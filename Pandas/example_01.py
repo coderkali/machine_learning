@@ -71,7 +71,7 @@ print("\n-------Sample Data ---------\n")
 
 data = {
     "Name ": ["kali","Meeta","Rishi"],
-    "Score": [100,200,300]
+    "Score": [78,98,89]
 }
 
 sample_df = pd.DataFrame(data, index = ["a","b","c"])
@@ -79,5 +79,58 @@ sample_df = pd.DataFrame(data, index = ["a","b","c"])
 print(sample_df.head())
 print(sample_df.tail())
 
+print("\n----------------\n")
+print(sample_df.iloc[1])
+print("\n----------------\n")
+print(sample_df.loc["c"])
 
+print("\n--------HighScore--------\n")
+high_score = sample_df[sample_df["Score"] > 85]
+print(high_score)
+
+print("\n--------LowScore--------\n")
+low_score = sample_df[sample_df["Score"] < 85]
+print(low_score)
+
+print("\n--------Adding a new Column--------\n")
+sample_df["Passed"] = sample_df["Score"] > 70
+print(sample_df)
+print("\n--------Adding a new Column--------\n")
+sample_df["Score_Percentage"] = sample_df["Score"]/100 *100
+print(sample_df)
+print("\n--------Adding a new Column--------\n")
+sample_df["City"] = ["New York", "Chicgo", "Columbus"]
+print(sample_df)
+
+print("\n--------Descriptive Statistsics--------\n")
+print("Avergae Score ::",sample_df["Score"].mean())
+print("Max Score ::",sample_df["Score"].max())
+print("Min",sample_df["Score"].min())
+
+print("\n--------Describe-------\n")
+
+print(sample_df.describe())
+
+print("\n--------Handling Missing Data-------\n")
+
+df2 = pd.DataFrame({
+    "Name": ["kali","Meeta","Rishi",None],
+    "Age": [35,None,3,10],
+    "Score": [85,91,None,88]
+})
+
+print(df2.head())
+
+print("\n--------Drop The name Who is having a  NONE-------\n")
+
+df2.dropna(subset=["Name"],inplace=True)
+
+print(df2.head())
+
+print("\n--------Replace with average value in NONE-------\n")
+
+df2["Age"] = df2["Age"].fillna(df2["Age"].mean())
+df2["Score"] = df2["Score"].fillna(df2["Score"].mean())
+
+print(df2.head())
 
