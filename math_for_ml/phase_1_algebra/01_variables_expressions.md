@@ -76,3 +76,41 @@ Variable    : Something that keeps changing, we can't predict its value
 Constant    : Always fixed before the equation starts, never changes
 
 Coefficient : The multiplier attached to a variable
+
+
+# Topic 02 — Functions & Graphs
+Date:
+
+## The Concept
+A function takes an input, does a calculation, and gives one output.
+One input always gives one output — no surprises.
+
+## The Formula
+f(x) = 5x - 200
+
+## What Each Symbol Means
+| Symbol | Meaning                          |
+|--------|----------------------------------|
+| f(x)   | The function — the machine       |
+| x      | Input — what you put in          |
+| f(x)   | Output — what comes out          |
+
+## Linear vs Non-linear
+| Formula  | Shape         | Power | ML Name    |
+|----------|---------------|-------|------------|
+| y = x    | Straight line | x¹    | Linear     |
+| y = x²   | U shape       | x²    | Non-linear |
+| y = x³   | S shape       | x³    | Non-linear |
+
+Rule: x¹ = straight line. x² or higher = curve.
+
+## ML Connection
+- Linear Regression uses y = wx + b — straight line only
+- Neural Networks use non-linear functions — can learn curves
+- If data has curved pattern, straight line model will fail
+
+## Memory Hook
+(Write your own one sentence here)
+
+## Practice Working
+(Your answers go here)
