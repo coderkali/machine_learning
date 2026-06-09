@@ -56,6 +56,8 @@ c = 50
 **Substitution:**
 - x = 5 → y = 60*5 + b = 300 + b
 
+-----
+
 ---
 
 ## Example 04 — Movie Theatre (Topic 01: Mixed practice)
