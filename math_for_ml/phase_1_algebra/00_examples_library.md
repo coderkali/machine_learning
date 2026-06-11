@@ -122,3 +122,40 @@ Ratio = 40/2 = 20 → this is w
 finds w and b automatically from thousands of rows of data.
 
 ---
+
+
+## Example 07 — Farmer Water & Crop Yield (Mixed Practice Q2)
+**Problem:** Find formula from data and predict unknown value.
+
+| Water litres (x) | Crop yield kg (y) |
+|------------------|-------------------|
+| 3                | 70                |
+| 6                | 130               |
+| 9                | 190               |
+
+**Finding w:**
+y increases by 60, x increases by 3
+w = 60 / 3 = 20
+
+**Finding b:**
+70 = 20*3 + b
+70 = 60 + b
+b = 10
+
+**Full formula:** y = 20x + 10
+
+**Prediction:** x = 15 → y = 20*15 + 10 = 310
+
+## Example 08 — Linear vs Non-linear comparison (Mixed Practice Q3)
+
+| Formula     | Type       | Shape         |
+|-------------|------------|---------------|
+| y = 4x + 10 | Linear     | Straight line |
+| y = 4x² + 10| Non-linear | U shape       |
+| y = 4x³ + 10| Non-linear | S shape       |
+
+**Y-intercept rule:**
+Constant b = 10 → all three cross vertical axis at y = 10
+When x = 0 → y always equals b
+
+**Key word:** Y-intercept = where graph crosses vertical axis
