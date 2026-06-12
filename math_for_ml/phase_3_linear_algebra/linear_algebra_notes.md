@@ -79,3 +79,31 @@ Matrix → many vectors stacked (many rows)
 (Write your own one sentence here)
 
 ---
+
+## Topic 4 — Matrix Shape & Dimensions
+
+### What is shape?
+Shape = (rows, columns) for a table/matrix
+Shape = (n,) for a plain list/vector — just n numbers in a line, no rows/columns
+
+### The pairing rule
+To pair a matrix with a vector:
+The matrix's COLUMNS must match the vector's SIZE.
+Rows do not matter for this check.
+
+### Example
+Matrix (5, 4)  — 5 stalls, 4 metrics each
+Vector (4,)    — 4 importance values, one per metric
+4 columns = 4 elements → compatible ✓
+
+### In ML
+Iris dataset matrix = (150, 4) — 150 flowers, 4 measurements
+Weight vector = (4,) — one weight per measurement
+4 = 4 → compatible ✓
+
+This is why shape mismatch errors happen — when columns ≠ vector size.
+
+### Memory hook
+(Write your own one sentence here)
+
+---
