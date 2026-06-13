@@ -107,3 +107,61 @@ This is why shape mismatch errors happen — when columns ≠ vector size.
 (Write your own one sentence here)
 
 ---
+
+## Topic 5 — Dot Product
+
+### What is it?
+Multiply each pair of numbers from two vectors, then add up all results.
+
+### Formula
+a · b = a1*b1 + a2*b2 + a3*b3 + ... + an*bn
+
+### Example — Chai stall score
+Data:    [80, 200, 35, 5]
+Weights: [2, 5, 0.5, 3]
+
+(80*2) + (200*5) + (35*0.5) + (5*3)
+= 160 + 1000 + 17.5 + 15
+= 1192.5
+
+### Small example
+a = [3, 4], b = [2, 5]
+a.b = 3*2 + 4*5 = 6 + 20 = 26
+
+### In ML
+This is the core operation inside every neuron.
+y = w1*x1 + w2*x2 + w3*x3 + w4*x4 + b
+The bracketed part is a dot product.
+
+### Memory hook
+(Write your own one sentence here)
+
+---## Topic 5 — Dot Product
+
+### What is it?
+Multiply each pair of numbers from two vectors, then add up all results.
+
+### Formula
+a · b = a1*b1 + a2*b2 + a3*b3 + ... + an*bn
+
+### Example — Chai stall score
+Data:    [80, 200, 35, 5]
+Weights: [2, 5, 0.5, 3]
+
+(80*2) + (200*5) + (35*0.5) + (5*3)
+= 160 + 1000 + 17.5 + 15
+= 1192.5
+
+### Small example
+a = [3, 4], b = [2, 5]
+a.b = 3*2 + 4*5 = 6 + 20 = 26
+
+### In ML
+This is the core operation inside every neuron.
+y = w1*x1 + w2*x2 + w3*x3 + w4*x4 + b
+The bracketed part is a dot product.
+
+### Memory hook
+(Write your own one sentence here)
+
+---
