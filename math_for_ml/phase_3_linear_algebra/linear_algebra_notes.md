@@ -165,3 +165,69 @@ The bracketed part is a dot product.
 (Write your own one sentence here)
 
 ---
+
+## Topic 6 — Matrix Multiplication
+
+### What is it?
+Doing dot product once for every row of a matrix, against the same vector.
+
+### Example — Chai stall scores (all 5 stalls)
+Matrix (5,4) x Vector (4,) = Result (5,)
+
+Stall 1: (80*2)+(200*5)+(35*0.5)+(5*3)  = 1192.5
+Stall 2: (60*2)+(100*5)+(32*0.5)+(4*3)  = 648
+Stall 3: ...
+Stall 4: ...
+Stall 5: ...
+
+### Shape rule
+(rows, cols) x (cols,) = (rows,)
+Matrix columns must match vector size.
+Result size = matrix rows.
+
+### In ML
+Iris dataset (150, 4) x weights (4,) = predictions (150,)
+All 150 predictions calculated in ONE operation instead of a loop.
+This is why ML libraries are fast.
+
+### Memory hook
+(Write your own one sentence here)
+
+---
+
+## Topic 6 — Matrix Multiplication
+
+### What is it?
+Doing dot product once for every row of a matrix, against the same weights vector.
+
+### Chai stall example
+Matrix (5,4) — 5 stalls, 4 metrics each
+Weights (4,) — 4 importance values
+
+Stall 1: (80*2)+(200*5)+(35*0.5)+(5*3)  = 1192.5
+Stall 2: (60*2)+(100*5)+(32*0.5)+(4*3)  = 648
+... (same for stalls 3, 4, 5)
+
+Result shape (5,) — one score per stall
+
+### Shape rule
+(rows, cols) x (cols,) = (rows,)
+Matrix columns must match vector size.
+Result size = matrix rows.
+
+### ML version — Iris dataset
+Matrix (150, 4) — 150 flowers, 4 measurements each
+Weights (4,) — one weight per measurement
+
+For each flower: dot product of its 4 measurements with the 4 weights = 1 prediction
+Doing this for all 150 flowers at once = matrix multiplication
+Result shape (150,) — one prediction per flower
+
+### Key idea
+Same operation as dot product, just repeated for every row.
+This is why ML libraries are fast — no loops, one operation for everything.
+
+### Memory hook
+(Write your own one sentence here)
+
+---
