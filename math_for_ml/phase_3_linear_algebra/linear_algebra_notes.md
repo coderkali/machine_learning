@@ -231,3 +231,35 @@ This is why ML libraries are fast — no loops, one operation for everything.
 (Write your own one sentence here)
 
 ---
+
+## Topic 7 — Transpose
+
+### What is it?
+Flipping a matrix — rows become columns, columns become rows.
+(rows, cols) becomes (cols, rows)
+
+### Why it's needed
+Sometimes data is written "sideways" and doesn't match the shape
+needed for multiplication. Transpose fixes the shape without
+changing the data.
+
+### Example
+Before transpose: (4, 5) — metrics as rows, stalls as columns
+Weights vector: (4,)
+Columns (5) != vector size (4) -> multiplication NOT possible
+
+After transpose: (5, 4) — stalls as rows, metrics as columns
+Columns (4) == vector size (4) -> multiplication possible
+
+### Shape rule
+(rows, cols) --transpose--> (cols, rows)
+Example: (150, 4) --transpose--> (4, 150)
+
+### In ML
+X.T appears everywhere in ML code/formulas.
+It exists purely to make shapes match for multiplication.
+
+### Memory hook
+(Write your own one sentence here)
+
+---
