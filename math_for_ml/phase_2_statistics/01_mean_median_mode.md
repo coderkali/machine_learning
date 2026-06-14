@@ -134,3 +134,17 @@ Now you know the formal name for what you saw.
 | Mode    | Most common value  | No                    | Categorical data, finding peaks |
 
 ---
+
+### Q3 — Missing value imputation (ML thinking)
+Location column: Mumbai, Delhi, Mumbai, Bangalore, Mumbai, Delhi, Mumbai
+
+1. Use MODE — finds most common value
+2. Mode = Mumbai (appears 4 times)
+3. Mean and Median only work on numbers.
+   Location is text/categorical — cannot add or sort words.
+   Mode works on both numbers AND text.
+
+ML connection:
+This technique is called categorical imputation.
+Scikit-learn: SimpleImputer(strategy='most_frequent')
+does exactly this automatically.
