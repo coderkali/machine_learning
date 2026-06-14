@@ -83,3 +83,54 @@ This is why news uses "median household income" not mean.
 (Write your own one sentence here)
 
 ---
+
+## MODE
+
+### What is it?
+The value that appears most frequently in the data.
+
+### Important cases
+| Situation              | Name      | Example                          |
+|------------------------|-----------|----------------------------------|
+| One value appears most | Unimodal  | mode = 45 (appears 3 times)      |
+| Two values tie         | Bimodal   | 45 and 80 both appear 3 times    |
+| All values unique      | No mode   | 45, 80, 55, 12, 8 — no repeats  |
+
+### Calculation
+Scores across 3 matches: 12, 45, 80, 45, 55, 8, 45, 12, 80
+
+| Score | Count |
+|-------|-------|
+| 8     | 1x    |
+| 12    | 2x    |
+| 45    | 3x  <- MODE  |
+| 55    | 1x    |
+| 80    | 2x    |
+
+Mode = 45
+
+### Real life connection
+Iris petal length histogram had TWO peaks — one for Setosa,
+one for other species. That was a bimodal distribution.
+Now you know the formal name for what you saw.
+
+### ML Use
+| Where                       | How                                        |
+|-----------------------------|--------------------------------------------|
+| Missing categorical values  | Fill missing "City" column with most common value |
+| Class imbalance detection   | Mode reveals dominant class in labels      |
+
+### Memory hook
+(Write your own one sentence here)
+
+---
+
+## SUMMARY — Mean vs Median vs Mode
+
+| Measure | What it finds      | Affected by outliers? | Best used when                  |
+|---------|--------------------|-----------------------|---------------------------------|
+| Mean    | Average value      | Yes                   | Data is clean, no extreme values|
+| Median  | Middle value       | No                    | Data has outliers               |
+| Mode    | Most common value  | No                    | Categorical data, finding peaks |
+
+---
