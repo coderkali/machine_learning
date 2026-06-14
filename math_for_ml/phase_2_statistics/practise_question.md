@@ -36,3 +36,31 @@ Mean got pulled up to 61 — not representative.
 Median ignored the outlier — gives realistic picture.
 
 Real world: salary reports and real estate always use median, not mean.
+
+
+## My Understanding (in my own words)
+
+Statistics is about finding patterns in a dataset using three key measures.
+
+### Mean
+Average of all values.
+Sum all values then divide by count.
+Example: [10,30,40,10,30,60,30]
+Mean = (10+30+40+10+30+60+30)/7 = 30
+
+### Median
+Middle value after sorting lowest to highest.
+Example sorted: [10,10,30,30,30,40,60]
+Median = 30 (4th value out of 7)
+
+### Mode
+Most frequently appearing value.
+Example: 30 appears 3 times — more than any other
+Mode = 30
+
+### Interesting observation
+When Mean = Median = Mode (all = 30 here),
+data is perfectly balanced — no skew, no outliers.
+In real data this rarely happens.
+
+---
