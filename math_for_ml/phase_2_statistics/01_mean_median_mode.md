@@ -42,3 +42,44 @@ x̄  = 200 / 5 = 40
 (Write your own one sentence here)
 
 ---
+
+
+## MEDIAN
+
+### What is it?
+The middle value when data is sorted from smallest to largest.
+Not affected by extreme values (outliers).
+
+### Steps
+1. Sort values from smallest to largest
+2. Pick the middle value
+
+### Calculation
+Original scores: 45, 80, 55, 12, 8
+Sorted:          8, 12, 45, 55, 80
+Middle value:    45 (3rd out of 5)
+
+Median = 45
+
+### Mean vs Median
+| Measure | Value | Affected by outliers? |
+|---------|-------|----------------------|
+| Mean    | 40    | Yes — pulled down by 8 and 12 |
+| Median  | 45    | No — ignores how extreme they are |
+
+### Real life example
+5 salaries: 20k, 25k, 22k, 24k, 5,00,000
+Mean = pulled way up by CEO salary = misleading
+Median = true middle salary = realistic picture
+This is why news uses "median household income" not mean.
+
+### ML Use
+| Where                        | How                                     |
+|------------------------------|-----------------------------------------|
+| Missing values with outliers | Fill with median — safer than mean      |
+| Skew detection               | If mean != median, data is skewed       |
+
+### Memory hook
+(Write your own one sentence here)
+
+---
