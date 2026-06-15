@@ -64,3 +64,63 @@ data is perfectly balanced — no skew, no outliers.
 In real data this rarely happens.
 
 ---
+
+### Q1 — Student test scores
+Scores: 30, 40, 50, 60, 70
+
+Mean = (30+40+50+60+70)/5 = 250/5 = 50
+
+| Score | Distance (x-x̄) | Squared |
+|-------|----------------|---------|
+| 30    | -20            | 400     |
+| 40    | -10            | 100     |
+| 50    | 0              | 0       |
+| 60    | +10            | 100     |
+| 70    | +20            | 400     |
+
+Variance = (400+100+0+100+400)/5 = 1000/5 = 200
+Std Dev  = √200 = 14.14
+
+MISTAKE TO AVOID: Never add raw distances — always square first.
+Negatives cancel positives and give wrong answer of zero.
+
+### Q2 — Delivery driver hiring
+Driver A: 30, 32, 29, 31, 30
+Driver B: 20, 45, 15, 50, 22
+
+Mean A = Mean B = 152/5 = 30.4 (same mean)
+
+Driver A Variance:
+(0.16+2.56+1.96+0.36+0.16)/5 = 5.2/5 = 1.04
+
+Driver B Variance:
+(108.16+213.16+237.16+384.16+70.56)/5 = 1013.2/5 = 202.64
+
+Decision: Hire Driver A
+Reason: Lower variance = consistent delivery times
+Driver B is unpredictable despite same average time
+
+MISTAKE TO AVOID: Always divide sum by n at the end.
+Variance = AVERAGE of squared distances, not just the sum.
+
+### Q3 — Study hours variance
+Scores: 2, 8, 3, 7, 5
+
+Mean = (2+8+3+7+5)/5 = 25/5 = 5
+
+| Score | Distance | Squared |
+|-------|----------|---------|
+| 2     | -3       | 9       |
+| 8     | +3       | 9       |
+| 3     | -2       | 4       |
+| 7     | +2       | 4       |
+| 5     | 0        | 0       |
+
+Variance = (9+9+4+4+0)/5 = 26/5 = 5.2
+Std Dev = √5.2 = 2.28
+
+Friend's scores: 4, 5, 6, 5, 5
+Friend has lower variance — stays closer to mean of 5.
+
+MISTAKE TO AVOID: Be careful with the distance table.
+Write each row carefully — easy to mix up values.
