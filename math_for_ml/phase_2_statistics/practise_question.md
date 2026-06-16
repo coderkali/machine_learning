@@ -124,3 +124,21 @@ Friend has lower variance — stays closer to mean of 5.
 
 MISTAKE TO AVOID: Be careful with the distance table.
 Write each row carefully — easy to mix up values.
+
+
+## My Understanding (in my own words)
+
+Mean tells us the average but doesn't tell us how spread out the data is.
+
+Variance measures how far each value is from the mean —
+by squaring the distances (to remove negatives) and averaging them.
+
+Standard Deviation is the square root of Variance —
+brings the unit back to the original so it makes real sense.
+
+Low variance/std dev = data stays close to mean = consistent.
+High variance/std dev = data is scattered far from mean = unpredictable.
+
+Example: Two cricket players with same mean of 50.
+Player A std dev = 1.41 -> consistent batsman.
+Player B std dev = 38.08 -> unpredictable batsman.
