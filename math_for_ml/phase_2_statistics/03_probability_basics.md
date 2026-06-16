@@ -179,3 +179,23 @@ Conclusion:
 ML connection:
 False negative = model says "no disease" but patient has it.
 In medical ML, minimizing false negatives is critical.
+
+
+## My Understanding (in my own words)
+
+1. Probability:
+Predicting how likely something is, on a scale of 0 to 1.
+Closer to 1 = more likely to happen.
+Closer to 0 = less likely to happen.
+
+2. P(A|B):
+Probability of A, GIVEN THAT B is already true.
+Example: P(spam | "prize") = probability of spam
+given the email already contains "prize."
+The | symbol means "given that."
+
+3. Probability in ML:
+ML models output probabilities to make decisions.
+Spam filter: P(spam | email words) -> if > 0.5, mark as spam.
+Disease model: P(disease | test result) -> if > 0.9, alert doctor.
+Every classifier is essentially a probability calculator.
