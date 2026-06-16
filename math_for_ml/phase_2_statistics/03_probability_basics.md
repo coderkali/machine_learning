@@ -132,3 +132,50 @@ Model picks whichever probability is higher.
 (Fill this in after practice questions)
 
 ---
+
+### Q1 — Coloured balls probability
+Bag: 5 blue, 4 green, 6 yellow. Total = 15
+
+P(blue)   = 5/15 = 0.33
+P(green)  = 4/15 = 0.26
+P(yellow) = 6/15 = 0.40
+
+Verification using Rule of Total Probability:
+0.33 + 0.26 + 0.40 = 1.0 ✓
+
+Shortcut used:
+P(yellow) = 1 - P(blue) - P(green) = 1 - 0.33 - 0.26 = 0.41
+(small rounding difference — both acceptable)
+
+---
+
+### Q2 — Spam filter conditional probability
+200 emails total:
+- 80 contain "prize" → 72 spam
+- 120 no "prize"    → 12 spam
+
+P(spam | "prize")    = 72/80  = 0.90
+P(spam | no "prize") = 12/120 = 0.10
+
+MISTAKE TO AVOID: Conditional probability P(A|B) uses
+only the group where B is already true as the total.
+Not the full dataset total.
+
+ML connection: This is exactly how Naive Bayes
+spam classifier works.
+
+### Q3 — Disease diagnosis model
+500 patients total:
+- 200 tested positive → 180 had disease
+- 300 tested negative → 15 had disease
+
+P(disease | positive test) = 180/200 = 0.90
+P(disease | negative test) = 15/300  = 0.05
+
+Conclusion:
+90% chance of disease if positive -> doctor should be worried.
+5% chance of disease if negative -> small risk remains (false negative).
+
+ML connection:
+False negative = model says "no disease" but patient has it.
+In medical ML, minimizing false negatives is critical.
