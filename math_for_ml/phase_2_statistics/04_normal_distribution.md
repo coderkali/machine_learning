@@ -102,3 +102,65 @@ from the mean is this value?"
 (Fill this after practice questions)
 
 ---
+
+---
+
+## Z-Score
+
+### The Problem it Solves
+Comparing values from different datasets directly is unfair.
+Two students from different schools with different averages
+and different spreads — how do you compare them fairly?
+Z-score gives a fair comparison by measuring relative position.
+
+### Formula
+z = (x - μ) / σ
+
+| Symbol | Meaning                    |
+|--------|----------------------------|
+| z      | Z-score — the final answer |
+| x      | The value you are checking |
+| μ      | Mean of the dataset        |
+| σ      | Standard deviation         |
+
+### Plain English
+Z-score tells you how many standard deviations a value
+is away from the mean.
+
+| Z-score | Meaning                          |
+|---------|----------------------------------|
+| 0       | Exactly at the mean              |
+| +1      | One std dev above mean           |
+| -1      | One std dev below mean           |
+| +2      | Two std devs above — getting rare|
+| +3      | Three std devs above — outlier   |
+
+### Calculation — Student comparison
+Student A: x=75, mean=60, std dev=10
+z = (75-60)/10 = 15/10 = 1.5
+
+Student B: x=80, mean=70, std dev=20
+z = (80-70)/20 = 10/20 = 0.5
+
+| Student | Raw Score | Z-score | Meaning                          |
+|---------|-----------|---------|----------------------------------|
+| A       | 75        | 1.5     | 1.5 std devs above class mean    |
+| B       | 80        | 0.5     | 0.5 std devs above class mean    |
+
+Conclusion: Student A performed better RELATIVE to their class.
+Raw score alone is misleading — z-score gives fair comparison.
+
+### ML Connection — StandardScaler
+Scikit-learn applies z = (x - mean) / std dev to every value.
+Result: mean becomes 0, std dev becomes 1.
+All features put on same scale — no feature dominates.
+
+### Why ML needs this
+Without scaling:
+- Sepal length: 4.3 to 7.9 cm (small numbers)
+- House price: 50,000 to 5,00,000 rupees (huge numbers)
+House price dominates every calculation just because
+its numbers are bigger — not because it is more important.
+Z-score scaling fixes this.
+
+---
