@@ -248,3 +248,189 @@ In Scikit-learn:
 from scipy import stats
 z_scores = stats.zscore(data)
 outliers = data[abs(z_scores) > 3]
+
+### Q2 — Bank fraud detection
+Mean = ₹5000, Std Dev = ₹1000
+
+Customer A: z = (5800-5000)/1000 = 800/1000  = 0.8  → Normal
+Customer B: z = (8500-5000)/1000 = 3500/1000 = 3.5  → OUTLIER
+Customer C: z = (3200-5000)/1000 = -1800/1000 = -1.8 → Normal
+
+Note on negative Z-score:
+Negative = below mean. Not automatically suspicious.
+Just means the transaction was smaller than average.
+
+Flag: Customer B — Z = 3.5 exceeds ±3 boundary.
+Only 0.3% of transactions reach this level.
+
+ML Connection:
+This is exactly how bank fraud detection models work.
+Any transaction with Z > 3 triggers an alert automatically.
+
+---
+
+## Reverse Calculation — Proving Everything from Raw Data
+
+### The Dataset
+10 bank customers and their transaction amounts:
+
+| Customer | Transaction (₹) |
+|----------|----------------|
+| 1        | 4000           |
+| 2        | 5500           |
+| 3        | 4800           |
+| 4        | 6000           |
+| 5        | 5200           |
+| 6        | 4500           |
+| 7        | 5800           |
+| 8        | 4200           |
+| 9        | 5100           |
+| 10       | 8900           |
+
+---
+
+### Stage 1 — Calculate Mean
+
+Step 1: Add all transactions
+4000 + 5500 = 9500
+9500 + 4800 = 14300
+14300 + 6000 = 20300
+20300 + 5200 = 25500
+25500 + 4500 = 30000
+30000 + 5800 = 35800
+35800 + 4200 = 40000
+40000 + 5100 = 45100
+45100 + 8900 = 54000
+
+Sum = 54000
+
+Step 2: Divide by number of customers
+Mean = 54000 / 10 = 5400
+
+MEAN = ₹5400
+
+---
+
+### Stage 2 — Calculate Standard Deviation
+
+Step 1: Find distance of each value from mean (5400)
+Step 2: Square each distance (removes negatives)
+Step 3: Average the squared distances = Variance
+Step 4: Square root of Variance = Std Dev
+
+#### Distance Table
+
+| Customer | Transaction (x) | Distance (x-5400) | Squared        |
+|----------|-----------------|-------------------|----------------|
+| 1        | 4000            | -1400             | 1,960,000      |
+| 2        | 5500            | +100              | 10,000         |
+| 3        | 4800            | -600              | 360,000        |
+| 4        | 6000            | +600              | 360,000        |
+| 5        | 5200            | -200              | 40,000         |
+| 6        | 4500            | -900              | 810,000        |
+| 7        | 5800            | +400              | 160,000        |
+| 8        | 4200            | -1200             | 1,440,000      |
+| 9        | 5100            | -300              | 90,000         |
+| 10       | 8900            | +3500             | 12,250,000     |
+
+Step 3: Add all squared distances
+1960000 + 10000     = 1970000
+1970000 + 360000    = 2330000
+2330000 + 360000    = 2690000
+2690000 + 40000     = 2730000
+2730000 + 810000    = 3540000
+3540000 + 160000    = 3700000
+3700000 + 1440000   = 5140000
+5140000 + 90000     = 5230000
+5230000 + 12250000  = 17480000
+
+Sum of squared distances = 17,480,000
+
+Step 4: Calculate Variance
+Variance = 17480000 / 10 = 1,748,000
+
+Step 5: Calculate Standard Deviation
+Std Dev = √1748000 = 1322.12
+
+STANDARD DEVIATION = ₹1322.12
+
+---
+
+### Stage 3 — Calculate Z-Score for Customer 10
+
+Customer 10 transaction = ₹8900
+Mean = ₹5400
+Std Dev = ₹1322.12
+
+Formula: z = (x - μ) / σ
+
+Step 1: Subtract mean from value
+8900 - 5400 = 3500
+
+Step 2: Divide by std dev
+3500 / 1322.12 = 2.64
+
+Z-SCORE = 2.64
+
+#### Is Customer 10 an outlier?
+Z = 2.64 -> within ±3 boundary -> NOT an outlier
+
+| Z-score range  | Classification | Action              |
+|----------------|----------------|---------------------|
+| 0 to ±1        | Very normal    | No action           |
+| ±1 to ±2       | Normal         | No action           |
+| ±2 to ±3       | Borderline     | Monitor             |
+| Beyond ±3      | Outlier        | Flag / Investigate  |
+
+---
+
+### Stage 4 — Reverse Calculation (Fraud Threshold)
+
+Question: Above what amount should the system flag a transaction?
+
+Formula: x = μ + (z × σ)
+
+Step 1: Plug in values
+x = 5400 + (3 × 1322.12)
+
+Step 2: Multiply
+3 × 1322.12 = 3966.36
+
+Step 3: Add mean
+5400 + 3966.36 = 9366.36
+
+FRAUD THRESHOLD = ₹9366.36
+
+Any transaction ABOVE ₹9366 gets flagged automatically.
+Customer 10's ₹8900 is below this threshold -> safe.
+
+---
+
+### Key Insight from This Exercise
+
+The same transaction amount can be normal OR suspicious
+depending on the dataset.
+
+Example:
+- Earlier example: Mean=5000, Std Dev=1000
+  ₹8500 -> Z=3.5 -> FLAGGED
+- Our real dataset: Mean=5400, Std Dev=1322.12
+  ₹8900 -> Z=2.64 -> NOT flagged
+
+This proves why ML models always calculate from
+actual data — never from assumptions.
+The numbers only make sense in context of the full dataset.
+
+---
+
+### Formula Summary
+
+| What          | Formula                    | Purpose                      |
+|---------------|----------------------------|------------------------------|
+| Mean          | μ = Σx / n                 | Find average                 |
+| Variance      | σ² = Σ(x-μ)² / n          | Find spread (squared units)  |
+| Std Dev       | σ = √σ²                    | Find spread (original units) |
+| Z-score       | z = (x-μ) / σ              | Find position on bell curve  |
+| Reverse       | x = μ + (z × σ)            | Find value from Z-score      |
+
+---
