@@ -164,3 +164,87 @@ its numbers are bigger — not because it is more important.
 Z-score scaling fixes this.
 
 ---
+
+### Q1 — Factory bolts normal distribution
+
+#### Setup
+A factory produces bolts. We want to know which bolts are
+normal and which are defective (outliers).
+
+Mean = 10 cm (average bolt length)
+Std Dev = 0.5 cm (how much bolts vary from average)
+
+---
+
+#### 68-95-99.7 Rule Applied
+
+BAND 1 — 68% of bolts (most common):
+Range = Mean ± 1 Std Dev
+     = 10 ± 0.5
+     = 9.5 cm to 10.5 cm
+Meaning: 680 out of every 1000 bolts fall in this range.
+These are your perfectly normal bolts.
+
+BAND 2 — 95% of bolts:
+Range = Mean ± 2 Std Dev
+     = 10 ± (2 × 0.5)
+     = 10 ± 1.0
+     = 9.0 cm to 11.0 cm
+Meaning: 950 out of every 1000 bolts fall here.
+Still acceptable — slightly longer or shorter than average.
+
+BAND 3 — 99.7% of bolts:
+Range = Mean ± 3 Std Dev
+     = 10 ± (3 × 0.5)
+     = 10 ± 1.5
+     = 8.5 cm to 11.5 cm
+Meaning: 997 out of every 1000 bolts fall here.
+Getting rare — these bolts are noticeably different.
+
+BEYOND BAND 3 — 0.3% of bolts:
+Shorter than 8.5 cm OR longer than 11.5 cm
+Only 3 out of every 1000 bolts.
+These are OUTLIERS — defective, needs inspection.
+
+Visual summary:
+8.5 --- 9.0 --- 9.5 ---[10 MEAN]--- 10.5 --- 11.0 --- 11.5
+ |_____________99.7%___________________________|
+         |_________95%_________________|
+                |____68%_________|
+
+---
+
+#### Is the 11.5 cm bolt an outlier?
+
+Step 1: Calculate Z-score
+z = (x - mean) / std dev
+z = (11.5 - 10) / 0.5
+z = 1.5 / 0.5
+z = 3.0
+
+Step 2: Check the rule
+| Z-score range  | Classification | Action          |
+|----------------|----------------|-----------------|
+| -1 to +1       | Very normal    | No action       |
+| -2 to +2       | Normal         | No action       |
+| -3 to +3       | Borderline     | Monitor         |
+| Beyond ±3      | Outlier        | Inspect/Remove  |
+
+Step 3: Conclusion
+Z = 3.0 sits exactly at the boundary.
+This bolt is at the edge of the 99.7% range.
+Only 3 in 1000 bolts are this long.
+ACTION: Flag for quality inspection — likely defective.
+
+---
+
+#### ML Connection
+This exact logic is used in:
+- Fraud detection: transaction with Z > 3 = suspicious
+- Data cleaning: remove rows with Z > 3 before training
+- Anomaly detection: find unusual patterns in data
+
+In Scikit-learn:
+from scipy import stats
+z_scores = stats.zscore(data)
+outliers = data[abs(z_scores) > 3]
