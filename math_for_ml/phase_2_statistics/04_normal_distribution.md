@@ -480,3 +480,26 @@ x = 78.84
 
 Any score above 78.84 = exceptional performance.
 Score of 81 crosses this threshold -> outstanding batsman.
+
+## My Understanding (in my own words)
+
+### Normal Distribution
+A continuous probability distribution where data clusters
+symmetrically around the center. When plotted, it creates
+a perfectly balanced bell curve — values near the mean are
+most common, values far from the mean become increasingly rare.
+
+### 68-95-99.7 Rule
+For any normal distribution:
+- 68% of data falls within ±1 std dev from mean
+- 95% of data falls within ±2 std dev from mean
+- 99.7% of data falls within ±3 std dev from mean
+Anything beyond ±3 std dev = outlier (only 0.3% of data)
+
+### Z-Score
+Measures exactly how many standard deviations a data point
+is from the mean.
+- Z = 0  -> exactly at the mean
+- Z > 0  -> above average
+- Z < 0  -> below average
+- Z > 3 or Z < -3 -> outlier, needs investigation
