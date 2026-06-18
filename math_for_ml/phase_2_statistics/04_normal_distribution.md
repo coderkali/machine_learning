@@ -434,3 +434,49 @@ The numbers only make sense in context of the full dataset.
 | Reverse       | x = μ + (z × σ)            | Find value from Z-score      |
 
 ---
+
+### Q3 — Cricket batting analysis
+
+Dataset: 32, 45, 55, 48, 60, 41, 38, 81
+
+#### Stage 1 — Mean
+32+45+55+48+60+41+38+81 = 400
+Mean = 400/8 = 50
+
+#### Stage 2 — Standard Deviation
+
+| Score | Distance (x-50) | Squared |
+|-------|-----------------|---------|
+| 32    | -18             | 324     |
+| 45    | -5              | 25      |
+| 55    | +5              | 25      |
+| 48    | -2              | 4       |
+| 60    | +10             | 100     |
+| 41    | -9              | 81      |
+| 38    | -12             | 144     |
+| 81    | +31             | 961     |
+
+Sum = 1664
+Variance = 1664/8 = 208
+Std Dev = √208 = 14.42
+
+MISTAKE TO AVOID: Always divide sum by n BEFORE
+taking square root. √(sum/n) not √sum/n
+
+#### Stage 3 — Z-score for 81
+z = (81-50) / 14.42
+z = 31/14.42
+z = 2.15
+
+#### Stage 4 — Is 81 an outlier?
+Z = 2.15 -> within ±3 -> NOT an outlier
+But getting close — worth monitoring.
+
+#### Stage 5 — Outstanding performance threshold (Z=2)
+x = μ + (z × σ)
+x = 50 + (2 × 14.42)
+x = 50 + 28.84
+x = 78.84
+
+Any score above 78.84 = exceptional performance.
+Score of 81 crosses this threshold -> outstanding batsman.
