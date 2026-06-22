@@ -123,3 +123,35 @@ r = Σ(x - x̄)(y - ȳ) / √[Σ(x - x̄)² × Σ(y - ȳ)²]
 (Fill this after practice questions)
 
 ---
+
+## Pearson Correlation — Full Calculation
+
+### Dataset
+Ice cream shop: Temperature vs Sales
+Mean of x (temperature) = 30
+Mean of y (ice cream sales) = 51
+
+### Calculation Table
+| Day | x  | y  | (x-30) | (y-51) | Product | (x-30)² | (y-51)² |
+|-----|----|----|--------|--------|---------|---------|---------|
+| 1   | 20 | 30 | -10    | -21    | +210    | 100     | 441     |
+| 2   | 25 | 40 | -5     | -11    | +55     | 25      | 121     |
+| 3   | 30 | 55 | 0      | +4     | 0       | 0       | 16      |
+| 4   | 35 | 60 | +5     | +9     | +45     | 25      | 81      |
+| 5   | 40 | 70 | +10    | +19    | +190    | 100     | 361     |
+| Sum |    |    |        |        | 500     | 250     | 1020    |
+
+### Final Calculation
+r = 500 / √(250 × 1020)
+r = 500 / √255000
+r = 500 / 505
+r = 0.99
+
+### Conclusion
+r = 0.99 -> Almost perfect positive correlation.
+When temperature goes up, ice cream sales go up together.
+
+### ML Decision
+If both features were in a dataset:
+r = 0.99 is too high -> DROP one feature.
+Keeping both = telling the model same thing twice.
