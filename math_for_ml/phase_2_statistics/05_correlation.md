@@ -155,3 +155,33 @@ When temperature goes up, ice cream sales go up together.
 If both features were in a dataset:
 r = 0.99 is too high -> DROP one feature.
 Keeping both = telling the model same thing twice.
+
+## My Understanding (in my own words)
+
+### What is Correlation?
+A statistical measure that describes the relationship
+between two or more variables. Measured by r value
+which always sits between -1 and +1.
+
+### Positive Correlation (0 to +1)
+Both variables move in the same direction.
+As one increases, the other increases too.
+Example: Temperature and ice cream sales (r = 0.99)
+
+### Negative Correlation (0 to -1)
+Variables move in opposite directions.
+As one increases, the other decreases.
+Example: Temperature and hot coffee sales.
+
+### No Correlation (r near 0)
+No relationship between variables.
+Example: Shoe size and runs scored.
+
+### Why we use it in ML — Feature Selection
+We drop features in two situations:
+1. r near 0 -> useless, no relationship with target
+2. r near 1 or -1 -> duplicate, saying same thing twice
+
+This makes the model simpler and more accurate.
+Real example: Iris petal length and petal width (r=0.96)
+-> drop one, keep the other.
