@@ -1,0 +1,118 @@
+# Phase 3, Topic 2 — Data Cleaning: Missing Values & Outliers
+
+## The Story
+
+With all 8 rows collected (Topic 1), Arjun's manager asks: "Can we use this
+data as-is?" Two problems block the answer:
+
+1. **Deepak's credit score is missing** (API timeout).
+2. **Priya's income (₹12,00,000)** looks like a data-entry typo.
+
+Each problem needs a different fix, because — as established in Topic 1 —
+they came from different failure modes.
+
+## Problem 1: Missing Value — Imputation
+
+With only 8 rows total, dropping Deepak's entire record over one missing
+field is wasteful. Instead, the missing credit score is **imputed** —
+filled in using a statistic computed from the other 7 known scores.
+
+**Known credit scores (7 customers, Deepak excluded):**
+720, 680, 610, 590, 700, 615, 750
+
+**Mean:**
+Sum = 720 + 680 + 610 + 590 + 700 + 615 + 750 = 4,665
+Mean = 4,665 ÷ 7 = **666.43**
+
+**Median:**
+Sorted: 590, 610, 615, 680, 700, 720, 750
+7 values (odd count) → middle value directly = **680**
+
+**Decision: use the mean (666.43) to impute Deepak's credit score.**
+
+Note: mean and median are fairly close here (666.43 vs 680) — there's no
+strong skew in this particular set of 7 scores, so either would have been a
+reasonable choice. The general rule to remember for future topics: when a
+dataset has significant skew or extreme values, the **median** is more
+robust because the mean gets pulled toward outliers; when the data is
+fairly evenly spread (like this one), the mean is often used by default
+since it uses all data points rather than just the middle one.
+
+## Problem 2: Outlier — IQR Method
+
+Instead of eyeballing that ₹12,00,000 "looks wrong," the IQR method proves
+it statistically.
+
+**All 8 monthly incomes, sorted (₹):**
+30,000 · 38,000 · 40,000 · 45,000 · 55,000 · 62,000 · 85,000 · 12,00,000
+
+**Step 1 — split into lower half and upper half (4 each):**
+- Lower half: 30,000, 38,000, 40,000, 45,000
+- Upper half: 55,000, 62,000, 85,000, 12,00,000
+
+**Step 2 — Q1 = median of lower half** (even count → average the two middle
+values):
+Q1 = (38,000 + 40,000) ÷ 2 = **39,000**
+
+**Step 3 — Q3 = median of upper half** (even count → average the two middle
+values):
+Q3 = (62,000 + 85,000) ÷ 2 = **73,500**
+
+**Step 4 — IQR (Interquartile Range):**
+IQR = Q3 − Q1 = 73,500 − 39,000 = **34,500**
+
+This is the width of the "normal middle 50%" of the data.
+
+**Step 5 — Upper bound:**
+Upper bound = Q3 + 1.5 × IQR = 73,500 + (1.5 × 34,500) = 73,500 + 51,750 =
+**125,250**
+
+The 1.5× multiplier (a convention introduced by statistician John Tukey) is
+a buffer added on top of the normal range — wide enough that ordinary
+variation stays inside it, narrow enough that genuinely extreme values
+still get flagged. Flagging everything outside Q1–Q3 directly would mark
+50% of all data as outliers, which is useless — hence the buffer.
+
+**Step 6 — Compare:**
+Priya's income (₹12,00,000) vs. upper bound (₹125,250) → **₹12,00,000 is
+about 9.6× past the upper bound.** Confirmed statistical outlier, not just
+a visual impression.
+
+## Visual
+
+A number line plot showed the 7 clustered "normal" incomes, the IQR box
+(Q1 to Q3), the upper bound as a dashed line, and Priya's income sitting far
+beyond it on a broken axis — visually confirming how far outside normal
+range her value falls.
+
+## Key Takeaways
+
+- **Missing values** are handled through imputation (mean or median),
+  chosen based on how skewed the rest of the data is. Mean uses all data
+  points; median is robust to skew/extremes.
+- **Median calculation rule:** odd count → middle value directly; even
+  count → average the two middle values. This same even/odd rule applies
+  when finding Q1 and Q3, since each is itself a median of a sub-group.
+- **IQR method** for outliers: IQR = Q3 − Q1 defines the "normal" spread;
+  1.5×IQR is a buffer added beyond Q3 (or subtracted below Q1, for low
+  outliers) before a value is flagged.
+- Knowing *why* a value is missing or wrong (Topic 1) directly informs
+  *how* to fix it (Topic 2) — an API-timeout gap gets imputed, a
+  likely-typo outlier gets flagged and corrected/excluded.
+
+## GenAI / RAG Bridge
+
+In a RAG pipeline, the equivalent of imputation is handling missing or
+incomplete document fields — e.g., a scraped page missing its title or
+publish date, filled with a reasonable default rather than dropping the
+whole document. The equivalent of outlier detection is filtering out
+corrupted or nonsensical chunks (e.g., garbled OCR text, a scraping error
+that returned raw HTML instead of content) before they get embedded and
+pollute retrieval results — using rule-based thresholds much like the IQR
+method flags Priya's income.
+
+## Status
+
+✅ Topic 2 understood and confirmed. Deepak's credit score → imputed with
+mean (666.43). Priya's income → confirmed statistical outlier via IQR
+method. Ready to proceed to Topic 3: Feature Engineering, Encoding.
