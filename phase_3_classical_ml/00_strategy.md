@@ -50,9 +50,9 @@ these same two problems.
 
 | # | Topic | Status |
 |---|---|---|
-| 1 | Data Collection | 🟡 In progress |
-| 2 | Data Cleaning, Missing Values, Outliers | ⬜ |
-| 3 | Feature Engineering, Encoding | ⬜ |
+| 1 | Data Collection | ✅ Complete |
+| 2 | Data Cleaning, Missing Values, Outliers | ✅ Complete |
+| 3 | Feature Engineering, Encoding | ⬜ Next up |
 | 4 | Regression | ⬜ |
 | 5 | Classification | ⬜ |
 | 6 | Clustering | ⬜ |
@@ -64,6 +64,30 @@ these same two problems.
 | 12 | Bringing It Together (mini scenario) | ⬜ |
 | 13 | End-to-End Recap (conceptual only, no coding) | ⬜ |
 
+## Folder Structure
+
+Each topic gets its own subfolder under `phase_3_classical_ml/`, rather
+than flat files at the root. Convention:
+
+```
+phase_3_classical_ml/
+  00_strategy.md
+  01_data_collection/
+    01_data_collection.md
+  02_data_cleaning/
+    02_data_cleaning.md
+    images/
+      02_income_outlier_iqr.svg
+  03_feature_engineering/
+    03_feature_engineering.md
+    images/           (only if that topic has visuals)
+  ...
+```
+
+Each topic folder contains its own `images/` subfolder if that topic has
+any embedded diagrams — keeps visuals scoped to the topic they belong to
+instead of one shared folder growing unmanageably across 13 topics.
+
 ## Teaching Rhythm (per topic)
 
 1. **Story-first** — real-world scenario with concrete numbers, using the
@@ -74,8 +98,53 @@ these same two problems.
    generated. Not optional; this is the teaching contract.
 4. **GenAI/RAG bridge** — explicit mapping from the classical ML concept to
    its later GenAI/RAG equivalent.
-5. **Notes generated** — only after understanding is confirmed.
-6. **Commit to GitHub** — before advancing to the next topic.
+5. **Visuals where they help** — diagrams/charts generated whenever a
+   number-heavy or spatial concept (spread, distribution, boundaries)
+   benefits from seeing it, not just reading it. Saved as an actual `.svg`
+   file under `images/` and embedded in the notes with markdown image
+   syntax — not just described in prose — so it renders on GitHub.
+6. **Notes generated** — only after understanding is confirmed.
+7. **Commit to GitHub** — before advancing to the next topic.
+
+## Recurring Add-Ons (Practice, FAQ, Interview Prep)
+
+These layer on top of the core rhythm above, starting from Topic 2 onward
+(and retrofitted to earlier topics if requested).
+
+### Riverstone Case Files (practice sessions)
+
+After a topic's notes are committed, before moving to the next topic, a new
+mini-scenario is introduced in the same Riverstone Bank universe — a new
+customer or a new twist — that requires applying the just-learned concept.
+Rules:
+- **Solved independently first** — no walkthrough given up front, same
+  paper-work-checked-not-solved contract as the main teaching flow.
+- Kept in the same story world deliberately, instead of abstract drills,
+  so the practice reinforces the mental model rather than testing
+  formula recall in isolation.
+- Every few topics, a **cumulative case file** quietly requires concepts
+  from 2-3 topics back as well as the current one — informal spaced
+  repetition without calling it that.
+- A short rapid-fire round (2-3 quick "why/what" conceptual questions, not
+  calculations) can follow the case file to test verbal recall, mimicking
+  how the concept would come up in an interview setting.
+
+### FAQ section (per topic notes file)
+
+A small set (3-5) of common conceptual mix-ups for that topic, written
+generally — "what someone learning this topic commonly gets confused
+about" — as distinct from the verbatim "Clarifying Questions Asked" log
+(which captures the actual back-and-forth from that specific learning
+session). Both can coexist in the same notes file; they serve different
+purposes.
+
+### Interview Questions & Answers (per topic notes file)
+
+3-5 realistic interview-style questions for that topic with concise model
+answers, pitched at the interview-ready level from the 3-level explanation.
+Builds directly toward the interview-prep work planned for later in the
+roadmap (post Phase 4+), so this doesn't need to be redone from scratch
+later — just aggregated.
 
 ## Notes
 

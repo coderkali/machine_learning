@@ -179,6 +179,76 @@ that returned raw HTML instead of content) before they get embedded and
 pollute retrieval results — using rule-based thresholds much like the IQR
 method flags Priya's income.
 
+## FAQ
+
+General points people commonly get confused about with this topic — not
+specific to this conversation, just worth having on record.
+
+**Q: Should missing values always be imputed with the mean?**
+A: No. Mean works well when the data is roughly symmetric (no strong
+skew), because it uses every data point. When data is skewed or has
+extreme values, the mean gets pulled toward those extremes — median is
+more robust in that case since it only cares about the middle position,
+not the actual magnitude of outlying values.
+
+**Q: Isn't it simpler to just drop rows with missing or outlier values?**
+A: Simpler, yes — but costly, especially with small datasets. Dropping
+Deepak's entire row over one missing field throws away 7 other perfectly
+good fields. The tradeoff is data loss vs. introduced bias: imputation
+keeps the row but adds an estimate; dropping keeps everything "real" but
+shrinks the dataset. With only 8 rows, dropping is rarely worth it.
+
+**Q: Does the IQR method work well on any dataset size?**
+A: It works on any size mathematically, but with very small samples (like
+8 rows here), Q1 and Q3 are less statistically stable — a single value
+shifts them more than it would in a dataset of thousands. The method is
+still the right conceptual tool to learn on; production datasets are
+usually much larger, which makes IQR bounds more reliable.
+
+**Q: If I find more than one outlier, do I just drop all of them
+automatically?**
+A: No — IQR flags candidates, it doesn't make the decision for you. Each
+flagged value still needs a judgment call: is it a data-entry error (like
+Priya's likely typo), a legitimate rare case (a genuinely high earner),
+or a sign of a deeper data issue? The fix (correct, cap, or drop) depends
+on which of those it turns out to be.
+
+## Interview Questions & Answers
+
+**Q: What's the difference between mean and median imputation, and when
+would you choose one over the other?**
+A: Mean imputation replaces a missing value with the average of the known
+values; median imputation uses the middle value of the sorted known
+values. Mean is preferred on roughly symmetric, non-skewed data since it
+uses all available information. Median is preferred when the data is
+skewed or contains outliers, since the mean would be distorted by those
+extreme values while the median stays stable.
+
+**Q: How does the IQR method detect outliers? What's the formula?**
+A: Sort the data, split it into a lower half and upper half, and compute
+Q1 (median of the lower half) and Q3 (median of the upper half). IQR =
+Q3 − Q1 represents the spread of the middle 50% of the data. Any value
+above `Q3 + 1.5 × IQR` (or below `Q1 − 1.5 × IQR`) is flagged as a
+statistical outlier.
+
+**Q: Why not just delete every row with a missing or outlier value?**
+A: Deleting is the simplest option but can meaningfully shrink a dataset
+and introduce bias if the missingness or outlier isn't random — for
+example, if higher earners are more likely to have data-entry issues,
+deleting those rows systematically removes a segment of the population
+rather than "bad data" at random. Imputation or correction preserves more
+of the dataset's signal, provided the substitution method is reasonable.
+
+**Q: Where does data cleaning fit in a production ML pipeline, and why
+does it matter for model performance?**
+A: It sits right after data collection and before feature engineering —
+the raw ingested data is rarely usable as-is. It matters because model
+quality is bounded by input quality: unresolved missing values can break
+training entirely (many algorithms can't handle nulls), and unresolved
+outliers can distort learned relationships, especially in models sensitive
+to scale like linear regression. Clean data isn't a nice-to-have step —
+it's a prerequisite for anything trained afterward to be trustworthy.
+
 ## Status
 
 ✅ Topic 2 understood and confirmed. Deepak's credit score → imputed with
