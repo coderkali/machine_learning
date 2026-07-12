@@ -85,6 +85,74 @@ A number line plot showed the 7 clustered "normal" incomes, the IQR box
 beyond it on a broken axis — visually confirming how far outside normal
 range her value falls.
 
+## Clarifying Questions Asked During This Topic
+
+These are the specific points of confusion that came up, kept here because
+they're worth remembering — not just the final answer, but *why* the
+confusion made sense.
+
+**Q: Median is just "sort and pick the middle number" — why did you
+average two numbers for Q1?**
+A: That rule still holds. The averaging only happens when there's no
+single middle value — i.e. an **even** count of numbers. {10, 20, 30} (odd)
+has one clean middle: 20. {10, 20} (even) has two numbers tied for the
+middle, so the convention is to average them: (10+20)/2 = 15. Each half of
+the 8 incomes has 4 values (even), which is why finding Q1 and Q3 both
+required averaging two middle values.
+
+**Q: What is IQR and what is the upper bound — these were never properly
+explained before being used?**
+A: Worked from a small 4-number example first (10, 20, 30, 40) before
+applying to the real data:
+- Q1 = median of the lower half = "the value below which the bottom 25%
+  sits."
+- Q3 = median of the upper half = "the value below which the bottom 75%
+  sits."
+- IQR = Q3 − Q1 = the width of the middle 50% of the data — where
+  "typical" values live.
+- Upper bound = Q3 + 1.5×IQR — a buffer zone added beyond the normal
+  range, so that only values well outside typical spread get flagged.
+
+**Q: Why 1.5 × IQR specifically — where does that number come from?**
+A: It's a convention introduced by statistician John Tukey, not something
+derived from this specific dataset. Flagging everything simply outside
+Q1–Q3 would mark 50% of all data as outliers — useless. 1.5× IQR acts as a
+buffer: wide enough that ordinary variation stays inside it, narrow enough
+that genuinely extreme values (like Priya's income) still get caught.
+(A stricter 3×IQR threshold exists for "extreme outliers," but 1.5× is the
+standard cutoff.)
+
+## Visual Walkthrough
+
+![Income outlier chart showing Q1, Q3, IQR box, upper bound, and Priya's flagged outlier value](images/02_income_outlier_iqr.svg)
+
+A labeled number-line chart plotted all 8 customers together:
+
+- The 7 "normal" customers (Meena, Farhan, Imran, Ravi, Kavya, Sunita,
+  Deepak) shown as gray dots, each labeled with name and exact income
+  (30,000 through 85,000).
+- A dashed vertical line at **Q1 = 39,000**, positioned between Farhan
+  (38,000) and Imran (40,000) — matching the calculation, since Q1 is the
+  average of those two middle values.
+- A dashed vertical line at **Q3 = 73,500**, positioned between Sunita
+  (62,000) and Deepak (85,000) — again matching the calculation.
+- A teal box spanning from the Q1 line to the Q3 line, with the IQR
+  calculation labeled directly inside it: **IQR = Q3 − Q1 = 73,500 −
+  39,000 = 34,500**.
+- A red dashed line marking the **upper bound (125,250)**, positioned just
+  past Deepak's dot — clearly beyond all 7 normal incomes.
+- A broken/zigzag mark on the axis line, signaling the scale jumps
+  discontinuously — because Priya's value is too far away to plot to true
+  scale alongside the others.
+- Priya's dot, shown in red past the break, labeled **12,00,000**, with a
+  caption underneath: *"Priya's 12,00,000 is about 9.6x past the upper
+  bound."*
+
+The visual reinforces the same conclusion as the arithmetic: all 7 normal
+incomes cluster tightly near the IQR box, while Priya's value sits in
+completely different territory — not just "a bit high," but far enough out
+to be flagged as a statistical outlier rather than a judgment call.
+
 ## Key Takeaways
 
 - **Missing values** are handled through imputation (mean or median),

@@ -1,0 +1,64 @@
+<svg width="680" height="400" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Income outlier chart with Q1, Q3, IQR, and upper bound</title>
+<rect width="680" height="400" fill="#ffffff"/>
+
+<text x="168" y="140" text-anchor="middle" font-family="Arial" font-size="14" font-weight="600" fill="#26215C">Q1 = 39,000</text>
+<line x1="168" y1="150" x2="168" y2="300" stroke="#444441" stroke-width="1" stroke-dasharray="4 3"/>
+
+<text x="428" y="140" text-anchor="middle" font-family="Arial" font-size="14" font-weight="600" fill="#26215C">Q3 = 73,500</text>
+<line x1="428" y1="150" x2="428" y2="300" stroke="#444441" stroke-width="1" stroke-dasharray="4 3"/>
+
+<text x="510" y="115" text-anchor="middle" font-family="Arial" font-size="12" fill="#993C1D">Upper bound</text>
+<text x="510" y="130" text-anchor="middle" font-family="Arial" font-size="12" fill="#993C1D">125,250</text>
+<line x1="510" y1="140" x2="510" y2="230" stroke="#D85A30" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+<line x1="50" y1="205" x2="505" y2="205" stroke="#444441" stroke-width="1"/>
+<line x1="520" y1="200" x2="527" y2="210" stroke="#444441" stroke-width="1.5"/>
+<line x1="530" y1="200" x2="537" y2="210" stroke="#444441" stroke-width="1.5"/>
+<line x1="550" y1="205" x2="610" y2="205" stroke="#444441" stroke-width="1"/>
+
+<g font-family="Arial">
+<text x="70" y="188" text-anchor="middle" font-size="12" fill="#2C2C2A">Meena</text>
+<circle cx="70" cy="205" r="5" fill="#B4B2A9"/>
+<text x="70" y="228" text-anchor="middle" font-size="12" fill="#2C2C2A">30,000</text>
+
+<text x="135" y="188" text-anchor="middle" font-size="12" fill="#2C2C2A">Farhan</text>
+<circle cx="135" cy="205" r="5" fill="#B4B2A9"/>
+<text x="135" y="228" text-anchor="middle" font-size="12" fill="#2C2C2A">38,000</text>
+
+<text x="200" y="188" text-anchor="middle" font-size="12" fill="#2C2C2A">Imran</text>
+<circle cx="200" cy="205" r="5" fill="#B4B2A9"/>
+<text x="200" y="228" text-anchor="middle" font-size="12" fill="#2C2C2A">40,000</text>
+
+<text x="265" y="188" text-anchor="middle" font-size="12" fill="#2C2C2A">Ravi</text>
+<circle cx="265" cy="205" r="5" fill="#B4B2A9"/>
+<text x="265" y="228" text-anchor="middle" font-size="12" fill="#2C2C2A">45,000</text>
+
+<text x="330" y="188" text-anchor="middle" font-size="12" fill="#2C2C2A">Kavya</text>
+<circle cx="330" cy="205" r="5" fill="#B4B2A9"/>
+<text x="330" y="228" text-anchor="middle" font-size="12" fill="#2C2C2A">55,000</text>
+
+<text x="395" y="188" text-anchor="middle" font-size="12" fill="#2C2C2A">Sunita</text>
+<circle cx="395" cy="205" r="5" fill="#B4B2A9"/>
+<text x="395" y="228" text-anchor="middle" font-size="12" fill="#2C2C2A">62,000</text>
+
+<text x="460" y="188" text-anchor="middle" font-size="12" fill="#2C2C2A">Deepak</text>
+<circle cx="460" cy="205" r="5" fill="#B4B2A9"/>
+<text x="460" y="228" text-anchor="middle" font-size="12" fill="#2C2C2A">85,000</text>
+</g>
+
+<g font-family="Arial">
+<text x="590" y="188" text-anchor="middle" font-size="14" font-weight="600" fill="#993C1D">Priya</text>
+<circle cx="590" cy="205" r="6" fill="#F0997B" stroke="#993C1D" stroke-width="1"/>
+<text x="590" y="228" text-anchor="middle" font-size="14" font-weight="600" fill="#993C1D">12,00,000</text>
+</g>
+
+<g font-family="Arial">
+<rect x="168" y="260" width="260" height="34" rx="6" fill="#9FE1CB" stroke="#0F6E56" stroke-width="1"/>
+<text x="298" y="273" text-anchor="middle" font-size="14" font-weight="600" fill="#04342C">IQR = Q3 - Q1</text>
+<text x="298" y="289" text-anchor="middle" font-size="12" fill="#085041">73,500 - 39,000 = 34,500</text>
+</g>
+
+<text x="298" y="330" text-anchor="middle" font-family="Arial" font-size="12" fill="#444441">Upper bound = Q3 + 1.5 x IQR = 73,500 + 51,750 = 125,250</text>
+<text x="298" y="350" text-anchor="middle" font-family="Arial" font-size="12" font-weight="600" fill="#993C1D">Priya's 12,00,000 is about 9.6x past the upper bound</text>
+</svg>
