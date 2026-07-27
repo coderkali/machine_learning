@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Engineering Roadmap — Mind Map</title>
+<style>
+  :root {
+    --page-bg: #fafaf9;
+    --ink: #16181b;
+    --muted: #6b6f76;
+    --card-border-ink: #1c1c1c;
+    --spine: #2a2d31;
+    --dot-ring: #fafaf9;
+
+    --done-bg: #e8f6ea;
+    --done-border: #1f8a3b;
+    --done-num-bg: #cdeed3;
+
+    --progress-bg: #f6d15b;
+    --progress-num-bg: #fce49a;
+
+    --none-bg: #f1f1ef;
+    --none-border: #c7c9cc;
+    --none-num-bg: #e3e3e0;
+    --none-text: #56595e;
+
+    --pill-border: #2f6fed;
+    --pill-bg: #eef3ff;
+    --pill-text: #1a3a9e;
+
+    --card-shadow: 0 2px 0 rgba(0,0,0,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page-bg: #0e1013;
+      --ink: #eef0f1;
+      --muted: #a3a8ae;
+      --card-border-ink: #e7e7e5;
+      --spine: #c7cbd0;
+      --dot-ring: #0e1013;
+
+      --done-bg: #12281a;
+      --done-border: #35c265;
+      --done-num-bg: #1c3a24;
+
+      --progress-bg: #8a6a19;
+      --progress-num-bg: #a9822a;
+
+      --none-bg: #1a1c20;
+      --none-border: #3a3d42;
+      --none-num-bg: #24272b;
+      --none-text: #9498a0;
+
+      --pill-border: #7ea0ff;
+      --pill-bg: #1a2340;
+      --pill-text: #cddaff;
+
+      --card-shadow: 0 2px 0 rgba(0,0,0,0.4);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page-head {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 22px 6px;
+  }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(22px, 4vw, 28px);
+    line-height: 1.2;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .lede { font-size: 14.5px; line-height: 1.6; color: var(--muted); max-width: 62ch; margin: 0 0 18px; }
+
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    max-width: 760px; margin: 0 auto; padding: 0 22px 18px;
+  }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .legend i.done { background: var(--done-border); }
+  .legend i.progress { background: var(--progress-bg); border: 1.5px solid var(--card-border-ink); }
+  .legend i.none { background: var(--none-border); }
+
+  .view-toggle { display: inline-flex; border: 1px solid var(--none-border); border-radius: 8px; padding: 2px; background: var(--none-bg); flex: none; }
+  .view-toggle button {
+    font: inherit; font-size: 12.5px; font-weight: 600; color: var(--muted);
+    background: transparent; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+  }
+  .view-toggle button[aria-pressed="true"] { background: var(--page-bg); color: var(--ink); box-shadow: var(--card-shadow); }
+  .view-toggle button:focus-visible { outline: 2px solid var(--pill-border); outline-offset: 1px; }
+
+  .canvas-scroll { overflow-x: auto; padding: 10px 0 60px; }
+  .diagram { position: relative; width: 1080px; margin: 0 auto; }
+  .diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+
+  .phase-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 280px 460px 280px;
+    column-gap: 20px;
+    align-items: center;
+    padding: 34px 0;
+  }
+  .pills-col { display: flex; flex-direction: column; gap: 14px; }
+  .pills-col.left { align-items: flex-end; }
+  .pills-col.right { align-items: flex-start; }
+
+  .pill {
+    border: 2px solid var(--pill-border);
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    font-weight: 700;
+    font-size: 12.5px;
+    line-height: 1.35;
+    padding: 9px 16px;
+    border-radius: 999px;
+    text-align: center;
+    max-width: 250px;
+  }
+
+  .step-card {
+    position: relative;
+    border: 2.5px solid var(--card-border-ink);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    box-shadow: var(--card-shadow);
+  }
+  .step-card.status-done { background: var(--done-bg); border-color: var(--done-border); }
+  .step-card.status-progress { background: var(--progress-bg); }
+  .step-card.status-none { background: var(--none-bg); border-color: var(--none-border); }
+
+  .step-num {
+    width: 42px; height: 42px; border-radius: 10px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 17px; font-family: ui-monospace, monospace;
+  }
+  .status-done .step-num { background: var(--done-num-bg); color: var(--done-border); }
+  .status-progress .step-num { background: var(--progress-num-bg); color: var(--card-border-ink); }
+  .status-none .step-num { background: var(--none-num-bg); color: var(--none-text); }
+
+  .step-body { min-width: 0; }
+  .step-body h3 { margin: 0 0 4px; font-size: 15.5px; font-weight: 800; line-height: 1.3; }
+  .status-none .step-body h3 { color: var(--none-text); }
+  .step-body p { margin: 0 22px 0 0; font-size: 12.5px; line-height: 1.5; }
+  .status-progress .step-body p, .status-progress .step-body h3 { color: #2a2408; }
+  .status-done .step-body p { color: #2f5d3a; }
+  .status-none .step-body p { color: var(--none-text); }
+
+  .chip {
+    position: absolute; top: -11px; right: 14px;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+    padding: 3px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px;
+    background: var(--page-bg); border: 1.5px solid var(--card-border-ink); color: var(--ink);
+  }
+  .status-none .chip { border-color: var(--none-border); color: var(--none-text); }
+  .chip i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .chip i.done { background: var(--done-border); }
+  .chip i.progress { background: var(--progress-bg); border: 1px solid var(--card-border-ink); }
+  .chip i.none { background: var(--none-border); }
+
+  .target-flag {
+    position: absolute; top: -11px; left: 14px;
+    font-size: 10.5px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 999px;
+    background: var(--pill-bg); border: 1.5px solid var(--pill-border); color: var(--pill-text);
+  }
+
+  /* List view */
+  #list-view { max-width: 760px; margin: 0 auto; padding: 6px 22px 60px; }
+  #list-view ol { list-style: none; margin: 0; padding: 0; }
+  #list-view li { border: 1px solid var(--none-border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  #list-view .lv-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  #list-view .lv-num { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); }
+  #list-view .lv-title { font-weight: 700; font-size: 14.5px; margin: 0; }
+  #list-view .lv-status { margin-left: auto; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+  #list-view .lv-status i { width: 8px; height: 8px; border-radius: 50%; }
+  #list-view .lv-status i.done { background: var(--done-border); }
+  #list-view .lv-status i.progress { background: var(--progress-bg); border: 1px solid var(--card-border-ink); }
+  #list-view .lv-status i.none { background: var(--none-border); }
+  #list-view .lv-desc { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+  #list-view .lv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  #list-view .lv-tags span { font-size: 11.5px; font-weight: 600; color: var(--pill-text); background: var(--pill-bg); border: 1px solid var(--pill-border); border-radius: 999px; padding: 3px 9px; }
+
+  footer { max-width: 760px; margin: 0 auto; padding: 0 22px 50px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--none-border); padding-top: 16px; }
+  footer code { font-family: ui-monospace, monospace; background: var(--none-bg); padding: 1px 6px; border-radius: 4px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <p class="eyebrow">AI_Engineering_Roadmap.md</p>
+    <h1>AI Engineering Roadmap — Mind Map</h1>
+    <p class="lede">Python → Math for ML → Classical Data Science → Neural Networks → NLP/Transformers → Generative AI → RAG → Agentic AI. Branches show the sub-topics inside each phase.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="legend">
+      <span><i class="done"></i>Done</span>
+      <span><i class="progress"></i>In progress</span>
+      <span><i class="none"></i>Not started</span>
+    </div>
+    <div class="view-toggle" role="group" aria-label="Change view">
+      <button type="button" id="btn-map" aria-pressed="true">Mind map</button>
+      <button type="button" id="btn-list" aria-pressed="false">List view</button>
+    </div>
+  </div>
+
+  <div class="canvas-scroll" id="map-view">
+    <div class="diagram" id="diagram">
+      <svg id="connectors" aria-hidden="true"></svg>
+    </div>
+  </div>
+
+  <div id="list-view" hidden></div>
+
+  <footer>
+    Source of truth: <code>AI_Engineering_Roadmap.md</code> · mirrors <code>README.md</code> · this page is a static, local visualization — regenerate it by hand whenever the roadmap file changes.
+  </footer>
+
+<script>
+(function () {
+  var PHASES = [
+    {
+      num: "01", title: "Python Foundations", status: "done",
+      desc: "Practical Python for AI libraries, notebooks, APIs, and data processing.",
+      left: ["Python Syntax & Data Types", "Functions & Control Flow", "File & JSON Handling"],
+      right: ["Pandas Basics", "NumPy Basics", "Matplotlib Basics"]
+    },
+    {
+      num: "02", title: "Math for ML Concepts", status: "progress",
+      desc: "Core intuition behind how a model “learns” — vectors, gradients, loss, and inferential statistics.",
+      left: ["Vectors & Gradient Descent", "Probability & Statistics", "Hypothesis Testing (Z-Test / T-Test)"],
+      right: ["Linear Regression (clean & messy data)", "Calculus for Cost Functions", "Classification Metrics — open"]
+    },
+    {
+      num: "03", title: "Classical Machine Learning Concepts", status: "progress",
+      desc: "Traditional ML vocabulary so later LLM/RAG evaluation discussions make sense. Current focus.",
+      left: ["Data Cleaning & Feature Engineering", "Regression & Classification", "Clustering"],
+      right: ["Train / Test / Validation Split", "Overfitting & Underfitting", "Accuracy, Precision, Recall, F1"]
+    },
+    {
+      num: "04", title: "Neural Network Fundamentals", status: "none",
+      desc: "How neural nets learn patterns — the same gradient-descent machinery from Phase 2, repeated across layers.",
+      left: ["Layers, Weights & Bias", "Activation Functions", "Forward Propagation"],
+      right: ["Backpropagation", "Optimizers", "Epochs, Batch Size, Learning Rate"]
+    },
+    {
+      num: "05", title: "NLP and Transformer Fundamentals", status: "none",
+      desc: "How machines process language and how transformer LLMs work conceptually.",
+      left: ["Tokenization & Embeddings", "RNN, LSTM, GRU", "Encoder–Decoder Architecture"],
+      right: ["Attention & Self-Attention", "Transformer & Context Window", "GPT-style vs BERT-style Models"]
+    },
+    {
+      num: "06", title: "Generative AI and LLMs", status: "none",
+      desc: "The pivot point — where the roadmap shifts from conceptual to deep engineering.",
+      left: ["Prompt Engineering", "Temperature, Top-p, Max Tokens", "Function & Tool Calling"],
+      right: ["Structured Output & JSON Mode", "Streaming Responses", "Cost & Token Usage"]
+    },
+    {
+      num: "07", title: "Embeddings, Vector DB, and RAG", status: "none",
+      desc: "Connect LLMs to private or enterprise data so answers are grounded, not generic.",
+      left: ["Embeddings & Similarity Search", "Chunking & Metadata", "Vector DBs (pgvector, FAISS)"],
+      right: ["Hybrid Search & Reranking", "RAG & Context Injection", "Secure, Tenant-Based Retrieval"]
+    },
+    {
+      num: "08", title: "Agentic AI", status: "none", target: true,
+      desc: "Reasoning, planning, tool-using agents and multi-step workflows — the target role.",
+      left: ["Planning & Tool Selection", "Memory & State Management", "LangGraph / CrewAI"],
+      right: ["Human-in-the-Loop Approval", "Retry, Fallback & Guardrails", "Agent Observability"]
+    },
+    {
+      num: "09", title: "MCP, Tool Calling, and Enterprise Integration", status: "none",
+      desc: "Standardized, secure connections between agents and external systems.",
+      left: ["Tool & Function Calling", "MCP Client & Server", "Tool Registry"],
+      right: ["Auth & Permission Checks", "Audit Logging", "Prompt Injection Protection"]
+    },
+    {
+      num: "10", title: "MLOps, Observability, Security, and Cloud Deployment", status: "none",
+      desc: "Running AI systems safely in production — flagged as the most consistent gap in real job postings.",
+      left: ["Cloud LLM Platforms (Bedrock, Azure)", "Docker & CI/CD", "Tracing (OpenTelemetry, LangSmith)"],
+      right: ["Cost & Latency Monitoring", "Guardrails & PII Masking", "Evaluation & Golden Datasets"]
+    },
+    {
+      num: "11", title: "Capstone Project and Interview Preparation", status: "none",
+      desc: "One end-to-end AI Risk Evaluation Platform tying every phase together into an interview story.",
+      left: ["React UI & API Gateway", "Spring Boot AI Orchestrator", "pgvector + Snowflake + MySQL"],
+      right: ["LLM Risk Explanation", "Human Approval Workflow", "Full Observability Stack"]
+    }
+  ];
+
+  var STATUS_LABEL = { done: "Done", progress: "In progress", none: "Not started" };
+
+  function el(tag, className, text) {
+    var e = document.createElement(tag);
+    if (className) e.className = className;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function buildDiagram() {
+    var diagram = document.getElementById("diagram");
+    PHASES.forEach(function (phase) {
+      var row = el("div", "phase-row");
+      row.dataset.status = phase.status;
+
+      var leftCol = el("div", "pills-col left");
+      phase.left.forEach(function (t) { leftCol.appendChild(el("div", "pill", t)); });
+
+      var rightCol = el("div", "pills-col right");
+      phase.right.forEach(function (t) { rightCol.appendChild(el("div", "pill", t)); });
+
+      var card = el("div", "step-card status-" + phase.status);
+      var numBox = el("div", "step-num", phase.num);
+      var body = el("div", "step-body");
+      body.appendChild(el("h3", null, phase.title));
+      body.appendChild(el("p", null, phase.desc));
+      card.appendChild(numBox);
+      card.appendChild(body);
+
+      var chip = el("span", "chip");
+      var chipDot = el("i", phase.status);
+      chip.appendChild(chipDot);
+      chip.appendChild(document.createTextNode(STATUS_LABEL[phase.status]));
+      card.appendChild(chip);
+
+      if (phase.target) {
+        card.appendChild(el("span", "target-flag", "★ Target role"));
+      }
+
+      row.appendChild(leftCol);
+      row.appendChild(card);
+      row.appendChild(rightCol);
+      diagram.appendChild(row);
+    });
+  }
+
+  function buildListView() {
+    var wrap = document.getElementById("list-view");
+    var ol = el("ol");
+    PHASES.forEach(function (phase) {
+      var li = el("li");
+      var top = el("div", "lv-top");
+      top.appendChild(el("span", "lv-num", "PHASE " + phase.num));
+      top.appendChild(el("h3", "lv-title", phase.title));
+      var st = el("span", "lv-status");
+      st.appendChild(el("i", phase.status));
+      st.appendChild(document.createTextNode(STATUS_LABEL[phase.status]));
+      top.appendChild(st);
+      li.appendChild(top);
+      li.appendChild(el("p", "lv-desc", phase.desc));
+      var tags = el("div", "lv-tags");
+      phase.left.concat(phase.right).forEach(function (t) { tags.appendChild(el("span", null, t)); });
+      li.appendChild(tags);
+      ol.appendChild(li);
+    });
+    wrap.appendChild(ol);
+  }
+
+  // Smooth flowchart-style S-curve between two points.
+  function curvePath(x0, y0, x1, y1) {
+    var mx = (x0 + x1) / 2;
+    return "M " + x0 + "," + y0 + " C " + mx + "," + y0 + " " + mx + "," + y1 + " " + x1 + "," + y1;
+  }
+
+  function svgEl(tag, attrs) {
+    var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function drawConnectors() {
+    var diagram = document.getElementById("diagram");
+    var svg = document.getElementById("connectors");
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    var dRect = diagram.getBoundingClientRect();
+    diagram.style.height = dRect.height + "px";
+    svg.setAttribute("viewBox", "0 0 " + dRect.width + " " + dRect.height);
+
+    var defs = svgEl("defs", {});
+    var marker = svgEl("marker", { id: "arrow", viewBox: "0 0 10 10", refX: "8", refY: "5", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" });
+    var arrowPath = svgEl("path", { d: "M 0 0 L 10 5 L 0 10 z", fill: "var(--pill-border)" });
+    marker.appendChild(arrowPath);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+
+    var rows = diagram.querySelectorAll(".phase-row");
+    var cardPoints = [];
+
+    rows.forEach(function (row) {
+      var card = row.querySelector(".step-card");
+      var cardRect = card.getBoundingClientRect();
+      var cx = cardRect.left + cardRect.width / 2 - dRect.left;
+      var top = cardRect.top - dRect.top;
+      var bottom = cardRect.bottom - dRect.top;
+      var midY = cardRect.top + cardRect.height / 2 - dRect.top;
+      var leftX = cardRect.left - dRect.left;
+      var rightX = cardRect.right - dRect.left;
+      cardPoints.push({ cx: cx, top: top, bottom: bottom });
+
+      [
+        { col: row.querySelector(".pills-col.left"), anchorX: leftX, pillEdge: "right" },
+        { col: row.querySelector(".pills-col.right"), anchorX: rightX, pillEdge: "left" }
+      ].forEach(function (side) {
+        if (!side.col) return;
+        var pills = side.col.querySelectorAll(".pill");
+        pills.forEach(function (pill) {
+          var pr = pill.getBoundingClientRect();
+          var py = pr.top + pr.height / 2 - dRect.top;
+          var px = side.pillEdge === "right" ? (pr.right - dRect.left) : (pr.left - dRect.left);
+          var path = svgEl("path", {
+            d: curvePath(side.anchorX, midY, px, py),
+            fill: "none", stroke: "var(--pill-border)", "stroke-width": "2",
+            "stroke-dasharray": "5 5", "marker-end": "url(#arrow)", opacity: "0.85"
+          });
+          svg.appendChild(path);
+        });
+        var anchorDot = svgEl("circle", { cx: side.anchorX, cy: midY, r: "4.5", fill: "var(--pill-border)", stroke: "var(--dot-ring)", "stroke-width": "2" });
+        svg.appendChild(anchorDot);
+      });
+    });
+
+    for (var i = 0; i < cardPoints.length - 1; i++) {
+      var a = cardPoints[i], b = cardPoints[i + 1];
+      var line = svgEl("path", {
+        d: curvePath(a.cx, a.bottom, b.cx, b.top),
+        fill: "none", stroke: "var(--spine)", "stroke-width": "2.5"
+      });
+      svg.appendChild(line);
+    }
+    cardPoints.forEach(function (p) {
+      [p.top, p.bottom].forEach(function (y) {
+        svg.appendChild(svgEl("circle", { cx: p.cx, cy: y, r: "5", fill: "var(--spine)", stroke: "var(--dot-ring)", "stroke-width": "2" }));
+      });
+    });
+  }
+
+  buildDiagram();
+  buildListView();
+  requestAnimationFrame(function () { requestAnimationFrame(drawConnectors); });
+  window.addEventListener("resize", function () {
+    clearTimeout(window.__mmResizeT);
+    window.__mmResizeT = setTimeout(drawConnectors, 150);
+  });
+
+  var btnMap = document.getElementById("btn-map");
+  var btnList = document.getElementById("btn-list");
+  var mapView = document.getElementById("map-view");
+  var listView = document.getElementById("list-view");
+  btnMap.addEventListener("click", function () {
+    mapView.hidden = false; listView.hidden = true;
+    btnMap.setAttribute("aria-pressed", "true"); btnList.setAttribute("aria-pressed", "false");
+    requestAnimationFrame(drawConnectors);
+  });
+  btnList.addEventListener("click", function () {
+    mapView.hidden = true; listView.hidden = false;
+    btnMap.setAttribute("aria-pressed", "false"); btnList.setAttribute("aria-pressed", "true");
+  });
+})();
+</script>
+
+</body>
+</html>
