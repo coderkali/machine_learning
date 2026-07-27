@@ -36,6 +36,8 @@ AI_Engineering_Roadmap.md     Full roadmap — phases, topics, status, depth rul
 
 ## Current Status
 
+✅ **Phase 1 — Python Foundations:** Done
+
 🟡 **Phase 2 — Math for ML:** Almost done (Meera's electricity bill problem
 still open; hypothesis testing — Z-Test vs T-Test, one-sample and paired
 T-tests — in progress, see `DataScience_Y/`)
