@@ -23,6 +23,11 @@ math_for_ml/                  Worked math notes, by phase
   phase_5_linear_regression/
     practice_exercises/       Step-by-step practice problems & solutions
 
+DataScience_Y/                 Hypothesis testing notes (Phase 2 stats)
+  Z-Test vs T-Test.md           Z-Test vs T-Test — when to use which, df, formulas
+  09-14_Hypothesis_Testing_*    Worked examples: one-sample T-test (95%/80% CI),
+                                 paired two-sample T-test
+
 Pandas/ NumPy/ Matplotlib/ seaborn/   Python foundations practice
 irisData_Exploration/                 Early data exploration practice
 
@@ -31,8 +36,9 @@ AI_Engineering_Roadmap.md     Full roadmap — phases, topics, status, depth rul
 
 ## Current Status
 
-🟡 **Phase 2 — Math for ML:** Almost done (one item open — Meera's
-electricity bill problem)
+🟡 **Phase 2 — Math for ML:** Almost done (Meera's electricity bill problem
+still open; hypothesis testing — Z-Test vs T-Test, one-sample and paired
+T-tests — in progress, see `DataScience_Y/`)
 
 🟡 **Phase 3 — Classical Data Science:** Current focus
 

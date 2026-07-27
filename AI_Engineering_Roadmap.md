@@ -139,6 +139,7 @@ become a mathematician.
 | Loss / error, cost function | ✅ |
 | Gradient, gradient descent | ✅ |
 | Basic probability, mean/median/variance/std dev, correlation | ✅ |
+| Hypothesis testing — Z-Test vs T-Test, one-sample T-test (95%/80% CI), paired two-sample T-test, degrees of freedom | 🟡 in progress |
 | Linear regression — clean data (direct slope formula) | ✅ |
 | Linear regression — messy data (manual gradient descent) | ✅ |
 | Deriving exact best-w formula (derivative = 0) | ✅ |
@@ -164,6 +165,9 @@ gradient descent is, why weights change, and how a model improves over
 time. ✅
 
 **Detailed worked notes:** `math_for_ml/phase_5_linear_regression/practice_exercises/`
+(linear regression) and `DataScience_Y/` (hypothesis testing — Z-Test vs
+T-Test, one-sample and paired T-tests). Independent two-sample T-test,
+Chi-Square, and ANOVA are not yet covered.
 
 ---
 
