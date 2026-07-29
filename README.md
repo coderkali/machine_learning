@@ -28,6 +28,17 @@ DataScience_Y/                 Hypothesis testing notes (Phase 2 stats)
   09-14_Hypothesis_Testing_*    Worked examples: one-sample T-test (95%/80% CI),
                                  paired two-sample T-test
 
+phase_3_classical_ml/          Structured Phase 3 curriculum — one evolving
+                                 Riverstone Bank loan-default dataset
+  00_strategy.md                 Teaching rhythm, topic list, status
+  01_data_collection/            ✅ Data Collection
+  02_data_cleaning/               ✅ Data Cleaning, Missing Values, Outliers
+
+ML/                            Conceptual primer notes from an external course
+                                 (WsCubeTech) — feeds vocabulary into Phase 3
+  01._LEARNING.MD                 What is ML, history, paradigm shift,
+                                   classification, advantages/disadvantages
+
 Pandas/ NumPy/ Matplotlib/ seaborn/   Python foundations practice
 irisData_Exploration/                 Early data exploration practice
 
@@ -42,6 +53,10 @@ AI_Engineering_Roadmap.md     Full roadmap — phases, topics, status, depth rul
 still open; hypothesis testing — Z-Test vs T-Test, one-sample and paired
 T-tests — in progress, see `DataScience_Y/`)
 
-🟡 **Phase 3 — Classical Data Science:** Current focus
+🟡 **Phase 3 — Classical Machine Learning:** Current focus — Data
+Collection ✅ and Data Cleaning ✅ done in `phase_3_classical_ml/`, Feature
+Engineering next up. Running alongside: a conceptual primer in `ML/`
+(what ML is, its history, the paradigm shift, classification, and
+advantages/disadvantages) — "Use of Machine Learning Technology" still open.
 
 See the roadmap file for the complete phase list and progress tracking.

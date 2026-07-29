@@ -182,9 +182,9 @@ later AI concepts make sense.
 
 | Topic | Status |
 |---|---|
-| Data collection | ⬜ |
-| Data cleaning, missing values, outliers | ⬜ |
-| Feature engineering, encoding | ⬜ |
+| Data collection | ✅ |
+| Data cleaning, missing values, outliers | ✅ |
+| Feature engineering, encoding | 🟡 next up |
 | Regression | ⬜ |
 | Classification | ⬜ |
 | Clustering | ⬜ |
@@ -192,6 +192,16 @@ later AI concepts make sense.
 | Overfitting, underfitting | ⬜ |
 | Accuracy, precision, recall, F1, confusion matrix | ⬜ |
 | Model tuning basics | ⬜ |
+
+**Running alongside — conceptual primer (`ML/`):** informal notes from an
+external course (WsCubeTech), started 2026-07-28, covering the vocabulary
+this phase assumes: what ML actually is, a brief history (Turing →
+Perceptron → AI winters → deep learning → transformers), the
+traditional-programming-vs-ML paradigm shift, Supervised / Unsupervised /
+Reinforcement Learning, and the advantages/disadvantages trade-offs of ML.
+Not one of the 10 tracked topics above — it's the primer that makes them
+make sense. 🟡 in progress — "Use of Machine Learning Technology" still
+open. See `ML/01._LEARNING.MD`.
 
 **Why this matters:** These terms appear everywhere in AI discussions, LLM
 evaluation, RAG evaluation, and production model quality checks — even
@@ -204,6 +214,10 @@ models, research-level model comparison.
 **Outcome target:** Explain regression, classification, overfitting, model
 evaluation, why we split train/test data, and how prediction quality is
 measured.
+
+**Detailed worked notes:** `phase_3_classical_ml/` (structured curriculum,
+one evolving Riverstone Bank loan-default dataset — see `00_strategy.md`)
+and `ML/` (conceptual primer notes from the external course).
 
 ---
 
