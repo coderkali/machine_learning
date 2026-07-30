@@ -107,50 +107,141 @@ means less data needed and less overfitting risk.
 
 ---
 
-## ML Algorithms Preview
+## Zoom In 3: ML Algorithms (3 categories → 5 models)
 
-| Category | Algorithms on the slide | Status |
-|---|---|---|
-| **Regression** | Linear Regression | You've already hand-derived this — cost function, gradient descent, the exact `w` formula — in `math_for_ml/phase_5_linear_regression/`. This topic will be a recap, not new ground. |
-| **Classification** | Logistic Regression, Decision Tree, Random Forest | New. Common gotcha: **Logistic Regression is a classification algorithm** despite the name "regression" — it predicts a probability, then a class. |
-| **Clustering** | K-Means | New — your first real Unsupervised Learning algorithm, following straight on from the taxonomy in `01._LEARNING.MD`. |
+```mermaid
+flowchart LR
+    ALGO["ML Algorithms"] --> R["Regression"]
+    ALGO --> C["Classification"]
+    ALGO --> K["Clustering"]
+
+    R --> R1["Linear Regression"]
+    C --> C1["Logistic Regression"]
+    C --> C2["Decision Tree"]
+    C --> C3["Random Forest"]
+    K --> K1["K-Means"]
+
+    style R fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style C fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style K fill:#b3781f,stroke:#8a5c16,color:#fff
+    style R1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+```
+
+| Category | Type | Model | One-liner |
+|---|---|---|---|
+| Regression | Supervised | **Linear Regression** ✅ (recap) | Predicts a continuous number by fitting a line through the data — you've already hand-derived cost function + gradient descent + the exact `w` formula in `math_for_ml/phase_5_linear_regression/`. |
+| Classification | Supervised | **Logistic Regression** | Predicts a probability, then thresholds it into a class (e.g. default / no default) — despite the name, this is classification, not regression. |
+| Classification | Supervised | **Decision Tree** | A flowchart of yes/no questions on features, learned from data, ending in a predicted class. |
+| Classification | Supervised | **Random Forest** | Many Decision Trees trained on random subsets of data/features, voting together — reduces any single tree's tendency to overfit. |
+| Clustering | Unsupervised | **K-Means** | Groups data into K clusters by repeatedly assigning points to the nearest cluster center and recomputing centers — no labels needed. |
+
+**Random Forest shows up twice in this roadmap** — here as a classifier,
+and earlier in Feature Selection as an importance-ranking tool. Same
+algorithm, two different jobs: predicting a class, or scoring which
+features matter most.
 
 ---
 
-## Hyperparameter Tuning
+## Zoom In 4: Hyperparameter Tuning (4 search methods)
+
+```mermaid
+flowchart LR
+    HPT["Hyperparameter Tuning"] --> M1["1. GridSearch"]
+    HPT --> M2["2. RandomizedSearch"]
+    HPT --> M3["3. Hyperopt"]
+    HPT --> M4["4. Genetic Algorithms"]
+```
 
 **Parameter vs. hyperparameter — the distinction that trips people up:**
 a *parameter* (like a regression weight) is **learned from data** during
 training. A *hyperparameter* (like "how many trees in the forest" or "K in
 K-Means") is **set by you before training starts** and controls *how* the
-learning happens.
+learning happens. The four methods below are just different strategies
+for searching the hyperparameter space.
 
-| Method | Idea |
-|---|---|
-| **GridSearch** | Try every combination of hyperparameters in a defined grid — exhaustive, reliable, slow. |
-| **RandomizedSearch** | Try a random sample of combinations instead of all of them — much faster, usually nearly as good. |
-| **Hyperopt** | A smarter ("Bayesian optimization") search — uses the results of earlier trials to decide which combination to try next, instead of guessing blindly. |
-| **Genetic Algorithms** | Treats hyperparameter combinations like a population that "evolves" — keep the best performers, mutate/combine them, repeat across generations. |
+| # | Method | Idea |
+|---|---|---|
+| 1 | **GridSearch** | Try every combination of hyperparameters in a defined grid — exhaustive, reliable, slow. |
+| 2 | **RandomizedSearch** | Try a random sample of combinations instead of all of them — much faster, usually nearly as good. |
+| 3 | **Hyperopt** | A smarter ("Bayesian optimization") search — uses the results of earlier trials to decide which combination to try next, instead of guessing blindly. |
+| 4 | **Genetic Algorithms** | Treats hyperparameter combinations like a population that "evolves" — keep the best performers, mutate/combine them, repeat across generations. |
 
 ---
 
-## Model Deployment, Docker & Kubernetes, End-to-End Projects
+## Zoom In 5: Model Deployment
 
-This is where your **12+ years of Java/Spring Boot/microservices
-experience stops being "adjacent" and becomes the actual advantage**:
-turning a trained model into a running service, containerizing it, and
-orchestrating it, is backend engineering — the exact skill set you already
-have. A Data Scientist coming from a research background usually has to
-learn this from zero; you don't.
+Not broken into a numbered list on the slide, but this is what "deployment"
+actually decomposes into once you get there:
+
+```mermaid
+flowchart LR
+    DEPLOY["Model Deployment"] --> D1["1. Export the model<br/>pickle / joblib / ONNX"]
+    DEPLOY --> D2["2. Wrap it in an API<br/>Flask/FastAPI, or a Spring Boot service"]
+    DEPLOY --> D3["3. Version it<br/>track which model is live"]
+    DEPLOY --> D4["4. Serve predictions<br/>batch vs. real-time"]
+```
+
+| # | Step | One-liner |
+|---|---|---|
+| 1 | **Export the model** | Save the trained model to a file so it can be loaded without retraining — `pickle`/`joblib` for scikit-learn, ONNX for cross-framework portability. |
+| 2 | **Wrap it in an API** | Put the loaded model behind an HTTP endpoint that takes input, returns a prediction — usually Flask/FastAPI in the Python world, but architecturally identical to any REST endpoint you've written in Spring Boot. |
+| 3 | **Version it** | Track *which* trained model is currently live, so a bad model can be rolled back the same way a bad code deploy would be. |
+| 4 | **Serve predictions** | Batch (score a big file overnight) vs. real-time (answer one request at a time, low latency) — the same batch-vs-online distinction you already know from regular backend systems. |
+
+---
+
+## Zoom In 6: Docker & Kubernetes
+
+```mermaid
+flowchart LR
+    DOCK["Docker &amp; Kubernetes"] --> K1["1. Dockerfile<br/>package model + API + dependencies"]
+    K1 --> K2["2. Image registry<br/>push/pull the built image"]
+    K2 --> K3["3. Kubernetes Deployment<br/>run N replicas of the container"]
+    K3 --> K4["4. Service / Load Balancer<br/>route traffic across replicas"]
+    K4 --> K5["5. Autoscaling<br/>add/remove replicas with load"]
+```
+
+This is likely **the single most familiar stage in this entire roadmap for
+you.** If you've containerized a Spring Boot microservice before, this is
+the same mental model end to end — the only thing that changed is the
+payload inside the container (a model + a small prediction API, instead of
+a business-logic service).
+
+---
+
+## Zoom In 7: End-to-End ML Projects
+
+This last stage isn't a new skill — it's **all of the above, run as one
+loop**, and it's the first place the pipeline stops being a straight line:
+
+```mermaid
+flowchart LR
+    A["Data Collection"] --> B["Data Cleaning"]
+    B --> C["Feature Engineering<br/>&amp; Selection"]
+    C --> D["Model Training"]
+    D --> E["Hyperparameter Tuning"]
+    E --> F["Evaluation"]
+    F --> G["Deployment"]
+    G --> H["Monitoring"]
+    H -.->|new data arrives| A
+
+    style H fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+```
+
+The loop-back from **Monitoring** to **Data Collection** is the important
+part: a deployed model's accuracy quietly decays as real-world data drifts
+away from what it was trained on ("model drift"), which is exactly *why*
+production ML projects are never really "done" the way a shipped feature
+is.
 
 **Worth flagging:** in your own `AI_Engineering_Roadmap.md`, deployment,
-Docker/CI-CD, and production concerns are deliberately scoped into
-**Phase 10 (MLOps, Observability, Security, Cloud Deployment)**, not
-Phase 3 — Phase 3's own depth rule is "light conceptual understanding
-only." So this course is running slightly ahead of your formal roadmap
-here, covering real deployment earlier than your plan schedules it. Not a
-problem — just don't feel behind if Phase 3 notes don't go this deep yet;
-this ground gets revisited properly in Phase 10.
+Docker/CI-CD, and production concerns (Zoom Ins 5–7 above) are deliberately
+scoped into **Phase 10 (MLOps, Observability, Security, Cloud Deployment)**
+and the **Phase 11 Capstone**, not Phase 3 — Phase 3's own depth rule is
+"light conceptual understanding only." So this course is running slightly
+ahead of your formal roadmap here. Not a problem — just don't feel behind
+if Phase 3 notes don't go this deep yet; this exact ground gets revisited
+properly, hands-on, in Phase 10/11.
 
 ---
 
