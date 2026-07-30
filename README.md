@@ -38,6 +38,8 @@ ML/                            Conceptual primer notes from an external course
                                  (WsCubeTech) — feeds vocabulary into Phase 3
   01._LEARNING.MD                 What is ML, history, paradigm shift,
                                    classification, advantages/disadvantages
+  02_ML_Roadmap.MD                Full course pipeline — feature engineering/
+                                   selection, algorithms, tuning, deployment
 
 Pandas/ NumPy/ Matplotlib/ seaborn/   Python foundations practice
 irisData_Exploration/                 Early data exploration practice
