@@ -40,6 +40,8 @@ ML/                            Conceptual primer notes from an external course
                                    classification, advantages/disadvantages
   02_ML_Roadmap.MD                Full course pipeline — feature engineering/
                                    selection, algorithms, tuning, deployment
+  03_Types_Of_Variables.MD         Numerical/Categorical/Date-Time/Mixed
+                                   variables, with a master reference table
 
 Pandas/ NumPy/ Matplotlib/ seaborn/   Python foundations practice
 irisData_Exploration/                 Early data exploration practice
