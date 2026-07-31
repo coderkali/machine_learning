@@ -44,6 +44,10 @@ ML/                            Conceptual primer notes from an external course
                                    variables, with a master reference table
   04_Data_Cleaning.MD              5 problems, raw-vs-cleaned example,
                                    6 sub-skills (2 new: duplicates, inconsistency)
+  05_Data_Cleaning_Practice.ipynb  Hands-on: pandas isnull().sum() on loans.csv,
+                                   + a nullity-correlation heatmap and bar chart
+  loans.csv                        618-row loan dataset (generated), matches the
+                                   exact missing-value pattern from the course
 
 Pandas/ NumPy/ Matplotlib/ seaborn/   Python foundations practice
 irisData_Exploration/                 Early data exploration practice
