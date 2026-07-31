@@ -42,6 +42,8 @@ ML/                            Conceptual primer notes from an external course
                                    selection, algorithms, tuning, deployment
   03_Types_Of_Variables.MD         Numerical/Categorical/Date-Time/Mixed
                                    variables, with a master reference table
+  04_Data_Cleaning.MD              5 problems, raw-vs-cleaned example,
+                                   6 sub-skills (2 new: duplicates, inconsistency)
 
 Pandas/ NumPy/ Matplotlib/ seaborn/   Python foundations practice
 irisData_Exploration/                 Early data exploration practice
