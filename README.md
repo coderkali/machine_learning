@@ -44,8 +44,13 @@ ML/                            Conceptual primer notes from an external course
                                    variables, with a master reference table
   04_Data_Cleaning.MD              5 problems, raw-vs-cleaned example,
                                    6 sub-skills (2 new: duplicates, inconsistency)
-  05_Data_Cleaning_Practice.ipynb  Hands-on: pandas isnull().sum() on loans.csv,
-                                   + a nullity-correlation heatmap and bar chart
+  05_Data_Cleaning_Practice.ipynb  Hands-on: missing-value detection (isnull(),
+                                   heatmap, bar chart), the 50% drop rule, and
+                                   mean/median/mode filling with a before/after chart
+  06_Dropping_Missing_Values.MD    Column-first (>=50%) then row deletion —
+                                   why blind dropna() cost 26% of rows here
+  07_Filling_Missing_Values.MD     Mean/median/mode vs ffill/bfill, plus two
+                                   pandas 3.0 fixes verified against loans.csv
   loans.csv                        618-row loan dataset (generated), matches the
                                    exact missing-value pattern from the course
 
