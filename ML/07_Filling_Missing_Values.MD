@@ -40,12 +40,12 @@ Two separate questions decide the right fill method, not one:
 
 ```mermaid
 flowchart TD
-    A["Column has missing values"] --> B{"Do rows have a<br/>real order?<br/>(time series, sorted log)"}
-    B -->|Yes| C["Method B — Forward/Backward Fill<br/>(ffill / bfill)"]
-    B -->|No — independent rows<br/>e.g. loans.csv| D{"Numerical or<br/>Categorical?"}
-    D -->|Numerical, no outliers| E["Fill with mean"]
-    D -->|Numerical, skewed/outliers| F["Fill with median"]
-    D -->|Categorical<br/>(or a number acting as one)| G["Fill with mode"]
+    A["Column has missing values"] --> B{"Do rows have a<br/>real order?<br/>time series, sorted log"}
+    B -->|"Yes"| C["Method B - Forward/Backward Fill<br/>ffill / bfill"]
+    B -->|"No - independent rows<br/>e.g. loans.csv"| D{"Numerical or<br/>Categorical?"}
+    D -->|"Numerical, no outliers"| E["Fill with mean"]
+    D -->|"Numerical, skewed/outliers"| F["Fill with median"]
+    D -->|"Categorical - or a number acting as one"| G["Fill with mode"]
 
     style C fill:#7a3f66,stroke:#552b47,color:#fff
     style E fill:#2f6fed,stroke:#1e4fae,color:#fff
