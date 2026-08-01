@@ -57,6 +57,14 @@ ML/                            Conceptual primer notes from an external course
                                    >50% missing, for the >50%-column scenario
   07_Filling_Missing_Values.MD     Mean/median/mode vs ffill/bfill, plus two
                                    pandas 3.0 fixes verified against loans.csv
+  07_Filling_Missing_Values.ipynb  Statistic fill (mean/median/mode) on loans.csv,
+                                   both pandas 3.0 gotchas proven live, line by line
+  07b_Ordered_And_Wide_Fill_Practice.ipynb  ffill/bfill on a real ordered series,
+                                   axis=1 on genuinely comparable columns
+  daily_temperature.csv            30-day ordered series, 5 gaps — for a real
+                                   ffill/bfill example loans.csv can't provide
+  store_sales_wide.csv             8 stores x Mon-Fri sales, scattered gaps — for
+                                   a real axis=1 fill example
   loans.csv                        618-row loan dataset (generated), matches the
                                    exact missing-value pattern from the course
 
