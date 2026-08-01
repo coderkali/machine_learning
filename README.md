@@ -51,6 +51,10 @@ ML/                            Conceptual primer notes from an external course
                                    why blind dropna() cost 26% of rows here
   06_Dropping_Missing_Values.ipynb  Same file's code, every line run separately
                                    with its own output — no step left unverified
+  06_High_Missing_Column_Practice.ipynb  loans_guarantor.csv — a dataset where
+                                   Method 1 actually fires (~62% missing column)
+  loans_guarantor.csv              loans.csv + Guarantor_Income, deliberately
+                                   >50% missing, for the >50%-column scenario
   07_Filling_Missing_Values.MD     Mean/median/mode vs ffill/bfill, plus two
                                    pandas 3.0 fixes verified against loans.csv
   loans.csv                        618-row loan dataset (generated), matches the
