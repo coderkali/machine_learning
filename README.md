@@ -49,6 +49,8 @@ ML/                            Conceptual primer notes from an external course
                                    mean/median/mode filling with a before/after chart
   06_Dropping_Missing_Values.MD    Column-first (>=50%) then row deletion —
                                    why blind dropna() cost 26% of rows here
+  06_Dropping_Missing_Values.ipynb  Same file's code, every line run separately
+                                   with its own output — no step left unverified
   07_Filling_Missing_Values.MD     Mean/median/mode vs ffill/bfill, plus two
                                    pandas 3.0 fixes verified against loans.csv
   loans.csv                        618-row loan dataset (generated), matches the
