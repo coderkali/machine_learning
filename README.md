@@ -65,6 +65,9 @@ ML/                            Conceptual primer notes from an external course
                                    ffill/bfill example loans.csv can't provide
   store_sales_wide.csv             8 stores x Mon-Fri sales, scattered gaps — for
                                    a real axis=1 fill example
+  08_Finding_Missing_Values_Scikit_Learning.ipynb  SimpleImputer on loans.csv —
+                                   before/after mean-fill chart, why mean is wrong
+                                   for Credit_History, all 4 strategies compared
   loans.csv                        618-row loan dataset (generated), matches the
                                    exact missing-value pattern from the course
 
