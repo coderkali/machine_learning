@@ -4,6 +4,10 @@
 
 **Status legend:** ✅ Done · 🟡 In Progress / Current · ⬜ Not Started
 
+**Visual version:** open `roadmap-visual.html` in a browser for a mind-map
+view of this same phase breakdown. Regenerate it by hand whenever this file
+changes — it does not read this file automatically.
+
 ---
 
 ## 1. Purpose of This Roadmap
@@ -139,13 +143,14 @@ become a mathematician.
 | Loss / error, cost function | ✅ |
 | Gradient, gradient descent | ✅ |
 | Basic probability, mean/median/variance/std dev, correlation | ✅ |
-| Hypothesis testing — Z-Test vs T-Test, one-sample T-test (95%/80% CI), paired two-sample T-test, degrees of freedom | 🟡 in progress |
+| Hypothesis testing — Z-Test vs T-Test, one-sample T-test (95%/80% CI), paired two-sample T-test, Chi-Square test, degrees of freedom | ✅ |
+| Hypothesis testing — independent two-sample T-test, ANOVA | ⬜ open |
 | Linear regression — clean data (direct slope formula) | ✅ |
 | Linear regression — messy data (manual gradient descent) | ✅ |
 | Deriving exact best-w formula (derivative = 0) | ✅ |
 | Derivative with respect to b | ✅ |
 | Connecting formal calculus (limits) to the ML cost derivative | ✅ |
-| Meera's electricity bill — full solve + 3.5hr prediction | ⬜ open |
+| Meera's electricity bill — full solve + 3.5hr prediction | ✅ |
 | Classification metrics basics | ⬜ |
 
 **Why this matters:** This phase explains what it means when a model
@@ -165,9 +170,10 @@ gradient descent is, why weights change, and how a model improves over
 time. ✅
 
 **Detailed worked notes:** `math_for_ml/phase_5_linear_regression/practice_exercises/`
-(linear regression) and `DataScience_Y/` (hypothesis testing — Z-Test vs
-T-Test, one-sample and paired T-tests). Independent two-sample T-test,
-Chi-Square, and ANOVA are not yet covered.
+(linear regression, including Meera's electricity bill — closed out with
+exact w/b formulas and a final prediction) and `DataScience_Y/` (hypothesis
+testing — Z-Test vs T-Test, one-sample, paired, and Chi-Square tests).
+Independent two-sample T-test and ANOVA are not yet covered.
 
 ---
 
@@ -184,7 +190,7 @@ later AI concepts make sense.
 |---|---|
 | Data collection | ✅ |
 | Data cleaning, missing values, outliers | ✅ |
-| Feature engineering, encoding | 🟡 next up |
+| Feature engineering, encoding | 🟡 next up (hands-on equivalent already coded in `ML/`, see below) |
 | Regression | ⬜ |
 | Classification | ⬜ |
 | Clustering | ⬜ |
@@ -193,15 +199,43 @@ later AI concepts make sense.
 | Accuracy, precision, recall, F1, confusion matrix | ⬜ |
 | Model tuning basics | ⬜ |
 
-**Running alongside — conceptual primer (`ML/`):** informal notes from an
-external course (WsCubeTech), started 2026-07-28, covering the vocabulary
-this phase assumes: what ML actually is, a brief history (Turing →
-Perceptron → AI winters → deep learning → transformers), the
-traditional-programming-vs-ML paradigm shift, Supervised / Unsupervised /
-Reinforcement Learning, and the advantages/disadvantages trade-offs of ML.
-Not one of the 10 tracked topics above — it's the primer that makes them
-make sense. 🟡 in progress — "Use of Machine Learning Technology" still
-open. See `ML/01._LEARNING.MD`.
+**Running alongside — a separate hands-on course track (`ML/`):** informal
+notes and code from an external course (WsCubeTech), started 2026-07-28.
+This track has its own pipeline (`ML/02_ML_Roadmap.MD`) and in places is
+already ahead of the structured Phase 3 curriculum above — treat it as a
+practical accelerant, not a replacement for the 10 tracked topics.
+
+- **Conceptual primer (01–04):** what ML actually is, a brief history
+  (Turing → Perceptron → AI winters → deep learning → transformers), the
+  traditional-programming-vs-ML paradigm shift, Supervised / Unsupervised /
+  Reinforcement Learning, advantages/disadvantages trade-offs, types of
+  variables (numerical/categorical/date-time/mixed), and the 6 sub-skills
+  of data cleaning. ✅ done — except one open sub-item, "Use of Machine
+  Learning Technology" (`ML/01._LEARNING.MD`). 🟡
+- **Hands-on feature engineering (05–19):** missing-value detection and
+  fill strategies (mean/median/mode, ffill/bfill, `SimpleImputer`),
+  one-hot/label/ordinal encoding, outlier detection and removal (IQR +
+  Z-score), feature scaling (standardization + normalization), duplicate-row
+  handling, inconsistent-text cleanup, dtype fixes, and skew correction
+  (`FunctionTransformer` + `log1p`) — all coded end-to-end on `loans.csv`
+  and related practice datasets. ✅ done.
+- **Capstone mini-project (`ML/project/`):** `Employee_Attrition_Pipeline.ipynb`
+  — a synthetic 706-row dataset built so every technique from 04–19 has a
+  real, messy example to fix (including duplicate rows and mixed-case text
+  that `loans.csv` never had), run through all 9 cleaning-to-model-ready
+  stages with a visualization at each step. ✅ done. See
+  `ML/project/ARCHITECTURE.md` for the full pipeline diagram and data
+  dictionary.
+- **Still open in this track** (per `ML/02_ML_Roadmap.MD`): Feature
+  Selection (6 techniques), ML Algorithms (regression/classification/
+  clustering, 5 models), Hyperparameter Tuning (4 search methods), Model
+  Deployment, Docker & Kubernetes, and a full End-to-End ML project with
+  actual model training. ⬜ not started.
+
+Net effect: the hands-on feature-engineering skill in this track already
+runs ahead of Phase 3 Topic 3 above — when that topic's conceptual
+write-up happens, it can lean on code that already exists instead of
+starting from zero.
 
 **Why this matters:** These terms appear everywhere in AI discussions, LLM
 evaluation, RAG evaluation, and production model quality checks — even
@@ -507,7 +541,7 @@ AI + Java + Spring Boot + Microservices + Cloud + Production Systems
 
 ```
 Step 1  → Learn Python enough for AI work                    ✅
-Step 2  → Understand basic ML math                           🟡 (1 item open)
+Step 2  → Understand basic ML math                           🟡 (few items open)
 Step 3  → Understand classical ML vocabulary                 🟡 current
 Step 4  → Understand neural networks                         ⬜
 Step 5  → Understand NLP and transformers                    ⬜
