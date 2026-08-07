@@ -112,10 +112,11 @@ AI_Engineering_Roadmap.md     Full roadmap — phases, topics, status, depth rul
 
 ✅ **Phase 1 — Python Foundations:** Done
 
-🟡 **Phase 2 — Math for ML:** Almost done — Meera's electricity bill ✅,
+✅ **Phase 2 — Math for ML:** Done — Meera's electricity bill ✅,
 hypothesis testing (Z-Test, T-Test, paired T-test, Chi-Square) ✅, see
-`DataScience_Y/`. Still open: independent two-sample T-test, ANOVA, and
-classification metrics basics.
+`DataScience_Y/`. Independent two-sample T-test and ANOVA are intentionally
+skipped (scope decision, not needed for the target role); classification
+metrics basics moved to Phase 3, where it's already a tracked topic.
 
 🟡 **Phase 3 — Classical Machine Learning:** Current focus — Data
 Collection ✅ and Data Cleaning ✅ done in `phase_3_classical_ml/`, Feature

@@ -93,7 +93,7 @@ explain it in interviews, and productionize it?
 
 ```
 Phase 1  → Python Foundations                              ✅ Done
-Phase 2  → Math for ML Concepts                             🟡 Almost done
+Phase 2  → Math for ML Concepts                             ✅ Done
 Phase 3  → Classical Machine Learning Concepts              🟡 Current focus
 Phase 4  → Neural Network Fundamentals                      ⬜ Not started
 Phase 5  → NLP and Transformer Fundamentals                 ⬜ Not started
@@ -127,7 +127,7 @@ later.
 
 ---
 
-## 6. Phase 2 — Math for ML Concepts 🟡 Almost Done
+## 6. Phase 2 — Math for ML Concepts ✅ Done
 
 **Goal:** Understand the basic math ideas behind machine learning, not
 become a mathematician.
@@ -144,14 +144,14 @@ become a mathematician.
 | Gradient, gradient descent | ✅ |
 | Basic probability, mean/median/variance/std dev, correlation | ✅ |
 | Hypothesis testing — Z-Test vs T-Test, one-sample T-test (95%/80% CI), paired two-sample T-test, Chi-Square test, degrees of freedom | ✅ |
-| Hypothesis testing — independent two-sample T-test, ANOVA | ⬜ open |
+| Hypothesis testing — independent two-sample T-test, ANOVA | ⏭️ skipped |
 | Linear regression — clean data (direct slope formula) | ✅ |
 | Linear regression — messy data (manual gradient descent) | ✅ |
 | Deriving exact best-w formula (derivative = 0) | ✅ |
 | Derivative with respect to b | ✅ |
 | Connecting formal calculus (limits) to the ML cost derivative | ✅ |
 | Meera's electricity bill — full solve + 3.5hr prediction | ✅ |
-| Classification metrics basics | ⬜ |
+| Classification metrics basics | ⏭️ moved to Phase 3 |
 
 **Why this matters:** This phase explains what it means when a model
 "learns":
@@ -169,11 +169,19 @@ intuition — that's a completed investment, not scope creep.)
 gradient descent is, why weights change, and how a model improves over
 time. ✅
 
+**Scope decision (2026-08-07):** Phase 2 is closed. Independent two-sample
+T-test and ANOVA are intentionally skipped — deeper inferential statistics
+isn't needed for the target role, and the depth reached (Z-Test, T-Test,
+paired T-test, Chi-Square, full linear regression by hand) already covers
+what later phases assume. Classification metrics basics isn't dropped,
+just relocated — it's already a tracked Phase 3 topic (accuracy, precision,
+recall, F1, confusion matrix), so it doesn't need a separate Phase 2 pass.
+No more math topics will be added to this phase.
+
 **Detailed worked notes:** `math_for_ml/phase_5_linear_regression/practice_exercises/`
 (linear regression, including Meera's electricity bill — closed out with
 exact w/b formulas and a final prediction) and `DataScience_Y/` (hypothesis
 testing — Z-Test vs T-Test, one-sample, paired, and Chi-Square tests).
-Independent two-sample T-test and ANOVA are not yet covered.
 
 ---
 
@@ -541,7 +549,7 @@ AI + Java + Spring Boot + Microservices + Cloud + Production Systems
 
 ```
 Step 1  → Learn Python enough for AI work                    ✅
-Step 2  → Understand basic ML math                           🟡 (few items open)
+Step 2  → Understand basic ML math                           ✅
 Step 3  → Understand classical ML vocabulary                 🟡 current
 Step 4  → Understand neural networks                         ⬜
 Step 5  → Understand NLP and transformers                    ⬜
