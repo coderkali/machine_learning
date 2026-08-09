@@ -35,7 +35,7 @@ hand whenever the roadmap file changes.
   - `01_data_collection/` — ✅ Data Collection
   - `02_data_cleaning/` — ✅ Data Cleaning, Missing Values, Outliers
 
-- **`ML/`** — External course notes (WsCubeTech): conceptual primer (01–04) + hands-on feature-engineering practice (05–19) + a capstone pipeline project (`project/`) — feeds vocabulary and code into Phase 3
+- **`ML/`** — External course notes (WsCubeTech): conceptual primer (01–04) + hands-on feature-engineering practice (05–19) + a capstone pipeline project (`project/`) + feature selection (20–22) + ML algorithms, starting with regression (23–26) — feeds vocabulary and code into Phase 3
   - `01._LEARNING.MD` — What is ML, history, paradigm shift, classification, advantages/disadvantages
   - `02_ML_Roadmap.MD` — Full course pipeline: feature engineering/selection, algorithms, tuning, deployment
   - `03_Types_Of_Variables.MD` — Numerical/Categorical/Date-Time/Mixed variables, with a master reference table
@@ -61,6 +61,13 @@ hand whenever the roadmap file changes.
     - `ARCHITECTURE.md` — Full 9-stage pipeline diagram (Mermaid) + data dictionary of every injected data issue
     - `Employee_Attrition_Pipeline.ipynb` — 706-row synthetic HR dataset run through the full cleaning-to-model-ready pipeline
     - `employee_attrition_raw.csv` — Raw synthetic dataset (seed 42, reproducible)
+  - `20_Feature_Selection_techniques.MD` / `.ipynb` — Filter/Wrapper/Embedded overview, Forward Selection & Backward Elimination on `diabetes.csv`
+  - `21_Feature_Selection_VarianceThreshold.ipynb` — Dropping near-constant columns with `VarianceThreshold`
+  - `22_Forward_Backward_Practice.ipynb` — Forward/backward wrapper selection redone on a synthetic dataset, one small step at a time (`SequentialFeatureSelector`)
+  - `23_Simple_Dataset_Practice.MD` / `.ipynb` — Train/test/predict from scratch on a tiny hand-built dataset, checked by hand at every step
+  - `24_Regression_Analysis.MD` — Map of regression analysis: every type the course names (simple/multiple/polynomial/etc.), before going hands-on
+  - `25_Simple_Linear_Regression.MD` — Concepts-only: `y = m·x + c`, slope/intercept, residuals, Ordinary Least Squares
+  - `26_Simple_Linear_Regression.ipynb` + `placement.csv` — Hands-on `scikit-learn` model on real CGPA→package data: train/test split, `.fit()`, `.predict()`, R² score, reading back `coef_`/`intercept_`, plus 4 residual-diagnostic visualizations (vertical-gap plot, residuals-vs-predicted, residual histogram, actual-vs-predicted)
 
 - **`Pandas/`, `NumPy/`, `Matplotlib/`, `seaborn/`** — Python foundations practice
 - **`irisData_Exploration/`** — Early data exploration practice
@@ -81,9 +88,14 @@ Collection ✅ and Data Cleaning ✅ done in `phase_3_classical_ml/`, Feature
 Engineering next up. Running alongside: a separate hands-on course track in
 `ML/` — conceptual primer (01-04) ✅ ("Use of Machine Learning Technology"
 still open), hands-on feature-engineering practice (05-19: encoding,
-outliers, scaling, duplicates, dtype fixes) ✅, and a capstone pipeline
-project (`ML/project/`) ✅. Still open in that track: feature selection,
-ML algorithms, hyperparameter tuning, deployment, Docker/Kubernetes.
+outliers, scaling, duplicates, dtype fixes) ✅, a capstone pipeline
+project (`ML/project/`) ✅, feature selection (20-22: filter/wrapper/
+embedded, `VarianceThreshold`, forward/backward selection) ✅, and Simple
+Linear Regression (23-26: from-scratch train/test/predict, regression
+overview, concepts, and a hands-on `scikit-learn` model with residual
+diagnostics) ✅. Still open in that track: Multiple Linear Regression, the
+rest of ML algorithms (classification, clustering), hyperparameter tuning,
+deployment, Docker/Kubernetes.
 
 See the roadmap file for the complete phase list and progress tracking, or
 open `roadmap-visual.html` in a browser for a visual mind-map version.

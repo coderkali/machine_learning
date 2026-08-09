@@ -234,9 +234,21 @@ practical accelerant, not a replacement for the 10 tracked topics.
   stages with a visualization at each step. ✅ done. See
   `ML/project/ARCHITECTURE.md` for the full pipeline diagram and data
   dictionary.
-- **Still open in this track** (per `ML/02_ML_Roadmap.MD`): Feature
-  Selection (6 techniques), ML Algorithms (regression/classification/
-  clustering, 5 models), Hyperparameter Tuning (4 search methods), Model
+- **Feature Selection (20–22):** filter/wrapper/embedded overview
+  (`20_Feature_Selection_techniques.MD`), `VarianceThreshold`, and a
+  forward/backward selection practice notebook. ✅ done.
+- **ML Algorithms — Regression (23–26):** a from-scratch train/test/predict
+  walkthrough on a tiny hand-built dataset (`23_Simple_Dataset_Practice`), a
+  broader regression-family overview (`24_Regression_Analysis.MD`), Simple
+  Linear Regression concepts (`25_Simple_Linear_Regression.MD`), and a
+  hands-on `scikit-learn` notebook that fits/scores/visualizes a real model
+  on `placement.csv`, including residual diagnostics
+  (`26_Simple_Linear_Regression.ipynb`). ✅ done — Simple Linear Regression
+  specifically; Multiple Linear Regression and classification/clustering
+  models are next.
+- **Still open in this track** (per `ML/02_ML_Roadmap.MD`): Multiple Linear
+  Regression, the rest of ML Algorithms (classification, clustering — 5
+  models total), Hyperparameter Tuning (4 search methods), Model
   Deployment, Docker & Kubernetes, and a full End-to-End ML project with
   actual model training. ⬜ not started.
 
