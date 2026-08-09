@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="600" height="240" fill="#ffffff"/>
+
+  <!-- Panel 1: positive slope -->
+  <g>
+    <line x1="30" y1="90" x2="170" y2="90" stroke="#8a8f98" stroke-width="1.5"/>
+    <line x1="40" y1="125" x2="160" y2="45" stroke="#2f6fed" stroke-width="3"/>
+    <path d="M 125 90 A 25 25 0 0 0 111.5 68.6" fill="none" stroke="#b3781f" stroke-width="1.5"/>
+    <text x="132" y="72" font-size="12" fill="#b3781f">θ</text>
+    <text x="100" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c1c1c">Positive slope</text>
+    <text x="100" y="178" text-anchor="middle" font-size="12" fill="#3a3d42">m = tan(θ), θ &lt; 90°</text>
+    <text x="100" y="195" text-anchor="middle" font-size="12" fill="#2f9e6f">rises left → right</text>
+  </g>
+
+  <!-- Panel 2: negative slope -->
+  <g>
+    <line x1="230" y1="90" x2="370" y2="90" stroke="#8a8f98" stroke-width="1.5"/>
+    <line x1="240" y1="45" x2="360" y2="125" stroke="#2f6fed" stroke-width="3"/>
+    <path d="M 325 90 A 25 25 0 0 1 305.7 74.7" fill="none" stroke="#b3781f" stroke-width="1.5"/>
+    <path d="M 305.7 74.7 A 25 25 0 0 1 288.4 68.6" fill="none" stroke="#b3781f" stroke-width="1.5"/>
+    <text x="290" y="60" font-size="12" fill="#b3781f">θ (obtuse)</text>
+    <text x="300" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c1c1c">Negative slope</text>
+    <text x="300" y="178" text-anchor="middle" font-size="12" fill="#3a3d42">m = −tan(θ), θ &gt; 90°</text>
+    <text x="300" y="195" text-anchor="middle" font-size="12" fill="#b33a3a">falls left → right</text>
+  </g>
+
+  <!-- Panel 3: zero slope -->
+  <g>
+    <line x1="430" y1="90" x2="570" y2="90" stroke="#8a8f98" stroke-width="1.5"/>
+    <line x1="440" y1="85" x2="560" y2="85" stroke="#2f6fed" stroke-width="3"/>
+    <text x="500" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c1c1c">Zero slope</text>
+    <text x="500" y="178" text-anchor="middle" font-size="12" fill="#3a3d42">m = 0, θ = 0°</text>
+    <text x="500" y="195" text-anchor="middle" font-size="12" fill="#8a8f98">flat — x has no effect on y</text>
+  </g>
+</svg>
