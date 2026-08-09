@@ -132,6 +132,9 @@ This is the single most important thing to get right in this repo. See the
   e.g. `Add notes:: ML : Feature Scaling Normalization` or
   `Add Notes : Feature Selection`. Match this style rather than switching
   to conventional-commits format.
+- **Never add a `Co-Authored-By: Claude` (or any AI-attribution) trailer**
+  to commit messages in this repo — commits should show only the user as
+  author/committer.
 - Commit at the end of each topic, before moving to the next one (part of
   the Phase 3 teaching rhythm, but a reasonable default repo-wide too).
 

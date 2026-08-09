@@ -133,3 +133,8 @@ Add Notes : More Detailed Way of understaing Feature Selection
 
 Pattern: `Add Notes[::] <track/area> : <short description>`. Commit at the
 end of each topic, before starting the next one.
+
+**Do not add a `Co-Authored-By: Claude` (or any AI-attribution) trailer to
+commit messages in this repo.** This repo's commits should show only the
+user as author/committer — no exceptions, regardless of how much of a
+commit's content Claude Code generated.
