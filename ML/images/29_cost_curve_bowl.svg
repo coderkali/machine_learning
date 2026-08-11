@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 410" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="580" height="410" fill="#ffffff"/>
+  <text x="290" y="24" text-anchor="middle" font-size="16" font-weight="bold" fill="#1c1c1c">Cost vs. parameter — why training "searches" for a minimum</text>
+
+  <!-- axes -->
+  <line x1="60" y1="340" x2="540" y2="340" stroke="#1c1c1c" stroke-width="2"/>
+  <line x1="60" y1="45" x2="60" y2="340" stroke="#1c1c1c" stroke-width="2"/>
+
+  <!-- x tick labels (m, slope) -->
+  <g font-size="12" fill="#3a3d42">
+    <text x="60" y="358" text-anchor="middle">0</text>
+    <text x="180" y="358" text-anchor="middle">0.25</text>
+    <text x="300" y="358" text-anchor="middle">0.5</text>
+    <text x="420" y="358" text-anchor="middle">0.75</text>
+    <text x="540" y="358" text-anchor="middle">1.0</text>
+  </g>
+
+  <!-- axis titles -->
+  <text x="300" y="376" text-anchor="middle" font-size="13" fill="#1c1c1c">m (slope) — other parameter c held fixed</text>
+  <text x="0" y="0" text-anchor="middle" font-size="13" fill="#1c1c1c" transform="translate(20,230) rotate(-90)">Cost J(m) — average squared error</text>
+
+  <!-- the bowl curve -->
+  <polyline points="60,70 110,168.2 160,240.8 210,287.6 260,308.7 276,310 320,303.3 370,279.6 420,238.6 470,180.4 520,104.9 540,70"
+            fill="none" stroke="#2f6fed" stroke-width="3"/>
+
+  <!-- suboptimal point: too flat -->
+  <line x1="132" y1="203.3" x2="132" y2="340" stroke="#b3781f" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="132" cy="203.3" r="6" fill="#b3781f"/>
+  <text x="132" y="190" text-anchor="middle" font-size="12" fill="#b3781f" font-weight="bold">too flat</text>
+  <text x="132" y="330" text-anchor="middle" font-size="11" fill="#b3781f">high cost</text>
+
+  <!-- suboptimal point: too steep -->
+  <line x1="420" y1="238.6" x2="420" y2="340" stroke="#b3781f" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="420" cy="238.6" r="6" fill="#b3781f"/>
+  <text x="420" y="225" text-anchor="middle" font-size="12" fill="#b3781f" font-weight="bold">too steep</text>
+  <text x="420" y="330" text-anchor="middle" font-size="11" fill="#b3781f">high cost</text>
+
+  <!-- minimum point -->
+  <line x1="276" y1="310" x2="276" y2="340" stroke="#2f9e6f" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="276" cy="310" r="7" fill="#2f9e6f"/>
+  <text x="276" y="140" text-anchor="middle" font-size="13" font-weight="bold" fill="#2f9e6f">m ≈ 0.45</text>
+  <text x="276" y="157" text-anchor="middle" font-size="12" fill="#2f9e6f">minimum cost</text>
+  <text x="276" y="173" text-anchor="middle" font-size="12" fill="#2f9e6f">(best fit)</text>
+  <line x1="276" y1="180" x2="276" y2="298" stroke="#2f9e6f" stroke-width="1" marker-end="url(#arrowGreen)"/>
+
+  <defs>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#2f9e6f"/>
+    </marker>
+  </defs>
+
+  <text x="290" y="398" text-anchor="middle" font-size="11" fill="#8a8f98">Gradient Descent (next topic) is the algorithm that walks downhill along this curve to reach the minimum automatically.</text>
+</svg>

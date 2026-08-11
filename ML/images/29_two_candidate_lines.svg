@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 430" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="580" height="430" fill="#ffffff"/>
+  <text x="290" y="24" text-anchor="middle" font-size="16" font-weight="bold" fill="#1c1c1c">Same 3 points, two candidate lines — which fits better?</text>
+
+  <!-- gridlines -->
+  <g stroke="#e6e6e6" stroke-width="1">
+    <line x1="220" y1="40" x2="220" y2="350"/>
+    <line x1="380" y1="40" x2="380" y2="350"/>
+    <line x1="60" y1="315.6" x2="540" y2="315.6"/>
+    <line x1="60" y1="229.4" x2="540" y2="229.4"/>
+    <line x1="60" y1="143.3" x2="540" y2="143.3"/>
+    <line x1="60" y1="57.2" x2="540" y2="57.2"/>
+  </g>
+
+  <!-- axes -->
+  <line x1="60" y1="350" x2="540" y2="350" stroke="#1c1c1c" stroke-width="2"/>
+  <line x1="60" y1="40" x2="60" y2="350" stroke="#1c1c1c" stroke-width="2"/>
+
+  <!-- tick labels -->
+  <g font-size="12" fill="#3a3d42">
+    <text x="60" y="368" text-anchor="middle">5</text>
+    <text x="220" y="368" text-anchor="middle">6</text>
+    <text x="380" y="368" text-anchor="middle">7</text>
+    <text x="540" y="368" text-anchor="middle">8</text>
+    <text x="48" y="319.6" text-anchor="end">2.0</text>
+    <text x="48" y="233.4" text-anchor="end">2.5</text>
+    <text x="48" y="147.3" text-anchor="end">3.0</text>
+    <text x="48" y="61.2" text-anchor="end">3.5</text>
+  </g>
+
+  <!-- axis titles -->
+  <text x="300" y="398" text-anchor="middle" font-size="13" fill="#1c1c1c">cgpa — independent variable (x)</text>
+  <text x="0" y="0" text-anchor="middle" font-size="13" fill="#1c1c1c" transform="translate(20,230) rotate(-90)">package in LPA — dependent variable (y)</text>
+
+  <!-- Line B: m=0.15, c=1.5 (worse fit) -->
+  <line x1="60" y1="272.5" x2="540" y2="195" stroke="#b33a3a" stroke-width="3"/>
+  <text x="360" y="215" font-size="12" fill="#b33a3a" font-weight="bold">Line B: m=0.15, c=1.5</text>
+  <text x="360" y="231" font-size="12" fill="#b33a3a">MSE ≈ 0.315 (worse fit)</text>
+
+  <!-- Line A: m=0.45, c=-0.1 (better fit) -->
+  <line x1="60" y1="289.7" x2="540" y2="57.2" stroke="#2f9e6f" stroke-width="3"/>
+  <text x="330" y="108" font-size="12" fill="#2f9e6f" font-weight="bold">Line A: m=0.45, c=−0.1</text>
+  <text x="330" y="124" font-size="12" fill="#2f9e6f">MSE ≈ 0.049 (better fit)</text>
+
+  <!-- data points -->
+  <g fill="#1c1c1c">
+    <circle cx="362.4" cy="98.6" r="6"/>
+    <circle cx="79.2" cy="319.0" r="6"/>
+    <circle cx="511.2" cy="100.3" r="6"/>
+  </g>
+  <text x="362.4" y="88" text-anchor="middle" font-size="11" fill="#1c1c1c">(6.89, 3.26)</text>
+  <text x="79.2" y="336" text-anchor="middle" font-size="11" fill="#1c1c1c">(5.12, 1.98)</text>
+  <text x="511.2" y="90" text-anchor="middle" font-size="11" fill="#1c1c1c">(7.82, 3.25)</text>
+
+  <text x="290" y="416" text-anchor="middle" font-size="11" fill="#8a8f98">Lower MSE = closer to the real points. The cost function is the only reason we can say "Line A wins," not just "Line A looks nicer."</text>
+</svg>
