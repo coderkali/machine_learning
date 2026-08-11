@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 430" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="580" height="430" fill="#ffffff"/>
+  <text x="290" y="24" text-anchor="middle" font-size="16" font-weight="bold" fill="#1c1c1c">5 students — predicted marks vs. actual marks</text>
+
+  <!-- gridlines -->
+  <g stroke="#e6e6e6" stroke-width="1">
+    <line x1="60" y1="350" x2="540" y2="350"/>
+    <line x1="60" y1="288" x2="540" y2="288"/>
+    <line x1="60" y1="226" x2="540" y2="226"/>
+    <line x1="60" y1="164" x2="540" y2="164"/>
+    <line x1="60" y1="102" x2="540" y2="102"/>
+    <line x1="60" y1="40" x2="540" y2="40"/>
+  </g>
+
+  <!-- axes -->
+  <line x1="60" y1="350" x2="540" y2="350" stroke="#1c1c1c" stroke-width="2"/>
+  <line x1="60" y1="40" x2="60" y2="350" stroke="#1c1c1c" stroke-width="2"/>
+
+  <!-- y tick labels -->
+  <g font-size="12" fill="#3a3d42">
+    <text x="48" y="354" text-anchor="end">0</text>
+    <text x="48" y="292" text-anchor="end">2</text>
+    <text x="48" y="230" text-anchor="end">4</text>
+    <text x="48" y="168" text-anchor="end">6</text>
+    <text x="48" y="106" text-anchor="end">8</text>
+    <text x="48" y="44" text-anchor="end">10</text>
+  </g>
+
+  <!-- x tick labels -->
+  <g font-size="13" fill="#3a3d42" text-anchor="middle">
+    <text x="108" y="368">A</text>
+    <text x="204" y="368">B</text>
+    <text x="300" y="368">C</text>
+    <text x="396" y="368">D</text>
+    <text x="492" y="368">E</text>
+  </g>
+
+  <!-- axis titles -->
+  <text x="300" y="398" text-anchor="middle" font-size="13" fill="#1c1c1c">student (5 quiz predictions)</text>
+  <text x="0" y="0" text-anchor="middle" font-size="13" fill="#1c1c1c" transform="translate(20,195) rotate(-90)">marks, out of 10</text>
+
+  <!-- legend -->
+  <circle cx="362" cy="50" r="5" fill="#2f6fed"/>
+  <text x="372" y="54" font-size="12" fill="#1c1c1c">actual marks</text>
+  <circle cx="362" cy="66" r="5" fill="#b3781f"/>
+  <text x="372" y="70" font-size="12" fill="#1c1c1c">predicted marks</text>
+  <line x1="352" y1="82" x2="372" y2="82" stroke="#8a8f98" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="378" y="86" font-size="12" fill="#1c1c1c">gap = |actual − predicted|</text>
+
+  <!-- Student A: actual 8 (y=102), predicted 6 (y=164), |error|=2 -->
+  <line x1="108" y1="102" x2="108" y2="164" stroke="#8a8f98" stroke-width="2" stroke-dasharray="4,3"/>
+  <circle cx="108" cy="102" r="7" fill="#2f6fed"/>
+  <circle cx="108" cy="164" r="7" fill="#b3781f"/>
+  <text x="122" y="137" font-size="12" fill="#1c1c1c" font-weight="bold">2</text>
+
+  <!-- Student B: actual 5 (y=195), predicted 7 (y=133), |error|=2 -->
+  <line x1="204" y1="195" x2="204" y2="133" stroke="#8a8f98" stroke-width="2" stroke-dasharray="4,3"/>
+  <circle cx="204" cy="195" r="7" fill="#2f6fed"/>
+  <circle cx="204" cy="133" r="7" fill="#b3781f"/>
+  <text x="218" y="168" font-size="12" fill="#1c1c1c" font-weight="bold">2</text>
+
+  <!-- Student C: actual 9 (y=71), predicted 9 (y=71), |error|=0 -->
+  <circle cx="300" cy="71" r="9" fill="none" stroke="#b3781f" stroke-width="2"/>
+  <circle cx="300" cy="71" r="5" fill="#2f6fed"/>
+  <text x="314" y="75" font-size="12" fill="#1c1c1c" font-weight="bold">0</text>
+
+  <!-- Student D: actual 3 (y=257), predicted 5 (y=195), |error|=2 -->
+  <line x1="396" y1="257" x2="396" y2="195" stroke="#8a8f98" stroke-width="2" stroke-dasharray="4,3"/>
+  <circle cx="396" cy="257" r="7" fill="#2f6fed"/>
+  <circle cx="396" cy="195" r="7" fill="#b3781f"/>
+  <text x="410" y="230" font-size="12" fill="#1c1c1c" font-weight="bold">2</text>
+
+  <!-- Student E: actual 7 (y=133), predicted 8 (y=102), |error|=1 -->
+  <line x1="492" y1="133" x2="492" y2="102" stroke="#8a8f98" stroke-width="2" stroke-dasharray="4,3"/>
+  <circle cx="492" cy="133" r="7" fill="#2f6fed"/>
+  <circle cx="492" cy="102" r="7" fill="#b3781f"/>
+  <text x="506" y="121" font-size="12" fill="#1c1c1c" font-weight="bold">1</text>
+
+  <text x="290" y="416" text-anchor="middle" font-size="11" fill="#8a8f98">MAE = (2 + 2 + 0 + 2 + 1) ÷ 5 = 1.4 → predictions were off by 1.4 marks, on average.</text>
+</svg>
