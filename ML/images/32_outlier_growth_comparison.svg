@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 430" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="580" height="430" fill="#ffffff"/>
+  <text x="290" y="26" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#1c1c1c">One outlier row added — how much each metric jumps</text>
+  <text x="290" y="45" text-anchor="middle" font-size="11" fill="#3a3d42">real numbers from `30_Cost_Function_MSE_GradientDescent.ipynb`, Step 10, 100 rows → 101</text>
+
+  <!-- gridlines -->
+  <g stroke="#e6e6e6" stroke-width="1">
+    <line x1="70" y1="350" x2="540" y2="350"/>
+    <line x1="70" y1="285" x2="540" y2="285"/>
+    <line x1="70" y1="220" x2="540" y2="220"/>
+    <line x1="70" y1="155" x2="540" y2="155"/>
+    <line x1="70" y1="90" x2="540" y2="90"/>
+  </g>
+
+  <!-- axes -->
+  <line x1="70" y1="350" x2="540" y2="350" stroke="#1c1c1c" stroke-width="2"/>
+  <line x1="70" y1="90" x2="70" y2="350" stroke="#1c1c1c" stroke-width="2"/>
+
+  <!-- y tick labels: growth factor, 0 to 18x -->
+  <g font-size="12" fill="#3a3d42">
+    <text x="58" y="354" text-anchor="end">0×</text>
+    <text x="58" y="289" text-anchor="end">4×</text>
+    <text x="58" y="224" text-anchor="end">8×</text>
+    <text x="58" y="159" text-anchor="end">12×</text>
+    <text x="58" y="94" text-anchor="end">16×</text>
+  </g>
+  <text x="0" y="0" text-anchor="middle" font-size="13" fill="#1c1c1c" transform="translate(24,220) rotate(-90)">growth factor (after ÷ before)</text>
+
+  <!-- baseline "no change" reference line at 1x -->
+  <line x1="70" y1="333.75" x2="540" y2="333.75" stroke="#8a8f98" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="75" y="328" text-anchor="start" font-size="10" fill="#8a8f98">1× (no change)</text>
+
+  <!-- Bar 1: MAE, growth 1.47x -->
+  <rect x="130" y="326" width="90" height="24" fill="#b3781f"/>
+  <text x="175" y="313" text-anchor="middle" font-size="13" font-weight="bold" fill="#b3781f">1.47×</text>
+  <text x="175" y="372" text-anchor="middle" font-size="12" fill="#1c1c1c" font-weight="bold">MAE</text>
+  <text x="175" y="388" text-anchor="middle" font-size="10" fill="#3a3d42">0.252 → 0.370</text>
+
+  <!-- Bar 2: RMSE, growth 4.04x -->
+  <rect x="260" y="284.4" width="90" height="65.6" fill="#2f9e6f"/>
+  <text x="305" y="271" text-anchor="middle" font-size="13" font-weight="bold" fill="#2f9e6f">4.04×</text>
+  <text x="305" y="372" text-anchor="middle" font-size="12" fill="#1c1c1c" font-weight="bold">RMSE</text>
+  <text x="305" y="388" text-anchor="middle" font-size="10" fill="#3a3d42">0.309 → 1.246</text>
+
+  <!-- Bar 3: MSE, growth 16.32x, breaks past the top of the chart -->
+  <rect x="390" y="84.8" width="90" height="265.2" fill="#2f6fed"/>
+  <path d="M390,84.8 L435,64 L480,84.8 Z" fill="#2f6fed"/>
+  <text x="435" y="52" text-anchor="middle" font-size="13" font-weight="bold" fill="#2f6fed">16.32×</text>
+  <text x="435" y="372" text-anchor="middle" font-size="12" fill="#1c1c1c" font-weight="bold">MSE</text>
+  <text x="435" y="388" text-anchor="middle" font-size="10" fill="#3a3d42">0.095 → 1.553</text>
+
+  <text x="290" y="412" text-anchor="middle" font-size="11" fill="#8a8f98">RMSE still amplifies the outlier (unlike MAE) but lands far below MSE's runaway 16× — a middle ground.</text>
+</svg>

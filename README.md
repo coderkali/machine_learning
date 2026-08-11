@@ -68,6 +68,12 @@ hand whenever the roadmap file changes.
   - `24_Regression_Analysis.MD` — Map of regression analysis: every type the course names (simple/multiple/polynomial/etc.), before going hands-on
   - `25_Simple_Linear_Regression.MD` — Concepts-only: `y = m·x + c`, slope/intercept, residuals, Ordinary Least Squares
   - `26_Simple_Linear_Regression.ipynb` + `placement.csv` — Hands-on `scikit-learn` model on real CGPA→package data: train/test split, `.fit()`, `.predict()`, R² score, reading back `coef_`/`intercept_`, plus 4 residual-diagnostic visualizations (vertical-gap plot, residuals-vs-predicted, residual histogram, actual-vs-predicted)
+  - `27_Multiple_Linear_Regression.ipynb` + `regression_dataset.csv` — Extending Simple Linear Regression to multiple predictors (`y = m1·x1 + m2·x2 + c`), hands-on with `scikit-learn`
+  - `28_Polynomial_Regression.ipynb` + `polynomial_dataset.csv` — Fitting curved relationships (`y = b0 + b1·x + b2·x² + ...`) via `PolynomialFeatures` + `LinearRegression`
+  - `29_Cost_Function.MD` — Concepts-only: why a cost function is needed, cost vs. loss, the cost curve/bowl, types of cost function (MSE/MAE/RMSE for regression, cross-entropy for classification)
+  - `30_Cost_Function_MSE_GradientDescent.ipynb` — Hands-on: MSE built from scratch, Gradient Descent implemented and run step-by-step on real data, cost bowl plotted for real, verified against `scikit-learn`'s OLS, and MSE vs. MAE outlier sensitivity proven with real numbers
+  - `31_Mean_Absolute_Error.MD` — MAE deep dive: worked quiz-marks example, MAE vs. MSE curve shapes, four real drawbacks (sharp corner, equal-weighting, slower training, median- vs. mean-seeking)
+  - `32_Root_Mean_Squared_Error.MD` — RMSE deep dive: √MSE unpacked, why the square root matters (readable units), when to prefer it over MSE/MAE (real outlier-growth comparison: MAE 1.47× vs. RMSE 4.04× vs. MSE 16.32×)
 
 - **`Pandas/`, `NumPy/`, `Matplotlib/`, `seaborn/`** — Python foundations practice
 - **`irisData_Exploration/`** — Early data exploration practice
@@ -90,12 +96,14 @@ Engineering next up. Running alongside: a separate hands-on course track in
 still open), hands-on feature-engineering practice (05-19: encoding,
 outliers, scaling, duplicates, dtype fixes) ✅, a capstone pipeline
 project (`ML/project/`) ✅, feature selection (20-22: filter/wrapper/
-embedded, `VarianceThreshold`, forward/backward selection) ✅, and Simple
-Linear Regression (23-26: from-scratch train/test/predict, regression
-overview, concepts, and a hands-on `scikit-learn` model with residual
-diagnostics) ✅. Still open in that track: Multiple Linear Regression, the
-rest of ML algorithms (classification, clustering), hyperparameter tuning,
-deployment, Docker/Kubernetes.
+embedded, `VarianceThreshold`, forward/backward selection) ✅, Simple/
+Multiple/Polynomial Linear Regression (23-28: from-scratch train/test/
+predict, regression overview, concepts, and hands-on `scikit-learn`
+models) ✅, and Cost Functions (29-32: why a cost function is needed,
+MSE + Gradient Descent from scratch, MAE, and RMSE — each of the "core
+three" regression error metrics with its own deep dive) ✅. Still open in
+that track: the rest of ML algorithms (classification, clustering),
+hyperparameter tuning, deployment, Docker/Kubernetes.
 
 See the roadmap file for the complete phase list and progress tracking, or
 open `roadmap-visual.html` in a browser for a visual mind-map version.

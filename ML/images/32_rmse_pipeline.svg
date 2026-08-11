@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 430" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="620" height="430" fill="#ffffff"/>
+  <text x="310" y="26" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#1c1c1c">Why square root? Same 5 students, three stops on the way to RMSE</text>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#1c1c1c"/>
+    </marker>
+  </defs>
+
+  <!-- Stage 1: raw signed errors -->
+  <rect x="15" y="55" width="170" height="305" rx="10" fill="#f5f7fb" stroke="#8a8f98" stroke-width="1.5"/>
+  <text x="100" y="80" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c1c1c">1. Raw error</text>
+  <text x="100" y="97" text-anchor="middle" font-size="10.5" fill="#3a3d42">(actual − predicted)</text>
+
+  <g font-size="14" fill="#1c1c1c">
+    <text x="35" y="135">A</text><text x="165" y="135" text-anchor="end">+2</text>
+    <text x="35" y="175">B</text><text x="165" y="175" text-anchor="end">−2</text>
+    <text x="35" y="215">C</text><text x="165" y="215" text-anchor="end">0</text>
+    <text x="35" y="255">D</text><text x="165" y="255" text-anchor="end">−2</text>
+    <text x="35" y="295">E</text><text x="165" y="295" text-anchor="end">−1</text>
+  </g>
+  <line x1="30" y1="112" x2="170" y2="112" stroke="#e6e6e6" stroke-width="1"/>
+  <text x="100" y="335" text-anchor="middle" font-size="10.5" fill="#8a8f98" font-style="italic">+ and − mix together</text>
+
+  <!-- Arrow 1 -->
+  <line x1="188" y1="207" x2="240" y2="207" stroke="#1c1c1c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="214" y="198" text-anchor="middle" font-size="11" fill="#b3781f" font-weight="bold">square</text>
+
+  <!-- Stage 2: squared errors + MSE -->
+  <rect x="245" y="55" width="170" height="305" rx="10" fill="#eef2fc" stroke="#2f6fed" stroke-width="1.5"/>
+  <text x="330" y="80" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c1c1c">2. Squared error</text>
+  <text x="330" y="97" text-anchor="middle" font-size="10.5" fill="#3a3d42">(marks² — not a real unit)</text>
+
+  <g font-size="14" fill="#1c1c1c">
+    <text x="265" y="135">A</text><text x="395" y="135" text-anchor="end">4</text>
+    <text x="265" y="175">B</text><text x="395" y="175" text-anchor="end">4</text>
+    <text x="265" y="215">C</text><text x="395" y="215" text-anchor="end">0</text>
+    <text x="265" y="255">D</text><text x="395" y="255" text-anchor="end">4</text>
+    <text x="265" y="295">E</text><text x="395" y="295" text-anchor="end">1</text>
+  </g>
+  <line x1="260" y1="112" x2="400" y2="112" stroke="#c7d4f5" stroke-width="1"/>
+  <line x1="260" y1="312" x2="400" y2="312" stroke="#c7d4f5" stroke-width="1"/>
+  <text x="330" y="335" text-anchor="middle" font-size="12" fill="#2f6fed" font-weight="bold">mean = MSE = 2.6 marks²</text>
+
+  <!-- Arrow 2 -->
+  <line x1="418" y1="207" x2="470" y2="207" stroke="#1c1c1c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="444" y="198" text-anchor="middle" font-size="11" fill="#2f9e6f" font-weight="bold">√ root</text>
+
+  <!-- Stage 3: RMSE -->
+  <rect x="475" y="125" width="130" height="170" rx="10" fill="#e9f7f0" stroke="#2f9e6f" stroke-width="2"/>
+  <text x="540" y="152" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c1c1c">3. RMSE</text>
+  <text x="540" y="205" text-anchor="middle" font-size="27" font-weight="bold" fill="#2f9e6f">1.61</text>
+  <text x="540" y="226" text-anchor="middle" font-size="12" fill="#1c1c1c">marks</text>
+  <text x="540" y="270" text-anchor="middle" font-size="10" fill="#3a3d42">back in original units</text>
+
+  <text x="310" y="395" text-anchor="middle" font-size="11" fill="#8a8f98">Squaring kills the +/− sign but leaves "marks²" — meaningless on its own.</text>
+  <text x="310" y="411" text-anchor="middle" font-size="11" fill="#8a8f98">√MSE undoes the square, landing back on plain marks: 1.61, right next to MAE's 1.4.</text>
+</svg>
