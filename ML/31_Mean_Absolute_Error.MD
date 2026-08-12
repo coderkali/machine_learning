@@ -242,7 +242,8 @@ penalty.
 
 ## Coming Up Next
 
-- ⬜ **RMSE** — the third regression cost function from `29`'s table,
-  square-rooting MSE back into the target's original units.
+- ✅ **RMSE** — the third regression cost function from `29`'s table,
+  square-rooting MSE back into the target's original units. See
+  [`32_Root_Mean_Squared_Error.MD`](32_Root_Mean_Squared_Error.MD).
 - ⬜ **Huber Loss** — the hybrid mentioned in drawback #3, worth a proper
   look once we're past the core three.
