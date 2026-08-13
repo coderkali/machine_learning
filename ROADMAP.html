@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI/ML Learning Roadmap</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #eef3fb;
+      --text: #172033;
+      --muted: #60708a;
+      --border: #d8e0ec;
+      --primary: #3157d5;
+      --primary-soft: #e7ecff;
+      --learning: #a96800;
+      --learning-soft: #fff3d6;
+      --planned: #718096;
+      --shadow: 0 14px 40px rgba(25, 42, 74, 0.09);
+      --foundation: #3157d5;
+      --ai: #7c3aed;
+      --analytics: #087f5b;
+      --production: #c05621;
+      --convergence: #b42365;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1320;
+        --surface: #151d2c;
+        --surface-soft: #1c2638;
+        --text: #edf2f8;
+        --muted: #a8b4c7;
+        --border: #2d3a4f;
+        --primary: #90a5ff;
+        --primary-soft: #25315f;
+        --learning: #ffd071;
+        --learning-soft: #4b3714;
+        --planned: #9aa8bc;
+        --shadow: 0 14px 42px rgba(0, 0, 0, 0.28);
+        --foundation: #8ca4ff;
+        --ai: #c4a7ff;
+        --analytics: #66d9ae;
+        --production: #ffb27a;
+        --convergence: #ff91bd;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--primary) 11%, transparent), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a { color: inherit; }
+    button { font: inherit; }
+
+    .page {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 32px clamp(16px, 4vw, 56px) 56px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .hero-link,
+    .folder-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 15px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .hero-link:hover,
+    .folder-link:hover { border-color: var(--primary); }
+
+    .summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 9px;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .progress {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--surface-soft);
+    }
+
+    .progress > span {
+      display: block;
+      width: 7.69%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f59e0b, #ffd166);
+    }
+
+    .status-counts {
+      display: flex;
+      gap: 18px;
+    }
+
+    .status-count {
+      min-width: 72px;
+      text-align: center;
+    }
+
+    .status-count strong {
+      display: block;
+      font-size: 1.35rem;
+    }
+
+    .status-count span {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin: 24px 0 18px;
+    }
+
+    .tab {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    [hidden] { display: none !important; }
+
+    .roadmap {
+      display: grid;
+      gap: 13px;
+    }
+
+    .lane {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .lane-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .lane-dot {
+      width: 10px;
+      height: 10px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: var(--lane-color);
+      box-shadow: 0 0 0 5px color-mix(in srgb, var(--lane-color) 14%, transparent);
+    }
+
+    .phase-track {
+      display: flex;
+      align-items: stretch;
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .phase-card {
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--lane-color);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .phase-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--lane-color);
+      box-shadow: var(--shadow);
+    }
+
+    .phase-card[aria-pressed="true"] {
+      outline: 3px solid color-mix(in srgb, var(--lane-color) 28%, transparent);
+      border-color: var(--lane-color);
+    }
+
+    .phase-card:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      right: -19px;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1.2rem;
+      pointer-events: none;
+    }
+
+    .phase-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .phase-number {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--lane-color) 14%, transparent);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--planned);
+      font-size: 0.72rem;
+    }
+
+    .status.learning {
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: var(--learning-soft);
+      color: var(--learning);
+      font-weight: 700;
+    }
+
+    .phase-card h2 {
+      margin: 0;
+      font-size: clamp(0.83rem, 1.25vw, 0.98rem);
+      line-height: 1.3;
+    }
+
+    .phase-card small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    .foundation { --lane-color: var(--foundation); }
+    .ai { --lane-color: var(--ai); }
+    .analytics { --lane-color: var(--analytics); }
+    .production { --lane-color: var(--production); }
+    .convergence { --lane-color: var(--convergence); }
+
+    .merge-note {
+      margin-left: 166px;
+      padding: 9px 12px;
+      border-left: 3px solid var(--border);
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .detail {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr);
+      gap: 24px;
+      margin-top: 22px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .detail-kicker {
+      margin: 0 0 5px;
+      color: var(--primary);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .detail h2 {
+      margin: 0 0 9px;
+      font-size: 1.35rem;
+    }
+
+    .detail p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .detail-meta {
+      display: grid;
+      gap: 14px;
+    }
+
+    .meta-label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      display: inline-flex;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-soft);
+      font-size: 0.75rem;
+    }
+
+    .folder-link {
+      width: fit-content;
+      min-height: 36px;
+      padding: 7px 11px;
+      box-shadow: none;
+      font-size: 0.8rem;
+    }
+
+    .tree-panel {
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .tree-panel h2 { margin: 0 0 6px; }
+    .tree-panel > p { margin: 0 0 20px; color: var(--muted); }
+
+    .tree {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 24px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tree li {
+      min-width: 0;
+      padding: 10px 12px;
+      border-left: 3px solid var(--border);
+      background: var(--surface-soft);
+    }
+
+    .tree a {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .tree span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .tree .active {
+      border-left-color: var(--learning);
+      background: var(--learning-soft);
+    }
+
+    .tree .nested {
+      margin: 8px 0 0;
+      padding-left: 14px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.73rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1050px) {
+      .lane { grid-template-columns: 120px minmax(0, 1fr); }
+      .phase-track { flex-wrap: wrap; gap: 12px; }
+      .phase-card { flex-basis: calc(33.333% - 8px); }
+      .phase-card::after { display: none; }
+      .merge-note { margin-left: 136px; }
+    }
+
+    @media (max-width: 720px) {
+      .page { padding-top: 22px; }
+      .hero { flex-direction: column; }
+      .summary { grid-template-columns: 1fr; }
+      .status-counts { justify-content: space-around; }
+      .lane { grid-template-columns: 1fr; gap: 8px; }
+      .lane-label { padding: 4px 2px; }
+      .phase-card { flex-basis: calc(50% - 6px); }
+      .merge-note { margin-left: 0; }
+      .detail { grid-template-columns: 1fr; }
+      .tree { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 430px) {
+      .phase-card { flex-basis: 100%; }
+      .tabs { width: 100%; }
+      .tab { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Instructor curriculum · 41 modules · 13 phases</p>
+        <h1>AI/ML Learning Roadmap</h1>
+        <p class="subtitle">A dependency-based path from Python foundations to production AI systems. Select a phase to see only its goal, modules, and prerequisite.</p>
+      </div>
+      <a class="hero-link" href="AI_ML_Series/README.md">Open learning folders →</a>
+    </header>
+
+    <section class="summary" aria-label="Current progress">
+      <div>
+        <div class="summary-label">
+          <span>Current focus: Phase 02 · NumPy and Pandas</span>
+          <span>1 of 13 phases active</span>
+        </div>
+        <div class="progress" aria-label="Roadmap progress: one phase learning"><span></span></div>
+      </div>
+      <div class="status-counts">
+        <div class="status-count"><strong>0</strong><span>Completed</span></div>
+        <div class="status-count"><strong>1</strong><span>Learning</span></div>
+        <div class="status-count"><strong>12</strong><span>Planned</span></div>
+      </div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="Roadmap views">
+      <button class="tab" id="roadmap-tab" role="tab" aria-selected="true" aria-controls="roadmap-panel">Visual roadmap</button>
+      <button class="tab" id="folders-tab" role="tab" aria-selected="false" aria-controls="folders-panel">Folder structure</button>
+    </div>
+
+    <section id="roadmap-panel" role="tabpanel" aria-labelledby="roadmap-tab">
+      <div class="roadmap">
+        <div class="lane foundation">
+          <div class="lane-label"><span class="lane-dot"></span>Foundation</div>
+          <div class="phase-track">
+            <button class="phase-card" data-phase="1" aria-pressed="false"><span class="phase-top"><span class="phase-number">01</span><span class="status">○ Planned</span></span><h2>Engineering + Python</h2><small>2 modules</small></button>
+            <button class="phase-card" data-phase="2" aria-pressed="true"><span class="phase-top"><span class="phase-number">02</span><span class="status learning">● Learning</span></span><h2>Data Toolkit + Apps</h2><small>3 modules</small></button>
+            <button class="phase-card" data-phase="3" aria-pressed="false"><span class="phase-top"><span class="phase-number">03</span><span class="status">○ Planned</span></span><h2>Math + Relational Data</h2><small>4 modules</small></button>
+          </div>
+        </div>
+
+        <div class="lane analytics">
+          <div class="lane-label"><span class="lane-dot"></span>Analytics lane</div>
+          <div class="phase-track">
+            <button class="phase-card" data-phase="4" aria-pressed="false"><span class="phase-top"><span class="phase-number">04</span><span class="status">○ Planned</span></span><h2>Analytics + BI</h2><small>4 modules · parallel tools</small></button>
+          </div>
+        </div>
+
+        <div class="lane ai">
+          <div class="lane-label"><span class="lane-dot"></span>Core AI lane</div>
+          <div class="phase-track">
+            <button class="phase-card" data-phase="5" aria-pressed="false"><span class="phase-top"><span class="phase-number">05</span><span class="status">○ Planned</span></span><h2>Classical ML</h2><small>2 modules</small></button>
+            <button class="phase-card" data-phase="6" aria-pressed="false"><span class="phase-top"><span class="phase-number">06</span><span class="status">○ Planned</span></span><h2>Neural AI</h2><small>4 modules</small></button>
+            <button class="phase-card" data-phase="7" aria-pressed="false"><span class="phase-top"><span class="phase-number">07</span><span class="status">○ Planned</span></span><h2>Transformers + Prompts</h2><small>2 modules</small></button>
+            <button class="phase-card" data-phase="8" aria-pressed="false"><span class="phase-top"><span class="phase-number">08</span><span class="status">○ Planned</span></span><h2>RAG + LLM Apps</h2><small>2 modules</small></button>
+            <button class="phase-card" data-phase="9" aria-pressed="false"><span class="phase-top"><span class="phase-number">09</span><span class="status">○ Planned</span></span><h2>Agents + Fine-Tuning</h2><small>3 modules</small></button>
+          </div>
+        </div>
+
+        <div class="lane production">
+          <div class="lane-label"><span class="lane-dot"></span>Production lane</div>
+          <div class="phase-track">
+            <button class="phase-card" data-phase="10" aria-pressed="false"><span class="phase-top"><span class="phase-number">10</span><span class="status">○ Planned</span></span><h2>Containers + MLOps</h2><small>2 modules</small></button>
+            <button class="phase-card" data-phase="11" aria-pressed="false"><span class="phase-top"><span class="phase-number">11</span><span class="status">○ Planned</span></span><h2>Data Platforms</h2><small>7 modules</small></button>
+            <button class="phase-card" data-phase="12" aria-pressed="false"><span class="phase-top"><span class="phase-number">12</span><span class="status">○ Planned</span></span><h2>Cloud + LLMOps</h2><small>4 modules</small></button>
+          </div>
+        </div>
+
+        <div class="merge-note">Phase 12 combines the agent, container, and data-platform lanes. Analytics and cloud work then meet in the final architecture phase.</div>
+
+        <div class="lane convergence">
+          <div class="lane-label"><span class="lane-dot"></span>Convergence</div>
+          <div class="phase-track">
+            <button class="phase-card" data-phase="13" aria-pressed="false"><span class="phase-top"><span class="phase-number">13</span><span class="status">○ Planned</span></span><h2>AI System Design + Career Proof</h2><small>2 modules</small></button>
+          </div>
+        </div>
+      </div>
+
+      <section class="detail" aria-live="polite">
+        <div>
+          <p class="detail-kicker" id="detail-phase">Phase 02 · Shared foundation</p>
+          <h2 id="detail-title">Python Data Toolkit and Rapid Apps</h2>
+          <p id="detail-goal">Turn arrays and files into clean analysis, charts, and a small interactive app.</p>
+        </div>
+        <div class="detail-meta">
+          <div><span class="meta-label">Modules</span><div class="chips" id="detail-modules"></div></div>
+          <div><span class="meta-label">Prerequisite</span><p id="detail-prerequisite"></p></div>
+          <a class="folder-link" id="detail-link" href="AI_ML_Series/02_data_toolkit_apps/README.md">Open phase folder →</a>
+        </div>
+      </section>
+    </section>
+
+    <section id="folders-panel" role="tabpanel" aria-labelledby="folders-tab" hidden>
+      <div class="tree-panel">
+        <h2>AI_ML_Series/</h2>
+        <p>The 13 phase folders now exist. Detailed topic folders are added only when lessons begin.</p>
+        <ul class="tree">
+          <li><a href="AI_ML_Series/01_engineering_python/README.md">01_engineering_python/</a><span>M01 Python · M24 Git/GitHub</span></li>
+          <li class="active"><a href="AI_ML_Series/02_data_toolkit_apps/README.md">02_data_toolkit_apps/</a><span>M02 Visualization · M03 NumPy/Pandas · M04 Streamlit</span><div class="nested">├── 01_numpy/<br>├── 02_pandas/<br>└── 03_matplotlib/</div></li>
+          <li><a href="AI_ML_Series/03_math_relational_data/README.md">03_math_relational_data/</a><span>M05 · M06 · M19 · M20</span></li>
+          <li><a href="AI_ML_Series/04_analytics_bi/README.md">04_analytics_bi/</a><span>M17 · M21 · M22 · M23</span></li>
+          <li><a href="AI_ML_Series/05_classical_ml_forecasting/README.md">05_classical_ml_forecasting/</a><span>M07 · M08</span></li>
+          <li><a href="AI_ML_Series/06_neural_ai_modalities/README.md">06_neural_ai_modalities/</a><span>M09 · M10 · M11 · M12</span></li>
+          <li><a href="AI_ML_Series/07_transformers_prompting/README.md">07_transformers_prompting/</a><span>M14 · M16</span></li>
+          <li><a href="AI_ML_Series/08_retrieval_llm_apps/README.md">08_retrieval_llm_apps/</a><span>M13 · M15</span></li>
+          <li><a href="AI_ML_Series/09_agents_finetuning_nocode/README.md">09_agents_finetuning_nocode/</a><span>M18 · M29 · M40</span></li>
+          <li><a href="AI_ML_Series/10_containers_mlops/README.md">10_containers_mlops/</a><span>M27 · M30</span></li>
+          <li><a href="AI_ML_Series/11_data_platforms/README.md">11_data_platforms/</a><span>M25 · M26 · M34–M38</span></li>
+          <li><a href="AI_ML_Series/12_cloud_llmops/README.md">12_cloud_llmops/</a><span>M28 · M31 · M32 · M33</span></li>
+          <li><a href="AI_ML_Series/13_ai_system_design_career/README.md">13_ai_system_design_career/</a><span>M39 · M41</span></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const phases = {
+      1: { lane: "Shared foundation", title: "Engineering and Python Foundation", goal: "Build the Python and version-control base for every later lab.", modules: ["M01 Python", "M24 Git and GitHub"], prerequisite: "None.", folder: "01_engineering_python" },
+      2: { lane: "Shared foundation", title: "Python Data Toolkit and Rapid Apps", goal: "Turn arrays and files into clean analysis, charts, and a small interactive app.", modules: ["M03 NumPy and Pandas", "M02 Data Visualization", "M04 Streamlit"], prerequisite: "Phase 01 Python. Git may run in parallel but must be checked before completion.", folder: "02_data_toolkit_apps" },
+      3: { lane: "Shared fork", title: "Math and Relational Data", goal: "Learn the math language of models and the relational-data language of production systems.", modules: ["M05 Statistics and Probability", "M06 Linear Algebra", "M19 MySQL", "M20 PostgreSQL"], prerequisite: "Phase 02 data manipulation; add the basic SQL readiness bridge before database-specific work.", folder: "03_math_relational_data" },
+      4: { lane: "Analytics lane", title: "Analytics and Business Intelligence", goal: "Turn structured data into calculations, dashboards, and shareable reports.", modules: ["M17 Excel", "M21 Power BI", "M22 Tableau", "M23 Looker Studio"], prerequisite: "Phase 03 relational concepts. BI tools can run in parallel.", folder: "04_analytics_bi" },
+      5: { lane: "Core AI lane", title: "Classical ML and Forecasting", goal: "Build, evaluate, save, and serve classical ML and time-series models.", modules: ["M07 Machine Learning", "M08 Time Series"], prerequisite: "Phases 02 and 03: Pandas, statistics, linear algebra, and clean train/test separation.", folder: "05_classical_ml_forecasting" },
+      6: { lane: "Core AI lane", title: "Neural Networks and AI Modalities", goal: "Apply neural-network learning to text, images, sequences, and RL environments.", modules: ["M10 Deep Learning", "M11 NLP", "M12 Computer Vision", "M09 Reinforcement Learning"], prerequisite: "Phase 05 plus derivative/gradient intuition. Learn deep-learning basics before DQN.", folder: "06_neural_ai_modalities" },
+      7: { lane: "Core AI lane", title: "Transformers and Prompting", goal: "Understand transformer data flow and control LLM behavior with testable prompts.", modules: ["M14 Transformers", "M16 Prompt Engineering"], prerequisite: "Phase 06 deep-learning and NLP foundations.", folder: "07_transformers_prompting" },
+      8: { lane: "Core AI lane", title: "Retrieval and LLM Applications", goal: "Ground LLMs in documents through embeddings, vector search, retrieval, and orchestration.", modules: ["M15 VectorDB", "M13 LangChain"], prerequisite: "Phase 07 plus vector and cosine-similarity foundations from Phase 03.", folder: "08_retrieval_llm_apps" },
+      9: { lane: "Core AI lane", title: "Agents, Fine-Tuning, and No-Code AI", goal: "Build action-taking systems, adapt model behavior, and create visual AI workflows.", modules: ["M18 Agentic AI", "M29 Fine-Tuning LLMs", "M40 No-Code AI Tools"], prerequisite: "Phase 08 for agents; Phases 06–07 for fine-tuning.", folder: "09_agents_finetuning_nocode" },
+      10: { lane: "Production lane", title: "Containers and MLOps", goal: "Make ML applications reproducible, deployable, versioned, and observable.", modules: ["M30 Docker", "M27 MLOps"], prerequisite: "Phase 01 Git and an evaluated model from Phase 05. Learn Docker first.", folder: "10_containers_mlops" },
+      11: { lane: "Data-platform lane", title: "Data Platforms", goal: "Build batch and streaming data paths for analytics and AI at scale.", modules: ["M25 MongoDB", "M26 Cassandra", "M35 Snowflake", "M38 dbt", "M36 Airflow", "M37 Kafka", "M34 Spark/Databricks"], prerequisite: "Phase 03 SQL plus Phase 10 Docker.", folder: "11_data_platforms" },
+      12: { lane: "Cloud convergence", title: "Cloud and LLMOps", goal: "Deploy and operate AI/LLM workloads with monitoring, evaluation, and cost control.", modules: ["M31 Azure", "M32 AWS", "M33 GCP", "M28 LLMOps"], prerequisite: "Phases 09, 10, and 11. The three cloud surveys can run in parallel.", folder: "12_cloud_llmops" },
+      13: { lane: "Convergence", title: "AI System Design and Career Proof", goal: "Turn completed work into defensible architecture decisions and credible portfolio evidence.", modules: ["M39 AI System Design", "M41 Job Ready Focus"], prerequisite: "Core AI plus relevant analytics, platform, and cloud work.", folder: "13_ai_system_design_career" }
+    };
+
+    const phaseButtons = [...document.querySelectorAll(".phase-card")];
+    const detailPhase = document.getElementById("detail-phase");
+    const detailTitle = document.getElementById("detail-title");
+    const detailGoal = document.getElementById("detail-goal");
+    const detailModules = document.getElementById("detail-modules");
+    const detailPrerequisite = document.getElementById("detail-prerequisite");
+    const detailLink = document.getElementById("detail-link");
+
+    function selectPhase(number) {
+      const phase = phases[number];
+      phaseButtons.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.phase === String(number))));
+      detailPhase.textContent = `Phase ${String(number).padStart(2, "0")} · ${phase.lane}`;
+      detailTitle.textContent = phase.title;
+      detailGoal.textContent = phase.goal;
+      detailModules.replaceChildren(...phase.modules.map(module => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = module;
+        return chip;
+      }));
+      detailPrerequisite.textContent = phase.prerequisite;
+      detailLink.href = `AI_ML_Series/${phase.folder}/README.md`;
+    }
+
+    phaseButtons.forEach(button => button.addEventListener("click", () => selectPhase(Number(button.dataset.phase))));
+
+    const tabs = [...document.querySelectorAll(".tab")];
+    const panels = {
+      "roadmap-tab": document.getElementById("roadmap-panel"),
+      "folders-tab": document.getElementById("folders-panel")
+    };
+
+    tabs.forEach(tab => tab.addEventListener("click", () => {
+      tabs.forEach(item => {
+        const selected = item === tab;
+        item.setAttribute("aria-selected", String(selected));
+        panels[item.id].hidden = !selected;
+      });
+    }));
+
+    selectPhase(2);
+  </script>
+</body>
+</html>
