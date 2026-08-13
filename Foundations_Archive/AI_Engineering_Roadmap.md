@@ -207,6 +207,22 @@ later AI concepts make sense.
 | Accuracy, precision, recall, F1, confusion matrix | ⬜ |
 | Model tuning basics | ⬜ |
 
+**Closing the ⬜ block above — the `AI_ML_Series/` track (started
+2026-08-12):** a second external course, Python → libraries → ML. Its
+algorithms half is run in **blind-write mode**: each algorithm is
+implemented in NumPy from scratch and asserted against scikit-learn's
+output *before* the instructor's shared code is opened. That assert is the
+pass/fail test that replaces "I think I understood it." Every algorithm
+gets the same eight-slot Algorithm Card, and every classifier is
+benchmarked on one fixed dataset so they stay comparable.
+
+This track is the designated route through Regression, Classification,
+Clustering, train/test/validation, overfitting, metrics, and model tuning —
+the seven ⬜ rows above. Its libraries half (NumPy/Pandas/Matplotlib/
+Seaborn) closes nothing here; Phase 1 is already ✅ and that half is
+scoped as cheap revision on purpose. See
+[`AI_ML_Series/00_course_map.md`](./AI_ML_Series/00_course_map.md).
+
 **Running alongside — a separate hands-on course track (`ML/`):** informal
 notes and code from an external course (WsCubeTech), started 2026-07-28.
 This track has its own pipeline (`ML/02_ML_Roadmap.MD`) and in places is

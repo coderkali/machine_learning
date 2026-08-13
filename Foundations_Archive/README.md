@@ -75,6 +75,12 @@ hand whenever the roadmap file changes.
   - `31_Mean_Absolute_Error.MD` — MAE deep dive: worked quiz-marks example, MAE vs. MSE curve shapes, four real drawbacks (sharp corner, equal-weighting, slower training, median- vs. mean-seeking)
   - `32_Root_Mean_Squared_Error.MD` — RMSE deep dive: √MSE unpacked, why the square root matters (readable units), when to prefer it over MSE/MAE (real outlier-growth comparison: MAE 1.47× vs. RMSE 4.04× vs. MSE 16.32×)
 
+- **`AI_ML_Series/`** — Second external course (started 2026-08-12), Python → libraries → ML. Deliberately runs at two speeds — see [`AI_ML_Series/00_course_map.md`](./AI_ML_Series/00_course_map.md)
+  - `01_numpy/`, `02_pandas/`, … — **Track A**, copy-freely revision of already-complete Phase 1 material; kept fast on purpose
+  - `algorithms/` — **Track B**, blind-write. Each algorithm is implemented in NumPy from scratch and asserted against scikit-learn *before* the instructor's code is opened. Same eight-slot "Algorithm Card" every time
+  - `algorithms/00_comparison_table.md` — self-generated master comparison across every algorithm, all benchmarked on `ML/diabetes.csv`
+  - `_instructor/` folders are gitignored — the course author's material isn't mine to republish, and the friction keeps the blind-write rule honest
+
 - **`Pandas/`, `NumPy/`, `Matplotlib/`, `seaborn/`** — Python foundations practice
 - **`irisData_Exploration/`** — Early data exploration practice
 - **`AI_Engineering_Roadmap.md`** — Full roadmap: phases, topics, status, depth rules

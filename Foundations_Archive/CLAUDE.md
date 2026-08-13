@@ -34,6 +34,10 @@ theory for phases before GenAI.
 - `ML/` — running notes for an external course (WsCubeTech ML series),
   numbered 01–23+, plus a capstone `project/` pipeline. Feeds vocabulary and
   code into Phase 3 but is tracked separately.
+- `AI_ML_Series/` — **second external course**, started 2026-08-12,
+  running Python → libraries → ML. Runs at two deliberate speeds: `NN_<lib>/`
+  folders are copy-freely revision, `algorithms/` is strict blind-write.
+  See `AI_ML_Series/00_course_map.md`.
 - `Pandas/`, `NumPy/`, `Matplotlib/`, `seaborn/`, `irisData_Exploration/` —
   early Python/data-science foundations practice (mostly closed out).
 - `AI_Engineering_Roadmap.md`, `roadmap-visual.html` — roadmap source of
@@ -42,10 +46,16 @@ theory for phases before GenAI.
 Full per-file breakdown is kept current in [`README.md`](./README.md) — check
 there before re-deriving folder contents from scratch.
 
-## The two note-taking tracks — do not mix these up
+## The three note-taking tracks — do not mix these up
 
 This is the single most important thing to get right in this repo. See the
-`00_strategy.md` file and README for details.
+`00_strategy.md` / `00_course_map.md` files and README for details.
+
+| Track | Mode | Defining contract |
+|---|---|---|
+| `phase_3_classical_ml/` | Socratic, self-designed | Verification question **before** notes are written |
+| `ML/` | Direct-author, external course | Notes written directly, no question gate |
+| `AI_ML_Series/` | Blind-write, external course | Instructor's code not opened until the user's own version runs |
 
 ### 1. `phase_3_classical_ml/` — Socratic, self-designed curriculum
 
@@ -105,6 +115,29 @@ This is the single most important thing to get right in this repo. See the
   been produced since topic 08 — don't assume it's still standard; ask or
   follow the most recent explicit instruction.
 
+### 3. `AI_ML_Series/` — blind-write notes for a second external course
+
+- Started 2026-08-12. Full contract in `AI_ML_Series/00_course_map.md`;
+  operational steps in `SKILLS.md`.
+- **Two speeds, by design.** `NN_<library>/` folders (NumPy, Pandas,
+  Matplotlib, Seaborn) are Track A — copying the instructor's code is fine
+  and expected, keep it fast, it's revision of an already-✅ Phase 1.
+  `algorithms/` is Track B — copying is banned.
+- **Track B's hard rule:** the instructor's shared code is not opened until
+  the user's own NumPy-only implementation runs *and* matches
+  scikit-learn's output (`np.allclose(..., atol=1e-4)`). That assert is the
+  exam — if it fails, help debug the misunderstanding, never loosen the
+  tolerance. Instructor code then goes in a gitignored `_instructor/`
+  folder and is diffed as a code review, not an answer key.
+- Every Track B topic uses the same **eight-slot Algorithm Card** (job /
+  what `.fit()` stores / prediction rule / objective / from scratch /
+  parity check / knobs & breaking points / verdict row). Slot 2 carries the
+  most weight — push for a concrete answer, never a vague "the model".
+- Simple-English register and small-cell notebook style carry over from
+  `ML/`. Card slots are markdown cells inside the `.ipynb`.
+- This track is what closes Phase 3's remaining ⬜ algorithm items on the
+  roadmap; Track A closes nothing.
+
 ## Environment
 
 - Python 3.14 (Homebrew). Two virtualenvs exist at the repo root:
@@ -146,9 +179,11 @@ is next up there. In parallel, the `ML/` course track has completed
 conceptual primer (01–04, one sub-item "Use of Machine Learning Technology"
 still open), hands-on feature engineering (05–19), and feature selection
 (20–22); still open: ML algorithms, hyperparameter tuning, deployment,
-Docker/Kubernetes. Check `AI_Engineering_Roadmap.md` and
-`phase_3_classical_ml/00_strategy.md` for the authoritative up-to-date
-status rather than trusting this snapshot as phases progress.
+Docker/Kubernetes. A third track, `AI_ML_Series/`, started 2026-08-12 to
+attack the ML-algorithms gap specifically, via blind-write implementation.
+Check `AI_Engineering_Roadmap.md`, `phase_3_classical_ml/00_strategy.md`
+and `AI_ML_Series/00_course_map.md` for the authoritative up-to-date status
+rather than trusting this snapshot as phases progress.
 
 ## Working preferences
 
@@ -160,4 +195,8 @@ status rather than trusting this snapshot as phases progress.
   question — it's a teaching contract, not an optional nicety.
 - In `ML/`, don't gate notes behind a question — write directly, richly,
   and in simple English.
-- Don't mix the two tracks' conventions into each other.
+- In `AI_ML_Series/algorithms/`, don't hand over a working implementation
+  before the user has attempted their own — that track's entire value is
+  the blind attempt plus the sklearn parity assert. Helping *debug* a
+  failing attempt is the job; supplying the answer isn't.
+- Don't mix the three tracks' conventions into each other.

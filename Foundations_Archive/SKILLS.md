@@ -60,6 +60,100 @@ WsCubeTech course.
 8. Commit with the established message style: `Add notes:: ML : <Topic
    Name>` (see git log for more examples).
 
+## Adding a new `AI_ML_Series/` note (blind-write mode)
+
+Third track, started 2026-08-12. External video course running Python →
+libraries → ML, where the instructor codes live and shares the source at
+the end of each session. Full contract in
+[`AI_ML_Series/00_course_map.md`](./AI_ML_Series/00_course_map.md) — read
+it before writing here; the summary below is the operational version.
+
+**What makes this track different from `ML/`:** the instructor's code is
+quarantined. That's the whole identity of the track — don't collapse it
+into the `ML/` workflow just because both are course-notes tracks.
+
+### First, decide which speed the topic runs at
+
+- **Track A — Python / NumPy / Pandas / Matplotlib / Seaborn.** Copying is
+  fine and expected. Copy, run, one markdown line per cell. Keep it cheap —
+  Phase 1 is already ✅ on the roadmap, this is revision. Files go in
+  `AI_ML_Series/NN_<library>/`. No algorithm card. If it's taking more than
+  one sitting, it's over-invested.
+- **Track B — any ML algorithm, plus train/test methodology, metrics, and
+  tuning.** Copying is banned. Follow the full protocol below. Files go in
+  `AI_ML_Series/algorithms/NN_<algorithm_name>/`.
+
+### Track B protocol — do not shortcut this
+
+1. User watches the explanation, then closes the video. **The shared code
+   is not downloaded yet.**
+2. Blank notebook. Implement the algorithm in **NumPy only**, no
+   scikit-learn — from the math, not from memory of the instructor's lines.
+3. Run scikit-learn's equivalent on the same data.
+4. **Assert the two match:** `np.allclose(my_coefs, model.coef_, atol=1e-4)`.
+   For algorithms with no coefficients (trees, KNN, K-Means), assert on
+   predictions instead; for K-Means compare assignments up to label
+   permutation with `random_state` fixed on both sides.
+5. **Only then** is the instructor's code opened, dropped into a
+   `_instructor/` subfolder, and diffed against the user's version as a
+   code review — not as an answer key.
+
+Step 4 is the point of the whole track: it turns "I think I understood"
+into a pass/fail test. **If the assert fails, help debug the
+misunderstanding — never loosen the tolerance to make it pass.**
+
+`_instructor/` is gitignored at the repo root. Two reasons: the repo is
+public and the course material isn't the user's to republish, and the
+friction is deliberate. Don't suggest committing it.
+
+### The Algorithm Card — eight fixed slots
+
+Every Track B topic uses the identical structure, in order. The
+consistency is the mechanism — it's what makes algorithms comparable
+instead of each one being learned in its own ad-hoc shape.
+
+1. **The job** — one sentence + a backend/Java analogy
+2. **What `.fit()` actually stores** — the literal in-memory artifact
+3. **The prediction rule** — one row → one output, walked by hand
+4. **The objective** — the loss, and how it's minimised
+5. **From scratch (NumPy)** — the blind implementation
+6. **sklearn parity check** — the assert from step 4
+7. **Knobs & breaking points** — hyperparameters, scaling sensitivity,
+   assumptions, failure modes, how it overfits
+8. **Verdict row** — appended to `algorithms/00_comparison_table.md`
+
+**Slot 2 carries the most weight** — push for concreteness there ("768
+rows of training data", "six floats", "a nested if/else ~8 levels deep"),
+never a vague "the model". A good forcing question: *could you reimplement
+`predict()` in Java from what's stored, without the library?*
+
+Template to copy:
+[`AI_ML_Series/algorithms/_TEMPLATE_algorithm_card.md`](./AI_ML_Series/algorithms/_TEMPLATE_algorithm_card.md)
+
+### Mechanics
+
+- Card slots live as markdown cells interleaved with code cells **inside
+  the `.ipynb`** — same default as `ML/`. No separate `.MD` per algorithm
+  unless the topic is purely conceptual.
+- Small cells, as in the `ML/` track: every intermediate sub-expression
+  that a slot refers to gets its own executed cell with visible output.
+- Simple-English register applies here too, same as `ML/`.
+- **Benchmark dataset:** every classifier also gets run on
+  [`ML/diabetes.csv`](./ML/diabetes.csv) with
+  `train_test_split(test_size=0.2, random_state=42, stratify=y)`, so rows
+  in the comparison table stay comparable. This is *in addition to* the
+  instructor's dataset, not instead of it.
+- Execute the notebook with the `pizza_env` kernel, zero errors (see top of
+  this file).
+- When a card completes, update **both** the status table in
+  `AI_ML_Series/00_course_map.md` §7 and the Phase 3 table in
+  `AI_Engineering_Roadmap.md` §7 — Track B is what closes that phase's
+  remaining ⬜ algorithm items. Track A closes nothing; Phase 1 is done.
+- Remind the user about the **48-hour blank-cell reimplementation** when a
+  card finishes.
+
+---
+
 ## Adding a new `phase_3_classical_ml/` topic (Socratic mode)
 
 Used for the self-designed curriculum topics (see `00_strategy.md` for the
