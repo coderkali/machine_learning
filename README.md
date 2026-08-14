@@ -14,12 +14,14 @@ roadmap, focused notes, runnable code, and projects.
 ## Current progress
 
 ```text
-Phase 02 — Python Data Toolkit and Rapid Apps   🟡 Learning
-All other phases                                ⬜ Not Started
+Phase 01 — Engineering and Python Foundation     🟡 Learning
+Phase 02 — Python Data Toolkit and Rapid Apps    🟡 Learning
+All other phases                                 ⬜ Not Started
 ```
 
 Current work:
 
+- [Python Session 01 — Variables, Data Types, Numbers, and Strings](./AI_ML_Series/01_engineering_python/01_python/session_01_variables_data_types_numbers_strings/README.md)
 - [NumPy fundamentals](./AI_ML_Series/02_data_toolkit_apps/01_numpy/example_01.ipynb)
 - [NumPy API-health exercise](./AI_ML_Series/02_data_toolkit_apps/01_numpy/project_01_api_health.ipynb)
 - [Pandas fundamentals](./AI_ML_Series/02_data_toolkit_apps/02_pandas/example_01.ipynb)

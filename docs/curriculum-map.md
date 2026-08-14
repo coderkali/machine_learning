@@ -25,7 +25,7 @@ System Design first. Therefore `M39` is System Design and `M40` is No-Code AI.
 - 🟢 **Completed** — the module work and checkpoint are finished.
 - 🔁 **Review Needed** — completed work needs fresh practice.
 
-Only `M03` is currently learning. Every other module remains not started.
+`M01` and `M03` are currently learning. Every other module remains not started.
 Entries marked **Prior only** are links to `Foundations_Archive/`; they do not
 change bootcamp status.
 
@@ -33,7 +33,7 @@ change bootcamp status.
 
 | ID | Instructor module | PDF pages | Dependency phase | Main PDF coverage | Bootcamp status | Repository evidence or planned path |
 |---|---|---:|---|---|---|---|
-| M01 | Python | 3-5 | 01 — Engineering and Python foundation | Syntax, collections, control flow, functions, arrays, OOP, files, exceptions, packages, environments | ⬜ Not Started | No current-course M01 evidence yet |
+| M01 | Python | 3-5 | 01 — Engineering and Python foundation | Syntax, collections, control flow, functions, arrays, OOP, files, exceptions, packages, environments | 🟡 Learning | Current: [Session 01 notebook and cell-by-cell guide](../AI_ML_Series/01_engineering_python/01_python/session_01_variables_data_types_numbers_strings/README.md), covering variables, data types, numbers, strings, input, conversion, and formatted output. This is partial M01 evidence, not module completion. |
 | M02 | Data Visualization with Python | 5-6 | 02 — Python data toolkit, visualization, and rapid apps | Matplotlib, Seaborn, Plotly, static and interactive charts | ⬜ Not Started | Planned landing page: [`03_matplotlib/`](../AI_ML_Series/02_data_toolkit_apps/03_matplotlib/README.md). It is not lesson evidence. Prior only: [Matplotlib](../Foundations_Archive/Matplotlib/example_01.py), [pizza plotting](../Foundations_Archive/irisData_Exploration/matplotlib/pizza_matplotlib_2.ipynb), and [Seaborn](../Foundations_Archive/irisData_Exploration/seaborn/pizza_seaborn.ipynb) |
 | M03 | Python for Data Science (NumPy & Pandas) | 6-8 | 02 — Python data toolkit, visualization, and rapid apps | NumPy arrays, operations and linear algebra; Pandas I/O, cleaning, selection, transformation, grouping, joins, pivots, dates, and strings | 🟡 Learning | Current: [NumPy example](../AI_ML_Series/02_data_toolkit_apps/01_numpy/example_01.ipynb), [partial API-health project](../AI_ML_Series/02_data_toolkit_apps/01_numpy/project_01_api_health.ipynb), and [Pandas example](../AI_ML_Series/02_data_toolkit_apps/02_pandas/example_01.ipynb). The project has only Parts 1-2 of 12. Prior only: [NumPy](../Foundations_Archive/NumPy/example_02.py), [Pandas](../Foundations_Archive/Pandas/example_01.py), [pizza NumPy](../Foundations_Archive/irisData_Exploration/numpy/pizza_numpy.ipynb), and [pizza Pandas](../Foundations_Archive/irisData_Exploration/panda/pizza_panda.ipynb) |
 | M04 | Streamlit | 8-9 | 02 — Python data toolkit, visualization, and rapid apps | UI elements, charts, inputs, media, chat, containers, state, multipage apps, GitHub deployment, secrets | ⬜ Not Started | No current-course M04 evidence yet |

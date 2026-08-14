@@ -9,6 +9,8 @@ Open the visual roadmap: **[`ROADMAP.html`](../ROADMAP.html)**
 ```text
 AI_ML_Series/
 ├── 01_engineering_python/
+│   └── 01_python/
+│       └── session_01_variables_data_types_numbers_strings/  # current work
 ├── 02_data_toolkit_apps/
 │   ├── 01_numpy/          # current work
 │   ├── 02_pandas/         # current work
