@@ -25,6 +25,7 @@ Current work:
 - [NumPy fundamentals](./AI_ML_Series/02_data_toolkit_apps/01_numpy/example_01.ipynb)
 - [NumPy API-health exercise](./AI_ML_Series/02_data_toolkit_apps/01_numpy/project_01_api_health.ipynb)
 - [Pandas fundamentals](./AI_ML_Series/02_data_toolkit_apps/02_pandas/example_01.ipynb)
+- [Matplotlib — current data-visualization lesson](./AI_ML_Series/02_data_toolkit_apps/03_matplotlib/README.md)
 
 ## Main structure
 

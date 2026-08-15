@@ -15,7 +15,7 @@
       --border: #d8e0ec;
       --primary: #3157d5;
       --primary-soft: #e7ecff;
-      --learning: #a96800;
+      --learning: #9a5a00;
       --learning-soft: #fff3d6;
       --planned: #718096;
       --shadow: 0 14px 40px rgba(25, 42, 74, 0.09);
@@ -141,6 +141,27 @@
       color: var(--muted);
     }
 
+    .current-lesson {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      width: fit-content;
+      margin: 0 0 11px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--learning-soft);
+      color: var(--learning);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .current-lesson a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .current-lesson a:hover { text-decoration: underline; }
+
     .progress {
       height: 10px;
       overflow: hidden;
@@ -240,6 +261,8 @@
       min-width: 0;
     }
 
+    .phase-track:has(> .phase-card[open]) { grid-template-columns: 1fr; }
+
     .phase-card {
       position: relative;
       min-width: 0;
@@ -323,6 +346,14 @@
       margin: 0;
       font-size: clamp(0.83rem, 1.25vw, 0.98rem);
       line-height: 1.3;
+    }
+
+    .phase-focus {
+      display: block;
+      margin-top: 6px;
+      color: var(--learning);
+      font-size: 0.74rem;
+      font-weight: 700;
     }
 
     .phase-action {
@@ -434,6 +465,103 @@
       font-size: 0.72rem;
     }
 
+    .topic-list li.current-topic {
+      border-left-color: var(--learning);
+      background: var(--learning-soft);
+    }
+
+    .topic-link {
+      display: block;
+      text-decoration: none;
+    }
+
+    .topic-link:hover strong { text-decoration: underline; }
+
+    .learning-path {
+      grid-column: 1 / -1;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .path-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .path-step {
+      position: relative;
+      min-width: 0;
+      padding: 0 9px;
+      text-align: center;
+    }
+
+    .path-step::after {
+      position: absolute;
+      z-index: 0;
+      top: 15px;
+      left: calc(50% + 18px);
+      width: calc(100% - 36px);
+      height: 2px;
+      background: var(--border);
+      content: "";
+    }
+
+    .path-step:last-child::after { display: none; }
+
+    .path-marker {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 8px;
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .path-step.in-progress .path-marker {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--text);
+    }
+
+    .path-step.current .path-marker {
+      border-color: var(--learning);
+      background: var(--learning-soft);
+      color: var(--learning);
+    }
+
+    .path-step strong {
+      display: block;
+      color: var(--text);
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+
+    .path-step small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      line-height: 1.35;
+    }
+
+    .path-step.current small {
+      color: var(--learning);
+      font-weight: 700;
+    }
+
+    .path-step a { text-decoration: none; }
+    .path-step a:hover strong { text-decoration: underline; }
+
     .folder-link {
       width: fit-content;
       min-height: 36px;
@@ -502,6 +630,7 @@
       .lane { grid-template-columns: 120px minmax(0, 1fr); }
       .phase-details { grid-template-columns: 1fr 1.4fr; }
       .phase-details .phase-section:last-child { grid-column: 1 / -1; }
+      .phase-details .prerequisite { grid-column: 1 / -1; }
       .merge-note { margin-left: 136px; }
     }
 
@@ -509,12 +638,24 @@
       .page { padding-top: 22px; }
       .hero { flex-direction: column; }
       .summary { grid-template-columns: 1fr; }
+      .summary-label { flex-direction: column; gap: 3px; }
       .status-counts { justify-content: space-around; }
       .lane { grid-template-columns: 1fr; gap: 8px; }
       .lane-label { padding: 4px 2px; }
       .merge-note { margin-left: 0; }
       .phase-details { grid-template-columns: 1fr; }
       .phase-details .phase-section:last-child { grid-column: auto; }
+      .phase-details .prerequisite { grid-column: auto; }
+      .learning-path { grid-column: auto; }
+      .path-list { grid-template-columns: 1fr; gap: 12px; }
+      .path-step { min-height: 44px; padding: 0 0 0 46px; text-align: left; }
+      .path-step::after {
+        top: 34px;
+        left: 15px;
+        width: 2px;
+        height: calc(100% + 12px);
+      }
+      .path-marker { position: absolute; top: 0; left: 0; margin: 0; }
       .tree { grid-template-columns: 1fr; }
     }
 
@@ -542,6 +683,7 @@
           <span>Active: Phase 01 Python · Phase 02 Data Toolkit</span>
           <span>2 of 13 phases active</span>
         </div>
+        <div class="current-lesson"><span aria-hidden="true">●</span><a href="AI_ML_Series/02_data_toolkit_apps/03_matplotlib/README.md">Current lesson · Matplotlib →</a></div>
         <div class="progress" aria-label="Roadmap progress: two phases learning"><span></span></div>
       </div>
       <div class="status-counts">
@@ -561,7 +703,7 @@
         <div class="lane foundation">
           <div class="lane-label"><span class="lane-dot"></span>Foundation</div>
           <div class="phase-track">
-            <details class="phase-card" open>
+            <details class="phase-card">
               <summary class="phase-summary">
                 <span class="phase-top"><span class="phase-number">01</span><span class="status learning">● Learning</span></span>
                 <h2>Engineering + Python</h2>
@@ -574,16 +716,18 @@
               </div>
             </details>
 
-            <details class="phase-card">
+            <details class="phase-card" open>
               <summary class="phase-summary">
                 <span class="phase-top"><span class="phase-number">02</span><span class="status learning">● Learning</span></span>
                 <h2>Data Toolkit + Apps</h2>
-                <span class="phase-action"><span>3 topics</span><span class="phase-toggle"><span class="when-closed">Expand</span><span class="when-open">Collapse</span><span class="chevron" aria-hidden="true">⌄</span></span></span>
+                <span class="phase-focus">Current focus · Matplotlib</span>
+                <span class="phase-action"><span>3 instructor modules</span><span class="phase-toggle"><span class="when-closed">Expand</span><span class="when-open">Collapse</span><span class="chevron" aria-hidden="true">⌄</span></span></span>
               </summary>
               <div class="phase-details">
                 <div class="phase-section"><span class="meta-label">Goal</span><p>Turn arrays and files into clean analysis, charts, and a small interactive app.</p></div>
-                <div class="phase-section"><span class="meta-label">Topics covered</span><ul class="topic-list"><li><strong>M03 · NumPy and Pandas</strong><span>Arrays, operations, linear algebra, I/O, cleaning, selection, transformation, grouping, joins, pivots, dates, and strings.</span></li><li><strong>M02 · Data Visualization</strong><span>Matplotlib, Seaborn, Plotly, and static and interactive charts.</span></li><li><strong>M04 · Streamlit</strong><span>UI elements, charts, inputs, media, chat, containers, state, multipage apps, deployment, and secrets.</span></li></ul></div>
-                <div class="phase-section"><span class="meta-label">Prerequisite</span><p>Phase 01 Python. Git may run in parallel.</p><a class="folder-link" href="AI_ML_Series/02_data_toolkit_apps/README.md">Open phase folder →</a></div>
+                <div class="phase-section"><span class="meta-label">Topics covered</span><ul class="topic-list"><li><strong>M03 · NumPy and Pandas</strong><span>Arrays, operations, linear algebra, I/O, cleaning, selection, transformation, grouping, joins, pivots, dates, and strings.</span></li><li class="current-topic"><a class="topic-link" href="AI_ML_Series/02_data_toolkit_apps/03_matplotlib/README.md"><strong>M02 · Data Visualization — Matplotlib now</strong><span>Matplotlib is the current lesson; Seaborn and Plotly follow later.</span></a></li><li><strong>M04 · Streamlit</strong><span>UI elements, charts, inputs, media, chat, containers, state, multipage apps, deployment, and secrets.</span></li></ul></div>
+                <div class="phase-section prerequisite"><span class="meta-label">Prerequisite</span><p>Phase 01 Python. Git may run in parallel.</p><a class="folder-link" href="AI_ML_Series/02_data_toolkit_apps/README.md">Open phase folder →</a></div>
+                <div class="learning-path"><span class="meta-label">Phase 02 learning flow</span><ol class="path-list" aria-label="Phase 02 topic progression"><li class="path-step in-progress"><span class="path-marker" aria-hidden="true">1</span><strong>NumPy + Pandas</strong><small>In progress · M03</small></li><li class="path-step current"><a href="AI_ML_Series/02_data_toolkit_apps/03_matplotlib/README.md" aria-current="step"><span class="path-marker" aria-hidden="true">2</span><strong>Matplotlib</strong><small>Current lesson · M02</small></a></li><li class="path-step"><span class="path-marker" aria-hidden="true">3</span><strong>Seaborn</strong><small>Not started · M02</small></li><li class="path-step"><span class="path-marker" aria-hidden="true">4</span><strong>Plotly</strong><small>Not started · M02</small></li><li class="path-step"><span class="path-marker" aria-hidden="true">5</span><strong>Streamlit</strong><small>Not started · M04</small></li></ol></div>
               </div>
             </details>
 
@@ -762,7 +906,7 @@
         <p>The 13 phase folders now exist. Detailed topic folders are added only when lessons begin.</p>
         <ul class="tree">
           <li class="active"><a href="AI_ML_Series/01_engineering_python/README.md">01_engineering_python/</a><span>M01 Python · M24 Git/GitHub</span><div class="nested">└── 01_python/<br>&nbsp;&nbsp;&nbsp;└── session_01_variables_data_types_numbers_strings/</div></li>
-          <li class="active"><a href="AI_ML_Series/02_data_toolkit_apps/README.md">02_data_toolkit_apps/</a><span>M02 Visualization · M03 NumPy/Pandas · M04 Streamlit</span><div class="nested">├── 01_numpy/<br>├── 02_pandas/<br>└── 03_matplotlib/</div></li>
+          <li class="active"><a href="AI_ML_Series/02_data_toolkit_apps/README.md">02_data_toolkit_apps/</a><span>M02 Visualization (Matplotlib learning) · M03 NumPy/Pandas · M04 Streamlit</span><div class="nested">├── 01_numpy/<br>├── 02_pandas/<br>└── 03_matplotlib/ ← current lesson</div></li>
           <li><a href="AI_ML_Series/03_math_relational_data/README.md">03_math_relational_data/</a><span>M05 · M06 · M19 · M20</span></li>
           <li><a href="AI_ML_Series/04_analytics_bi/README.md">04_analytics_bi/</a><span>M17 · M21 · M22 · M23</span></li>
           <li><a href="AI_ML_Series/05_classical_ml_forecasting/README.md">05_classical_ml_forecasting/</a><span>M07 · M08</span></li>

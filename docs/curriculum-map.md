@@ -25,7 +25,7 @@ System Design first. Therefore `M39` is System Design and `M40` is No-Code AI.
 - 🟢 **Completed** — the module work and checkpoint are finished.
 - 🔁 **Review Needed** — completed work needs fresh practice.
 
-`M01` and `M03` are currently learning. Every other module remains not started.
+`M01`, `M02`, and `M03` are currently learning. Every other module remains not started.
 Entries marked **Prior only** are links to `Foundations_Archive/`; they do not
 change bootcamp status.
 
