@@ -5,7 +5,7 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 | Phase | Learning area | Instructor modules | Status |
 |---:|---|---|---|
 | 01 | Engineering and Python | Python; Git and GitHub | 🟡 Learning |
-| 02 | Data Toolkit and Apps | NumPy/Pandas; **Matplotlib (current)**; Seaborn/Plotly; Streamlit | 🟡 Learning |
+| 02 | Data Toolkit and Apps | NumPy/Pandas; Matplotlib; **Seaborn (current)**; Plotly; Streamlit | 🟡 Learning |
 | 03 | Math and Relational Data | Statistics; Linear Algebra; MySQL; PostgreSQL | ⬜ Not Started |
 | 04 | Analytics and BI | Excel; Power BI; Tableau; Looker Studio | ⬜ Not Started |
 | 05 | Classical ML and Forecasting | Machine Learning; Time Series | ⬜ Not Started |
@@ -20,11 +20,11 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 
 ## Dependency flow
 
-**Current lesson:** [Matplotlib](./AI_ML_Series/02_data_toolkit_apps/03_matplotlib/README.md) in Phase 02.
+**Current lesson:** [Seaborn](./AI_ML_Series/02_data_toolkit_apps/04_seaborn/README.md) in Phase 02.
 
 ```mermaid
 flowchart LR
-    P01["01 Python + Git"] --> P02["02 NumPy/Pandas → Matplotlib → Apps"] --> P03["03 Math + SQL"]
+    P01["01 Python + Git"] --> P02["02 NumPy/Pandas → Matplotlib/Seaborn → Apps"] --> P03["03 Math + SQL"]
     P03 --> P04["04 BI"]
     P03 --> P05["05 ML"] --> P06["06 Neural AI"] --> P07["07 Transformers"] --> P08["08 RAG"] --> P09["09 Agents"]
     P05 --> P10["10 Docker + MLOps"]

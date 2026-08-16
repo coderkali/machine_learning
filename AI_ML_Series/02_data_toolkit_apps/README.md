@@ -3,14 +3,14 @@
 **Status:** 🟡 Learning  
 **Goal:** Turn arrays and files into clean analysis, charts, and small apps.
 
-**Current focus:** [Matplotlib](./03_matplotlib/) in M02 Data Visualization.
+**Current focus:** [Seaborn](./04_seaborn/) in M02 Data Visualization.
 
 **Interactive project:** [Iris Flower Visual Explorer](./05_iris_visual_explorer/index.html) — plain HTML, CSS, and JavaScript.
 
 | Module | Instructor topic | Current location | Status |
 |---|---|---|---|
 | M03 | NumPy and Pandas | [`01_numpy/`](./01_numpy/), [`02_pandas/`](./02_pandas/) | 🟡 Learning |
-| M02 | Data Visualization | [`03_matplotlib/`](./03_matplotlib/) | **Matplotlib: 🟡 Learning**; Seaborn/Plotly: ⬜ Not Started |
+| M02 | Data Visualization | [`03_matplotlib/`](./03_matplotlib/), [`04_seaborn/`](./04_seaborn/) | Matplotlib: 🟡 Learning; **Seaborn: 🟡 Learning**; Plotly: ⬜ Not Started |
 | M04 | Streamlit | Add when the lesson begins | ⬜ Not Started |
 
 **Prerequisite:** Phase 01 Python basics. Git can run in parallel.
