@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore Iris flower anatomy, measurements, distributions, correlations, and a simple classifier in plain HTML, CSS, and JavaScript.">
+  <title>Iris Flower Visual Explorer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="Iris Explorer home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        Iris Explorer
+      </a>
+      <div class="nav-links">
+        <a href="#anatomy">Flower</a>
+        <a href="#computations">Computations</a>
+        <a href="#explore">Explore</a>
+        <a href="#connections">Connections</a>
+      </div>
+    </nav>
+
+    <div class="hero-content" id="top">
+      <div>
+        <p class="eyebrow">Interactive dataset guide</p>
+        <h1>Understand Iris flowers through color, values, and connections.</h1>
+        <p class="lead">Each point is one flower. Hover, focus, or tap a point to see its exact measurements, then use the correlation map to learn how those measurements move together.</p>
+        <a class="primary-link" href="#explore">Start exploring</a>
+      </div>
+      <aside class="dataset-summary" aria-label="Dataset summary">
+        <p><strong>150</strong><span>flowers</span></p>
+        <p><strong>3</strong><span>species</span></p>
+        <p><strong>4</strong><span>measurements</span></p>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <section class="measurement-guide" aria-labelledby="measurement-title">
+      <div class="section-heading compact">
+        <p class="eyebrow">First, know the columns</p>
+        <h2 id="measurement-title">Four measurements describe every flower</h2>
+        <p>Sepals are the outer leaf-like parts. Petals are the inner parts. Every value is measured in centimeters.</p>
+      </div>
+      <div class="measurement-list">
+        <article><span>01</span><h3>Sepal length</h3><p>End-to-end length of the sepal.</p></article>
+        <article><span>02</span><h3>Sepal width</h3><p>Width across the broadest part.</p></article>
+        <article><span>03</span><h3>Petal length</h3><p>End-to-end length of the petal.</p></article>
+        <article><span>04</span><h3>Petal width</h3><p>Width across the broadest part.</p></article>
+      </div>
+    </section>
+
+    <section class="anatomy-section" id="anatomy" aria-labelledby="anatomy-title">
+      <div class="section-heading">
+        <p class="eyebrow">See the real flower structure</p>
+        <h2 id="anatomy-title">Sepals outside, petals inside</h2>
+        <p>The notebook draws the flower schematically because the dataset contains measurements, not photographs. Hover, focus, or tap either flower part to see what its two columns mean.</p>
+      </div>
+
+      <div class="anatomy-layout">
+        <div class="anatomy-card">
+          <h3>Where the measured parts sit</h3>
+          <div class="anatomy-stage">
+            <span class="part-label petal-label">Petal <small>inner leaf</small></span>
+            <span class="part-label sepal-label">Sepal <small>outer leaf</small></span>
+            <div class="flower-shape anatomy-flower" aria-label="Schematic Iris flower">
+              <button class="flower-leaf sepal leaf-1" type="button" data-flower-part="sepal" aria-label="Sepal, the outer leaf" aria-pressed="false"></button>
+              <button class="flower-leaf sepal leaf-2" type="button" data-flower-part="sepal" aria-label="Sepal, the outer leaf" aria-pressed="false"></button>
+              <button class="flower-leaf sepal leaf-3" type="button" data-flower-part="sepal" aria-label="Sepal, the outer leaf" aria-pressed="false"></button>
+              <button class="flower-leaf petal leaf-4" type="button" data-flower-part="petal" aria-label="Petal, the inner leaf" aria-pressed="false"></button>
+              <button class="flower-leaf petal leaf-5" type="button" data-flower-part="petal" aria-label="Petal, the inner leaf" aria-pressed="false"></button>
+              <button class="flower-leaf petal leaf-6" type="button" data-flower-part="petal" aria-label="Petal, the inner leaf" aria-pressed="false"></button>
+              <span class="flower-center" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div id="anatomy-readout" class="anatomy-readout" aria-live="polite">
+            <strong>Hover a petal or sepal</strong>
+            <span>The matching dataset columns will appear here.</span>
+          </div>
+        </div>
+
+        <div class="average-size-card">
+          <h3>The four numbers at average size</h3>
+          <div class="average-leaves" aria-label="Average sepal and petal measurements">
+            <figure>
+              <div class="average-leaf sepal-sample"><span class="vertical-measure">5.8 cm</span><span class="horizontal-measure">3.1 cm</span></div>
+              <figcaption><strong>Sepal</strong><span>length × width</span></figcaption>
+            </figure>
+            <figure>
+              <div class="average-leaf petal-sample"><span class="vertical-measure">3.8 cm</span><span class="horizontal-measure">1.2 cm</span></div>
+              <figcaption><strong>Petal</strong><span>length × width</span></figcaption>
+            </figure>
+          </div>
+          <p>The average sepal is longer and wider, but petal measurements separate the species much more clearly.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="species-mean-section" aria-labelledby="species-mean-title">
+      <div class="section-heading">
+        <p class="eyebrow">Dataset → species → one average flower</p>
+        <h2 id="species-mean-title">Only the values change between species</h2>
+        <p>Every row has the same four feature columns. These HTML flowers are scaled from the computed species averages, so the petal growth you see comes directly from the data.</p>
+      </div>
+      <div id="mean-flowers" class="mean-flower-grid"></div>
+      <div id="mean-flower-readout" class="mean-flower-readout" aria-live="polite">
+        <strong>Compare the colored flowers</strong>
+        <span>Hover, focus, or tap one to inspect its four computed averages.</span>
+      </div>
+    </section>
+
+    <section class="computation-section" id="computations" aria-labelledby="computation-title">
+      <div class="section-heading">
+        <p class="eyebrow">Compute before you chart</p>
+        <h2 id="computation-title">The checks and calculations behind the visuals</h2>
+        <p>All numbers below are calculated in JavaScript from the same 150 rows embedded in this page.</p>
+      </div>
+
+      <div id="quality-checks" class="quality-checks" aria-label="Dataset quality checks"></div>
+
+      <div class="computation-layout">
+        <article class="balance-panel">
+          <p class="mini-label">Class balance</p>
+          <h3>50 flowers in every species</h3>
+          <p>A balanced label column makes accuracy easier to interpret.</p>
+          <div id="balance-bars" class="balance-bars"></div>
+          <p class="balance-note">Each species is 33.3% of the data. By contrast, a 140 / 5 / 5 split could make an always-majority guess look 93.3% accurate while learning nothing useful.</p>
+        </article>
+
+        <article class="formula-panel">
+          <p class="mini-label">What each calculation answers</p>
+          <dl>
+            <div><dt>Mean</dt><dd><code>sum ÷ count</code><span>What is a typical value?</span></dd></div>
+            <div><dt>Range</dt><dd><code>maximum − minimum</code><span>How far do values spread?</span></dd></div>
+            <div><dt>Correlation</dt><dd><code>−1 to +1</code><span>Do two columns move together?</span></dd></div>
+            <div><dt>Accuracy</dt><dd><code>correct ÷ total × 100</code><span>How often are the rules right?</span></dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <article class="summary-panel">
+        <div>
+          <p class="mini-label">JavaScript version of <code>describe()</code></p>
+          <h3>Numeric summary of all four measurements</h3>
+        </div>
+        <div class="table-scroll">
+          <table id="summary-table">
+            <caption>Descriptive statistics in centimeters</caption>
+          </table>
+        </div>
+      </article>
+
+      <article class="distribution-panel">
+        <div>
+          <p class="mini-label">Distribution and overlap</p>
+          <h3>Averages do not show the whole range</h3>
+          <p>Each line runs from minimum to maximum, the thicker box covers the middle 50%, and the tick marks the median. Hover, focus, or tap a species row for exact values.</p>
+        </div>
+        <div id="distribution-plots" class="distribution-plots"></div>
+        <div id="distribution-readout" class="distribution-readout" aria-live="polite">
+          <strong>Why this matters</strong>
+          <span>Setosa petals form a separate group, while Versicolor and Virginica overlap.</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="explore-section" id="explore" aria-labelledby="explore-title">
+      <div class="section-heading">
+        <p class="eyebrow">Explore every flower</p>
+        <h2 id="explore-title">One point represents one Iris flower</h2>
+        <p>Species use consistent colors and shapes: Setosa is a blue circle, Versicolor is an orange triangle, and Virginica is a green diamond. The axis selectors provide an interactive web version of the notebook pairplot: choose any two measurements to compare.</p>
+      </div>
+
+      <div class="controls" aria-label="Scatter plot controls">
+        <label>Horizontal axis
+          <select id="x-feature">
+            <option value="sepalLength">Sepal length</option>
+            <option value="sepalWidth">Sepal width</option>
+            <option value="petalLength" selected>Petal length</option>
+            <option value="petalWidth">Petal width</option>
+          </select>
+        </label>
+        <label>Vertical axis
+          <select id="y-feature">
+            <option value="sepalLength">Sepal length</option>
+            <option value="sepalWidth">Sepal width</option>
+            <option value="petalLength">Petal length</option>
+            <option value="petalWidth" selected>Petal width</option>
+          </select>
+        </label>
+        <fieldset class="species-filters">
+          <legend>Species filter</legend>
+          <div>
+            <button type="button" class="filter-button active" data-filter="all" aria-pressed="true">All <small>150</small></button>
+            <button type="button" class="filter-button setosa" data-filter="setosa" aria-pressed="false"><i class="shape circle" aria-hidden="true"></i>Setosa <small>50</small></button>
+            <button type="button" class="filter-button versicolor" data-filter="versicolor" aria-pressed="false"><i class="shape triangle" aria-hidden="true"></i>Versicolor <small>50</small></button>
+            <button type="button" class="filter-button virginica" data-filter="virginica" aria-pressed="false"><i class="shape diamond" aria-hidden="true"></i>Virginica <small>50</small></button>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="explorer-layout">
+        <div class="chart-panel">
+          <div class="chart-meta"><span id="chart-context">All species · 150 flowers</span><span id="chart-pair">Petal length × Petal width</span></div>
+          <div class="chart-wrap">
+            <svg id="scatterplot" class="scatterplot" viewBox="0 0 760 470" role="img" aria-labelledby="scatter-title scatter-description">
+              <title id="scatter-title">Interactive Iris measurement scatter plot</title>
+              <desc id="scatter-description">Flowers plotted by two selectable measurements. Hover or focus a point to reveal its values.</desc>
+            </svg>
+            <div id="point-tooltip" class="point-tooltip" hidden aria-live="polite"></div>
+          </div>
+          <p class="chart-help">Hover or focus for exact values. Click, tap, Enter, or Space to keep a flower selected.</p>
+        </div>
+
+        <aside id="flower-details" class="flower-details" aria-live="polite"></aside>
+      </div>
+    </section>
+
+    <section class="rule-section" id="rules" aria-labelledby="rules-title">
+      <div class="section-heading">
+        <p class="eyebrow">A computation from the chart</p>
+        <h2 id="rules-title">Two straight lines classify 96% of the flowers</h2>
+        <p>The notebook turns the petal plot into two simple <code>if</code> statements. The page computes every prediction and the confusion matrix below.</p>
+      </div>
+
+      <div class="rule-layout">
+        <article class="rule-steps">
+          <ol>
+            <li><span>1</span><div><strong>If petal length &lt; 2.5 cm</strong><p>Predict Setosa.</p></div></li>
+            <li><span>2</span><div><strong>Otherwise, if petal width &lt; 1.75 cm</strong><p>Predict Versicolor.</p></div></li>
+            <li><span>3</span><div><strong>Otherwise</strong><p>Predict Virginica.</p></div></li>
+          </ol>
+          <button id="show-rule-lines" class="primary-link" type="button" aria-pressed="false">Show rule lines on the scatter plot</button>
+        </article>
+
+        <article class="rule-results">
+          <p class="mini-label">Full dataset · 150 flowers</p>
+          <div id="rule-score" class="rule-score"></div>
+          <div class="table-scroll">
+            <table id="confusion-table">
+              <caption>Actual species compared with the two-rule prediction</caption>
+            </table>
+          </div>
+          <p>All six mistakes happen where Versicolor and Virginica overlap. Setosa is separated perfectly by the first rule.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="connections-section" id="connections" aria-labelledby="connections-title">
+      <div class="section-heading">
+        <p class="eyebrow">See the connections</p>
+        <h2 id="connections-title">Correlation shows which measurements move together</h2>
+        <p>Values near +1 move together, values near −1 move in opposite directions, and values near 0 have a weak linear relationship. Hover a cell for an explanation; click it to update the scatter plot.</p>
+      </div>
+
+      <div class="connection-layout">
+        <div class="heatmap-panel">
+          <div class="heatmap-meta"><span id="heatmap-context">All species · 150 flowers</span><span><i class="negative-key"></i> Negative <i class="positive-key"></i> Positive</span></div>
+          <div id="heatmap" class="heatmap" role="grid" aria-label="Iris feature correlation matrix"></div>
+        </div>
+        <aside id="correlation-details" class="correlation-details" aria-live="polite"></aside>
+      </div>
+
+      <div class="learning-note">
+        <p class="eyebrow">Important data lesson</p>
+        <h3>The group you choose can change the relationship.</h3>
+        <p>Petal length and petal width have a very strong correlation of about 0.96 across all flowers. Filter to one species and the value changes because you are comparing flowers within one cluster instead of across three clusters.</p>
+      </div>
+    </section>
+
+    <section class="takeaways" aria-labelledby="takeaway-title">
+      <div class="section-heading compact">
+        <p class="eyebrow">Read the pattern</p>
+        <h2 id="takeaway-title">Three things to remember</h2>
+      </div>
+      <div class="takeaway-list">
+        <article><span>01</span><div><h3>Petals separate species best</h3><p>Setosa petal length stops at 1.9 cm, while Versicolor starts at 3.0 cm.</p></div></article>
+        <article><span>02</span><div><h3>Some species overlap</h3><p>Versicolor and Virginica share a boundary region, so one measurement is not always enough.</p></div></article>
+        <article><span>03</span><div><h3>Sepal width tells a different story</h3><p>Its overall relationships are weak or negative, unlike the strong petal connection.</p></div></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Iris Flower Visual Explorer</p>
+    <p>The same canonical 150 Iris rows loaded by Seaborn in the notebook · values in centimeters</p>
+    <a href="iris_dataset_explained.ipynb">Open source notebook</a>
+  </footer>
+</body>
+</html>

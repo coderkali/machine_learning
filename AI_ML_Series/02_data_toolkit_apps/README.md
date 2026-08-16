@@ -5,6 +5,8 @@
 
 **Current focus:** [Matplotlib](./03_matplotlib/) in M02 Data Visualization.
 
+**Interactive project:** [Iris Flower Visual Explorer](./05_iris_visual_explorer/index.html) — plain HTML, CSS, and JavaScript.
+
 | Module | Instructor topic | Current location | Status |
 |---|---|---|---|
 | M03 | NumPy and Pandas | [`01_numpy/`](./01_numpy/), [`02_pandas/`](./02_pandas/) | 🟡 Learning |
