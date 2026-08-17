@@ -1,0 +1,10 @@
+# Dependencies for the apps in this folder.
+# Streamlit Community Cloud reads this file when it builds an app,
+# so it must sit next to the app files and stay in sync with what they import.
+streamlit>=1.61
+pandas>=2.0
+plotly>=6.0
+# sales_analysis.py additionally uses these three:
+numpy>=1.26
+matplotlib>=3.8
+seaborn>=0.13

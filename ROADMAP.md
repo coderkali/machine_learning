@@ -5,7 +5,7 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 | Phase | Learning area | Instructor modules | Status |
 |---:|---|---|---|
 | 01 | Engineering and Python | Python; Git and GitHub | 🟡 Learning |
-| 02 | Data Toolkit and Apps | NumPy/Pandas; Matplotlib; **Seaborn (current)**; Plotly; Streamlit | 🟡 Learning |
+| 02 | Data Toolkit and Apps | NumPy/Pandas; Matplotlib; Seaborn; Plotly; **Streamlit (current)** | 🟡 Learning |
 | 03 | Math and Relational Data | Statistics; Linear Algebra; MySQL; PostgreSQL | ⬜ Not Started |
 | 04 | Analytics and BI | Excel; Power BI; Tableau; Looker Studio | ⬜ Not Started |
 | 05 | Classical ML and Forecasting | Machine Learning; Time Series | ⬜ Not Started |
