@@ -20,8 +20,10 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 
 ## Dependency flow
 
-**Current lesson:** [NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) in Phase 02
-(M03). Matplotlib, Seaborn, Plotly, and Streamlit also remain in progress.
+**Current lesson:** M03 in Phase 02 —
+[NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) and
+[Pandas](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md).
+Matplotlib, Seaborn, Plotly, and Streamlit also remain in progress.
 
 ```mermaid
 flowchart LR

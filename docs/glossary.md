@@ -47,6 +47,12 @@ fraud.
 Information from validation, test, or future data accidentally influences
 training. It makes evaluation look better than real-world performance.
 
+### DataFrame
+
+A table of labelled columns held in memory, from the Pandas library. Each column
+is a Series with its own data type, and every row carries an index label. It is
+close to a database result set you can keep and re-query.
+
 ### Deep learning
 
 A part of machine learning that uses neural networks with multiple layers to
@@ -107,6 +113,14 @@ The learned artifact that turns input features into a prediction or generated
 output. It is similar to the decision logic behind an API, but its behavior is
 learned from data.
 
+## O
+
+### One-hot encoding
+
+Turning a category column into one true/false column per distinct value, so a
+model can use it without being told the categories have an order. The ordered
+case is called ordinal encoding.
+
 ## P
 
 ### Prompt
@@ -124,6 +138,13 @@ time.
 
 An application pattern that retrieves relevant source material and gives it to
 a generative model before the model answers.
+
+## S
+
+### Series
+
+A single labelled column of one data type, from the Pandas library. A DataFrame
+is a set of Series sharing one index.
 
 ## T
 
