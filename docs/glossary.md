@@ -22,6 +22,12 @@ The balance between a model that is too simple to learn useful patterns and a
 model that learns the training data so closely that it performs poorly on new
 data.
 
+### Broadcasting
+
+The rule that lets an operation combine arrays of different shapes by stretching
+size-1 dimensions instead of copying data. It is what makes "subtract the mean
+from every row" a single expression.
+
 ## C
 
 ### Chunk
@@ -45,6 +51,12 @@ training. It makes evaluation look better than real-world performance.
 
 A part of machine learning that uses neural networks with multiple layers to
 learn complex patterns.
+
+### Dot product
+
+Multiply two vectors position by position and add the results, giving one
+number. It is the weighted sum behind a linear model's prediction, one neuron in
+a neural network, and cosine similarity in search and RAG.
 
 ## E
 
@@ -141,3 +153,9 @@ commonly used for semantic search and RAG retrieval.
 
 An ordered list of numbers. In AI it can represent features, words, documents,
 images, or other information.
+
+### Vectorization
+
+Expressing a calculation as one operation over a whole array instead of a Python
+loop over its elements. The loop still runs, but inside compiled code over packed
+memory, which is why it is much faster.

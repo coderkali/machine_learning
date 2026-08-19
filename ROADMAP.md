@@ -5,7 +5,7 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 | Phase | Learning area | Instructor modules | Status |
 |---:|---|---|---|
 | 01 | Engineering and Python | Python; Git and GitHub | 🟡 Learning |
-| 02 | Data Toolkit and Apps | NumPy/Pandas; Matplotlib; Seaborn; Plotly; **Streamlit (current)** | 🟡 Learning |
+| 02 | Data Toolkit and Apps | **NumPy/Pandas (current)**; Matplotlib; Seaborn; Plotly; Streamlit | 🟡 Learning |
 | 03 | Math and Relational Data | Statistics; Linear Algebra; MySQL; PostgreSQL | ⬜ Not Started |
 | 04 | Analytics and BI | Excel; Power BI; Tableau; Looker Studio | ⬜ Not Started |
 | 05 | Classical ML and Forecasting | Machine Learning; Time Series | ⬜ Not Started |
@@ -20,7 +20,8 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 
 ## Dependency flow
 
-**Current lesson:** [Seaborn](./AI_ML_Series/02_data_toolkit_apps/04_seaborn/README.md) in Phase 02.
+**Current lesson:** [NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) in Phase 02
+(M03). Matplotlib, Seaborn, Plotly, and Streamlit also remain in progress.
 
 ```mermaid
 flowchart LR
