@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A visual, interactive map of the Python data science and machine learning ecosystem—from raw data to production.">
+  <meta name="theme-color" content="#17352c">
+  <title>Python AI / ML Visual Learning Hub</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the learning map</a>
+  <header class="topbar">
+    <a class="brand" href="#overview" aria-label="Python ML Atlas home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Python <b>ML Atlas</b></span></a>
+    <div class="top-actions">
+      <label class="search-box" for="site-search"><span aria-hidden="true">⌕</span><span class="sr-only">Search this guide</span><input id="site-search" type="search" placeholder="Find a tool or concept…" autocomplete="off"></label>
+      <button class="menu-button" id="menu-button" type="button" aria-expanded="false" aria-controls="sidebar">Explore</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Learning hub sections">
+      <div class="progress-label"><span>Journey progress</span><strong id="progress-value">0%</strong></div>
+      <div class="progress-track" aria-hidden="true"><i id="progress-bar"></i></div>
+      <nav id="section-nav">
+        <a href="#overview">Overview</a><a href="#python">Python foundation</a><a href="#numpy">NumPy</a><a href="#pandas">Pandas &amp; Polars</a>
+        <a href="#visualization">Visualization</a><a href="#eda">EDA &amp; cleaning</a><a href="#features">Feature engineering</a>
+        <a href="#machine-learning">Machine learning</a><a href="#algorithms">Algorithms</a><a href="#sklearn">Scikit-learn</a>
+        <a href="#evaluation">Evaluation</a><a href="#advanced-ml">Advanced ML</a><a href="#deep-learning">Deep learning</a>
+        <a href="#modalities">Vision &amp; NLP</a><a href="#genai">Generative AI</a><a href="#production">Production</a>
+        <a href="#selector">Tool selector</a><a href="#projects">Projects</a><a href="#roadmap">Roadmap</a><a href="#cheatsheet">Cheat sheet</a>
+      </nav>
+      <a class="side-back" href="../05_iris_visual_explorer/index.html">↗ Open Iris Explorer</a>
+    </aside>
+
+    <main id="main">
+      <section class="hero observed" id="overview" data-search="overview ecosystem map pipeline raw data production">
+        <div class="hero-copy">
+          <p class="eyebrow">A visual field guide for software engineers</p>
+          <h1>See how data becomes a decision.</h1>
+          <p class="lead">The Python ML ecosystem is not a bag of unrelated libraries. It is an assembly line: each tool exists because the previous stage creates a new kind of problem.</p>
+          <div class="hero-actions"><a class="primary-button" href="#ecosystem">Explore the map ↓</a><a href="#selector">I have a task—pick my tool</a></div>
+        </div>
+        <aside class="hero-model"><p class="mini-label">The core mental model</p><div class="equation"><span>data</span><i>→</i><span>signal</span><i>→</i><span>decision</span></div><p><strong>Libraries shape data.</strong> Models learn signal. Production delivers decisions.</p></aside>
+        <div class="journey" aria-labelledby="journey-title">
+          <div class="journey-head"><div><p class="mini-label">The complete journey</p><h2 id="journey-title">Raw data → production</h2></div><p id="journey-explanation" aria-live="polite"><strong>Raw data</strong> begins messy and shaped for storage—not learning.</p></div>
+          <div class="journey-track" id="journey-track" role="list" aria-label="Machine learning workflow stages"></div>
+        </div>
+      </section>
+
+      <section class="content-section observed" id="ecosystem" data-search="ecosystem python numpy pandas polars matplotlib seaborn plotly scikit xgboost pytorch tensorflow hugging face mlflow fastapi">
+        <div class="section-heading"><p class="eyebrow">01 · The big picture</p><h2>Python AI / ML ecosystem map</h2><p>Click a node to jump to its role. Read downward: data becomes increasingly useful—and specialized.</p></div>
+        <div class="ecosystem-map">
+          <a class="eco-root" href="#python"><small>Language</small><strong>PYTHON</strong></a><div class="eco-trunk"></div>
+          <div class="eco-columns">
+            <article><p class="mini-label">Shape data</p><h3>Data handling</h3><div><a href="#numpy">NumPy</a><a href="#pandas">Pandas</a><a href="#pandas">Polars</a></div></article>
+            <article><p class="mini-label">See signal</p><h3>Visualization</h3><div><a href="#visualization">Matplotlib</a><a href="#visualization">Seaborn</a><a href="#visualization">Plotly</a></div></article>
+            <article><p class="mini-label">Learn patterns</p><h3>Machine learning</h3><div><a href="#sklearn">Scikit-learn</a><a href="#advanced-ml">XGBoost</a><a href="#advanced-ml">LightGBM</a></div></article>
+            <article><p class="mini-label">Learn features</p><h3>Deep learning</h3><div><a href="#deep-learning">PyTorch</a><a href="#deep-learning">TensorFlow</a><a href="#genai">Transformers</a></div></article>
+            <article><p class="mini-label">Deliver value</p><h3>Production</h3><div><a href="#production">MLflow</a><a href="#production">FastAPI</a><a href="#production">Streamlit</a></div></article>
+          </div>
+        </div>
+        <div class="terminology-card"><div><p class="mini-label">Words matter</p><h3>A library gives tools. A framework gives structure.</h3><p>You call a library. A framework often calls your code at the right moment. Platforms coordinate work around both.</p></div><div class="taxonomy" id="taxonomy"></div></div>
+      </section>
+
+      <section class="content-section observed" id="python" data-search="python variables lists tuples dictionaries sets loops functions lambda comprehensions classes modules packages virtual environments pip exceptions">
+        <div class="section-heading"><p class="eyebrow">02 · Before the libraries</p><h2>The Python you actually need before ML</h2><p>You need enough to represent rows, repeat work, package logic, and recover when data is imperfect—not every corner of the language.</p></div>
+        <div class="readiness"><strong>You need this before starting ML</strong><span>collections → control flow → functions → modules → environments</span></div>
+        <div class="foundation-grid" id="foundation-grid"></div>
+        <div class="bridge-card"><div class="dark-code"><code>prices = [10, 20, 30]</code><span>ordinary Python list</span></div><i>→</i><div><p class="mini-label">The pressure point</p><h3>What if there are 10 million values?</h3><p>Python is general. Numerical work needs dense storage and operations over whole blocks. That pressure created NumPy.</p></div></div>
+      </section>
+
+      <section class="content-section observed" id="numpy" data-search="numpy ndarray dimensions shape dtype indexing slicing vectorization broadcasting aggregation matrix operations">
+        <div class="section-heading split"><div><p class="eyebrow">03 · Numerical foundation</p><h2>NumPy: stop moving one number at a time</h2></div><p><strong>Analogy:</strong> a Python loop is a cashier scanning items individually. NumPy updates the whole shipment.</p></div>
+        <div class="array-transform"><div><p class="mini-label">Python list</p><code>[10, 20, 30, 40]</code><small>Flexible objects</small></div><i>→</i><div><p class="mini-label">ndarray · shape (4,) · int64</p><div class="array-cells"><b>10</b><b>20</b><b>30</b><b>40</b></div><small>Same type, tightly packed</small></div></div>
+        <div class="compare-grid">
+          <article><p class="mini-label">Python loop</p><div class="loop-flow"><span>10 × 2</span><i>→</i><span>20 × 2</span><i>→</i><span>30 × 2</span></div><p>Interpreter work repeats for every object.</p></article>
+          <article><p class="mini-label">NumPy vectorization</p><div class="vector-flow"><span>[10 20 30]</span><i>× 2</i><strong>[20 40 60]</strong></div><p>Compiled routines process contiguous numeric memory.</p></article>
+        </div>
+        <div class="concept-grid three">
+          <article><p class="mini-label">Array anatomy</p><h3>Shape gives structure</h3><dl><div><dt>dimensions</dt><dd>number of axes</dd></div><div><dt>shape</dt><dd>size per axis</dd></div><div><dt>dtype</dt><dd>stored value type</dd></div><div><dt>slice</dt><dd>selected region</dd></div></dl></article>
+          <article><p class="mini-label">Two superpowers</p><h3>Vectorization + broadcasting</h3><p>Apply operations to arrays; let compatible shapes interact without manual copying.</p><pre><code>scores = np.array([72, 81, 93])
+curved = scores + 5
+average = curved.mean()</code></pre></article>
+          <article><p class="mini-label">Use / avoid</p><h3>Choose NumPy when…</h3><p><b>Use:</b> numerical arrays, linear algebra, images, aggregation.</p><p><b>Not first:</b> labeled mixed-type business tables.</p><div class="pipeline-place">Python → <strong>NumPy</strong> → Pandas → scikit-learn</div></article>
+        </div>
+      </section>
+
+      <section class="content-section observed" id="pandas" data-search="pandas dataframe series csv excel sql json head info describe loc iloc filter sort groupby merge join concat apply missing duplicates datetime pivot polars lazy parallel">
+        <div class="section-heading"><p class="eyebrow">04 · Labeled tabular data</p><h2>Pandas gives arrays business meaning</h2><p>NumPy knows positions. Pandas adds indexes, column names, mixed types, and spreadsheet/database-like operations.</p></div>
+        <div class="dataframe-visual"><div class="sources"><span>CSV</span><span>Excel</span><span>SQL</span><span>JSON</span></div><i>→</i><div class="mini-table"><div><b>Name</b><b>Age</b><b>Salary</b></div><div><span>John</span><span>30</span><span>$100k</span></div><div><span>Maria</span><span>27</span><span>$95k</span></div></div><div><strong>DataFrame</strong><small>each column is a Series</small><small>labels + mixed types</small></div></div>
+        <div class="workflow"><span>LOAD<small>read_csv</small></span><i>→</i><span>INSPECT<small>head · info</small></span><i>→</i><span>CLEAN<small>fillna · types</small></span><i>→</i><span>TRANSFORM<small>loc · apply</small></span><i>→</i><span>COMBINE<small>merge · concat</small></span><i>→</i><span>ANALYZE<small>groupby · pivot</small></span><i>→</i><span>ML<small>X + y</small></span></div>
+        <div class="operation-ribbon" aria-label="Common Pandas operations"><span><b>Read</b> read_csv · read_excel · read_sql · JSON</span><span><b>Inspect</b> head · info · describe · dtypes</span><span><b>Select</b> loc · iloc · filter · sort</span><span><b>Combine</b> merge · join · concat</span><span><b>Repair</b> nulls · duplicates · datetime</span><span><b>Summarize</b> groupby · aggregate · pivot</span></div>
+        <div class="code-story"><pre><code>df = pd.read_csv("customers.csv")
+active = df.loc[df["status"] == "active"]
+revenue = active.groupby("city")["spend"].sum()</code></pre><ol><li>Read bytes into a DataFrame.</li><li>Keep rows matching a business rule.</li><li>Fold customers into one result per city.</li></ol></div>
+        <div class="tool-choice"><div><p class="mini-label">Matrix mathematics?</p><strong>NumPy</strong><span>dense same-type arrays</span></div><div><p class="mini-label">Rows + labels?</p><strong>Pandas</strong><span>familiar broad ecosystem</span></div><div><p class="mini-label">Parallel lazy queries?</p><strong>Polars</strong><span>fast columnar execution</span></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Question</th><th>NumPy</th><th>Pandas</th><th>Polars</th></tr></thead><tbody><tr><th>Structure</th><td>ndarray</td><td>DataFrame</td><td>DataFrame / LazyFrame</td></tr><tr><th>Best for</th><td>numeric computation</td><td>tabular exploration</td><td>large query pipelines</td></tr><tr><th>Labels + mixed types</th><td>limited</td><td>excellent</td><td>excellent</td></tr><tr><th>Execution</th><td>eager</td><td>mostly eager</td><td>eager or lazy + parallel</td></tr></tbody></table></div>
+        <aside class="truth-note"><strong>Polars does not universally replace Pandas.</strong> Start with Pandas for typical work. Reach for Polars when profiling shows scale, parallelism, or lazy optimization matters.</aside>
+      </section>
+
+      <section class="content-section observed" id="visualization" data-search="visualization matplotlib seaborn plotly line bar scatter histogram subplot axes labels legends countplot boxplot violin pairplot heatmap">
+        <div class="section-heading"><p class="eyebrow">05 · Turn numbers into sight</p><h2>Visualization is your model before the model</h2><p>A chart can expose skew, clusters, leakage, outliers, and bad assumptions before an algorithm makes them expensive.</p></div>
+        <div class="viz-tree"><div class="viz-root">DATA</div><i></i><div>
+          <article><b class="blue"></b><h3>Matplotlib</h3><strong>Maximum control</strong><p>Foundational line, bar, scatter, histogram, subplots, axes, labels, and legends.</p><code>ax.scatter(x, y)</code></article>
+          <article><b class="orange"></b><h3>Seaborn</h3><strong>Statistical EDA</strong><p>Built on Matplotlib: histograms, counts, boxes, violins, pairs, and heatmaps.</p><code>sns.boxplot(data=df)</code></article>
+          <article><b class="green"></b><h3>Plotly</h3><strong>Interactive stories</strong><p>Browser charts with hover, zoom, selection, and dashboard-friendly interaction.</p><code>px.scatter(df, x, y)</code></article>
+        </div></div>
+        <div class="chart-lab"><div><p class="mini-label">Tiny EDA chart</p><h3>Customer spend is right-skewed</h3><p>Most values sit left; a few large customers stretch the tail and pull the mean.</p></div><div class="histogram" role="img" aria-label="Right-skewed histogram"><i style="--h:36%"></i><i style="--h:84%"></i><i style="--h:100%"></i><i style="--h:73%"></i><i style="--h:48%"></i><i style="--h:29%"></i><i style="--h:18%"></i><i style="--h:10%"></i><i style="--h:5%"></i><small>low spend</small><small>high spend →</small></div></div>
+      </section>
+
+      <section class="content-section observed" id="eda" data-search="eda cleaning missing null duplicates distributions categorical correlation outliers imbalance dropna fillna datatype normalization standardization encoding leakage">
+        <div class="section-heading"><p class="eyebrow">06 · Ask before you predict</p><h2>EDA is an interrogation, not a chart gallery</h2><p>Every question reduces the chance your model learns an accident instead of a pattern.</p></div>
+        <div class="eda-timeline" id="eda-timeline"></div>
+        <div class="dirty-clean">
+          <article><p class="mini-label">Dirty data</p><div class="rows"><span>Ana · 34 · Chicago</span><span>Sam · <mark>?</mark> · chicago</span><span class="duplicate">Ana · 34 · Chicago</span><span>Lee · <mark>"$91k"</mark> · NY</span></div><ul><li>missing</li><li>duplicate</li><li>inconsistent</li><li>wrong type</li></ul></article>
+          <div class="cleaner"><span>drop_duplicates</span><span>fillna</span><span>astype</span><span>standardize labels</span><strong>Cleaning</strong></div>
+          <article><p class="mini-label">Clean data</p><div class="rows"><span>Ana · 34 · Chicago</span><span>Sam · 31 · Chicago</span><span>Lee · 29 · New York</span></div><p>Each value now means what the column claims.</p></article>
+        </div>
+        <div class="warning-grid"><article><strong>Missing values</strong><p>Drop only when loss is safe; otherwise impute with domain knowledge.</p></article><article><strong>Outliers</strong><p>Investigate first. In fraud, the outlier may be the signal.</p></article><article><strong>Imbalance</strong><p>99% accuracy can mean “always predict normal.”</p></article><article><strong>Leakage</strong><p>A future-created column lets the model cheat.</p></article></div>
+      </section>
+
+      <section class="content-section observed" id="features" data-search="feature engineering numerical categorical onehotencoder labelencoder standardscaler minmax feature extraction selection pca dimensionality">
+        <div class="section-heading"><p class="eyebrow">07 · Translate reality into numbers</p><h2>Feature engineering creates a learnable view</h2><p>Algorithms do not intuit “Chicago” or reconcile wildly different units. Representation changes what a model can learn.</p></div>
+        <div class="feature-factory"><div class="record"><p>Age <b>35</b></p><p>City <b>Chicago</b></p><p>Salary <b>$120,000</b></p></div><div class="factory"><span>StandardScaler</span><span>OneHotEncoder</span><span>MinMaxScaler</span><strong>Feature<br>engineering</strong></div><div class="record vector"><p>Age_scaled <b>0.47</b></p><p>City_Chicago <b>1</b></p><p>City_NY <b>0</b></p><p>Salary_scaled <b>0.65</b></p></div></div>
+        <div class="concept-grid four"><article><p class="mini-label">Scale</p><h3>StandardScaler</h3><p>Centers and scales for distance- and gradient-based models.</p></article><article><p class="mini-label">Encode</p><h3>OneHotEncoder</h3><p>Yes/no columns without inventing category order.</p></article><article><p class="mini-label">Select</p><h3>Feature selection</h3><p>Remove noise and cost while preserving signal.</p></article><article><p class="mini-label">Compress</p><h3>PCA</h3><p>Fewer variance-preserving directions; less interpretability.</p></article></div>
+        <aside class="truth-note"><strong>LabelEncoder is generally for target labels, not unordered inputs.</strong> Chicago=0, New York=1 invents a numeric distance.</aside>
+      </section>
+
+      <section class="content-section observed" id="machine-learning" data-search="machine learning supervised unsupervised semi supervised reinforcement regression classification clustering pca">
+        <div class="section-heading"><p class="eyebrow">08 · The learning problem</p><h2>First ask: do I have the answer column?</h2><p>That single question separates supervised learning from unsupervised discovery.</p></div>
+        <div class="ml-tree"><div class="ml-root">MACHINE LEARNING<small>patterns from examples</small></div><i></i><div class="ml-branches"><article><p class="mini-label">Labels exist</p><h3>Supervised</h3><div><a href="#algorithms"><b>Regression</b><span>predict a number</span></a><a href="#algorithms"><b>Classification</b><span>predict a category</span></a></div></article><article><p class="mini-label">No labels</p><h3>Unsupervised</h3><div><a href="#algorithms"><b>Clustering</b><span>discover groups</span></a><a href="#features"><b>PCA</b><span>compress structure</span></a></div></article></div></div>
+        <p class="support-note"><strong>Also exists:</strong> semi-supervised learning mixes a few labels with many unlabeled examples; reinforcement learning learns actions from rewards.</p>
+      </section>
+
+      <section class="content-section observed" id="algorithms" data-search="regression linear polynomial decision tree random forest xgboost classification logistic knn naive bayes svm clustering kmeans hierarchical dbscan">
+        <div class="section-heading"><p class="eyebrow">09 · Choose the answer shape</p><h2>Regression, classification, or clustering?</h2><p>The problem type determines candidate algorithms and evaluation.</p></div>
+        <div class="tabs" role="tablist" aria-label="Machine learning problem types"><button id="tab-regression" role="tab" aria-selected="true" aria-controls="algorithm-panel" data-algorithm="regression">Regression</button><button id="tab-classification" role="tab" aria-selected="false" aria-controls="algorithm-panel" data-algorithm="classification" tabindex="-1">Classification</button><button id="tab-clustering" role="tab" aria-selected="false" aria-controls="algorithm-panel" data-algorithm="clustering" tabindex="-1">Clustering</button></div>
+        <div class="algorithm-panel" id="algorithm-panel" role="tabpanel" aria-live="polite"></div>
+      </section>
+
+      <section class="content-section observed" id="sklearn" data-search="scikit learn fit transform predict train_test_split pipeline columntransformer preprocessing metrics model selection">
+        <div class="section-heading"><p class="eyebrow">10 · A consistent ML workbench</p><h2>Scikit-learn makes different models feel familiar</h2><p>Its shared API makes experiments composable: fit → transform → predict.</p></div>
+        <div class="workflow sklearn"><span>Pandas<small>DataFrame</small></span><i>→</i><span>Split<small>train / test</small></span><i>→</i><span>Preprocess<small>transform</small></span><i>→</i><span class="active">Model<small>fit</small></span><i>→</i><span>Predict<small>unseen X</small></span><i>→</i><span>Evaluate<small>metric</small></span></div>
+        <div class="api-loop"><div><code>model.fit(X_train, y_train)</code><span>learn from examples</span></div><i>→</i><div><code>model.predict(X_test)</code><span>apply the learned rule</span></div></div>
+        <div class="pipeline-demo"><pre><code>pipeline = Pipeline([
+  ("prep", ColumnTransformer([... ])),
+  ("model", RandomForestClassifier())
+])
+pipeline.fit(X_train, y_train)</code></pre><div><p class="mini-label">Why Pipeline matters</p><h3>Preprocessing stays attached to the model.</h3><p>Training and prediction run identical transforms. Within cross-validation, each fold learns preprocessing only from its training rows.</p></div></div>
+      </section>
+
+      <section class="content-section observed" id="evaluation" data-search="train validation test cross validation overfitting underfitting bias variance mae mse rmse r2 accuracy precision recall f1 roc auc confusion matrix">
+        <div class="section-heading"><p class="eyebrow">11 · Prove it generalizes</p><h2>Training score is rehearsal. Test score is opening night.</h2><p>A model matters only when it works on examples it did not learn from.</p></div>
+        <div class="split-data"><div class="train"><b>70%</b><span>Train</span><small>learn parameters</small></div><div class="validation"><b>15%</b><span>Validation</span><small>choose settings</small></div><div class="test"><b>15%</b><span>Test</span><small>final check</small></div></div>
+        <div class="cross-validation"><div><p class="mini-label">When data is precious</p><h3>Cross-validation rotates the validation fold</h3><p>Train several times, holding out a different fold. The test set remains sealed.</p></div><div class="folds"><p><i>V</i><b>T</b><b>T</b><b>T</b><b>T</b></p><p><b>T</b><i>V</i><b>T</b><b>T</b><b>T</b></p><p><b>T</b><b>T</b><i>V</i><b>T</b><b>T</b></p><p><b>T</b><b>T</b><b>T</b><i>V</i><b>T</b></p><p><b>T</b><b>T</b><b>T</b><b>T</b><i>V</i></p></div></div>
+        <div class="fit-cards"><article><p class="mini-label">Underfit · high bias</p><div class="fit-plot underfit"><i></i><b></b><span></span><em></em><small></small></div><h3>Too simple</h3><p>Bad on train and test.</p></article><article class="good"><p class="mini-label">Good fit</p><div class="fit-plot goodfit"><i></i><b></b><span></span><em></em><small></small></div><h3>Learns the signal</h3><p>Train and test are strong and close.</p></article><article><p class="mini-label">Overfit · high variance</p><div class="fit-plot overfit"><i></i><b></b><span></span><em></em><small></small></div><h3>Memorizes noise</h3><p>Great on train, weak on new data.</p></article></div>
+        <div class="metric-lab"><div><p class="mini-label">Business cost chooses the metric</p><h3 id="metric-title"></h3><p id="metric-copy"></p><div class="metric-buttons"><button class="active" data-metric="fraud" aria-pressed="true">Fraud</button><button data-metric="spam" aria-pressed="false">Spam</button><button data-metric="regression" aria-pressed="false">Price model</button></div></div><div id="metric-visual" aria-live="polite"></div></div>
+        <div class="metric-reference"><article><b>MAE</b><span>average absolute miss</span></article><article><b>MSE</b><span>average squared miss</span></article><article><b>RMSE</b><span>punishes large misses in target units</span></article><article><b>R²</b><span>variance vs mean baseline</span></article><article><b>Accuracy</b><span>overall fraction correct</span></article><article><b>Precision</b><span>predicted positives right</span></article><article><b>Recall</b><span>actual positives caught</span></article><article><b>F1</b><span>precision/recall balance</span></article><article><b>ROC-AUC</b><span>ranking across thresholds</span></article></div>
+      </section>
+
+      <section class="content-section observed" id="advanced-ml" data-search="decision trees random forest gradient boosting xgboost lightgbm catboost optuna hyperparameter">
+        <div class="section-heading"><p class="eyebrow">12 · Trees become teams</p><h2>From one explainable tree to powerful ensembles</h2><p>Trees split features into decisions. Ensembles combine many trees to reduce weaknesses.</p></div>
+        <div class="decision-tree"><div class="root">Income &gt; $100k?</div><div class="branch left"></div><div class="branch right"></div><div class="left-node">Credit &gt; 700?</div><div class="right-node">Reject</div><div class="approve">Approve</div><div class="review">Review</div></div>
+        <div class="ensemble-grid"><article><p class="mini-label">Parallel wisdom</p><h3>Random Forest</h3><div class="forest"><span>Tree 1<b>YES</b></span><span>Tree 2<b>NO</b></span><span>Tree 3<b>YES</b></span><i>↓ vote ↓</i><strong>YES</strong></div><p>Many decorrelated trees vote; averaging reduces instability.</p></article><article><p class="mini-label">Sequential correction</p><h3>Gradient Boosting</h3><div class="boost"><span>Model 1<small>errors</small></span><i>→</i><span>Model 2<small>targets errors</small></span><i>→</i><span>Model 3<small>refines</small></span></div><p>Each small model targets what the ensemble still gets wrong.</p></article></div>
+        <div class="booster-grid"><article><b>XGBoost</b><p>Mature, regularized, excellent structured-data baseline.</p></article><article><b>LightGBM</b><p>Fast and memory-efficient for large tabular data.</p></article><article><b>CatBoost</b><p>Strong categorical handling and robust defaults.</p></article><article><b>Optuna</b><p>Smart tuning—after validation is sound.</p></article></div>
+      </section>
+
+      <section class="content-section observed" id="deep-learning" data-search="deep learning neuron weight bias activation forward loss backpropagation gradient descent epoch batch learning rate pytorch tensorflow keras">
+        <div class="section-heading"><p class="eyebrow">13 · When features can be learned</p><h2>Deep learning learns representations and predictions together</h2><p>Use it when rich data and scale justify complexity—not automatically for every table.</p></div>
+        <div class="network" aria-label="Input layer, two hidden layers, and output layer"><div><p>Input</p><i></i><i></i><i></i><i></i></div><span>→</span><div><p>Hidden</p><i></i><i></i><i></i><i></i><i></i></div><span>→</span><div><p>Hidden</p><i></i><i></i><i></i></div><span>→</span><div><p>Output</p><i></i></div></div>
+        <div class="learning-loop"><span><b>1</b>Forward<small>predict</small></span><i>→</i><span><b>2</b>Loss<small>measure error</small></span><i>→</i><span><b>3</b>Backprop<small>assign blame</small></span><i>→</i><span><b>4</b>Gradient descent<small>adjust weight + bias</small></span><i>↻</i></div>
+        <div class="term-grid"><article><b>Neuron</b><span>weighted inputs + bias + activation</span></article><article><b>Epoch</b><span>one pass through training data</span></article><article><b>Batch</b><span>examples before one update</span></article><article><b>Learning rate</b><span>update step size</span></article></div>
+        <div class="framework-choice"><article><p class="mini-label">Flexible experiments</p><h3>PyTorch</h3><p>Readable custom loops, research, many modern AI workflows.</p></article><div><span>custom, dynamic experiments?</span><b>PyTorch</b><i>or</i><span>high-level integrated ecosystem?</span><b>TensorFlow / Keras</b></div><article><p class="mini-label">High-level building</p><h3>TensorFlow + Keras</h3><p>Concise APIs inside a broad training and deployment ecosystem.</p></article></div>
+      </section>
+
+      <section class="content-section observed" id="modalities" data-search="computer vision image pixels cnn opencv pillow torchvision nlp tokenization nltk spacy transformers">
+        <div class="section-heading"><p class="eyebrow">14 · Different data, different front doors</p><h2>Images and language need representation first</h2><p>The learning loop stays familiar; the input pipeline changes.</p></div>
+        <div class="modality-grid"><article><p class="mini-label">Computer vision</p><h3>Image → pixels → CNN / vision model → prediction</h3><div class="pixel-picture"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="role-list"><span><b>OpenCV</b> image/video processing</span><span><b>Pillow</b> simple image files</span><span><b>torchvision</b> transforms + vision models</span></div></article><article><p class="mini-label">Natural language processing</p><h3>Text → tokens → numbers → model</h3><div class="tokenizer"><q>Machine learning is awesome</q><i>↓ tokenize</i><div><span>Machine</span><span>learning</span><span>is</span><span>awesome</span></div><i>↓ embed</i><code>[0.12, −0.44, 0.81, …]</code></div><div class="role-list"><span><b>NLTK</b> classic NLP + teaching</span><span><b>spaCy</b> production linguistics</span><span><b>Transformers</b> contextual pretrained models</span></div></article></div>
+      </section>
+
+      <section class="content-section observed" id="genai" data-search="generative ai embeddings vector database transformers llm prompt context window rag fine tuning agents">
+        <div class="section-heading"><p class="eyebrow">15 · The modern AI connection</p><h2>Generative AI sits on the same learning story</h2><p>The scale is new; data, representation, optimization, evaluation, and deployment remain.</p></div>
+        <div class="chain"><span>Machine Learning</span><i>→</i><span>Deep Learning</span><i>→</i><span>Transformers</span><i>→</i><span>LLMs</span><i>→</i><span>Generative AI</span><i>→</i><span>RAG</span><i>→</i><span>Agents</span></div>
+        <div class="genai-layout"><div class="rag-flow"><span>Question</span><i>→</i><span>Embedding</span><i>→</i><span>Vector search</span><i>→</i><span>Context</span><i>→</i><span>LLM answer</span></div><div class="glossary"><article><b>Embedding</b><p>A vector placing similar meaning nearby.</p></article><article><b>Context window</b><p>Text the model can consider now.</p></article><article><b>RAG</b><p>Retrieve trusted text, then generate.</p></article><article><b>Fine-tuning</b><p>Adjust behavior with training examples.</p></article><article><b>Agent</b><p>A model-driven tool/action loop.</p></article><article><b>Prompt</b><p>Instructions and inference-time context.</p></article></div></div>
+      </section>
+
+      <section class="content-section observed" id="production" data-search="jupyter notebook py scipy statsmodels mlflow fastapi streamlit gradio pydantic experiment tracking deployment production">
+        <div class="section-heading"><p class="eyebrow">16 · Experiment to product</p><h2>An experiment is not a production system</h2><p>Jupyter asks quickly. Production code must answer reliably tomorrow, for someone else, on new data.</p></div>
+        <div class="chain notebook"><span>Experiment</span><i>→</i><span class="active">Jupyter<small>explore · narrate</small></span><i>→</i><span>Validate</span><i>→</i><span class="active">.py package<small>test · reuse</small></span><i>→</i><span>Production</span></div>
+        <div class="production-flow"><article><small>01</small><h3>Track</h3><b>MLflow</b><p>Runs, metrics, artifacts, versions.</p></article><i>→</i><article><small>02</small><h3>Validate</h3><b>Pydantic</b><p>Feature schema and types.</p></article><i>→</i><article><small>03</small><h3>Serve</h3><b>FastAPI</b><p>A tested prediction endpoint.</p></article><i>→</i><article><small>04</small><h3>Use</h3><b>App / UI</b><p>React, Streamlit, or Gradio.</p></article></div>
+        <div class="booster-grid"><article><b>FastAPI</b><p>Typed REST API for other software.</p></article><article><b>Streamlit</b><p>Fast data apps and dashboards.</p></article><article><b>Gradio</b><p>Fast interactive model demos.</p></article><article><b>MLflow</b><p>Experiment and model lineage.</p></article></div>
+      </section>
+
+      <section class="content-section selector-section observed" id="selector" data-search="which tool decision selector csv matrix visualize predict classify cluster deep image text llm experiments api ui">
+        <div class="section-heading"><p class="eyebrow">17 · Ask what tool I need</p><h2>Start with the job, not the logo</h2><p>Choose your goal. The recommendation explains why, companions, and the next learning step.</p></div>
+        <div class="selector-lab"><div class="selector-control"><label for="tool-goal">I want to…</label><select id="tool-goal"></select><div id="goal-path"></div></div><article class="recommendation" id="tool-recommendation" aria-live="polite"></article></div>
+        <div class="quick-decisions" id="quick-decisions"></div>
+      </section>
+
+      <section class="content-section observed" id="projects" data-search="project customer churn house price pandas seaborn random forest mlflow fastapi regression rmse r2">
+        <div class="section-heading"><p class="eyebrow">18 · Put the pieces together</p><h2>Two projects, one connected ecosystem</h2><p>Each tool appears exactly where its strength becomes necessary.</p></div>
+        <article class="project"><header><div><p class="mini-label">End-to-end classification</p><h3>Customer churn prediction</h3></div><span>Will this customer leave?</span></header><div class="project-flow"><div><b>customer.csv</b><small>raw rows</small></div><i>→</i><div><b>Pandas</b><small>clean</small></div><i>→</i><div><b>Seaborn</b><small>EDA</small></div><i>→</i><div><b>ColumnTransformer</b><small>features</small></div><i>→</i><div><b>Random Forest</b><small>classify</small></div><i>→</i><div><b>Recall + F1</b><small>evaluate</small></div><i>→</i><div><b>MLflow</b><small>track</small></div><i>→</i><div><b>FastAPI</b><small>serve</small></div><i>→</i><div><b>Application</b><small>act</small></div></div><div class="why-row"><span><b>Why Pandas?</b> messy labeled rows</span><span><b>Why Seaborn?</b> compare churn groups</span><span><b>Why Pipeline?</b> safe repeat transforms</span><span><b>Why API?</b> deliver to a product</span></div></article>
+        <article class="project compact"><header><div><p class="mini-label">Regression</p><h3>House price prediction</h3></div><span>What number should this house sell for?</span></header><div class="project-flow"><div><b>CSV</b></div><i>→</i><div><b>Pandas</b></div><i>→</i><div><b>NumPy</b></div><i>→</i><div><b>Seaborn EDA</b></div><i>→</i><div><b>Features</b></div><i>→</i><div><b>Regressor</b></div><i>→</i><div><b>RMSE / R²</b></div><i>→</i><div><b>Price</b></div></div></article>
+      </section>
+
+      <section class="content-section observed" id="roadmap" data-search="roadmap python numpy pandas visualization statistics eda features sklearn algorithms evaluation deep transformers genai mlops">
+        <div class="section-heading"><p class="eyebrow">19 · Learn in dependency order</p><h2>A roadmap that answers “why next?”</h2><p>Select a level to see what it unlocks. Build projects throughout.</p></div>
+        <div class="roadmap-layout"><ol id="roadmap-list"></ol><aside id="roadmap-detail" aria-live="polite"></aside></div>
+      </section>
+
+      <section class="content-section observed" id="cheatsheet" data-search="cheat sheet scipy statsmodels dask duckdb optuna fastapi streamlit gradio pydantic">
+        <div class="section-heading"><p class="eyebrow">20 · Keep this map nearby</p><h2>Tool cheat sheet</h2><p>Each line is a job description, not a popularity contest.</p></div>
+        <div class="cheat-grid" id="cheat-grid"></div>
+        <aside class="closing-note"><p class="mini-label">The connected story</p><h3>Python expresses the work. NumPy makes numbers fast. DataFrames make them meaningful. Charts expose patterns. Features make patterns learnable. Models predict. Evaluation earns trust. Production makes the prediction useful.</h3><a href="#overview">Return to the big picture ↑</a></aside>
+      </section>
+      <div class="no-results" id="no-results" hidden><strong>No matching section found.</strong><span>Try “Pandas,” “recall,” “RAG,” or “FastAPI.”</span></div>
+    </main>
+  </div>
+  <footer><p>Python ML Atlas · dependency-free visual learning</p><p>Relationships, not definitions.</p><a href="../README.md">Back to Data Toolkit modules</a></footer>
+</body>
+</html>
