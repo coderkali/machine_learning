@@ -75,12 +75,27 @@ meaning or similarity.
 
 One complete pass through the training dataset.
 
+### Estimator
+
+Any scikit-learn object that learns from data. Every estimator uses the same three
+methods: `fit` learns and stores what it found, `transform` applies that to reshape
+the data, and `predict` applies it to answer a question. Preprocessors have `fit` and
+`transform`; models have `fit` and `predict`. Anything learned during `fit` is stored
+on the object with a trailing underscore, such as `mean_` or `coef_`.
+
 ## F
 
 ### Feature
 
 An input value used by a model to make a prediction. In a customer model,
 examples include account age or number of support requests.
+
+### Feature scaling
+
+Putting every numeric column on a comparable range so that no column dominates only
+because its numbers are larger. Standardization centres a column on mean 0 with
+standard deviation 1; normalization squeezes it into a fixed range such as 0 to 1.
+It matters most for distance-based and gradient-based algorithms.
 
 ### Fine-tuning
 
@@ -141,6 +156,12 @@ a generative model before the model answers.
 
 ## S
 
+### scikit-learn
+
+The standard Python library for classical machine learning — everything before neural
+networks, including preprocessing, regression, classification, clustering, and model
+evaluation. It exposes almost all of that through one shared interface, the estimator.
+
 ### Series
 
 A single labelled column of one data type, from the Pandas library. A DataFrame
@@ -152,6 +173,12 @@ is a set of Series sharing one index.
 
 A unit of text processed by a language model. A token may be a word, part of a
 word, punctuation, or another small text unit.
+
+### Train/test split
+
+Holding back part of the data so a model can be scored on rows it has never seen.
+The split must come before any step that learns from data, including preprocessing —
+otherwise information crosses from test to train and causes data leakage.
 
 ### Training
 

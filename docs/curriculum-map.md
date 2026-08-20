@@ -25,7 +25,8 @@ System Design first. Therefore `M39` is System Design and `M40` is No-Code AI.
 - 🟢 **Completed** — the module work and checkpoint are finished.
 - 🔁 **Review Needed** — completed work needs fresh practice.
 
-`M01`, `M02`, and `M03` are currently learning. Every other module remains not started.
+`M01`, `M02`, `M03`, `M04`, and `M07` are currently learning. Every other module
+remains not started.
 Entries marked **Prior only** are links to `Foundations_Archive/`; they do not
 change bootcamp status.
 
@@ -39,7 +40,7 @@ change bootcamp status.
 | M04 | Streamlit | 8-9 | 02 — Python data toolkit, visualization, and rapid apps | UI elements, charts, inputs, media, chat, containers, state, multipage apps, GitHub deployment, secrets | 🟡 Learning | Started: [`07_streamlit/`](../AI_ML_Series/02_data_toolkit_apps/07_streamlit/) with [topic README](../AI_ML_Series/02_data_toolkit_apps/07_streamlit/README.md) and a [Tips Explorer app](../AI_ML_Series/02_data_toolkit_apps/07_streamlit/app.py) covering widgets, layout, caching, session state, and a Community Cloud deployment plan. Learner-written evidence: [Sales Analysis app](../AI_ML_Series/02_data_toolkit_apps/07_streamlit/sales_analysis.py) with a [line-by-line review](../AI_ML_Series/02_data_toolkit_apps/07_streamlit/sales_analysis_explained.md); two re-run/session-state defects are open and tracked in the review queue. |
 | M05 | Statistics and Probability | 9-10 | 03 — Math and relational-data foundations | Descriptive statistics, probability, distributions, inference, tests, correlation, information theory | ⬜ Not Started | Prior only: [statistics notes](../Foundations_Archive/math_for_ml/phase_2_statistics/) and [hypothesis-testing notebooks](../Foundations_Archive/DataScience_Y/) |
 | M06 | Linear Algebra | 10-11 | 03 — Math and relational-data foundations | Scalars, vectors, matrices, norms, similarity, eigenvalues, PCA, LU, QR, SVD | ⬜ Not Started | Prior only: [linear-algebra archive](../Foundations_Archive/math_for_ml/phase_3_linear_algebra/) |
-| M07 | Machine Learning | 11-14 | 05 — Classical modeling and forecasting | Data loading, EDA, preprocessing, validation, feature work, regression, classification, clustering, ensembles, evaluation, tuning, saving, deployment | ⬜ Not Started | Prior only: [ML archive](../Foundations_Archive/ML/) and [classical-ML archive](../Foundations_Archive/phase_3_classical_ml/) |
+| M07 | Machine Learning | 11-14 | 05 — Classical modeling and forecasting | Data loading, EDA, preprocessing, validation, feature work, regression, classification, clustering, ensembles, evaluation, tuning, saving, deployment | 🟡 Learning | Current: [`train_test_split` notebook](../AI_ML_Series/02_data_toolkit_apps/08_sklearn/example_01.ipynb) and [synthetic-dataset notebook](../AI_ML_Series/02_data_toolkit_apps/08_sklearn/example_02.ipynb) with [topic README](../AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md). Learner-written evidence: `X`/`Y` selection and a full `train_test_split` call, documented parameter by parameter with three verified experiments and three charts covering `test_size`, `shuffle`, `random_state`, `stratify`, and the four-value return order; plus `make_regression`, `make_classification`, and `make_blobs`. **Splitting and data generation only — no estimator has been fitted and no model exists yet.** The instructor introduced scikit-learn during Phase 02, so the folder sits in `02_data_toolkit_apps/08_sklearn/` even though M07 maps to dependency phase 05. Prior only: [ML archive](../Foundations_Archive/ML/) and [classical-ML archive](../Foundations_Archive/phase_3_classical_ml/); the archive's [attrition project](../Foundations_Archive/ML/project/Employee_Attrition_Pipeline.ipynb) fits preprocessing before splitting, which the review queue tracks as an open leakage defect |
 | M08 | Time Series | 14-15 | 05 — Classical modeling and forecasting | Datetime data, resampling, stationarity, ACF/PACF, ADF, smoothing, AR/MA/ARMA/ARIMA/SARIMAX, Auto-ARIMA | ⬜ Not Started | No current-course M08 evidence yet |
 | M09 | Reinforcement Learning | 15-16 | 06 — Neural networks and AI modalities | Agent/environment loop, MDP, Bellman equation, RL types, Q-learning, DQN | ⬜ Not Started | No current-course M09 evidence yet |
 | M10 | Deep Learning | 16-18 | 06 — Neural networks and AI modalities | Neural-network basics, loss and backpropagation, optimizers, ANN, CNN, RNN, LSTM, GRU, autoencoders, VAE, GAN, saving and deployment | ⬜ Not Started | No current-course M10 evidence yet |
@@ -74,6 +75,14 @@ change bootcamp status.
 | M39 | System Design for AI Systems | 66-67 | 13 — AI system design and career proof | Scale, reliability, latency, consistency, building blocks, microservices, data/ML/LLM/RAG/vector architecture, security and cost | ⬜ Not Started | Prior only: [one pipeline architecture](../Foundations_Archive/ML/project/ARCHITECTURE.md); it is not full AI-system-design evidence |
 | M40 | No-Code AI Tools | 67-68 | 09 — Agents, fine-tuning, and visual AI builders | Bubble, Zapier, Make, n8n, Flowise, Langflow, Notion AI, AppSheet and visual agent builders | ⬜ Not Started | No current-course M40 evidence yet |
 | M41 | Job Ready Focus | 68 | 13 — AI system design and career proof | Role mapping, ATS resume, portfolio, LinkedIn, job-search workflow and interview preparation | ⬜ Not Started | No current-course M41 evidence yet |
+
+## Cross-phase note
+
+Instructor teaching order and dependency order do not always agree. M07 was introduced
+during Phase 02 teaching, so its first evidence lives in
+[`02_data_toolkit_apps/08_sklearn/`](../AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md)
+while the module still maps to dependency phase 05. Folders follow the instructor;
+this table follows the dependency roadmap. Neither was moved to make them agree.
 
 ## Coverage notes
 

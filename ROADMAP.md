@@ -5,10 +5,10 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 | Phase | Learning area | Instructor modules | Status |
 |---:|---|---|---|
 | 01 | Engineering and Python | Python; Git and GitHub | 🟡 Learning |
-| 02 | Data Toolkit and Apps | **NumPy/Pandas (current)**; Matplotlib; Seaborn; Plotly; Streamlit | 🟡 Learning |
+| 02 | Data Toolkit and Apps | NumPy/Pandas; Matplotlib; Seaborn; Plotly; Streamlit; **scikit-learn (current)** | 🟡 Learning |
 | 03 | Math and Relational Data | Statistics; Linear Algebra; MySQL; PostgreSQL | ⬜ Not Started |
 | 04 | Analytics and BI | Excel; Power BI; Tableau; Looker Studio | ⬜ Not Started |
-| 05 | Classical ML and Forecasting | Machine Learning; Time Series | ⬜ Not Started |
+| 05 | Classical ML and Forecasting | **Machine Learning (started early in Phase 02)**; Time Series | 🟡 Learning |
 | 06 | Neural AI Modalities | Deep Learning; NLP; Computer Vision; RL | ⬜ Not Started |
 | 07 | Transformers and Prompting | Transformers; Prompt Engineering | ⬜ Not Started |
 | 08 | Retrieval and LLM Apps | VectorDB; LangChain | ⬜ Not Started |
@@ -20,10 +20,15 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 
 ## Dependency flow
 
-**Current lesson:** M03 in Phase 02 —
+**Current lesson:** M07 —
+[scikit-learn](./AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md), just started
+(`train_test_split` and synthetic datasets; no estimator fitted yet). M03
 [NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) and
-[Pandas](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md).
-Matplotlib, Seaborn, Plotly, and Streamlit also remain in progress.
+[Pandas](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md), plus Matplotlib,
+Seaborn, Plotly, and Streamlit, also remain in progress.
+
+M07 sits in Phase 05 by dependency, but the instructor introduced scikit-learn during
+Phase 02, so the folder lives under `02_data_toolkit_apps/08_sklearn/`.
 
 ```mermaid
 flowchart LR
