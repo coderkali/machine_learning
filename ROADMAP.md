@@ -21,8 +21,9 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 ## Dependency flow
 
 **Current lesson:** M07 —
-[scikit-learn](./AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md), just started
-(`train_test_split` and synthetic datasets; no estimator fitted yet). M03
+[scikit-learn](./AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md)
+(`train_test_split` and all five synthetic dataset generators, both notebooks now
+documented; no estimator fitted yet). M03
 [NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) and
 [Pandas](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md), plus Matplotlib,
 Seaborn, Plotly, and Streamlit, also remain in progress.

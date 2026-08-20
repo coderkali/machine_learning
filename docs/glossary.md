@@ -35,6 +35,12 @@ from every row" a single expression.
 A smaller section of a document prepared for embedding or retrieval. Chunk
 size and overlap affect how much context a RAG system can find.
 
+### Class imbalance
+
+A classification dataset where one label is much rarer than another, such as one
+fraud case in a thousand transactions. Accuracy stops being useful, because always
+predicting the common class already scores 99.9%.
+
 ### Classification
 
 A supervised learning task that predicts a category, such as fraud or not
@@ -166,6 +172,14 @@ evaluation. It exposes almost all of that through one shared interface, the esti
 
 A single labelled column of one data type, from the Pandas library. A DataFrame
 is a set of Series sharing one index.
+
+### Synthetic data
+
+Data generated from a formula rather than collected from the real world. Because
+you chose the pattern, the noise level, and the number of groups, you know the
+correct answer in advance — which is what makes it useful for testing an algorithm
+or a pipeline. scikit-learn's `make_regression`, `make_classification`,
+`make_blobs`, `make_circles`, and `make_moons` are the standard generators.
 
 ## T
 

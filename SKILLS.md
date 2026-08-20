@@ -35,6 +35,7 @@ tests, and reproducible end-to-end work.
 | Categorical encoding | Applied | [One-hot](Foundations_Archive/ML/09_one_hot_encoding.ipynb), [label](Foundations_Archive/ML/10_Label_Encoding.ipynb), and [ordinal](Foundations_Archive/ML/11_Ordinal_Encoding.ipynb) labs plus the attrition project |
 | Scaling and feature transforms | Applied | [Standard scaling](Foundations_Archive/ML/15_Feature_Scaling.ipynb), [min-max normalization](Foundations_Archive/ML/16_Feature_Scaling_Normalization.ipynb), [function transforms](Foundations_Archive/ML/19_Function_Transformer.ipynb), and the attrition project |
 | Feature selection | Comfortable | [Forward/backward selection](Foundations_Archive/ML/20_Feature_Selection_techniques.ipynb), [VarianceThreshold](Foundations_Archive/ML/21_Feature_Selection_VarianceThreshold.ipynb), and a second [wrapper-method practice lab](Foundations_Archive/ML/22_Forward_Backward_Practice.ipynb) |
+| Synthetic dataset generation | Comfortable | Learner-written calls to all five generators in the [synthetic-datasets notebook](AI_ML_Series/02_data_toolkit_apps/08_sklearn/example_02.ipynb): `make_regression`, `make_classification`, `make_blobs`, `make_circles`, and `make_moons`, documented parameter by parameter and re-run end to end. Includes the learner's own column-by-column experiment, which surfaced the `shuffle=True` column-permutation gotcha and a small-sample false pattern. Not yet Applied: the generated data has not been fed to a model |
 
 ## Mathematics and Statistics
 
@@ -52,7 +53,7 @@ tests, and reproducible end-to-end work.
 
 | Skill | Level | Evidence |
 |---|---|---|
-| Train/test supervised workflow | Comfortable | Stratified splitting, fitting, prediction, and held-out scoring in the [simple classifier lab](Foundations_Archive/ML/23_Simple_Dataset_Practice.ipynb) and [feature-selection lab](Foundations_Archive/ML/20_Feature_Selection_techniques.ipynb) |
+| Train/test supervised workflow | Comfortable | Stratified splitting, fitting, prediction, and held-out scoring in the [simple classifier lab](Foundations_Archive/ML/23_Simple_Dataset_Practice.ipynb) and [feature-selection lab](Foundations_Archive/ML/20_Feature_Selection_techniques.ipynb). Current course: [`train_test_split` in depth](AI_ML_Series/02_data_toolkit_apps/08_sklearn/train_test_split_data.ipynb) — every parameter verified by experiment, but no model is fitted there yet |
 | Linear, multiple, and polynomial regression | Comfortable | Executed [simple](Foundations_Archive/ML/26_Simple_Linear_Regression.ipynb), [multiple](Foundations_Archive/ML/27_Multiple_Linear_Regression.ipynb), and [polynomial](Foundations_Archive/ML/28_Polynomial_Regression.ipynb) regression labs, plus from-scratch linear gradient descent |
 | Decision-tree classification | Beginner | A one-split tree in the [simple classifier lab](Foundations_Archive/ML/23_Simple_Dataset_Practice.ipynb) and tree-based feature-selection exercises on diabetes data |
 | MSE, MAE, and R-squared | Comfortable | From-scratch MSE/MAE and outlier sensitivity in the [cost-function lab](Foundations_Archive/ML/30_Cost_Function_MSE_GradientDescent.ipynb), plus held-out R-squared in the regression labs |
