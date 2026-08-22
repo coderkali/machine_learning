@@ -1,8 +1,8 @@
 # scikit-learn
 
 **Curriculum module:** M07 - Machine Learning
-**Status:** 🟡 Learning — **splitting and synthetic data.** No model has been fitted yet.
-Both notebooks are fully documented.
+**Status:** 🟡 Learning — **splitting, synthetic data, and exploratory analysis.**
+No model has been fitted yet. All three notebooks are fully documented.
 
 scikit-learn is where the toolkit stops describing data and starts **learning from it**.
 NumPy gave you arrays, Pandas gave you labelled columns, Matplotlib and Plotly gave you
@@ -18,7 +18,8 @@ estimators only have three verbs.
 | File | Contents |
 |---|---|
 | [`train_test_split_data.ipynb`](./train_test_split_data.ipynb) | **`train_test_split`, in depth.** The estimator model, loading `age1.csv` by relative path, choosing `X` and `Y`, then every parameter of the split: `test_size`, `shuffle`, `random_state`, `stratify`, and the return order. Three experiments with three charts show what each parameter actually changes. |
-| [`example_02.ipynb`](./example_02.ipynb) | **Synthetic datasets, in depth.** All five generators — `make_regression`, `make_classification`, `make_blobs`, `make_circles`, and `make_moons` — with every parameter tabulated and one chart per knob: `noise`, `coef`, `n_informative`, `class_sep`, `flip_y`, `weights`, `n_clusters_per_class`, `cluster_std`, and `factor`. Ends with the learner's own column experiment and the `IndexError` it produced, both explained rather than deleted. |
+| [`make_*_dataset.ipynb`](./make_*_dataset.ipynb) | **Synthetic datasets, in depth.** All five generators — `make_regression`, `make_classification`, `make_blobs`, `make_circles`, and `make_moons` — with every parameter tabulated and one chart per knob: `noise`, `coef`, `n_informative`, `class_sep`, `flip_y`, `weights`, `n_clusters_per_class`, `cluster_std`, and `factor`. Ends with the learner's own column experiment and the `IndexError` it produced, both explained rather than deleted. |
+| [`uni_boi_multi_variate_analaysis.ipynb`](./uni_boi_multi_variate_analaysis.ipynb) | **Exploratory data analysis on Iris, in depth.** Where `load_iris()`'s `0`/`1`/`2` target values actually come from (they ship inside scikit-learn's own `iris.csv`; the number is an index into `target_names`), then the three widths of analysis — **univariate** with the `np.zeros_like` flat-line trick, **bivariate** with `plt.scatter(c=target)`, and **multivariate** with `sns.pairplot(hue=, markers=)`. Ends by naming the two columns that carry the signal. Contains a real mislabelling bug — `virginica` and `versicolor` are swapped — kept and explained rather than quietly fixed. |
 
 Data comes from [`../02_pandas/DataSet/`](../02_pandas/DataSet/) — the same 13 CSVs used
 by the Pandas notebooks. `age1.csv`, `age2.csv`, and `income.csv` suit scaling;
@@ -138,6 +139,7 @@ mapping and proves it.
 | Reading meaning into `x[:, 0]` after `make_classification` | `shuffle=True` shuffles the **columns** as well as the rows. Verified in `example_02`: for `random_state=1` the learner's `x[:, 0]` turned out to be the *useless* noise column. |
 | Trusting a 10-row scatter plot | Five points landing left of five other points is not a rare event. The same column shows a convincing split at `n_samples=10` and none at all at `n_samples=500`. |
 | `x[:, 5]` on a 5-column array | `IndexError: index 5 is out of bounds for axis 1 with size 5`. Size 5 means the last valid index is 4. Loop over `range(x.shape[1])` instead of hardcoding. |
+| Naming the Iris classes from memory | The order is **setosa, versicolor, virginica** → `0`, `1`, `2`. The EDA notebook names `target == 1` "virginica" and `target == 2` "versicolor", which is backwards. Nothing raises; the plots just carry wrong labels. Decode with `iris.target_names[k]`. |
 
 ## Covered so far
 
@@ -155,6 +157,15 @@ redundant / repeated / useless column anatomy, `class_sep`, `flip_y`, `weights`,
 `centers`, uneven cluster sizes), and the two non-linear shapes `make_circles`
 (`factor`) and `make_moons`. It also covers reading a NumPy array by axis —
 `x[row]` vs `x[:, column]` — and reading an `IndexError` traceback.
+
+`uni_boi_multi_variate_analaysis` adds **exploratory data analysis**: the `Bunch` that
+`load_iris()` returns, where a bundled dataset's integer target comes from and why it is
+an index into `target_names` rather than a computed value, boolean-mask filtering per
+class, and the three widths of analysis — univariate (`np.zeros_like` for a flat 1-D
+strip plot), bivariate (`plt.scatter` with `c=target` driving a colormap), and
+multivariate (`sns.pairplot` with `hue` and `markers`, and why its diagonal is a density
+curve). It ends on a feature-selection call made from the picture alone: petal length and
+petal width carry the signal.
 
 **Not covered yet:** `StandardScaler`, `MinMaxScaler`, and `Normalizer`; `LabelEncoder`,
 `OrdinalEncoder`, and `OneHotEncoder`; `SimpleImputer`; `Pipeline` and
