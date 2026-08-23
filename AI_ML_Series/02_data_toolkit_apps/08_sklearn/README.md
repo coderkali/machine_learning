@@ -1,8 +1,8 @@
 # scikit-learn
 
 **Curriculum module:** M07 - Machine Learning
-**Status:** 🟡 Learning — **splitting, synthetic data, and exploratory analysis.**
-No model has been fitted yet. All three notebooks are fully documented.
+**Status:** 🟡 Learning — **splitting, synthetic data, exploratory analysis, and
+preprocessing.** No model has been fitted yet. All four notebooks are fully documented.
 
 scikit-learn is where the toolkit stops describing data and starts **learning from it**.
 NumPy gave you arrays, Pandas gave you labelled columns, Matplotlib and Plotly gave you
@@ -20,6 +20,7 @@ estimators only have three verbs.
 | [`train_test_split_data.ipynb`](./train_test_split_data.ipynb) | **`train_test_split`, in depth.** The estimator model, loading `age1.csv` by relative path, choosing `X` and `Y`, then every parameter of the split: `test_size`, `shuffle`, `random_state`, `stratify`, and the return order. Three experiments with three charts show what each parameter actually changes. |
 | [`make_*_dataset.ipynb`](./make_*_dataset.ipynb) | **Synthetic datasets, in depth.** All five generators — `make_regression`, `make_classification`, `make_blobs`, `make_circles`, and `make_moons` — with every parameter tabulated and one chart per knob: `noise`, `coef`, `n_informative`, `class_sep`, `flip_y`, `weights`, `n_clusters_per_class`, `cluster_std`, and `factor`. Ends with the learner's own column experiment and the `IndexError` it produced, both explained rather than deleted. |
 | [`uni_boi_multi_variate_analaysis.ipynb`](./uni_boi_multi_variate_analaysis.ipynb) | **Exploratory data analysis on Iris, in depth.** Where `load_iris()`'s `0`/`1`/`2` target values actually come from (they ship inside scikit-learn's own `iris.csv`; the number is an index into `target_names`), then the three widths of analysis — **univariate** with the `np.zeros_like` flat-line trick, **bivariate** with `plt.scatter(c=target)`, and **multivariate** with `sns.pairplot(hue=, markers=)`. Ends by naming the two columns that carry the signal. Contains a real mislabelling bug — `virginica` and `versicolor` are swapped — kept and explained rather than quietly fixed. |
+| [`preprocessing.ipynb`](./preprocessing.ipynb) | **Preprocessing, in depth.** The three scalers with their formulas, hand-computed and checked against sklearn with `np.allclose` — `StandardScaler` $(x-\mu)/\sigma$, `MinMaxScaler` $(x-x_{min})/(x_{max}-x_{min})$, `RobustScaler` $(x-Q_2)/IQR$ — then `Binarizer`, `Normalizer` (row-wise, not column-wise), `LabelEncoder`, and `OneHotEncoder`. Measures what three outliers do to ten thousand good rows, proves why the learner's chained-`df` cells still gave the right answer (all three scalers are affine), and closes with a decision chart, a leakage demo, and a `Pipeline` + `ColumnTransformer` version that cannot leak. |
 
 Data comes from [`../02_pandas/DataSet/`](../02_pandas/DataSet/) — the same 13 CSVs used
 by the Pandas notebooks. `age1.csv`, `age2.csv`, and `income.csv` suit scaling;
@@ -167,10 +168,14 @@ multivariate (`sns.pairplot` with `hue` and `markers`, and why its diagonal is a
 curve). It ends on a feature-selection call made from the picture alone: petal length and
 petal width carry the signal.
 
-**Not covered yet:** `StandardScaler`, `MinMaxScaler`, and `Normalizer`; `LabelEncoder`,
-`OrdinalEncoder`, and `OneHotEncoder`; `SimpleImputer`; `Pipeline` and
-`ColumnTransformer`; any model at all (`LinearRegression`, `LogisticRegression`, trees,
-KNN, forests); metrics and `cross_val_score`; `GridSearchCV`; and `joblib` persistence.
+**Now covered** (in `preprocessing.ipynb`): `StandardScaler`, `MinMaxScaler`,
+`RobustScaler`, `Binarizer`, `Normalizer`, `LabelEncoder`, and `OneHotEncoder`, plus a
+first working `Pipeline` + `ColumnTransformer`.
+
+**Not covered yet:** `OrdinalEncoder` and `SimpleImputer`; `Pipeline` and
+`ColumnTransformer` beyond the closing demo; any model at all (`LinearRegression`,
+`LogisticRegression`, trees, KNN, forests); metrics and `cross_val_score`;
+`GridSearchCV`; and `joblib` persistence.
 
 Several of these have **prior evidence** in
 [`Foundations_Archive/ML/`](../../../Foundations_Archive/ML/) from earlier self-study.
@@ -191,7 +196,7 @@ modelling work to continue in
 ## Version note
 
 Written and verified against **scikit-learn 1.9.0**, pandas 3.0.3, numpy 2.4.6, and
-matplotlib on Python 3.14 (`pizza_env`). Both notebooks were re-run end to end, so every
+matplotlib on Python 3.14 (`pizza_env`). All four notebooks were re-run end to end, so every
 saved chart is real output. One cell in `train_test_split_data.ipynb` calls
 `train_test_split` without a seed on purpose, to show that the result changes between
 runs — so that cell's saved output is *meant* to differ each time.
