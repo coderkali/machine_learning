@@ -46,6 +46,15 @@ predicting the common class already scores 99.9%.
 A supervised learning task that predicts a category, such as fraud or not
 fraud.
 
+### Coefficient
+
+The number a linear model multiplies one input column by. It answers a narrow
+question: if this column goes up by 1 and every other column stays fixed, how
+much does the prediction move? Stored as `model.coef_`, one entry per input
+column, in the order those columns were passed to `fit`. Because it is a
+*partial* effect, the same column can get a different coefficient in a
+different model.
+
 ## D
 
 ### Data leakage
@@ -114,12 +123,27 @@ behavior better fits a task or domain.
 
 Using a trained model to produce a prediction or generated output.
 
+### Intercept
+
+The value a linear model predicts when every input is 0, stored as
+`model.intercept_`. It sets the height of the line or plane. It is an anchor for
+the fit, not usually a meaningful prediction — a row where every column is 0
+often does not exist in the data.
+
 ## L
 
 ### Large language model (LLM)
 
 A neural network trained on large amounts of text and other data to understand
 and generate language-like output.
+
+### Least squares
+
+The rule linear regression uses to choose its numbers: pick the line or plane
+that makes the total of the **squared** vertical gaps between the real points
+and the model as small as possible. Squaring removes the sign and punishes big
+misses harder than small ones. scikit-learn solves it directly with linear
+algebra, with no loop and no learning rate.
 
 ## M
 
@@ -133,6 +157,21 @@ of relying only on rules written by a developer.
 The learned artifact that turns input features into a prediction or generated
 output. It is similar to the decision logic behind an API, but its behavior is
 learned from data.
+
+### Multicollinearity
+
+When two or more input columns move together, so the model cannot tell which
+one deserves the credit. The predictions can still be fine; the individual
+coefficients become unstable and hard to explain. Seen in `age2.csv`, where
+`Age` and `Degrees` correlate at `0.78` and `Age`'s coefficient changes from
+`−61` to `−20.4` depending on whether `Degrees` is in the model.
+
+### Multiple linear regression
+
+Linear regression with more than one input column:
+`y = b0 + w1*x1 + w2*x2 + ...`. One input draws a line, two inputs draw a
+plane, more inputs draw a shape that cannot be pictured. The class is still
+`LinearRegression`; only the width of `X` — and the length of `coef_` — changes.
 
 ## O
 
@@ -150,10 +189,23 @@ The instructions and context sent to a generative model.
 
 ## R
 
+### R-squared (R²)
+
+The default `.score()` of a regression model: how much of the movement in the
+target the model explains. `1.0` is a perfect fit and `0.0` is no better than
+always guessing the average; it can go negative for a model that is worse than
+that. It says nothing about whether the test set was large enough to trust.
+
 ### Regression
 
 A supervised learning task that predicts a number, such as price or delivery
 time.
+
+### Residual
+
+The gap between one real value and the value the model predicted for it
+(`actual − predicted`). Residuals are what least squares squares and adds up,
+and plotting them is the fastest way to see where a model is wrong.
 
 ### Retrieval-augmented generation (RAG)
 

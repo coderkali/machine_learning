@@ -22,8 +22,10 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 
 **Current lesson:** M07 —
 [scikit-learn](./AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md)
-(`train_test_split` and all five synthetic dataset generators, both notebooks now
-documented; no estimator fitted yet). M03
+(`train_test_split`, all five synthetic dataset generators, EDA, preprocessing, and the
+first fitted models: simple and **multiple linear regression** — six notebooks, all
+documented and re-run. No algorithm beyond `LinearRegression` and no metric beyond
+`.score()` yet). M03
 [NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) and
 [Pandas](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md), plus Matplotlib,
 Seaborn, Plotly, and Streamlit, also remain in progress.
