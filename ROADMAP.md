@@ -23,9 +23,10 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 **Current lesson:** M07 —
 [scikit-learn](./AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md)
 (`train_test_split`, all five synthetic dataset generators, EDA, preprocessing, and the
-first fitted models: simple and **multiple linear regression** — six notebooks, all
-documented and re-run. No algorithm beyond `LinearRegression` and no metric beyond
-`.score()` yet). M03
+first fitted models: simple linear regression, multiple linear regression, and
+**Ridge** — seven notebooks, all documented and re-run. Ridge brings the first
+**hyperparameter**, `alpha`, with its shrink factor `S/(S+α)` and an alpha table. No
+metric beyond `.score()` yet, and no cross-validation). M03
 [NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) and
 [Pandas](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md), plus Matplotlib,
 Seaborn, Plotly, and Streamlit, also remain in progress.

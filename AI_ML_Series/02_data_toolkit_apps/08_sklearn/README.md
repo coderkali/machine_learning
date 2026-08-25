@@ -2,9 +2,10 @@
 
 **Curriculum module:** M07 - Machine Learning
 **Status:** 🟡 Learning — **splitting, synthetic data, exploratory analysis,
-preprocessing, and the first two fitted models.** `LinearRegression` is done in both
-its shapes — one input column, then many. No other algorithm, and no metric beyond
-`.score()`, yet. All six notebooks are fully documented.
+preprocessing, and the first fitted models.** `LinearRegression` is done in both its
+shapes — one input column, then many — and **`Ridge`** adds the first
+**hyperparameter**, `alpha`, with the maths behind it worked out and verified. No
+metric beyond `.score()` yet. All seven notebooks are fully documented.
 
 scikit-learn is where the toolkit stops describing data and starts **learning from it**.
 NumPy gave you arrays, Pandas gave you labelled columns, Matplotlib and Plotly gave you
@@ -25,6 +26,7 @@ estimators only have three verbs.
 | [`03_preprocessing.ipynb`](./03_preprocessing.ipynb) | **Preprocessing, in depth.** The three scalers with their formulas, hand-computed and checked against sklearn with `np.allclose` — `StandardScaler` $(x-\mu)/\sigma$, `MinMaxScaler` $(x-x_{min})/(x_{max}-x_{min})$, `RobustScaler` $(x-Q_2)/IQR$ — then `Binarizer`, `Normalizer` (row-wise, not column-wise), `LabelEncoder`, and `OneHotEncoder`. Measures what three outliers do to ten thousand good rows, proves why the learner's chained-`df` cells still gave the right answer (all three scalers are affine), and closes with a decision chart, a leakage demo, and a `Pipeline` + `ColumnTransformer` version that cannot leak. |
 | [`05_Linear_Regression.ipynb`](./05_Linear_Regression.ipynb) | **The first fitted model.** `make_regression` data, split, `fit`, `predict`, `score`, and then the two numbers that *are* the model — `coef_` (the slope: how much `y` moves per 1 step of `x`, one entry per input column) and `intercept_` (the value of `y` when `x` is 0). Rebuilds `predict()` by hand as `m * x + c` and checks it with `np.allclose`, draws the intercept and the slope triangle on the real data, and turns each knob on its own to show that `coef_` tilts the line while `intercept_` shifts it. Closes with a long section on **how `fit()` actually finds those two numbers** — the squared-error cost, the parabola-shaped cost curve that makes a search unnecessary, the closed-form solution and the Normal Equation $(X^{T}X)^{-1}X^{T}y$ both checked against sklearn, the real `_preprocess_data` → `scipy.linalg.lstsq` → `_set_intercept` path through sklearn's source, and a hand-written gradient descent that walks to the same answer in 60 steps, with the contour plot of its path. |
 | [`06_multiple_linear_regression.ipynb`](./06_multiple_linear_regression.ipynb) | **The same model with more than one input column.** `Age` + `Degrees` → `Income` on `age2.csv`, so `coef_` becomes an array of two and the line becomes a **plane**, drawn in 3-D with the residual sticks that `fit` minimises. Rebuilds `predict()` as `b0 + X @ coef_` and checks it with `np.allclose`; shows that slicing the plane at fixed `Degrees` gives parallel lines whose shared tilt *is* `coef_[0]`; and measures the partial-effect point directly — `Age` alone is worth `−61` per year, `Age` beside `Degrees` only `−20.4`. Ends on why the `0.976` test R² is not evidence (2 test rows, and train R² is `0.795`). |
+| [`07_Ridge.ipynb`](./07_Ridge.ipynb) | **The first regularised model, and the first hyperparameter.** Ridge minimises `error + α × slope²` instead of error alone, so `alpha` becomes a dial between "fit the data" and "keep the slope small". Kept deliberately short: one formula, **`new slope = old slope × S/(S+α)`** where `S` is the spread of `x` on the training rows, verified against every `coef_` the notebook prints (`np.allclose` → `True` across nine alphas). That fraction answers *why the line goes flat*: a large `alpha` sends the slope to 0, the unpenalised intercept re-settles on `mean(y_train)`, and the model becomes "always guess the average" — which is what R² = 0 means, measured at `0.0015`. Closes with the **alpha table** from `0` to `10,000,000`, showing the shrink factor, `coef_`, `intercept_`, and train/test R² side by side. |
 
 Data comes from [`../02_pandas/DataSet/`](../02_pandas/DataSet/) — the same 13 CSVs used
 by the Pandas notebooks. `age1.csv`, `age2.csv`, and `income.csv` suit scaling;
@@ -148,6 +150,11 @@ mapping and proves it.
 | Reading a coefficient as the column's standalone effect | It is a **partial** effect: the movement in `y` when that column changes by 1 *and everything else stays fixed*. Measured in `06` — dropping `Degrees` from the model changes `Age`'s coefficient from `−20.4` to `−61`. |
 | Trusting R² from a 2-row test set | `06` scores `0.976` on test and `0.795` on train. A test score above the train score on 2 rows is luck, not skill. Needs enough rows, or `cross_val_score`. |
 | Reading `intercept_` as a real prediction | `7111.11` is the income at `Age = 0, Degrees = 0`. Nobody in the table is 0 years old — the intercept anchors the plane, it does not describe a person. |
+| Reusing an `alpha` value from another project or tutorial | `alpha` only means something **relative to `S = Σ(x−x̄)²`**, and `S` grows with the row count. In `07` the same `alpha=100` is a rounding error on 8,000 rows and would be a heavy penalty on 50. There is no portable "good alpha". |
+| Searching `alpha` over `[1, 2, 3, 4, 5]` | Nothing changes at that scale. All the movement happens across orders of magnitude around `S`, so move in jumps of ten: `0.01, 0.1, 1, 10, 100, 1000`. |
+| Expecting `Ridge` to drop useless columns | The shrink factor `S/(S+α)` is strictly between 0 and 1, so a coefficient gets close to 0 but never reaches it. **Lasso** is the one that produces exact zeros. |
+| Expecting regularisation to improve any model | It only helps a model that is overfitting. On `07`'s 10,000 rows with one clean column there is nothing to fix, so every increase of `alpha` only makes the score worse. |
+| `make_regression(...)` with no `random_state` | Every run draws a new dataset, so no number written next to the cell stays true. `07`'s first cell has this bug; the notebook keeps it, names it, and re-draws with a seed in the cell below. |
 | `x[:, 5]` on a 5-column array | `IndexError: index 5 is out of bounds for axis 1 with size 5`. Size 5 means the last valid index is 4. Loop over `range(x.shape[1])` instead of hardcoding. |
 | Naming the Iris classes from memory | The order is **setosa, versicolor, virginica** → `0`, `1`, `2`. The EDA notebook names `target == 1` "virginica" and `target == 2` "versicolor", which is backwards. Nothing raises; the plots just carry wrong labels. Decode with `iris.target_names[k]`. |
 
@@ -187,15 +194,24 @@ importances until the columns are scaled, and the first look at **multicollinear
 `Age` and `Degrees` correlate at `0.78`, and that is exactly why `Age`'s coefficient
 moves from `−61` to `−20.4` when `Degrees` joins the model.
 
+`07_Ridge` adds the first **regularised** model and the first **hyperparameter**: what
+the penalty `α × slope²` does to the cost, why `alpha` has no trailing underscore, the
+shrink factor `new slope = old slope × S/(S+α)` verified against every printed
+coefficient, why the fitted line **rotates flat** onto `mean(y_train)` rather than onto
+zero (the intercept is not penalised), and why that end state gives R² = 0 by
+definition. It is written short on purpose — the matrix form, `RidgeCV`, the scaling
+requirement, and a worked overfitting case are all left for later.
+
 **Now covered** (in `preprocessing.ipynb`): `StandardScaler`, `MinMaxScaler`,
 `RobustScaler`, `Binarizer`, `Normalizer`, `LabelEncoder`, and `OneHotEncoder`, plus a
 first working `Pipeline` + `ColumnTransformer`.
 
 **Not covered yet:** `OrdinalEncoder` and `SimpleImputer`; `Pipeline` and
-`ColumnTransformer` beyond the closing demo; every model except `LinearRegression`
-(`LogisticRegression`, trees, KNN, forests); metrics beyond `.score()`, and
-`cross_val_score`;
-`GridSearchCV`; and `joblib` persistence.
+`ColumnTransformer` beyond the closing demo; **Lasso and ElasticNet**, which `07` names
+as the contrast but never fits; the fact that Ridge needs scaled columns while
+`LinearRegression` does not; a worked overfitting case; every model outside the linear
+family (`LogisticRegression`, trees, KNN, forests); metrics beyond `.score()`;
+`cross_val_score`, `RidgeCV`, and `GridSearchCV`; and `joblib` persistence.
 
 Several of these have **prior evidence** in
 [`Foundations_Archive/ML/`](../../../Foundations_Archive/ML/) from earlier self-study.
@@ -216,10 +232,13 @@ modelling work to continue in
 ## Version note
 
 Written and verified against **scikit-learn 1.9.0**, pandas 3.0.3, numpy 2.4.6, and
-matplotlib and seaborn on Python 3.14 (`pizza_env`). All six notebooks were re-run end to
-end, so every saved chart is real output. One cell in `01_train_test_split_data.ipynb` calls
-`train_test_split` without a seed on purpose, to show that the result changes between
-runs — so that cell's saved output is *meant* to differ each time.
+matplotlib and seaborn on Python 3.14 (`pizza_env`). All seven notebooks were re-run end
+to end, so every saved chart is real output. One cell in `01_train_test_split_data.ipynb`
+calls `train_test_split` without a seed on purpose, to show that the result changes
+between runs. The opening `make_regression` in `07_Ridge.ipynb` also has no
+`random_state`, but that one is a real defect: the notebook names it and re-draws the
+data with `random_state=42` in the cell below, which is what every number quoted in `07`
+refers to.
 
 ## Key takeaway
 
@@ -231,6 +250,11 @@ runs — so that cell's saved output is *meant* to differ each time.
 For the models: a fitted `LinearRegression` **is** `intercept_` plus one entry of `coef_`
 per input column, and each of those entries only means *"if this column moves by 1 and
 nothing else does"*. Add a column and every other coefficient can change.
+
+For `Ridge`: `alpha` shrinks the slope by `S/(S+α)`, where `S` is the spread of your
+training column. Small `alpha` and you have `LinearRegression`; large `alpha` and the
+slope goes to zero, so the line goes flat at `mean(y)` and R² goes to 0. It only helps a
+model that is overfitting.
 
 For the generators: `make_*` hands you data whose answer you already know, which is the
 only reason it is useful. Always set `random_state`, always set `n_features`, and never

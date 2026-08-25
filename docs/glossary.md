@@ -20,7 +20,9 @@ with human intelligence, such as understanding language or making decisions.
 
 The balance between a model that is too simple to learn useful patterns and a
 model that learns the training data so closely that it performs poorly on new
-data.
+data. `Ridge`'s `alpha` is a dial you can turn along this axis: raising it makes the
+model stiffer. The Ridge notebook shows the stiff end — a large `alpha` on clean data
+flattens the line until it only predicts the average.
 
 ### Broadcasting
 
@@ -117,6 +119,16 @@ It matters most for distance-based and gradient-based algorithms.
 Continuing the training of a pre-trained model on a targeted dataset so its
 behavior better fits a task or domain.
 
+## H
+
+### Hyperparameter
+
+A setting you choose before training, as opposed to a value the model learns from
+the data. `alpha` in `Ridge` is one. scikit-learn makes the difference visible: a
+learned value carries a **trailing underscore** (`coef_`, `intercept_`), a
+hyperparameter does not. Hyperparameters are chosen by cross-validation on the
+training rows — never by whichever value scored best on the test set.
+
 ## I
 
 ### Inference
@@ -131,6 +143,13 @@ the fit, not usually a meaningful prediction — a row where every column is 0
 often does not exist in the data.
 
 ## L
+
+### L1 and L2 penalties
+
+The two usual ways to punish large coefficients. **L2** adds `α·Σw²` and is what
+`Ridge` uses: it shrinks every coefficient smoothly towards 0 but never reaches 0.
+**L1** adds `α·Σ|w|` and is what `Lasso` uses: it can set coefficients to exactly 0,
+which makes it a feature-selection tool as well. `ElasticNet` mixes the two.
 
 ### Large language model (LLM)
 
@@ -181,6 +200,14 @@ Turning a category column into one true/false column per distinct value, so a
 model can use it without being told the categories have an order. The ordered
 case is called ordinal encoding.
 
+### Overfitting
+
+When a model learns the training rows so closely that it stops generalising. The
+signature is a **gap**: a high train score beside a much lower test score. Measured
+The opposite failure is **underfitting**, where the model is too stiff to follow the
+data and both scores are low together; a large `alpha` in the Ridge notebook produces
+it on purpose.
+
 ## P
 
 ### Prompt
@@ -201,6 +228,14 @@ that. It says nothing about whether the test set was large enough to trust.
 A supervised learning task that predicts a number, such as price or delivery
 time.
 
+### Regularization
+
+Adding a penalty on the size of the coefficients to the thing a model minimises, so
+it is no longer free to fit the training rows as hard as it can. It trades a little
+more **bias** for a lot less **variance**, which helps when there are few rows, many
+columns, or correlated columns — and only costs you when there was no overfitting to
+begin with. See **Ridge**, **L1 and L2 penalties**.
+
 ### Residual
 
 The gap between one real value and the value the model predicted for it
@@ -211,6 +246,21 @@ and plotting them is the fastest way to see where a model is wrong.
 
 An application pattern that retrieves relevant source material and gives it to
 a generative model before the model answers.
+
+### Ridge regression
+
+Linear regression with an L2 penalty: it minimises
+`Σ(y − ŷ)² + α·Σw²` instead of just the squared error. `alpha` is the dial between
+the two goals. With one input column the effect is exactly
+
+```text
+w_ridge = w_ols * S/(S + alpha),   S = sum of (x - x_mean)^2 on the training rows
+```
+
+so `alpha` shrinks the slope by a factor between 0 and 1 — never to zero, never
+negative. As `alpha` grows the fitted line **rotates flat**, and because the
+intercept is not penalised it settles at `mean(y)`, which is the model R² calls
+`0.0`.
 
 ## S
 
@@ -224,6 +274,13 @@ evaluation. It exposes almost all of that through one shared interface, the esti
 
 A single labelled column of one data type, from the Pandas library. A DataFrame
 is a set of Series sharing one index.
+
+### Shrinkage
+
+The pull that a regularisation penalty applies to coefficients, moving them towards
+zero. In Ridge with one input column the amount is exactly `S/(S+α)`, the **shrink
+factor** — which is why the same `alpha` bites harder on a small dataset (`S` is
+small) than on a large one.
 
 ### Synthetic data
 
