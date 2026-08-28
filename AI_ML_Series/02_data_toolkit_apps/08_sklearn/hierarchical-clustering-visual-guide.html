@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clustering vs Hierarchical Clustering — Live Visual Lab</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f5f7fb; --surface: #fff; --soft: #eef3f9; --text: #172033;
+      --muted: #5f6b7c; --line: #d7dfeb; --grid: #e8edf4; --blue: #3974cc;
+      --blue-soft: #eaf2ff; --orange: #e47d28; --orange-soft: #fff1e5;
+      --green: #25845e; --purple: #7758c5; --red: #c54b4b; --neutral: #8995a7;
+      --shadow: 0 14px 38px rgba(31, 43, 68, .09);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.55; }
+    button, input, select { font: inherit; }
+    .page { width: min(1180px, calc(100% - 30px)); margin: 0 auto; padding: 38px 0 70px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 900px; margin-bottom: 12px; font-size: clamp(2rem, 5vw, 3.45rem); line-height: 1.07; letter-spacing: -.04em; }
+    h2 { letter-spacing: -.02em; }
+    .eyebrow { margin-bottom: 7px; color: var(--blue); font-size: .82rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .lead { max-width: 850px; color: var(--muted); font-size: 1.08rem; }
+    .mental-model { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: stretch; margin: 26px 0; }
+    .concept { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow); }
+    .concept h2 { margin-bottom: 6px; font-size: 1.1rem; }
+    .concept p { margin: 0; color: var(--muted); }
+    .concept.method { border-color: #b8cff3; background: linear-gradient(145deg, #fff, var(--blue-soft)); }
+    .arrow { align-self: center; color: var(--blue); font-size: 1.7rem; font-weight: 700; }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .tab-button, .button { min-height: 44px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); cursor: pointer; font-weight: 700; }
+    .tab-button:hover, .button:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+    .tab-button[aria-selected="true"], .button.primary { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .tab-button:focus-visible, .button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid rgba(57,116,204,.25); outline-offset: 2px; }
+    .button:disabled { cursor: not-allowed; opacity: .45; }
+    .tab-panel[hidden] { display: none; }
+
+    .section-head { max-width: 860px; margin-bottom: 20px; }
+    .section-head h2 { margin-bottom: 6px; font-size: clamp(1.5rem, 3vw, 2rem); }
+    .section-head p { margin-bottom: 0; color: var(--muted); }
+    .card { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }
+    .pad { padding: 22px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .formula-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0 22px; }
+    .formula-card { padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+    .formula-card h3 { margin-bottom: 7px; font-size: .92rem; }
+    .formula { display: block; overflow-wrap: anywhere; color: var(--purple); font-family: "SFMono-Regular", Consolas, monospace; font-size: .92rem; }
+    .formula-card p { margin: 8px 0 0; color: var(--muted); font-size: .88rem; }
+    .plain-note { padding: 14px 16px; border-left: 4px solid var(--green); background: rgba(37,132,94,.08); }
+    .lesson-intro { margin-bottom: 20px; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }
+    .lesson-intro h3 { margin-bottom: 8px; font-size: 1.2rem; }
+    .lesson-intro > p { max-width: 900px; color: var(--muted); }
+    .word-breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .word-part { padding: 15px; border-radius: 12px; background: var(--soft); }
+    .word-part strong { display: block; margin-bottom: 4px; color: var(--blue); }
+    .word-part span { color: var(--muted); }
+    .process-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; counter-reset: process; }
+    .process-step { position: relative; min-height: 112px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fafbfd; }
+    .process-step::before { counter-increment: process; content: counter(process); display: grid; place-items: center; width: 27px; height: 27px; margin-bottom: 8px; border-radius: 50%; background: var(--blue); color: #fff; font-size: .8rem; font-weight: 700; }
+    .process-step strong { display: block; margin-bottom: 3px; }
+    .process-step span { color: var(--muted); font-size: .88rem; }
+    .term-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin-top: 14px; }
+    .term { padding: 11px; border-left: 3px solid var(--blue); background: var(--blue-soft); }
+    .term strong { display: block; font-size: .87rem; }
+    .term span { color: var(--muted); font-size: .82rem; }
+    .how-to { margin-top: 15px; padding: 13px 15px; border-radius: 11px; background: var(--orange-soft); }
+    .how-to strong { color: #9b4c0d; }
+    details.formula-drawer { margin: 15px 0 20px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+    details.formula-drawer summary { padding: 14px 16px; cursor: pointer; font-weight: 700; }
+    details.formula-drawer[open] summary { border-bottom: 1px solid var(--line); }
+    details.formula-drawer .formula-grid { margin: 0; padding: 14px; }
+    .step-guide { margin-bottom: 14px; padding: 13px; border-radius: 10px; background: var(--blue-soft); }
+    .step-guide strong { display: block; margin-bottom: 4px; }
+    .step-guide span { color: var(--muted); }
+    .tree-reading { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin: 15px 0; }
+    .tree-key { padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: #fafbfd; }
+    .tree-key strong { display: block; margin-bottom: 3px; }
+    .tree-key span { color: var(--muted); font-size: .86rem; }
+
+    .data-layout { display: grid; grid-template-columns: minmax(280px, .75fr) minmax(380px, 1.25fr); gap: 18px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--muted); font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
+    td.number { font-variant-numeric: tabular-nums; text-align: right; }
+    tr:last-child td { border-bottom: 0; }
+    .distance-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+    label { color: var(--muted); font-size: .86rem; font-weight: 700; }
+    select { width: 100%; min-height: 42px; margin-top: 5px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--text); }
+    .result-box { padding: 14px; border-radius: 12px; background: var(--soft); }
+    .result-box p:last-child { margin-bottom: 0; }
+    .calculation { overflow-wrap: anywhere; color: var(--purple); font-family: "SFMono-Regular", Consolas, monospace; font-size: .9rem; }
+
+    .lab { overflow: hidden; }
+    .lab-head { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; padding: 22px 24px 17px; border-bottom: 1px solid var(--line); }
+    .step-count { margin-bottom: 5px; color: var(--blue); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .lab-head h3 { margin-bottom: 6px; font-size: 1.35rem; }
+    .lab-head p { max-width: 760px; margin-bottom: 0; color: var(--muted); }
+    .live-value { padding: 9px 12px; border-radius: 10px; background: var(--soft); color: var(--text); font-size: .88rem; font-weight: 700; white-space: nowrap; }
+    .visual-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .65fr); gap: 0; }
+    .visual-panel { min-width: 0; padding: 14px; }
+    .detail-panel { padding: 20px; border-left: 1px solid var(--line); background: #fafbfd; }
+    .detail-panel h3 { margin-bottom: 8px; font-size: 1rem; }
+    .detail-panel p { color: var(--muted); }
+    .detail-panel .calculation { color: var(--purple); }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 4px 0 8px; color: var(--muted); font-size: .84rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .swatch { width: 11px; height: 11px; border-radius: 50%; }
+    .metric { margin: 16px 0; padding: 13px; border-radius: 11px; background: var(--soft); }
+    .metric-label { color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+    .metric-value { font-size: 1.28rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .controls { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; padding: 18px 24px 22px; border-top: 1px solid var(--line); background: var(--soft); }
+    .button-group { display: flex; gap: 8px; }
+    .slider-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); cursor: pointer; }
+
+    svg.chart { display: block; width: 100%; height: auto; min-height: 390px; }
+    .frame { fill: transparent; stroke: var(--line); stroke-width: 1.4; }
+    .grid-line { stroke: var(--grid); stroke-width: 1; }
+    .axis-text, .point-text, .chart-note { font-family: inherit; }
+    .axis-text { fill: var(--muted); font-size: 12px; }
+    .point-text { fill: var(--text); font-size: 13px; font-weight: 700; pointer-events: none; }
+    .chart-note { fill: var(--muted); font-size: 12px; }
+    .data-point { cursor: pointer; stroke: #fff; stroke-width: 3; transition: fill .3s ease, r .2s ease; }
+    .data-point:hover { r: 10; }
+    .assignment-line { stroke: var(--line); stroke-width: 1.3; stroke-dasharray: 4 4; }
+    .centroid { stroke: var(--text); stroke-width: 2; transition: transform .6s ease; }
+    .cluster-hull { fill-opacity: .1; stroke-width: 2; stroke-dasharray: 5 4; }
+    .merge-link { stroke: var(--orange); stroke-width: 3; stroke-dasharray: 7 6; }
+    .tree-branch { fill: none; stroke: var(--blue); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .cut-line { stroke: var(--purple); stroke-width: 2.5; stroke-dasharray: 8 6; }
+
+    .linkage-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin: 0 0 16px; }
+    .linkage-controls label { min-width: 220px; }
+    .linkage-formula { flex: 1; min-width: 280px; padding: 11px 13px; border-radius: 10px; background: var(--soft); color: var(--purple); font-family: "SFMono-Regular", Consolas, monospace; font-size: .88rem; }
+    .hierarchy-plots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .plot-title { margin: 0 0 3px; text-align: center; color: var(--muted); font-size: .86rem; font-weight: 700; }
+
+    .compare-table td:first-child { font-weight: 700; }
+    .final-memory { margin-top: 18px; padding: 18px; border-radius: 14px; background: var(--text); color: #fff; text-align: center; font-size: 1.04rem; }
+    .checklist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+    .check { padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+    .check strong { display: block; margin-bottom: 4px; }
+    .check span { color: var(--muted); }
+
+    @media (max-width: 900px) {
+      .grid-2, .data-layout, .visual-grid, .hierarchy-plots { grid-template-columns: 1fr; }
+      .detail-panel { border-top: 1px solid var(--line); border-left: 0; }
+      .formula-grid, .checklist, .process-strip, .term-grid, .tree-reading { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 680px) {
+      .page { width: min(100% - 18px, 1180px); padding-top: 24px; }
+      .mental-model { grid-template-columns: 1fr; gap: 8px; }
+      .arrow { justify-self: center; transform: rotate(90deg); }
+      .lab-head { grid-template-columns: 1fr; }
+      .live-value { justify-self: start; }
+      .controls { grid-template-columns: 1fr; }
+      .slider-wrap { grid-row: 1; }
+      .button-group { justify-content: space-between; }
+      .distance-controls { grid-template-columns: 1fr; }
+      .word-breakdown, .formula-grid, .checklist, .process-strip, .term-grid, .tree-reading { grid-template-columns: 1fr; }
+      svg.chart { min-height: 300px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Interactive lesson from notebooks 12 and 13</p>
+      <h1>Clustering and hierarchical clustering, calculated live</h1>
+      <p class="lead">Use the same ten points in every section. First learn distance, then watch K-means move centers, then watch hierarchical clustering merge groups and build a dendrogram.</p>
+    </header>
+
+    <section class="mental-model" aria-label="Main relationship">
+      <div class="concept">
+        <h2>Clustering = the goal</h2>
+        <p>Discover groups in data that has no answer labels.</p>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="concept method">
+        <h2>K-means and hierarchical = two methods</h2>
+        <p>K-means moves centers. Hierarchical clustering joins groups and records a tree.</p>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="Lesson sections" role="tablist">
+      <button class="tab-button" id="tab-foundation" role="tab" aria-selected="true" aria-controls="panel-foundation">1. Data &amp; distance</button>
+      <button class="tab-button" id="tab-kmeans" role="tab" aria-selected="false" aria-controls="panel-kmeans">2. K-means: moving centers</button>
+      <button class="tab-button" id="tab-hierarchy" role="tab" aria-selected="false" aria-controls="panel-hierarchy">3. Hierarchical: merging groups</button>
+      <button class="tab-button" id="tab-compare" role="tab" aria-selected="false" aria-controls="panel-compare">4. Compare</button>
+    </nav>
+
+    <section class="tab-panel" id="panel-foundation" role="tabpanel" aria-labelledby="tab-foundation">
+      <div class="section-head">
+        <h2>Start with the data in your hand</h2>
+        <p>Each row is one observation. Feature 1 and Feature 2 are the only information given to either algorithm.</p>
+      </div>
+      <div class="data-layout">
+        <div class="card pad table-wrap">
+          <table aria-label="Ten data points">
+            <thead><tr><th>Point</th><th class="number">Feature 1</th><th class="number">Feature 2</th></tr></thead>
+            <tbody id="data-table-body"></tbody>
+          </table>
+        </div>
+        <div class="card pad">
+          <h3>Distance is the shared starting idea</h3>
+          <p>Both methods need a way to decide what is near. For two-dimensional points, we use straight-line Euclidean distance.</p>
+          <span class="formula">d(A,B) = √[(xA − xB)² + (yA − yB)²]</span>
+          <div class="distance-controls">
+            <label>First point<select id="distance-point-1"></select></label>
+            <label>Second point<select id="distance-point-2"></select></label>
+          </div>
+          <div class="result-box" aria-live="polite">
+            <p id="distance-words"></p>
+            <p class="calculation" id="distance-calculation"></p>
+          </div>
+          <p class="plain-note"><strong>Meaning:</strong> a smaller distance means the two observations are more similar according to these features.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-kmeans" role="tabpanel" aria-labelledby="tab-kmeans" hidden>
+      <div class="section-head">
+        <h2>What is K-means, and why is it here?</h2>
+        <p>Tab 1 gave us ten unlabeled points. We now need an algorithm that can divide them into sensible groups. K-means is the first clustering method used in notebook 12.</p>
+      </div>
+      <div class="lesson-intro">
+        <h3>First understand the name</h3>
+        <div class="word-breakdown">
+          <div class="word-part"><strong>K = how many groups we want</strong><span>In this lesson, K = 2, so we ask the algorithm to find exactly two clusters.</span></div>
+          <div class="word-part"><strong>Means = averages</strong><span>Each group is represented by its average position, called a centroid or center.</span></div>
+        </div>
+        <p><strong>K-means means:</strong> create K groups by repeatedly moving K average points. It does not know the correct groups in advance.</p>
+
+        <h3>The complete K-means story</h3>
+        <div class="process-strip">
+          <div class="process-step"><strong>Choose K</strong><span>We choose two groups because the scatter plot appears to have two broad regions.</span></div>
+          <div class="process-step"><strong>Place centers</strong><span>Put one temporary center inside the data for each requested group.</span></div>
+          <div class="process-step"><strong>Assign and move</strong><span>Send each point to its nearest center, then move each center to its group average.</span></div>
+          <div class="process-step"><strong>Stop when stable</strong><span>Repeat until no point changes group and the centers no longer move.</span></div>
+        </div>
+
+        <h3>Four words used in the lab</h3>
+        <div class="term-grid">
+          <div class="term"><strong>Centroid</strong><span>The average x and y position of one cluster.</span></div>
+          <div class="term"><strong>Assignment</strong><span>Giving a point to its nearest centroid.</span></div>
+          <div class="term"><strong>Iteration</strong><span>One assignment step followed by one center update.</span></div>
+          <div class="term"><strong>Converged</strong><span>The groups and centers have stopped changing.</span></div>
+        </div>
+        <div class="how-to"><strong>How to use the lab:</strong> begin at Step 1 and press <em>Next</em> slowly. The ◆ symbols are centers. Dashed lines appear when points are assigned. After centers appear, click any lettered point to see its two distance calculations.</div>
+      </div>
+
+      <details class="formula-drawer">
+        <summary>Show the K-means formulas after the visual idea is clear</summary>
+        <div class="formula-grid">
+          <div class="formula-card"><h3>1. Distance</h3><span class="formula">d(x, μk) = √Σ(xj − μkj)²</span><p>Compare one point with every center. Choose the smallest distance.</p></div>
+          <div class="formula-card"><h3>2. New center</h3><span class="formula">μk = (1 / nk) Σ xi</span><p>Add the coordinates in a group and divide by the number of points.</p></div>
+          <div class="formula-card"><h3>3. SSE</h3><span class="formula">SSE = Σk Σi∈Ck ‖xi − μk‖²</span><p>Add every squared point-to-center distance. Smaller means more compact groups.</p></div>
+        </div>
+      </details>
+
+      <section class="card lab" aria-labelledby="kmeans-step-title">
+        <div class="lab-head">
+          <div aria-live="polite"><div class="step-count" id="kmeans-step-count"></div><h3 id="kmeans-step-title"></h3><p id="kmeans-step-copy"></p></div>
+          <div class="live-value" id="kmeans-live-value"></div>
+        </div>
+        <div class="visual-grid">
+          <div class="visual-panel">
+            <div class="legend"><span><i class="swatch" style="background:var(--blue)"></i>Cluster 1</span><span><i class="swatch" style="background:var(--orange)"></i>Cluster 2</span><span>◆ centroid</span></div>
+            <svg class="chart" id="kmeans-svg" viewBox="0 0 650 440" role="img" aria-label="Live K-means calculation with ten points"></svg>
+          </div>
+          <aside class="detail-panel" aria-live="polite">
+            <h3>What this step means</h3>
+            <div class="step-guide"><strong id="kmeans-step-meaning-title"></strong><span id="kmeans-step-meaning"></span></div>
+            <p><strong>Optional check:</strong> click any lettered point. When centroids exist, its distance to both centers appears below.</p>
+            <div id="kmeans-point-detail" class="calculation">Choose a step containing centroids, then click a point.</div>
+            <div class="metric"><div class="metric-label">Current SSE</div><div class="metric-value" id="kmeans-sse">—</div></div>
+            <p id="kmeans-sse-note">SSE appears after points are assigned.</p>
+            <p class="plain-note" id="kmeans-next-action"></p>
+          </aside>
+        </div>
+        <div class="controls">
+          <div class="button-group"><button class="button" id="kmeans-back">← Back</button><button class="button" id="kmeans-next">Next →</button></div>
+          <div class="slider-wrap"><label class="slider-label" for="kmeans-slider"><span>Move through K-means</span><span id="kmeans-slider-value"></span></label><input id="kmeans-slider" type="range" min="0" max="6" step="1" value="0"></div>
+          <button class="button primary" id="kmeans-play">▶ Play</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="tab-panel" id="panel-hierarchy" role="tabpanel" aria-labelledby="tab-hierarchy" hidden>
+      <div class="section-head">
+        <h2>What is hierarchical clustering?</h2>
+        <p>It is a different way to group the same ten points. Unlike K-means, it does not move centers. It builds larger groups by joining smaller groups.</p>
+      </div>
+      <div class="lesson-intro">
+        <h3>Think of building a family tree from the bottom upward</h3>
+        <p>At the start, A, B, C, and every other point is a separate one-person group. The closest two groups join. That new group can then join another point or group. Every join becomes one branch in a tree.</p>
+        <div class="word-breakdown">
+          <div class="word-part"><strong>Hierarchical = arranged in levels</strong><span>Small groups sit at lower levels. Larger combined groups sit at higher levels.</span></div>
+          <div class="word-part"><strong>Agglomerative = join from the bottom</strong><span>This is the version used here: start with individuals and repeatedly combine them.</span></div>
+        </div>
+
+        <h3>The complete hierarchical story</h3>
+        <div class="process-strip">
+          <div class="process-step"><strong>Start with 10 groups</strong><span>Every point is temporarily its own cluster.</span></div>
+          <div class="process-step"><strong>Compare groups</strong><span>Use a linkage rule to calculate the distance between every possible pair.</span></div>
+          <div class="process-step"><strong>Merge the nearest</strong><span>Join only the pair with the smallest linkage value.</span></div>
+          <div class="process-step"><strong>Save the history</strong><span>Repeat until one group remains. Draw every join as a dendrogram branch.</span></div>
+        </div>
+        <p class="plain-note"><strong>Easy counting rule:</strong> with 10 points, clusters remaining = 10 − completed merges. For example, after 3 merges there are 7 clusters.</p>
+
+        <h3>How to read the dendrogram on the right</h3>
+        <div class="tree-reading">
+          <div class="tree-key"><strong>Letter at bottom</strong><span>One original data point.</span></div>
+          <div class="tree-key"><strong>U-shaped branch</strong><span>Two points or groups joined.</span></div>
+          <div class="tree-key"><strong>Branch height</strong><span>Higher means the groups were more different.</span></div>
+          <div class="tree-key"><strong>Purple cut line</strong><span>Count branches below it to get the current cluster count.</span></div>
+        </div>
+        <div class="how-to"><strong>How to use the lab:</strong> keep <em>Ward linkage</em> selected first. Press <em>Merge</em> once at a time. Watch the orange dashed line in the left chart, then watch the matching branch appear in the right chart.</div>
+      </div>
+
+      <div class="linkage-controls">
+        <label>Linkage: what does “distance between two groups” mean?<select id="linkage-select"><option value="ward">Ward — add the least extra spread</option><option value="single">Single — nearest two members</option><option value="complete">Complete — farthest two members</option><option value="average">Average — mean of all pair distances</option></select></label>
+      </div>
+      <details class="formula-drawer">
+        <summary>Show the selected linkage formula</summary>
+        <div class="linkage-formula" id="linkage-formula" style="margin:14px"></div>
+      </details>
+
+      <section class="card lab" aria-labelledby="hierarchy-step-title">
+        <div class="lab-head">
+          <div aria-live="polite"><div class="step-count" id="hierarchy-step-count"></div><h3 id="hierarchy-step-title"></h3><p id="hierarchy-step-copy"></p></div>
+          <div class="live-value" id="cluster-count"></div>
+        </div>
+        <div class="visual-panel">
+          <div class="hierarchy-plots">
+            <div><p class="plot-title">Left: orange dashed line = the next pair to join</p><svg class="chart" id="hierarchy-scatter" viewBox="0 0 650 440" role="img" aria-label="Current hierarchical clusters in data space"></svg></div>
+            <div><p class="plot-title">Right: blue branches = merges already completed</p><svg class="chart" id="dendrogram-svg" viewBox="0 0 650 440" role="img" aria-label="Progressive dendrogram for ten points"></svg></div>
+          </div>
+          <div class="result-box" aria-live="polite">
+            <p><strong>Groups that exist now:</strong> <span id="current-clusters-list"></span></p>
+            <p id="next-merge-words"></p>
+            <details class="formula-drawer" style="margin-bottom:0">
+              <summary>Show the calculation for this next merge</summary>
+              <p class="calculation" id="next-merge-calculation" style="padding:0 14px 14px"></p>
+            </details>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="button-group"><button class="button" id="hierarchy-back">← Back</button><button class="button" id="hierarchy-next">Merge →</button></div>
+          <div class="slider-wrap"><label class="slider-label" for="hierarchy-slider"><span>Number of completed merges</span><span id="hierarchy-slider-value"></span></label><input id="hierarchy-slider" type="range" min="0" max="9" step="1" value="0"></div>
+          <button class="button primary" id="hierarchy-play">▶ Play</button>
+        </div>
+      </section>
+      <p class="plain-note" style="margin-top:16px"><strong>Important:</strong> the points never move in the data-space chart. Only their group membership changes. The dendrogram changes because it is a record of those merges.</p>
+    </section>
+
+    <section class="tab-panel" id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" hidden>
+      <div class="section-head"><h2>Now compare the two methods</h2><p>They solve the same general clustering problem, but their mechanics and outputs are different.</p></div>
+      <div class="card pad table-wrap">
+        <table class="compare-table">
+          <thead><tr><th>Question</th><th>K-means</th><th>Hierarchical clustering</th></tr></thead>
+          <tbody>
+            <tr><td>What moves?</td><td>Centroids move toward the mean.</td><td>Nothing in data space; groups merge.</td></tr>
+            <tr><td>Choose cluster count first?</td><td>Yes. Set K before fitting.</td><td>Not necessarily. Inspect and cut the dendrogram later.</td></tr>
+            <tr><td>Main calculation</td><td>Point-to-centroid distance.</td><td>Cluster-to-cluster linkage distance.</td></tr>
+            <tr><td>Main output</td><td>Labels and centroid positions.</td><td>Labels plus a merge tree.</td></tr>
+            <tr><td>Best visual idea</td><td>Centers move; assignments repeat.</td><td>Branches join from bottom to top.</td></tr>
+            <tr><td>Curved moon-shaped data</td><td>Often splits it poorly because centers favor compact groups.</td><td>Single linkage can follow connected curved shapes, as notebook 12 demonstrates.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="checklist">
+        <div class="check"><strong>Use K-means when</strong><span>you expect compact groups, know K, and need speed on larger data.</span></div>
+        <div class="check"><strong>Use hierarchical when</strong><span>you want the grouping history or do not yet know the best cut.</span></div>
+        <div class="check"><strong>Before either method</strong><span>scale features, inspect outliers, and decide whether Euclidean distance makes sense.</span></div>
+      </div>
+      <div class="final-memory"><strong>Final memory:</strong> clustering is the task; K-means and hierarchical clustering are different algorithms for completing that task.</div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const NS = "http://www.w3.org/2000/svg";
+      const points = [
+        {name:"A", x:10, y:15}, {name:"B", x:18, y:22}, {name:"C", x:25, y:14}, {name:"D", x:30, y:28}, {name:"E", x:20, y:35},
+        {name:"F", x:65, y:65}, {name:"G", x:72, y:75}, {name:"H", x:80, y:62}, {name:"I", x:88, y:78}, {name:"J", x:75, y:88}
+      ];
+      const colors = ["var(--blue)", "var(--orange)", "var(--green)", "var(--purple)", "var(--red)", "#2a8ca8", "#b46b9b", "#8a7b2d", "#55718f", "#9a6542"];
+      const sx = x => 55 + x * 5.45;
+      const sy = y => 390 - y * 3.5;
+      const euclidean = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+      const mean = members => ({x: members.reduce((s,i)=>s+points[i].x,0)/members.length, y: members.reduce((s,i)=>s+points[i].y,0)/members.length});
+      const fmt = n => Number(n).toFixed(2);
+
+      function basePlot() {
+        let html = '<rect class="frame" x="48" y="24" width="560" height="366" rx="4"></rect>';
+        [20,40,60,80].forEach(v => { html += `<line class="grid-line" x1="${sx(v)}" y1="24" x2="${sx(v)}" y2="390"></line><line class="grid-line" x1="48" y1="${sy(v)}" x2="608" y2="${sy(v)}"></line><text class="axis-text" x="${sx(v)}" y="410" text-anchor="middle">${v}</text><text class="axis-text" x="40" y="${sy(v)+4}" text-anchor="end">${v}</text>`; });
+        html += '<text class="axis-text" x="328" y="432" text-anchor="middle">Feature 1</text><text class="axis-text" x="13" y="210" text-anchor="middle" transform="rotate(-90 13 210)">Feature 2</text>';
+        return html;
+      }
+      function pointCircle(p, i, fill, extra="") { return `<circle class="data-point" data-point-index="${i}" cx="${sx(p.x)}" cy="${sy(p.y)}" r="8" fill="${fill}" ${extra}></circle><text class="point-text" x="${sx(p.x)+11}" y="${sy(p.y)-10}">${p.name}</text>`; }
+
+      // Tabs
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      tabs.forEach(tab => tab.addEventListener("click", () => {
+        tabs.forEach(t => { const active=t===tab; t.setAttribute("aria-selected", String(active)); document.getElementById(t.getAttribute("aria-controls")).hidden=!active; });
+      }));
+
+      // Data table and live distance formula
+      document.getElementById("data-table-body").innerHTML = points.map(p=>`<tr><td><strong>${p.name}</strong></td><td class="number">${p.x}</td><td class="number">${p.y}</td></tr>`).join("");
+      const d1=document.getElementById("distance-point-1"), d2=document.getElementById("distance-point-2");
+      [d1,d2].forEach(select => select.innerHTML=points.map((p,i)=>`<option value="${i}">${p.name} (${p.x}, ${p.y})</option>`).join(""));
+      d2.value="1";
+      function renderDistance() {
+        const a=points[+d1.value], b=points[+d2.value], dx=a.x-b.x, dy=a.y-b.y, value=euclidean(a,b);
+        document.getElementById("distance-words").innerHTML=`Distance from <strong>${a.name}</strong> to <strong>${b.name}</strong> is <strong>${fmt(value)}</strong>.`;
+        document.getElementById("distance-calculation").textContent=`√[(${a.x} − ${b.x})² + (${a.y} − ${b.y})²] = √(${dx*dx} + ${dy*dy}) = ${fmt(value)}`;
+      }
+      d1.addEventListener("change",renderDistance); d2.addEventListener("change",renderDistance); renderDistance();
+
+      // K-means calculations
+      const initialCenters=[{x:10,y:15},{x:30,y:28}];
+      const assign = centers => points.map(p => euclidean(p,centers[0])<=euclidean(p,centers[1])?0:1);
+      const moveCenters = labels => [0,1].map(k => { const ids=points.map((_,i)=>i).filter(i=>labels[i]===k); return mean(ids); });
+      const labels0=assign(initialCenters), centers1=moveCenters(labels0), labels1=assign(centers1), centers2=moveCenters(labels1);
+      const kStates=[
+        {title:"Look at unlabeled data",copy:"K-means has not started. The points have values but no cluster answers.",centers:null,labels:null,lines:false,note:"No SSE yet"},
+        {title:"Choose K = 2 and place two starting centers",copy:"K-means requires the number of clusters first. These starting centers are intentionally imperfect.",centers:initialCenters,labels:null,lines:false,note:"Two initial centroids"},
+        {title:"Assignment step 1",copy:"Every point goes to the nearest centroid. Dashed lines show the winning point-to-center distances.",centers:initialCenters,labels:labels0,lines:true,note:"Assign to nearest center"},
+        {title:"Update step 1",copy:"Each centroid moves to the mean x and mean y of the points currently assigned to it.",centers:centers1,labels:labels0,lines:true,note:"Centers moved to means"},
+        {title:"Assignment step 2",copy:"Using the moved centers, calculate every distance again. Several points now change membership.",centers:centers1,labels:labels1,lines:true,note:"Assignments recalculated"},
+        {title:"Update step 2",copy:"Move each centroid to its new group mean. The groups are now compact and well separated.",centers:centers2,labels:labels1,lines:true,note:"SSE becomes much smaller"},
+        {title:"Converged: stop",copy:"Another assignment does not change any label, so another mean does not move either centroid.",centers:centers2,labels:labels1,lines:false,note:"Final: 2 stable clusters"}
+      ];
+      const kGuides=[
+        {title:"We only have coordinates",meaning:"The gray points are not labeled as Group 1 or Group 2. K-means must create those labels from distance.",next:"Next, we tell the algorithm how many groups to create: K = 2."},
+        {title:"The diamonds are temporary guesses",meaning:"μ1 and μ2 are two starting centroids. A starting centroid is not yet the final center of a real group.",next:"Next, every point compares its distance to μ1 and μ2."},
+        {title:"The nearest centroid wins",meaning:"Blue means μ1 was nearer. Orange means μ2 was nearer. A dashed line points to the winning centroid.",next:"Next, each centroid moves to the average position of its assigned points."},
+        {title:"Move to the group average",meaning:"The center uses mean x and mean y. This movement lowers the total squared error for the current memberships.",next:"Next, all points measure their distances again because the centers moved."},
+        {title:"A point is allowed to change groups",meaning:"C, D, and E now find μ1 nearer, so the two visible groups become the five lower-left and five upper-right points.",next:"Next, calculate the mean of these improved groups."},
+        {title:"The centers now represent the groups",meaning:"μ1 is the average of A–E. μ2 is the average of F–J. SSE has dropped greatly from the first assignment.",next:"Next, perform one more check to see whether anything changes."},
+        {title:"Nothing changes, so the loop ends",meaning:"The same points remain assigned to the same centers. The centroids also remain in the same positions. This is convergence.",next:"K-means is finished: A–E form one cluster and F–J form the other."}
+      ];
+      let kStep=0, selectedPoint=0, kTimer=null;
+      const kSSE = state => !state.centers||!state.labels ? null : points.reduce((sum,p,i)=>{const c=state.centers[state.labels[i]]; return sum+(p.x-c.x)**2+(p.y-c.y)**2;},0);
+      function renderKMeans() {
+        const state=kStates[kStep]; let html=basePlot();
+        if(state.lines) points.forEach((p,i)=>{const c=state.centers[state.labels[i]]; html+=`<line class="assignment-line" x1="${sx(p.x)}" y1="${sy(p.y)}" x2="${sx(c.x)}" y2="${sy(c.y)}"></line>`;});
+        points.forEach((p,i)=>html+=pointCircle(p,i,state.labels?colors[state.labels[i]]:"var(--neutral)",i===selectedPoint?'style="stroke:var(--purple);stroke-width:5"':""));
+        if(state.centers) state.centers.forEach((c,i)=>html+=`<rect class="centroid" x="${sx(c.x)-9}" y="${sy(c.y)-9}" width="18" height="18" rx="2" fill="${colors[i]}" transform="rotate(45 ${sx(c.x)} ${sy(c.y)})"></rect><text class="chart-note" x="${sx(c.x)+15}" y="${sy(c.y)+5}">μ${i+1} (${fmt(c.x)}, ${fmt(c.y)})</text>`);
+        document.getElementById("kmeans-svg").innerHTML=html;
+        document.getElementById("kmeans-step-count").textContent=`Step ${kStep+1} of ${kStates.length}`;
+        document.getElementById("kmeans-step-title").textContent=state.title; document.getElementById("kmeans-step-copy").textContent=state.copy; document.getElementById("kmeans-live-value").textContent=state.note;
+        document.getElementById("kmeans-step-meaning-title").textContent=kGuides[kStep].title; document.getElementById("kmeans-step-meaning").textContent=kGuides[kStep].meaning; document.getElementById("kmeans-next-action").innerHTML=`<strong>What happens next:</strong> ${kGuides[kStep].next}`;
+        document.getElementById("kmeans-slider").value=kStep; document.getElementById("kmeans-slider-value").textContent=`${kStep+1} / ${kStates.length}`;
+        document.getElementById("kmeans-back").disabled=kStep===0; document.getElementById("kmeans-next").disabled=kStep===kStates.length-1;
+        const sse=kSSE(state); document.getElementById("kmeans-sse").textContent=sse===null?"—":fmt(sse); document.getElementById("kmeans-sse-note").textContent=sse===null?"SSE appears after points are assigned.":"Lower is better. It falls as assignments and centers improve.";
+        const p=points[selectedPoint];
+        if(!state.centers) document.getElementById("kmeans-point-detail").textContent=`${p.name} = (${p.x}, ${p.y}). Centroids have not been placed yet.`;
+        else { const da=euclidean(p,state.centers[0]),db=euclidean(p,state.centers[1]); document.getElementById("kmeans-point-detail").innerHTML=`${p.name} = (${p.x}, ${p.y})<br><br>d(${p.name}, μ1) = ${fmt(da)}<br>d(${p.name}, μ2) = ${fmt(db)}<br><br><strong>Nearest: μ${da<=db?1:2}</strong>`; }
+        document.querySelectorAll("#kmeans-svg .data-point").forEach(el=>el.addEventListener("click",()=>{selectedPoint=+el.dataset.pointIndex;renderKMeans();}));
+      }
+      function stopK(){if(kTimer)clearInterval(kTimer);kTimer=null;document.getElementById("kmeans-play").textContent="▶ Play";}
+      document.getElementById("kmeans-slider").addEventListener("input",e=>{stopK();kStep=+e.target.value;renderKMeans();});
+      document.getElementById("kmeans-back").addEventListener("click",()=>{stopK();kStep=Math.max(0,kStep-1);renderKMeans();});
+      document.getElementById("kmeans-next").addEventListener("click",()=>{stopK();kStep=Math.min(6,kStep+1);renderKMeans();});
+      document.getElementById("kmeans-play").addEventListener("click",()=>{if(kTimer){stopK();return;}if(kStep===6)kStep=0;renderKMeans();document.getElementById("kmeans-play").textContent="❚❚ Pause";kTimer=setInterval(()=>{if(kStep===6){stopK();}else{kStep++;renderKMeans();}},2100);});
+      renderKMeans();
+
+      // Hierarchical calculations
+      const linkageText={single:"Single: d(A,B) = min d(a,b)",complete:"Complete: d(A,B) = max d(a,b)",average:"Average: d(A,B) = mean of every d(a,b)",ward:"Ward: ΔSSE = (nA·nB / (nA+nB)) × ‖μA−μB‖²"};
+      function clusterDistance(a,b,method){
+        const distances=a.members.flatMap(i=>b.members.map(j=>euclidean(points[i],points[j])));
+        if(method==="single")return Math.min(...distances); if(method==="complete")return Math.max(...distances); if(method==="average")return distances.reduce((s,v)=>s+v,0)/distances.length;
+        const ma=mean(a.members),mb=mean(b.members); return (a.members.length*b.members.length/(a.members.length+b.members.length))*((ma.x-mb.x)**2+(ma.y-mb.y)**2);
+      }
+      function buildHierarchy(method){
+        let clusters=points.map((_,i)=>({id:i,members:[i],left:null,right:null,height:0})); let nextId=points.length; const events=[],snapshots=[clusters.map(c=>({...c,members:[...c.members]}))];
+        while(clusters.length>1){let best=null;for(let i=0;i<clusters.length;i++)for(let j=i+1;j<clusters.length;j++){const value=clusterDistance(clusters[i],clusters[j],method);if(!best||value<best.value)best={i,j,value,a:clusters[i],b:clusters[j]};}
+          const merged={id:nextId++,members:[...best.a.members,...best.b.members],left:best.a.id,right:best.b.id,height:best.value};events.push({...best,newNode:merged});clusters=clusters.filter((_,i)=>i!==best.i&&i!==best.j);clusters.push(merged);snapshots.push(clusters.map(c=>({...c,members:[...c.members]})));}
+        return {events,snapshots};
+      }
+      let method="ward", hData=buildHierarchy(method), hStep=0, hTimer=null;
+      function memberNames(members){return members.map(i=>points[i].name).join("");}
+      function describeLinkage(event){
+        const a=event.a,b=event.b,v=event.value;
+        if(method==="ward"){const ma=mean(a.members),mb=mean(b.members),factor=a.members.length*b.members.length/(a.members.length+b.members.length);return `(${a.members.length}×${b.members.length} / ${a.members.length+b.members.length}) × [(${fmt(ma.x)}−${fmt(mb.x)})² + (${fmt(ma.y)}−${fmt(mb.y)})²] = ${fmt(v)}`;}
+        return `${method} pairwise distance between {${memberNames(a.members)}} and {${memberNames(b.members)}} = ${fmt(v)}`;
+      }
+      function hierarchyScatter(clusters,next){
+        let html=basePlot();
+        clusters.forEach((c,index)=>{if(c.members.length>1){const xs=c.members.map(i=>sx(points[i].x)),ys=c.members.map(i=>sy(points[i].y));const x=Math.min(...xs)-18,y=Math.min(...ys)-18,w=Math.max(...xs)-Math.min(...xs)+36,h=Math.max(...ys)-Math.min(...ys)+36;html+=`<rect class="cluster-hull" x="${x}" y="${y}" width="${w}" height="${h}" rx="22" fill="${colors[index%colors.length]}" stroke="${colors[index%colors.length]}"></rect>`;}});
+        if(next){const a=mean(next.a.members),b=mean(next.b.members);html+=`<line class="merge-link" x1="${sx(a.x)}" y1="${sy(a.y)}" x2="${sx(b.x)}" y2="${sy(b.y)}"></line>`;}
+        points.forEach((p,i)=>{const ci=clusters.findIndex(c=>c.members.includes(i));html+=pointCircle(p,i,colors[ci%colors.length]);});return html;
+      }
+      function dendrogramMarkup(completed){
+        const all=hData.events,maxHeight=Math.max(...all.map(e=>e.value)); const leafX={};points.forEach((p,i)=>leafX[i]=70+i*55); const nodes={};points.forEach((p,i)=>nodes[i]={x:leafX[i],y:375});
+        let html='<rect class="frame" x="48" y="24" width="560" height="366" rx="4"></rect><text class="axis-text" x="20" y="210" text-anchor="middle" transform="rotate(-90 20 210)">Merge distance</text>';
+        all.forEach((e,index)=>{const left=nodes[e.a.id],right=nodes[e.b.id],y=350-(e.value/maxHeight)*285,x=(left.x+right.x)/2;nodes[e.newNode.id]={x,y};if(index<completed)html+=`<path class="tree-branch" d="M${left.x},${left.y} V${y} H${right.x} V${right.y}"></path>`;});
+        points.forEach((p,i)=>html+=`<circle cx="${leafX[i]}" cy="375" r="6" fill="var(--neutral)"></circle><text class="point-text" x="${leafX[i]}" y="405" text-anchor="middle">${p.name}</text>`);
+        if(completed<all.length){const prev=completed===0?0:all[completed-1].value,next=all[completed].value,cut=(prev+next)/2,y=350-(cut/maxHeight)*285;html+=`<line class="cut-line" x1="50" y1="${y}" x2="607" y2="${y}"></line><text class="chart-note" x="600" y="${y-7}" text-anchor="end">current cut → ${10-completed} clusters</text>`;} else html+='<text class="chart-note" x="328" y="48" text-anchor="middle">All points have joined</text>';
+        return html;
+      }
+      function renderHierarchy(){
+        const clusters=hData.snapshots[hStep],next=hData.events[hStep];document.getElementById("linkage-formula").textContent=linkageText[method];document.getElementById("hierarchy-scatter").innerHTML=hierarchyScatter(clusters,next);document.getElementById("dendrogram-svg").innerHTML=dendrogramMarkup(hStep);
+        document.getElementById("hierarchy-step-count").textContent=`Merge ${hStep} of 9 completed`;document.getElementById("cluster-count").textContent=`${clusters.length} current cluster${clusters.length===1?"":"s"}`;document.getElementById("hierarchy-slider").value=hStep;document.getElementById("hierarchy-slider-value").textContent=`${hStep} merges → ${clusters.length} clusters`;document.getElementById("hierarchy-back").disabled=hStep===0;document.getElementById("hierarchy-next").disabled=hStep===9;
+        document.getElementById("current-clusters-list").textContent=clusters.map(c=>`{${memberNames(c.members)}}`).join("  ");
+        if(next){
+          document.getElementById("hierarchy-step-title").textContent=hStep===0?`Before merge 1: {${memberNames(next.a.members)}} and {${memberNames(next.b.members)}} are closest`:`After ${hStep} merge${hStep===1?"":"s"}: compare the remaining groups again`;
+          document.getElementById("hierarchy-step-copy").textContent=hStep===0?"No groups have joined yet. The algorithm compares every possible pair using the selected linkage rule.":`There are now ${clusters.length} groups. The algorithm recalculates linkage distances because one of the groups is new.`;
+          document.getElementById("next-merge-words").innerHTML=`<strong>Next action:</strong> join {${memberNames(next.a.members)}} with {${memberNames(next.b.members)}}. Their ${method} linkage value, <strong>${fmt(next.value)}</strong>, is the smallest available. Press <em>Merge</em> to record this join.`;
+          document.getElementById("next-merge-calculation").textContent=describeLinkage(next);
+        }else{
+          document.getElementById("hierarchy-step-title").textContent="All 9 merges are complete";
+          document.getElementById("hierarchy-step-copy").textContent="Ten separate points became one complete hierarchy. The dendrogram preserves the order and height of every join.";
+          document.getElementById("next-merge-words").innerHTML="<strong>What to do now:</strong> move the slider backward. The purple cut line shows how one tree can produce different numbers of clusters.";
+          document.getElementById("next-merge-calculation").textContent="A useful cut is often placed before a large jump in merge distance.";
+        }
+      }
+      function stopH(){if(hTimer)clearInterval(hTimer);hTimer=null;document.getElementById("hierarchy-play").textContent="▶ Play";}
+      document.getElementById("linkage-select").addEventListener("change",e=>{stopH();method=e.target.value;hData=buildHierarchy(method);hStep=0;renderHierarchy();});
+      document.getElementById("hierarchy-slider").addEventListener("input",e=>{stopH();hStep=+e.target.value;renderHierarchy();});document.getElementById("hierarchy-back").addEventListener("click",()=>{stopH();hStep=Math.max(0,hStep-1);renderHierarchy();});document.getElementById("hierarchy-next").addEventListener("click",()=>{stopH();hStep=Math.min(9,hStep+1);renderHierarchy();});document.getElementById("hierarchy-play").addEventListener("click",()=>{if(hTimer){stopH();return;}if(hStep===9)hStep=0;renderHierarchy();document.getElementById("hierarchy-play").textContent="❚❚ Pause";hTimer=setInterval(()=>{if(hStep===9){stopH();}else{hStep++;renderHierarchy();}},1900);});
+      renderHierarchy();
+    })();
+  </script>
+</body>
+</html>
