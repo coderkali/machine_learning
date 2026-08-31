@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An evidence-based visual map of concepts learned in the AI_ML_Series repository.">
+  <title>My Learning Atlas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#concept-detail">Skip to concept detail</a>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="My Learning Atlas home">
+      <span class="brand-mark" aria-hidden="true">ML</span>
+      <span><strong>My Learning Atlas</strong><small>Repository evidence, connected</small></span>
+    </a>
+    <div class="search-wrap">
+      <label class="sr-only" for="global-search">Search concepts or source files</label>
+      <input id="global-search" type="search" placeholder="Search concepts or filenames…" autocomplete="off">
+      <kbd>/</kbd>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+    <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle color theme">◐</button>
+  </header>
+
+  <main id="home" class="page-shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Personal knowledge graph · evidence first</p>
+        <h1 id="page-title">See what I learned—and where it lives.</h1>
+        <p class="hero-copy">A visual path from Python values to trained models. Every learned status points back to real notes, notebooks, code, or experiments in this repository.</p>
+      </div>
+      <div class="hero-legend" aria-label="Learning status legend">
+        <span class="status-pill learned">✓ Learned</span>
+        <span class="status-pill current">◐ Currently learning</span>
+        <span class="status-pill referenced">○ Referenced</span>
+      </div>
+    </section>
+
+    <section id="stats" class="stats-grid" aria-label="Repository learning statistics"></section>
+
+    <section class="journey-strip" aria-labelledby="recent-title">
+      <div><p class="eyebrow">Latest evidence</p><h2 id="recent-title">Recently learned</h2></div>
+      <div id="recent-concepts" class="recent-list"></div>
+    </section>
+
+    <section class="workspace" aria-label="Interactive learning map">
+      <aside class="map-sidebar">
+        <div class="sidebar-heading">
+          <div><p class="eyebrow">My learning</p><h2>Knowledge tree</h2></div>
+          <div class="tree-actions">
+            <button id="expand-all" type="button">Expand</button>
+            <button id="collapse-all" type="button">Collapse</button>
+          </div>
+        </div>
+        <div class="status-filters" role="group" aria-label="Filter concepts by status">
+          <button class="filter-chip active" data-status="all" aria-pressed="true">All</button>
+          <button class="filter-chip" data-status="learned" aria-pressed="false">Learned</button>
+          <button class="filter-chip" data-status="current" aria-pressed="false">Learning</button>
+          <button class="filter-chip" data-status="referenced" aria-pressed="false">Referenced</button>
+        </div>
+        <nav id="knowledge-tree" class="knowledge-tree" aria-label="My learning, category, topic, and concept roadmap"></nav>
+      </aside>
+
+      <article id="concept-detail" class="concept-detail" tabindex="-1" aria-live="polite">
+        <div class="loading-state"><span></span><p>Building the evidence map…</p></div>
+      </article>
+    </section>
+
+    <section class="evidence-section" aria-labelledby="evidence-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Reverse lookup</p><h2 id="evidence-title">File → concept traceability</h2></div>
+        <p>Select a source file to see every concept it supports.</p>
+      </div>
+      <label class="file-search"><span>Filter source files</span><input id="file-search" type="search" placeholder="Try Ridge.ipynb or README.md"></label>
+      <div id="file-index" class="file-index"></div>
+    </section>
+
+    <section class="coverage-section" aria-labelledby="coverage-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Repository coverage</p><h2 id="coverage-title">What the evidence contains</h2></div>
+        <p>Bars compare learned evidence with all documented nodes in each branch—not completion of the global AI/ML field.</p>
+      </div>
+      <div id="coverage-bars" class="coverage-bars"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>My Learning Atlas</strong> · generated from repository evidence</p>
+    <p id="last-updated"></p>
+  </footer>
+  <script src="learning-map.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

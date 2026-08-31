@@ -2,7 +2,11 @@
 
 This is the active learning workspace for the instructor bootcamp.
 
-Open the visual roadmap: **[`ROADMAP.html`](../ROADMAP.html)**
+Open the evidence-based visual learning map: **[`learning-website/index.html`](./learning-website/index.html)**
+
+The site is generated from [`learning-map.js`](./learning-website/learning-map.js). It keeps
+learned, currently-learning, and curriculum-only references separate and maps
+every concept back to its actual source files.
 
 ## Folder structure
 
