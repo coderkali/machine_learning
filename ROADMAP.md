@@ -22,11 +22,16 @@ For the full visual version, open **[`ROADMAP.html`](./ROADMAP.html)**.
 
 **Current lesson:** M07 —
 [scikit-learn](./AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md)
-(`train_test_split`, all five synthetic dataset generators, EDA, preprocessing, and the
-first fitted models: simple linear regression, multiple linear regression, and
-**Ridge** — seven notebooks, all documented and re-run. Ridge brings the first
-**hyperparameter**, `alpha`, with its shrink factor `S/(S+α)` and an alpha table. No
-metric beyond `.score()` yet, and no cross-validation). M03
+— fourteen documented notebooks. `train_test_split`, all five synthetic dataset
+generators, EDA, and preprocessing, then the full supervised linear family:
+simple and multiple linear regression, `coef_`/`intercept_` solved by hand,
+**Ridge**, **Lasso** (L1 zeroes weak coefficients, so it selects features),
+**ElasticNet** (`l1_ratio` mixes L1 and L2), and **Polynomial Regression** with the
+first worked underfit/overfit comparison. **Cross-validation** replaces the single
+lucky split with K folds. Unsupervised learning has started: **K-Means** with the
+elbow method and **hierarchical clustering** with dendrograms and linkage, plus a
+standalone visual guide. Still open: classification, trees and ensembles, metrics
+beyond `.score()`, `GridSearchCV`, and persistence. M03
 [NumPy](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md) and
 [Pandas](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md), plus Matplotlib,
 Seaborn, Plotly, and Streamlit, also remain in progress.
