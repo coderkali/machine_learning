@@ -3,93 +3,100 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An evidence-based visual map of concepts learned in the AI_ML_Series repository.">
-  <title>My Learning Atlas</title>
+  <meta name="description" content="An evidence-based interactive tree of concepts learned in the AI_ML_Series repository.">
+  <title>My ML Learning Tree</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a class="skip-link" href="#concept-detail">Skip to concept detail</a>
+  <a class="skip-link" href="#learning-tree">Skip to learning tree</a>
+
   <header class="topbar">
-    <a class="brand" href="#home" aria-label="My Learning Atlas home">
-      <span class="brand-mark" aria-hidden="true">ML</span>
-      <span><strong>My Learning Atlas</strong><small>Repository evidence, connected</small></span>
+    <a class="brand" href="#learning-tree" aria-label="My ML Learning Tree home">
+      <span class="brand-seed" aria-hidden="true">ML</span>
+      <span><strong>My Learning Tree</strong><small>Every leaf has evidence</small></span>
     </a>
-    <div class="search-wrap">
+
+    <div class="global-search">
       <label class="sr-only" for="global-search">Search concepts or source files</label>
-      <input id="global-search" type="search" placeholder="Search concepts or filenames…" autocomplete="off">
+      <input id="global-search" type="search" placeholder="Find a concept or file…" autocomplete="off">
       <kbd>/</kbd>
       <div id="search-results" class="search-results" hidden></div>
     </div>
-    <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle color theme">◐</button>
+
+    <div id="header-stats" class="header-stats" aria-label="Repository learning statistics"></div>
+    <button id="theme-toggle" class="round-button" type="button" aria-label="Toggle color theme">◐</button>
   </header>
 
-  <main id="home" class="page-shell">
-    <section class="hero" aria-labelledby="page-title">
+  <main>
+    <section class="map-intro">
       <div>
-        <p class="eyebrow">Personal knowledge graph · evidence first</p>
-        <h1 id="page-title">See what I learned—and where it lives.</h1>
-        <p class="hero-copy">A visual path from Python values to trained models. Every learned status points back to real notes, notebooks, code, or experiments in this repository.</p>
+        <p class="eyebrow">Repository-grown knowledge map</p>
+        <h1>Machine learning is the tree.<br>Every lesson grows a branch.</h1>
       </div>
-      <div class="hero-legend" aria-label="Learning status legend">
-        <span class="status-pill learned">✓ Learned</span>
-        <span class="status-pill current">◐ Currently learning</span>
-        <span class="status-pill referenced">○ Referenced</span>
-      </div>
+      <p>Start at the ML root. Open a category branch, then a topic, then select a concept leaf. Only repository-backed learning is marked complete.</p>
     </section>
 
-    <section id="stats" class="stats-grid" aria-label="Repository learning statistics"></section>
-
-    <section class="journey-strip" aria-labelledby="recent-title">
-      <div><p class="eyebrow">Latest evidence</p><h2 id="recent-title">Recently learned</h2></div>
-      <div id="recent-concepts" class="recent-list"></div>
-    </section>
-
-    <section class="workspace" aria-label="Interactive learning map">
-      <aside class="map-sidebar">
-        <div class="sidebar-heading">
-          <div><p class="eyebrow">My learning</p><h2>Knowledge tree</h2></div>
-          <div class="tree-actions">
-            <button id="expand-all" type="button">Expand</button>
-            <button id="collapse-all" type="button">Collapse</button>
+    <section id="learning-tree" class="tree-stage" aria-labelledby="tree-title">
+      <div class="tree-toolbar">
+        <div>
+          <p class="eyebrow">Interactive roadmap</p>
+          <h2 id="tree-title">Explore the knowledge tree</h2>
+        </div>
+        <div class="tree-controls">
+          <div class="status-filters" role="group" aria-label="Filter concept leaves">
+            <button class="filter-button active" data-status="all" aria-pressed="true">All</button>
+            <button class="filter-button" data-status="learned" aria-pressed="false"><i class="status-dot learned"></i>Learned</button>
+            <button class="filter-button" data-status="current" aria-pressed="false"><i class="status-dot current"></i>Learning</button>
+            <button class="filter-button" data-status="referenced" aria-pressed="false"><i class="status-dot referenced"></i>Referenced</button>
           </div>
+          <button id="expand-all" class="text-button" type="button">Open all</button>
+          <button id="collapse-all" class="text-button" type="button">Close all</button>
         </div>
-        <div class="status-filters" role="group" aria-label="Filter concepts by status">
-          <button class="filter-chip active" data-status="all" aria-pressed="true">All</button>
-          <button class="filter-chip" data-status="learned" aria-pressed="false">Learned</button>
-          <button class="filter-chip" data-status="current" aria-pressed="false">Learning</button>
-          <button class="filter-chip" data-status="referenced" aria-pressed="false">Referenced</button>
-        </div>
-        <nav id="knowledge-tree" class="knowledge-tree" aria-label="My learning, category, topic, and concept roadmap"></nav>
-      </aside>
-
-      <article id="concept-detail" class="concept-detail" tabindex="-1" aria-live="polite">
-        <div class="loading-state"><span></span><p>Building the evidence map…</p></div>
-      </article>
-    </section>
-
-    <section class="evidence-section" aria-labelledby="evidence-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">Reverse lookup</p><h2 id="evidence-title">File → concept traceability</h2></div>
-        <p>Select a source file to see every concept it supports.</p>
       </div>
-      <label class="file-search"><span>Filter source files</span><input id="file-search" type="search" placeholder="Try Ridge.ipynb or README.md"></label>
-      <div id="file-index" class="file-index"></div>
+
+      <nav id="tree-breadcrumb" class="tree-breadcrumb" aria-label="Current tree path">
+        <span>Machine Learning</span>
+      </nav>
+
+      <div id="tree-viewport" class="tree-viewport" role="tree" aria-live="polite"></div>
+
+      <div class="tree-foot">
+        <div><span class="status-key learned">✓</span><strong>Learned</strong><small>supported by completed notes or experiments</small></div>
+        <div><span class="status-key current">◐</span><strong>Currently learning</strong><small>partial work or unresolved exercises</small></div>
+        <div><span class="status-key referenced">○</span><strong>Referenced</strong><small>curriculum branch without mastery evidence</small></div>
+      </div>
     </section>
 
-    <section class="coverage-section" aria-labelledby="coverage-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">Repository coverage</p><h2 id="coverage-title">What the evidence contains</h2></div>
-        <p>Bars compare learned evidence with all documented nodes in each branch—not completion of the global AI/ML field.</p>
-      </div>
-      <div id="coverage-bars" class="coverage-bars"></div>
+    <section class="recent-section" aria-labelledby="recent-title">
+      <div><p class="eyebrow">Newest leaves</p><h2 id="recent-title">Recently learned</h2></div>
+      <div id="recent-concepts" class="recent-rail"></div>
     </section>
+
+    <details class="evidence-dock">
+      <summary>
+        <span><span class="eyebrow">Reverse traceability</span><strong>Open the file → concept map</strong></span>
+        <span id="file-count"></span>
+      </summary>
+      <div class="evidence-content">
+        <label class="file-search"><span>Filter source files</span><input id="file-search" type="search" placeholder="Try Ridge.ipynb or README.md"></label>
+        <div id="file-index" class="file-index"></div>
+      </div>
+    </details>
   </main>
 
+  <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+  <aside id="concept-drawer" class="concept-drawer" aria-labelledby="drawer-title" aria-hidden="true">
+    <button id="drawer-close" class="drawer-close" type="button" aria-label="Close concept details">×</button>
+    <div id="concept-content"></div>
+  </aside>
+
   <footer>
-    <p><strong>My Learning Atlas</strong> · generated from repository evidence</p>
+    <p><strong>My ML Learning Tree</strong> · grown from repository evidence</p>
     <p id="last-updated"></p>
   </footer>
+
   <script src="learning-map.js"></script>
+  <script src="labs.js"></script>
   <script src="app.js" defer></script>
 </body>
 </html>
