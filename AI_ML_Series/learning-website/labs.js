@@ -71,6 +71,30 @@
       prompt: "Change linkage and cut height. The same nine points produce different group stories.",
       source: "13_Hirerachical_Clustering.ipynb · linkage comparisons and cut-height plots",
     },
+    "classification-metrics": {
+      type: "classificationMetrics",
+      title: "Rebuild the confusion matrix",
+      prompt: "Change missed malignant cases and false alarms. Every metric updates from the four counts.",
+      source: "15_Model_Evaluation.ipynb · 114-row breast-cancer test set",
+    },
+    "roc-auc": {
+      type: "roc",
+      title: "Move the decision threshold",
+      prompt: "Lower the cutoff to catch more positives, then watch the ROC point move with the false-positive cost.",
+      source: "14_roc.ipynb + 14_ROC_Curve.png · probability threshold experiment",
+    },
+    "decision-tree-classification": {
+      type: "treeClassification",
+      title: "Grow the classification tree",
+      prompt: "Compare candidate first questions, then send a new student through the learned decision path.",
+      source: "16_Descison_Tree_Classfication.ipynb + dt.tree",
+    },
+    "decision-tree-regression": {
+      type: "treeRegression",
+      title: "Grow the regression tree",
+      prompt: "Compare variance reduction and follow a student to the leaf-average mark.",
+      source: "17_Descison_Tree_Regression.ipynb + dt1.tree",
+    },
   };
 
   let cleanupCurrent = null;
@@ -115,6 +139,19 @@
       case "dendrogram":
         return selectControl("linkage", "Linkage", [["ward", "Ward"], ["single", "Single"], ["complete", "Complete"], ["average", "Average"]])
           + rangeControl("cutHeight", "Cut height", 5, 130, 1, 80);
+      case "classificationMetrics":
+        return rangeControl("falseNegatives", "Missed malignant (FN)", 0, 47, 1, 4)
+          + rangeControl("falsePositives", "Benign false alarms (FP)", 0, 67, 1, 4);
+      case "roc":
+        return rangeControl("threshold", "Positive threshold", .01, .99, .01, .5);
+      case "treeClassification":
+        return selectControl("firstSplit", "Compare first question", [["videos", "Watched videos?"], ["guide", "Used guide?"]])
+          + selectControl("studentVideos", "New student · videos", [["1", "Yes"], ["0", "No"]])
+          + selectControl("studentGuide", "New student · guide", [["1", "Yes"], ["0", "No"]]);
+      case "treeRegression":
+        return selectControl("firstSplit", "Compare first question", [["guide", "Used guide?"], ["videos", "Watched videos?"]])
+          + selectControl("studentVideos", "New student · videos", [["1", "Yes"], ["0", "No"]])
+          + selectControl("studentGuide", "New student · guide", [["1", "Yes"], ["0", "No"]]);
       default:
         return "";
     }
@@ -725,6 +762,294 @@
     metric(readout, [["Linkage", method], ["Cut height", cut], ["Clusters", groups.length]], groups.length === 1 ? "The cut is above the final merge, so every point belongs to one cluster." : `The horizontal cut crosses ${groups.length} surviving branches, producing ${groups.length} clusters.`);
   }
 
+  function drawClassificationMetrics(root, canvas, readout) {
+    const actualPositive = 47;
+    const actualNegative = 67;
+    const fn = value(root, "falseNegatives");
+    const fp = value(root, "falsePositives");
+    const tp = actualPositive - fn;
+    const tn = actualNegative - fp;
+    const total = actualPositive + actualNegative;
+    const accuracy = (tp + tn) / total;
+    const precision = tp + fp ? tp / (tp + fp) : 0;
+    const recall = tp / actualPositive;
+    const f1 = precision + recall ? (2 * precision * recall) / (precision + recall) : 0;
+    const { ctx, width, height, colors } = prepareCanvas(canvas, 350);
+    const gridSize = Math.min(238, width - 112);
+    const cell = gridSize / 2;
+    const left = Math.max(76, (width - gridSize) / 2);
+    const top = 68;
+    const cells = [
+      { row: 0, column: 0, label: "TP", detail: "malignant found", count: tp, color: colors.forest },
+      { row: 0, column: 1, label: "FN", detail: "malignant missed", count: fn, color: colors.amber },
+      { row: 1, column: 0, label: "FP", detail: "false alarm", count: fp, color: colors.amber },
+      { row: 1, column: 1, label: "TN", detail: "benign cleared", count: tn, color: colors.forest },
+    ];
+
+    ctx.font = "11px system-ui";
+    ctx.fillStyle = colors.ink;
+    ctx.textAlign = "center";
+    ctx.fillText("Predicted malignant", left + cell / 2, 43);
+    ctx.fillText("Predicted benign", left + cell * 1.5, 43);
+    ctx.save();
+    ctx.translate(left - 54, top + cell);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("Actual class", 0, 0);
+    ctx.restore();
+
+    cells.forEach((item) => {
+      const x = left + item.column * cell;
+      const y = top + item.row * cell;
+      ctx.globalAlpha = .14 + .5 * (item.count / 67);
+      ctx.fillStyle = item.color;
+      ctx.fillRect(x + 2, y + 2, cell - 4, cell - 4);
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = item.color;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x + 2, y + 2, cell - 4, cell - 4);
+      ctx.fillStyle = colors.ink;
+      ctx.textAlign = "center";
+      ctx.font = "600 25px system-ui";
+      ctx.fillText(String(item.count), x + cell / 2, y + cell / 2 - 4);
+      ctx.font = "600 11px system-ui";
+      ctx.fillText(item.label, x + cell / 2, y + cell / 2 + 18);
+      ctx.fillStyle = colors.muted;
+      ctx.font = "10px system-ui";
+      ctx.fillText(item.detail, x + cell / 2, y + cell / 2 + 35);
+    });
+    ctx.fillStyle = colors.muted;
+    ctx.textAlign = "left";
+    ctx.font = "10px system-ui";
+    ctx.fillText("Malignant is the positive class (label 0 in the notebook).", left, height - 17);
+    metric(readout, [["Accuracy", accuracy.toFixed(3)], ["Precision", precision.toFixed(3)], ["Recall", recall.toFixed(3)], ["F1", f1.toFixed(3)]], fn > fp ? "Missed malignant cases are pulling recall down faster than precision." : fp > fn ? "False alarms are pulling precision down faster than recall." : "Equal FN and FP counts make precision and recall similar here, but they represent different real-world costs.");
+  }
+
+  const rocSamples = [
+    { score: .95, label: 1 }, { score: .90, label: 1 }, { score: .80, label: 1 },
+    { score: .70, label: 0 }, { score: .40, label: 1 }, { score: .30, label: 0 },
+    { score: .20, label: 0 }, { score: .10, label: 0 }, { score: .05, label: 0 },
+    { score: .01, label: 0 },
+  ];
+
+  function rocCounts(threshold) {
+    return rocSamples.reduce((counts, sample) => {
+      const predicted = sample.score >= threshold ? 1 : 0;
+      if (sample.label === 1 && predicted === 1) counts.tp += 1;
+      if (sample.label === 1 && predicted === 0) counts.fn += 1;
+      if (sample.label === 0 && predicted === 1) counts.fp += 1;
+      if (sample.label === 0 && predicted === 0) counts.tn += 1;
+      return counts;
+    }, { tp: 0, fn: 0, fp: 0, tn: 0 });
+  }
+
+  function rocCurvePoints() {
+    const positives = rocSamples.filter((sample) => sample.label === 1).length;
+    const negatives = rocSamples.length - positives;
+    let tp = 0;
+    let fp = 0;
+    const points = [{ fpr: 0, tpr: 0 }];
+    rocSamples.slice().sort((a, b) => b.score - a.score).forEach((sample) => {
+      if (sample.label === 1) tp += 1;
+      else fp += 1;
+      points.push({ fpr: fp / negatives, tpr: tp / positives });
+    });
+    return points;
+  }
+
+  function drawRoc(root, canvas, readout) {
+    const threshold = value(root, "threshold");
+    const counts = rocCounts(threshold);
+    const positives = counts.tp + counts.fn;
+    const negatives = counts.fp + counts.tn;
+    const tpr = counts.tp / positives;
+    const fpr = counts.fp / negatives;
+    const precision = counts.tp + counts.fp ? counts.tp / (counts.tp + counts.fp) : 0;
+    const points = rocCurvePoints();
+    const auc = points.slice(1).reduce((area, point, index) => {
+      const previous = points[index];
+      return area + (point.fpr - previous.fpr) * (point.tpr + previous.tpr) / 2;
+    }, 0);
+    const plot = frame(canvas, [0, 1], [0, 1], ["False-positive rate", "True-positive rate"]);
+    const { ctx, x, y, colors } = plot;
+
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = colors.muted;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x(0), y(0));
+    ctx.lineTo(x(1), y(1));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.strokeStyle = colors.series[0];
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    points.forEach((point, index) => {
+      if (index === 0) ctx.moveTo(x(point.fpr), y(point.tpr));
+      else {
+        const previous = points[index - 1];
+        ctx.lineTo(x(point.fpr), y(previous.tpr));
+        ctx.lineTo(x(point.fpr), y(point.tpr));
+      }
+    });
+    ctx.stroke();
+
+    ctx.fillStyle = colors.amber;
+    ctx.beginPath();
+    ctx.arc(x(fpr), y(tpr), 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = colors.paper;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = colors.ink;
+    ctx.font = "11px system-ui";
+    ctx.textAlign = fpr > .72 ? "right" : "left";
+    ctx.fillText(`threshold ${threshold.toFixed(2)}`, x(fpr) + (fpr > .72 ? -10 : 10), y(tpr) - 10);
+    metric(readout, [["TPR / recall", tpr.toFixed(2)], ["FPR", fpr.toFixed(2)], ["Precision", precision.toFixed(2)], ["Toy AUC", auc.toFixed(2)]], threshold < .4 ? "A permissive threshold catches nearly every positive, but more negatives cross the gate." : threshold > .75 ? "A strict threshold reduces false alarms, but some real positives are now missed." : "This threshold balances the two error types on the score example from the visual note.");
+  }
+
+  const classificationRows = [
+    { videos: 0, guide: 0, result: 0 }, { videos: 1, guide: 1, result: 1 },
+    { videos: 1, guide: 0, result: 1 }, { videos: 0, guide: 0, result: 0 },
+    { videos: 0, guide: 0, result: 0 }, { videos: 1, guide: 1, result: 1 },
+    { videos: 0, guide: 1, result: 0 }, { videos: 1, guide: 1, result: 1 },
+    { videos: 1, guide: 0, result: 0 }, { videos: 1, guide: 1, result: 1 },
+  ];
+
+  function entropy(rows) {
+    if (!rows.length) return 0;
+    const pass = rows.filter((row) => row.result === 1).length;
+    const probabilities = [pass / rows.length, (rows.length - pass) / rows.length];
+    return probabilities.reduce((sum, probability) => probability ? sum - probability * Math.log2(probability) : sum, 0);
+  }
+
+  function classificationGain(feature) {
+    const parent = entropy(classificationRows);
+    const groups = [0, 1].map((answer) => classificationRows.filter((row) => row[feature] === answer));
+    const after = groups.reduce((sum, group) => sum + group.length / classificationRows.length * entropy(group), 0);
+    return { parent, after, gain: parent - after, groups };
+  }
+
+  function connectTreeNodes(ctx, from, to, colors, active) {
+    ctx.strokeStyle = active ? colors.amber : colors.line;
+    ctx.lineWidth = active ? 3 : 1.5;
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+  }
+
+  function treeBox(ctx, centerX, centerY, width, title, detail, colors, active, leaf) {
+    const height = leaf ? 54 : 62;
+    const left = centerX - width / 2;
+    const top = centerY - height / 2;
+    ctx.globalAlpha = active ? .18 : .08;
+    ctx.fillStyle = leaf ? colors.forest : colors.series[0];
+    ctx.fillRect(left, top, width, height);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = active ? colors.amber : colors.line;
+    ctx.lineWidth = active ? 2.5 : 1.2;
+    ctx.strokeRect(left, top, width, height);
+    ctx.fillStyle = colors.ink;
+    ctx.textAlign = "center";
+    ctx.font = "600 11px system-ui";
+    ctx.fillText(title, centerX, centerY - 5);
+    ctx.fillStyle = colors.muted;
+    ctx.font = "10px system-ui";
+    ctx.fillText(detail, centerX, centerY + 13);
+    return { top: { x: centerX, y: top }, bottom: { x: centerX, y: top + height } };
+  }
+
+  function drawTreeClassification(root, canvas, readout) {
+    const comparedFeature = value(root, "firstSplit");
+    const videos = Number(value(root, "studentVideos"));
+    const guide = Number(value(root, "studentGuide"));
+    const comparison = classificationGain(comparedFeature);
+    const videosGain = classificationGain("videos").gain;
+    const guideGain = classificationGain("guide").gain;
+    const prediction = videos === 0 ? "Fail" : guide === 1 ? "Pass" : "Fail (tie leaf)";
+    const pathRoot = true;
+    const pathNoVideos = videos === 0;
+    const pathGuide = videos === 1;
+    const pathNoGuide = videos === 1 && guide === 0;
+    const pathYesGuide = videos === 1 && guide === 1;
+    const { ctx, width, colors } = prepareCanvas(canvas, 380);
+    const nodeWidth = Math.max(92, Math.min(146, width * .21));
+    const rootNode = treeBox(ctx, width / 2, 58, nodeWidth, "Watched videos?", "entropy 1.00 · 10 rows", colors, pathRoot, false);
+    const failNode = treeBox(ctx, width * .22, 172, nodeWidth, "Predict Fail", "4 fail · pure", colors, pathNoVideos, true);
+    const guideNode = treeBox(ctx, width * .68, 172, nodeWidth, "Used guide?", "entropy 0.65 · 6 rows", colors, pathGuide, false);
+    const tieNode = treeBox(ctx, width * .53, 300, nodeWidth, "Predict Fail", "1 fail / 1 pass · tie", colors, pathNoGuide, true);
+    const passNode = treeBox(ctx, width * .84, 300, nodeWidth, "Predict Pass", "4 pass · pure", colors, pathYesGuide, true);
+    connectTreeNodes(ctx, rootNode.bottom, failNode.top, colors, pathNoVideos);
+    connectTreeNodes(ctx, rootNode.bottom, guideNode.top, colors, pathGuide);
+    connectTreeNodes(ctx, guideNode.bottom, tieNode.top, colors, pathNoGuide);
+    connectTreeNodes(ctx, guideNode.bottom, passNode.top, colors, pathYesGuide);
+    ctx.fillStyle = colors.muted;
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText("No", width * .34, 118);
+    ctx.fillText("Yes", width * .59, 118);
+    ctx.fillText("No", width * .59, 238);
+    ctx.fillText("Yes", width * .77, 238);
+    metric(readout, [["Videos gain", videosGain.toFixed(3)], ["Guide gain", guideGain.toFixed(3)], ["Compared after-entropy", comparison.after.toFixed(3)], ["Prediction", prediction]], comparedFeature === "videos" ? "Videos wins the first split because 0.610 information gain removes more uncertainty than Guide's 0.278." : "Guide is a valid candidate, but its 0.278 gain leaves more uncertainty—so the learned tree chooses Videos first.");
+  }
+
+  const regressionRows = [
+    { videos: 0, guide: 0, result: 30 }, { videos: 1, guide: 1, result: 89 },
+    { videos: 0, guide: 0, result: 31 }, { videos: 0, guide: 0, result: 32 },
+    { videos: 1, guide: 1, result: 90 }, { videos: 0, guide: 1, result: 25 },
+    { videos: 1, guide: 1, result: 91 }, { videos: 1, guide: 0, result: 20 },
+    { videos: 1, guide: 1, result: 90 },
+  ];
+
+  function variance(rows) {
+    if (!rows.length) return 0;
+    const mean = rows.reduce((sum, row) => sum + row.result, 0) / rows.length;
+    return rows.reduce((sum, row) => sum + (row.result - mean) ** 2, 0) / rows.length;
+  }
+
+  function regressionReduction(feature) {
+    const parent = variance(regressionRows);
+    const groups = [0, 1].map((answer) => regressionRows.filter((row) => row[feature] === answer));
+    const after = groups.reduce((sum, group) => sum + group.length / regressionRows.length * variance(group), 0);
+    return { parent, after, reduction: parent - after };
+  }
+
+  function drawTreeRegression(root, canvas, readout) {
+    const comparedFeature = value(root, "firstSplit");
+    const videos = Number(value(root, "studentVideos"));
+    const guide = Number(value(root, "studentGuide"));
+    const compared = regressionReduction(comparedFeature);
+    const guideReduction = regressionReduction("guide").reduction;
+    const videosReduction = regressionReduction("videos").reduction;
+    const prediction = guide === 0 ? (videos === 0 ? 31 : 20) : (videos === 0 ? 25 : 90);
+    const { ctx, width, colors } = prepareCanvas(canvas, 410);
+    const nodeWidth = Math.max(84, Math.min(135, width * .2));
+    const rootNode = treeBox(ctx, width / 2, 50, nodeWidth, "Used guide?", "variance 972.89", colors, true, false);
+    const leftNode = treeBox(ctx, width * .27, 155, nodeWidth, "Videos?", "mean 28.25 · 4 rows", colors, guide === 0, false);
+    const rightNode = treeBox(ctx, width * .73, 155, nodeWidth, "Videos?", "mean 77.00 · 5 rows", colors, guide === 1, false);
+    const leafPositions = [width * .12, width * .36, width * .64, width * .88];
+    const leafValues = [31, 20, 25, 90];
+    const activeLeaves = [guide === 0 && videos === 0, guide === 0 && videos === 1, guide === 1 && videos === 0, guide === 1 && videos === 1];
+    const leafNodes = leafValues.map((number, index) => treeBox(ctx, leafPositions[index], 300, nodeWidth * .8, `Predict ${number}`, index === 3 ? "mean of 4 rows" : index === 0 ? "mean of 3 rows" : "one row", colors, activeLeaves[index], true));
+    connectTreeNodes(ctx, rootNode.bottom, leftNode.top, colors, guide === 0);
+    connectTreeNodes(ctx, rootNode.bottom, rightNode.top, colors, guide === 1);
+    connectTreeNodes(ctx, leftNode.bottom, leafNodes[0].top, colors, activeLeaves[0]);
+    connectTreeNodes(ctx, leftNode.bottom, leafNodes[1].top, colors, activeLeaves[1]);
+    connectTreeNodes(ctx, rightNode.bottom, leafNodes[2].top, colors, activeLeaves[2]);
+    connectTreeNodes(ctx, rightNode.bottom, leafNodes[3].top, colors, activeLeaves[3]);
+    ctx.fillStyle = colors.muted;
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText("No", width * .38, 101);
+    ctx.fillText("Yes", width * .62, 101);
+    ctx.fillText("No", width * .18, 230);
+    ctx.fillText("Yes", width * .33, 230);
+    ctx.fillText("No", width * .67, 230);
+    ctx.fillText("Yes", width * .82, 230);
+    metric(readout, [["Guide reduction", guideReduction.toFixed(2)], ["Videos reduction", videosReduction.toFixed(2)], ["Compared after-variance", compared.after.toFixed(2)], ["Predicted marks", prediction]], comparedFeature === "guide" ? "Guide produces the larger first variance reduction, so it becomes the root question." : "Videos reduces some spread, but Guide creates more similar mark groups and wins the root split.");
+  }
+
   function draw(config, root, canvas, readout) {
     if (config.type === "linear") drawLinear(root, canvas, readout);
     if (config.type === "plane") drawPlane(root, canvas, readout);
@@ -734,6 +1059,10 @@
     if (config.type === "crossValidation") drawCrossValidation(root, canvas, readout);
     if (config.type === "kmeans") drawKMeans(root, canvas, readout);
     if (config.type === "dendrogram") drawDendrogram(root, canvas, readout);
+    if (config.type === "classificationMetrics") drawClassificationMetrics(root, canvas, readout);
+    if (config.type === "roc") drawRoc(root, canvas, readout);
+    if (config.type === "treeClassification") drawTreeClassification(root, canvas, readout);
+    if (config.type === "treeRegression") drawTreeRegression(root, canvas, readout);
   }
 
   function mount(id) {

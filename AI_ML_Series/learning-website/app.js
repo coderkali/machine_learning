@@ -30,7 +30,7 @@ const topicInfoFor = (concept) => {
 };
 const fileName = (path) => path.split("/").pop();
 const sourceHref = (path) => `../${encodeURI(path)}`;
-const iconFor = (type) => ({ notebook: "◫", markdown: "▤", python: "⌘", dataset: "▦", web: "◇", image: "▧", config: "⚙" }[type] || "·");
+const iconFor = (type) => ({ notebook: "◫", markdown: "▤", python: "⌘", dataset: "▦", web: "◇", image: "▧", diagram: "⌁", config: "⚙" }[type] || "·");
 
 function init() {
   if (!window.LEARNING_MAP) throw new Error("learning-map.js did not load");
@@ -129,7 +129,7 @@ function renderTree() {
       </button>
       <div class="root-trunk" aria-hidden="true"><span></span></div>
     </div>
-    ${state.rootOpen ? `<div class="category-canopy" role="group">${branches}</div>` : `<div class="folded-tree"><span>12 category branches folded into the ML root</span></div>`}`;
+    ${state.rootOpen ? `<div class="category-canopy" role="group">${branches}</div>` : `<div class="folded-tree"><span>${state.data.categories.length} category branches folded into the ML root</span></div>`}`;
 
   renderBreadcrumb();
 }

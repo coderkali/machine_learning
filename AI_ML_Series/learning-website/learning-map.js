@@ -1,18 +1,19 @@
 window.LEARNING_MAP = {
   "meta": {
     "title": "My Learning Atlas",
-    "lastUpdated": "2026-08-31",
+    "lastUpdated": "2026-09-02",
     "defaultConcept": "linear-regression",
-    "analyzedFiles": 73,
-    "notebooks": 24,
+    "analyzedFiles": 81,
+    "notebooks": 28,
     "inventory": {
       "markdownNotes": 24,
-      "notebooks": 24,
+      "notebooks": 28,
       "datasets": 14,
       "pythonFiles": 2,
       "webLearningAssets": 7,
-      "images": 1,
-      "requirementsFiles": 1
+      "images": 3,
+      "requirementsFiles": 1,
+      "diagramSources": 2
     },
     "initialization": true
   },
@@ -44,7 +45,12 @@ window.LEARNING_MAP = {
     { "id": "regression", "title": "Regression Models", "color": "#c05d42", "topics": [
       { "title": "Linear Models", "conceptIds": ["linear-regression", "multiple-linear-regression"] },
       { "title": "Regularization", "conceptIds": ["ridge-regression", "lasso-regression", "elastic-net"] },
-      { "title": "Nonlinear Features", "conceptIds": ["polynomial-regression"] }
+      { "title": "Nonlinear Features", "conceptIds": ["polynomial-regression"] },
+      { "title": "Tree Regression", "conceptIds": ["decision-tree-regression"] }
+    ] },
+    { "id": "classification", "title": "Classification & Decision Trees", "color": "#3f6fae", "topics": [
+      { "title": "Classification Evaluation", "conceptIds": ["classification-metrics", "roc-auc"] },
+      { "title": "Tree Classification", "conceptIds": ["decision-tree-classification"] }
     ] },
     { "id": "evaluation", "title": "Evaluation & Selection", "color": "#6d5d9b", "topics": [
       { "title": "Scoring", "conceptIds": ["r-squared"] },
@@ -59,7 +65,7 @@ window.LEARNING_MAP = {
       { "title": "Analytics", "conceptIds": ["future-bi"] }
     ] },
     { "id": "future-ai", "title": "Referenced Advanced AI", "color": "#7a817d", "topics": [
-      { "title": "Classical ML Extensions", "conceptIds": ["future-classification", "future-hyperparameter-tuning", "future-time-series"] },
+      { "title": "Classical ML Extensions", "conceptIds": ["future-hyperparameter-tuning", "future-time-series"] },
       { "title": "Neural & Language AI", "conceptIds": ["future-neural-modalities", "future-transformers", "future-rag", "future-agents"] }
     ] },
     { "id": "future-production", "title": "Referenced Production & Career", "color": "#7a817d", "topics": [
@@ -409,7 +415,7 @@ window.LEARNING_MAP = {
       "code": "sns.pairplot(iris, hue='species')\nsns.heatmap(iris[features].corr(), annot=True)\npred = np.where(iris.petal_length < 2.5, 'setosa', ...)",
       "example": "Two straight petal thresholds classify about 96% of the 150 flowers, while Versicolor and Virginica overlap near the boundary.",
       "confusions": ["Target 0/1/2 indexes target_names; it is not calculated from measurements.", "The original sklearn EDA notebook swaps Versicolor and Virginica labels in some cells.", "A strong overall correlation can change when filtering to one species."],
-      "prerequisites": ["pandas-dataframes-indexing", "seaborn-statistical-viz"], "related": ["future-classification", "cross-validation"],
+      "prerequisites": ["pandas-dataframes-indexing", "seaborn-statistical-viz"], "related": ["decision-tree-classification", "cross-validation"],
       "revision": { "purpose":"Understand data before modeling", "input":"150 flowers × 4 measurements + species", "output":"Quality checks + useful feature relationships", "core idea":"Petal features separate species best", "remember":"Decode labels; do not memorize them" },
       "keywords": ["EDA", "iris", "univariate", "bivariate", "multivariate", "correlation", "pairplot"],
       "lastUpdated": "2026-08-22",
@@ -511,7 +517,7 @@ window.LEARNING_MAP = {
       "code": "X, y, true_w = make_regression(n_samples=300, n_features=1, noise=5, coef=True, random_state=0)",
       "example": "A brute-force straight-line search reaches about 98% on blobs but only 66% on circles, making the nonlinear limitation visible.",
       "confusions": ["make_classification shuffles feature roles by default.", "A convincing 10-row plot can be random coincidence.", "A cluster id from make_blobs is an answer key for checking, not a supervised target used by clustering."],
-      "prerequisites": ["numpy-vectorization-broadcasting", "matplotlib-chart-grammar"], "related": ["linear-regression", "kmeans-clustering", "future-classification"],
+      "prerequisites": ["numpy-vectorization-broadcasting", "matplotlib-chart-grammar"], "related": ["linear-regression", "kmeans-clustering", "decision-tree-classification"],
       "revision": { "purpose":"Controlled model experiments", "input":"Generator parameters", "output":"Known-structure X and y", "core idea":"Know the answer before modeling", "remember":"Set seed and feature count" },
       "keywords": ["make_regression", "make_classification", "make_blobs", "make_circles", "make_moons"],
       "lastUpdated": "2026-08-20",
@@ -584,7 +590,7 @@ window.LEARNING_MAP = {
       "code": "train_r2 = model.score(X_train, y_train)\ntest_r2 = model.score(X_test, y_test)",
       "example": "The multiple-regression notebook gets test R² 0.976 on only two rows while train R² is 0.795; it explicitly calls the high test value luck.",
       "confusions": ["R² is not the percentage of predictions that are correct.", "A negative value is valid.", "A high value from too few rows is not reliable evidence."],
-      "prerequisites": ["linear-regression", "train-test-leakage"], "related": ["cross-validation", "ridge-regression"],
+      "prerequisites": ["linear-regression", "train-test-leakage"], "related": ["cross-validation", "ridge-regression", "decision-tree-regression"],
       "revision": { "purpose":"Compare regression to mean baseline", "input":"Actual and predicted y", "output":"Relative score", "core idea":"1 − model error / baseline error", "remember":"Read score with test size" },
       "keywords": ["R2", "score", "residual", "baseline", "evaluation"],
       "lastUpdated": "2026-08-24",
@@ -700,7 +706,7 @@ window.LEARNING_MAP = {
       "code": "cv = StratifiedKFold(n_splits=5)\nscores = cross_val_score(GaussianNB(), X, y, cv=cv)\nprint(scores.mean())",
       "example": "LeaveOneOut reveals exactly seven misclassified Iris rows, all in overlapping Versicolor/Virginica classes.",
       "confusions": ["Plain KFold on class-sorted Iris creates single-class test blocks.", "LeavePOut grows combinatorially: 150 choose 2 = 11,175 fits.", "GaussianNB is used as the evaluation vehicle, not taught in depth as a learned model."],
-      "prerequisites": ["train-test-leakage", "r-squared", "iris-eda"], "related": ["future-hyperparameter-tuning"],
+      "prerequisites": ["train-test-leakage", "r-squared", "iris-eda"], "related": ["classification-metrics", "future-hyperparameter-tuning"],
       "revision": { "purpose":"Stabilize model evaluation", "input":"Estimator + X + y + splitter", "output":"Several validation scores", "core idea":"Rotate the held-out rows", "remember":"Classifiers usually need stratification" },
       "keywords": ["KFold", "StratifiedKFold", "LeaveOneOut", "LeavePOut", "cross_val_score"],
       "lastUpdated": "2026-08-26",
@@ -792,18 +798,108 @@ window.LEARNING_MAP = {
       "sources":[{"path":"04_analytics_bi/README.md","type":"markdown","role":"curriculum reference","purpose":"Lists the four BI modules with explicit Not Started status.","highlights":["no lesson artifacts"]}]
     },
     {
-      "id": "future-classification", "title": "Classification Models & Metrics", "categoryId": "future-ai", "status": "referenced",
-      "summary": "Classification shapes and GaussianNB usage appear, but Logistic Regression, trees, forests, KNN, and classification metrics are not taught as completed concepts.",
-      "what":"Future supervised category prediction and its evaluation metrics.","why":"Required for imbalanced targets such as Car/Bike and for trustworthy classification systems.","intuition":"The repository knows what a class label looks like, but has not yet completed the algorithm/metric lessons.",
-      "how":["Synthetic class data exists.","Iris classification is used for cross-validation.","Dedicated model/metric evidence is still missing."],
-      "visual":{"type":"flow","title":"Evidence boundary","items":[{"label":"Class-shaped y","detail":"learned"},{"label":"GaussianNB vehicle","detail":"used, not explained"},{"label":"Algorithms + metrics","detail":"referenced"}]},
-      "formula":null,"code":null,"example":"GaussianNB is fitted only to compare splitters; its probability model is never explained.","confusions":["Using an estimator does not prove its theory was learned.","The broad Python ML visual guide is a reference map, not evidence of completing every node."],
-      "prerequisites":["train-test-leakage","iris-eda"],"related":["synthetic-datasets","cross-validation"],"revision":{"purpose":"Future category prediction","input":"Feature rows + class labels","output":"Predicted class/probability","core idea":"Referenced, not learned","remember":"Need algorithm and metric lessons"},
-      "keywords":["classification","logistic regression","decision tree","random forest","precision","recall","F1","GaussianNB"],"lastUpdated":"2026-08-31",
-      "sources":[
-        {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/index.html","type":"web","role":"broad ecosystem reference","purpose":"Shows classification, metrics, ensembles, deep learning, and production in one connected visual guide; treated as reference coverage unless supported by dedicated lessons.","highlights":["reference concepts", "not status evidence"]},
-        {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/script.js","type":"web","role":"interactive reference logic","purpose":"Populates journey, tool, metric, recommendation, and roadmap interactions for the broad ecosystem guide.","highlights":["metric scenarios", "roadmap nodes"]},
-        {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/styles.css","type":"web","role":"reference presentation","purpose":"Styles the connected ecosystem visualization.","highlights":["interactive learning guide"]}
+      "id": "classification-metrics",
+      "title": "Classification Evaluation & Confusion Matrix",
+      "categoryId": "classification",
+      "status": "learned",
+      "summary": "A confusion matrix separates correct predictions from false alarms and missed positives so accuracy, precision, recall, and F1 can be interpreted by cost.",
+      "what": "Classification evaluation counts true positives, false positives, false negatives, and true negatives, then converts those counts into task-specific metrics.",
+      "why": "Accuracy alone can hide the mistake that matters most. In the breast-cancer lesson, missing a malignant case has a very different cost from flagging a benign case.",
+      "intuition": "The matrix is an error ledger: first count each kind of decision, then choose the metric that charges the model for the costly mistake.",
+      "how": ["Choose and state the positive class before calculating metrics.", "Place actual labels on one matrix axis and predicted labels on the other.", "Compute precision from predicted positives and recall from actual positives.", "Use F1 when both precision and recall matter, while retaining the raw counts."],
+      "visual": { "type": "comparison", "title": "Four outcomes behind every metric", "items": [{"label":"True positive","detail":"positive found"},{"label":"False negative","detail":"positive missed"},{"label":"False positive","detail":"false alarm"},{"label":"True negative","detail":"negative cleared"}] },
+      "formula": { "expression": "precision = TP/(TP+FP) · recall = TP/(TP+FN)", "parts": [{"term":"precision","meaning":"how trustworthy positive predictions are"},{"term":"recall","meaning":"how many real positives were found"},{"term":"F1","meaning":"harmonic balance of precision and recall"}], "example": "For malignant=positive, TP=43, FN=4, FP=4, TN=63 gives precision≈0.915 and recall≈0.915." },
+      "code": "cm = confusion_matrix(y_test, y_pred)\nprecision = precision_score(y_test, y_pred, pos_label=0)\nrecall = recall_score(y_test, y_pred, pos_label=0)",
+      "example": "GaussianNB on the 114-row breast-cancer test set predicts 106 rows correctly; the confusion matrix [[43,4],[4,63]] exposes the eight errors hidden by 92.98% accuracy.",
+      "confusions": ["The positive class is a meaning you choose, not automatically label 1.", "Pass y_true before y_pred; reversing them can silently swap precision and recall.", "Macro average treats classes equally; weighted average follows class support."],
+      "prerequisites": ["train-test-leakage", "sklearn-estimator-api"],
+      "related": ["roc-auc", "cross-validation", "decision-tree-classification"],
+      "revision": { "purpose":"Measure the kinds of classification mistakes", "input":"Actual and predicted class labels", "output":"Confusion counts + accuracy/precision/recall/F1", "core idea":"Metric choice follows error cost", "remember":"Name the positive class first" },
+      "keywords": ["confusion matrix", "accuracy", "precision", "recall", "F1", "support", "classification report", "pos_label"],
+      "lastUpdated": "2026-09-01",
+      "sources": [
+        { "path":"02_data_toolkit_apps/08_sklearn/15_Model_Evaluation.ipynb", "type":"notebook", "role":"theory + code + experiment", "purpose":"Evaluates GaussianNB on the breast-cancer dataset and derives accuracy, confusion-matrix counts, precision, recall, F1, support, and averaging choices.", "highlights":["22 instructional cells", "all 13 code cells executed", "positive-class and argument-order warnings"] },
+        { "path":"02_data_toolkit_apps/08_sklearn/15_Model_Evaluation.png", "type":"image", "role":"visual revision sheet", "purpose":"Connects the confusion-matrix quadrants to metric formulas, threshold behavior, evaluation splits, and practical pitfalls.", "highlights":["hand-drawn matrix", "formula map", "clinical error costs"] },
+        {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/index.html","type":"web","role":"broader reference map","purpose":"Places learned classification metrics inside the wider ML ecosystem while leaving unsupported algorithms as references.","highlights":["classification branch", "metric scenarios"]},
+        {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/script.js","type":"web","role":"reference interaction logic","purpose":"Implements metric scenarios and roadmap interactions in the earlier broad visual guide.","highlights":["metric scenarios", "roadmap nodes"]},
+        {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/styles.css","type":"web","role":"reference presentation","purpose":"Styles the connected ecosystem guide used as secondary reference evidence.","highlights":["interactive guide"]}
+      ]
+    },
+    {
+      "id": "roc-auc",
+      "title": "ROC Curve, AUC & Decision Thresholds",
+      "categoryId": "classification",
+      "status": "learned",
+      "summary": "ROC traces true-positive rate against false-positive rate across every probability threshold; AUC summarizes how well scores rank positives above negatives.",
+      "what": "A classifier can output probabilities, and a threshold converts those probabilities into labels. Sweeping that threshold produces the ROC curve.",
+      "why": "The default 0.5 cutoff is not a law. Threshold choice lets a system trade missed positives against false alarms without retraining the model.",
+      "intuition": "Lowering the gate admits more real positives and more false alarms; the ROC curve records the entire journey of that gate.",
+      "how": ["Fit a binary classifier and obtain the positive-class score from predict_proba.", "Move the threshold from strict to permissive.", "At each threshold compute TPR and FPR.", "Use the ROC shape and AUC for ranking quality, then choose an operating threshold from the real error costs."],
+      "visual": { "type":"flow", "title":"One probability model, many decisions", "items":[{"label":"predict_proba","detail":"continuous score"},{"label":"threshold","detail":"decision policy"},{"label":"TPR / FPR","detail":"one ROC point"},{"label":"sweep","detail":"whole ROC curve"},{"label":"AUC","detail":"ranking summary"}] },
+      "formula": { "expression":"TPR = TP/(TP+FN) · FPR = FP/(FP+TN)", "parts":[{"term":"TPR","meaning":"recall of the positive class"},{"term":"FPR","meaning":"share of negatives incorrectly admitted"},{"term":"AUC","meaning":"probability a random positive ranks above a random negative"}], "example":"In the notebook, threshold 0.35 raises recall from about 0.77 to 0.91 while increasing false positives." },
+      "code": "scores = model.predict_proba(X_test)[:, 1]\nfpr, tpr, thresholds = roc_curve(y_test, scores)\nRocCurveDisplay.from_estimator(model, X_test, y_test)",
+      "example": "Logistic regression reaches about 0.815 accuracy but 0.912 AUC, showing why one cutoff and the full ranking curve answer different questions.",
+      "confusions": ["ROC is not a plot of precision versus recall.", "AUC measures ranking across thresholds, not accuracy at threshold 0.5.", "RocCurveDisplay.from_estimator replaces the removed metrics.plot_roc_curve API used in an intentional error cell."],
+      "prerequisites": ["classification-metrics", "synthetic-datasets"],
+      "related": ["decision-tree-classification", "train-test-leakage"],
+      "revision": { "purpose":"Study threshold tradeoffs", "input":"Actual labels + positive-class scores", "output":"ROC curve, AUC, chosen threshold", "core idea":"Every threshold creates a different confusion matrix", "remember":"Top-left is strong; diagonal is random" },
+      "keywords": ["ROC", "AUC", "threshold", "TPR", "FPR", "predict_proba", "LogisticRegression"],
+      "lastUpdated": "2026-09-01",
+      "sources": [
+        { "path":"02_data_toolkit_apps/08_sklearn/14_roc.ipynb", "type":"notebook", "role":"theory + code + threshold experiment", "purpose":"Fits logistic regression, extracts probabilities, plots ROC, interprets AUC, and measures how threshold 0.35 changes recall.", "highlights":["all nine instructional code cells executed", "AUC 0.912 versus accuracy 0.815", "deprecated API reproduced then corrected"] },
+        { "path":"02_data_toolkit_apps/08_sklearn/14_ROC_Curve.png", "type":"image", "role":"visual revision sheet", "purpose":"Draws the threshold table, confusion-count changes, ROC geometry, and AUC interpretation as one connected visual explanation.", "highlights":["threshold walk-through", "ROC point table", "AUC ranges"] }
+      ]
+    },
+    {
+      "id": "decision-tree-classification",
+      "title": "Decision Tree Classification",
+      "categoryId": "classification",
+      "status": "learned",
+      "summary": "A classification tree repeatedly chooses the question with the largest information gain, then predicts the majority class in each final leaf.",
+      "what": "DecisionTreeClassifier partitions feature space with if/else questions and uses class counts in each leaf to make a categorical prediction.",
+      "why": "It turns entropy and information gain into an inspectable model whose complete decision path can be drawn and explained.",
+      "intuition": "Ask the question that creates the cleanest groups first; continue until another useful question or an unavoidable contradiction remains.",
+      "how": ["Measure the parent class entropy.", "Try each candidate split and calculate its weighted child entropy.", "Choose the split with the highest information gain.", "Repeat inside impure branches and predict from the reached leaf."],
+      "visual": { "type":"flow", "title":"Learned student-result tree", "items":[{"label":"Videos?","detail":"best gain: 0.610"},{"label":"No","detail":"4 fail · pure leaf"},{"label":"Yes","detail":"ask Guide?"},{"label":"Guide yes","detail":"4 pass"},{"label":"Conflict leaf","detail":"same inputs, opposite labels"}] },
+      "formula": { "expression":"information gain = H(parent) − Σ weighted H(children)", "parts":[{"term":"H","meaning":"entropy −Σp log₂p"},{"term":"weight","meaning":"child rows divided by parent rows"},{"term":"gain","meaning":"impurity removed by the question"}], "example":"Videos reduces entropy from 1.000 to 0.390, gain≈0.610; Guide alone gains≈0.278." },
+      "code": "model = DecisionTreeClassifier(criterion='entropy', random_state=0)\nmodel.fit(X, y)\nplot_tree(model, feature_names=['videos', 'guide'], class_names=encoder.classes_)",
+      "example": "On ten student rows, the tree asks whether the student watched the videos before asking about the guide; [1,1] predicts pass.",
+      "confusions": ["A training score of 0.90 is a memory check, not an honest generalization score.", "Two rows with identical inputs but opposite labels cannot be perfectly separated by these features.", "Random Forest is mentioned as a next step but is not yet learned."],
+      "prerequisites": ["pandas-dataframes-indexing", "classification-metrics"],
+      "related": ["roc-auc", "decision-tree-regression", "future-hyperparameter-tuning"],
+      "revision": { "purpose":"Predict a class with visible rules", "input":"Feature rows + class labels", "output":"Decision path + predicted class", "core idea":"Choose the split with maximum impurity reduction", "remember":"Leaves vote from class counts" },
+      "keywords": ["decision tree", "classifier", "entropy", "information gain", "split", "leaf", "plot_tree"],
+      "lastUpdated": "2026-09-02",
+      "sources": [
+        { "path":"02_data_toolkit_apps/08_sklearn/16_Descison_Tree_Classfication.ipynb", "type":"notebook", "role":"manual derivation + code + visualization", "purpose":"Computes entropy and information gain by hand, fits the entropy-based classifier, exports and plots its learned rules, and explains the conflicting row.", "highlights":["46 instructional cells", "30 executed code cells", "manual split comparison"] },
+        { "path":"02_data_toolkit_apps/08_sklearn/dt.tree", "type":"diagram", "role":"exported model structure", "purpose":"Stores the exact Graphviz decision tree learned from the student pass/fail dataset.", "highlights":["root: videos ≤ 0.5", "sample counts and entropy at every node"] },
+        { "path":"02_data_toolkit_apps/02_pandas/DataSet/exam.csv", "type":"dataset", "role":"classification training data", "purpose":"Provides the ten student rows with video, guide, and pass/fail outcomes used for the manual and sklearn tree.", "highlights":["two binary inputs", "one contradictory feature pair"] }
+      ]
+    },
+    {
+      "id": "decision-tree-regression",
+      "title": "Decision Tree Regression",
+      "categoryId": "regression",
+      "status": "learned",
+      "summary": "A regression tree chooses questions that reduce target variance, then predicts the average numeric target stored in the reached leaf.",
+      "what": "DecisionTreeRegressor partitions feature space like a classification tree, but evaluates numeric spread with squared error and returns leaf means.",
+      "why": "It models nonlinear step patterns without a straight-line equation and makes the classification-versus-regression tree distinction concrete.",
+      "intuition": "Sort students into rooms whose marks are as similar as possible; a new student receives the average mark in the room reached by the rules.",
+      "how": ["Measure variance in the parent marks.", "Try each feature split and compute weighted child variance.", "Choose the largest variance reduction.", "Repeat within branches and use the leaf mean as the prediction."],
+      "visual": { "type":"comparison", "title":"Same tree shape, different learning target", "items":[{"label":"Classifier leaf","detail":"majority label"},{"label":"Regressor leaf","detail":"average number"},{"label":"Classifier split","detail":"entropy reduction"},{"label":"Regressor split","detail":"variance reduction"}] },
+      "formula": { "expression":"variance reduction = Var(parent) − Σ weighted Var(children)", "parts":[{"term":"Var(parent)","meaning":"initial target spread"},{"term":"weighted children","meaning":"remaining spread after a question"},{"term":"leaf value","meaning":"mean target of rows in that leaf"}], "example":"Guide reduces variance from about 972.89 to 386.08, a reduction of about 586.81." },
+      "code": "model = DecisionTreeRegressor(random_state=0)\nmodel.fit(X_train, y_train)\npredicted_marks = model.predict([[1, 1]])",
+      "example": "Using the nine training students, the fitted leaves predict step values 31, 20, 25, or 90; a student with videos=1 and guide=1 receives 90.",
+      "confusions": ["Regression trees output numbers, but those predictions are leaf averages—not a continuous fitted line.", "Trees cannot interpolate arbitrary values between learned leaf means.", "A single hidden row and a score calculated across mixed train/test rows are too weak for model-quality claims."],
+      "prerequisites": ["train-test-leakage", "r-squared", "decision-tree-classification"],
+      "related": ["linear-regression", "polynomial-regression", "classification-metrics"],
+      "revision": { "purpose":"Predict a number with rule-based partitions", "input":"Feature rows + numeric target", "output":"Leaf-mean prediction", "core idea":"Choose the split with maximum variance reduction", "remember":"A regression tree predicts in steps" },
+      "keywords": ["decision tree", "regressor", "variance", "squared_error", "variance reduction", "leaf mean"],
+      "lastUpdated": "2026-09-02",
+      "sources": [
+        { "path":"02_data_toolkit_apps/08_sklearn/17_Descison_Tree_Regression.ipynb", "type":"notebook", "role":"comparison + manual derivation + code", "purpose":"Contrasts classification and regression trees, calculates variance reduction, fits the regressor, exports its rules, and records evaluation limits.", "highlights":["24 instructional cells", "12 executed code cells", "classification-versus-regression comparison"] },
+        { "path":"02_data_toolkit_apps/08_sklearn/dt1.tree", "type":"diagram", "role":"exported model structure", "purpose":"Stores the exact Graphviz regression tree with guide at the root and learned leaf values.", "highlights":["root: guide ≤ 0.5", "leaf values 31, 20, 25, 90"] },
+        { "path":"02_data_toolkit_apps/02_pandas/DataSet/exam1.csv", "type":"dataset", "role":"regression data", "purpose":"Provides ten student rows with binary study inputs and numeric marks for the regression-tree experiment.", "highlights":["numeric target marks", "used for manual variance and sklearn fitting"] }
       ]
     },
     {
