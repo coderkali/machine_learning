@@ -1,17 +1,17 @@
 window.LEARNING_MAP = {
   "meta": {
     "title": "My Learning Atlas",
-    "lastUpdated": "2026-09-02",
+    "lastUpdated": "2026-09-03",
     "defaultConcept": "linear-regression",
-    "analyzedFiles": 81,
-    "notebooks": 28,
+    "analyzedFiles": 85,
+    "notebooks": 30,
     "inventory": {
       "markdownNotes": 24,
-      "notebooks": 28,
+      "notebooks": 30,
       "datasets": 14,
       "pythonFiles": 2,
       "webLearningAssets": 7,
-      "images": 3,
+      "images": 5,
       "requirementsFiles": 1,
       "diagramSources": 2
     },
@@ -50,11 +50,13 @@ window.LEARNING_MAP = {
     ] },
     { "id": "classification", "title": "Classification & Decision Trees", "color": "#3f6fae", "topics": [
       { "title": "Classification Evaluation", "conceptIds": ["classification-metrics", "roc-auc"] },
-      { "title": "Tree Classification", "conceptIds": ["decision-tree-classification"] }
+      { "title": "Tree Classification", "conceptIds": ["decision-tree-classification"] },
+      { "title": "Probabilistic Classification", "conceptIds": ["naive-bayes"] }
     ] },
     { "id": "evaluation", "title": "Evaluation & Selection", "color": "#6d5d9b", "topics": [
       { "title": "Scoring", "conceptIds": ["r-squared"] },
-      { "title": "Resampling", "conceptIds": ["cross-validation"] }
+      { "title": "Resampling", "conceptIds": ["cross-validation"] },
+      { "title": "Hyperparameter Search", "conceptIds": ["hyperparameter-tuning"] }
     ] },
     { "id": "clustering", "title": "Unsupervised Learning", "color": "#427d58", "topics": [
       { "title": "Partitioning", "conceptIds": ["kmeans-clustering"] },
@@ -65,11 +67,11 @@ window.LEARNING_MAP = {
       { "title": "Analytics", "conceptIds": ["future-bi"] }
     ] },
     { "id": "future-ai", "title": "Referenced Advanced AI", "color": "#7a817d", "topics": [
-      { "title": "Classical ML Extensions", "conceptIds": ["future-hyperparameter-tuning", "future-time-series"] },
+      { "title": "Classical ML Extensions", "conceptIds": ["future-time-series"] },
       { "title": "Neural & Language AI", "conceptIds": ["future-neural-modalities", "future-transformers", "future-rag", "future-agents"] }
     ] },
     { "id": "future-production", "title": "Referenced Production & Career", "color": "#7a817d", "topics": [
-      { "title": "Operations & Platforms", "conceptIds": ["future-containers-mlops", "future-data-platforms", "future-cloud-llmops"] },
+      { "title": "Operations & Platforms", "conceptIds": ["future-model-persistence", "future-containers-mlops", "future-data-platforms", "future-cloud-llmops"] },
       { "title": "System Design & Career", "conceptIds": ["future-system-design"] }
     ] }
   ],
@@ -706,7 +708,7 @@ window.LEARNING_MAP = {
       "code": "cv = StratifiedKFold(n_splits=5)\nscores = cross_val_score(GaussianNB(), X, y, cv=cv)\nprint(scores.mean())",
       "example": "LeaveOneOut reveals exactly seven misclassified Iris rows, all in overlapping Versicolor/Virginica classes.",
       "confusions": ["Plain KFold on class-sorted Iris creates single-class test blocks.", "LeavePOut grows combinatorially: 150 choose 2 = 11,175 fits.", "GaussianNB is used as the evaluation vehicle, not taught in depth as a learned model."],
-      "prerequisites": ["train-test-leakage", "r-squared", "iris-eda"], "related": ["classification-metrics", "future-hyperparameter-tuning"],
+      "prerequisites": ["train-test-leakage", "r-squared", "iris-eda"], "related": ["classification-metrics", "hyperparameter-tuning"],
       "revision": { "purpose":"Stabilize model evaluation", "input":"Estimator + X + y + splitter", "output":"Several validation scores", "core idea":"Rotate the held-out rows", "remember":"Classifiers usually need stratification" },
       "keywords": ["KFold", "StratifiedKFold", "LeaveOneOut", "LeavePOut", "cross_val_score"],
       "lastUpdated": "2026-08-26",
@@ -819,7 +821,7 @@ window.LEARNING_MAP = {
       "lastUpdated": "2026-09-01",
       "sources": [
         { "path":"02_data_toolkit_apps/08_sklearn/15_Model_Evaluation.ipynb", "type":"notebook", "role":"theory + code + experiment", "purpose":"Evaluates GaussianNB on the breast-cancer dataset and derives accuracy, confusion-matrix counts, precision, recall, F1, support, and averaging choices.", "highlights":["22 instructional cells", "all 13 code cells executed", "positive-class and argument-order warnings"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/15_Model_Evaluation.png", "type":"image", "role":"visual revision sheet", "purpose":"Connects the confusion-matrix quadrants to metric formulas, threshold behavior, evaluation splits, and practical pitfalls.", "highlights":["hand-drawn matrix", "formula map", "clinical error costs"] },
+        { "path":"02_data_toolkit_apps/08_sklearn/HandWritten Notes/15_Model_Evaluation.png", "type":"image", "role":"visual revision sheet", "purpose":"Connects the confusion-matrix quadrants to metric formulas, threshold behavior, evaluation splits, and practical pitfalls.", "highlights":["hand-drawn matrix", "formula map", "clinical error costs"] },
         {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/index.html","type":"web","role":"broader reference map","purpose":"Places learned classification metrics inside the wider ML ecosystem while leaving unsupported algorithms as references.","highlights":["classification branch", "metric scenarios"]},
         {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/script.js","type":"web","role":"reference interaction logic","purpose":"Implements metric scenarios and roadmap interactions in the earlier broad visual guide.","highlights":["metric scenarios", "roadmap nodes"]},
         {"path":"02_data_toolkit_apps/09_python_ml_visual_guide/styles.css","type":"web","role":"reference presentation","purpose":"Styles the connected ecosystem guide used as secondary reference evidence.","highlights":["interactive guide"]}
@@ -847,7 +849,7 @@ window.LEARNING_MAP = {
       "lastUpdated": "2026-09-01",
       "sources": [
         { "path":"02_data_toolkit_apps/08_sklearn/14_roc.ipynb", "type":"notebook", "role":"theory + code + threshold experiment", "purpose":"Fits logistic regression, extracts probabilities, plots ROC, interprets AUC, and measures how threshold 0.35 changes recall.", "highlights":["all nine instructional code cells executed", "AUC 0.912 versus accuracy 0.815", "deprecated API reproduced then corrected"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/14_ROC_Curve.png", "type":"image", "role":"visual revision sheet", "purpose":"Draws the threshold table, confusion-count changes, ROC geometry, and AUC interpretation as one connected visual explanation.", "highlights":["threshold walk-through", "ROC point table", "AUC ranges"] }
+        { "path":"02_data_toolkit_apps/08_sklearn/HandWritten Notes/14_ROC_Curve.png", "type":"image", "role":"visual revision sheet", "purpose":"Draws the threshold table, confusion-count changes, ROC geometry, and AUC interpretation as one connected visual explanation.", "highlights":["threshold walk-through", "ROC point table", "AUC ranges"] }
       ]
     },
     {
@@ -866,13 +868,14 @@ window.LEARNING_MAP = {
       "example": "On ten student rows, the tree asks whether the student watched the videos before asking about the guide; [1,1] predicts pass.",
       "confusions": ["A training score of 0.90 is a memory check, not an honest generalization score.", "Two rows with identical inputs but opposite labels cannot be perfectly separated by these features.", "Random Forest is mentioned as a next step but is not yet learned."],
       "prerequisites": ["pandas-dataframes-indexing", "classification-metrics"],
-      "related": ["roc-auc", "decision-tree-regression", "future-hyperparameter-tuning"],
+      "related": ["roc-auc", "decision-tree-regression", "hyperparameter-tuning"],
       "revision": { "purpose":"Predict a class with visible rules", "input":"Feature rows + class labels", "output":"Decision path + predicted class", "core idea":"Choose the split with maximum impurity reduction", "remember":"Leaves vote from class counts" },
       "keywords": ["decision tree", "classifier", "entropy", "information gain", "split", "leaf", "plot_tree"],
       "lastUpdated": "2026-09-02",
       "sources": [
         { "path":"02_data_toolkit_apps/08_sklearn/16_Descison_Tree_Classfication.ipynb", "type":"notebook", "role":"manual derivation + code + visualization", "purpose":"Computes entropy and information gain by hand, fits the entropy-based classifier, exports and plots its learned rules, and explains the conflicting row.", "highlights":["46 instructional cells", "30 executed code cells", "manual split comparison"] },
         { "path":"02_data_toolkit_apps/08_sklearn/dt.tree", "type":"diagram", "role":"exported model structure", "purpose":"Stores the exact Graphviz decision tree learned from the student pass/fail dataset.", "highlights":["root: videos ≤ 0.5", "sample counts and entropy at every node"] },
+        { "path":"02_data_toolkit_apps/08_sklearn/HandWritten Notes/16_DTC.png", "type":"image", "role":"visual theory note", "purpose":"Explains classifier anatomy, Gini and entropy, information gain, prediction paths, pruning controls, strengths, limitations, and real-world uses.", "highlights":["split-quality formulas", "worked buy/not-buy tree", "overfitting and pruning"] },
         { "path":"02_data_toolkit_apps/02_pandas/DataSet/exam.csv", "type":"dataset", "role":"classification training data", "purpose":"Provides the ten student rows with video, guide, and pass/fail outcomes used for the manual and sklearn tree.", "highlights":["two binary inputs", "one contradictory feature pair"] }
       ]
     },
@@ -899,19 +902,76 @@ window.LEARNING_MAP = {
       "sources": [
         { "path":"02_data_toolkit_apps/08_sklearn/17_Descison_Tree_Regression.ipynb", "type":"notebook", "role":"comparison + manual derivation + code", "purpose":"Contrasts classification and regression trees, calculates variance reduction, fits the regressor, exports its rules, and records evaluation limits.", "highlights":["24 instructional cells", "12 executed code cells", "classification-versus-regression comparison"] },
         { "path":"02_data_toolkit_apps/08_sklearn/dt1.tree", "type":"diagram", "role":"exported model structure", "purpose":"Stores the exact Graphviz regression tree with guide at the root and learned leaf values.", "highlights":["root: guide ≤ 0.5", "leaf values 31, 20, 25, 90"] },
+        { "path":"02_data_toolkit_apps/08_sklearn/HandWritten Notes/17_DTR.png", "type":"image", "role":"visual theory note", "purpose":"Explains regression-tree anatomy, variance and MSE split criteria, leaf means, prediction paths, pruning controls, strengths, limitations, and use cases.", "highlights":["variance-reduction formula", "worked price tree", "piecewise predictions"] },
         { "path":"02_data_toolkit_apps/02_pandas/DataSet/exam1.csv", "type":"dataset", "role":"regression data", "purpose":"Provides ten student rows with binary study inputs and numeric marks for the regression-tree experiment.", "highlights":["numeric target marks", "used for manual variance and sklearn fitting"] }
       ]
     },
     {
-      "id":"future-hyperparameter-tuning","title":"Hyperparameter Search & Model Persistence","categoryId":"future-ai","status":"referenced",
-      "summary":"Ridge/Lasso/ElasticNet introduce hyperparameters, but RidgeCV, GridSearchCV, joblib persistence, and deployment are explicitly not covered.",
-      "what":"Future systematic model selection and saved-model workflow.","why":"Manual alpha experiments are educational; repeatable selection requires validation-aware search and persistence.","intuition":"Today the dials are turned by hand; later the search process will choose them without leaking test data.",
-      "how":["Keep test rows sealed.","Search candidate parameters inside cross-validation.","Refit the selected configuration.","Persist the complete pipeline."],
-      "visual":{"type":"flow","title":"Future selection path","items":[{"label":"Parameter grid"},{"label":"Cross-validation"},{"label":"Best configuration"},{"label":"Refit"},{"label":"Persist"}]},
-      "formula":null,"code":null,"example":"The scikit README names cross_val_score, RidgeCV, GridSearchCV, and joblib as not covered.","confusions":["Manually trying alpha values is evidence of understanding the effect, not a complete tuning workflow."],
-      "prerequisites":["cross-validation","elastic-net"],"related":["future-containers-mlops"],"revision":{"purpose":"Future repeatable model selection","input":"Model + parameter space","output":"Validated saved pipeline","core idea":"Referenced only","remember":"Search inside CV, not on test"},
-      "keywords":["GridSearchCV","RidgeCV","joblib","persistence","hyperparameter tuning"],"lastUpdated":"2026-08-31",
-      "sources":[{"path":"02_data_toolkit_apps/08_sklearn/README.md","type":"markdown","role":"explicit not-covered list","purpose":"Names tuning and persistence tools as upcoming rather than learned.","highlights":["clear coverage boundary"]}]
+      "id": "naive-bayes",
+      "title": "Naive Bayes Classifiers",
+      "categoryId": "classification",
+      "status": "learned",
+      "summary": "Naive Bayes scores each possible class by combining its prior probability with feature likelihoods, then returns the class with the largest score.",
+      "what": "A family of fast probabilistic classifiers built from Bayes theorem and a simplifying assumption that features behave independently inside each class.",
+      "why": "It turns evidence around—from knowing how features behave within a class to estimating the class given new features—and provides specialized models for continuous, count, and binary data.",
+      "intuition": "For each possible answer, ask two questions: how common is this class, and how normal are these feature values for it? Multiply those clues and choose the strongest story.",
+      "how": ["Calculate the prior P(y) for each class.", "Model each feature likelihood P(xᵢ|y) using a distribution suited to the data type.", "Multiply the prior and feature likelihoods for each class.", "Compare the class scores; the shared evidence denominator does not affect which class wins."],
+      "visual": { "type":"comparison", "title":"Choose the variant from the feature meaning", "items":[{"label":"GaussianNB","detail":"continuous measurements · bell curve per feature/class"},{"label":"MultinomialNB","detail":"non-negative counts or frequencies"},{"label":"BernoulliNB","detail":"binary presence/absence after a threshold"}] },
+      "formula": { "expression":"P(y|x₁…xₙ) ∝ P(y) × Π P(xᵢ|y)", "parts":[{"term":"P(y)","meaning":"class prior: how common the class is"},{"term":"P(xᵢ|y)","meaning":"likelihood of one feature inside that class"},{"term":"Π","meaning":"multiply the feature likelihoods under the naive independence assumption"}], "example":"For mark 74, the watched-class likelihood × prior is about 0.023 versus 0.006, so GaussianNB predicts watched." },
+      "code": "model = GaussianNB()\nmodel.fit(X_train, y_train)\nprobabilities = model.predict_proba([[74]])\nprediction = model.predict([[74]])",
+      "example": "On Iris, GaussianNB correctly predicts 29 of 30 test flowers (0.967), while treating centimetres as Multinomial counts scores 0.567 and default Bernoulli binarization collapses every positive-valued row to the same pattern.",
+      "confusions": ["Naive means conditionally independent features—not a model that ignores evidence.", "GaussianNB, MultinomialNB, and BernoulliNB are not interchangeable; select from the meaning and domain of the input values.", "MinMax scaling can remove MultinomialNB's negative-value error, but it does not turn continuous measurements into natural counts.", "The notebook's final scaling repair is conceptually explained, but its saved execution order recreates raw data after scaling, so the last fit still errors; rerun generation → scaling → split → fit in order to complete that experiment."],
+      "prerequisites": ["classification-metrics", "ml-preprocessing", "synthetic-datasets", "iris-eda"],
+      "related": ["roc-auc", "cross-validation", "hyperparameter-tuning"],
+      "revision": { "purpose":"Predict a class from probabilistic evidence", "input":"Features whose distribution matches the chosen variant", "output":"Class probabilities and winning label", "core idea":"Prior × likelihoods for every class", "remember":"Continuous → Gaussian; counts → Multinomial; binary → Bernoulli" },
+      "keywords": ["Naive Bayes", "Bayes theorem", "GaussianNB", "MultinomialNB", "BernoulliNB", "prior", "likelihood", "conditional independence", "binarize"],
+      "lastUpdated": "2026-09-03",
+      "sources": [
+        { "path":"02_data_toolkit_apps/08_sklearn/18_Naive_Bayers.ipynb", "type":"notebook", "role":"theory + code + comparative experiments", "purpose":"Derives Bayes classification from a colony example, visualizes Gaussian class distributions, evaluates three Naive Bayes variants on Iris and synthetic data, and studies thresholds and preprocessing constraints.", "highlights":["58 instructional cells", "33 executed code cells", "Gaussian likelihood visual", "three saved error outputs including one unresolved execution-order issue"] }
+      ]
+    },
+    {
+      "id": "hyperparameter-tuning",
+      "title": "Grid Search & Randomized Hyperparameter Tuning",
+      "categoryId": "evaluation",
+      "status": "learned",
+      "summary": "Hyperparameter search trains several model configurations inside cross-validation, chooses from validation evidence, and keeps the untouched test set for one final evaluation.",
+      "what": "GridSearchCV exhaustively checks a declared parameter grid; RandomizedSearchCV tests a limited random sample from candidate lists or distributions.",
+      "why": "A single fit cannot decide its own pre-training settings, and manually choosing from repeated test-set scores leaks the test set into model selection.",
+      "intuition": "The estimator is a recipe template. Search clones it with different knob settings, gives each clone several fair practice exams, then refits the strongest recipe on all training rows.",
+      "how": ["Seal the final test set before tuning.", "Create an unfitted estimator and a parameter search space.", "Evaluate every grid combination—or n_iter random samples—across cross-validation folds.", "Read best_params_, best_score_, best_estimator_, and cv_results_.", "With refit=True, use the refitted winner for the single final test-set evaluation."],
+      "visual": { "type":"flow", "title":"Honest model-selection loop", "items":[{"label":"Estimator template","detail":"unfitted model"},{"label":"Parameter space","detail":"knobs to try"},{"label":"Cross-validation","detail":"each setting gets several exams"},{"label":"Best params","detail":"validation winner"},{"label":"Refit","detail":"all training rows"},{"label":"Final test","detail":"open once"}] },
+      "formula": { "expression":"total fits = configurations × CV folds", "parts":[{"term":"configurations","meaning":"Cartesian product for grid search or n_iter for random search"},{"term":"CV folds","meaning":"independent validation rounds per configuration"},{"term":"refit","meaning":"one additional final fit of the winner when enabled"}], "example":"2 criteria × 2 splitters × 6 depths = 24 configurations; five folds require 120 comparison fits." },
+      "code": "grid = GridSearchCV(DecisionTreeClassifier(random_state=0), options, cv=5)\ngrid.fit(X_train, y_train)\nprint(grid.best_params_, grid.best_score_)\nfinal_score = grid.score(X_test, y_test)",
+      "example": "The Iris grid searches 24 decision trees and records a best mean CV accuracy of 0.975. A five-sample randomized search uses 25 CV fits instead of 120 and finds 0.950 in the saved run.",
+      "confusions": ["mean_test_score in cv_results_ means the held-out CV folds—not the sealed X_test dataset.", "best_params_ identifies a strong validated setting, not a universal setting for every future dataset.", "RandomizedSearchCV needs random_state for repeatable sampled configurations; a tree using splitter='random' needs its own seed too.", "Grid search cost multiplies quickly; random search becomes useful when the search space is large."],
+      "prerequisites": ["cross-validation", "decision-tree-classification", "train-test-leakage"],
+      "related": ["classification-metrics", "naive-bayes", "future-model-persistence"],
+      "revision": { "purpose":"Choose model settings without test leakage", "input":"Estimator + parameter space + training data + CV strategy", "output":"Validated parameters, score log, refitted estimator", "core idea":"Compare settings on folds inside training data", "remember":"Tune on CV; test once at the end" },
+      "keywords": ["hyperparameter", "parameter", "GridSearchCV", "RandomizedSearchCV", "param_grid", "param_distributions", "n_iter", "best_params", "best_score", "cv_results", "refit"],
+      "lastUpdated": "2026-09-03",
+      "sources": [
+        { "path":"02_data_toolkit_apps/08_sklearn/19_Hyperparameter_Tuning.ipynb", "type":"notebook", "role":"theory + code + search comparison", "purpose":"Distinguishes parameters from hyperparameters, manually compares tree settings, performs exhaustive and randomized searches, inspects all CV results, and explains leakage, refitting, search cost, and reproducibility.", "highlights":["44 instructional cells", "26 executed code cells", "24-combination grid", "GridSearchCV versus RandomizedSearchCV cost comparison"] }
+      ]
+    },
+    {
+      "id":"future-model-persistence","title":"Model Persistence & Deployment Handoff","categoryId":"future-production","status":"referenced",
+      "summary":"The tuned estimator can now be selected and refitted, but saving, loading, versioning, and serving that complete model pipeline have not yet been implemented.",
+      "what":"A future workflow for serializing a trained pipeline and using the same artifact outside the training notebook.",
+      "why":"A selected model only becomes reusable when its preprocessing, parameters, dependencies, and version can be reproduced safely.",
+      "intuition":"Hyperparameter search chooses the recipe; persistence packages the finished meal so another process can serve it.",
+      "how":["Select and refit the winner.","Save the complete pipeline with version metadata.","Load it in a separate process.","Verify predictions before deployment."],
+      "visual":{"type":"flow","title":"Referenced production handoff","items":[{"label":"best_estimator_","detail":"learned"},{"label":"Serialize","detail":"not learned"},{"label":"Load + verify","detail":"not learned"},{"label":"Serve","detail":"not learned"}]},
+      "formula":null,
+      "code":null,
+      "example":"The scikit-learn README names joblib persistence as upcoming; no saved model artifact or loading experiment exists yet.",
+      "confusions":["refit=True creates an in-memory fitted estimator; it does not save the estimator to disk.","A model file without its preprocessing pipeline is usually incomplete."],
+      "prerequisites":["hyperparameter-tuning"],
+      "related":["future-containers-mlops"],
+      "revision":{"purpose":"Future reusable model artifact","input":"Validated fitted pipeline","output":"Versioned loadable model","core idea":"Referenced only","remember":"No persistence experiment yet"},
+      "keywords":["joblib","pickle","model persistence","serialization","deployment"],
+      "lastUpdated":"2026-09-03",
+      "sources":[{"path":"02_data_toolkit_apps/08_sklearn/README.md","type":"markdown","role":"explicit not-covered list","purpose":"Still identifies joblib persistence and deployment as future work even though GridSearchCV is now covered by a dedicated notebook.","highlights":["persistence remains unsupported"]}]
     },
     {
       "id":"future-time-series","title":"Time Series Forecasting","categoryId":"future-ai","status":"referenced",
@@ -963,7 +1023,7 @@ window.LEARNING_MAP = {
       "summary":"Containerization and MLOps are planned but no Dockerfiles, MLflow runs, model registry, or monitoring artifacts exist.","what":"Future reproducible packaging and ML lifecycle operations.","why":"Needed to move evaluated models from notebooks into reliable services.","intuition":"The current Streamlit deployment notes explain a boundary, but they do not implement MLOps.",
       "how":["First produce an evaluated model.","Then add container and lifecycle artifacts."],"visual":{"type":"flow","title":"Future production lane","items":[{"label":"Evaluated model"},{"label":"Docker image"},{"label":"Registry"},{"label":"Deploy"},{"label":"Monitor"}]},
       "formula":null,"code":null,"example":"Phase 10 contains only its README.","confusions":["A requirements.txt file is dependency evidence, not Docker/MLOps completion."],
-      "prerequisites":["future-git","future-hyperparameter-tuning"],"related":["future-data-platforms"],"revision":{"purpose":"Future reproducible ML operations","input":"Not started","output":"No learned status yet","core idea":"Reference only","remember":"Need container/lifecycle files"},
+      "prerequisites":["future-git","hyperparameter-tuning","future-model-persistence"],"related":["future-data-platforms"],"revision":{"purpose":"Future reproducible ML operations","input":"Not started","output":"No learned status yet","core idea":"Reference only","remember":"Need container/lifecycle files"},
       "keywords":["docker","MLOps","MLflow","registry","drift"],"lastUpdated":"2026-08-31",
       "sources":[{"path":"10_containers_mlops/README.md","type":"markdown","role":"curriculum reference","purpose":"Lists Docker and MLOps with explicit Not Started status.","highlights":["no implementation artifacts"]}]
     },

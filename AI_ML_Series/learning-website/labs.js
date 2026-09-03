@@ -95,6 +95,18 @@
       prompt: "Compare variance reduction and follow a student to the leaf-average mark.",
       source: "17_Descison_Tree_Regression.ipynb + dt1.tree",
     },
+    "naive-bayes": {
+      type: "naiveBayes",
+      title: "Move evidence through two bell curves",
+      prompt: "Change the student's mark or the class prior. Gaussian likelihoods and the winning class react immediately.",
+      source: "18_Naive_Bayers.ipynb · 14-student GaussianNB experiment",
+    },
+    "hyperparameter-tuning": {
+      type: "hyperparameterSearch",
+      title: "Explore the search budget",
+      prompt: "Compare all 24 grid combinations with a smaller random sample and see how cross-validation multiplies the work.",
+      source: "19_Hyperparameter_Tuning.ipynb · saved 24-combination CV results",
+    },
   };
 
   let cleanupCurrent = null;
@@ -152,6 +164,13 @@
         return selectControl("firstSplit", "Compare first question", [["guide", "Used guide?"], ["videos", "Watched videos?"]])
           + selectControl("studentVideos", "New student · videos", [["1", "Yes"], ["0", "No"]])
           + selectControl("studentGuide", "New student · guide", [["1", "Yes"], ["0", "No"]]);
+      case "naiveBayes":
+        return rangeControl("mark", "Student mark", 50, 115, 1, 74)
+          + rangeControl("watchedPrior", "Hypothetical watched prior", 10, 90, 1, 64, "%");
+      case "hyperparameterSearch":
+        return selectControl("searchMethod", "Search strategy", [["grid", "Grid · try every combination"], ["random", "Random · sample combinations"]])
+          + rangeControl("randomSamples", "Random combinations", 1, 24, 1, 5)
+          + rangeControl("cvFolds", "Cross-validation folds", 2, 10, 1, 5);
       default:
         return "";
     }
@@ -1050,6 +1069,141 @@
     metric(readout, [["Guide reduction", guideReduction.toFixed(2)], ["Videos reduction", videosReduction.toFixed(2)], ["Compared after-variance", compared.after.toFixed(2)], ["Predicted marks", prediction]], comparedFeature === "guide" ? "Guide produces the larger first variance reduction, so it becomes the root question." : "Videos reduces some spread, but Guide creates more similar mark groups and wins the root split.");
   }
 
+  function gaussianDensity(x, mean, deviation) {
+    return Math.exp(-((x - mean) ** 2) / (2 * deviation ** 2)) / (Math.sqrt(2 * Math.PI) * deviation);
+  }
+
+  function drawNaiveBayes(root, canvas, readout) {
+    const mark = value(root, "mark");
+    const watchedPrior = value(root, "watchedPrior") / 100;
+    const notWatchedPrior = 1 - watchedPrior;
+    const classes = [
+      { name: "Watched", mean: 79.11, deviation: 9.56, prior: watchedPrior, colorIndex: 0 },
+      { name: "Did not watch", mean: 86.20, deviation: 8.70, prior: notWatchedPrior, colorIndex: 1 },
+    ];
+    const scores = classes.map((item) => gaussianDensity(mark, item.mean, item.deviation) * item.prior);
+    const scoreTotal = scores[0] + scores[1];
+    const posteriors = scores.map((score) => scoreTotal ? score / scoreTotal : 0);
+    const winner = posteriors[0] >= posteriors[1] ? 0 : 1;
+    const plot = frame(canvas, [50, 115], [0, .055], ["Student mark", "Probability density"]);
+    const { ctx, x, y, colors } = plot;
+
+    classes.forEach((item) => {
+      ctx.strokeStyle = colors.series[item.colorIndex];
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let index = 0; index <= 220; index += 1) {
+        const number = 50 + (65 * index) / 220;
+        const density = gaussianDensity(number, item.mean, item.deviation);
+        if (index === 0) ctx.moveTo(x(number), y(density));
+        else ctx.lineTo(x(number), y(density));
+      }
+      ctx.stroke();
+      ctx.fillStyle = colors.series[item.colorIndex];
+      ctx.font = "600 11px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(`${item.name} · μ ${item.mean.toFixed(1)}`, x(item.mean), y(gaussianDensity(item.mean, item.mean, item.deviation)) - 10);
+    });
+
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = colors.amber;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x(mark), y(0));
+    ctx.lineTo(x(mark), y(.052));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = colors.amber;
+    ctx.textAlign = mark > 103 ? "right" : "left";
+    ctx.font = "600 11px system-ui";
+    ctx.fillText(`new mark ${mark}`, x(mark) + (mark > 103 ? -8 : 8), y(.051));
+
+    classes.forEach((item, index) => {
+      const density = gaussianDensity(mark, item.mean, item.deviation);
+      ctx.fillStyle = colors.series[item.colorIndex];
+      ctx.beginPath();
+      ctx.arc(x(mark), y(density), index === winner ? 7 : 5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    metric(readout, [["Watched posterior", `${(posteriors[0] * 100).toFixed(1)}%`], ["Not-watched posterior", `${(posteriors[1] * 100).toFixed(1)}%`], ["Prediction", classes[winner].name], ["Class prior", `${(watchedPrior * 100).toFixed(0)} / ${(notWatchedPrior * 100).toFixed(0)}`]], `At mark ${mark}, each bell-curve height is multiplied by its class prior. The larger weighted likelihood becomes the prediction.`);
+  }
+
+  const tuningGrid = [
+    { label: "gini / best", scores: [.691667, .950000, .933333, .925000, .933333, .925000] },
+    { label: "gini / random", scores: [.691667, .766667, .958333, .975000, .950000, .925000] },
+    { label: "entropy / best", scores: [.691667, .933333, .933333, .933333, .933333, .925000] },
+    { label: "entropy / random", scores: [.683333, .900000, .908333, .866667, .925000, .925000] },
+  ];
+  const randomSearchOrder = [1, 4, 16, 18, 7, 12, 20, 3, 15, 9, 22, 0, 6, 11, 14, 5, 19, 2, 13, 21, 10, 17, 8, 23];
+
+  function drawHyperparameterSearch(root, canvas, readout) {
+    const method = value(root, "searchMethod");
+    const requestedSamples = value(root, "randomSamples");
+    const folds = value(root, "cvFolds");
+    const testedCount = method === "grid" ? 24 : requestedSamples;
+    const tested = method === "grid"
+      ? new Set(Array.from({ length: 24 }, (_, index) => index))
+      : new Set(randomSearchOrder.slice(0, requestedSamples));
+    const visible = [];
+    tuningGrid.forEach((row, rowIndex) => row.scores.forEach((score, columnIndex) => {
+      const flatIndex = rowIndex * 6 + columnIndex;
+      if (tested.has(flatIndex)) visible.push({ rowIndex, columnIndex, flatIndex, score });
+    }));
+    const best = visible.reduce((winner, candidate) => !winner || candidate.score > winner.score ? candidate : winner, null);
+    const { ctx, width, height, colors } = prepareCanvas(canvas, 365);
+    const pad = { left: Math.min(112, width * .34), right: 14, top: 66, bottom: 48 };
+    const cellWidth = (width - pad.left - pad.right) / 6;
+    const cellHeight = (height - pad.top - pad.bottom) / 4;
+
+    ctx.fillStyle = colors.ink;
+    ctx.font = "600 11px system-ui";
+    ctx.textAlign = "left";
+    ctx.fillText(method === "grid" ? "GridSearchCV · all combinations" : `RandomizedSearchCV · ${testedCount} sampled combinations`, pad.left, 24);
+    ctx.fillStyle = colors.muted;
+    ctx.font = "10px system-ui";
+    ctx.fillText("Cell value = saved mean 5-fold CV accuracy", pad.left, 43);
+
+    for (let column = 0; column < 6; column += 1) {
+      ctx.fillStyle = colors.muted;
+      ctx.textAlign = "center";
+      ctx.fillText(`depth ${column + 1}`, pad.left + (column + .5) * cellWidth, pad.top - 12);
+    }
+
+    tuningGrid.forEach((row, rowIndex) => {
+      ctx.fillStyle = colors.ink;
+      ctx.textAlign = "right";
+      ctx.font = "10px system-ui";
+      ctx.fillText(row.label, pad.left - 9, pad.top + (rowIndex + .5) * cellHeight + 4);
+      row.scores.forEach((score, columnIndex) => {
+        const flatIndex = rowIndex * 6 + columnIndex;
+        const isTested = tested.has(flatIndex);
+        const cellX = pad.left + columnIndex * cellWidth;
+        const cellY = pad.top + rowIndex * cellHeight;
+        ctx.globalAlpha = isTested ? .16 + .7 * Math.max(0, Math.min(1, (score - .65) / .35)) : .05;
+        ctx.fillStyle = isTested ? colors.series[0] : colors.muted;
+        ctx.fillRect(cellX + 2, cellY + 2, cellWidth - 4, cellHeight - 4);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = best && flatIndex === best.flatIndex ? colors.amber : colors.line;
+        ctx.lineWidth = best && flatIndex === best.flatIndex ? 3 : 1;
+        ctx.strokeRect(cellX + 2, cellY + 2, cellWidth - 4, cellHeight - 4);
+        ctx.fillStyle = isTested ? colors.ink : colors.muted;
+        ctx.textAlign = "center";
+        ctx.font = "10px system-ui";
+        ctx.fillText(isTested ? score.toFixed(3) : "—", cellX + cellWidth / 2, cellY + cellHeight / 2 + 4);
+      });
+    });
+
+    ctx.fillStyle = colors.amber;
+    ctx.fillRect(pad.left, height - 22, 11, 11);
+    ctx.fillStyle = colors.muted;
+    ctx.textAlign = "left";
+    ctx.fillText("outline = best tested setting", pad.left + 17, height - 13);
+    const bestRow = tuningGrid[best.rowIndex];
+    const bestParams = `${bestRow.label} / depth ${best.columnIndex + 1}`;
+    metric(readout, [["Configurations", testedCount], ["CV comparison fits", testedCount * folds], ["Best visible CV", best.score.toFixed(3)], ["Best visible settings", bestParams]], method === "grid" ? "Grid search covers every declared combination. The final refit is additional to the CV comparison fits shown here." : "This is a deterministic illustration sampled from the notebook's saved grid scores. A real unseeded RandomizedSearchCV run may choose different cells and scores.");
+  }
+
   function draw(config, root, canvas, readout) {
     if (config.type === "linear") drawLinear(root, canvas, readout);
     if (config.type === "plane") drawPlane(root, canvas, readout);
@@ -1063,6 +1217,8 @@
     if (config.type === "roc") drawRoc(root, canvas, readout);
     if (config.type === "treeClassification") drawTreeClassification(root, canvas, readout);
     if (config.type === "treeRegression") drawTreeRegression(root, canvas, readout);
+    if (config.type === "naiveBayes") drawNaiveBayes(root, canvas, readout);
+    if (config.type === "hyperparameterSearch") drawHyperparameterSearch(root, canvas, readout);
   }
 
   function mount(id) {
