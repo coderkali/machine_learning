@@ -46,6 +46,7 @@ function init() {
   }
 
   renderHeaderStats();
+  renderResume();
   renderTree();
   renderRecent();
   renderFileIndex();
@@ -63,6 +64,18 @@ function renderHeaderStats() {
     <span><strong>${learned}</strong> learned</span>
     <span><strong>${current}</strong> growing</span>
     <span><strong>${state.data.meta.analyzedFiles}</strong> sources</span>`;
+}
+
+function renderResume() {
+  const summary = state.data.meta.updateSummary;
+  if (!summary) return;
+  const inventory = state.data.meta.inventory;
+  byId("resume-learning").innerHTML = `<p class="eyebrow">Continue where you left off · ${escapeHtml(state.data.meta.lastUpdated)}</p>
+    <h2 id="resume-title">From ensembles to unusual observations</h2>
+    <p>${escapeHtml(summary.resume)}</p><p>${escapeHtml(summary.next)}</p>
+    <div class="resume-actions"><button type="button" data-concept-id="local-outlier-factor">Resume the LOF experiment</button><button type="button" data-concept-id="random-forest">Review ensemble methods</button><a href="data-explorer.html">Explore all 12,662 data points →</a></div>
+    <div class="coverage-stats"><span><strong>${inventory.notebooks}</strong> notebooks</span><span><strong>${inventory.pythonFiles}</strong> Python files</span><span><strong>${inventory.datasets}</strong> dataset files</span><span><strong>${inventory.images}</strong> source images</span><span><strong>${summary.newConceptIds.length}</strong> new concept cards</span></div>
+    <details><summary>What changed in this update</summary><p>${summary.notes.map(escapeHtml).join("<br>")}</p><a href="UPDATE_LOG.md">Read the saved update checkpoint →</a></details>`;
 }
 
 function conceptsForTopic(topic) {
@@ -85,7 +98,7 @@ function renderTree() {
     const open = state.openCategories.has(category.id);
     const learnedCount = allConcepts.filter((concept) => concept.status === "learned").length;
     const currentCount = allConcepts.filter((concept) => concept.status === "current").length;
-    const evidencePercent = Math.round(((learnedCount + currentCount * 0.5) / allConcepts.length) * 100);
+    const evidencePercent = Math.round((learnedCount / allConcepts.length) * 100);
 
     const topics = (category.topics || []).map((topic, index) => {
       const concepts = conceptsForTopic(topic);
@@ -113,7 +126,7 @@ function renderTree() {
       <button class="category-node" type="button" data-category-id="${category.id}" role="treeitem" aria-expanded="${open}">
         <span class="branch-number">${String(state.data.categories.indexOf(category) + 1).padStart(2, "0")}</span>
         <span class="branch-copy"><strong>${escapeHtml(category.title)}</strong><small>${(category.topics || []).length} topics · ${allConcepts.length} concepts</small></span>
-        <span class="branch-growth"><i style="width:${evidencePercent}%"></i><small>${learnedCount} learned${currentCount ? ` · ${currentCount} growing` : ""}</small></span>
+        <span class="branch-growth" title="${learnedCount} of ${allConcepts.length} mapped concepts learned; this is repository coverage, not curriculum completion"><i style="width:${evidencePercent}%"></i><small>${learnedCount} learned${currentCount ? ` · ${currentCount} growing` : ""}</small></span>
         <span class="node-toggle" aria-hidden="true">${open ? "−" : "+"}</span>
       </button>
       ${open ? `<div class="topic-forest" role="group">${topics}</div>` : ""}
@@ -201,6 +214,7 @@ function selectConcept(id, updateHash = true) {
   const concept = conceptById(id);
   if (!concept) return;
   window.LearningLabs?.unmount();
+  window.LearningDetails?.unmount();
   const info = topicInfoFor(concept);
   state.rootOpen = true;
   state.selectedId = id;
@@ -211,6 +225,7 @@ function selectConcept(id, updateHash = true) {
   renderTree();
   renderConceptDrawer(concept);
   openDrawer();
+  window.LearningDetails?.mount(concept);
   if (window.LearningLabs?.has(id)) window.LearningLabs.mount(id);
   if (updateHash) history.replaceState(null, "", `#concept=${id}`);
 }
@@ -237,6 +252,8 @@ function renderConceptDrawer(concept) {
       <h3>${escapeHtml(concept.visual?.title || concept.title)}</h3>
       ${renderVisual(concept.visual)}
     </section>`}
+
+    ${window.LearningDetails?.markup(concept) || ""}
 
     <div class="detail-accordions">
       <details open>
@@ -323,6 +340,7 @@ function openDrawer() {
 
 function closeDrawer() {
   window.LearningLabs?.unmount();
+  window.LearningDetails?.unmount();
   byId("concept-drawer").classList.remove("open");
   byId("concept-drawer").setAttribute("aria-hidden", "true");
   byId("drawer-backdrop").hidden = true;
@@ -330,16 +348,17 @@ function closeDrawer() {
 }
 
 function renderRecent() {
+  const updateOrder = [...(state.data.meta.updateSummary?.newConceptIds || []), ...(state.data.meta.updateSummary?.updatedConceptIds || [])];
   const recent = [...state.data.concepts]
-    .filter((concept) => concept.status === "learned")
-    .sort((a, b) => b.lastUpdated.localeCompare(a.lastUpdated))
-    .slice(0, 5);
+    .filter((concept) => concept.status !== "referenced")
+    .sort((a, b) => b.lastUpdated.localeCompare(a.lastUpdated) || (updateOrder.includes(a.id) ? updateOrder.indexOf(a.id) : 999) - (updateOrder.includes(b.id) ? updateOrder.indexOf(b.id) : 999))
+    .slice(0, Math.max(5, updateOrder.length));
   byId("recent-concepts").innerHTML = recent.map((concept, index) => {
     const info = topicInfoFor(concept);
     return `<button class="recent-leaf" type="button" data-concept-id="${concept.id}">
       <span>${String(index + 1).padStart(2, "0")}</span>
       <strong>${escapeHtml(concept.title)}</strong>
-      <small>${escapeHtml(info.category.title)} → ${escapeHtml(info.topic.title)}</small>
+      <small>${statusMeta[concept.status].label} · ${escapeHtml(info.category.title)} → ${escapeHtml(info.topic.title)}</small>
     </button>`;
   }).join("");
 }
@@ -427,7 +446,7 @@ function bindControls() {
   byId("theme-toggle").addEventListener("click", () => {
     const dark = document.documentElement.dataset.theme === "dark";
     document.documentElement.dataset.theme = dark ? "" : "dark";
-    localStorage.setItem("learning-tree-theme", dark ? "light" : "dark");
+    try { localStorage.setItem("learning-tree-theme", dark ? "light" : "dark"); } catch { /* Theme still works when browser storage is disabled. */ }
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "/" && document.activeElement.tagName !== "INPUT") {
@@ -443,7 +462,12 @@ function bindControls() {
     if (!event.target.closest(".global-search")) byId("search-results").hidden = true;
   });
 
-  if (localStorage.getItem("learning-tree-theme") === "dark") document.documentElement.dataset.theme = "dark";
+  try { if (localStorage.getItem("learning-tree-theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch { /* File mode may disable storage. */ }
+  window.addEventListener("hashchange", () => {
+    const id = location.hash.startsWith("#concept=") ? location.hash.slice(9) : null;
+    if (id && conceptById(id)) selectConcept(id, false);
+    else closeDrawer();
+  });
 }
 
 try {

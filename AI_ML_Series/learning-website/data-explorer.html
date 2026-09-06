@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Inspect all 12,662 observations from the latest ML lessons, with interactive scatter plots, complete feature tables, and source traceability.">
+  <title>All Lesson Data Points · My ML Learning Tree</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="lesson-details.css">
+</head>
+<body>
+  <main class="explorer-main">
+    <a class="lesson-link" href="index.html">← Back to the learning tree</a>
+    <p class="eyebrow">Every observation has a source</p>
+    <h1>See the data behind the lesson.</h1>
+    <p>Six datasets, all 12,662 rows. Change axes, inspect a row, or filter source groups. Every matching point is drawn; table pagination never samples the chart. Source-group IDs are not anomaly labels.</p>
+    <section class="lesson-evidence" aria-labelledby="explorer-title">
+      <h2 id="explorer-title">Dataset explorer</h2>
+      <div class="lesson-controls">
+        <label>Dataset<select id="explorer-dataset"></select></label>
+        <label>Horizontal axis<select id="explorer-x"></select></label>
+        <label>Vertical axis<select id="explorer-y"></select></label>
+        <label>Source group<select id="explorer-group"><option value="all">All source groups</option></select></label>
+        <label>Inspect row ID<input id="explorer-row" type="number" min="0" value="0" step="1"></label>
+      </div>
+      <p id="explorer-note"></p>
+      <canvas id="explorer-canvas" role="img" aria-label="All observations in the selected dataset"></canvas>
+      <div id="explorer-readout" class="detail-readout" aria-live="polite"></div>
+      <div class="resume-actions"><a id="explorer-source" target="_blank" rel="noopener">Open original notebook</a><a id="explorer-concept">Study the related concept</a><button id="explorer-download" type="button">Download matching rows as CSV</button></div>
+      <div id="explorer-table"></div>
+      <nav class="explorer-pagination" aria-label="Data table pages"><button id="explorer-prev" type="button">Previous 25 rows</button><span id="explorer-page" aria-live="polite"></span><button id="explorer-next" type="button">Next 25 rows</button></nav>
+    </section>
+    <p>Data generated from the exact notebook seeds or literal rows. All feature columns are available. Detector scores and settings are explored in their concept cards; these colors show source groups only.</p>
+  </main>
+  <script src="lesson-data.js"></script>
+  <script src="lesson-details.js"></script>
+  <script src="data-explorer.js"></script>
+</body>
+</html>

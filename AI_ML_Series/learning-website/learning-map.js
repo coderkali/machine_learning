@@ -1,22 +1,50 @@
 window.LEARNING_MAP = {
   "meta": {
-    "title": "My Learning Atlas",
-    "lastUpdated": "2026-09-03",
-    "defaultConcept": "linear-regression",
-    "analyzedFiles": 85,
-    "notebooks": 30,
-    "inventory": {
-      "markdownNotes": 24,
-      "notebooks": 30,
-      "datasets": 14,
-      "pythonFiles": 2,
-      "webLearningAssets": 7,
-      "images": 5,
-      "requirementsFiles": 1,
-      "diagramSources": 2
-    },
-    "initialization": true
+  "title": "My Learning Atlas",
+  "lastUpdated": "2026-09-05",
+  "defaultConcept": "local-outlier-factor",
+  "analyzedFiles": 89,
+  "notebooks": 32,
+  "inventory": {
+    "markdownNotes": 24,
+    "notebooks": 32,
+    "datasets": 14,
+    "pythonFiles": 2,
+    "webLearningAssets": 7,
+    "images": 7,
+    "requirementsFiles": 1,
+    "diagramSources": 2
   },
+  "initialization": false,
+  "previousUpdated": "2026-09-03",
+  "updateSummary": {
+    "resume": "Previous website update: September 3 — Naive Bayes and hyperparameter tuning. Continue with ensemble methods, then outliers.",
+    "newConceptIds": [
+      "random-forest",
+      "random-forest-regression",
+      "adaboost",
+      "gradient-boosting",
+      "voting-ensemble",
+      "outlier-detection",
+      "dbscan-clustering",
+      "elliptic-envelope",
+      "isolation-forest",
+      "local-outlier-factor"
+    ],
+    "updatedConceptIds": [
+      "linear-regression",
+      "naive-bayes",
+      "hyperparameter-tuning"
+    ],
+    "next": "Resume at LOF: compare one feature with two, then change k from 3 to 6. Forest regression still needs a held-out evaluation.",
+    "notes": [
+      "All previous 47 concepts are preserved.",
+      "The coefficient-by-hand notebook was already mapped; its worked rows are now visible.",
+      "IMG_3446.jpeg, IMG_3447.jpeg and IMG_3448.jpeg are referenced inside the outlier notebook but are absent from this repository.",
+      "Archive material remains prior-learning evidence, not current-course completion."
+    ]
+  }
+},
   "categories": [
     { "id": "python", "title": "Python Foundations", "color": "#315c91", "topics": [
       { "title": "Language Basics", "conceptIds": ["python-values-types"] }
@@ -42,26 +70,115 @@ window.LEARNING_MAP = {
       { "title": "Estimator Workflow", "conceptIds": ["sklearn-estimator-api", "train-test-leakage"] },
       { "title": "Data Generation & Preparation", "conceptIds": ["synthetic-datasets", "ml-preprocessing"] }
     ] },
-    { "id": "regression", "title": "Regression Models", "color": "#c05d42", "topics": [
-      { "title": "Linear Models", "conceptIds": ["linear-regression", "multiple-linear-regression"] },
-      { "title": "Regularization", "conceptIds": ["ridge-regression", "lasso-regression", "elastic-net"] },
-      { "title": "Nonlinear Features", "conceptIds": ["polynomial-regression"] },
-      { "title": "Tree Regression", "conceptIds": ["decision-tree-regression"] }
-    ] },
-    { "id": "classification", "title": "Classification & Decision Trees", "color": "#3f6fae", "topics": [
-      { "title": "Classification Evaluation", "conceptIds": ["classification-metrics", "roc-auc"] },
-      { "title": "Tree Classification", "conceptIds": ["decision-tree-classification"] },
-      { "title": "Probabilistic Classification", "conceptIds": ["naive-bayes"] }
-    ] },
+    {
+  "id": "regression",
+  "title": "Regression Models",
+  "color": "#c05d42",
+  "topics": [
+    {
+      "title": "Linear Models",
+      "conceptIds": [
+        "linear-regression",
+        "multiple-linear-regression"
+      ]
+    },
+    {
+      "title": "Regularization",
+      "conceptIds": [
+        "ridge-regression",
+        "lasso-regression",
+        "elastic-net"
+      ]
+    },
+    {
+      "title": "Nonlinear Features",
+      "conceptIds": [
+        "polynomial-regression"
+      ]
+    },
+    {
+      "title": "Tree Regression",
+      "conceptIds": [
+        "decision-tree-regression",
+        "random-forest-regression"
+      ]
+    }
+  ]
+},
+    {
+  "id": "classification",
+  "title": "Classification & Decision Trees",
+  "color": "#3f6fae",
+  "topics": [
+    {
+      "title": "Classification Evaluation",
+      "conceptIds": [
+        "classification-metrics",
+        "roc-auc"
+      ]
+    },
+    {
+      "title": "Tree Classification",
+      "conceptIds": [
+        "decision-tree-classification"
+      ]
+    },
+    {
+      "title": "Probabilistic Classification",
+      "conceptIds": [
+        "naive-bayes"
+      ]
+    },
+    {
+      "title": "Ensembles",
+      "conceptIds": [
+        "random-forest",
+        "adaboost",
+        "gradient-boosting",
+        "voting-ensemble"
+      ]
+    }
+  ]
+},
     { "id": "evaluation", "title": "Evaluation & Selection", "color": "#6d5d9b", "topics": [
       { "title": "Scoring", "conceptIds": ["r-squared"] },
       { "title": "Resampling", "conceptIds": ["cross-validation"] },
       { "title": "Hyperparameter Search", "conceptIds": ["hyperparameter-tuning"] }
     ] },
-    { "id": "clustering", "title": "Unsupervised Learning", "color": "#427d58", "topics": [
-      { "title": "Partitioning", "conceptIds": ["kmeans-clustering"] },
-      { "title": "Hierarchy", "conceptIds": ["hierarchical-clustering"] }
-    ] },
+    {
+  "id": "clustering",
+  "title": "Unsupervised Learning",
+  "color": "#427d58",
+  "topics": [
+    {
+      "title": "Partitioning",
+      "conceptIds": [
+        "kmeans-clustering"
+      ]
+    },
+    {
+      "title": "Hierarchy",
+      "conceptIds": [
+        "hierarchical-clustering"
+      ]
+    },
+    {
+      "title": "Density & Noise",
+      "conceptIds": [
+        "dbscan-clustering"
+      ]
+    },
+    {
+      "title": "Outlier Detection",
+      "conceptIds": [
+        "outlier-detection",
+        "elliptic-envelope",
+        "isolation-forest",
+        "local-outlier-factor"
+      ]
+    }
+  ]
+},
     { "id": "future-foundations", "title": "Referenced Foundations", "color": "#7a817d", "topics": [
       { "title": "Engineering & Data Prerequisites", "conceptIds": ["future-git", "future-math-sql"] },
       { "title": "Analytics", "conceptIds": ["future-bi"] }
@@ -126,30 +243,215 @@ window.LEARNING_MAP = {
       ]
     },
     {
-      "id": "linear-regression",
-      "title": "Linear Regression",
-      "categoryId": "regression",
-      "status": "learned",
-      "summary": "A fitted line predicts a continuous value using an intercept plus a learned slope for each input feature.",
-      "what": "Linear regression finds the coefficients that minimize squared prediction error.",
-      "why": "It is the clearest first model for understanding fit, predict, score, coefficients, residuals, and model interpretation.",
-      "intuition": "Lay a straight ruler through a cloud of points so the total squared vertical misses are as small as possible.",
-      "how": ["Inspect the relationship.", "Split rows into training and testing sets.", "Fit LinearRegression on training rows.", "Predict unseen targets.", "Read R², coef_, and intercept_ honestly."],
-      "visual": { "type":"flow", "title":"The fitted-model path", "items":[{"label":"X, y","detail":"features + target"},{"label":"Split","detail":"protect test rows"},{"label":"fit()","detail":"learn m and b"},{"label":"predict()","detail":"apply the line"},{"label":"score()","detail":"R² on test"}] },
-      "formula": { "expression":"ŷ = b₀ + Xw", "parts":[{"term":"ŷ","meaning":"predicted numeric target"},{"term":"b₀","meaning":"intercept"},{"term":"X","meaning":"feature row or matrix"},{"term":"w","meaning":"learned coefficient vector"}], "example":"With b₀=2 and w=3, x=4 predicts 14." },
-      "code": "model = LinearRegression()\nmodel.fit(X_train, y_train)\npredictions = model.predict(X_test)\nr2 = model.score(X_test, y_test)",
-      "example": "The notebook rebuilds sklearn predictions as m*x+c and proves equality with np.allclose.",
-      "confusions": ["fit() learns; predict() applies what was learned.", "intercept_ may describe an impossible x=0 case and still be mathematically necessary.", "A strong score on two test rows is not strong evidence."],
-      "prerequisites": ["numpy-array-anatomy"], "related": [],
-      "revision": { "purpose":"Predict a continuous value", "input":"Numeric feature matrix X", "output":"Numeric prediction ŷ", "core idea":"Best squared-error line or plane", "remember":"The model is intercept_ + coef_" },
-      "keywords": ["regression", "best fit line", "coef", "intercept", "R2"],
-      "lastUpdated": "2026-08-24",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/05_Linear_Regression.ipynb", "type":"notebook", "role":"theory + code + experiment + visualization", "purpose":"Fits the first model, reconstructs predictions, derives the closed form, checks sklearn's least-squares route, and implements gradient descent.", "highlights":["np.allclose proof", "cost parabola", "normal equation", "gradient descent path"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/05a_Coef_And_Intercept_By_Hand.ipynb", "type":"notebook", "role":"worked visual derivation", "purpose":"Calculates slope and intercept by hand and explains numerator/denominator areas visually.", "highlights":["hand calculation", "walk back to y-axis"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/README.md", "type":"markdown", "role":"topic map", "purpose":"Connects the estimator API, split-before-fit rule, and linear model interpretation.", "highlights":["fit/transform/predict mental model", "known interpretation traps"] }
+  "id": "linear-regression",
+  "title": "Linear Regression",
+  "categoryId": "regression",
+  "status": "learned",
+  "summary": "A fitted line predicts a continuous value using an intercept plus a learned slope for each input feature.",
+  "what": "Linear regression finds the coefficients that minimize squared prediction error.",
+  "why": "It is the clearest first model for understanding fit, predict, score, coefficients, residuals, and model interpretation.",
+  "intuition": "Lay a straight ruler through a cloud of points so the total squared vertical misses are as small as possible.",
+  "how": [
+    "Inspect the relationship.",
+    "Split rows into training and testing sets.",
+    "Fit LinearRegression on training rows.",
+    "Predict unseen targets.",
+    "Read R², coef_, and intercept_ honestly."
+  ],
+  "visual": {
+    "type": "flow",
+    "title": "The fitted-model path",
+    "items": [
+      {
+        "label": "X, y",
+        "detail": "features + target"
+      },
+      {
+        "label": "Split",
+        "detail": "protect test rows"
+      },
+      {
+        "label": "fit()",
+        "detail": "learn m and b"
+      },
+      {
+        "label": "predict()",
+        "detail": "apply the line"
+      },
+      {
+        "label": "score()",
+        "detail": "R² on test"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "ŷ = b₀ + Xw",
+    "parts": [
+      {
+        "term": "ŷ",
+        "meaning": "predicted numeric target"
+      },
+      {
+        "term": "b₀",
+        "meaning": "intercept"
+      },
+      {
+        "term": "X",
+        "meaning": "feature row or matrix"
+      },
+      {
+        "term": "w",
+        "meaning": "learned coefficient vector"
+      }
+    ],
+    "example": "With b₀=2 and w=3, x=4 predicts 14."
+  },
+  "code": "model = LinearRegression()\nmodel.fit(X_train, y_train)\npredictions = model.predict(X_test)\nr2 = model.score(X_test, y_test)",
+  "example": "The notebook rebuilds sklearn predictions as m*x+c and proves equality with np.allclose.",
+  "confusions": [
+    "fit() learns; predict() applies what was learned.",
+    "intercept_ may describe an impossible x=0 case and still be mathematically necessary.",
+    "A strong score on two test rows is not strong evidence."
+  ],
+  "prerequisites": [
+    "numpy-array-anatomy"
+  ],
+  "related": [],
+  "revision": {
+    "purpose": "Predict a continuous value",
+    "input": "Numeric feature matrix X",
+    "output": "Numeric prediction ŷ",
+    "core idea": "Best squared-error line or plane",
+    "remember": "The model is intercept_ + coef_"
+  },
+  "keywords": [
+    "regression",
+    "best fit line",
+    "coef",
+    "intercept",
+    "R2"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/05_Linear_Regression.ipynb",
+      "type": "notebook",
+      "role": "theory + code + experiment + visualization",
+      "purpose": "Fits the first model, reconstructs predictions, derives the closed form, checks sklearn's least-squares route, and implements gradient descent.",
+      "highlights": [
+        "np.allclose proof",
+        "cost parabola",
+        "normal equation",
+        "gradient descent path"
       ]
     },
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/05a_Coef_And_Intercept_By_Hand.ipynb",
+      "type": "notebook",
+      "role": "worked visual derivation",
+      "purpose": "Calculates slope and intercept by hand and explains numerator/denominator areas visually.",
+      "highlights": [
+        "hand calculation",
+        "walk back to y-axis"
+      ]
+    },
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/README.md",
+      "type": "markdown",
+      "role": "topic map",
+      "purpose": "Connects the estimator API, split-before-fit rule, and linear model interpretation.",
+      "highlights": [
+        "fit/transform/predict mental model",
+        "known interpretation traps"
+      ]
+    }
+  ],
+  "datasetId": "salary",
+  "lessonLab": "coefficients",
+  "plotCells": {
+    "05a_Coef_And_Intercept_By_Hand.ipynb": [
+      2,
+      20,
+      23,
+      26,
+      29
+    ]
+  },
+  "workedTable": {
+    "headers": [
+      "Row",
+      "x",
+      "y",
+      "x−3",
+      "y−46",
+      "Product",
+      "x deviation²",
+      "Prediction",
+      "Residual"
+    ],
+    "rows": [
+      [
+        "A",
+        1,
+        30,
+        -2,
+        -16,
+        32,
+        4,
+        30,
+        0
+      ],
+      [
+        "B",
+        2,
+        35,
+        -1,
+        -11,
+        11,
+        1,
+        38,
+        -3
+      ],
+      [
+        "C",
+        3,
+        50,
+        0,
+        4,
+        0,
+        0,
+        46,
+        4
+      ],
+      [
+        "D",
+        4,
+        55,
+        1,
+        9,
+        9,
+        1,
+        54,
+        1
+      ],
+      [
+        "E",
+        5,
+        60,
+        2,
+        14,
+        28,
+        4,
+        62,
+        -2
+      ]
+    ]
+  },
+  "detailNotes": [
+    "The companion was already linked in the previous map; this update exposes all five rows and every arithmetic contribution inside the website.",
+    "Slope = 80/10 = 8; intercept = 46−8×3 = 22. Squared residuals sum to 30; MSE=6; R²=1−30/670≈0.9552. These are fit diagnostics on the five demonstration rows."
+  ]
+},
     {
       "id": "numpy-vectorization-broadcasting",
       "title": "NumPy Indexing, Vectorization & Broadcasting",
@@ -199,29 +501,108 @@ window.LEARNING_MAP = {
       ]
     },
     {
-      "id": "numpy-api-health-project",
-      "title": "Applied NumPy Data Quality",
-      "categoryId": "numerical",
-      "status": "current",
-      "summary": "An in-progress API health project applies shapes, missing-value handling, copies, and robust outlier detection to service telemetry.",
-      "what": "A 6×7 latency and error matrix is inspected, cleaned, and checked for a real Friday incident without erasing it as noise.",
-      "why": "The project turns array syntax into a defensible data-quality workflow and exposes why context determines whether an outlier is an error.",
-      "intuition": "A missing sensor reading should be estimated; a real incident spike should stay visible and be flagged.",
-      "how": ["Load four arrays and assert their shapes.", "Locate NaN with isnan and where.", "Work on a copy and impute from the same service's week.", "Compare ordinary z-score failure with median/MAD detection."],
-      "visual": { "type":"comparison", "title":"Two unusual values, two decisions", "items":[{"label":"Payment Wednesday = NaN","detail":"Reading does not exist → estimate on a copy"},{"label":"Search Friday = 980ms","detail":"Real incident → keep and flag"}] },
-      "formula": { "expression":"modified z = 0.6745 × (x − median) / MAD", "parts":[{"term":"median","meaning":"robust center"},{"term":"MAD","meaning":"median absolute deviation"},{"term":"3.5","meaning":"common flag threshold"}], "example":"The 980ms spike is hidden by ordinary mean/std but obvious under median/MAD." },
-      "code": "clean = latency_ms.copy()\nclean[rows, cols] = np.nanmean(latency_ms[rows], axis=1)\nmodified_z = 0.6745 * (search - np.median(search)) / mad",
-      "example": "The notebook proves that filling a missing latency with zero would pull the payment average down incorrectly.",
-      "confusions": ["An outlier is not automatically bad data.", "A slice can mutate the raw matrix unless copied.", "The roadmap lists 12 parts, but only parts 1–2 currently exist."],
-      "prerequisites": ["numpy-vectorization-broadcasting"], "related": ["pandas-cleaning-transform"],
-      "revision": { "purpose":"Trust telemetry before analysis", "input":"Latency/error matrices", "output":"Clean copy + flagged incidents", "core idea":"Missing ≠ extreme", "remember":"Impute missing; preserve real events" },
-      "keywords": ["nan", "imputation", "MAD", "outlier", "copy", "API health"],
-      "lastUpdated": "2026-08-19",
-      "sources": [
-        { "path":"02_data_toolkit_apps/01_numpy/project_01_api_health.ipynb", "type":"notebook", "role":"in-progress experiment", "purpose":"Implements Parts 1–2 of a planned 12-part pure NumPy monitoring project.", "highlights":["shape assertions", "NaN imputation", "copy vs view", "z-score failure", "median/MAD"] },
-        { "path":"02_data_toolkit_apps/01_numpy/README.md", "type":"markdown", "role":"status boundary", "purpose":"Explicitly marks the project in progress and says Parts 3–12 must not be treated as completed.", "highlights":["current status", "future parts identified"] }
+  "id": "numpy-api-health-project",
+  "title": "Applied NumPy Data Quality",
+  "categoryId": "numerical",
+  "status": "current",
+  "summary": "An in-progress API health project applies shapes, missing-value handling, copies, and robust outlier detection to service telemetry.",
+  "what": "A 6×7 latency and error matrix is inspected, cleaned, and checked for a real Friday incident without erasing it as noise.",
+  "why": "The project turns array syntax into a defensible data-quality workflow and exposes why context determines whether an outlier is an error.",
+  "intuition": "A missing sensor reading should be estimated; a real incident spike should stay visible and be flagged.",
+  "how": [
+    "Load four arrays and assert their shapes.",
+    "Locate NaN with isnan and where.",
+    "Work on a copy and impute from the same service's week.",
+    "Compare ordinary z-score failure with median/MAD detection."
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Two unusual values, two decisions",
+    "items": [
+      {
+        "label": "Payment Wednesday = NaN",
+        "detail": "Reading does not exist → estimate on a copy"
+      },
+      {
+        "label": "Search Friday = 980ms",
+        "detail": "Real incident → keep and flag"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "modified z = 0.6745 × (x − median) / MAD",
+    "parts": [
+      {
+        "term": "median",
+        "meaning": "robust center"
+      },
+      {
+        "term": "MAD",
+        "meaning": "median absolute deviation"
+      },
+      {
+        "term": "3.5",
+        "meaning": "common flag threshold"
+      }
+    ],
+    "example": "The 980ms spike is hidden by ordinary mean/std but obvious under median/MAD."
+  },
+  "code": "clean = latency_ms.copy()\nclean[rows, cols] = np.nanmean(latency_ms[rows], axis=1)\nmodified_z = 0.6745 * (search - np.median(search)) / mad",
+  "example": "The notebook proves that filling a missing latency with zero would pull the payment average down incorrectly.",
+  "confusions": [
+    "An outlier is not automatically bad data.",
+    "A slice can mutate the raw matrix unless copied.",
+    "The roadmap lists 12 parts, but only parts 1–2 currently exist."
+  ],
+  "prerequisites": [
+    "numpy-vectorization-broadcasting"
+  ],
+  "related": [
+    "pandas-cleaning-transform",
+    "outlier-detection"
+  ],
+  "revision": {
+    "purpose": "Trust telemetry before analysis",
+    "input": "Latency/error matrices",
+    "output": "Clean copy + flagged incidents",
+    "core idea": "Missing ≠ extreme",
+    "remember": "Impute missing; preserve real events"
+  },
+  "keywords": [
+    "nan",
+    "imputation",
+    "MAD",
+    "outlier",
+    "copy",
+    "API health"
+  ],
+  "lastUpdated": "2026-08-19",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/01_numpy/project_01_api_health.ipynb",
+      "type": "notebook",
+      "role": "in-progress experiment",
+      "purpose": "Implements Parts 1–2 of a planned 12-part pure NumPy monitoring project.",
+      "highlights": [
+        "shape assertions",
+        "NaN imputation",
+        "copy vs view",
+        "z-score failure",
+        "median/MAD"
       ]
     },
+    {
+      "path": "02_data_toolkit_apps/01_numpy/README.md",
+      "type": "markdown",
+      "role": "status boundary",
+      "purpose": "Explicitly marks the project in progress and says Parts 3–12 must not be treated as completed.",
+      "highlights": [
+        "current status",
+        "future parts identified"
+      ]
+    }
+  ]
+},
     {
       "id": "pandas-dataframes-indexing",
       "title": "Pandas DataFrames, Indexing & Filtering",
@@ -505,53 +886,218 @@ window.LEARNING_MAP = {
       ]
     },
     {
-      "id": "synthetic-datasets",
-      "title": "Synthetic Dataset Generators",
-      "categoryId": "workflow",
-      "status": "learned",
-      "summary": "make_regression, make_classification, make_blobs, make_circles, and make_moons create known-answer fixtures for controlled experiments.",
-      "what": "Generators produce feature arrays, targets, and tunable difficulty so model behavior can be checked against a known construction.",
-      "why": "They isolate one idea—noise, separation, redundant features, cluster spread, or nonlinear shape—without uncontrolled real-world mess.",
-      "intuition": "A synthetic dataset is a unit-test fixture for a model: you built the answer, so failure is interpretable.",
-      "how": ["Choose the answer shape: number, class, or unlabeled groups.", "Set sample/feature counts explicitly.", "Turn one difficulty knob at a time.", "Fix random_state and compare the resulting geometry."],
-      "visual": { "type":"comparison", "title":"Choose by answer shape", "items":[{"label":"make_regression","detail":"continuous y"},{"label":"make_classification","detail":"class label y"},{"label":"make_blobs","detail":"round clusters"},{"label":"make_circles","detail":"nested nonlinear classes"},{"label":"make_moons","detail":"interlocking nonlinear classes"}] },
-      "formula": null,
-      "code": "X, y, true_w = make_regression(n_samples=300, n_features=1, noise=5, coef=True, random_state=0)",
-      "example": "A brute-force straight-line search reaches about 98% on blobs but only 66% on circles, making the nonlinear limitation visible.",
-      "confusions": ["make_classification shuffles feature roles by default.", "A convincing 10-row plot can be random coincidence.", "A cluster id from make_blobs is an answer key for checking, not a supervised target used by clustering."],
-      "prerequisites": ["numpy-vectorization-broadcasting", "matplotlib-chart-grammar"], "related": ["linear-regression", "kmeans-clustering", "decision-tree-classification"],
-      "revision": { "purpose":"Controlled model experiments", "input":"Generator parameters", "output":"Known-structure X and y", "core idea":"Know the answer before modeling", "remember":"Set seed and feature count" },
-      "keywords": ["make_regression", "make_classification", "make_blobs", "make_circles", "make_moons"],
-      "lastUpdated": "2026-08-20",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/02_make_*_dataset.ipynb", "type":"notebook", "role":"controlled experiments", "purpose":"Documents all five generators, their parameters, visual effects, column anatomy, nonlinear limits, and an intentional IndexError.", "highlights":["39 executed code cells", "one chart per knob", "brute-force line benchmark"] }
+  "id": "synthetic-datasets",
+  "title": "Synthetic Dataset Generators",
+  "categoryId": "workflow",
+  "status": "learned",
+  "summary": "make_regression, make_classification, make_blobs, make_circles, and make_moons create known-answer fixtures for controlled experiments.",
+  "what": "Generators produce feature arrays, targets, and tunable difficulty so model behavior can be checked against a known construction.",
+  "why": "They isolate one idea—noise, separation, redundant features, cluster spread, or nonlinear shape—without uncontrolled real-world mess.",
+  "intuition": "A synthetic dataset is a unit-test fixture for a model: you built the answer, so failure is interpretable.",
+  "how": [
+    "Choose the answer shape: number, class, or unlabeled groups.",
+    "Set sample/feature counts explicitly.",
+    "Turn one difficulty knob at a time.",
+    "Fix random_state and compare the resulting geometry."
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Choose by answer shape",
+    "items": [
+      {
+        "label": "make_regression",
+        "detail": "continuous y"
+      },
+      {
+        "label": "make_classification",
+        "detail": "class label y"
+      },
+      {
+        "label": "make_blobs",
+        "detail": "round clusters"
+      },
+      {
+        "label": "make_circles",
+        "detail": "nested nonlinear classes"
+      },
+      {
+        "label": "make_moons",
+        "detail": "interlocking nonlinear classes"
+      }
+    ]
+  },
+  "formula": null,
+  "code": "X, y, true_w = make_regression(n_samples=300, n_features=1, noise=5, coef=True, random_state=0)",
+  "example": "A brute-force straight-line search reaches about 98% on blobs but only 66% on circles, making the nonlinear limitation visible.",
+  "confusions": [
+    "make_classification shuffles feature roles by default.",
+    "A convincing 10-row plot can be random coincidence.",
+    "A cluster id from make_blobs is an answer key for checking, not a supervised target used by clustering."
+  ],
+  "prerequisites": [
+    "numpy-vectorization-broadcasting",
+    "matplotlib-chart-grammar"
+  ],
+  "related": [
+    "linear-regression",
+    "kmeans-clustering",
+    "decision-tree-classification",
+    "outlier-detection"
+  ],
+  "revision": {
+    "purpose": "Controlled model experiments",
+    "input": "Generator parameters",
+    "output": "Known-structure X and y",
+    "core idea": "Know the answer before modeling",
+    "remember": "Set seed and feature count"
+  },
+  "keywords": [
+    "make_regression",
+    "make_classification",
+    "make_blobs",
+    "make_circles",
+    "make_moons"
+  ],
+  "lastUpdated": "2026-08-20",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/02_make_*_dataset.ipynb",
+      "type": "notebook",
+      "role": "controlled experiments",
+      "purpose": "Documents all five generators, their parameters, visual effects, column anatomy, nonlinear limits, and an intentional IndexError.",
+      "highlights": [
+        "39 executed code cells",
+        "one chart per knob",
+        "brute-force line benchmark"
+      ]
+    }
+  ]
+},
+    {
+  "id": "ml-preprocessing",
+  "title": "Scaling, Encoding & Leakage-safe Pipelines",
+  "categoryId": "workflow",
+  "status": "learned",
+  "summary": "Standard, min-max, and robust scaling plus categorical encoding are fitted on training data and composed in ColumnTransformer/Pipeline.",
+  "what": "Preprocessing changes feature representation while learning parameters such as means, ranges, quantiles, or category vocabularies.",
+  "why": "Distance, gradient, and penalized models can be distorted by units; text inputs need numeric representation; pipelines prevent inconsistent or leaked transforms.",
+  "intuition": "Put different rulers on comparable scales, but calibrate the rulers using the training room only.",
+  "how": [
+    "Split rows first.",
+    "Assign numeric and categorical columns to transformers.",
+    "Fit the preprocessing graph on training rows.",
+    "Transform train/test identically and keep the graph attached to the model."
+  ],
+  "visual": {
+    "type": "flow",
+    "title": "A leakage-safe mixed-column path",
+    "items": [
+      {
+        "label": "Raw X",
+        "detail": "age, salary, city"
+      },
+      {
+        "label": "Split",
+        "detail": "train / test"
+      },
+      {
+        "label": "ColumnTransformer",
+        "detail": "scale + one-hot"
+      },
+      {
+        "label": "Model",
+        "detail": "fit on transformed train"
+      },
+      {
+        "label": "Pipeline",
+        "detail": "one reusable object"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "z = (x − μ) / σ",
+    "parts": [
+      {
+        "term": "x",
+        "meaning": "original value"
+      },
+      {
+        "term": "μ",
+        "meaning": "training-column mean"
+      },
+      {
+        "term": "σ",
+        "meaning": "training-column population standard deviation"
+      }
+    ],
+    "example": "x equal to the training mean becomes 0."
+  },
+  "code": "prep = ColumnTransformer([\n  ('num', StandardScaler(), numeric_cols),\n  ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)\n])\npipe = Pipeline([('prep', prep), ('model', model)])",
+  "example": "Three outliers among 10,000 good rows visibly distort StandardScaler and MinMaxScaler more than RobustScaler.",
+  "confusions": [
+    "Normalizer scales each row length; scalers work by column.",
+    "LabelEncoder is for target y, not unordered input columns.",
+    "OrdinalEncoder and SimpleImputer are explicitly not yet covered."
+  ],
+  "prerequisites": [
+    "train-test-leakage",
+    "pandas-cleaning-transform"
+  ],
+  "related": [
+    "ridge-regression",
+    "lasso-regression",
+    "elastic-net",
+    "outlier-detection",
+    "local-outlier-factor"
+  ],
+  "revision": {
+    "purpose": "Create model-ready features",
+    "input": "Mixed numeric + categorical X",
+    "output": "Consistent numeric matrix",
+    "core idea": "Learn transforms on train only",
+    "remember": "Pipeline keeps preprocessing attached"
+  },
+  "keywords": [
+    "StandardScaler",
+    "MinMaxScaler",
+    "RobustScaler",
+    "OneHotEncoder",
+    "ColumnTransformer",
+    "Pipeline"
+  ],
+  "lastUpdated": "2026-08-22",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/03_preprocessing.ipynb",
+      "type": "notebook",
+      "role": "formula + experiment + pipeline",
+      "purpose": "Hand-computes and verifies three scalers, covers Binarizer/Normalizer/encoders, measures outliers, demonstrates leakage, and builds a first pipeline.",
+      "highlights": [
+        "np.allclose formulas",
+        "outlier experiment",
+        "Pipeline + ColumnTransformer"
       ]
     },
     {
-      "id": "ml-preprocessing",
-      "title": "Scaling, Encoding & Leakage-safe Pipelines",
-      "categoryId": "workflow",
-      "status": "learned",
-      "summary": "Standard, min-max, and robust scaling plus categorical encoding are fitted on training data and composed in ColumnTransformer/Pipeline.",
-      "what": "Preprocessing changes feature representation while learning parameters such as means, ranges, quantiles, or category vocabularies.",
-      "why": "Distance, gradient, and penalized models can be distorted by units; text inputs need numeric representation; pipelines prevent inconsistent or leaked transforms.",
-      "intuition": "Put different rulers on comparable scales, but calibrate the rulers using the training room only.",
-      "how": ["Split rows first.", "Assign numeric and categorical columns to transformers.", "Fit the preprocessing graph on training rows.", "Transform train/test identically and keep the graph attached to the model."],
-      "visual": { "type":"flow", "title":"A leakage-safe mixed-column path", "items":[{"label":"Raw X","detail":"age, salary, city"},{"label":"Split","detail":"train / test"},{"label":"ColumnTransformer","detail":"scale + one-hot"},{"label":"Model","detail":"fit on transformed train"},{"label":"Pipeline","detail":"one reusable object"}] },
-      "formula": { "expression":"z = (x − μ) / σ", "parts":[{"term":"x","meaning":"original value"},{"term":"μ","meaning":"training-column mean"},{"term":"σ","meaning":"training-column population standard deviation"}], "example":"x equal to the training mean becomes 0." },
-      "code": "prep = ColumnTransformer([\n  ('num', StandardScaler(), numeric_cols),\n  ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)\n])\npipe = Pipeline([('prep', prep), ('model', model)])",
-      "example": "Three outliers among 10,000 good rows visibly distort StandardScaler and MinMaxScaler more than RobustScaler.",
-      "confusions": ["Normalizer scales each row length; scalers work by column.", "LabelEncoder is for target y, not unordered input columns.", "OrdinalEncoder and SimpleImputer are explicitly not yet covered."],
-      "prerequisites": ["train-test-leakage", "pandas-cleaning-transform"], "related": ["ridge-regression", "lasso-regression", "elastic-net"],
-      "revision": { "purpose":"Create model-ready features", "input":"Mixed numeric + categorical X", "output":"Consistent numeric matrix", "core idea":"Learn transforms on train only", "remember":"Pipeline keeps preprocessing attached" },
-      "keywords": ["StandardScaler", "MinMaxScaler", "RobustScaler", "OneHotEncoder", "ColumnTransformer", "Pipeline"],
-      "lastUpdated": "2026-08-22",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/03_preprocessing.ipynb", "type":"notebook", "role":"formula + experiment + pipeline", "purpose":"Hand-computes and verifies three scalers, covers Binarizer/Normalizer/encoders, measures outliers, demonstrates leakage, and builds a first pipeline.", "highlights":["np.allclose formulas", "outlier experiment", "Pipeline + ColumnTransformer"] },
-        { "path":"02_data_toolkit_apps/02_pandas/DataSet/income.csv", "type":"dataset", "role":"scaling data", "purpose":"Rank/Income values used for scaling demonstrations.", "highlights":["different numeric scales"] },
-        { "path":"02_data_toolkit_apps/02_pandas/DataSet/encoding.csv", "type":"dataset", "role":"encoding data", "purpose":"TEAM labels and years used for encoding practice.", "highlights":["nominal categories"] }
+      "path": "02_data_toolkit_apps/02_pandas/DataSet/income.csv",
+      "type": "dataset",
+      "role": "scaling data",
+      "purpose": "Rank/Income values used for scaling demonstrations.",
+      "highlights": [
+        "different numeric scales"
       ]
     },
+    {
+      "path": "02_data_toolkit_apps/02_pandas/DataSet/encoding.csv",
+      "type": "dataset",
+      "role": "encoding data",
+      "purpose": "TEAM labels and years used for encoding practice.",
+      "highlights": [
+        "nominal categories"
+      ]
+    }
+  ]
+},
     {
       "id": "multiple-linear-regression",
       "title": "Multiple Linear Regression & Partial Effects",
@@ -717,29 +1263,121 @@ window.LEARNING_MAP = {
       ]
     },
     {
-      "id": "kmeans-clustering",
-      "title": "K-Means Clustering",
-      "categoryId": "clustering",
-      "status": "learned",
-      "summary": "K-Means alternates nearest-centroid assignment and centroid averaging; it stores centers and can assign new rows to existing groups.",
-      "what": "An unsupervised partitioning algorithm for roughly round, separated, similarly scaled clusters.",
-      "why": "It discovers operational groups when no answer column exists and enables cheap prediction for new rows using stored centroids.",
-      "intuition": "Place K meeting points, send each person to the nearest one, move each meeting point to its crowd's average, and repeat.",
-      "how": ["Choose K and initial centers.", "Assign every point to its nearest center.", "Move each center to the mean of assigned points.", "Repeat until labels and centers stop changing."],
-      "visual": { "type":"flow", "title":"The K-Means loop", "items":[{"label":"Choose K","detail":"number of centers"},{"label":"Assign","detail":"nearest center"},{"label":"Average","detail":"move centroids"},{"label":"Repeat","detail":"until stable"},{"label":"Predict","detail":"nearest stored center"}] },
-      "formula": { "expression":"SSE = Σₖ Σᵢ∈Cₖ ||xᵢ − μₖ||²", "parts":[{"term":"Cₖ","meaning":"points assigned to cluster k"},{"term":"μₖ","meaning":"cluster centroid"},{"term":"SSE","meaning":"total squared point-to-center distance"}], "example":"The elbow method searches for K after which SSE improvement slows." },
-      "code": "model = KMeans(n_clusters=4)\nmodel.fit(X)\nlabels = model.labels_\nnew_group = model.predict(new_rows)",
-      "example": "On 5,000 synthetic customers the trained model is only four 2D centers—eight numbers—used to place a new customer.",
-      "confusions": ["Cluster IDs are arbitrary names.", "predict(X) on training X repeats labels_.", "K-Means cuts two moons incorrectly because nearest-center boundaries are not curved."],
-      "prerequisites": ["synthetic-datasets", "numpy-math-linear-algebra", "sklearn-estimator-api"], "related": ["hierarchical-clustering"],
-      "revision": { "purpose":"Discover round groups without labels", "input":"Scaled numeric X", "output":"Cluster IDs + centroids", "core idea":"Nearest center, then average", "remember":"Stored centers allow predict()" },
-      "keywords": ["KMeans", "centroid", "cluster", "SSE", "elbow", "unsupervised"],
-      "lastUpdated": "2026-08-27",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/12_clustering.ipynb", "type":"notebook", "role":"algorithm story + experiment", "purpose":"Fits K-Means on blobs, explains new-row prediction, then demonstrates its failure on moons.", "highlights":["5,000 points", "center storage", "nonlinear failure"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/hierarchical-clustering-visual-guide.html", "type":"web", "role":"live algorithm lab", "purpose":"Calculates K-Means assignments, centroid moves, SSE, hierarchical merges, and dendrogram steps interactively on ten fixed points.", "highlights":["step slider", "play controls", "live formulas"] }
+  "id": "kmeans-clustering",
+  "title": "K-Means Clustering",
+  "categoryId": "clustering",
+  "status": "learned",
+  "summary": "K-Means alternates nearest-centroid assignment and centroid averaging; it stores centers and can assign new rows to existing groups.",
+  "what": "An unsupervised partitioning algorithm for roughly round, separated, similarly scaled clusters.",
+  "why": "It discovers operational groups when no answer column exists and enables cheap prediction for new rows using stored centroids.",
+  "intuition": "Place K meeting points, send each person to the nearest one, move each meeting point to its crowd's average, and repeat.",
+  "how": [
+    "Choose K and initial centers.",
+    "Assign every point to its nearest center.",
+    "Move each center to the mean of assigned points.",
+    "Repeat until labels and centers stop changing."
+  ],
+  "visual": {
+    "type": "flow",
+    "title": "The K-Means loop",
+    "items": [
+      {
+        "label": "Choose K",
+        "detail": "number of centers"
+      },
+      {
+        "label": "Assign",
+        "detail": "nearest center"
+      },
+      {
+        "label": "Average",
+        "detail": "move centroids"
+      },
+      {
+        "label": "Repeat",
+        "detail": "until stable"
+      },
+      {
+        "label": "Predict",
+        "detail": "nearest stored center"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "SSE = Σₖ Σᵢ∈Cₖ ||xᵢ − μₖ||²",
+    "parts": [
+      {
+        "term": "Cₖ",
+        "meaning": "points assigned to cluster k"
+      },
+      {
+        "term": "μₖ",
+        "meaning": "cluster centroid"
+      },
+      {
+        "term": "SSE",
+        "meaning": "total squared point-to-center distance"
+      }
+    ],
+    "example": "The elbow method searches for K after which SSE improvement slows."
+  },
+  "code": "model = KMeans(n_clusters=4)\nmodel.fit(X)\nlabels = model.labels_\nnew_group = model.predict(new_rows)",
+  "example": "On 5,000 synthetic customers the trained model is only four 2D centers—eight numbers—used to place a new customer.",
+  "confusions": [
+    "Cluster IDs are arbitrary names.",
+    "predict(X) on training X repeats labels_.",
+    "K-Means cuts two moons incorrectly because nearest-center boundaries are not curved."
+  ],
+  "prerequisites": [
+    "synthetic-datasets",
+    "numpy-math-linear-algebra",
+    "sklearn-estimator-api"
+  ],
+  "related": [
+    "hierarchical-clustering",
+    "dbscan-clustering"
+  ],
+  "revision": {
+    "purpose": "Discover round groups without labels",
+    "input": "Scaled numeric X",
+    "output": "Cluster IDs + centroids",
+    "core idea": "Nearest center, then average",
+    "remember": "Stored centers allow predict()"
+  },
+  "keywords": [
+    "KMeans",
+    "centroid",
+    "cluster",
+    "SSE",
+    "elbow",
+    "unsupervised"
+  ],
+  "lastUpdated": "2026-08-27",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/12_clustering.ipynb",
+      "type": "notebook",
+      "role": "algorithm story + experiment",
+      "purpose": "Fits K-Means on blobs, explains new-row prediction, then demonstrates its failure on moons.",
+      "highlights": [
+        "5,000 points",
+        "center storage",
+        "nonlinear failure"
       ]
     },
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/hierarchical-clustering-visual-guide.html",
+      "type": "web",
+      "role": "live algorithm lab",
+      "purpose": "Calculates K-Means assignments, centroid moves, SSE, hierarchical merges, and dendrogram steps interactively on ten fixed points.",
+      "highlights": [
+        "step slider",
+        "play controls",
+        "live formulas"
+      ]
+    }
+  ]
+},
     {
       "id": "hierarchical-clustering",
       "title": "Hierarchical Clustering & Dendrograms",
@@ -853,107 +1491,525 @@ window.LEARNING_MAP = {
       ]
     },
     {
-      "id": "decision-tree-classification",
-      "title": "Decision Tree Classification",
-      "categoryId": "classification",
-      "status": "learned",
-      "summary": "A classification tree repeatedly chooses the question with the largest information gain, then predicts the majority class in each final leaf.",
-      "what": "DecisionTreeClassifier partitions feature space with if/else questions and uses class counts in each leaf to make a categorical prediction.",
-      "why": "It turns entropy and information gain into an inspectable model whose complete decision path can be drawn and explained.",
-      "intuition": "Ask the question that creates the cleanest groups first; continue until another useful question or an unavoidable contradiction remains.",
-      "how": ["Measure the parent class entropy.", "Try each candidate split and calculate its weighted child entropy.", "Choose the split with the highest information gain.", "Repeat inside impure branches and predict from the reached leaf."],
-      "visual": { "type":"flow", "title":"Learned student-result tree", "items":[{"label":"Videos?","detail":"best gain: 0.610"},{"label":"No","detail":"4 fail · pure leaf"},{"label":"Yes","detail":"ask Guide?"},{"label":"Guide yes","detail":"4 pass"},{"label":"Conflict leaf","detail":"same inputs, opposite labels"}] },
-      "formula": { "expression":"information gain = H(parent) − Σ weighted H(children)", "parts":[{"term":"H","meaning":"entropy −Σp log₂p"},{"term":"weight","meaning":"child rows divided by parent rows"},{"term":"gain","meaning":"impurity removed by the question"}], "example":"Videos reduces entropy from 1.000 to 0.390, gain≈0.610; Guide alone gains≈0.278." },
-      "code": "model = DecisionTreeClassifier(criterion='entropy', random_state=0)\nmodel.fit(X, y)\nplot_tree(model, feature_names=['videos', 'guide'], class_names=encoder.classes_)",
-      "example": "On ten student rows, the tree asks whether the student watched the videos before asking about the guide; [1,1] predicts pass.",
-      "confusions": ["A training score of 0.90 is a memory check, not an honest generalization score.", "Two rows with identical inputs but opposite labels cannot be perfectly separated by these features.", "Random Forest is mentioned as a next step but is not yet learned."],
-      "prerequisites": ["pandas-dataframes-indexing", "classification-metrics"],
-      "related": ["roc-auc", "decision-tree-regression", "hyperparameter-tuning"],
-      "revision": { "purpose":"Predict a class with visible rules", "input":"Feature rows + class labels", "output":"Decision path + predicted class", "core idea":"Choose the split with maximum impurity reduction", "remember":"Leaves vote from class counts" },
-      "keywords": ["decision tree", "classifier", "entropy", "information gain", "split", "leaf", "plot_tree"],
-      "lastUpdated": "2026-09-02",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/16_Descison_Tree_Classfication.ipynb", "type":"notebook", "role":"manual derivation + code + visualization", "purpose":"Computes entropy and information gain by hand, fits the entropy-based classifier, exports and plots its learned rules, and explains the conflicting row.", "highlights":["46 instructional cells", "30 executed code cells", "manual split comparison"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/dt.tree", "type":"diagram", "role":"exported model structure", "purpose":"Stores the exact Graphviz decision tree learned from the student pass/fail dataset.", "highlights":["root: videos ≤ 0.5", "sample counts and entropy at every node"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/HandWritten Notes/16_DTC.png", "type":"image", "role":"visual theory note", "purpose":"Explains classifier anatomy, Gini and entropy, information gain, prediction paths, pruning controls, strengths, limitations, and real-world uses.", "highlights":["split-quality formulas", "worked buy/not-buy tree", "overfitting and pruning"] },
-        { "path":"02_data_toolkit_apps/02_pandas/DataSet/exam.csv", "type":"dataset", "role":"classification training data", "purpose":"Provides the ten student rows with video, guide, and pass/fail outcomes used for the manual and sklearn tree.", "highlights":["two binary inputs", "one contradictory feature pair"] }
+  "id": "decision-tree-classification",
+  "title": "Decision Tree Classification",
+  "categoryId": "classification",
+  "status": "learned",
+  "summary": "A classification tree repeatedly chooses the question with the largest information gain, then predicts the majority class in each final leaf.",
+  "what": "DecisionTreeClassifier partitions feature space with if/else questions and uses class counts in each leaf to make a categorical prediction.",
+  "why": "It turns entropy and information gain into an inspectable model whose complete decision path can be drawn and explained.",
+  "intuition": "Ask the question that creates the cleanest groups first; continue until another useful question or an unavoidable contradiction remains.",
+  "how": [
+    "Measure the parent class entropy.",
+    "Try each candidate split and calculate its weighted child entropy.",
+    "Choose the split with the highest information gain.",
+    "Repeat inside impure branches and predict from the reached leaf."
+  ],
+  "visual": {
+    "type": "flow",
+    "title": "Learned student-result tree",
+    "items": [
+      {
+        "label": "Videos?",
+        "detail": "best gain: 0.610"
+      },
+      {
+        "label": "No",
+        "detail": "4 fail · pure leaf"
+      },
+      {
+        "label": "Yes",
+        "detail": "ask Guide?"
+      },
+      {
+        "label": "Guide yes",
+        "detail": "4 pass"
+      },
+      {
+        "label": "Conflict leaf",
+        "detail": "same inputs, opposite labels"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "information gain = H(parent) − Σ weighted H(children)",
+    "parts": [
+      {
+        "term": "H",
+        "meaning": "entropy −Σp log₂p"
+      },
+      {
+        "term": "weight",
+        "meaning": "child rows divided by parent rows"
+      },
+      {
+        "term": "gain",
+        "meaning": "impurity removed by the question"
+      }
+    ],
+    "example": "Videos reduces entropy from 1.000 to 0.390, gain≈0.610; Guide alone gains≈0.278."
+  },
+  "code": "model = DecisionTreeClassifier(criterion='entropy', random_state=0)\nmodel.fit(X, y)\nplot_tree(model, feature_names=['videos', 'guide'], class_names=encoder.classes_)",
+  "example": "On ten student rows, the tree asks whether the student watched the videos before asking about the guide; [1,1] predicts pass.",
+  "confusions": [
+    "A training score of 0.90 is a memory check, not an honest generalization score.",
+    "Two rows with identical inputs but opposite labels cannot be perfectly separated by these features.",
+    "Random Forest is mentioned as a next step but is not yet learned."
+  ],
+  "prerequisites": [
+    "pandas-dataframes-indexing",
+    "classification-metrics"
+  ],
+  "related": [
+    "roc-auc",
+    "decision-tree-regression",
+    "hyperparameter-tuning",
+    "random-forest",
+    "adaboost"
+  ],
+  "revision": {
+    "purpose": "Predict a class with visible rules",
+    "input": "Feature rows + class labels",
+    "output": "Decision path + predicted class",
+    "core idea": "Choose the split with maximum impurity reduction",
+    "remember": "Leaves vote from class counts"
+  },
+  "keywords": [
+    "decision tree",
+    "classifier",
+    "entropy",
+    "information gain",
+    "split",
+    "leaf",
+    "plot_tree"
+  ],
+  "lastUpdated": "2026-09-02",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/16_Descison_Tree_Classfication.ipynb",
+      "type": "notebook",
+      "role": "manual derivation + code + visualization",
+      "purpose": "Computes entropy and information gain by hand, fits the entropy-based classifier, exports and plots its learned rules, and explains the conflicting row.",
+      "highlights": [
+        "46 instructional cells",
+        "30 executed code cells",
+        "manual split comparison"
       ]
     },
     {
-      "id": "decision-tree-regression",
-      "title": "Decision Tree Regression",
-      "categoryId": "regression",
-      "status": "learned",
-      "summary": "A regression tree chooses questions that reduce target variance, then predicts the average numeric target stored in the reached leaf.",
-      "what": "DecisionTreeRegressor partitions feature space like a classification tree, but evaluates numeric spread with squared error and returns leaf means.",
-      "why": "It models nonlinear step patterns without a straight-line equation and makes the classification-versus-regression tree distinction concrete.",
-      "intuition": "Sort students into rooms whose marks are as similar as possible; a new student receives the average mark in the room reached by the rules.",
-      "how": ["Measure variance in the parent marks.", "Try each feature split and compute weighted child variance.", "Choose the largest variance reduction.", "Repeat within branches and use the leaf mean as the prediction."],
-      "visual": { "type":"comparison", "title":"Same tree shape, different learning target", "items":[{"label":"Classifier leaf","detail":"majority label"},{"label":"Regressor leaf","detail":"average number"},{"label":"Classifier split","detail":"entropy reduction"},{"label":"Regressor split","detail":"variance reduction"}] },
-      "formula": { "expression":"variance reduction = Var(parent) − Σ weighted Var(children)", "parts":[{"term":"Var(parent)","meaning":"initial target spread"},{"term":"weighted children","meaning":"remaining spread after a question"},{"term":"leaf value","meaning":"mean target of rows in that leaf"}], "example":"Guide reduces variance from about 972.89 to 386.08, a reduction of about 586.81." },
-      "code": "model = DecisionTreeRegressor(random_state=0)\nmodel.fit(X_train, y_train)\npredicted_marks = model.predict([[1, 1]])",
-      "example": "Using the nine training students, the fitted leaves predict step values 31, 20, 25, or 90; a student with videos=1 and guide=1 receives 90.",
-      "confusions": ["Regression trees output numbers, but those predictions are leaf averages—not a continuous fitted line.", "Trees cannot interpolate arbitrary values between learned leaf means.", "A single hidden row and a score calculated across mixed train/test rows are too weak for model-quality claims."],
-      "prerequisites": ["train-test-leakage", "r-squared", "decision-tree-classification"],
-      "related": ["linear-regression", "polynomial-regression", "classification-metrics"],
-      "revision": { "purpose":"Predict a number with rule-based partitions", "input":"Feature rows + numeric target", "output":"Leaf-mean prediction", "core idea":"Choose the split with maximum variance reduction", "remember":"A regression tree predicts in steps" },
-      "keywords": ["decision tree", "regressor", "variance", "squared_error", "variance reduction", "leaf mean"],
-      "lastUpdated": "2026-09-02",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/17_Descison_Tree_Regression.ipynb", "type":"notebook", "role":"comparison + manual derivation + code", "purpose":"Contrasts classification and regression trees, calculates variance reduction, fits the regressor, exports its rules, and records evaluation limits.", "highlights":["24 instructional cells", "12 executed code cells", "classification-versus-regression comparison"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/dt1.tree", "type":"diagram", "role":"exported model structure", "purpose":"Stores the exact Graphviz regression tree with guide at the root and learned leaf values.", "highlights":["root: guide ≤ 0.5", "leaf values 31, 20, 25, 90"] },
-        { "path":"02_data_toolkit_apps/08_sklearn/HandWritten Notes/17_DTR.png", "type":"image", "role":"visual theory note", "purpose":"Explains regression-tree anatomy, variance and MSE split criteria, leaf means, prediction paths, pruning controls, strengths, limitations, and use cases.", "highlights":["variance-reduction formula", "worked price tree", "piecewise predictions"] },
-        { "path":"02_data_toolkit_apps/02_pandas/DataSet/exam1.csv", "type":"dataset", "role":"regression data", "purpose":"Provides ten student rows with binary study inputs and numeric marks for the regression-tree experiment.", "highlights":["numeric target marks", "used for manual variance and sklearn fitting"] }
+      "path": "02_data_toolkit_apps/08_sklearn/dt.tree",
+      "type": "diagram",
+      "role": "exported model structure",
+      "purpose": "Stores the exact Graphviz decision tree learned from the student pass/fail dataset.",
+      "highlights": [
+        "root: videos ≤ 0.5",
+        "sample counts and entropy at every node"
       ]
     },
     {
-      "id": "naive-bayes",
-      "title": "Naive Bayes Classifiers",
-      "categoryId": "classification",
-      "status": "learned",
-      "summary": "Naive Bayes scores each possible class by combining its prior probability with feature likelihoods, then returns the class with the largest score.",
-      "what": "A family of fast probabilistic classifiers built from Bayes theorem and a simplifying assumption that features behave independently inside each class.",
-      "why": "It turns evidence around—from knowing how features behave within a class to estimating the class given new features—and provides specialized models for continuous, count, and binary data.",
-      "intuition": "For each possible answer, ask two questions: how common is this class, and how normal are these feature values for it? Multiply those clues and choose the strongest story.",
-      "how": ["Calculate the prior P(y) for each class.", "Model each feature likelihood P(xᵢ|y) using a distribution suited to the data type.", "Multiply the prior and feature likelihoods for each class.", "Compare the class scores; the shared evidence denominator does not affect which class wins."],
-      "visual": { "type":"comparison", "title":"Choose the variant from the feature meaning", "items":[{"label":"GaussianNB","detail":"continuous measurements · bell curve per feature/class"},{"label":"MultinomialNB","detail":"non-negative counts or frequencies"},{"label":"BernoulliNB","detail":"binary presence/absence after a threshold"}] },
-      "formula": { "expression":"P(y|x₁…xₙ) ∝ P(y) × Π P(xᵢ|y)", "parts":[{"term":"P(y)","meaning":"class prior: how common the class is"},{"term":"P(xᵢ|y)","meaning":"likelihood of one feature inside that class"},{"term":"Π","meaning":"multiply the feature likelihoods under the naive independence assumption"}], "example":"For mark 74, the watched-class likelihood × prior is about 0.023 versus 0.006, so GaussianNB predicts watched." },
-      "code": "model = GaussianNB()\nmodel.fit(X_train, y_train)\nprobabilities = model.predict_proba([[74]])\nprediction = model.predict([[74]])",
-      "example": "On Iris, GaussianNB correctly predicts 29 of 30 test flowers (0.967), while treating centimetres as Multinomial counts scores 0.567 and default Bernoulli binarization collapses every positive-valued row to the same pattern.",
-      "confusions": ["Naive means conditionally independent features—not a model that ignores evidence.", "GaussianNB, MultinomialNB, and BernoulliNB are not interchangeable; select from the meaning and domain of the input values.", "MinMax scaling can remove MultinomialNB's negative-value error, but it does not turn continuous measurements into natural counts.", "The notebook's final scaling repair is conceptually explained, but its saved execution order recreates raw data after scaling, so the last fit still errors; rerun generation → scaling → split → fit in order to complete that experiment."],
-      "prerequisites": ["classification-metrics", "ml-preprocessing", "synthetic-datasets", "iris-eda"],
-      "related": ["roc-auc", "cross-validation", "hyperparameter-tuning"],
-      "revision": { "purpose":"Predict a class from probabilistic evidence", "input":"Features whose distribution matches the chosen variant", "output":"Class probabilities and winning label", "core idea":"Prior × likelihoods for every class", "remember":"Continuous → Gaussian; counts → Multinomial; binary → Bernoulli" },
-      "keywords": ["Naive Bayes", "Bayes theorem", "GaussianNB", "MultinomialNB", "BernoulliNB", "prior", "likelihood", "conditional independence", "binarize"],
-      "lastUpdated": "2026-09-03",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/18_Naive_Bayers.ipynb", "type":"notebook", "role":"theory + code + comparative experiments", "purpose":"Derives Bayes classification from a colony example, visualizes Gaussian class distributions, evaluates three Naive Bayes variants on Iris and synthetic data, and studies thresholds and preprocessing constraints.", "highlights":["58 instructional cells", "33 executed code cells", "Gaussian likelihood visual", "three saved error outputs including one unresolved execution-order issue"] }
+      "path": "02_data_toolkit_apps/08_sklearn/HandWritten Notes/16_DTC.png",
+      "type": "image",
+      "role": "visual theory note",
+      "purpose": "Explains classifier anatomy, Gini and entropy, information gain, prediction paths, pruning controls, strengths, limitations, and real-world uses.",
+      "highlights": [
+        "split-quality formulas",
+        "worked buy/not-buy tree",
+        "overfitting and pruning"
       ]
     },
     {
-      "id": "hyperparameter-tuning",
-      "title": "Grid Search & Randomized Hyperparameter Tuning",
-      "categoryId": "evaluation",
-      "status": "learned",
-      "summary": "Hyperparameter search trains several model configurations inside cross-validation, chooses from validation evidence, and keeps the untouched test set for one final evaluation.",
-      "what": "GridSearchCV exhaustively checks a declared parameter grid; RandomizedSearchCV tests a limited random sample from candidate lists or distributions.",
-      "why": "A single fit cannot decide its own pre-training settings, and manually choosing from repeated test-set scores leaks the test set into model selection.",
-      "intuition": "The estimator is a recipe template. Search clones it with different knob settings, gives each clone several fair practice exams, then refits the strongest recipe on all training rows.",
-      "how": ["Seal the final test set before tuning.", "Create an unfitted estimator and a parameter search space.", "Evaluate every grid combination—or n_iter random samples—across cross-validation folds.", "Read best_params_, best_score_, best_estimator_, and cv_results_.", "With refit=True, use the refitted winner for the single final test-set evaluation."],
-      "visual": { "type":"flow", "title":"Honest model-selection loop", "items":[{"label":"Estimator template","detail":"unfitted model"},{"label":"Parameter space","detail":"knobs to try"},{"label":"Cross-validation","detail":"each setting gets several exams"},{"label":"Best params","detail":"validation winner"},{"label":"Refit","detail":"all training rows"},{"label":"Final test","detail":"open once"}] },
-      "formula": { "expression":"total fits = configurations × CV folds", "parts":[{"term":"configurations","meaning":"Cartesian product for grid search or n_iter for random search"},{"term":"CV folds","meaning":"independent validation rounds per configuration"},{"term":"refit","meaning":"one additional final fit of the winner when enabled"}], "example":"2 criteria × 2 splitters × 6 depths = 24 configurations; five folds require 120 comparison fits." },
-      "code": "grid = GridSearchCV(DecisionTreeClassifier(random_state=0), options, cv=5)\ngrid.fit(X_train, y_train)\nprint(grid.best_params_, grid.best_score_)\nfinal_score = grid.score(X_test, y_test)",
-      "example": "The Iris grid searches 24 decision trees and records a best mean CV accuracy of 0.975. A five-sample randomized search uses 25 CV fits instead of 120 and finds 0.950 in the saved run.",
-      "confusions": ["mean_test_score in cv_results_ means the held-out CV folds—not the sealed X_test dataset.", "best_params_ identifies a strong validated setting, not a universal setting for every future dataset.", "RandomizedSearchCV needs random_state for repeatable sampled configurations; a tree using splitter='random' needs its own seed too.", "Grid search cost multiplies quickly; random search becomes useful when the search space is large."],
-      "prerequisites": ["cross-validation", "decision-tree-classification", "train-test-leakage"],
-      "related": ["classification-metrics", "naive-bayes", "future-model-persistence"],
-      "revision": { "purpose":"Choose model settings without test leakage", "input":"Estimator + parameter space + training data + CV strategy", "output":"Validated parameters, score log, refitted estimator", "core idea":"Compare settings on folds inside training data", "remember":"Tune on CV; test once at the end" },
-      "keywords": ["hyperparameter", "parameter", "GridSearchCV", "RandomizedSearchCV", "param_grid", "param_distributions", "n_iter", "best_params", "best_score", "cv_results", "refit"],
-      "lastUpdated": "2026-09-03",
-      "sources": [
-        { "path":"02_data_toolkit_apps/08_sklearn/19_Hyperparameter_Tuning.ipynb", "type":"notebook", "role":"theory + code + search comparison", "purpose":"Distinguishes parameters from hyperparameters, manually compares tree settings, performs exhaustive and randomized searches, inspects all CV results, and explains leakage, refitting, search cost, and reproducibility.", "highlights":["44 instructional cells", "26 executed code cells", "24-combination grid", "GridSearchCV versus RandomizedSearchCV cost comparison"] }
+      "path": "02_data_toolkit_apps/02_pandas/DataSet/exam.csv",
+      "type": "dataset",
+      "role": "classification training data",
+      "purpose": "Provides the ten student rows with video, guide, and pass/fail outcomes used for the manual and sklearn tree.",
+      "highlights": [
+        "two binary inputs",
+        "one contradictory feature pair"
+      ]
+    }
+  ]
+},
+    {
+  "id": "decision-tree-regression",
+  "title": "Decision Tree Regression",
+  "categoryId": "regression",
+  "status": "learned",
+  "summary": "A regression tree chooses questions that reduce target variance, then predicts the average numeric target stored in the reached leaf.",
+  "what": "DecisionTreeRegressor partitions feature space like a classification tree, but evaluates numeric spread with squared error and returns leaf means.",
+  "why": "It models nonlinear step patterns without a straight-line equation and makes the classification-versus-regression tree distinction concrete.",
+  "intuition": "Sort students into rooms whose marks are as similar as possible; a new student receives the average mark in the room reached by the rules.",
+  "how": [
+    "Measure variance in the parent marks.",
+    "Try each feature split and compute weighted child variance.",
+    "Choose the largest variance reduction.",
+    "Repeat within branches and use the leaf mean as the prediction."
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Same tree shape, different learning target",
+    "items": [
+      {
+        "label": "Classifier leaf",
+        "detail": "majority label"
+      },
+      {
+        "label": "Regressor leaf",
+        "detail": "average number"
+      },
+      {
+        "label": "Classifier split",
+        "detail": "entropy reduction"
+      },
+      {
+        "label": "Regressor split",
+        "detail": "variance reduction"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "variance reduction = Var(parent) − Σ weighted Var(children)",
+    "parts": [
+      {
+        "term": "Var(parent)",
+        "meaning": "initial target spread"
+      },
+      {
+        "term": "weighted children",
+        "meaning": "remaining spread after a question"
+      },
+      {
+        "term": "leaf value",
+        "meaning": "mean target of rows in that leaf"
+      }
+    ],
+    "example": "Guide reduces variance from about 972.89 to 386.08, a reduction of about 586.81."
+  },
+  "code": "model = DecisionTreeRegressor(random_state=0)\nmodel.fit(X_train, y_train)\npredicted_marks = model.predict([[1, 1]])",
+  "example": "Using the nine training students, the fitted leaves predict step values 31, 20, 25, or 90; a student with videos=1 and guide=1 receives 90.",
+  "confusions": [
+    "Regression trees output numbers, but those predictions are leaf averages—not a continuous fitted line.",
+    "Trees cannot interpolate arbitrary values between learned leaf means.",
+    "A single hidden row and a score calculated across mixed train/test rows are too weak for model-quality claims."
+  ],
+  "prerequisites": [
+    "train-test-leakage",
+    "r-squared",
+    "decision-tree-classification"
+  ],
+  "related": [
+    "linear-regression",
+    "polynomial-regression",
+    "classification-metrics",
+    "random-forest-regression",
+    "gradient-boosting"
+  ],
+  "revision": {
+    "purpose": "Predict a number with rule-based partitions",
+    "input": "Feature rows + numeric target",
+    "output": "Leaf-mean prediction",
+    "core idea": "Choose the split with maximum variance reduction",
+    "remember": "A regression tree predicts in steps"
+  },
+  "keywords": [
+    "decision tree",
+    "regressor",
+    "variance",
+    "squared_error",
+    "variance reduction",
+    "leaf mean"
+  ],
+  "lastUpdated": "2026-09-02",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/17_Descison_Tree_Regression.ipynb",
+      "type": "notebook",
+      "role": "comparison + manual derivation + code",
+      "purpose": "Contrasts classification and regression trees, calculates variance reduction, fits the regressor, exports its rules, and records evaluation limits.",
+      "highlights": [
+        "24 instructional cells",
+        "12 executed code cells",
+        "classification-versus-regression comparison"
       ]
     },
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/dt1.tree",
+      "type": "diagram",
+      "role": "exported model structure",
+      "purpose": "Stores the exact Graphviz regression tree with guide at the root and learned leaf values.",
+      "highlights": [
+        "root: guide ≤ 0.5",
+        "leaf values 31, 20, 25, 90"
+      ]
+    },
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/HandWritten Notes/17_DTR.png",
+      "type": "image",
+      "role": "visual theory note",
+      "purpose": "Explains regression-tree anatomy, variance and MSE split criteria, leaf means, prediction paths, pruning controls, strengths, limitations, and use cases.",
+      "highlights": [
+        "variance-reduction formula",
+        "worked price tree",
+        "piecewise predictions"
+      ]
+    },
+    {
+      "path": "02_data_toolkit_apps/02_pandas/DataSet/exam1.csv",
+      "type": "dataset",
+      "role": "regression data",
+      "purpose": "Provides ten student rows with binary study inputs and numeric marks for the regression-tree experiment.",
+      "highlights": [
+        "numeric target marks",
+        "used for manual variance and sklearn fitting"
+      ]
+    }
+  ]
+},
+    {
+  "id": "naive-bayes",
+  "title": "Naive Bayes Classifiers",
+  "categoryId": "classification",
+  "status": "learned",
+  "summary": "Naive Bayes scores each possible class by combining its prior probability with feature likelihoods, then returns the class with the largest score.",
+  "what": "A family of fast probabilistic classifiers built from Bayes theorem and a simplifying assumption that features behave independently inside each class.",
+  "why": "It turns evidence around—from knowing how features behave within a class to estimating the class given new features—and provides specialized models for continuous, count, and binary data.",
+  "intuition": "For each possible answer, ask two questions: how common is this class, and how normal are these feature values for it? Multiply those clues and choose the strongest story.",
+  "how": [
+    "Calculate the prior P(y) for each class.",
+    "Model each feature likelihood P(xᵢ|y) using a distribution suited to the data type.",
+    "Multiply the prior and feature likelihoods for each class.",
+    "Compare the class scores; the shared evidence denominator does not affect which class wins."
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Choose the variant from the feature meaning",
+    "items": [
+      {
+        "label": "GaussianNB",
+        "detail": "continuous measurements · bell curve per feature/class"
+      },
+      {
+        "label": "MultinomialNB",
+        "detail": "non-negative counts or frequencies"
+      },
+      {
+        "label": "BernoulliNB",
+        "detail": "binary presence/absence after a threshold"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "P(y|x₁…xₙ) ∝ P(y) × Π P(xᵢ|y)",
+    "parts": [
+      {
+        "term": "P(y)",
+        "meaning": "class prior: how common the class is"
+      },
+      {
+        "term": "P(xᵢ|y)",
+        "meaning": "likelihood of one feature inside that class"
+      },
+      {
+        "term": "Π",
+        "meaning": "multiply the feature likelihoods under the naive independence assumption"
+      }
+    ],
+    "example": "For mark 74, the watched-class likelihood × prior is about 0.023 versus 0.006, so GaussianNB predicts watched."
+  },
+  "code": "model = GaussianNB()\nmodel.fit(X_train, y_train)\nprobabilities = model.predict_proba([[74]])\nprediction = model.predict([[74]])",
+  "example": "On Iris, GaussianNB correctly predicts 29 of 30 test flowers (0.967), while treating centimetres as Multinomial counts scores 0.567 and default Bernoulli binarization collapses every positive-valued row to the same pattern.",
+  "confusions": [
+    "Naive means conditionally independent features—not a model that ignores evidence.",
+    "GaussianNB, MultinomialNB, and BernoulliNB are not interchangeable; select from the meaning and domain of the input values.",
+    "MinMax scaling can remove MultinomialNB's negative-value error, but it does not turn continuous measurements into natural counts.",
+    "The notebook's final scaling repair is conceptually explained, but its saved execution order recreates raw data after scaling, so the last fit still errors; rerun generation → scaling → split → fit in order to complete that experiment.",
+    "The handwritten sheet says missing data works well, but the notebook does not demonstrate native NaN handling; do not assume these sklearn estimators accept missing values without preprocessing."
+  ],
+  "prerequisites": [
+    "classification-metrics",
+    "ml-preprocessing",
+    "synthetic-datasets",
+    "iris-eda"
+  ],
+  "related": [
+    "roc-auc",
+    "cross-validation",
+    "hyperparameter-tuning"
+  ],
+  "revision": {
+    "purpose": "Predict a class from probabilistic evidence",
+    "input": "Features whose distribution matches the chosen variant",
+    "output": "Class probabilities and winning label",
+    "core idea": "Prior × likelihoods for every class",
+    "remember": "Continuous → Gaussian; counts → Multinomial; binary → Bernoulli"
+  },
+  "keywords": [
+    "Naive Bayes",
+    "Bayes theorem",
+    "GaussianNB",
+    "MultinomialNB",
+    "BernoulliNB",
+    "prior",
+    "likelihood",
+    "conditional independence",
+    "binarize"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/18_Naive_Bayers.ipynb",
+      "type": "notebook",
+      "role": "theory + code + comparative experiments",
+      "purpose": "Derives Bayes classification from a colony example, visualizes Gaussian class distributions, evaluates three Naive Bayes variants on Iris and synthetic data, and studies thresholds and preprocessing constraints.",
+      "highlights": [
+        "58 instructional cells",
+        "33 executed code cells",
+        "Gaussian likelihood visual",
+        "three saved error outputs including one unresolved execution-order issue"
+      ]
+    },
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/HandWritten Notes/18_Naive_Bayes_Detailed_Handwritten_Notes.png",
+      "type": "image",
+      "role": "handwritten visual revision",
+      "purpose": "Visual revision of Bayes theorem, conditional independence, Gaussian/Multinomial/Bernoulli choices, and limitations.",
+      "highlights": [
+        "formula and process diagrams",
+        "comparison tables"
+      ]
+    }
+  ]
+},
+    {
+  "id": "hyperparameter-tuning",
+  "title": "Grid Search & Randomized Hyperparameter Tuning",
+  "categoryId": "evaluation",
+  "status": "learned",
+  "summary": "Hyperparameter search trains several model configurations inside cross-validation, chooses from validation evidence, and keeps the untouched test set for one final evaluation.",
+  "what": "GridSearchCV exhaustively checks a declared parameter grid; RandomizedSearchCV tests a limited random sample from candidate lists or distributions.",
+  "why": "A single fit cannot decide its own pre-training settings, and manually choosing from repeated test-set scores leaks the test set into model selection.",
+  "intuition": "The estimator is a recipe template. Search clones it with different knob settings, gives each clone several fair practice exams, then refits the strongest recipe on all training rows.",
+  "how": [
+    "Seal the final test set before tuning.",
+    "Create an unfitted estimator and a parameter search space.",
+    "Evaluate every grid combination—or n_iter random samples—across cross-validation folds.",
+    "Read best_params_, best_score_, best_estimator_, and cv_results_.",
+    "With refit=True, use the refitted winner for the single final test-set evaluation."
+  ],
+  "visual": {
+    "type": "flow",
+    "title": "Honest model-selection loop",
+    "items": [
+      {
+        "label": "Estimator template",
+        "detail": "unfitted model"
+      },
+      {
+        "label": "Parameter space",
+        "detail": "knobs to try"
+      },
+      {
+        "label": "Cross-validation",
+        "detail": "each setting gets several exams"
+      },
+      {
+        "label": "Best params",
+        "detail": "validation winner"
+      },
+      {
+        "label": "Refit",
+        "detail": "all training rows"
+      },
+      {
+        "label": "Final test",
+        "detail": "open once"
+      }
+    ]
+  },
+  "formula": {
+    "expression": "total fits = configurations × CV folds",
+    "parts": [
+      {
+        "term": "configurations",
+        "meaning": "Cartesian product for grid search or n_iter for random search"
+      },
+      {
+        "term": "CV folds",
+        "meaning": "independent validation rounds per configuration"
+      },
+      {
+        "term": "refit",
+        "meaning": "one additional final fit of the winner when enabled"
+      }
+    ],
+    "example": "2 criteria × 2 splitters × 6 depths = 24 configurations; five folds require 120 comparison fits."
+  },
+  "code": "grid = GridSearchCV(DecisionTreeClassifier(random_state=0), options, cv=5)\ngrid.fit(X_train, y_train)\nprint(grid.best_params_, grid.best_score_)\nfinal_score = grid.score(X_test, y_test)",
+  "example": "The Iris grid searches 24 decision trees and records a best mean CV accuracy of 0.975. A five-sample randomized search uses 25 CV fits instead of 120 and finds 0.950 in the saved run.",
+  "confusions": [
+    "mean_test_score in cv_results_ means the held-out CV folds—not the sealed X_test dataset.",
+    "best_params_ identifies a strong validated setting, not a universal setting for every future dataset.",
+    "RandomizedSearchCV needs random_state for repeatable sampled configurations; a tree using splitter='random' needs its own seed too.",
+    "Grid search cost multiplies quickly; random search becomes useful when the search space is large.",
+    "Bayesian optimization, Hyperband and successive halving appear only in the revision sheet; no executed experiments establish them as learned here."
+  ],
+  "prerequisites": [
+    "cross-validation",
+    "decision-tree-classification",
+    "train-test-leakage"
+  ],
+  "related": [
+    "classification-metrics",
+    "naive-bayes",
+    "future-model-persistence",
+    "random-forest",
+    "gradient-boosting"
+  ],
+  "revision": {
+    "purpose": "Choose model settings without test leakage",
+    "input": "Estimator + parameter space + training data + CV strategy",
+    "output": "Validated parameters, score log, refitted estimator",
+    "core idea": "Compare settings on folds inside training data",
+    "remember": "Tune on CV; test once at the end"
+  },
+  "keywords": [
+    "hyperparameter",
+    "parameter",
+    "GridSearchCV",
+    "RandomizedSearchCV",
+    "param_grid",
+    "param_distributions",
+    "n_iter",
+    "best_params",
+    "best_score",
+    "cv_results",
+    "refit"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/19_Hyperparameter_Tuning.ipynb",
+      "type": "notebook",
+      "role": "theory + code + search comparison",
+      "purpose": "Distinguishes parameters from hyperparameters, manually compares tree settings, performs exhaustive and randomized searches, inspects all CV results, and explains leakage, refitting, search cost, and reproducibility.",
+      "highlights": [
+        "44 instructional cells",
+        "26 executed code cells",
+        "24-combination grid",
+        "GridSearchCV versus RandomizedSearchCV cost comparison"
+      ]
+    },
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/HandWritten Notes/19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png",
+      "type": "image",
+      "role": "handwritten visual revision",
+      "purpose": "Visual revision of learned parameters versus hyperparameters, bias/variance, CV, grid/random search, and future search methods.",
+      "highlights": [
+        "formula and process diagrams",
+        "comparison tables"
+      ]
+    }
+  ]
+},
     {
       "id":"future-model-persistence","title":"Model Persistence & Deployment Handoff","categoryId":"future-production","status":"referenced",
       "summary":"The tuned estimator can now be selected and refitted, but saving, loading, versioning, and serving that complete model pipeline have not yet been implemented.",
@@ -1056,6 +2112,1397 @@ window.LEARNING_MAP = {
         {"path":"13_ai_system_design_career/README.md","type":"markdown","role":"curriculum reference","purpose":"Lists AI System Design and Job Ready Focus with explicit Not Started status.","highlights":["final convergence phase"]},
         {"path":"README.md","type":"markdown","role":"repository overview","purpose":"Describes the active workspace, folder structure, and rule that topic folders appear only when lessons begin.","highlights":["current work map", "legacy roadmap link"]}
       ]
+    },
+{
+  "id": "random-forest",
+  "title": "Random Forest & Bagging",
+  "categoryId": "classification",
+  "status": "learned",
+  "summary": "A random forest combines decision trees trained with sampled rows and randomly restricted split features.",
+  "what": "A random forest combines decision trees trained with sampled rows and randomly restricted split features.",
+  "why": "Reduce the instability of a single tree by combining trees with different errors.",
+  "intuition": "Several readers see overlapping samples and combine their conclusions; identical mistakes will not cancel out.",
+  "how": [
+    "Draw bootstrap samples from training rows, with replacement.",
+    "At each split, consider a random subset of available features.",
+    "Grow the trees independently; each tree returns class probabilities.",
+    "Average those probabilities and choose the largest class average.",
+    "Evaluate on the untouched 45-row test set."
+  ],
+  "formula": {
+    "expression": "P(c | x) = (1 / T) Σ pₜ(c | x)",
+    "parts": [
+      {
+        "term": "T",
+        "meaning": "number of trees"
+      },
+      {
+        "term": "pₜ",
+        "meaning": "class probability from tree t"
+      },
+      {
+        "term": "c",
+        "meaning": "candidate class"
+      }
+    ],
+    "example": "Tree probabilities 0.8, 0.7, 0.3 average to 0.6 for the same class."
+  },
+  "example": "The saved 100-tree Iris classifier scored 0.9777778 = 44/45. This split cannot establish that a forest always beats another model.",
+  "code": "model = RandomForestClassifier(n_estimators=100, random_state=0)\nmodel.fit(X_train, y_train)\naccuracy = model.score(X_test, y_test)",
+  "confusions": [
+    "Averaging helps when errors differ; no ensemble is guaranteed to improve.",
+    "A bootstrap sample can repeat a row and omit another.",
+    "scikit-learn averages tree probabilities; majority class voting is only a simplified intuition.",
+    "More trees can stabilize predictions but do not repair leakage or irrelevant features.",
+    "The original forest is unseeded; the code here adds a seed for repeatability."
+  ],
+  "prerequisites": [
+    "decision-tree-classification",
+    "train-test-leakage"
+  ],
+  "related": [
+    "adaboost",
+    "gradient-boosting",
+    "voting-ensemble",
+    "random-forest-regression",
+    "isolation-forest"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Random Forest & Bagging at a glance",
+    "items": [
+      {
+        "label": "Rows",
+        "detail": "Bootstrap sample per tree"
+      },
+      {
+        "label": "Features",
+        "detail": "Random subset per split"
+      },
+      {
+        "label": "Combine",
+        "detail": "Mean class probabilities"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Reduce the instability of a single tree by combining trees with different errors.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "A random forest combines decision trees trained with sampled rows and randomly restricted split features.",
+    "core idea": "Several readers see overlapping samples and combine their conclusions; identical mistakes will not cancel out.",
+    "remember": "Averaging helps when errors differ; no ensemble is guaranteed to improve."
+  },
+  "keywords": [
+    "RandomForestClassifier",
+    "bagging",
+    "bootstrap",
+    "n_estimators",
+    "max_features",
+    "estimators_"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/20_Ensemble_methods.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Compares forest classification, AdaBoost, gradient boosting, hard/soft voting, and forest regression with saved model outputs.",
+      "highlights": [
+        "44 cells; 27 executed code cells",
+        "105/45 Iris split",
+        "5-model hard votes and 15-column soft probabilities",
+        "Regression score uses training data"
+      ]
     }
+  ],
+  "datasetId": "iris",
+  "lessonLab": "forest",
+  "parameters": [
+    [
+      "n_estimators",
+      "100 in the notebook",
+      "More trees cost more training and prediction work."
+    ],
+    [
+      "max_features",
+      "Subset at each split",
+      "Encourages different trees; classifier and regressor defaults differ."
+    ],
+    [
+      "random_state",
+      "Absent in original forest",
+      "Controls sampling and split randomness when set."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "Averaging helps when errors differ — explain why.",
+      "answer": "Several readers see overlapping samples and combine their conclusions; identical mistakes will not cancel out. The saved 100-tree Iris classifier scored 0.9777778 = 44/45. This split cannot establish that a forest always beats another model."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/ensemble.html"
+    }
+  ]
+},
+{
+  "id": "random-forest-regression",
+  "title": "Random Forest Regression",
+  "categoryId": "regression",
+  "status": "current",
+  "summary": "A regression forest predicts a number by averaging the numeric predictions of its fitted trees.",
+  "what": "A regression forest predicts a number by averaging the numeric predictions of its fitted trees.",
+  "why": "Combine several flexible tree regressors to make a steadier numeric prediction.",
+  "intuition": "Ask several trees for a price, then take their mean.",
+  "how": [
+    "Generate all 10,000 seeded one-feature regression rows.",
+    "Fit 100 regression trees on bootstrap samples.",
+    "Each tree predicts a leaf mean.",
+    "Average predictions across trees.",
+    "Complete the missing held-out split before interpreting generalization."
+  ],
+  "formula": {
+    "expression": "ŷ = (1 / T) Σ ŷₜ",
+    "parts": [
+      {
+        "term": "ŷₜ",
+        "meaning": "numeric prediction from tree t"
+      },
+      {
+        "term": "T",
+        "meaning": "number of trees"
+      },
+      {
+        "term": "ŷ",
+        "meaning": "forest mean"
+      }
+    ],
+    "example": "Predictions 50, 60, 70 give a forest prediction of 60."
+  },
+  "example": "Saved R² = 0.9911716974219119 on the same x, y used for fit. The model runs, but held-out evaluation remains unfinished.",
+  "code": "X_train, X_test, y_train, y_test = train_test_split(x, y, random_state=0)\nreg = RandomForestRegressor(n_estimators=100, random_state=0)\nreg.fit(X_train, y_train)\n# Suggested next exercise; no saved test score yet:\nreg.score(X_test, y_test)",
+  "confusions": [
+    "The saved 0.991 is a training R², not accuracy or a held-out result.",
+    "A forest average is a numeric mean, not majority voting.",
+    "Tree models make piecewise constant predictions and do not extrapolate a line beyond their training targets."
+  ],
+  "prerequisites": [
+    "decision-tree-regression",
+    "random-forest",
+    "r-squared"
+  ],
+  "related": [
+    "train-test-leakage",
+    "linear-regression"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Random Forest Regression at a glance",
+    "items": [
+      {
+        "label": "Classification",
+        "detail": "Average probabilities → class"
+      },
+      {
+        "label": "Regression",
+        "detail": "Average numbers → number"
+      },
+      {
+        "label": "Next exercise",
+        "detail": "Split first; report test R²"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Combine several flexible tree regressors to make a steadier numeric prediction.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "A regression forest predicts a number by averaging the numeric predictions of its fitted trees.",
+    "core idea": "Ask several trees for a price, then take their mean.",
+    "remember": "The saved 0.991 is a training R², not accuracy or a held-out result."
+  },
+  "keywords": [
+    "RandomForestRegressor",
+    "bagging",
+    "average",
+    "training score",
+    "held-out"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/20_Ensemble_methods.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Compares forest classification, AdaBoost, gradient boosting, hard/soft voting, and forest regression with saved model outputs.",
+      "highlights": [
+        "44 cells; 27 executed code cells",
+        "105/45 Iris split",
+        "5-model hard votes and 15-column soft probabilities",
+        "Regression score uses training data"
+      ]
+    }
+  ],
+  "datasetId": "regression",
+  "lessonLab": "forestRegression",
+  "plotCells": {
+    "20_Ensemble_methods.ipynb": [
+      39
+    ]
+  },
+  "quiz": [
+    {
+      "question": "The saved 0.991 is a training R², not accuracy or a held-out result. — explain why.",
+      "answer": "Ask several trees for a price, then take their mean. Saved R² = 0.9911716974219119 on the same x, y used for fit. The model runs, but held-out evaluation remains unfinished."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/ensemble.html"
+    }
+  ]
+},
+{
+  "id": "adaboost",
+  "title": "AdaBoost: Reweight the Mistakes",
+  "categoryId": "classification",
+  "status": "learned",
+  "summary": "AdaBoost trains learners in sequence and increases the relative influence of misclassified training rows.",
+  "what": "AdaBoost trains learners in sequence and increases the relative influence of misclassified training rows.",
+  "why": "Give later learners a reason to focus on examples the current ensemble gets wrong.",
+  "intuition": "A teacher gives missed questions more attention in the next practice round.",
+  "how": [
+    "Start with equal row weights.",
+    "Train a weak learner using the current weights.",
+    "Calculate its weighted classification error.",
+    "Increase weights of mistakes and normalize.",
+    "Combine learners using their learned voting weights."
+  ],
+  "formula": {
+    "expression": "wᵢ(next) ∝ wᵢ × exp(αₜ × I[wrongᵢ])",
+    "parts": [
+      {
+        "term": "wᵢ",
+        "meaning": "current weight of row i"
+      },
+      {
+        "term": "αₜ",
+        "meaning": "weight of learner t"
+      },
+      {
+        "term": "I[wrongᵢ]",
+        "meaning": "1 for a mistake, 0 otherwise"
+      },
+      {
+        "term": "∝",
+        "meaning": "normalize afterward so weights sum to 1"
+      }
+    ],
+    "example": "With α=ln(2), a wrong row gets twice its former unnormalized weight; correct rows keep theirs."
+  },
+  "example": "Depth-3 DecisionTreeClassifier learners, up to 100 stages, scored 44/45 on the saved Iris test split.",
+  "code": "model = AdaBoostClassifier(\n    estimator=DecisionTreeClassifier(max_depth=3),\n    n_estimators=100, random_state=0)\nmodel.fit(X_train, y_train)",
+  "confusions": [
+    "Wrong rows gain relative weight; outliers or wrong labels may also receive extra attention.",
+    "Learner vote weights and observation weights are different quantities.",
+    "n_estimators is a maximum: fitting can stop early on perfect training performance."
+  ],
+  "prerequisites": [
+    "decision-tree-classification",
+    "classification-metrics"
+  ],
+  "related": [
+    "random-forest",
+    "gradient-boosting",
+    "outlier-detection"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "AdaBoost: Reweight the Mistakes at a glance",
+    "items": [
+      {
+        "label": "Bagging",
+        "detail": "Trees can train independently"
+      },
+      {
+        "label": "AdaBoost",
+        "detail": "Next learner uses updated row weights"
+      },
+      {
+        "label": "Final output",
+        "detail": "Weighted combination of learners"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Give later learners a reason to focus on examples the current ensemble gets wrong.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "AdaBoost trains learners in sequence and increases the relative influence of misclassified training rows.",
+    "core idea": "A teacher gives missed questions more attention in the next practice round.",
+    "remember": "Wrong rows gain relative weight; outliers or wrong labels may also receive extra attention."
+  },
+  "keywords": [
+    "AdaBoostClassifier",
+    "boosting",
+    "sample weights",
+    "estimator",
+    "learning_rate"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/20_Ensemble_methods.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Compares forest classification, AdaBoost, gradient boosting, hard/soft voting, and forest regression with saved model outputs.",
+      "highlights": [
+        "44 cells; 27 executed code cells",
+        "105/45 Iris split",
+        "5-model hard votes and 15-column soft probabilities",
+        "Regression score uses training data"
+      ]
+    }
+  ],
+  "datasetId": "iris",
+  "lessonLab": "adaboost",
+  "parameters": [
+    [
+      "estimator",
+      "DecisionTreeClassifier(max_depth=3)",
+      "Small learner repeatedly fitted."
+    ],
+    [
+      "n_estimators",
+      "100",
+      "Maximum boosting stages."
+    ],
+    [
+      "learning_rate",
+      "Weight scaling",
+      "Trade off contribution per learner with number of stages."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "Wrong rows gain relative weight — explain why.",
+      "answer": "A teacher gives missed questions more attention in the next practice round. Depth-3 DecisionTreeClassifier learners, up to 100 stages, scored 44/45 on the saved Iris test split."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/ensemble.html"
+    }
+  ]
+},
+{
+  "id": "gradient-boosting",
+  "title": "Gradient Boosting & Learning Rate",
+  "categoryId": "classification",
+  "status": "learned",
+  "summary": "Gradient boosting adds trees that follow the negative gradient of the current loss.",
+  "what": "Gradient boosting adds trees that follow the negative gradient of the current loss.",
+  "why": "Improve the current prediction through a sequence of small corrections.",
+  "intuition": "Start with an estimate, learn what still needs correcting, and add only part of the correction.",
+  "how": [
+    "Choose an initial prediction and a loss.",
+    "Compute the negative loss gradient at current predictions.",
+    "Fit a small tree to that correction signal.",
+    "Add learning_rate times the tree output.",
+    "Repeat and compare settings using validation data."
+  ],
+  "formula": {
+    "expression": "Fₜ(x) = Fₜ₋₁(x) + η hₜ(x)",
+    "parts": [
+      {
+        "term": "Fₜ₋₁",
+        "meaning": "current prediction function"
+      },
+      {
+        "term": "hₜ",
+        "meaning": "new correction tree"
+      },
+      {
+        "term": "η",
+        "meaning": "learning rate"
+      },
+      {
+        "term": "t",
+        "meaning": "boosting stage"
+      }
+    ],
+    "example": "Squared-error illustration: start 50, target 62, correction 12; η=0.01 gives 50.12 after one step."
+  },
+  "example": "The saved GradientBoostingClassifier uses 100 stages and learning_rate=0.01, scoring 44/45. The numeric correction lab illustrates squared-error regression; classification uses loss gradients in score space.",
+  "code": "model = GradientBoostingClassifier(\n    n_estimators=100, learning_rate=0.01, random_state=0)\nmodel.fit(X_train, y_train)\nmodel.score(X_test, y_test)",
+  "confusions": [
+    "For classification, a correction is not simply y minus a predicted class label.",
+    "A smaller learning rate often needs more stages; neither setting guarantees better test performance.",
+    "Boosting can chase noise, so tune with validation rather than repeatedly consulting the test set.",
+    "XGBoost and LightGBM are named in the notes but have no fitted experiments here."
+  ],
+  "prerequisites": [
+    "decision-tree-regression",
+    "hyperparameter-tuning"
+  ],
+  "related": [
+    "adaboost",
+    "random-forest",
+    "outlier-detection"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Gradient Boosting & Learning Rate at a glance",
+    "items": [
+      {
+        "label": "AdaBoost",
+        "detail": "Reweights misclassified observations"
+      },
+      {
+        "label": "Gradient boosting",
+        "detail": "Fits loss-gradient corrections"
+      },
+      {
+        "label": "Learning rate",
+        "detail": "Scales each new correction"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Improve the current prediction through a sequence of small corrections.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "Gradient boosting adds trees that follow the negative gradient of the current loss.",
+    "core idea": "Start with an estimate, learn what still needs correcting, and add only part of the correction.",
+    "remember": "For classification, a correction is not simply y minus a predicted class label."
+  },
+  "keywords": [
+    "GradientBoostingClassifier",
+    "learning_rate",
+    "negative gradient",
+    "residual",
+    "n_estimators"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/20_Ensemble_methods.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Compares forest classification, AdaBoost, gradient boosting, hard/soft voting, and forest regression with saved model outputs.",
+      "highlights": [
+        "44 cells; 27 executed code cells",
+        "105/45 Iris split",
+        "5-model hard votes and 15-column soft probabilities",
+        "Regression score uses training data"
+      ]
+    }
+  ],
+  "datasetId": "iris",
+  "lessonLab": "boosting",
+  "parameters": [
+    [
+      "learning_rate",
+      "0.01",
+      "Fraction of each new correction added."
+    ],
+    [
+      "n_estimators",
+      "100",
+      "Number of boosting stages."
+    ],
+    [
+      "max_depth",
+      "Complexity of correction trees",
+      "Tune together with stage count and learning rate."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "For classification, a correction is not simply y minus a predicted class label. — explain why.",
+      "answer": "Start with an estimate, learn what still needs correcting, and add only part of the correction. The saved GradientBoostingClassifier uses 100 stages and learning_rate=0.01, scoring 44/45. The numeric correction lab illustrates squared-error regression; classification uses loss gradients in score space."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/ensemble.html"
+    }
+  ]
+},
+{
+  "id": "voting-ensemble",
+  "title": "Hard & Soft Voting",
+  "categoryId": "classification",
+  "status": "learned",
+  "summary": "VotingClassifier combines different model families using class votes or averaged class probabilities.",
+  "what": "VotingClassifier combines different model families using class votes or averaged class probabilities.",
+  "why": "Combine independently useful models whose mistakes or confidence patterns differ.",
+  "intuition": "Hard voting counts raised hands; soft voting averages how likely each class looks to the panel.",
+  "how": [
+    "Create named (label, estimator) pairs.",
+    "Fit cloned estimators on training data.",
+    "For hard voting, count class predictions.",
+    "For soft voting, average each class probability across models.",
+    "Inspect transform() to see member outputs; score the combined estimator separately."
+  ],
+  "formula": {
+    "expression": "hard = argmax꜀ Σ I[ŷₜ=c]; soft = argmax꜀ (1/T) Σ pₜ(c)",
+    "parts": [
+      {
+        "term": "T",
+        "meaning": "number of component models"
+      },
+      {
+        "term": "I",
+        "meaning": "1 when the model chooses class c"
+      },
+      {
+        "term": "pₜ(c)",
+        "meaning": "probability assigned to class c"
+      },
+      {
+        "term": "argmax",
+        "meaning": "choose the class with the largest total"
+      }
+    ],
+    "example": "Two models favor A at 0.51 each; one favors B at 0.99. Hard chooses A (2/3), soft chooses B (mean 0.657)."
+  },
+  "example": "The notebook fits forest, SVC, KNN, AdaBoost and logistic regression. Hard transform has 45×5 labels; soft transform has 45×15 probabilities. Printed scores are member scores, not a directly saved final.score() result.",
+  "code": "panel = VotingClassifier(estimators=estimators, voting=\"soft\")\npanel.fit(X_train, y_train)\nmember_probabilities = panel.transform(X_test)\n# Score the combined panel, not only its members:\npanel.score(X_test, y_test)",
+  "confusions": [
+    "Equal member accuracies do not imply identical predictions; inspect row-level votes.",
+    "The saved final.transform() is a matrix of member outputs, not final ensemble predictions.",
+    "Soft voting needs predict_proba from every member and useful probability estimates.",
+    "The saved SVC warning discusses future probability calibration changes; hard voting itself does not require probabilities.",
+    "SVC and KNN are used as components here; their internals are not separately demonstrated."
+  ],
+  "prerequisites": [
+    "classification-metrics",
+    "random-forest",
+    "adaboost"
+  ],
+  "related": [
+    "roc-auc",
+    "naive-bayes"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Hard & Soft Voting at a glance",
+    "items": [
+      {
+        "label": "Hard",
+        "detail": "One class label per member"
+      },
+      {
+        "label": "Soft",
+        "detail": "One probability per class per member"
+      },
+      {
+        "label": "Underscore",
+        "detail": "estimators_ contains fitted clones"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Combine independently useful models whose mistakes or confidence patterns differ.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "VotingClassifier combines different model families using class votes or averaged class probabilities.",
+    "core idea": "Hard voting counts raised hands; soft voting averages how likely each class looks to the panel.",
+    "remember": "Equal member accuracies do not imply identical predictions; inspect row-level votes."
+  },
+  "keywords": [
+    "VotingClassifier",
+    "hard",
+    "soft",
+    "predict_proba",
+    "transform",
+    "estimators_",
+    "SVC",
+    "KNeighborsClassifier"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/20_Ensemble_methods.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Compares forest classification, AdaBoost, gradient boosting, hard/soft voting, and forest regression with saved model outputs.",
+      "highlights": [
+        "44 cells; 27 executed code cells",
+        "105/45 Iris split",
+        "5-model hard votes and 15-column soft probabilities",
+        "Regression score uses training data"
+      ]
+    }
+  ],
+  "datasetId": "iris",
+  "lessonLab": "voting",
+  "parameters": [
+    [
+      "voting",
+      "hard / soft",
+      "Count labels / average probabilities."
+    ],
+    [
+      "estimators",
+      "Five named model recipes",
+      "Fitted copies appear in estimators_."
+    ],
+    [
+      "flatten_transform",
+      "Default soft output",
+      "5 models × 3 classes = 15 columns per observation."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "Equal member accuracies do not imply identical predictions — explain why.",
+      "answer": "Hard voting counts raised hands; soft voting averages how likely each class looks to the panel. The notebook fits forest, SVC, KNN, AdaBoost and logistic regression. Hard transform has 45×5 labels; soft transform has 45×15 probabilities. Printed scores are member scores, not a directly saved final.score() result."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/ensemble.html"
+    }
+  ]
+},
+{
+  "id": "outlier-detection",
+  "title": "Outliers: Flags, Scores & Investigation",
+  "categoryId": "clustering",
+  "status": "learned",
+  "summary": "Outlier detection identifies observations that look unusual under a chosen representation and rule.",
+  "what": "Outlier detection identifies observations that look unusual under a chosen representation and rule.",
+  "why": "Find rows worth investigating without assuming every unusual observation is a mistake.",
+  "intuition": "An unusually slow API request might be a failure or a legitimate report; the flag starts the investigation.",
+  "how": [
+    "Choose meaningful feature columns and units.",
+    "Decide whether normality means density, one ellipse, isolation, or relative local density.",
+    "Fit the rule on the appropriate reference data.",
+    "Separate continuous scores from thresholded labels.",
+    "Review flagged rows; retain legitimate rare cases and correct confirmed errors."
+  ],
+  "formula": {
+    "expression": "decision score = raw score − offset",
+    "parts": [
+      {
+        "term": "raw score",
+        "meaning": "model-specific ordering, not probability"
+      },
+      {
+        "term": "offset",
+        "meaning": "chosen or learned threshold"
+      },
+      {
+        "term": "decision score",
+        "meaning": "negative means outlier for IsolationForest and EllipticEnvelope"
+      }
+    ],
+    "example": "Isolation raw −0.645 minus offset −0.5 gives −0.145 → label −1."
+  },
+  "example": "The notebook moves through 500 synthetic rows, then 2,000 ellipse rows, back to 500 rows, then seven manual rows. A change of x changes the problem being fitted.",
+  "code": "model.fit(X)\nlabels = model.predict(X)  # IsolationForest / EllipticEnvelope\nflagged_rows = X[labels == -1]\n# Default LOF uses fit_predict(X); DBSCAN stores labels_.",
+  "confusions": [
+    "An anomaly flag is not a verified error and is not an accuracy measurement.",
+    "Generating-cloud labels are not anomaly ground truth.",
+    "DBSCAN label 1 is a cluster ID; detector label +1 means inlier.",
+    "Outlier detection examines a possibly contaminated collection; novelty detection evaluates new rows against a normal reference set.",
+    "Fit preprocessing only on training/reference rows when evaluating unseen data."
+  ],
+  "prerequisites": [
+    "ml-preprocessing",
+    "synthetic-datasets"
+  ],
+  "related": [
+    "dbscan-clustering",
+    "elliptic-envelope",
+    "isolation-forest",
+    "local-outlier-factor",
+    "numpy-api-health-project"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Outliers: Flags, Scores & Investigation at a glance",
+    "items": [
+      {
+        "label": "DBSCAN",
+        "detail": "Connected dense regions"
+      },
+      {
+        "label": "Ellipse",
+        "detail": "One robust covariance shape"
+      },
+      {
+        "label": "Isolation Forest",
+        "detail": "Short isolation paths"
+      },
+      {
+        "label": "LOF",
+        "detail": "Density relative to neighbors"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Find rows worth investigating without assuming every unusual observation is a mistake.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "Outlier detection identifies observations that look unusual under a chosen representation and rule.",
+    "core idea": "An unusually slow API request might be a failure or a legitimate report; the flag starts the investigation.",
+    "remember": "An anomaly flag is not a verified error and is not an accuracy measurement."
+  },
+  "keywords": [
+    "outlier",
+    "anomaly",
+    "inlier",
+    "novelty",
+    "contamination",
+    "score",
+    "mask"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/21_Outliers.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Connects DBSCAN, robust covariance, isolation trees, and local density through executed experiments and feature-selection comparisons.",
+      "highlights": [
+        "56 cells; 30 executed code cells",
+        "500-row DBSCAN / isolation / LOF data",
+        "2,000-row ellipse data",
+        "Seven-row LOF feature and neighbor experiment"
+      ]
+    }
+  ],
+  "datasetId": "clouds",
+  "lessonLab": "dbscan",
+  "comparison": {
+    "headers": [
+      "Method",
+      "Output",
+      "Main control",
+      "Watch for"
+    ],
+    "rows": [
+      [
+        "DBSCAN",
+        "Cluster IDs and −1 noise",
+        "eps, min_samples",
+        "Several populations with different densities"
+      ],
+      [
+        "Elliptic Envelope",
+        "+1 / −1 and robust-distance score",
+        "contamination",
+        "One ellipse may bridge unrelated clouds"
+      ],
+      [
+        "Isolation Forest",
+        "+1 / −1 and isolation score",
+        "trees, samples, contamination",
+        "An edge point can be valid"
+      ],
+      [
+        "LOF",
+        "+1 / −1 and local-density score",
+        "n_neighbors",
+        "Feature choice changes neighbors"
+      ]
+    ]
+  },
+  "quiz": [
+    {
+      "question": "An anomaly flag is not a verified error and is not an accuracy measurement. — explain why.",
+      "answer": "An unusually slow API request might be a failure or a legitimate report; the flag starts the investigation. The notebook moves through 500 synthetic rows, then 2,000 ellipse rows, back to 500 rows, then seven manual rows. A change of x changes the problem being fitted."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/outlier_detection.html"
+    }
+  ]
+},
+{
+  "id": "dbscan-clustering",
+  "title": "DBSCAN: Core, Border & Noise",
+  "categoryId": "clustering",
+  "status": "learned",
+  "summary": "DBSCAN grows clusters through connected core neighborhoods and labels unreachable observations as noise.",
+  "what": "DBSCAN grows clusters through connected core neighborhoods and labels unreachable observations as noise.",
+  "why": "Discover groups and noise without choosing a number of clusters in advance.",
+  "intuition": "Draw a radius around each dot: crowded neighborhoods connect; border dots join a core without extending the cluster.",
+  "how": [
+    "Count neighbors within eps, including the observation itself.",
+    "Mark a point core when this count reaches min_samples.",
+    "Connect reachable core points into clusters.",
+    "Attach nearby non-core points as border points.",
+    "Leave remaining rows as noise, label −1."
+  ],
+  "formula": {
+    "expression": "Nε(p) = {q : distance(p,q) ≤ ε}; core ⇔ |Nε(p)| ≥ min_samples",
+    "parts": [
+      {
+        "term": "ε",
+        "meaning": "neighborhood radius in feature-distance units"
+      },
+      {
+        "term": "p",
+        "meaning": "candidate row, included in its own neighborhood"
+      },
+      {
+        "term": "q",
+        "meaning": "another row"
+      },
+      {
+        "term": "|Nε(p)|",
+        "meaning": "number of rows inside the radius"
+      }
+    ],
+    "example": "At eps=0.3 and min_samples=10: 415 core + 60 border + 25 noise = 500 rows, in 3 clusters."
+  },
+  "example": "On the exact 500 rows, eps 0.15 / 0.3 / 0.6 gives 256 / 25 / 0 noise rows and 5 / 3 / 3 clusters. The points never move; the grouping rule changes.",
+  "code": "db = DBSCAN(eps=0.3, min_samples=10).fit(x)\ncore = np.zeros(len(x), dtype=bool)\ncore[db.core_sample_indices_] = True\nnoise = db.labels_ == -1\nborder = ~core & ~noise",
+  "confusions": [
+    "A non-core point is not automatically noise: it may be a border point.",
+    "Border points do not propagate a cluster through other border points.",
+    "Cluster IDs are arbitrary and need not match the generating labels.",
+    "eps is a distance, not a probability or cluster count.",
+    "Standard DBSCAN does not provide predict() for future rows."
+  ],
+  "prerequisites": [
+    "kmeans-clustering",
+    "ml-preprocessing"
+  ],
+  "related": [
+    "hierarchical-clustering",
+    "local-outlier-factor",
+    "outlier-detection"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "DBSCAN: Core, Border & Noise at a glance",
+    "items": [
+      {
+        "label": "Core",
+        "detail": "At least min_samples in radius, including self"
+      },
+      {
+        "label": "Border",
+        "detail": "Not core, but within a core radius"
+      },
+      {
+        "label": "Noise",
+        "detail": "Neither core nor border"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Discover groups and noise without choosing a number of clusters in advance.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "DBSCAN grows clusters through connected core neighborhoods and labels unreachable observations as noise.",
+    "core idea": "Draw a radius around each dot: crowded neighborhoods connect; border dots join a core without extending the cluster.",
+    "remember": "A non-core point is not automatically noise: it may be a border point."
+  },
+  "keywords": [
+    "DBSCAN",
+    "eps",
+    "min_samples",
+    "core_sample_indices_",
+    "labels_",
+    "core",
+    "border",
+    "noise"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/21_Outliers.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Connects DBSCAN, robust covariance, isolation trees, and local density through executed experiments and feature-selection comparisons.",
+      "highlights": [
+        "56 cells; 30 executed code cells",
+        "500-row DBSCAN / isolation / LOF data",
+        "2,000-row ellipse data",
+        "Seven-row LOF feature and neighbor experiment"
+      ]
+    }
+  ],
+  "datasetId": "clouds",
+  "lessonLab": "dbscan",
+  "plotCells": {
+    "21_Outliers.ipynb": [
+      6,
+      10,
+      11,
+      13,
+      38
+    ]
+  },
+  "parameters": [
+    [
+      "eps",
+      "0.15 / 0.3 / 0.6",
+      "Neighborhood grows as radius increases."
+    ],
+    [
+      "min_samples",
+      "10 in the 500-row experiment",
+      "Includes the row itself; higher count makes core status harder."
+    ],
+    [
+      "Feature scale",
+      "Same synthetic units here",
+      "Changing relative units changes distances and neighborhoods."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "A non-core point is not automatically noise: it may be a border point. — explain why.",
+      "answer": "Draw a radius around each dot: crowded neighborhoods connect; border dots join a core without extending the cluster. On the exact 500 rows, eps 0.15 / 0.3 / 0.6 gives 256 / 25 / 0 noise rows and 5 / 3 / 3 clusters. The points never move; the grouping rule changes."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/outlier_detection.html"
+    }
+  ]
+},
+{
+  "id": "elliptic-envelope",
+  "title": "Elliptic Envelope & Robust Distance",
+  "categoryId": "clustering",
+  "status": "learned",
+  "summary": "EllipticEnvelope learns a robust center and covariance, then flags rows outside a score threshold.",
+  "what": "EllipticEnvelope learns a robust center and covariance, then flags rows outside a score threshold.",
+  "why": "Account for correlated features and the direction in which a roughly Gaussian cloud naturally spreads.",
+  "intuition": "Wrap a tilted oval around one usual population; a point across its narrow axis is more unusual than the same raw distance along its long axis.",
+  "how": [
+    "Fit a robust center and covariance.",
+    "Measure each row using squared Mahalanobis distance.",
+    "Use contamination to set a training-score cutoff.",
+    "Draw the zero decision boundary.",
+    "Check whether one ellipse actually describes the population."
+  ],
+  "formula": {
+    "expression": "d²(x) = (x − μ)ᵀ Σ⁻¹ (x − μ)",
+    "parts": [
+      {
+        "term": "x",
+        "meaning": "feature row"
+      },
+      {
+        "term": "μ",
+        "meaning": "robust center"
+      },
+      {
+        "term": "Σ",
+        "meaning": "covariance matrix"
+      },
+      {
+        "term": "ᵀ",
+        "meaning": "transpose"
+      },
+      {
+        "term": "⁻¹",
+        "meaning": "matrix inverse, not an anomaly label"
+      }
+    ],
+    "example": "If μ=(0,0), covariance is diag(4,1), then x=(2,1) has d²=2²/4 + 1²/1 = 2."
+  },
+  "example": "The notebook fits two generated clouds: 2,000 rows, spread 0.9, seed 0. At contamination=0.1, 200 rows are flagged; the ellipse spans the gap between the clouds.",
+  "code": "ee = EllipticEnvelope(contamination=0.1, random_state=0)\nee.fit(x)\nlabels = ee.predict(x)\nscores = ee.decision_function(x)",
+  "confusions": [
+    "One ellipse assumes one roughly Gaussian population; two separated clouds challenge that assumption.",
+    "10% contamination is a cutoff setting, not proof that 10% of requests are bad.",
+    "The website adds random_state=0 to make this originally unseeded fit reproducible."
+  ],
+  "prerequisites": [
+    "numpy-math-linear-algebra",
+    "outlier-detection"
+  ],
+  "related": [
+    "local-outlier-factor",
+    "isolation-forest"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Elliptic Envelope & Robust Distance at a glance",
+    "items": [
+      {
+        "label": "Center",
+        "detail": "Typical location"
+      },
+      {
+        "label": "Covariance",
+        "detail": "Stretch and tilt"
+      },
+      {
+        "label": "Threshold",
+        "detail": "How far outside is flagged"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Account for correlated features and the direction in which a roughly Gaussian cloud naturally spreads.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "EllipticEnvelope learns a robust center and covariance, then flags rows outside a score threshold.",
+    "core idea": "Wrap a tilted oval around one usual population; a point across its narrow axis is more unusual than the same raw distance along its long axis.",
+    "remember": "One ellipse assumes one roughly Gaussian population; two separated clouds challenge that assumption."
+  },
+  "keywords": [
+    "EllipticEnvelope",
+    "Mahalanobis",
+    "covariance",
+    "contamination",
+    "decision_function"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/21_Outliers.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Connects DBSCAN, robust covariance, isolation trees, and local density through executed experiments and feature-selection comparisons.",
+      "highlights": [
+        "56 cells; 30 executed code cells",
+        "500-row DBSCAN / isolation / LOF data",
+        "2,000-row ellipse data",
+        "Seven-row LOF feature and neighbor experiment"
+      ]
+    }
+  ],
+  "datasetId": "ellipse",
+  "lessonLab": "ellipse",
+  "plotCells": {
+    "21_Outliers.ipynb": [
+      17,
+      21,
+      23
+    ]
+  },
+  "parameters": [
+    [
+      "contamination",
+      "0.1",
+      "Expected outlier fraction used to set the threshold."
+    ],
+    [
+      "random_state",
+      "0 for website replay",
+      "Added seed; original notebook fit has no seed."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "One ellipse assumes one roughly Gaussian population — explain why.",
+      "answer": "Wrap a tilted oval around one usual population; a point across its narrow axis is more unusual than the same raw distance along its long axis. The notebook fits two generated clouds: 2,000 rows, spread 0.9, seed 0. At contamination=0.1, 200 rows are flagged; the ellipse spans the gap between the clouds."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/outlier_detection.html"
+    }
+  ]
+},
+{
+  "id": "isolation-forest",
+  "title": "Isolation Forest & Score Direction",
+  "categoryId": "clustering",
+  "status": "learned",
+  "summary": "Isolation Forest uses random feature/value cuts and flags rows with unusually short average isolation paths.",
+  "what": "Isolation Forest uses random feature/value cuts and flags rows with unusually short average isolation paths.",
+  "why": "Detect isolated observations without fitting target labels or forcing normality into one ellipse.",
+  "intuition": "A lonely point is often separated in a few random cuts; a point in a crowd usually needs more.",
+  "how": [
+    "Sample rows for each isolation tree.",
+    "Choose a random feature and split value at each node.",
+    "Measure path lengths, including remaining-length adjustment at non-singleton leaves.",
+    "Average paths and normalize by per-tree sample size.",
+    "Convert scores to labels using the offset."
+  ],
+  "formula": {
+    "expression": "s(x,m) = 2^(−E[h(x)] / c(m))",
+    "parts": [
+      {
+        "term": "E[h(x)]",
+        "meaning": "mean adjusted isolation path length"
+      },
+      {
+        "term": "m",
+        "meaning": "number of sampled rows per tree"
+      },
+      {
+        "term": "c(m)",
+        "meaning": "reference expected path length"
+      },
+      {
+        "term": "s",
+        "meaning": "original anomaly score; higher means more unusual"
+      }
+    ],
+    "example": "If mean path=3 and reference length=6, original score≈0.707; mean path=9 gives≈0.354."
+  },
+  "example": "The seeded score experiment records row 442: raw −0.645, decision −0.145, label −1; row 415: −0.470, +0.030, +1; row 181: −0.425, +0.075, +1.",
+  "code": "iso = IsolationForest(random_state=0).fit(x)\nraw = iso.score_samples(x)\ndecision = raw - iso.offset_\nlabels = iso.predict(x)",
+  "confusions": [
+    "Higher original anomaly score means unusual, but lower sklearn score_samples means unusual.",
+    "With auto contamination, offset=−0.5; use decision<0 for labels, not raw>+0.5.",
+    "RandomForestClassifier is supervised; IsolationForest never receives y.",
+    "Random cuts are axis-aligned, not diagonal lines.",
+    "More trees stabilize the estimate; they do not make flags ground truth."
+  ],
+  "prerequisites": [
+    "random-forest",
+    "outlier-detection"
+  ],
+  "related": [
+    "elliptic-envelope",
+    "local-outlier-factor",
+    "dbscan-clustering"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Isolation Forest & Score Direction at a glance",
+    "items": [
+      {
+        "label": "Short paths",
+        "detail": "Larger original anomaly score"
+      },
+      {
+        "label": "Raw sklearn score",
+        "detail": "Opposite sign"
+      },
+      {
+        "label": "Decision score",
+        "detail": "raw − offset; negative → flag"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Detect isolated observations without fitting target labels or forcing normality into one ellipse.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "Isolation Forest uses random feature/value cuts and flags rows with unusually short average isolation paths.",
+    "core idea": "A lonely point is often separated in a few random cuts; a point in a crowd usually needs more.",
+    "remember": "Higher original anomaly score means unusual, but lower sklearn score_samples means unusual."
+  },
+  "keywords": [
+    "IsolationForest",
+    "path length",
+    "score_samples",
+    "offset_",
+    "decision_function",
+    "max_samples"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/21_Outliers.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Connects DBSCAN, robust covariance, isolation trees, and local density through executed experiments and feature-selection comparisons.",
+      "highlights": [
+        "56 cells; 30 executed code cells",
+        "500-row DBSCAN / isolation / LOF data",
+        "2,000-row ellipse data",
+        "Seven-row LOF feature and neighbor experiment"
+      ]
+    }
+  ],
+  "datasetId": "clouds",
+  "lessonLab": "isolation",
+  "plotCells": {
+    "21_Outliers.ipynb": [
+      31,
+      33
+    ]
+  },
+  "parameters": [
+    [
+      "n_estimators",
+      "100",
+      "Number of random isolation trees."
+    ],
+    [
+      "max_samples",
+      "auto: up to 256 rows/tree",
+      "Reference sample size affects paths."
+    ],
+    [
+      "contamination",
+      "auto in the notebook",
+      "Auto offset is −0.5; numeric fractions choose a score cutoff."
+    ],
+    [
+      "random_state",
+      "0 in the teaching experiment",
+      "Original first fit is unseeded."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "Higher original anomaly score means unusual, but lower sklearn score_samples means unusual. — explain why.",
+      "answer": "A lonely point is often separated in a few random cuts; a point in a crowd usually needs more. The seeded score experiment records row 442: raw −0.645, decision −0.145, label −1; row 415: −0.470, +0.030, +1; row 181: −0.425, +0.075, +1."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/outlier_detection.html"
+    }
+  ]
+},
+{
+  "id": "local-outlier-factor",
+  "title": "Local Outlier Factor & Feature Choice",
+  "categoryId": "clustering",
+  "status": "learned",
+  "summary": "LOF compares a row’s local reachability density with the densities of its nearest neighbors.",
+  "what": "LOF compares a row’s local reachability density with the densities of its nearest neighbors.",
+  "why": "Notice a point that is sparse relative to its neighbors, even when different normal groups have different densities.",
+  "intuition": "Ask whether this request has much more breathing room than its neighbors do.",
+  "how": [
+    "Choose the feature columns before computing distances.",
+    "Find k nearest neighbors, excluding the candidate itself.",
+    "Smooth distances with reach_dist(p,o)=max(k-distance(o),d(p,o)).",
+    "Take inverse mean reachability distance to obtain local reachability density (LRD).",
+    "Divide mean neighbor LRD by the candidate LRD; compare the score with the cutoff."
+  ],
+  "formula": {
+    "expression": "LOFₖ(p) = meanₒ∈Nₖ(p)(LRDₖ(o)) / LRDₖ(p)",
+    "parts": [
+      {
+        "term": "p",
+        "meaning": "candidate observation"
+      },
+      {
+        "term": "Nₖ(p)",
+        "meaning": "its k nearest neighbors, excluding itself"
+      },
+      {
+        "term": "LRD",
+        "meaning": "inverse mean reachability distance"
+      },
+      {
+        "term": "k",
+        "meaning": "neighbor count"
+      }
+    ],
+    "example": "Candidate density 0.5 and neighbor densities 2, 2.5, 3 give LOF=2.5/0.5=5. Equal densities give LOF=1."
+  },
+  "example": "On A–G, k=3 flags F and G. With feature 1 only, scores are 3.611 and 4.400; with both features, 3.316 and 4.139. With both features and k=6, no rows are flagged.",
+  "code": "X = x[:, [0]]  # one feature, shape (7, 1)\nlof = LocalOutlierFactor(n_neighbors=3)\nlabels = lof.fit_predict(X)\npositive_lof = -lof.negative_outlier_factor_\n# Compare with fit_predict(x) to use both columns.",
+  "confusions": [
+    "A two-dimensional plot can display labels learned using only one feature.",
+    "reshape(-1,1) does not restore a discarded second column.",
+    "DBSCAN counts self in min_samples; LOF neighbors exclude self.",
+    "Stored negative_outlier_factor_ reverses the theoretical positive LOF direction.",
+    "Default LOF fits and labels training rows; novelty=True is a separate future-row workflow.",
+    "Tied neighbor distances can affect which equal-distance neighbors are selected."
+  ],
+  "prerequisites": [
+    "numpy-array-anatomy",
+    "ml-preprocessing",
+    "outlier-detection"
+  ],
+  "related": [
+    "dbscan-clustering",
+    "isolation-forest"
+  ],
+  "visual": {
+    "type": "comparison",
+    "title": "Local Outlier Factor & Feature Choice at a glance",
+    "items": [
+      {
+        "label": "LOF near 1",
+        "detail": "Similar density to neighbors"
+      },
+      {
+        "label": "Large positive LOF",
+        "detail": "Candidate is much less dense"
+      },
+      {
+        "label": "k=6 on seven rows",
+        "detail": "Everyone else is a neighbor"
+      }
+    ]
+  },
+  "revision": {
+    "purpose": "Notice a point that is sparse relative to its neighbors, even when different normal groups have different densities.",
+    "input": "Feature rows X; targets y only for supervised models",
+    "output": "LOF compares a row’s local reachability density with the densities of its nearest neighbors.",
+    "core idea": "Ask whether this request has much more breathing room than its neighbors do.",
+    "remember": "A two-dimensional plot can display labels learned using only one feature."
+  },
+  "keywords": [
+    "LocalOutlierFactor",
+    "LOF",
+    "n_neighbors",
+    "negative_outlier_factor_",
+    "reachability",
+    "LRD",
+    "reshape",
+    "feature selection"
+  ],
+  "lastUpdated": "2026-09-05",
+  "sources": [
+    {
+      "path": "02_data_toolkit_apps/08_sklearn/21_Outliers.ipynb",
+      "type": "notebook",
+      "role": "theory + executed code + experiment + visualization",
+      "purpose": "Connects DBSCAN, robust covariance, isolation trees, and local density through executed experiments and feature-selection comparisons.",
+      "highlights": [
+        "56 cells; 30 executed code cells",
+        "500-row DBSCAN / isolation / LOF data",
+        "2,000-row ellipse data",
+        "Seven-row LOF feature and neighbor experiment"
+      ]
+    }
+  ],
+  "datasetId": "lof",
+  "lessonLab": "lof",
+  "plotCells": {
+    "21_Outliers.ipynb": [
+      44,
+      47,
+      50,
+      52
+    ]
+  },
+  "parameters": [
+    [
+      "n_neighbors",
+      "2 / 3 / 6",
+      "Changes the comparison neighborhood."
+    ],
+    [
+      "Selected columns",
+      "Feature 1 / both",
+      "Changes distances even if the chart looks the same."
+    ],
+    [
+      "contamination",
+      "auto",
+      "Notebook uses negative cutoff −1.5, equivalent to positive LOF >1.5."
+    ]
+  ],
+  "quiz": [
+    {
+      "question": "A two-dimensional plot can display labels learned using only one feature. — explain why.",
+      "answer": "Ask whether this request has much more breathing room than its neighbors do. On A–G, k=3 flags F and G. With feature 1 only, scores are 3.611 and 4.400; with both features, 3.316 and 4.139. With both features and k=6, no rows are flagged."
+    }
+  ],
+  "references": [
+    {
+      "title": "Official scikit-learn explanation",
+      "url": "https://scikit-learn.org/stable/modules/outlier_detection.html"
+    }
+  ]
+}
   ]
 };
