@@ -32,11 +32,43 @@ software engineering when the comparison is useful.
 Teach in this order:
 
 ```text
-Concept -> Why -> Simple Example -> Visual -> Code -> Practical Use -> Takeaway
+Story -> Concept -> Why -> Simple Example -> Visual -> Code -> Practical Use -> Takeaway
 ```
 
 Teach one logical concept at a time. Start with intuition. Add mathematics or
 implementation detail only when it helps the current lesson.
+
+### Always open with a story
+
+Every topic README and every teaching notebook starts with a short story about a
+named person with a real problem, never with a definition or a description of
+the data. The shape is:
+
+```text
+<Name> wanted to do X
+  -> they tried the obvious thing
+  -> it failed, and here is exactly why it failed
+  -> so the solution is this
+```
+
+Only after that failure is clear do you introduce the concept, the maths, or the
+code. The story is not decoration. It is what makes the reader feel the problem
+the algorithm was invented to solve. A notebook that opens with "we have fifteen
+observations on a number line" has already lost the reader.
+
+Keep the same character and the same scenario running through the whole notebook,
+including the figure titles and axis labels, so the ending pays off the opening.
+
+### Handwritten notes are reference only
+
+When the learner shares photos of their handwritten notes, read them and say so.
+Use them to decide **what to draw and how to draw it** — reproduce their sketches
+as real rendered figures, matching their own labels.
+
+Do not mention the notes inside the document. No "page 1 of my notes", no "the
+notes say", no corrections to what is written on the page. Those observations
+belong in the chat reply, not in the notebook. The notebook must read as a
+standalone lesson to someone who has never seen the notes.
 
 ## Preserve the learner's code
 
