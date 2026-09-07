@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Categorical Encoding — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Categorical Encoding</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#one-hot-encoding">One-Hot Encoding</a><a href="#when-to-use-one-hot-encoding">When to Use One-Hot Encoding</a><a href="#label-encoding">Label Encoding</a><a href="#same-technique-real-data">Same Technique, Real Data</a><a href="#label-encoding-vs-one-hot-encoding">Label Encoding vs. One-Hot Encoding</a><a href="#when-and-why-to-use-label-encoding">When (and Why) to Use Label Encoding</a><a href="#ordinal-encoding">Ordinal Encoding</a><a href="#real-data-two-columns-two-different-situations">Real Data — Two Columns, Two Different Situations</a><a href="#label-encoding-vs-one-hot-encoding-vs-ordinal-en">Label Encoding vs. One-Hot Encoding vs. Ordinal Enco</a><a href="#when-and-why-to-use-ordinal-encoding">When (and Why) to Use Ordinal Encoding</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Categorical Encoding</h1>
+  <p class="lede">Models only do arithmetic. Words have to become numbers without inventing an order.</p>
+  <div class="tags"><span class="tag">3 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Kiran had a City column: Delhi, Mumbai, Chennai.</strong> The model refused text, so he numbered them 1, 2, 3 and moved on.</p><p>The model then did what models do — arithmetic. It concluded Chennai (3) was <em>three times</em> Delhi (1), and that the average of Delhi and Chennai was Mumbai.</p><p><span class='beat'>None of that is true. He had invented an order that does not exist.</span></p><p>One-hot encoding fixes it by giving each city its own yes/no column, so no city outranks another. Ordinal encoding is only correct when the order is genuine — Small &lt; Medium &lt; Large.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>One-hot when categories are unordered; ordinal only when the order is real.</p></div>
+<div class="src-head">📓 <a href="../Concept/09_one_hot_encoding.ipynb">09_one_hot_encoding.ipynb</a></div>
+<h2 id="one-hot-encoding">One-Hot Encoding</h2>
+<p>Most ML algorithms only understand numbers. Columns like <code>Gender</code> (<code>Male</code>/<code>Female</code>) or <code>Married</code> (<code>Yes</code>/<code>No</code>) are <strong>categorical</strong> — text labels with no numeric meaning. Before we can feed them to a model, we need to turn them into numbers <em>without inventing a false ordering</em> (e.g. <code>Male=0, Female=1</code> would wrongly imply <code>Female &gt; Male</code>).</p>
+<p><strong>One-hot encoding</strong> solves this by turning each category into its own binary (0/1) column instead of a single numeric column. This notebook works through it two ways on the <code>../../_shared_data/loans.csv</code> dataset:</p>
+<ol>
+<li><code>pandas.get_dummies()</code> — quick, good for exploration.</li>
+<li><code>sklearn.preprocessing.OneHotEncoder</code> — the version you actually want in a real ML pipeline (fit on train, reuse on test/production).</li>
+</ol>
+<p>Along the way we also cover why missing values need to be handled first, the &quot;dummy variable trap,&quot; and when to reach for one-hot encoding vs. its alternatives.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<p>Just pandas — everything below (<code>read_csv</code>, <code>isnull</code>, <code>fillna</code>, <code>get_dummies</code>) is a DataFrame/Series method.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y  
+3             1.0     Semiurban           Y  
+4             0.0         Urban           N</pre></div>
+<p><code>read_csv</code> loads <code>../../_shared_data/loans.csv</code> into a DataFrame; <code>head()</code> prints the first 5 rows so we can eyeball the columns before doing anything else.</p>
+<p>Scanning the output, the columns split into two groups:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Type</th>
+  <th>Columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Categorical (text labels)</td>
+  <td><code>Gender</code>, <code>Married</code>, <code>Dependents</code>, <code>Education</code>, <code>Self_Employed</code>, <code>Property_Area</code>, <code>Loan_Status</code></td>
+</tr>
+<tr>
+  <td>Numeric</td>
+  <td><code>ApplicantIncome</code>, <code>CoapplicantIncome</code>, <code>LoanAmount</code>, <code>Loan_Amount_Term</code>, <code>Credit_History</code></td>
+</tr>
+</tbody>
+</table>
+<p>This notebook focuses on encoding <code>Gender</code> and <code>Married</code> — the same technique applies to the rest.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<p><code>isnull()</code> turns every cell into <code>True</code>/<code>False</code> (missing or not), and <code>.sum()</code> adds those booleans column-wise (<code>True</code> counts as 1) — a one-liner for &quot;how many NaNs per column.&quot;</p>
+<p>This has to happen <strong>before</strong> encoding, not after, because both encoders choke on <code>NaN</code> in different ways:</p>
+<ul>
+<li><code>pd.get_dummies()</code> will silently drop <code>NaN</code> rows into <em>no</em> category (all encoded columns become 0) unless you pass <code>dummy_na=True</code> — easy to miss.</li>
+<li><code>sklearn.OneHotEncoder</code> raises an error on <code>NaN</code> by default (unless you set <code>handle_unknown</code>/<code>encoded_missing_value</code>).</li>
+</ul>
+<p>So: impute first, encode second.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset[&quot;Gender&quot;] = dataset[&quot;Gender&quot;].fillna(dataset[&quot;Gender&quot;].mode()[0])</pre></div>
+<p><code>.mode()[0]</code> is the most frequent value in the column — the standard way to impute a <strong>categorical</strong> column (compare: numeric columns are usually filled with <code>.median()</code> or <code>.mean()</code>).</p>
+<p>Note the fix from the copy-on-write gotcha we hit earlier: <code>dataset[&quot;Gender&quot;].fillna(value, inplace=True)</code> mutates a throwaway copy of the column and silently does nothing to <code>dataset</code>. Reassigning — <code>dataset[&quot;Gender&quot;] = dataset[&quot;Gender&quot;].fillna(value)</code> — writes the result back into the real DataFrame.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender                0
+Married               0
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<p><code>Gender</code> now reads <code>0</code>. (This particular output also shows <code>Married</code> at <code>0</code> — that's a leftover from an earlier out-of-order run, not a real effect of the <code>Gender</code> fillna. If you <code>Restart &amp; Run All</code> top-to-bottom, <code>Married</code> will still show its original missing count here, since its own <code>fillna</code> cell hasn't executed yet at this point in the notebook — worth remembering when a notebook's outputs stop matching its cell order.)</p>
+<p>The remaining columns are left untouched — out of scope here since we're only encoding <code>Gender</code> and <code>Married</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">dataset[&quot;Married&quot;] = dataset[&quot;Married&quot;].fillna(dataset[&quot;Married&quot;].mode()[0])</pre></div>
+<p>Same pattern as <code>Gender</code> — mode imputation, reassigned rather than <code>inplace=True</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">en_data = dataset[[&quot;Gender&quot;,&quot;Married&quot;]]
+en_data</pre></div>
+<div class="out"><div class="h">Output</div><pre>     Gender Married
+0      Male     Yes
+1      Male     Yes
+2    Female      No
+3      Male     Yes
+4      Male      No
+..      ...     ...
+613  Female     Yes
+614    Male     Yes
+615    Male      No
+616    Male     Yes
+617    Male     Yes
+
+[618 rows x 2 columns]</pre></div>
+<p>Pulling out just the two columns we're going to encode. Both are <strong>nominal</strong> categorical variables — categories with no inherent order (<code>Male</code> isn't &quot;more&quot; or &quot;less&quot; than <code>Female</code>). That distinction matters:</p>
+<ul>
+<li><strong>Nominal</strong> (<code>Gender</code>, <code>Married</code>, <code>Property_Area</code>, ...) → one-hot encode.</li>
+<li><strong>Ordinal</strong> (e.g. an education level <code>High School &lt; Bachelors &lt; Masters</code>) → encode as ordered integers instead (<code>OrdinalEncoder</code>), so the model can actually use the ordering. One-hotting an ordinal column throws away information the model could have used.</li>
+</ul>
+<p><code>Dependents</code>, <code>Education</code>, <code>Property_Area</code>, and <code>Loan_Status</code> are also categorical in this dataset and would follow the exact same recipe — left out here just to keep the example focused.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">import matplotlib.pyplot as plt
+import seaborn as sns
+
+fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+sns.countplot(x=&quot;Gender&quot;, data=en_data, hue=&quot;Gender&quot;, legend=False, palette=&quot;Blues&quot;, ax=axes[0])
+axes[0].set_title(&quot;Gender distribution&quot;)
+sns.countplot(x=&quot;Married&quot;, data=en_data, hue=&quot;Married&quot;, legend=False, palette=&quot;Blues&quot;, ax=axes[1])
+axes[1].set_title(&quot;Married distribution&quot;)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/09-one-hot-encoding-c15-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">pd.get_dummies(en_data)</pre></div>
+<div class="out"><div class="h">Output</div><pre>     Gender_Female  Gender_Male  Married_No  Married_Yes
+0            False         True       False         True
+1            False         True       False         True
+2             True        False        True        False
+3            False         True       False         True
+4            False         True        True        False
+..             ...          ...         ...          ...
+613           True        False       False         True
+614          False         True       False         True
+615          False         True        True        False
+616          False         True       False         True
+617          False         True       False         True
+
+[618 rows x 4 columns]</pre></div>
+<p><code>pd.get_dummies()</code> looks at every unique value in each column and creates one binary column per value:</p>
+<ul>
+<li><code>Gender</code> (2 unique values) → <code>Gender_Female</code>, <code>Gender_Male</code></li>
+<li><code>Married</code> (2 unique values) → <code>Married_No</code>, <code>Married_Yes</code></li>
+</ul>
+<p>Each row gets exactly one <code>True</code> per original column — that single &quot;hot&quot; (on) bit among otherwise-zero columns is where the name comes from.</p>
+<p><strong>Watch this:</strong> <code>Gender_Female</code> and <code>Gender_Male</code> are perfect opposites — if you know one, you automatically know the other (<code>Male = NOT Female</code>). Keeping both is redundant and, for linear models, actively harmful (it's called the <strong>dummy variable trap</strong> — more on this further down, where <code>drop=&quot;first&quot;</code> fixes it).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">sample = pd.get_dummies(en_data).head(15).astype(int)
+
+plt.figure(figsize=(5, 6))
+sns.heatmap(sample, annot=True, cmap=&quot;Blues&quot;, cbar=False, linewidths=0.5, linecolor=&quot;white&quot;)
+plt.title(&quot;One-Hot Encoding — first 15 rows&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/09-one-hot-encoding-c18-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">pd.get_dummies(en_data).info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 618 entries, 0 to 617
+Data columns (total 4 columns):
+ #   Column         Non-Null Count  Dtype
+---  ------         --------------  -----
+ 0   Gender_Female  618 non-null    bool 
+ 1   Gender_Male    618 non-null    bool 
+ 2   Married_No     618 non-null    bool 
+ 3   Married_Yes    618 non-null    bool 
+dtypes: bool(4)
+memory usage: 2.5 KB</pre></div>
+<p>The encoded columns are <code>bool</code>, not <code>int</code> — <code>True</code>/<code>False</code> instead of <code>1</code>/<code>0</code>. That's a memory optimization (1 byte per bool vs. 8 bytes for a default <code>int64</code>); 618 rows × 4 columns fits in 2.5 KB. Most ML libraries treat <code>True</code>/<code>False</code> as <code>1</code>/<code>0</code> automatically, but if something insists on numeric dtype, <code>.astype(int)</code> converts them explicitly.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">from sklearn.preprocessing import OneHotEncoder</pre></div>
+<p>Why a second way to do the same thing? <code>pd.get_dummies()</code> is convenient for a one-off notebook, but it doesn't <em>remember</em> what it did — it just looks at whatever data you hand it <em>right now</em> and creates columns for whatever categories happen to be present. Two problems that causes in real ML work:</p>
+<ul>
+<li>If your test/production data has a category that never showed up in training, <code>get_dummies()</code> won't create a column for it, and your train/test column counts will mismatch.</li>
+<li>If a category is missing from a later batch, you lose a column that your trained model still expects.</li>
+</ul>
+<p><code>OneHotEncoder</code> fixes this with the same <strong>fit / transform</strong> contract every sklearn transformer follows: <code>fit()</code> learns the fixed set of categories once (like compiling a schema), and <code>transform()</code> applies <em>that exact schema</em> to any new data afterward — erroring or ignoring cleanly on anything unseen, depending on <code>handle_unknown</code>. That's what makes it safe to drop into a <code>Pipeline</code>/<code>ColumnTransformer</code> and reuse between training and inference.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">ohe = OneHotEncoder()
+ohe.fit_transform(en_data)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Compressed Sparse Row sparse matrix of dtype &#x27;float64&#x27;
+	with 1236 stored elements and shape (618, 4)&gt;</pre></div>
+<p>Notice the return type: not an array, not a DataFrame — a <strong>sparse matrix</strong> (<code>Compressed Sparse Row</code>, or CSR). One-hot encoded data is mostly zeros (only one column per category-group is ever &quot;hot&quot;), so instead of storing every zero, sklearn stores just the non-zero coordinates and values.</p>
+<p><code>1236 stored elements, shape (618, 4)</code>: 618 rows × 2 encoded groups (<code>Gender</code>, <code>Married</code>) × 1 active flag per group = 1236 ones. A dense array here would allocate 618 × 4 = 2472 cells — noticeably more, and the savings scale up fast with higher-cardinality columns (e.g. one-hotting a <code>zip_code</code> column with 40,000 unique values would be nearly all zeros).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">ohe.fit_transform(en_data).toarray()</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[0., 1., 0., 1.],
+       [0., 1., 0., 1.],
+       [1., 0., 1., 0.],
+       ...,
+       [0., 1., 1., 0.],
+       [0., 1., 0., 1.],
+       [0., 1., 0., 1.]], shape=(618, 4))</pre></div>
+<p><code>.toarray()</code> expands the sparse matrix back into a regular dense NumPy array — every implicit zero gets written out. Fine for peeking at the data here; in a real pipeline you'd generally leave it sparse (or construct with <code>OneHotEncoder(sparse_output=False)</code> if you specifically need dense) since most sklearn estimators accept sparse input directly and there's no reason to pay the memory cost.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">ar = ohe.fit_transform(en_data).toarray()
+pd.DataFrame(ar, columns=[&quot;Gender_Female&quot;,&quot;Gender_Male&quot;,&quot;Married_No&quot;,&quot;Married_Yes&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>     Gender_Female  Gender_Male  Married_No  Married_Yes
+0              0.0          1.0         0.0          1.0
+1              0.0          1.0         0.0          1.0
+2              1.0          0.0         1.0          0.0
+3              0.0          1.0         0.0          1.0
+4              0.0          1.0         1.0          0.0
+..             ...          ...         ...          ...
+613            1.0          0.0         0.0          1.0
+614            0.0          1.0         0.0          1.0
+615            0.0          1.0         1.0          0.0
+616            0.0          1.0         0.0          1.0
+617            0.0          1.0         0.0          1.0
+
+[618 rows x 4 columns]</pre></div>
+<p>Column names are hardcoded by hand here — fragile, since it depends on knowing the exact category order sklearn picked. The robust way to get them is <code>ohe.get_feature_names_out([&quot;Gender&quot;, &quot;Married&quot;])</code>, which returns the real column names sklearn assigned, in the right order, straight from the fitted encoder.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">ohe = OneHotEncoder(drop=&quot;first&quot;)
+ohe.fit_transform(en_data)
+ohe.fit_transform(en_data).toarray()</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[1., 1.],
+       [1., 1.],
+       [0., 0.],
+       ...,
+       [1., 0.],
+       [1., 1.],
+       [1., 1.]], shape=(618, 2))</pre></div>
+<p>This is the dummy-variable-trap fix mentioned earlier. <code>drop=&quot;first&quot;</code> drops one category per original column instead of keeping all of them:</p>
+<ul>
+<li><code>Gender</code> (<code>Female</code>, <code>Male</code>) → drops <code>Female</code> alphabetically, keeps only <code>Gender_Male</code>. <code>0</code> now <em>means</em> <code>Female</code>.</li>
+<li><code>Married</code> (<code>No</code>, <code>Yes</code>) → drops <code>No</code>, keeps only <code>Married_Yes</code>. <code>0</code> now means <code>No</code>.</li>
+</ul>
+<p><strong>Why it matters:</strong> with <em>all</em> categories kept, the columns are perfectly collinear (<code>Gender_Female = 1 − Gender_Male</code>), which makes the design matrix rank-deficient for linear/logistic regression — the math for inverting it breaks down, and coefficient estimates become unstable. Dropping one category per group removes the redundancy without losing information: the dropped category is still fully represented, just implicitly, as &quot;all other flags in this group are 0.&quot;</p>
+<p>Tree-based models (decision trees, random forests, XGBoost) don't do this matrix inversion, so they're unaffected by the trap — you can leave <code>drop=&quot;first&quot;</code> off for them if you'd rather keep the encoding symmetric.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">ar = ohe.fit_transform(en_data).toarray()
+pd.DataFrame(ar, columns=[&quot;Gender_Male&quot;,&quot;Married_Yes&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>     Gender_Male  Married_Yes
+0            1.0          1.0
+1            1.0          1.0
+2            0.0          0.0
+3            1.0          1.0
+4            1.0          0.0
+..           ...          ...
+613          0.0          1.0
+614          1.0          1.0
+615          1.0          0.0
+616          1.0          1.0
+617          1.0          1.0
+
+[618 rows x 2 columns]</pre></div>
+<p>That's the full round trip: raw text categories → missing values imputed → one-hot encoded → collinearity-safe encoding via <code>drop=&quot;first&quot;</code>. Summary of when to reach for this below.</p>
+
+<h2 id="when-to-use-one-hot-encoding">When to Use One-Hot Encoding</h2>
+<p><strong>Use it when:</strong></p>
+<ul>
+<li>The categorical variable is <strong>nominal</strong> (no order) — <code>Gender</code>, <code>Married</code>, <code>Property_Area</code>, <code>Color</code>, <code>Country</code>, etc.</li>
+<li>The model is <strong>distance- or weight-based</strong> and would otherwise misread integer-coded categories as having magnitude/order: linear &amp; logistic regression, SVM, KNN, k-means, and neural networks all fall into this bucket. Feeding <code>Property_Area = {Rural: 0, Semiurban: 1, Urban: 2}</code> into linear regression tells the model <code>Urban</code> is &quot;twice&quot; <code>Semiurban</code> — nonsense for an unordered category. One-hot avoids that entirely.</li>
+</ul>
+<p><strong>Think twice when:</strong></p>
+<ul>
+<li><strong>The category is ordinal.</strong> An education level with a real ranking should use <code>OrdinalEncoder</code> (or a manual integer map) instead — one-hot throws away the order information the model could use.</li>
+<li><strong>Cardinality is high</strong> (dozens/hundreds/thousands of unique values — think <code>zip_code</code>, <code>user_id</code>, <code>product_sku</code>). One-hot then explodes column count, which:<ul>
+<li>blows up memory/compute (mitigated somewhat by sparse matrices, as seen above, but still)</li>
+<li>creates a lot of very sparse, low-signal columns that hurt models prone to overfitting</li>
+<li>Alternatives: <strong>target/mean encoding</strong>, <strong>frequency encoding</strong>, the <strong>hashing trick</strong>, or learned <strong>embeddings</strong> (common in deep learning / recommendation systems).</li>
+</ul>
+</li>
+<li><strong>Tree-based models with many categories.</strong> Random forests / gradient boosting <em>can</em> consume one-hot columns, but they often perform just as well or better with plain integer-encoded categories (or native categorical support, e.g. <code>HistGradientBoostingClassifier</code>, LightGBM, CatBoost) — trees split on thresholds, so they don't assume distance between codes the way linear models do.</li>
+</ul>
+<p><strong>Implementation notes:</strong></p>
+<ul>
+<li><code>pd.get_dummies()</code> — fast for one-off EDA in a notebook; not schema-stable across separate train/test calls.</li>
+<li><code>sklearn.OneHotEncoder</code> — the one to use in an actual pipeline: <code>fit</code> on train, <code>transform</code> on test/production so both see identical columns; set <code>handle_unknown=&quot;ignore&quot;</code> to avoid blowing up on a category the model has never seen in production; combine with <code>ColumnTransformer</code> to encode some columns while leaving numeric ones alone.</li>
+<li>Use <code>drop=&quot;first&quot;</code> (or <code>drop=&quot;if_binary&quot;</code>) for linear/logistic regression to sidestep the dummy variable trap; leave it off for tree-based models or when you specifically want every category explicitly represented.</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/10_Label_Encoding.ipynb">10_Label_Encoding.ipynb</a></div>
+<h2 id="label-encoding">Label Encoding</h2>
+<p>The other half of Categorical Encoding from <code>03_Types_Of_Variables.MD</code>'s ordinal/nominal split — <code>09_one_hot_encoding.ipynb</code> handled the <strong>nominal</strong> side (<code>Gender</code>, <code>Married</code>); this notebook handles turning categories into a <em>single</em> numeric column, and asks when that's actually a safe thing to do.</p>
+<p><strong>Label encoding</strong> assigns each unique category one integer code (<code>Rural → 0, Semiurban → 1, Urban → 2</code>) instead of one-hot's &quot;one binary column per category.&quot; That's more compact, but it <em>implicitly claims an order</em> — fine when the order is real (ordinal data), risky when it isn't (nominal data fed to a distance/weight-based model).</p>
+<p>This notebook covers, in order:</p>
+<ol>
+<li>The mechanics on a toy example — <code>fit_transform()</code> first, then the exact same result broken into separate <code>fit()</code> and <code>transform()</code> calls.</li>
+<li>The same technique on real data — <code>../../_shared_data/loans.csv</code>'s <code>Property_Area</code> column.</li>
+<li>Label Encoding vs. One-Hot Encoding, side by side.</li>
+<li>When (and why) to reach for Label Encoding instead of One-Hot.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<p>Just pandas for now — <code>LabelEncoder</code> comes from scikit-learn, imported once we need it below.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">df = pd.DataFrame({&quot;name&quot;:[&quot;Kali&quot;,&quot;Cow&quot;,&quot;Cat&quot;,&quot;dog&quot;,&quot;black&quot;]})
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>    name
+0   Kali
+1    Cow
+2    Cat
+3    dog
+4  black</pre></div>
+<p>A tiny 5-row toy dataset — one nominal-looking column, <code>name</code> — just to see exactly what <code>LabelEncoder</code> does before trying it on <code>../../_shared_data/loans.csv</code>. (Names don't really have a natural order; they're used here purely because the mapping is easy to eyeball, not as a real-world label-encoding candidate.)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">from sklearn.preprocessing import LabelEncoder</pre></div>
+<p><code>sklearn.preprocessing.LabelEncoder</code> — the scikit-learn class for exactly one job: map each unique category in a 1-D column to an integer <code>0 .. n_classes-1</code>. Compare <code>09_one_hot_encoding.ipynb</code>'s <code>OneHotEncoder</code>, which maps each category to its own binary <em>column</em> instead — the comparison table near the end of this notebook lays out when to pick which.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">le = LabelEncoder()</pre></div>
+<p>Instantiate it — same <code>fit</code> / <code>transform</code> contract every sklearn transformer follows (identical shape to <code>OneHotEncoder</code> in <code>09_one_hot_encoding.ipynb</code>), just with a 1-D column in and a 1-D column out instead of many columns out.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">df[&quot;en_name&quot;]=le.fit_transform(df[&quot;name&quot;])
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>    name  en_name
+0   Kali        2
+1    Cow        1
+2    Cat        0
+3    dog        4
+4  black        3</pre></div>
+<p><code>fit_transform()</code> is the one-call shortcut — it does two jobs at once:</p>
+<ol>
+<li><strong>fit</strong>: scan <code>df[&quot;name&quot;]</code>, find the unique categories, and assign each one a code.</li>
+<li><strong>transform</strong>: replace every original value with its assigned code.</li>
+</ol>
+<p>The codes above aren't in the order the names appeared in the DataFrame — they're in <strong>sorted order</strong>: <code>LabelEncoder</code> sorts the unique values first (the same rule Python's default string sort uses — uppercase letters sort before lowercase, since <code>'C'</code> (67) &lt; <code>'b'</code> (98) in ASCII), <em>then</em> assigns <code>0, 1, 2, ...</code> down that sorted list. Confirmed directly in the next cell.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">le.classes_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([&#x27;Cat&#x27;, &#x27;Cow&#x27;, &#x27;Kali&#x27;, &#x27;black&#x27;, &#x27;dog&#x27;], dtype=object)</pre></div>
+<p><code>classes_</code> is where the fitted encoder stores what it learned — the sorted list of unique categories, in the exact order their integer codes were assigned. Index into it with a code to decode by hand: <code>le.classes_[2]</code> → <code>'Kali'</code>, matching the <code>en_name = 2</code> row above. This is also exactly what <code>fit()</code> alone produces, with no encoding applied yet — see next.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">le2 = LabelEncoder()
+le2.fit(df[&quot;name&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>LabelEncoder()</pre></div>
+<p>This is <strong><code>fit()</code> in isolation</strong> — it only <em>learns</em>. It scans <code>df[&quot;name&quot;]</code>, works out the sorted class list, and stores it on the encoder (<code>le2.classes_</code> below) — but it hasn't touched <code>df[&quot;name&quot;]</code> itself, and there's no encoded output yet. Notice the cell's output is the encoder object printing itself (<code>LabelEncoder()</code>), not a list of numbers — <code>fit()</code> returns <code>self</code>, not the transformed data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">le2.classes_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([&#x27;Cat&#x27;, &#x27;Cow&#x27;, &#x27;Kali&#x27;, &#x27;black&#x27;, &#x27;dog&#x27;], dtype=object)</pre></div>
+<p>Same sorted class list as before — <code>fit()</code> alone already fully determines the mapping. Encoding the actual data is a separate step, next.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">le2.transform(df[&quot;name&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 4, 3])</pre></div>
+<p><strong><code>transform()</code> in isolation</strong> — takes the mapping <code>fit()</code> already learned and applies it, returning the integer codes. <code>le2.fit(df[&quot;name&quot;]).transform(df[&quot;name&quot;])</code> (two calls) produces exactly the same array as <code>le.fit_transform(df[&quot;name&quot;])</code> (one call) — <code>fit_transform</code> is purely a convenience wrapper, not a different algorithm.</p>
+<p><strong>Why bother keeping them separate, then?</strong> Because in a real train/test split you <em>must</em> keep them separate:</p>
+<ul>
+<li><code>encoder.fit(X_train[col])</code> — learn the category → code mapping <strong>once</strong>, from training data only.</li>
+<li><code>encoder.transform(X_train[col])</code> and <code>encoder.transform(X_test[col])</code> — apply that <em>same</em> fixed mapping to both.</li>
+</ul>
+<p>If you called <code>fit_transform()</code> on the test set too, you'd get a <strong>second, independent</strong> mapping — possibly assigning <code>Urban</code> a different code than the one the trained model learned to associate with <code>Urban</code>. Same idea as <code>09_one_hot_encoding.ipynb</code>'s point about <code>OneHotEncoder</code>: fit the schema once, reuse it everywhere. (Backend mental model: <code>fit()</code> is building a <code>HashMap&lt;String, Integer&gt;</code> once from a known vocabulary; <code>transform()</code> is repeated <code>map.get(key)</code> lookups against that same map — you don't rebuild the map from a different, possibly-incomplete vocabulary every time you need a lookup.)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">le2.inverse_transform([0, 1, 2, 3, 4])</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([&#x27;Cat&#x27;, &#x27;Cow&#x27;, &#x27;Kali&#x27;, &#x27;black&#x27;, &#x27;dog&#x27;], dtype=object)</pre></div>
+<p><code>inverse_transform</code> runs the mapping backwards — codes back to original labels — using the same <code>classes_</code> list. Useful for turning a model's numeric prediction (say, an encoded target class) back into a human-readable label before showing it to anyone.</p>
+
+<h2 id="same-technique-real-data">Same Technique, Real Data</h2>
+<p>Now <code>../../_shared_data/loans.csv</code>'s <code>Property_Area</code> column — <code>Rural</code> / <code>Semiurban</code> / <code>Urban</code>, the same one <code>09_one_hot_encoding.ipynb</code> flagged as <strong>nominal</strong> (no natural order) and one-hot encoded instead. It's label-encoded here anyway, deliberately, to show the mechanics on real data — see the comparison section below for why nominal data like this is usually the wrong candidate for label encoding into a linear/distance-based model, and where label encoding is actually the right call instead.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y  
+3             1.0     Semiurban           Y  
+4             0.0         Urban           N</pre></div>
+<p>Loading the same dataset <code>09_one_hot_encoding.ipynb</code> used.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">dataset[&quot;Property_Area&quot;].unique()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;Semiurban&#x27;, &#x27;Urban&#x27;, nan, &#x27;Rural&#x27;]
+Length: 4, dtype: str</pre></div>
+<p>Four unique values come back — including <code>nan</code>. <code>Property_Area</code> has missing values (9 of them, per <code>09_one_hot_encoding.ipynb</code>'s <code>isnull().sum()</code> check) — normally the move is to impute <em>before</em> encoding (mode-fill, same as <code>Gender</code>/<code>Married</code> in that notebook). Skipped here on purpose, to show what actually happens: <strong><code>LabelEncoder</code> in this environment's scikit-learn version (1.8.0) treats <code>nan</code> as a valid fourth class</strong> rather than raising an error — confirmed below via <code>la.classes_</code>. That's version-dependent behavior worth checking rather than assuming — older scikit-learn releases raised on <code>NaN</code> in <code>LabelEncoder.fit()</code>. Either way, treating &quot;missing&quot; as if it were a real category conflates two different meanings, so imputing first is still the safer default in practice.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">la = LabelEncoder()</pre></div>
+<p>A separate encoder instance for this column — one <code>LabelEncoder</code> per column, never shared, since each learns its own independent mapping (<code>la</code> for <code>Property_Area</code>, distinct from <code>le</code>/<code>le2</code> above for <code>name</code>).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">la.fit(dataset[&quot;Property_Area&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>LabelEncoder()</pre></div>
+<p><strong><code>fit()</code> in isolation, on real data.</strong> Output is the encoder printing itself again — same signal as before: no encoded values yet, just the learned mapping stored internally.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">la.classes_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([&#x27;Rural&#x27;, &#x27;Semiurban&#x27;, &#x27;Urban&#x27;, nan], dtype=object)</pre></div>
+<p>Confirms the gotcha from above: 4 classes, with <code>nan</code> sorted in among the real category names as if it were one of them (<code>array(['Rural', 'Semiurban', 'Urban', nan], dtype=object)</code>) — this is what makes the <code>nan → 3</code> in the next cell's output meaningful rather than a bug.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">transformed = la.transform(dataset[&quot;Property_Area&quot;])
+transformed</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1, 2, 2, 1, 2, 3, 0, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 1, 2,
+       1, 2, 1, 1, 1, 3, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 0, 0, 0, 1, 2,
+       1, 1, 1, 2, 2, 2, 2, 3, 0, 2, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2,
+       1, 1, 1, 1, 1, 0, 2, 1, 2, 1, 1, 0, 1, 1, 2, 2, 2, 0, 2, 0, 2, 1,
+       1, 1, 1, 1, 0, 1, 2, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 2, 1,
+       1, 1, 2, 1, 2, 0, 2, 2, 1, 1, 2, 1, 1, 2, 1, 1, 0, 2, 2, 0, 1, 2,
+       0, 2, 0, 1, 0, 0, 2, 0, 2, 1, 1, 2, 2, 2, 2, 2, 0, 1, 0, 0, 3, 1,
+       0, 1, 1, 0, 1, 1, 0, 1, 0, 2, 2, 1, 2, 0, 2, 1, 2, 0, 1, 2, 2, 1,
+       0, 0, 2, 1, 2, 1, 1, 2, 1, 0, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 1, 2,
+       2, 2, 0, 0, 1, 2, 1, 2, 0, 2, 2, 1, 2, 1, 0, 2, 1, 1, 2, 2, 2, 2,
+       2, 0, 1, 0, 1, 3, 1, 2, 2, 1, 0, 1, 2, 0, 2, 0, 0, 0, 0, 2, 1, 1,
+       1, 2, 2, 2, 1, 1, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 1,
+       2, 2, 0, 1, 1, 1, 0, 0, 1, 1, 2, 1, 1, 2, 0, 0, 2, 0, 2, 1, 0, 2,
+       1, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 0, 2, 0, 1, 2, 0, 1, 1, 1, 1,
+       0, 1, 3, 1, 0, 0, 2, 2, 1, 1, 1, 0, 0, 1, 1, 2, 1, 2, 1, 1, 1, 1,
+       2, 2, 2, 0, 0, 2, 2, 1, 1, 2, 2, 1, 2, 2, 2, 1, 1, 2, 3, 1, 0, 0,
+       2, 0, 1, 1, 2, 2, 2, 0, 1, 1, 1, 2, 2, 1, 1, 0, 1, 1, 0, 2, 1, 1,
+       2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 0, 2, 2, 2, 2, 1, 0, 2, 1, 1, 0,
+       1, 2, 1, 0, 1, 0, 0, 2, 0, 1, 3, 1, 0, 1, 1, 2, 1, 0, 1, 2, 0, 0,
+       1, 2, 1, 2, 2, 1, 0, 2, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2,
+       0, 0, 0, 2, 1, 2, 2, 2, 0, 2, 1, 0, 1, 2, 0, 1, 1, 1, 0, 1, 1, 1,
+       2, 0, 3, 1, 1, 2, 1, 1, 2, 2, 0, 0, 1, 2, 2, 2, 1, 0, 1, 2, 0, 1,
+       2, 1, 2, 0, 2, 1, 1, 0, 1, 1, 2, 0, 1, 2, 0, 2, 2, 1, 2, 1, 2, 2,
+       2, 2, 0, 1, 1, 1, 1, 2, 2, 1, 1, 0, 0, 0, 2, 2, 2, 0, 0, 0, 2, 0,
+       1, 0, 1, 2, 2, 0, 1, 2, 2, 2, 0, 2, 2, 0, 1, 2, 2, 2, 2, 2, 2, 1,
+       0, 0, 1, 2, 0, 0, 1, 2, 2, 1, 1, 2, 0, 1, 1, 2, 0, 1, 2, 1, 1, 0,
+       2, 0, 1, 2, 2, 2, 2, 1, 1, 2, 0, 2, 1, 0, 0, 1, 1, 2, 2, 1, 2, 2,
+       2, 0, 0, 0, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 1, 0, 1, 1, 0, 2, 1,
+       1, 1])</pre></div>
+<p><strong><code>transform()</code> in isolation</strong>, applying <code>la</code>'s already-learned mapping to the whole column — a 618-length array of the codes <code>la.classes_</code> established: <code>Rural→0, Semiurban→1, Urban→2, nan→3</code>. Deliberately split from <code>fit()</code>, exactly like the toy example: in a real pipeline, <code>la.fit()</code> runs once on training data, and this <code>transform()</code> line runs separately on train, validation, <em>and</em> test — never re-fitting on new data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">dataset[&quot;Property_Area&quot;] = transformed</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">dataset[&quot;Property_Area&quot;].unique()</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1, 2, 3, 0])</pre></div>
+<p>Confirms the swap: what used to be <code>['Semiurban', 'Urban', nan, 'Rural']</code> (text, in dataset appearance order) is now <code>[1, 2, 3, 0]</code> (the same four categories, as integers) — <code>1=Semiurban, 2=Urban, 3=nan, 0=Rural</code>, matching <code>la.classes_</code> exactly.</p>
+
+<h2 id="label-encoding-vs-one-hot-encoding">Label Encoding vs. One-Hot Encoding</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Label Encoding (<code>LabelEncoder</code>)</th>
+  <th>One-Hot Encoding (<code>OneHotEncoder</code> / <code>get_dummies</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>What it produces</strong></td>
+  <td>One column, integer codes <code>0..n-1</code></td>
+  <td><code>n</code> (or <code>n-1</code>) binary columns, one per category</td>
+</tr>
+<tr>
+  <td><strong>Order implied?</strong></td>
+  <td>Yes — <code>2</code> is &quot;more than&quot; <code>1</code> as far as the <em>number</em> is concerned</td>
+  <td>No — each category is its own independent 0/1 flag</td>
+</tr>
+<tr>
+  <td><strong>Right for</strong></td>
+  <td><strong>Ordinal</strong> categories (real rank) <em>or</em> the target/label column <code>y</code> <em>or</em> tree-based models fed nominal data</td>
+  <td><strong>Nominal</strong> categories (no real rank) fed to linear/distance-based models</td>
+</tr>
+<tr>
+  <td><strong>Wrong for</strong></td>
+  <td>Nominal categories fed to linear/distance-based models (invents a fake order — see <code>Language</code> example in <code>03_Types_Of_Variables.MD</code>)</td>
+  <td>High-cardinality nominal columns (explodes into hundreds/thousands of sparse columns)</td>
+</tr>
+<tr>
+  <td><strong>Output size</strong></td>
+  <td>Always 1 column, however many categories</td>
+  <td>Grows with category count</td>
+</tr>
+<tr>
+  <td><strong><code>../../_shared_data/loans.csv</code> example</strong></td>
+  <td><code>Property_Area</code> → <code>[0, 1, 2, 3]</code> (used above; not ideal here — see below)</td>
+  <td><code>Gender</code>, <code>Married</code> → <code>Gender_Male</code>, <code>Married_Yes</code>, ... (<code>09_one_hot_encoding.ipynb</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The <code>Property_Area</code> example above is actually a case <em>against</em> label encoding</strong>, done deliberately to show the mechanics: <code>Property_Area</code> is nominal (no real rank between <code>Rural</code>/<code>Semiurban</code>/<code>Urban</code>), so feeding <code>[0, 1, 2, 3]</code> into a linear or distance-based model would wrongly suggest <code>Urban</code> (2) is &quot;more&quot; than <code>Semiurban</code> (1) — exactly the trap <code>03_Types_Of_Variables.MD</code>'s <code>Language</code> example warned about. <code>09_one_hot_encoding.ipynb</code> one-hot-encodes this same column for that reason. Label encoding would be the right call here only if the model reading it is tree-based (see below).</p>
+
+<h2 id="when-and-why-to-use-label-encoding">When (and Why) to Use Label Encoding</h2>
+<p><strong>Use it when:</strong></p>
+<ul>
+<li><strong>The category is ordinal</strong> — a real rank exists (<code>Nice &lt; Good &lt; Great</code>, <code>Low &lt; Medium &lt; High</code>). The integer order the model sees now <em>matches</em> a genuine order in the data, so nothing false is implied.</li>
+<li><strong>Encoding the target/label column (<code>y</code>)</strong> in a classification problem — scikit-learn's classifiers expect integer-coded class labels regardless of whether the classes are ordinal or nominal; this is the one place label encoding is the default even for nominal classes, because there's no &quot;distance between predictions&quot; being computed the way there is between input feature columns.</li>
+<li><strong>The model is tree-based</strong> (Decision Tree, Random Forest, XGBoost, LightGBM, CatBoost) <strong>and the column is high-cardinality nominal</strong>. Trees split on thresholds (<code>is code &lt;= 1.5?</code>), not on distance or magnitude, so a fake numeric order barely hurts them — and label encoding avoids one-hot's column explosion on a column with many categories (a <code>zip_code</code>-style column, say).</li>
+</ul>
+<p><strong>Think twice when:</strong></p>
+<ul>
+<li><strong>The category is nominal</strong> <em>and</em> <strong>the model is linear/distance-based</strong> — Linear/Logistic Regression, SVM, KNN, k-means, neural networks. These all either compute distances or fit a single coefficient per feature, and both interpretations break when the numeric order is fake. This is exactly the <code>Property_Area</code> situation above — one-hot encoding (<code>09_one_hot_encoding.ipynb</code>) is the safer default there.</li>
+</ul>
+<p><strong>Implementation notes:</strong></p>
+<ul>
+<li>One <code>LabelEncoder</code> instance per column — it only knows how to encode the single 1-D array it was fit on.</li>
+<li><code>fit()</code> on training data only; <code>transform()</code> (never <code>fit_transform()</code> again) on validation/test/production, so every split shares the exact same mapping.</li>
+<li>Check for <code>NaN</code> before fitting — don't rely on a specific scikit-learn version's behavior (this one happens to silently treat <code>NaN</code> as its own class); impute first, same as the categorical mode-fill used for <code>Gender</code>/<code>Married</code> in <code>09_one_hot_encoding.ipynb</code>.</li>
+<li><code>inverse_transform()</code> decodes integer codes back to the original labels — handy for turning a model's predicted class back into something readable.</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/11_Ordinal_Encoding.ipynb">11_Ordinal_Encoding.ipynb</a></div>
+<h2 id="ordinal-encoding">Ordinal Encoding</h2>
+<p>The third and last piece of the categorical-encoding puzzle from <code>03_Types_Of_Variables.MD</code>:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Encoder</th>
+  <th>Rank order</th>
+  <th>Who decides the order</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>OneHotEncoder</code> (<code>09</code>)</td>
+  <td>none implied</td>
+  <td>n/a — no single number per category</td>
+</tr>
+<tr>
+  <td><code>LabelEncoder</code> (<code>10</code>)</td>
+  <td>implied, but arbitrary</td>
+  <td>the encoder — always alphabetical</td>
+</tr>
+<tr>
+  <td><code>OrdinalEncoder</code> (this notebook)</td>
+  <td>implied, and <strong>real</strong></td>
+  <td><strong>you</strong> — you pass the exact order in</td>
+</tr>
+</tbody>
+</table>
+<p>Ordinal encoding is label encoding's fix for the one thing <code>10_Label_Encoding.ipynb</code>
+flagged as risky: <code>LabelEncoder</code> can't be told what order to use, so it's only safe
+when alphabetical order happens to line up with reality (rare). <code>OrdinalEncoder</code>
+takes an explicit <code>categories=</code> list — the order you supply <em>is</em> the rank the model
+sees. This notebook covers, in order:</p>
+<ol>
+<li>Mechanics on a toy example (<code>Size</code>: <code>s &lt; m &lt; l &lt; xl</code>) — <code>OrdinalEncoder</code>, then a
+concrete side-by-side against <code>LabelEncoder</code> on the <em>same</em> column, to see exactly
+what goes wrong when the order isn't explicit.</li>
+<li>A manual <code>.map()</code> alternative — same idea as <code>10</code>'s fit/transform duality.</li>
+<li>Real data — <code>../../_shared_data/loans.csv</code>'s <code>Property_Area</code> (nominal, kept only to fix a real bug
+in the original code) and <code>Dependents</code> (genuinely ordinal: <code>0 &lt; 1 &lt; 2 &lt; 3+</code>).</li>
+<li>Visualizations, a three-way comparison table, and when/why to reach for this one.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np</pre></div>
+<p><code>matplotlib</code>/<code>numpy</code> added this time for the visualizations further down —everything else is the same pandas + scikit-learn stack as <code>09</code>/<code>10</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">df = pd.DataFrame({&quot;Size&quot;:[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;,&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;]})
+df.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>  Size
+0    s
+1    m
+2    l
+3   xl
+4    s</pre></div>
+<p>A toy <code>Size</code> column — and unlike <code>10_Label_Encoding.ipynb</code>'s <code>name</code> example, this one is
+<strong>genuinely ordinal</strong>: <code>s &lt; m &lt; l &lt; xl</code> is a real rank, not just convenient for eyeballing.
+That's the right kind of column to reach for ordinal encoding on.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">size_order = [&quot;s&quot;, &quot;m&quot;, &quot;l&quot;, &quot;xl&quot;]
+seq_ramp = [&quot;#86b6ef&quot;, &quot;#5598e7&quot;, &quot;#2a78d6&quot;, &quot;#1c5cab&quot;]  # sequential blue, light -&gt; dark = low -&gt; high rank
+
+counts = df[&quot;Size&quot;].value_counts().reindex(size_order)
+
+fig, ax = plt.subplots(figsize=(5, 3.5))
+ax.bar(size_order, counts.values, color=seq_ramp, width=0.6)
+ax.set_title(&quot;Size — raw counts, in real rank order&quot;)
+ax.set_xlabel(&quot;Size (s &lt; m &lt; l &lt; xl)&quot;)
+ax.set_ylabel(&quot;Count&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/11-ordinal-encoding-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 1 — raw counts, ordered correctly.</strong> <code>value_counts()</code> on its own would
+return categories sorted by frequency, not rank — <code>.reindex(size_order)</code> forces the
+x-axis into the real <code>s → xl</code> order before plotting. The bars use one sequential blue
+ramp, light to dark, so the color itself echoes the rank (lightest = smallest size) —
+this is a single ordered series, not four unrelated categories, so it gets one hue
+stepped by darkness rather than four different hues.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">ord_data = [[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;]]</pre></div>
+<p>The order <code>OrdinalEncoder</code> will assign codes in — a <strong>list of lists</strong>, one inner list
+per column being encoded (only one column here, <code>Size</code>). Whatever order you write the
+values in <em>is</em> the rank order the encoder learns: <code>s</code> here is first, so it becomes <code>0</code>.
+<code>LabelEncoder</code> has no equivalent parameter — it can't be told an order at all.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">from sklearn.preprocessing import OrdinalEncoder, LabelEncoder</pre></div>
+<p>Both imported here — <code>LabelEncoder</code> only to run the direct comparison below, not
+because it's the right tool for this column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">oe = OrdinalEncoder(categories=ord_data)</pre></div>
+<p>Instantiate with the explicit order from above. Compare <code>10_Label_Encoding.ipynb</code>'s
+<code>LabelEncoder()</code> — no arguments there, because there's nothing to configure; here the
+<code>categories=</code> argument is the entire point of choosing this encoder.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">oe.fit(df[[&quot;Size&quot;]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>OrdinalEncoder(categories=[[&#x27;s&#x27;, &#x27;m&#x27;, &#x27;l&#x27;, &#x27;xl&#x27;]])</pre></div>
+<p><strong><code>fit()</code> in isolation.</strong> One difference from <code>LabelEncoder</code> worth catching early:
+<code>df[[&quot;Size&quot;]]</code> — <strong>double</strong> brackets, a DataFrame (2D), not <code>df[&quot;Size&quot;]</code> (1D). <code>OrdinalEncoder</code>
+is built for <code>X</code> (feature columns, possibly several at once); <code>LabelEncoder</code> is built for
+<code>y</code> (a single target column) and only accepts 1D input. Passing a 1D column here raises a
+<code>ValueError</code> — a genuinely common gotcha when switching between the two.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">df[&quot;Size_En&quot;]= oe.transform(df[[&quot;Size&quot;]])
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>  Size  Size_En
+0    s      0.0
+1    m      1.0
+2    l      2.0
+3   xl      3.0
+4    s      0.0
+5    s      0.0
+6    m      1.0
+7    l      2.0
+8   xl      3.0
+9    s      0.0</pre></div>
+<p><strong><code>transform()</code> in isolation</strong> — codes now follow the real order: <code>s=0, m=1, l=2, xl=3</code>,
+a perfect staircase. Kept as two separate calls here for the same reason <code>10</code> split
+<code>fit</code>/<code>transform</code>: <code>fit()</code> once on training data, <code>transform()</code> reused unchanged on
+validation/test.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">le_check = LabelEncoder()
+le_check.fit(df[&quot;Size&quot;])
+label_codes = le_check.transform(size_order)          # what LabelEncoder assigns to s, m, l, xl
+ordinal_codes = oe.transform(pd.DataFrame({&quot;Size&quot;: size_order}))[:, 0]  # what OrdinalEncoder assigns
+
+print(&quot;LabelEncoder classes_ (alphabetical):&quot;, le_check.classes_)
+print(&quot;LabelEncoder codes for s, m, l, xl:  &quot;, label_codes)
+print(&quot;OrdinalEncoder codes for s, m, l, xl:&quot;, ordinal_codes)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LabelEncoder classes_ (alphabetical): [&#x27;l&#x27; &#x27;m&#x27; &#x27;s&#x27; &#x27;xl&#x27;]
+LabelEncoder codes for s, m, l, xl:   [2 1 0 3]
+OrdinalEncoder codes for s, m, l, xl: [0. 1. 2. 3.]</pre></div>
+<p><strong>The concrete difference, side by side.</strong> <code>LabelEncoder</code> sorts alphabetically —
+<code>classes_</code> comes back <code>['l', 'm', 's', 'xl']</code> — so it assigns <code>l=0, m=1, s=2, xl=3</code>.
+Read against the real rank (<code>s &lt; m &lt; l &lt; xl</code>), that's backwards and scrambled: it
+claims the <em>largest</em> size (<code>l</code>) is the <em>smallest</em> code. <code>OrdinalEncoder</code>, told the
+real order explicitly, gives the correct staircase <code>s=0, m=1, l=2, xl=3</code>. Same
+column, same five lines of setup, two completely different — and only one
+<em>correct</em> — numeric relationships. Visualized next.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">x = np.arange(len(size_order))
+width = 0.35
+
+fig, ax = plt.subplots(figsize=(6, 3.5))
+ax.bar(x - width/2, label_codes, width, label=&quot;LabelEncoder (alphabetical)&quot;, color=&quot;#eb6834&quot;)
+ax.bar(x + width/2, ordinal_codes, width, label=&quot;OrdinalEncoder (categories=[...])&quot;, color=&quot;#2a78d6&quot;)
+ax.set_xticks(x)
+ax.set_xticklabels(size_order)
+ax.set_ylabel(&quot;Assigned code&quot;)
+ax.set_title(&quot;Same column, two encoders — only one is a staircase&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/11-ordinal-encoding-c19-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 2 — why the difference matters.</strong> Orange (<code>LabelEncoder</code>) zigzags;
+blue (<code>OrdinalEncoder</code>) climbs in a straight staircase matching <code>s &lt; m &lt; l &lt; xl</code>. Two
+series here (two different <em>encoders</em>, i.e. two different identities), so they get
+two distinct hues with a legend — not a light-to-dark ramp, since these aren't steps
+of one ordered thing the way the raw-count chart was.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">df1 = pd.DataFrame({&quot;Size&quot;:[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;,&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;]})</pre></div>
+<p>Same duality <code>10_Label_Encoding.ipynb</code> showed for <code>fit_transform</code> vs. separate
+<code>fit</code>/<code>transform</code> — here it's <code>OrdinalEncoder</code> vs. a plain Python dict + <code>.map()</code>,
+both expressing the identical mapping.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">ord_data1= {&quot;s&quot;:0,&quot;m&quot;:1,&quot;l&quot;:2,&quot;xl&quot;:3}</pre></div>
+<p>A hand-written lookup table saying exactly the same thing as <code>ord_data = [[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;]]</code>
+above, just as a dict instead of an ordered list.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">df1[&quot;Size_EN_MAP&quot;] = df1[&quot;Size&quot;].map(ord_data1)
+df1</pre></div>
+<div class="out"><div class="h">Output</div><pre>  Size  Size_EN_MAP
+0    s            0
+1    m            1
+2    l            2
+3   xl            3
+4    s            0
+5    s            0
+6    m            1
+7    l            2
+8   xl            3
+9    s            0</pre></div>
+<p><code>.map()</code> looks up every value in <code>ord_data1</code> and substitutes its code — identical
+output to <code>OrdinalEncoder</code> above (<code>s=0, m=1, l=2, xl=3</code>). The trade-off: <code>.map()</code> is
+one line and needs no import, but it's entirely manual — any value <em>not</em> in the dict
+silently becomes <code>NaN</code>, with no warning. <code>OrdinalEncoder</code> gives the same result plus
+the sklearn safety net: <code>handle_unknown=&quot;use_encoded_value&quot;, unknown_value=np.nan</code>
+(or an error, by default) for values it wasn't fit on, and it drops straight into a
+<code>Pipeline</code>/<code>ColumnTransformer</code> the way a plain dict can't.</p>
+
+<h2 id="real-data-two-columns-two-different-situations">Real Data — Two Columns, Two Different Situations</h2>
+<p><code>../../_shared_data/loans.csv</code> again. Two columns this time:</p>
+<ul>
+<li><strong><code>Property_Area</code></strong> — <code>Rural</code>/<code>Semiurban</code>/<code>Urban</code>. Same column <code>09</code> and <code>10</code> used —
+it's <strong>nominal</strong>, not ordinal, but it's encoded here anyway to fix a real bug that
+was in the original version of this notebook (see the callout below).</li>
+<li><strong><code>Dependents</code></strong> — <code>0</code>/<code>1</code>/<code>2</code>/<code>3+</code>. This one <em>is</em> genuinely ordinal: more
+dependents is a real, ordered quantity.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y  
+3             1.0     Semiurban           Y  
+4             0.0         Urban           N</pre></div>
+<p>Loading the same dataset <code>09</code> and <code>10</code> used.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">dataset[&quot;Property_Area&quot;].unique()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;Semiurban&#x27;, &#x27;Urban&#x27;, nan, &#x27;Rural&#x27;]
+Length: 4, dtype: str</pre></div>
+<p>9 missing values hiding in here (per <code>09_one_hot_encoding.ipynb</code>'s <code>isnull().sum()</code>
+check) — same as before, has to be imputed <em>before</em> encoding.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">dataset[&quot;Property_Area&quot;] = dataset[&quot;Property_Area&quot;].fillna(dataset[&quot;Property_Area&quot;].mode()[0])
+dataset[&quot;Property_Area&quot;].unique()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;Semiurban&#x27;, &#x27;Urban&#x27;, &#x27;Rural&#x27;]
+Length: 3, dtype: str</pre></div>
+<p><strong>The bug fix.</strong> The original version of this cell was:</p>
+<div class="code"><pre class="py">dataset[&quot;Property_Area&quot;].fillna(dataset[&quot;Property_Area&quot;].mode()[0], inplace=True)
+</pre></div>
+<p>That's the exact copy-on-write gotcha <code>09_one_hot_encoding.ipynb</code> already called out
+for <code>Gender</code>: <code>dataset[&quot;Property_Area&quot;].fillna(..., inplace=True)</code> mutates a <strong>throwaway
+copy</strong> of the column, not <code>dataset</code> itself — pandas even raises a <code>ChainedAssignmentError</code>
+warning about it. <code>dataset[&quot;Property_Area&quot;]</code> was left with <code>NaN</code> still in it, and two
+cells later <code>OrdinalEncoder(categories=[[&quot;Rural&quot;,&quot;Semiurban&quot;,&quot;Urban&quot;]]).fit_transform(...)</code>
+crashed with <code>ValueError: Found unknown categories [nan] in column 0 during fit</code> — the
+explicit <code>categories</code> list has no entry for <code>nan</code>, so the encoder correctly refuses to
+guess. Reassigning (<code>dataset[&quot;Property_Area&quot;] = dataset[&quot;Property_Area&quot;].fillna(...)</code>)
+writes the result back into the real column, so <code>unique()</code> above now comes back with
+<strong>no <code>nan</code></strong> — the fix is confirmed before the encoder ever runs, not after it fails.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">en_data_ord = [[&quot;Rural&quot;,&quot;Semiurban&quot;,&quot;Urban&quot;]]</pre></div>
+<p>No real rank between these three (nominal — <code>09</code> one-hot-encoded this exact column
+for that reason), but an explicit order still has to be supplied for <code>OrdinalEncoder</code>
+to run at all. Picked arbitrarily here purely to demonstrate the mechanics on a
+familiar column, now that the missing-value bug is fixed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">oen = OrdinalEncoder(categories=en_data_ord)
+dataset[&quot;Property_Area&quot;] = oen.fit_transform(dataset[[&quot;Property_Area&quot;]])
+dataset[&quot;Property_Area&quot;].head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    1.0
+1    2.0
+2    2.0
+3    1.0
+4    2.0
+5    1.0
+6    0.0
+7    2.0
+8    1.0
+9    1.0
+Name: Property_Area, dtype: float64</pre></div>
+<p>Runs cleanly now — no <code>nan</code> left to trip the encoder. (The original also had a second
+bug on this line, <code>dataset[10]</code> instead of showing the encoded column — indexing a
+DataFrame with a bare integer like that raises <code>KeyError</code> unless a column is literally
+named <code>10</code>. Fixed to <code>dataset[&quot;Property_Area&quot;].head(10)</code>, which actually shows the
+result: <code>Rural→0, Semiurban→1, Urban→2</code>.)</p>
+<p><strong>Worth restating:</strong> this column being encodable now doesn't make label/ordinal
+encoding the <em>right</em> choice for it in a real model — see the comparison table further
+down. It's nominal; <code>09</code>'s one-hot encoding is still the safer default for a
+linear/distance-based model.</p>
+
+<h3><code>Dependents</code> — the genuinely ordinal one</h3>
+<p>Unlike <code>Property_Area</code>, this column has a real order: <code>0 &lt; 1 &lt; 2 &lt; 3+</code> dependents
+is an actual ordered quantity, not an arbitrary label. This is the kind of column
+<code>OrdinalEncoder</code> was built for.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts(dropna=False)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dependents
+0      356
+2      108
+1       82
+3+      57
+NaN     15
+Name: count, dtype: int64</pre></div>
+<p>15 missing values. Same rule as always: impute before encoding, using the same
+reassignment pattern (not <code>inplace=True</code>) fixed above.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].fillna(dataset[&quot;Dependents&quot;].mode()[0])
+dataset[&quot;Dependents&quot;].unique()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;0&#x27;, &#x27;2&#x27;, &#x27;1&#x27;, &#x27;3+&#x27;]
+Length: 4, dtype: str</pre></div>
+<p><code>NaN</code> gone, mode-filled with the most common value (<code>&quot;0&quot;</code>).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">dep_order = [[&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3+&quot;]]
+oe_dep = OrdinalEncoder(categories=dep_order)
+dataset[&quot;Dependents_En&quot;] = oe_dep.fit_transform(dataset[[&quot;Dependents&quot;]])
+dataset[[&quot;Dependents&quot;, &quot;Dependents_En&quot;]].head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>  Dependents  Dependents_En
+0          0            0.0
+1          0            0.0
+2          0            0.0
+3          0            0.0
+4          2            2.0
+5          0            0.0
+6          0            0.0
+7          0            0.0
+8          0            0.0
+9          0            0.0</pre></div>
+<p>A dedicated encoder instance (<code>oe_dep</code>) with its own <code>categories=</code> — same pattern as
+<code>la</code>/<code>le2</code> getting their own <code>LabelEncoder</code> in <code>10</code>, one encoder per column. <code>&quot;0&quot; → 0, &quot;1&quot; → 1, &quot;2&quot; → 2, &quot;3+&quot; → 3</code>, the real order preserved exactly, unlike what <code>LabelEncoder</code>
+would have done here too (alphabetical on these strings happens to <em>coincidentally</em>
+match, since <code>&quot;0&quot; &lt; &quot;1&quot; &lt; &quot;2&quot; &lt; &quot;3+&quot;</code> sorts the same both ways — but that's luck, not a
+guarantee, which is exactly why <code>categories=</code> is still the safer, explicit choice).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">dep_order_list = [&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3+&quot;]
+dep_ramp = [&quot;#86b6ef&quot;, &quot;#5598e7&quot;, &quot;#2a78d6&quot;, &quot;#1c5cab&quot;]
+dep_counts = dataset[&quot;Dependents&quot;].value_counts().reindex(dep_order_list)
+
+fig, ax = plt.subplots(figsize=(5, 3.5))
+ax.bar(dep_order_list, dep_counts.values, color=dep_ramp, width=0.6)
+ax.set_title(&quot;Dependents — raw counts, in real rank order&quot;)
+ax.set_xlabel(&quot;Dependents (0 &lt; 1 &lt; 2 &lt; 3+)&quot;)
+ax.set_ylabel(&quot;Count&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/11-ordinal-encoding-c45-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 3 — the real-data version of Visualization 1.</strong> Same sequential
+blue ramp, light-to-dark following the real rank, now on <code>../../_shared_data/loans.csv</code> instead of the
+toy example — most applicants have 0 dependents, tapering off through <code>3+</code>.</p>
+
+<h2 id="label-encoding-vs-one-hot-encoding-vs-ordinal-en">Label Encoding vs. One-Hot Encoding vs. Ordinal Encoding</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th><code>LabelEncoder</code> (<code>10</code>)</th>
+  <th><code>OneHotEncoder</code> (<code>09</code>)</th>
+  <th><code>OrdinalEncoder</code> (this notebook)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Output</strong></td>
+  <td>1 column, integer codes</td>
+  <td><em>n</em> (or <em>n</em>-1) binary columns</td>
+  <td>1 column, integer codes</td>
+</tr>
+<tr>
+  <td><strong>Who sets the order</strong></td>
+  <td>The encoder — always alphabetical</td>
+  <td>n/a — no order implied</td>
+  <td><strong>You</strong> — via <code>categories=</code></td>
+</tr>
+<tr>
+  <td><strong>Order implied?</strong></td>
+  <td>Yes, but arbitrary</td>
+  <td>No</td>
+  <td>Yes, and (if you set it right) real</td>
+</tr>
+<tr>
+  <td><strong>Input shape</strong></td>
+  <td>1D — a single column (<code>df[&quot;col&quot;]</code>)</td>
+  <td>2D — one or more columns</td>
+  <td>2D — one or more columns</td>
+</tr>
+<tr>
+  <td><strong>Intended for</strong></td>
+  <td>The target column <code>y</code></td>
+  <td>Nominal feature columns <code>X</code></td>
+  <td>Ordinal feature columns <code>X</code></td>
+</tr>
+<tr>
+  <td><strong>Right for</strong></td>
+  <td>Encoding <code>y</code> in classification</td>
+  <td>Nominal <code>X</code>, linear/distance-based models</td>
+  <td>Ordinal <code>X</code>, any model</td>
+</tr>
+<tr>
+  <td><strong>Wrong for</strong></td>
+  <td>Nominal <code>X</code> into linear/distance-based models</td>
+  <td>High-cardinality nominal columns</td>
+  <td>Nominal <code>X</code> with no real order to supply</td>
+</tr>
+<tr>
+  <td><strong>Unseen category at transform time</strong></td>
+  <td>Errors</td>
+  <td><code>handle_unknown=&quot;ignore&quot;</code> available</td>
+  <td><code>handle_unknown=&quot;use_encoded_value&quot;</code> + <code>unknown_value=</code> available</td>
+</tr>
+<tr>
+  <td><strong><code>../../_shared_data/loans.csv</code> example</strong></td>
+  <td>— (not used on <code>X</code> here)</td>
+  <td><code>Gender</code>, <code>Married</code> (<code>09</code>)</td>
+  <td><code>Dependents</code> (real rank) — <code>Property_Area</code> here only to show mechanics</td>
+</tr>
+</tbody>
+</table>
+<p>The one-line version: <strong>all three answer &quot;how do I turn text into numbers,&quot;
+and only <code>OrdinalEncoder</code> lets you also answer &quot;in what order.&quot;</strong></p>
+
+<h2 id="when-and-why-to-use-ordinal-encoding">When (and Why) to Use Ordinal Encoding</h2>
+<p><strong>Use it when:</strong></p>
+<ul>
+<li><strong>The category has a real, known rank</strong> and you can write that order down —
+sizes, ratings (<code>Low/Medium/High</code>), education levels, <code>Dependents</code>-style counts
+bucketed as strings. The whole benefit over <code>LabelEncoder</code> is that you supply the
+order instead of hoping alphabetical sort happens to match reality.</li>
+<li><strong>You need more than one ordinal column encoded together</strong> — <code>OrdinalEncoder</code>
+takes 2D input and a <code>categories=</code> list-of-lists, so one instance can fit several
+columns at once (each with its own order), where <code>LabelEncoder</code> needs a separate
+instance per column since it only accepts 1D.</li>
+<li><strong>Production robustness matters</strong> — <code>handle_unknown=&quot;use_encoded_value&quot;, unknown_value=np.nan</code> handles a category showing up at inference time that
+training never saw, without crashing the pipeline (a plain <code>.map()</code> dict just
+silently returns <code>NaN</code> with no such configuration).</li>
+</ul>
+<p><strong>Think twice when:</strong></p>
+<ul>
+<li><strong>There's no real order</strong> — forcing <code>categories=</code> on a nominal column (like
+<code>Property_Area</code> above) doesn't make the order real; it just picks <em>one</em> arbitrary
+order instead of the alphabetical one <code>LabelEncoder</code> would have picked. One-hot
+encoding (<code>09</code>) is still the honest choice for nominal data going into a
+linear/distance-based model.</li>
+<li><strong>The order is debatable</strong> — if two people would rank the categories differently,
+that's a sign the &quot;order&quot; is more nominal than ordinal in practice; encoding it
+as ordinal bakes in one arbitrary opinion as if it were fact.</li>
+</ul>
+<p><strong>Implementation notes:</strong></p>
+<ul>
+<li><code>categories=</code> must list <strong>every</strong> value that will ever appear, in rank order, as
+a list of lists (one inner list per column) — a value missing from that list is
+treated as <em>unknown</em>, not silently appended.</li>
+<li>Always pass a 2D slice (<code>df[[&quot;col&quot;]]</code>, double brackets), never a 1D <code>df[&quot;col&quot;]</code> —
+the single most common <code>OrdinalEncoder</code> error.</li>
+<li>Impute missing values <em>before</em> fitting — an explicit <code>categories=</code> list has no
+slot for <code>NaN</code> unless you deliberately add one, so a leftover <code>NaN</code> (from a bug
+like the one fixed above, or from skipping imputation entirely) raises
+<code>ValueError: Found unknown categories [nan]</code> at fit time.</li>
+</ul>
+
+<div class="foot"><a class="btn" href="../Concept/09_one_hot_encoding.ipynb">09_one_hot_encoding.ipynb ↗</a><a class="btn" href="../Concept/10_Label_Encoding.ipynb">10_Label_Encoding.ipynb ↗</a><a class="btn" href="../Concept/11_Ordinal_Encoding.ipynb">11_Ordinal_Encoding.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

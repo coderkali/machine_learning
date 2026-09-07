@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T Test — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">02 DataScience › <b>T Test</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#hypothesis-testing-t-test">Hypothesis Testing - T-Test</a><a href="#t-test-formula">T-Test Formula</a><a href="#example-1-one-tailed-t-test">Example 1 (One-Tailed T-Test).</a><a href="#example-2-two-sample-t-test-two-tailed">Example 2 (Two-Sample T-Test, Two-Tailed)</a><a href="#two-sample-t-test-formula">Two-Sample T-Test Formula</a><a href="#example-3-one-sample-t-test-two-tailed-95-confid">Example 3 (One-Sample T-Test, Two-Tailed, 95% Confid</a><a href="#faq">FAQ</a><a href="#example-3b-one-sample-t-test-two-tailed-80-confi">Example 3b (One-Sample T-Test, Two-Tailed, 80% Confi</a><a href="#faq">FAQ</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Data science and statistics</p>
+  <h1>T Test</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">4 notebooks</span></div>
+</div>
+<div class="src-head">📓 <a href="../Concept/09_Hypothesis_Testing_T-Test.ipynb">09_Hypothesis_Testing_T-Test.ipynb</a></div>
+<h2 id="hypothesis-testing-t-test">Hypothesis Testing - T-Test</h2>
+<p><strong>Assumption:</strong> data → Normal Distribution</p>
+<ol>
+<li>Population → mean ($\mu$)</li>
+<li>Sample → Mean ($\bar{x}$), Std ($S$)</li>
+<li>No. of samples ($n$) &lt; 30</li>
+</ol>
+<p>When the sample size is small (n &lt; 30) and/or the population standard deviation is unknown, we use the <strong>t-test</strong> instead of the z-test.</p>
+
+<h2 id="t-test-formula">T-Test Formula</h2>
+<div class='formula'>t_{test} = \dfrac{\bar{x} - \mu}{\dfrac{S}{\sqrt{n}}}</div>
+
+<p>Where:</p>
+<ul>
+<li>$\bar{x}$ = Sample Mean</li>
+<li>$\mu$ = Population Mean</li>
+<li>$S$ = Std of Sample</li>
+<li>$n$ = No. of samples</li>
+</ul>
+<h3>Z-Test vs T-Test</h3>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Z-Test</th>
+  <th>T-Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Sample size</td>
+  <td>n ≥ 30</td>
+  <td>n &lt; 30</td>
+</tr>
+<tr>
+  <td>Population std</td>
+  <td>known</td>
+  <td>unknown (use sample std $S$)</td>
+</tr>
+<tr>
+  <td>Distribution used</td>
+  <td>Normal (Z)</td>
+  <td>Student's t-distribution</td>
+</tr>
+</tbody>
+</table>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import scipy.stats as st
+import numpy as np</pre></div>
+<h2 id="example-1-one-tailed-t-test">Example 1 (One-Tailed T-Test).</h2>
+<p>A manufacturer claims that the average weight of a bag of potato chips is <strong>150 grams</strong>. A sample of <strong>25 bags</strong> is taken, and the average weight is found to be <strong>148 grams</strong>, with a standard deviation of <strong>5 grams</strong>. Test the manufacturer's claim using a <strong>one-tailed t-test</strong> with a significance level of <strong>0.05</strong>.</p>
+<p><strong>Given:</strong></p>
+<ul>
+<li>$\mu = 150$ (claimed population mean)</li>
+<li>$\bar{x} = 148$ (sample mean)</li>
+<li>$n = 25$ (sample size)</li>
+<li>$S = 5$ (sample std)</li>
+<li>$\alpha = 0.05$</li>
+</ul>
+<p><strong>Hypotheses:</strong></p>
+<ul>
+<li>$H_0: \mu = 150\ gm$ — the claim is true</li>
+<li>$H_a: \mu &lt; 150\ gm$ — actual average weight is less than claimed (left-tailed, since we're only checking for <em>underfilling</em>, not any deviation)</li>
+</ul>
+<h3>What are we actually finding out, and why?</h3>
+<p>We want to know: is the gap between the sample mean (148g) and the claimed mean (150g) big enough to be real, or could it just be random sampling noise? The t-test converts that gap into a standardized score ($t_{test}$) and checks it against how much variation we'd expect by chance alone (the t-distribution for this sample size). If our score falls further into the tail than chance would reasonably allow ($\alpha = 0.05$, i.e. only a 5% chance region), we conclude the underfilling is statistically real and reject the manufacturer's claim.</p>
+
+<h3>Step 1 - Degrees of Freedom</h3>
+<div class='formula'>df = n - 1 = 25 - 1 = 24</div>
+
+<p>We need <code>df</code> because the t-distribution's exact shape (how fat its tails are) depends on sample size — with fewer samples, we're less certain about the true spread, so the tails are fatter and the critical value is larger than a z-score would be.</p>
+<h3>Step 2 - Critical t-value (from t-table)</h3>
+<p>Look up the t-table at <strong>df = 24</strong>, <strong>one-tail = 0.05</strong> → $t_{critical} = 1.711$.</p>
+<p>Since $H_a: \mu &lt; 150$ is left-tailed, the rejection region sits on the <em>left</em> side of the distribution, so the critical value used for comparison is $t_{critical} = -1.711$.</p>
+<p>The plot below reproduces the sketch: the curve is the t-distribution (df=24), the shaded left tail is the <strong>Ha (reject $H_0$)</strong> rejection region worth $\alpha = 0.05$ of the area, the dashed line at $t=0$ marks <strong>$H_0$</strong>, and the boundary between them is $t = -1.711$.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">import matplotlib.pyplot as plt
+
+df_ = 24
+t_crit = st.t.ppf(0.05, df_)          # -1.7109
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df_)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;crimson&quot;, linewidth=2)
+
+# shade rejection region (Ha) - left tail
+x_reject = np.linspace(-4, t_crit, 100)
+ax.fill_between(x_reject, st.t.pdf(x_reject, df_), color=&quot;crimson&quot;, alpha=0.4)
+
+# H0 dashed centerline
+ax.axvline(0, color=&quot;crimson&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+
+# critical t-value line + label
+ax.axvline(t_crit, color=&quot;navy&quot;, linewidth=1.5)
+ax.text(t_crit, -0.01, f&quot;t = {t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;navy&quot;)
+
+ax.text(t_crit - 1, max(y) * 0.5, &quot;Ha\n(reject H0)&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+ax.text(2, max(y) * 0.5, &quot;fail to reject H0&quot;, ha=&quot;center&quot;, color=&quot;black&quot;)
+ax.text(t_crit - 0.3, 0.02, &quot;α = 0.05&quot;, color=&quot;navy&quot;)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(&quot;One-Tailed T-Test (left-tailed), df = 24&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/09-hypothesis-testing-t-test-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Step 3 - Calculate the test statistic</h3>
+<div class='formula'>t_{test} = \dfrac{\bar{x} - \mu}{\dfrac{S}{\sqrt{n}}} = \dfrac{148 - 150}{\dfrac{5}{\sqrt{25}}} = \dfrac{-2}{1} = -2</div>
+
+<h3>Step 4 - Decision rule</h3>
+<p>Reject $H_0$ if $t_{test}$ is <strong>more extreme</strong> (further into the tail) than $t_{critical}$:</p>
+<div class='formula'>t_{test} (-2) &lt; t_{critical} (-1.711)</div>
+
+<p>This is true, so $t_{test}$ falls inside the rejection region → <strong>reject $H_0$, accept $H_a$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 5% significance level, there is enough evidence to say the average bag weight is significantly less than the claimed 150 grams — the manufacturer's claim does not hold up.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148
+p_u = 150
+s_std = 5
+n = 25
+alpha = 0.05
+df = n - 1
+
+t_critical = st.t.ppf(alpha, df)   # left-tailed -&gt; use alpha directly, not 1-alpha
+t_test = (x_bar - p_u) / (s_std / np.sqrt(n))
+
+print(&quot;df:&quot;, df)
+print(&quot;t_critical:&quot;, t_critical)
+print(&quot;t_test:&quot;, t_test)
+
+if t_test &lt; t_critical:
+    print(&quot;Reject H0 -&gt; Ha is right (avg weight &lt; 150 gm)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 is right (avg weight = 150 gm)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>df: 24
+t_critical: -1.7108820799094284
+t_test: -2.0
+Reject H0 -&gt; Ha is right (avg weight &lt; 150 gm)</pre></div>
+<div class="src-head">📓 <a href="../Concept/10_Hypothesis_Testing_T-Test.ipynb">10_Hypothesis_Testing_T-Test.ipynb</a></div>
+<h2 id="example-2-two-sample-t-test-two-tailed">Example 2 (Two-Sample T-Test, Two-Tailed)</h2>
+<p>A company wants to test whether there is a difference in productivity between two teams. They randomly select <strong>20 employees</strong> from each team and record their productivity scores. The mean productivity score for <strong>Team A is 80</strong> with a standard deviation of <strong>5</strong>, while the mean productivity score for <strong>Team B is 75</strong> with a standard deviation of <strong>6</strong>. Test at a <strong>5% level of significance</strong> whether there is a difference in productivity between the two teams.</p>
+<h3>What do the symbols mean?</h3>
+<p>Before writing down the &quot;Given&quot; values, it helps to be clear on what each symbol stands for:</p>
+<ul>
+<li>$\mu_A$, $\mu_B$ = the <strong>true (population) average</strong> productivity of <em>every</em> employee on Team A / Team B — the real number we actually care about, but can never observe directly (we'd have to measure every single employee).</li>
+<li>$\bar{x}_A$, $\bar{x}_B$ = the <strong>sample mean</strong> — the average productivity we <em>measured</em> from the 20 employees we happened to sample from each team.</li>
+<li>$S_A$, $S_B$ = the <strong>sample standard deviation</strong> — how spread out those 20 sampled scores are around their own sample mean, for each team.</li>
+<li>$n_A$, $n_B$ = the <strong>sample size</strong> — how many employees were sampled from each team (20 each here).</li>
+</ul>
+<p>So $\bar{x}_A, S_A, n_A$ are all things we <em>directly measured</em> from Team A's sample; $\mu_A$ is the unknown truth about Team A we're trying to make a statement about. Same pattern for Team B. The entire test is a way of using the measured sample quantities to infer something about the unknown population means.</p>
+<p><strong>Given:</strong></p>
+<ul>
+<li>$\bar{x}_A = 80$, $S_A = 5$, $n_A = 20$ (Team A)</li>
+<li>$\bar{x}_B = 75$, $S_B = 6$, $n_B = 20$ (Team B)</li>
+<li>$\alpha = 0.05$</li>
+</ul>
+<h3>What is $\alpha$ (the significance level), and where does 0.05 come from?</h3>
+<p>$\alpha$ is <strong>not calculated from the data at all</strong> — it's a threshold <em>we choose ourselves, in advance</em>, before ever looking at the samples. It represents how much risk we're willing to accept of making a <strong>Type I error</strong>: rejecting $H_0$ when $H_0$ is actually true (i.e., concluding the teams <em>are</em> different in productivity when in reality they aren't, and the 5-point gap was just sampling luck).</p>
+<ul>
+<li>$\alpha = 0.05$ means we're willing to accept at most a <strong>5% chance</strong> of wrongly rejecting a true $H_0$.</li>
+<li>Equivalently, we're demanding <strong>95% confidence</strong> before we'll call the result &quot;significant.&quot;</li>
+<li>The value <strong>0.05 is a convention</strong>, not something derived from this problem's numbers — it's the most commonly used significance level across statistics and industry (0.01 for stricter tolerance, 0.10 for looser tolerance are the other common choices). The question told us to use it: <em>&quot;Test at a 5% level of significance.&quot;</em></li>
+</ul>
+<p>Once $\alpha$ is chosen, it directly determines <em>how far into the tail(s)</em> of the t-distribution counts as &quot;too surprising to be chance&quot; — that boundary is exactly $t_{critical}$, computed in Step 2 below. For a <strong>two-tailed</strong> test like this one, the 5% risk is split evenly between the left and right tails ($\alpha/2 = 0.025$ each), because being &quot;different&quot; could mean Team A &gt; Team B <em>or</em> Team A &lt; Team B — both directions have to share the same total 5% risk budget.</p>
+<p><strong>Hypotheses:</strong></p>
+<ul>
+<li>$H_0: \mu_A - \mu_B = 0$ — no difference in productivity between the two teams</li>
+<li>$H_a: \mu_A - \mu_B \neq 0$ — there is a difference (two-tailed, since we're checking for <em>any</em> difference, not a specific direction)</li>
+</ul>
+<h3>One-tailed or two-tailed — how do we decide?</h3>
+<p>This is <strong>not</strong> a fixed rule (&quot;always use one-tail&quot; or &quot;always use two-tail&quot;) — it depends entirely on how the question is worded, which decides how $H_a$ gets written:</p>
+<ul>
+<li><strong>Example 1</strong> asked us to check the manufacturer's claim specifically for <em>underfilling</em> — the concern was only &quot;is the true average weight less than what's claimed?&quot; That's a claim with a direction, so $H_a: \mu &lt; 150$ pointed <strong>one way only</strong> → one-tailed test, with the whole $\alpha$ sitting in a single tail.</li>
+<li><strong>Example 2</strong> only asks &quot;is there a difference in productivity between the two teams?&quot; — it never says &quot;is Team A <em>more</em> productive than Team B.&quot; Team A being higher than B, or Team A being lower than B, are <strong>both</strong> valid ways for &quot;a difference&quot; to exist. So $H_a: \mu_A - \mu_B \neq 0$ has to cover <strong>both directions</strong> → two-tailed test, with $\alpha$ split across both tails.</li>
+</ul>
+<p><strong>Rule of thumb</strong> — look at the wording of the claim being tested:</p>
+<ul>
+<li><em>&quot;greater than,&quot; &quot;less than,&quot; &quot;more than,&quot; &quot;increases,&quot; &quot;decreases,&quot; &quot;underfills&quot;</em> (a specific direction is claimed) → <strong>one-tailed</strong>.</li>
+<li><em>&quot;different from,&quot; &quot;not equal to,&quot; &quot;a difference exists,&quot; &quot;changed&quot;</em> (no direction is claimed, only that <em>something</em> changed) → <strong>two-tailed</strong>.</li>
+</ul>
+<p>In practice, two-tailed tests are actually the more common default, precisely because most real questions (like this one) don't come with a built-in reason to rule out one direction ahead of time. You only use a one-tailed test when the problem itself gives you a specific, justified direction to test — like Example 1's underfilling concern. Nothing here tells us Team A can <em>only</em> be better (or <em>only</em> worse) than Team B, so both directions have to stay open, which is why Step 2 below computes <strong>two</strong> critical values ($\pm 2.024$) instead of one.</p>
+<h3>Why do we hypothesize about $\mu_A - \mu_B$ instead of $\mu_A$ and $\mu_B$ separately?</h3>
+<p>In Example 1 there was one unknown ($\mu$) and one known reference point (the manufacturer's claim, 150g), so we tested $\mu$ directly against a number. Here there are <strong>two unknowns</strong> ($\mu_A$ and $\mu_B$) and neither has a known reference value — we only want to know how they compare to <em>each other</em>.</p>
+<p>So instead of testing two separate unknowns, we combine them into a single unknown quantity, their difference $\mu_A - \mu_B$, and test <em>that</em> against zero:</p>
+<ul>
+<li>&quot;No difference between the teams&quot; means the two population means are equal, i.e. $\mu_A - \mu_B = 0$. That is exactly the &quot;nothing going on&quot; default position, so it becomes $H_0$.</li>
+<li>&quot;There is a difference&quot; simply means that difference is not zero — $\mu_A - \mu_B \neq 0$ — which becomes $H_a$, the logical opposite of $H_0$.</li>
+</ul>
+<p>This is also why the formula's numerator is written as $(\bar{x}_A - \bar{x}_B) - (\mu_A - \mu_B)$: it compares the difference we <em>observed</em> in our samples ($\bar{x}_A - \bar{x}_B = 5$) against the difference we <em>hypothesized</em> for the populations ($\mu_A - \mu_B$, assumed $0$ under $H_0$). Since $H_0$ sets that hypothesized difference to $0$, the term disappears and the formula simplifies to just $\bar{x}_A - \bar{x}_B$ on top — see the formula cell below.</p>
+<h3>What are we actually finding out, and why?</h3>
+<p>This time we're comparing two <em>sample</em> means to each other instead of a sample mean to a known population mean. The question is: is the 5-point gap between Team A (80) and Team B (75) large enough to reflect a real difference in productivity, or could it just be noise from picking 20 random employees per team? Because we're testing for a difference in <em>either</em> direction (A could be higher or lower than B), the rejection region is split across <strong>both tails</strong> of the t-distribution — this is what makes it a two-tailed test, unlike Example 1's one-tailed test.</p>
+
+<h2 id="two-sample-t-test-formula">Two-Sample T-Test Formula</h2>
+<div class='formula'>t_{test} = \dfrac{(\bar{x}_A - \bar{x}_B) - (\mu_A - \mu_B)}{\sqrt{\dfrac{S_A^2}{n_A} + \dfrac{S_B^2}{n_B}}}</div>
+
+<p>Where:</p>
+<ul>
+<li>$\bar{x}_A, \bar{x}_B$ = Sample means of Team A, Team B</li>
+<li>$\mu_A - \mu_B$ = Hypothesized difference in population means (= 0 under $H_0$)</li>
+<li>$S_A, S_B$ = Sample standard deviations of Team A, Team B</li>
+<li>$n_A, n_B$ = Sample sizes of Team A, Team B</li>
+</ul>
+<p>Since $H_0$ assumes $\mu_A - \mu_B = 0$, that term drops out and the formula simplifies to:</p>
+<div class='formula'>t_{test} = \dfrac{\bar{x}_A - \bar{x}_B}{\sqrt{\dfrac{S_A^2}{n_A} + \dfrac{S_B^2}{n_B}}}</div>
+
+
+<h3>Step 1 - Degrees of Freedom</h3>
+<div class='formula'>df = n_A + n_B - 2 = 20 + 20 - 2 = 38</div>
+
+<p>For a two-sample t-test, <code>df</code> is the sum of both sample sizes minus 2 (one degree of freedom is &quot;spent&quot; estimating each team's sample mean).</p>
+<h3>Step 2 - Critical t-value (from t-table)</h3>
+<p>Since this is <strong>two-tailed</strong>, $\alpha = 0.05$ is split evenly across both tails: $\alpha/2 = 0.025$ on each side.</p>
+<p>Look up the t-table at <strong>df = 38</strong>, <strong>two-tail = 0.05</strong> (i.e. one-tail = 0.025) → $t_{critical} \approx \pm 2.024$.</p>
+<p>The plot below reproduces the sketch: the curve is the t-distribution (df=38), both shaded tails are the <strong>Ha (reject $H_0$)</strong> rejection regions — each worth $\alpha/2 = 0.025$ of the area — the dashed line at $t=0$ marks <strong>$H_0$</strong>, and the boundaries are $t = -2.024$ and $t = +2.024$.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">import matplotlib.pyplot as plt
+import scipy.stats as st
+import numpy as np
+
+df_ = 38
+t_crit = st.t.ppf(0.975, df_)          # 2.0244
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df_)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;navy&quot;, linewidth=2)
+
+# shade rejection regions (Ha) - both tails
+x_left = np.linspace(-4, -t_crit, 100)
+x_right = np.linspace(t_crit, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df_), color=&quot;crimson&quot;, alpha=0.4)
+ax.fill_between(x_right, st.t.pdf(x_right, df_), color=&quot;crimson&quot;, alpha=0.4)
+
+# H0 dashed centerline
+ax.axvline(0, color=&quot;navy&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0&quot;, ha=&quot;center&quot;, color=&quot;navy&quot;)
+
+# critical t-value lines + labels
+ax.axvline(-t_crit, color=&quot;crimson&quot;, linewidth=1.5)
+ax.axvline(t_crit, color=&quot;crimson&quot;, linewidth=1.5)
+ax.text(-t_crit, -0.01, f&quot;t = {-t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit, -0.01, f&quot;t = {t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.text(-t_crit - 0.6, max(y) * 0.5, &quot;Ha&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit + 0.6, max(y) * 0.5, &quot;Ha&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+ax.text(0, max(y) * 0.5, &quot;fail to reject H0&quot;, ha=&quot;center&quot;, color=&quot;black&quot;)
+ax.text(-t_crit - 0.3, 0.02, &quot;\u03b1/2 = 0.025&quot;, color=&quot;crimson&quot;, fontsize=8)
+ax.text(t_crit + 0.3, 0.02, &quot;\u03b1/2 = 0.025&quot;, color=&quot;crimson&quot;, fontsize=8)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(&quot;Two-Tailed T-Test, df = 38&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/10-hypothesis-testing-t-test-c03-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Step 3 - Calculate the test statistic</h3>
+<div class='formula'>t_{test} = \dfrac{\bar{x}_A - \bar{x}_B}{\sqrt{\dfrac{S_A^2}{n_A} + \dfrac{S_B^2}{n_B}}} = \dfrac{80 - 75}{\sqrt{\dfrac{5^2}{20} + \dfrac{6^2}{20}}} = \dfrac{5}{\sqrt{1.25 + 1.8}} = \dfrac{5}{1.746} \approx 2.863</div>
+
+<h3>Step 4 - Decision rule</h3>
+<p>For a two-tailed test, reject $H_0$ if $t_{test}$ is <strong>more extreme</strong> than $t_{critical}$ in <em>either</em> direction:</p>
+<div class='formula'>|t_{test}| (2.863) &gt; |t_{critical}| (2.024)</div>
+
+<p>This is true, so $t_{test}$ falls inside the rejection region → <strong>reject $H_0$, accept $H_a$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 5% significance level, there is enough evidence to say there is a statistically significant difference in productivity between Team A and Team B — Team A's higher average productivity is not just due to random sampling.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">x_bar_A = 80
+s_A = 5
+n_A = 20
+
+x_bar_B = 75
+s_B = 6
+n_B = 20
+
+alpha = 0.05
+df = n_A + n_B - 2
+
+se = np.sqrt((s_A**2 / n_A) + (s_B**2 / n_B))
+t_test = (x_bar_A - x_bar_B) / se
+t_critical = st.t.ppf(1 - alpha / 2, df)   # two-tailed -&gt; use alpha/2
+
+print(&quot;df:&quot;, df)
+print(&quot;standard error:&quot;, se)
+print(&quot;t_critical: +-&quot;, t_critical)
+print(&quot;t_test:&quot;, t_test)
+
+if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; Ha is right (there IS a difference in productivity)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 is right (no significant difference in productivity)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>df: 38
+standard error: 1.746424919657298
+t_critical: +- 2.0243941639119694
+t_test: 2.862991671569341
+Reject H0 -&gt; Ha is right (there IS a difference in productivity)</pre></div>
+<div class="src-head">📓 <a href="../Concept/12_Hypothesis_Testing_T-Test_95.ipynb">12_Hypothesis_Testing_T-Test_95.ipynb</a></div>
+<h2 id="example-3-one-sample-t-test-two-tailed-95-confid">Example 3 (One-Sample T-Test, Two-Tailed, 95% Confidence Interval)</h2>
+<p>In the population, the average <strong>IQ is 100</strong>. A team of researchers wants to test a new medication to see if it has either a <strong>positive or negative</strong> effect on intelligence, or <strong>no effect at all</strong>. A sample of <strong>30 participants</strong> who have taken the medication has a mean of <strong>140</strong>, with a standard deviation of <strong>20</strong>. Did the medication affect intelligence? (<strong>CI = 95%</strong>)</p>
+<p><strong>Given:</strong></p>
+<ul>
+<li>$\mu = 100$ (population mean IQ)</li>
+<li>$n = 30$ (sample size)</li>
+<li>$\bar{x} = 140$ (sample mean)</li>
+<li>$S = 20$ (sample std)</li>
+<li>$CI = 95%$</li>
+</ul>
+<p>Because the researchers are checking for <strong>either</strong> a positive <strong>or</strong> a negative effect (not specifically one direction), this is a <strong>two-tailed test</strong>.</p>
+
+<h3>Step 1 - State the Null and Alternate Hypothesis</h3>
+<div class='formula'>H_0: \mu = 100</div>
+
+<div class='formula'>H_1: \mu \neq 100 \quad \text{(two-tailed test)}</div>
+
+<ul>
+<li>$H_0$ (Null Hypothesis) — the medication has <strong>no effect</strong> on IQ; the sample mean of 140 is just due to random sampling variation.</li>
+<li>$H_1$ (Alternate Hypothesis) — the medication <strong>does</strong> affect IQ (could be higher or lower), so we test both directions at once.</li>
+</ul>
+
+<h3>Step 2 - Significance Value</h3>
+<div class='formula'>CI = 95\% = 0.95</div>
+
+<div class='formula'>\alpha = 1 - CI = 1 - 0.95 = 0.05</div>
+
+<p>$\alpha$ is the probability of a <strong>Type I error</strong> — rejecting $H_0$ when it's actually true — that we're willing to accept. We fix this <em>before</em> looking at the sample data. Because this is two-tailed, this risk is split evenly between both tails of the distribution:</p>
+<div class='formula'>\dfrac{\alpha}{2} = \dfrac{0.05}{2} = 0.025 \text{ on each side}</div>
+
+
+<h3>Step 3 - Degrees of Freedom</h3>
+<div class='formula'>df = n - 1 = 30 - 1 = 29</div>
+
+<p>We use the <strong>t-distribution</strong> (not the z-distribution) here because the population standard deviation $\sigma$ is unknown — we only have the sample standard deviation $S = 20$. Estimating the spread from the sample itself introduces extra uncertainty, so the t-distribution has fatter tails than the normal distribution, and <code>df</code> controls exactly how fat. The <code>-1</code> reflects that one degree of freedom is &quot;used up&quot; estimating the sample mean $\bar{x}$ itself.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
+import numpy as np
+import matplotlib.pyplot as plt</pre></div>
+<h3>Step 4 - Decision Boundary</h3>
+<p>Look up the t-table at <strong>df = 29</strong>, two-tailed $\alpha = 0.05$ (i.e. 0.025 in each tail):</p>
+<div class='formula'>t_{critical} = \pm 2.045</div>
+
+<p>The region between $-2.045$ and $+2.045$ is the <strong>acceptance region</strong> (fail to reject $H_0$). Anything beyond that, in either tail, is the <strong>rejection region</strong> (reject $H_0$).</p>
+<p><strong>Decision rule:</strong> If $t_{test} &lt; -2.045$ or $t_{test} &gt; 2.045$, reject the null hypothesis.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">df = 29
+alpha = 0.05
+
+t_crit = st.t.ppf(1 - alpha / 2, df)   # 2.045
+
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions - both tails
+x_left = np.linspace(-4, -t_crit, 100)
+x_right = np.linspace(t_crit, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.4)
+
+# acceptance region
+x_mid = np.linspace(-t_crit, t_crit, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (95%)&quot;)
+
+ax.axvline(0, color=&quot;black&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0 (μ=100)&quot;, ha=&quot;center&quot;)
+ax.axvline(-t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_crit, -0.01, f&quot;-{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit, -0.01, f&quot;+{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 95% CI)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-hypothesis-testing-t-test-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Step 5 - Calculate the T-Test Statistic</h3>
+<div class='formula'>t_{test} = \dfrac{\bar{x} - \mu}{\dfrac{S}{\sqrt{n}}} = \dfrac{140 - 100}{\dfrac{20}{\sqrt{30}}} = \dfrac{40}{3.65} \approx 10.96</div>
+
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
+mu = 100
+S = 20
+n = 30
+alpha = 0.05
+df = n - 1
+
+t_critical = st.t.ppf(1 - alpha / 2, df)   # two-tailed -&gt; 2.045
+t_test = (x_bar - mu) / (S / np.sqrt(n))
+
+print(&quot;df:&quot;, df)
+print(&quot;t_critical: +-&quot;, round(t_critical, 4))
+print(&quot;t_test:&quot;, round(t_test, 4))</pre></div>
+<div class="out"><div class="h">Output</div><pre>df: 29
+t_critical: +- 2.0452
+t_test: 10.9545</pre></div>
+<h3>Step 6 - Conclusion</h3>
+<p><strong>Decision rule:</strong> If $t_{test}$ is less than $-2.045$ or greater than $+2.045$, reject the null hypothesis.</p>
+<div class='formula'>t_{test} (10.96) &gt; t_{critical} (2.045)</div>
+
+<p>This is true — $t_{test}$ falls far inside the rejection region → <strong>reject $H_0$, accept $H_1$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 95% confidence level, there is enough evidence to say the medication had a statistically significant effect on intelligence — the jump from an average IQ of 100 to a sample mean of 140 is extremely unlikely to be random sampling noise.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (medication DOES affect intelligence)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Reject H0 -&gt; H1 is right (medication DOES affect intelligence)</pre></div>
+<h3>Plotting the actual t_test value</h3>
+<p>The earlier plot only showed the critical boundaries ($\pm 2.045$). Here we mark the <strong>actual computed value, $t_{test} \approx 10.96$</strong>, on the same curve — it lands so far into the tail that it's off the visible range of a standard plot, which visually drives home just how strong this result is.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">x = np.linspace(-4, 12, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions
+x_left = np.linspace(-4, -t_critical, 100)
+x_right = np.linspace(t_critical, 12, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.3)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.3)
+
+# acceptance region
+x_mid = np.linspace(-t_critical, t_critical, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.25)
+
+# critical boundaries
+ax.axvline(-t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_critical, -0.01, f&quot;-{t_critical:.2f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_critical, -0.01, f&quot;+{t_critical:.2f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+# actual test statistic
+ax.axvline(t_test, color=&quot;darkorange&quot;, linewidth=2)
+ax.plot(t_test, st.t.pdf(t_test, df), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=8, zorder=5)
+ax.annotate(f&quot;t_test = {t_test:.2f}\n(deep in rejection region)&quot;,
+            xy=(t_test, st.t.pdf(t_test, df)),
+            xytext=(t_test - 5, max(y) * 0.55),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;darkorange&quot;),
+            color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(&quot;Where does t_test land? (df=29, 95% CI)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-hypothesis-testing-t-test-c12-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="faq">FAQ</h2>
+<p><strong>1. Why is this a t-test and not a z-test?</strong></p>
+<p>The sample size is $n = 30$ and, more importantly, we're only given the <strong>sample</strong> standard deviation ($S = 20$), not the true population standard deviation $\sigma$. Whenever $\sigma$ is unknown, we must estimate spread from the sample, which adds uncertainty — the t-distribution (with its fatter tails, controlled by <code>df</code>) accounts for that. If the population $\sigma$ were known, we'd use a z-test instead, even at $n=30$.</p>
+<p><strong>2. Why two-tailed instead of one-tailed?</strong></p>
+<p>The question explicitly asks whether the medication has &quot;either a positive or negative effect... or no effect at all.&quot; Since we care about a deviation in <strong>either direction</strong>, the rejection region must be split across <strong>both</strong> tails of the distribution ($\alpha/2$ each), giving $H_1: \mu \neq 100$. If the question instead asked &quot;does the medication <strong>increase</strong> IQ,&quot; that would be one-tailed with $H_1: \mu &gt; 100$.</p>
+<p><strong>3. Why is $t_{test}$ so much larger than $t_{critical}$ here? What does the &quot;40-point jump&quot; mean?</strong></p>
+<p><strong>The &quot;40-point jump&quot; is just the raw, unscaled gap in the formula's numerator:</strong></p>
+<div class='formula'>\bar{x} - \mu = 140 - 100 = 40</div>
+
+<p>It's the plain difference between what we <em>observed</em> (sample mean IQ = 140) and what $H_0$ <em>claims</em> (population mean IQ = 100), measured in ordinary IQ points — before it gets divided by anything or turned into a standardized score.</p>
+<p><strong>Step A — is 40 points a lot, for one person?</strong> On its own, &quot;40 points&quot; is hard to judge — it depends on how much IQ scores naturally bounce around. The sample's spread is $S = 20$, so $40 / 20 = 2$: the gap equals <strong>2 individual standard deviations</strong>. For a single person, landing 2 standard deviations from the mean is somewhat unusual but not extraordinary.</p>
+<p><strong>Step B — but we're not looking at one person, we're looking at the <em>average</em> of 30 people.</strong> Averages are far more stable than individuals — random ups and downs across 30 different people mostly cancel out. The formula captures this by dividing by the <strong>standard error of the mean</strong> instead of the raw standard deviation:</p>
+<div class='formula'>SE = \dfrac{S}{\sqrt{n}} = \dfrac{20}{\sqrt{30}} \approx 3.65</div>
+
+<p>Notice $SE \approx 3.65$ is roughly <strong>5.5× smaller</strong> than $S = 20$ — that shrinkage is exactly the benefit of averaging over 30 samples instead of looking at just 1.</p>
+<p><strong>Step C — put the same 40-point gap over this much smaller yardstick:</strong></p>
+<div class='formula'>t_{test} = \dfrac{\bar{x}-\mu}{SE} = \dfrac{40}{3.65} \approx 10.96</div>
+
+<p>So the <em>same</em> 40-point gap that was &quot;only&quot; 2 standard deviations at the individual level becomes <strong>~11 standard errors</strong> at the sample-mean level — because the yardstick used to judge it (SE) is so much finer than the yardstick for individuals (S).</p>
+<p><strong>Intuition:</strong> one person scoring 40 points above average is mildly surprising. But the <em>average</em> of 30 randomly chosen people scoring 40 points above the population average — with essentially no overlap in who's selected — is almost never going to happen just by chance. That's the whole point of dividing by $SE$ instead of $S$: it measures the gap in units of &quot;how much sampling wobble we'd realistically expect for a mean of 30 people,&quot; not &quot;how much any one person's score can wobble.&quot;</p>
+<p><strong>Why this makes $t_{test} \gg t_{critical}$:</strong> $t_{critical} \approx 2.045$ represents &quot;about 2 standard errors&quot; — the largest wobble we'd tolerate as plausibly due to chance at 95% confidence. Our actual result is <strong>~11 standard errors</strong> out — more than 5× further than the threshold — so it isn't a borderline call at all; it's a result that's essentially impossible to get under $H_0$ by random sampling alone.</p>
+<p><strong>4. What does &quot;reject $H_0$&quot; actually tell us, and what doesn't it tell us?</strong></p>
+<p>It tells us the difference is <strong>statistically significant</strong> — i.e., very unlikely to be random noise. It does <strong>not</strong> by itself prove the medication <em>causes</em> the IQ change (that depends on the study design, e.g. whether there was a control group, randomization, blinding, etc.), and it doesn't tell us anything about whether a 40-point jump is <em>practically</em> meaningful — that's a separate question from statistical significance.</p>
+<p><strong>5. How would the conclusion change with an 80% confidence interval instead of 95%?</strong></p>
+<p>A lower CI (80%) means a larger $\alpha = 0.20$, split into $\alpha/2 = 0.10$ per tail, which produces a <strong>smaller</strong> $|t_{critical}|$ (the acceptance region shrinks). Since our $t_{test} \approx 10.96$ is already far beyond the 95% CI's critical value, it would just as easily fall in the rejection region under an 80% CI — the conclusion (reject $H_0$) doesn't change, but the <em>margin</em> by which we reject does. See the companion notebook for the worked 80% CI version of this same problem.</p>
+
+<div class="src-head">📓 <a href="../Concept/13_Hypothesis_Testing_T-Test_80.ipynb">13_Hypothesis_Testing_T-Test_80.ipynb</a></div>
+<h2 id="example-3b-one-sample-t-test-two-tailed-80-confi">Example 3b (One-Sample T-Test, Two-Tailed, 80% Confidence Interval)</h2>
+<p>Same problem as the <a href="../Concept/12_Hypothesis_Testing_T-Test_95.ipynb">95% CI notebook</a> — only the confidence level changes. In the population, the average <strong>IQ is 100</strong>. A team of researchers wants to test a new medication to see if it has either a <strong>positive or negative</strong> effect on intelligence, or <strong>no effect at all</strong>. A sample of <strong>30 participants</strong> who have taken the medication has a mean of <strong>140</strong>, with a standard deviation of <strong>20</strong>. Did the medication affect intelligence? (<strong>CI = 80%</strong>)</p>
+<p><strong>Given:</strong></p>
+<ul>
+<li>$\mu = 100$ (population mean IQ)</li>
+<li>$n = 30$ (sample size)</li>
+<li>$\bar{x} = 140$ (sample mean)</li>
+<li>$S = 20$ (sample std)</li>
+<li>$CI = 80%$</li>
+</ul>
+<p>Because the researchers are checking for <strong>either</strong> a positive <strong>or</strong> a negative effect (not specifically one direction), this is still a <strong>two-tailed test</strong> — only $CI$ (and therefore $\alpha$ and the critical value) changes.</p>
+
+<h3>Step 1 - State the Null and Alternate Hypothesis</h3>
+<div class='formula'>H_0: \mu = 100</div>
+
+<div class='formula'>H_1: \mu \neq 100 \quad \text{(two-tailed test)}</div>
+
+<p>The hypotheses themselves <strong>never depend on the confidence level</strong> — they come purely from the wording of the question (&quot;positive or negative effect, or no effect&quot;). Only the <em>threshold</em> for deciding changes when $CI$ changes.</p>
+
+<h3>Step 2 - Significance Value</h3>
+<div class='formula'>CI = 80\% = 0.80</div>
+
+<div class='formula'>\alpha = 1 - CI = 1 - 0.80 = 0.20</div>
+
+<p>This time we're only willing to be <strong>80% confident</strong>, so we tolerate a bigger risk of a Type I error: $\alpha = 0.20$ instead of $0.05$. Split evenly across both tails (two-tailed test):</p>
+<div class='formula'>\dfrac{\alpha}{2} = \dfrac{0.20}{2} = 0.10 \text{ on each side}</div>
+
+<p>Compare this to the 95% CI case, where $\alpha/2$ was only $0.025$ — a lower confidence level means a <strong>wider, more lenient</strong> rejection region on each side.</p>
+
+<h3>Step 3 - Degrees of Freedom</h3>
+<div class='formula'>df = n - 1 = 30 - 1 = 29</div>
+
+<p><code>df</code> only depends on the sample size, not on the chosen confidence level — so this is identical to the 95% CI case.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
+import numpy as np
+import matplotlib.pyplot as plt</pre></div>
+<h3>Step 4 - Decision Boundary</h3>
+<p>Look up the t-table at <strong>df = 29</strong>, two-tailed $\alpha = 0.20$ (i.e. 0.10 in each tail):</p>
+<div class='formula'>t_{critical} \approx \pm 1.311</div>
+
+<p>The region between $-1.311$ and $+1.311$ is the <strong>acceptance region</strong> (fail to reject $H_0$). Anything beyond that, in either tail, is the <strong>rejection region</strong> (reject $H_0$).</p>
+<p>Notice how much <strong>narrower</strong> this acceptance region is compared to the 95% CI case ($\pm 2.045$) — at a lower confidence level, we require <em>less</em> evidence before rejecting $H_0$.</p>
+<p><strong>Decision rule:</strong> If $t_{test} &lt; -1.311$ or $t_{test} &gt; 1.311$, reject the null hypothesis.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">df = 29
+alpha = 0.20
+
+t_crit = st.t.ppf(1 - alpha / 2, df)   # ~1.311
+
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions - both tails
+x_left = np.linspace(-4, -t_crit, 100)
+x_right = np.linspace(t_crit, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.4)
+
+# acceptance region
+x_mid = np.linspace(-t_crit, t_crit, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (80%)&quot;)
+
+ax.axvline(0, color=&quot;black&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0 (μ=100)&quot;, ha=&quot;center&quot;)
+ax.axvline(-t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_crit, -0.01, f&quot;-{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit, -0.01, f&quot;+{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 80% CI)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/13-hypothesis-testing-t-test-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Step 5 - Calculate the T-Test Statistic</h3>
+<div class='formula'>t_{test} = \dfrac{\bar{x} - \mu}{\dfrac{S}{\sqrt{n}}} = \dfrac{140 - 100}{\dfrac{20}{\sqrt{30}}} = \dfrac{40}{3.65} \approx 10.96</div>
+
+<p>This step is <strong>completely unaffected</strong> by the confidence level — $t_{test}$ only depends on the sample data ($\bar{x}, \mu, S, n$), never on $\alpha$ or $CI$. Only $t_{critical}$ (Step 4) changes with confidence level.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
+mu = 100
+S = 20
+n = 30
+alpha = 0.20
+df = n - 1
+
+t_critical = st.t.ppf(1 - alpha / 2, df)   # two-tailed -&gt; ~1.311
+t_test = (x_bar - mu) / (S / np.sqrt(n))
+
+print(&quot;df:&quot;, df)
+print(&quot;t_critical: +-&quot;, round(t_critical, 4))
+print(&quot;t_test:&quot;, round(t_test, 4))</pre></div>
+<div class="out"><div class="h">Output</div><pre>df: 29
+t_critical: +- 1.3114
+t_test: 10.9545</pre></div>
+<h3>Step 6 - Conclusion</h3>
+<p><strong>Decision rule:</strong> If $t_{test}$ is less than $-1.311$ or greater than $+1.311$, reject the null hypothesis.</p>
+<div class='formula'>t_{test} (10.96) &gt; t_{critical} (1.311)</div>
+
+<p>This is true — $t_{test}$ falls far inside the rejection region → <strong>reject $H_0$, accept $H_1$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 80% confidence level too, there is enough evidence to say the medication had a statistically significant effect on intelligence. The result doesn't change from the 95% CI case — but here it's an even more lopsided call, since the bar for rejection ($\pm 1.311$) is much lower and $t_{test} \approx 10.96$ clears it by an even wider margin.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (medication DOES affect intelligence)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Reject H0 -&gt; H1 is right (medication DOES affect intelligence)</pre></div>
+<h3>Side by Side — 95% CI vs 80% CI</h3>
+<p>Same data, same $t_{test} \approx 10.96$ — only the acceptance/rejection boundary moves. A lower confidence level shrinks the acceptance region, making it <em>easier</em> to reject $H_0$ (though here it was already an easy call at 95%).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">dfree = 29
+t_test_val = 10.9545
+
+alphas = {&quot;95% CI&quot;: 0.05, &quot;80% CI&quot;: 0.20}
+
+x = np.linspace(-4, 12, 500)
+y = st.t.pdf(x, dfree)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4), sharey=True)
+
+for ax, (label, a) in zip(axes, alphas.items()):
+    t_c = st.t.ppf(1 - a / 2, dfree)
+    ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+    x_left = np.linspace(-4, -t_c, 100)
+    x_right = np.linspace(t_c, 12, 100)
+    ax.fill_between(x_left, st.t.pdf(x_left, dfree), color=&quot;crimson&quot;, alpha=0.35)
+    ax.fill_between(x_right, st.t.pdf(x_right, dfree), color=&quot;crimson&quot;, alpha=0.35)
+
+    x_mid = np.linspace(-t_c, t_c, 200)
+    ax.fill_between(x_mid, st.t.pdf(x_mid, dfree), color=&quot;seagreen&quot;, alpha=0.25)
+
+    ax.axvline(t_c, color=&quot;crimson&quot;, linestyle=&quot;:&quot;)
+    ax.axvline(-t_c, color=&quot;crimson&quot;, linestyle=&quot;:&quot;)
+
+    ax.axvline(t_test_val, color=&quot;darkorange&quot;, linewidth=2)
+    ax.plot(t_test_val, st.t.pdf(t_test_val, dfree), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=7, zorder=5)
+
+    ax.set_yticks([])
+    ax.set_xlabel(&quot;t&quot;)
+    ax.set_title(f&quot;{label}   (t_critical = ±{t_c:.3f})&quot;)
+
+plt.tight_layout()
+plt.show()
+
+print(f&quot;{&#x27;CI&#x27;:&lt;10}{&#x27;alpha&#x27;:&lt;10}{&#x27;t_critical&#x27;:&lt;14}{&#x27;t_test&#x27;:&lt;10}{&#x27;Decision&#x27;}&quot;)
+for label, a in alphas.items():
+    t_c = st.t.ppf(1 - a / 2, dfree)
+    decision = &quot;Reject H0&quot; if abs(t_test_val) &gt; t_c else &quot;Fail to reject H0&quot;
+    print(f&quot;{label:&lt;10}{a:&lt;10}{t_c:&lt;14.4f}{t_test_val:&lt;10.4f}{decision}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>CI        alpha     t_critical    t_test    Decision
+95% CI    0.05      2.0452        10.9545   Reject H0
+80% CI    0.2       1.3114        10.9545   Reject H0</pre></div>
+<figure class="shot"><img src="assets/13-hypothesis-testing-t-test-c12-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="faq">FAQ</h2>
+<p><strong>1. Why does the critical value shrink from 2.045 (95% CI) to 1.311 (80% CI)?</strong></p>
+<p>Confidence level and critical value move in the same direction. A <strong>higher</strong> CI (like 95%) demands stronger evidence before rejecting $H_0$, so it pushes the critical value further out into the tail (a wider acceptance region). A <strong>lower</strong> CI (like 80%) is more lenient — we're only asking for 80% confidence, so we accept a bigger risk of a Type I error ($\alpha = 0.20$ instead of $0.05$), which pulls the critical value inward (a narrower acceptance region, easier to spill into the rejection zone).</p>
+<p><strong>2. Does the sample data ($\bar{x}, S, n$) change with the confidence level?</strong></p>
+<p>No. $t_{test}$ is computed purely from what was observed — the sample mean, sample std, and sample size — none of which have anything to do with how confident we <em>choose</em> to be. Only $t_{critical}$ (Step 4) depends on $CI$. This is why $t_{test} \approx 10.96$ is identical in both the 95% and 80% CI versions of this notebook.</p>
+<p><strong>3. If both CIs lead to &quot;reject $H_0$,&quot; why bother computing both?</strong></p>
+<p>Because it won't always be this clear-cut. Here, $t_{test} \approx 10.96$ is so extreme that it clears <em>both</em> thresholds easily — the medication's effect is obvious regardless of how strict we are. But in a borderline case (say $t_{test} = 1.5$), the 95% CI threshold (2.045) would say &quot;fail to reject $H_0$,&quot; while the 80% CI threshold (1.311) would say &quot;reject $H_0$&quot; — the <em>same data</em> leading to <em>opposite conclusions</em> purely because of the confidence level chosen. That's exactly why $\alpha$/$CI$ must be picked <strong>before</strong> looking at the data, not adjusted afterward to get the answer you want.</p>
+<p><strong>4. When would someone actually use an 80% CI instead of 95%?</strong></p>
+<p>95% (or 99%) is the standard for most formal research, medicine, and any decision where a <strong>false positive is costly</strong> (e.g., wrongly approving a drug as effective). An 80% CI is more common in <strong>exploratory or low-stakes</strong> settings — e.g., early-stage screening, A/B tests where you're just looking for promising leads to investigate further, or internal business decisions where being wrong occasionally is cheap and moving fast matters more than rigor.</p>
+<p><strong>5. How does this compare to the <a href="../Concept/12_Hypothesis_Testing_T-Test_95.ipynb">95% CI version</a> of this same problem?</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>95% CI</th>
+  <th>80% CI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\alpha$</td>
+  <td>0.05</td>
+  <td>0.20</td>
+</tr>
+<tr>
+  <td>$\alpha/2$ (two-tailed)</td>
+  <td>0.025</td>
+  <td>0.10</td>
+</tr>
+<tr>
+  <td>$t_{critical}$</td>
+  <td>$\pm 2.045$</td>
+  <td>$\pm 1.311$</td>
+</tr>
+<tr>
+  <td>$t_{test}$</td>
+  <td>10.96</td>
+  <td>10.96</td>
+</tr>
+<tr>
+  <td>Decision</td>
+  <td>Reject $H_0$</td>
+  <td>Reject $H_0$</td>
+</tr>
+</tbody>
+</table>
+<p>Same hypotheses, same data, same $t_{test}$ — the only thing that moved is where the goalposts (critical value) sit.</p>
+
+<div class="foot"><a class="btn" href="../Concept/09_Hypothesis_Testing_T-Test.ipynb">09_Hypothesis_Testing_T-Test.ipynb ↗</a><a class="btn" href="../Concept/10_Hypothesis_Testing_T-Test.ipynb">10_Hypothesis_Testing_T-Test.ipynb ↗</a><a class="btn" href="../Concept/12_Hypothesis_Testing_T-Test_95.ipynb">12_Hypothesis_Testing_T-Test_95.ipynb ↗</a><a class="btn" href="../Concept/13_Hypothesis_Testing_T-Test_80.ipynb">13_Hypothesis_Testing_T-Test_80.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ElasticNet — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>ElasticNet</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#elasticnet-regression">ElasticNet Regression</a><a href="#1-train-test-split">1. Train-Test Split</a><a href="#2-elasticnet-the-defaults-alpha-1-0-l1-ratio-0-5">2. ElasticNet() — the defaults alpha = 1.0, l1_ratio</a><a href="#3-turning-alpha-up-alpha-gt-1">3. Turning alpha up (alpha &amp;gt; 1)</a><a href="#4-turning-alpha-down-alpha-lt-1">4. Turning alpha down (alpha &amp;lt; 1)</a><a href="#5-wrap-up">5. Wrap up</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>ElasticNet</h1>
+  <p class="lede">Both penalties at once, with a dial between them.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Imran now had two tools and a problem with each.</strong> Lasso zeroed columns — good — but when two columns were near-copies it kept one at random and threw the other away.</p><p>Ridge kept both and shared the credit — good — but never removed anything.</p><p><span class='beat'>He wanted the selection of Lasso and the stability of Ridge.</span></p><p>ElasticNet applies both penalties together. <code>l1_ratio</code> slides between them: 1.0 is pure Lasso, 0.0 is pure Ridge, and 0.5 gives selection that still handles correlated columns sensibly.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>alpha sets how strong the penalty is; l1_ratio sets how much of it behaves like Lasso.</p></div>
+<div class="src-head">📓 <a href="../Concept/09_ElasticNet.ipynb">09_ElasticNet.ipynb</a></div>
+<h2 id="elasticnet-regression">ElasticNet Regression</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning, scikit-learn module.</p>
+</div>
+<p>Ridge and Lasso each fix one thing. ElasticNet uses both penalties at the same time.</p>
+<div class="code"><pre>LinearRegression : error only
+Ridge   (L2)     : error + alpha x slope^2      slope shrinks, never reaches 0
+Lasso   (L1)     : error + alpha x |slope|      slope can land exactly on 0
+ElasticNet       : error + both penalties       shrinks like Ridge, can still reach 0 like Lasso
+</pre></div>
+<h3>The formula sklearn actually minimises</h3>
+<div class="code"><pre>   cost = (1 / 2n) x sum( y - y_pred )^2  +  alpha x r x |w|  +  (alpha x (1 - r) / 2) x w^2
+           \__________  __________/           \______  ______/    \__________  __________/
+                      \/                             \/                      \/
+            how wrong the line is                Lasso price             Ridge price
+
+   n     = number of training rows
+   w     = the slope (coef_)
+   alpha = total price of the slope          default 1.0
+   r     = l1_ratio, how that price is split  default 0.5
+</pre></div>
+<p>So there are two knobs, not one:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>knob</th>
+  <th>question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>alpha</code></td>
+  <td>how much do I punish a big slope?</td>
+</tr>
+<tr>
+  <td><code>l1_ratio</code></td>
+  <td>how much of that punishment is Lasso, how much is Ridge?</td>
+</tr>
+</tbody>
+</table>
+<div class="code"><pre>   l1_ratio = 0.0   -&gt;  pure Ridge
+   l1_ratio = 0.5   -&gt;  half and half     (the default, used everywhere in this notebook)
+   l1_ratio = 1.0   -&gt;  pure Lasso
+</pre></div>
+<p>The data below is one input column, one output number, 10,000 rows, noise = 5.
+<code>x</code> runs from about <code>-3.58</code> to <code>4.13</code>, <code>y</code> from about <code>-106</code> to <code>121</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
+x,y = make_regression(n_features=1, noise=5, n_samples=10000,random_state=2)
+import matplotlib.pyplot as plt
+plt.scatter(x,y,s=3)
+plt.xlabel(&#x27;x&#x27;)
+plt.ylabel(&#x27;y&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c01-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="1-train-test-split">1. Train-Test Split</h2>
+<p>8,000 rows to learn from, 2,000 rows kept hidden for the score.</p>
+<p>Two numbers from the training rows are used again and again below:</p>
+<div class="code"><pre>   n  = training rows                        = 8000
+   S  = how spread out x is on those rows    = sum of (x - average x)^2 = 8033.32
+   n / S                                     = 0.9959
+</pre></div>
+<p><code>random_state=0</code> fixes the split, so every number in this notebook is repeatable.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div>
+<h2 id="2-elasticnet-the-defaults-alpha-1-0-l1-ratio-0-5">2. <code>ElasticNet()</code> — the defaults <code>alpha = 1.0</code>, <code>l1_ratio = 0.5</code></h2>
+<p>Same three steps as always: <code>fit</code>, <code>predict</code>, <code>score</code>. The model it produces is two numbers:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>value</th>
+  <th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>coef_</code></td>
+  <td><code>18.558122</code></td>
+  <td><code>y</code> moves 18.56 when <code>x</code> moves 1</td>
+</tr>
+<tr>
+  <td><code>intercept_</code></td>
+  <td><code>-0.147721</code></td>
+  <td>the height of the line at <code>x = 0</code></td>
+</tr>
+</tbody>
+</table>
+<p>R² on the 2,000 hidden rows is <strong><code>0.851062</code></strong>.</p>
+<p>Plain <code>LinearRegression</code> on the same rows gives slope <code>28.296622</code> and R² <code>0.969932</code>.
+So the default <code>alpha = 1</code> took about <code>9.74</code> off the slope. That is a big cut for a setting
+nobody chose.</p>
+<h3>One formula for the whole notebook</h3>
+<p>ElasticNet does the Lasso step and the Ridge step together: subtract on the top, divide on
+the bottom.</p>
+<div class="code"><pre>                     Lasso part: subtract
+                 _____________/\______________
+                /                              \
+   new slope = ( old slope - alpha x r x n/S )  /  ( 1 + alpha x (1 - r) x n/S )
+                                                   \____________  _____________/
+                                                                \/
+                                                       Ridge part: divide
+
+   the top is floored at 0 - it never goes negative
+</pre></div>
+<p>With <code>r = 0.5</code> and <code>n/S = 0.9959</code>, both <code>alpha</code> terms become <code>0.4979 x alpha</code>:</p>
+<div class="code"><pre>   new slope = (28.2966 - 0.4979 x alpha) / (1 + 0.4979 x alpha)
+
+   alpha = 1  -&gt;  (28.2966 - 0.4979) / 1.4979  =  18.5581
+</pre></div>
+<p>That is exactly what <code>coef_</code> prints. Every cell after this one is the same line with a
+different <code>alpha</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">from sklearn.linear_model import ElasticNet
+reg = ElasticNet()
+reg.fit(X_train,y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>ElasticNet()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">reg.predict(X_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([-22.9719679 , -13.3175701 ,  44.55955866, ...,  -2.75752941,
+         2.06068692,  29.13496094])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">reg.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.8510615252652294</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">reg.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([18.55812214])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">reg.intercept_</pre></div>
+<div class="out"><div class="h">Output</div><pre>-0.14772097715944033</pre></div>
+<h3>Predictions vs actuals (<code>alpha = 1.0</code>)</h3>
+<p><code>reg.predict(x)</code> runs on all 10,000 rows, so the orange points form the fitted line across
+the whole cloud.</p>
+<div class="code"><pre>   blue cloud  = the real data, it never changes
+   orange line = the model, it gets flatter every time alpha goes up
+</pre></div>
+<p>At <code>alpha = 1</code> the line already leans less than the cloud. The cloud climbs faster than the
+line, and that visible gap is the regularization — it is why R² dropped from <code>0.9699</code> to
+<code>0.8511</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">y_pred = reg.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c12-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="3-turning-alpha-up-alpha-gt-1">3. Turning <code>alpha</code> up (<code>alpha &gt; 1</code>)</h2>
+<p>The next cells are the same code with a bigger <code>alpha</code>. The formula predicts each one before
+sklearn runs:</p>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right"><code>alpha</code></th>
+  <th style="text-align:right">top: <code>28.2966 - 0.4979 x alpha</code></th>
+  <th style="text-align:right">bottom: <code>1 + 0.4979 x alpha</code></th>
+  <th style="text-align:right"><code>coef_</code> printed</th>
+  <th style="text-align:right">test R²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right"><code>2</code></td>
+  <td style="text-align:right"><code>27.3007</code></td>
+  <td style="text-align:right"><code>1.9959</code></td>
+  <td style="text-align:right"><code>13.678753</code></td>
+  <td style="text-align:right"><code>0.706671</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>5</code></td>
+  <td style="text-align:right"><code>25.8072</code></td>
+  <td style="text-align:right"><code>3.4896</code></td>
+  <td style="text-align:right"><code>7.395336</code></td>
+  <td style="text-align:right"><code>0.437311</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>20</code></td>
+  <td style="text-align:right"><code>18.3381</code></td>
+  <td style="text-align:right"><code>10.9585</code></td>
+  <td style="text-align:right"><code>1.673410</code></td>
+  <td style="text-align:right"><code>0.110319</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>100</code></td>
+  <td style="text-align:right"><code>-21.4934</code> → <code>0</code></td>
+  <td style="text-align:right">—</td>
+  <td style="text-align:right"><code>0.000000</code></td>
+  <td style="text-align:right"><code>-0.000030</code></td>
+</tr>
+</tbody>
+</table>
+<p>The drop is fast at first and then slows down. The top is shrinking while the bottom is
+growing, so the slope falls hard early and then crawls toward 0.</p>
+<h3>Where the slope hits exactly 0</h3>
+<p>The top goes negative once <code>alpha</code> is big enough, and ElasticNet stops it at 0:</p>
+<div class="code"><pre>   the alpha that kills the slope  =  old slope x S / (n x r)
+                                   =  28.2966 x 8033.32 / (8000 x 0.5)
+                                   =  56.83
+</pre></div>
+<p><code>alpha = 100</code> in the last cell is well past that line. <code>coef_</code> is <code>[0.]</code>, the line is flat,
+and <code>intercept_</code> settles on the average of <code>y_train</code> (<code>-0.474607</code>). The model now predicts
+the same number for every row, so R² is about <code>0</code> — which is what R² = 0 means: no better
+than guessing the average.</p>
+<p>Pure Lasso would have killed the same slope at <code>28.41</code>. ElasticNet needs roughly twice the
+<code>alpha</code> because only half of it (<code>l1_ratio = 0.5</code>) is the L1 part that can reach 0.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">reg = ElasticNet(alpha=2)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.7066712129632455</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">y_pred = reg.predict(x)
+print(reg.coef_)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[13.67875302]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c16-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">reg = ElasticNet(alpha=5)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.4373105641354814
+[7.39533623]</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c17-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">reg = ElasticNet(alpha=20)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.11031911092000335
+[1.6734099]</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c18-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">reg = ElasticNet(alpha=100)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>-3.0155503971895925e-05
+[0.]</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c19-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="4-turning-alpha-down-alpha-lt-1">4. Turning <code>alpha</code> down (<code>alpha &lt; 1</code>)</h2>
+<p>A small <code>alpha</code> is a small price, so the slope stays close to where linear regression put it.</p>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right"><code>alpha</code></th>
+  <th style="text-align:right"><code>coef_</code></th>
+  <th style="text-align:right">test R²</th>
+  <th>distance from OLS slope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right"><code>0.2</code></td>
+  <td style="text-align:right"><code>25.643339</code></td>
+  <td style="text-align:right"><code>0.959904</code></td>
+  <td><code>2.653</code> below</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.1</code></td>
+  <td style="text-align:right"><code>26.907057</code></td>
+  <td style="text-align:right"><code>0.966768</code></td>
+  <td><code>1.390</code> below</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.01</code></td>
+  <td style="text-align:right"><code>28.151469</code></td>
+  <td style="text-align:right"><code>0.969816</code></td>
+  <td><code>0.145</code> below</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0</code> (OLS)</td>
+  <td style="text-align:right"><code>28.296622</code></td>
+  <td style="text-align:right"><code>0.969932</code></td>
+  <td>—</td>
+</tr>
+</tbody>
+</table>
+<p>The score barely moves here, and it never beats plain <code>LinearRegression</code>. That is expected:
+one clean column and 10,000 rows means there is no overfitting to remove. Regularization only
+pays when the model has more freedom than the data can support.</p>
+<p>Do not pass <code>alpha=0</code> to <code>ElasticNet</code>. It works, but sklearn warns about it — use
+<code>LinearRegression</code> for that case.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">reg = ElasticNet(alpha=0.2)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9599038182793258
+[25.643339]</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c21-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">reg = ElasticNet(alpha=0.1)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9667684007017164
+[26.90705662]</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c22-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">reg = ElasticNet(alpha=0.01)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9698159687440311
+[28.15146906]</pre></div>
+<figure class="shot"><img src="assets/09-elasticnet-c23-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="5-wrap-up">5. Wrap up</h2>
+<h3>The whole notebook in one table</h3>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right"><code>alpha</code></th>
+  <th style="text-align:right"><code>coef_</code></th>
+  <th style="text-align:right"><code>intercept_</code></th>
+  <th style="text-align:right">test R²</th>
+  <th>what happened</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right"><code>0</code></td>
+  <td style="text-align:right"><code>28.296622</code></td>
+  <td style="text-align:right"><code>0.023815</code></td>
+  <td style="text-align:right"><code>0.969932</code></td>
+  <td>plain <code>LinearRegression</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.01</code></td>
+  <td style="text-align:right"><code>28.151469</code></td>
+  <td style="text-align:right"><code>0.021258</code></td>
+  <td style="text-align:right"><code>0.969816</code></td>
+  <td>no visible change</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.1</code></td>
+  <td style="text-align:right"><code>26.907057</code></td>
+  <td style="text-align:right"><code>-0.000661</code></td>
+  <td style="text-align:right"><code>0.966768</code></td>
+  <td>5% flatter, almost free</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.2</code></td>
+  <td style="text-align:right"><code>25.643339</code></td>
+  <td style="text-align:right"><code>-0.022921</code></td>
+  <td style="text-align:right"><code>0.959904</code></td>
+  <td>first visible cost</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>1</code></td>
+  <td style="text-align:right"><code>18.558122</code></td>
+  <td style="text-align:right"><code>-0.147721</code></td>
+  <td style="text-align:right"><code>0.851062</code></td>
+  <td>the default, already a big cut</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>2</code></td>
+  <td style="text-align:right"><code>13.678753</code></td>
+  <td style="text-align:right"><code>-0.233667</code></td>
+  <td style="text-align:right"><code>0.706671</code></td>
+  <td>clearly under the cloud</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>5</code></td>
+  <td style="text-align:right"><code>7.395336</code></td>
+  <td style="text-align:right"><code>-0.344344</code></td>
+  <td style="text-align:right"><code>0.437311</code></td>
+  <td>most of the slope gone</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>20</code></td>
+  <td style="text-align:right"><code>1.673410</code></td>
+  <td style="text-align:right"><code>-0.445131</code></td>
+  <td style="text-align:right"><code>0.110319</code></td>
+  <td>nearly flat</td>
+</tr>
+<tr>
+  <td style="text-align:right"><strong><code>56.83</code></strong></td>
+  <td style="text-align:right"><strong><code>0.000000</code></strong></td>
+  <td style="text-align:right"><code>-0.474607</code></td>
+  <td style="text-align:right"><code>-0.000030</code></td>
+  <td><strong>the column is dropped</strong></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>100</code></td>
+  <td style="text-align:right"><code>0.000000</code></td>
+  <td style="text-align:right"><code>-0.474607</code></td>
+  <td style="text-align:right"><code>-0.000030</code></td>
+  <td>same, nothing left to cut</td>
+</tr>
+</tbody>
+</table>
+<h3>ElasticNet in three lines</h3>
+<div class="code"><pre>   cost       =  error  +  alpha x r x |w|  +  (alpha x (1 - r) / 2) x w^2
+   new slope  =  (old slope - alpha x r x n/S) / (1 + alpha x (1 - r) x n/S)    top floored at 0
+   alpha &gt;= old slope x S / (n x r)   -&gt;   slope = 0, the column is dropped
+</pre></div>
+<p>Ridge divides, Lasso subtracts, ElasticNet does both. That is the whole idea.</p>
+<h3>Common mistakes</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Mistake</th>
+  <th>What actually happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Copying an <code>alpha</code> from another project</td>
+  <td><code>alpha</code> only means something next to <code>n / S</code>, and both change with your data.</td>
+</tr>
+<tr>
+  <td>Tuning <code>alpha</code> and leaving <code>l1_ratio</code> at <code>0.5</code></td>
+  <td>It is a real second knob. At <code>alpha = 1</code>: <code>l1_ratio=0.25</code> → slope <code>16.06</code> (R² <code>0.7841</code>), <code>0.5</code> → <code>18.56</code> (R² <code>0.8511</code>), <code>0.75</code> → <code>22.06</code> (R² <code>0.9198</code>). More Ridge share means more dividing, which cuts harder here than subtracting.</td>
+</tr>
+<tr>
+  <td>Reading <code>Ridge(alpha=1)</code> and <code>ElasticNet(alpha=1, l1_ratio=0)</code> as the same model</td>
+  <td><code>ElasticNet</code> divides the error by <code>2n</code> first, <code>Ridge</code> does not. On this data <code>ElasticNet(alpha=1, l1_ratio=0)</code> matches <code>Ridge(alpha=8000)</code> — slope <code>14.18</code>, not <code>28.29</code>.</td>
+</tr>
+<tr>
+  <td>Not scaling the features</td>
+  <td>Both penalties are charged on raw coefficient size, so a column in small units gets punished more. Fit inside a <code>Pipeline</code> with <code>StandardScaler</code>.</td>
+</tr>
+<tr>
+  <td>Expecting ElasticNet to beat OLS here</td>
+  <td>It only helps when the model is overfitting. One clean column, 10,000 rows — nothing to fix, so every increase of <code>alpha</code> only costs score.</td>
+</tr>
+</tbody>
+</table>
+<div class="note"><div class="h">Note</div><p><strong>If you remember only one thing...</strong>
+ElasticNet is Ridge's divide and Lasso's subtract in one formula. <code>alpha</code> sets the total
+price of the slope, <code>l1_ratio</code> splits that price, and only the Lasso half can push a
+coefficient to exactly 0.</p>
+</div>
+
+<div class="foot"><a class="btn" href="../Concept/09_ElasticNet.ipynb">09_ElasticNet.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

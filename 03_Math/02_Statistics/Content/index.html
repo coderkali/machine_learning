@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistics — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">03 Math › <b>Statistics</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#what-is-statistics-origin-story-amp-big-picture">What is Statistics — Origin Story &amp;amp; Big Picture</a><a href="#where-statistics-came-from">Where statistics came from</a><a href="#what-does-quot-statistics-quot-actually-mean">What does &amp;quot;statistics&amp;quot; actually mean?</a><a href="#real-life-story-village-doctor">Real life story — Village Doctor</a><a href="#why-this-matters-for-machine-learning">Why this matters for Machine Learning</a><a href="#the-two-branches-of-statistics">The two branches of statistics</a><a href="#phase-2-roadmap">Phase 2 Roadmap</a><a href="#topic-01-mean-median-mode">Topic 01 — Mean, Median, Mode</a><a href="#the-story">The Story</a><a href="#mean">MEAN</a><a href="#median">MEDIAN</a><a href="#mode">MODE</a><a href="#summary-mean-vs-median-vs-mode">SUMMARY — Mean vs Median vs Mode</a><a href="#topic-02-variance-amp-standard-deviation">Topic 02 — Variance &amp;amp; Standard Deviation</a><a href="#the-story">The Story</a><a href="#the-problem-with-raw-distances">The Problem with Raw Distances</a><a href="#variance">VARIANCE</a><a href="#standard-deviation">STANDARD DEVIATION</a><a href="#ml-connection">ML Connection</a><a href="#memory-hook">Memory Hook</a><a href="#practice-working">Practice Working</a><a href="#topic-03-probability-basics">Topic 03 — Probability Basics</a><a href="#the-story">The Story</a><a href="#what-is-probability">What is Probability?</a><a href="#the-formula">The Formula</a><a href="#cricket-ball-example">Cricket Ball Example</a><a href="#rule-of-total-probability">Rule of Total Probability</a><a href="#conditional-probability">Conditional Probability</a><a href="#ml-connection">ML Connection</a><a href="#key-rules-summary">Key Rules Summary</a><a href="#memory-hook">Memory Hook</a><a href="#practice-working">Practice Working</a><a href="#my-understanding-in-my-own-words">My Understanding (in my own words)</a><a href="#my-understanding-in-my-own-words">My Understanding (in my own words)</a><a href="#topic-04-normal-distribution">Topic 04 — Normal Distribution</a><a href="#the-story">The Story</a><a href="#why-does-this-shape-appear">Why Does This Shape Appear?</a><a href="#what-the-bell-curve-looks-like">What the Bell Curve Looks Like</a><a href="#the-68-95-99-7-rule">The 68-95-99.7 Rule</a><a href="#z-score-coming-next">Z-Score — Coming Next</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Mathematics for ML</p>
+  <h1>Statistics</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">7 notes</span></div>
+</div>
+<div class="src-head">📝 <a href="../Concept/00_what_is_statistics.md">00_what_is_statistics.md</a></div>
+<h2 id="what-is-statistics-origin-story-amp-big-picture">What is Statistics — Origin Story &amp; Big Picture</h2>
+<hr />
+<h2 id="where-statistics-came-from">Where statistics came from</h2>
+<h3>1. Gambling -&gt; Probability</h3>
+<p>17th century Europe. A nobleman (Chevalier de Méré) kept losing
+at dice games and couldn't figure out why.</p>
+<p>He asked mathematician Blaise Pascal to explain it.
+Pascal worked with Pierre de Fermat - together they figured out
+how to calculate the CHANCES of different dice outcomes.</p>
+<p>This was the birth of PROBABILITY.</p>
+<h3>2. Counting populations -&gt; Statistics</h3>
+<p>Governments needed to know population numbers, deaths, births.</p>
+<p>John Graunt studied death records in London and noticed PATTERNS:</p>
+<ul>
+<li>Certain diseases killed more people in certain months</li>
+<li>More boys were born than girls, every single year, consistently</li>
+</ul>
+<p>Realization: Even though individual events seem random,
+the GROUP as a whole follows predictable patterns.</p>
+<p>This was the birth of STATISTICS.</p>
+<hr />
+<h2 id="what-does-quot-statistics-quot-actually-mean">What does &quot;statistics&quot; actually mean?</h2>
+<p>Statistics is the science of:</p>
+<ol>
+<li>Collecting data</li>
+<li>Summarizing it</li>
+<li>Finding patterns in it</li>
+<li>Using those patterns to make decisions or predictions</li>
+</ol>
+<p>Even when individual cases are unpredictable, GROUPS follow patterns.</p>
+<hr />
+<h2 id="real-life-story-village-doctor">Real life story — Village Doctor</h2>
+<p>One sick child with fever -&gt; doctor has no idea why (could be anything)</p>
+<p>100 children with fever over a month -&gt; doctor writes down:
+age, symptoms, food, location</p>
+<p>Pattern found: 80 of 100 children who got sick drank water from
+the SAME WELL.</p>
+<p>One data point = no information.
+Many data points, summarized and compared = reveals the truth.</p>
+<p>THIS is statistics.</p>
+<hr />
+<h2 id="why-this-matters-for-machine-learning">Why this matters for Machine Learning</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Village doctor</th>
+  <th>ML model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>100 sick children</td>
+  <td>Millions of data rows</td>
+</tr>
+<tr>
+  <td>&quot;80 drank from same well&quot;</td>
+  <td>&quot;Pattern found in the data&quot;</td>
+</tr>
+<tr>
+  <td>Doctor's conclusion: avoid that well</td>
+  <td>Model's prediction: &quot;this is spam&quot;</td>
+</tr>
+<tr>
+  <td>Used statistics to find pattern manually</td>
+  <td>Uses statistics (mean, variance,</td>
+</tr>
+<tr>
+  <td></td>
+  <td>probability, correlation) automatically</td>
+</tr>
+</tbody>
+</table>
+<p>Every ML algorithm is built on top of statistics.
+Without statistics, there is no ML - just numbers with no meaning.</p>
+<hr />
+<h2 id="the-two-branches-of-statistics">The two branches of statistics</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Branch</th>
+  <th>What it does</th>
+  <th>Topics in our plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Descriptive Statistics</td>
+  <td>Summarizing what data looks like</td>
+  <td>Mean, Median, Mode, Variance, Std Dev, Correlation</td>
+</tr>
+<tr>
+  <td>Inferential/Probability</td>
+  <td>Predictions &amp; decisions under uncertainty</td>
+  <td>Probability Basics, Normal Distribution</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="phase-2-roadmap">Phase 2 Roadmap</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Topic</th>
+  <th>ML Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Mean, Median, Mode</td>
+  <td>Missing values, skew detection, MSE loss</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Variance &amp; Standard Deviation</td>
+  <td>StandardScaler, overfitting (bias-variance)</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Probability Basics</td>
+  <td>Every classifier outputs a probability</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Normal Distribution</td>
+  <td>Z-score, outlier detection, algorithm assumptions</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Correlation</td>
+  <td>Feature selection (Iris heatmap)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+
+<div class="src-head">📝 <a href="../Concept/01_mean_median_mode.md">01_mean_median_mode.md</a></div>
+<h2 id="topic-01-mean-median-mode">Topic 01 — Mean, Median, Mode</h2>
+<p>Date:</p>
+<hr />
+<h2 id="the-story">The Story</h2>
+<p>Cricket coach with 5 players. Team selector asks:
+&quot;How well did your team bat — give me ONE number?&quot;</p>
+<p>Scores: Rohit=45, Virat=80, Dhoni=55, Hardik=12, Bumrah=8</p>
+<hr />
+<h2 id="mean">MEAN</h2>
+<h3>What is it?</h3>
+<p>The average. Add everything up, divide by how many there are.</p>
+<h3>Formula</h3>
+<p>x̄ = Σx / n</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>x̄</td>
+  <td>Mean (read: &quot;x bar&quot;)</td>
+</tr>
+<tr>
+  <td>Σ</td>
+  <td>Sum of all values (add them up)</td>
+</tr>
+<tr>
+  <td>x</td>
+  <td>Each individual value</td>
+</tr>
+<tr>
+  <td>n</td>
+  <td>Total count of values</td>
+</tr>
+</tbody>
+</table>
+<h3>Calculation</h3>
+<p>Σx = 45 + 80 + 55 + 12 + 8 = 200
+n  = 5
+x̄  = 200 / 5 = 40</p>
+<h3>ML Use</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Where</th>
+  <th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Missing values</td>
+  <td>Fill empty cells with column mean</td>
+</tr>
+<tr>
+  <td>Feature scaling</td>
+  <td>Subtract mean to center data at zero</td>
+</tr>
+<tr>
+  <td>MSE loss</td>
+  <td>Mean of all prediction errors squared</td>
+</tr>
+</tbody>
+</table>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="median">MEDIAN</h2>
+<h3>What is it?</h3>
+<p>The middle value when data is sorted from smallest to largest.
+Not affected by extreme values (outliers).</p>
+<h3>Steps</h3>
+<ol>
+<li>Sort values from smallest to largest</li>
+<li>Pick the middle value</li>
+</ol>
+<h3>Calculation</h3>
+<p>Original scores: 45, 80, 55, 12, 8
+Sorted:          8, 12, 45, 55, 80
+Middle value:    45 (3rd out of 5)</p>
+<p>Median = 45</p>
+<h3>Mean vs Median</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Measure</th>
+  <th>Value</th>
+  <th>Affected by outliers?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mean</td>
+  <td>40</td>
+  <td>Yes — pulled down by 8 and 12</td>
+</tr>
+<tr>
+  <td>Median</td>
+  <td>45</td>
+  <td>No — ignores how extreme they are</td>
+</tr>
+</tbody>
+</table>
+<h3>Real life example</h3>
+<p>5 salaries: 20k, 25k, 22k, 24k, 5,00,000
+Mean = pulled way up by CEO salary = misleading
+Median = true middle salary = realistic picture
+This is why news uses &quot;median household income&quot; not mean.</p>
+<h3>ML Use</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Where</th>
+  <th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Missing values with outliers</td>
+  <td>Fill with median — safer than mean</td>
+</tr>
+<tr>
+  <td>Skew detection</td>
+  <td>If mean != median, data is skewed</td>
+</tr>
+</tbody>
+</table>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="mode">MODE</h2>
+<h3>What is it?</h3>
+<p>The value that appears most frequently in the data.</p>
+<h3>Important cases</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Situation</th>
+  <th>Name</th>
+  <th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>One value appears most</td>
+  <td>Unimodal</td>
+  <td>mode = 45 (appears 3 times)</td>
+</tr>
+<tr>
+  <td>Two values tie</td>
+  <td>Bimodal</td>
+  <td>45 and 80 both appear 3 times</td>
+</tr>
+<tr>
+  <td>All values unique</td>
+  <td>No mode</td>
+  <td>45, 80, 55, 12, 8 — no repeats</td>
+</tr>
+</tbody>
+</table>
+<h3>Calculation</h3>
+<p>Scores across 3 matches: 12, 45, 80, 45, 55, 8, 45, 12, 80</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Score</th>
+  <th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>8</td>
+  <td>1x</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>2x</td>
+</tr>
+<tr>
+  <td>45</td>
+  <td>3x  &lt;- MODE</td>
+</tr>
+<tr>
+  <td>55</td>
+  <td>1x</td>
+</tr>
+<tr>
+  <td>80</td>
+  <td>2x</td>
+</tr>
+</tbody>
+</table>
+<p>Mode = 45</p>
+<h3>Real life connection</h3>
+<p>Iris petal length histogram had TWO peaks — one for Setosa,
+one for other species. That was a bimodal distribution.
+Now you know the formal name for what you saw.</p>
+<h3>ML Use</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Where</th>
+  <th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Missing categorical values</td>
+  <td>Fill missing &quot;City&quot; column with most common value</td>
+</tr>
+<tr>
+  <td>Class imbalance detection</td>
+  <td>Mode reveals dominant class in labels</td>
+</tr>
+</tbody>
+</table>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="summary-mean-vs-median-vs-mode">SUMMARY — Mean vs Median vs Mode</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Measure</th>
+  <th>What it finds</th>
+  <th>Affected by outliers?</th>
+  <th>Best used when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mean</td>
+  <td>Average value</td>
+  <td>Yes</td>
+  <td>Data is clean, no extreme values</td>
+</tr>
+<tr>
+  <td>Median</td>
+  <td>Middle value</td>
+  <td>No</td>
+  <td>Data has outliers</td>
+</tr>
+<tr>
+  <td>Mode</td>
+  <td>Most common value</td>
+  <td>No</td>
+  <td>Categorical data, finding peaks</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>Q3 — Missing value imputation (ML thinking)</h3>
+<p>Location column: Mumbai, Delhi, Mumbai, Bangalore, Mumbai, Delhi, Mumbai</p>
+<ol>
+<li>Use MODE — finds most common value</li>
+<li>Mode = Mumbai (appears 4 times)</li>
+<li>Mean and Median only work on numbers.
+Location is text/categorical — cannot add or sort words.
+Mode works on both numbers AND text.</li>
+</ol>
+<p>ML connection:
+This technique is called categorical imputation.
+Scikit-learn: SimpleImputer(strategy='most_frequent')
+does exactly this automatically.</p>
+
+<div class="src-head">📝 <a href="../Concept/02_variance_std.md">02_variance_std.md</a></div>
+<h2 id="topic-02-variance-amp-standard-deviation">Topic 02 — Variance &amp; Standard Deviation</h2>
+<p>Date:</p>
+<hr />
+<h2 id="the-story">The Story</h2>
+<p>Two cricket players, both with mean score of 50 across 5 matches.</p>
+<p>Player A: 48, 52, 49, 51, 50  -&gt; consistent
+Player B: 10, 90, 5, 95, 50   -&gt; unpredictable</p>
+<p>Same mean. Completely different story.
+Mean alone doesn't tell us how SPREAD OUT the data is.
+That's what Variance and Standard Deviation measure.</p>
+<hr />
+<h2 id="the-problem-with-raw-distances">The Problem with Raw Distances</h2>
+<p>Distances from mean can be negative and positive.
+They cancel each other out when added -&gt; sum = 0 -&gt; useless.
+Fix: SQUARE each distance to remove negatives.</p>
+<hr />
+<h2 id="variance">VARIANCE</h2>
+<h3>What is it?</h3>
+<p>Average of squared distances from the mean.
+Measures how spread out data is from the average.</p>
+<h3>Formula</h3>
+<p>σ² = Σ(x - x̄)² / n</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>σ²</td>
+  <td>Variance (sigma squared)</td>
+</tr>
+<tr>
+  <td>Σ</td>
+  <td>Sum of everything</td>
+</tr>
+<tr>
+  <td>x</td>
+  <td>Each individual value</td>
+</tr>
+<tr>
+  <td>x̄</td>
+  <td>The mean</td>
+</tr>
+<tr>
+  <td>(x - x̄)²</td>
+  <td>Distance from mean, squared</td>
+</tr>
+<tr>
+  <td>n</td>
+  <td>Total count of values</td>
+</tr>
+</tbody>
+</table>
+<h3>Calculation — Player A</h3>
+<p>Scores: 48, 52, 49, 51, 50 | Mean = 50</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Score</th>
+  <th>Distance (x-x̄)</th>
+  <th>Squared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>48</td>
+  <td>-2</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>52</td>
+  <td>+2</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>49</td>
+  <td>-1</td>
+  <td>1</td>
+</tr>
+<tr>
+  <td>51</td>
+  <td>+1</td>
+  <td>1</td>
+</tr>
+<tr>
+  <td>50</td>
+  <td>0</td>
+  <td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Variance = (4+4+1+1+0)/5 = 2</p>
+<h3>Calculation — Player B</h3>
+<p>Scores: 10, 90, 5, 95, 50 | Mean = 50</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Score</th>
+  <th>Distance (x-x̄)</th>
+  <th>Squared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>10</td>
+  <td>-40</td>
+  <td>1600</td>
+</tr>
+<tr>
+  <td>90</td>
+  <td>+40</td>
+  <td>1600</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>-45</td>
+  <td>2025</td>
+</tr>
+<tr>
+  <td>95</td>
+  <td>+45</td>
+  <td>2025</td>
+</tr>
+<tr>
+  <td>50</td>
+  <td>0</td>
+  <td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Variance = (1600+1600+2025+2025+0)/5 = 1450</p>
+<h3>Comparison</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Player</th>
+  <th>Variance</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td>2</td>
+  <td>Scores stay close to mean</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>1450</td>
+  <td>Scores wander far from mean</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="standard-deviation">STANDARD DEVIATION</h2>
+<h3>What is it?</h3>
+<p>Square root of Variance. Brings the unit back to original.
+Variance is in runs² (unnatural). Std dev is in runs (natural).</p>
+<h3>Formula</h3>
+<p>σ = √σ²</p>
+<h3>Calculation</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Player</th>
+  <th>Variance</th>
+  <th>Std Dev</th>
+  <th>Plain meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td>2</td>
+  <td>√2 = 1.41 runs</td>
+  <td>Varies by ±1.41 from mean</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>1450</td>
+  <td>√1450 = 38.08 runs</td>
+  <td>Varies by ±38.08 from mean</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ml-connection">ML Connection</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Where</th>
+  <th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>StandardScaler</td>
+  <td>Divides every value by std dev to normalize data</td>
+</tr>
+<tr>
+  <td>Bias-variance tradeoff</td>
+  <td>High variance model = overfitting</td>
+</tr>
+<tr>
+  <td>Outlier detection</td>
+  <td>Values beyond 3 std devs = outliers</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="memory-hook">Memory Hook</h2>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="practice-working">Practice Working</h2>
+<p>(Your answers go here)</p>
+<hr />
+
+<div class="src-head">📝 <a href="../Concept/03_probability_basics.md">03_probability_basics.md</a></div>
+<h2 id="topic-03-probability-basics">Topic 03 — Probability Basics</h2>
+<p>Date:</p>
+<hr />
+<h2 id="the-story">The Story</h2>
+<p>India vs Australia cricket match. Before it starts your friend asks:
+&quot;Do you think India will win?&quot;
+You say: &quot;70% chance India wins.&quot;</p>
+<p>You haven't watched a single ball — but you converted everything
+you knew (form, ground, history) into ONE number between 0 and 1.
+That number is called PROBABILITY.</p>
+<hr />
+<h2 id="what-is-probability">What is Probability?</h2>
+<p>A number between 0 and 1 that measures how likely something is.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Value</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>0</td>
+  <td>Impossible — will NOT happen</td>
+</tr>
+<tr>
+  <td>0.5</td>
+  <td>50/50 chance</td>
+</tr>
+<tr>
+  <td>1</td>
+  <td>Certain — WILL happen</td>
+</tr>
+</tbody>
+</table>
+<p>Note: 70% in real life = 0.7 in math. Always between 0 and 1.</p>
+<hr />
+<h2 id="the-formula">The Formula</h2>
+<p>P(event) = Favourable outcomes / Total possible outcomes</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>P(event)</td>
+  <td>Probability of something happening</td>
+</tr>
+<tr>
+  <td>Favourable outcomes</td>
+  <td>Ways the event CAN happen</td>
+</tr>
+<tr>
+  <td>Total outcomes</td>
+  <td>All possible things that could happen</td>
+</tr>
+</tbody>
+</table>
+<h3>Example — Rolling a dice</h3>
+<p>P(rolling a 4) = 1/6 = 0.167
+Favourable = 1 (only one face shows 4)
+Total = 6 (dice has 6 faces)</p>
+<hr />
+<h2 id="cricket-ball-example">Cricket Ball Example</h2>
+<p>Bag contains 10 balls: 6 red, 4 white</p>
+<p>P(red)   = 6/10 = 0.6
+P(white) = 4/10 = 0.4</p>
+<hr />
+<h2 id="rule-of-total-probability">Rule of Total Probability</h2>
+<p>All probabilities must always add up to 1.
+One outcome MUST happen — so together they = 1 (certainty).</p>
+<p>P(red) + P(white) = 0.6 + 0.4 = 1.0</p>
+<p>Useful shortcut:
+P(not A) = 1 - P(A)
+P(not red) = 1 - 0.6 = 0.4</p>
+<hr />
+<h2 id="conditional-probability">Conditional Probability</h2>
+<p>&quot;Given that something is already true — what is the probability
+of something else happening?&quot;</p>
+<p>Written as: P(A | B) = &quot;Probability of A GIVEN B&quot;
+The | symbol means &quot;given that&quot;</p>
+<h3>Examples</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Plain English</th>
+  <th>Math notation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Probability of spam given word &quot;prize&quot;</td>
+  <td>P(spam | &quot;prize&quot;)</td>
+</tr>
+<tr>
+  <td>Probability of rain given cloudy sky</td>
+  <td>P(rain | cloudy)</td>
+</tr>
+<tr>
+  <td>Probability of cancer given positive test</td>
+  <td>P(cancer | positive test)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ml-connection">ML Connection</h2>
+<p>Every classifier in ML outputs a probability.</p>
+<h3>Email spam classifier example</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Email</th>
+  <th>P(spam)</th>
+  <th>P(not spam)</th>
+  <th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>&quot;Win a prize now!&quot;</td>
+  <td>0.95</td>
+  <td>0.05</td>
+  <td>Spam</td>
+</tr>
+<tr>
+  <td>&quot;Meeting at 3pm&quot;</td>
+  <td>0.02</td>
+  <td>0.98</td>
+  <td>Not spam</td>
+</tr>
+<tr>
+  <td>&quot;Claim your reward&quot;</td>
+  <td>0.78</td>
+  <td>0.22</td>
+  <td>Spam</td>
+</tr>
+</tbody>
+</table>
+<p>P(spam) + P(not spam) always = 1.
+Model picks whichever probability is higher.</p>
+<h3>Where probability appears in ML</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Algorithm</th>
+  <th>How probability is used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Spam filter</td>
+  <td>P(spam | email words)</td>
+</tr>
+<tr>
+  <td>Disease diagnosis</td>
+  <td>P(disease | test results)</td>
+</tr>
+<tr>
+  <td>Image classifier</td>
+  <td>P(cat | image pixels)</td>
+</tr>
+<tr>
+  <td>Recommendation</td>
+  <td>P(user likes movie | past watch history)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-rules-summary">Key Rules Summary</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Rule</th>
+  <th>Formula</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Basic probability</td>
+  <td>P = favourable/total</td>
+  <td>Between 0 and 1</td>
+</tr>
+<tr>
+  <td>Total probability</td>
+  <td>P(A)+P(not A) = 1</td>
+  <td>All outcomes sum to 1</td>
+</tr>
+<tr>
+  <td>Conditional</td>
+  <td>P(A|B)</td>
+  <td>Probability of A given B is true</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="memory-hook">Memory Hook</h2>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="practice-working">Practice Working</h2>
+<p>(Your answers go here)</p>
+<hr />
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<p>(Fill this in after practice questions)</p>
+<hr />
+<h3>Q1 — Coloured balls probability</h3>
+<p>Bag: 5 blue, 4 green, 6 yellow. Total = 15</p>
+<p>P(blue)   = 5/15 = 0.33
+P(green)  = 4/15 = 0.26
+P(yellow) = 6/15 = 0.40</p>
+<p>Verification using Rule of Total Probability:
+0.33 + 0.26 + 0.40 = 1.0 ✓</p>
+<p>Shortcut used:
+P(yellow) = 1 - P(blue) - P(green) = 1 - 0.33 - 0.26 = 0.41
+(small rounding difference — both acceptable)</p>
+<hr />
+<h3>Q2 — Spam filter conditional probability</h3>
+<p>200 emails total:</p>
+<ul>
+<li>80 contain &quot;prize&quot; → 72 spam</li>
+<li>120 no &quot;prize&quot;    → 12 spam</li>
+</ul>
+<p>P(spam | &quot;prize&quot;)    = 72/80  = 0.90
+P(spam | no &quot;prize&quot;) = 12/120 = 0.10</p>
+<p>MISTAKE TO AVOID: Conditional probability P(A|B) uses
+only the group where B is already true as the total.
+Not the full dataset total.</p>
+<p>ML connection: This is exactly how Naive Bayes
+spam classifier works.</p>
+<h3>Q3 — Disease diagnosis model</h3>
+<p>500 patients total:</p>
+<ul>
+<li>200 tested positive → 180 had disease</li>
+<li>300 tested negative → 15 had disease</li>
+</ul>
+<p>P(disease | positive test) = 180/200 = 0.90
+P(disease | negative test) = 15/300  = 0.05</p>
+<p>Conclusion:
+90% chance of disease if positive -&gt; doctor should be worried.
+5% chance of disease if negative -&gt; small risk remains (false negative).</p>
+<p>ML connection:
+False negative = model says &quot;no disease&quot; but patient has it.
+In medical ML, minimizing false negatives is critical.</p>
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<ol>
+<li><p>Probability:
+Predicting how likely something is, on a scale of 0 to 1.
+Closer to 1 = more likely to happen.
+Closer to 0 = less likely to happen.</p>
+</li>
+<li><p>P(A|B):
+Probability of A, GIVEN THAT B is already true.
+Example: P(spam | &quot;prize&quot;) = probability of spam
+given the email already contains &quot;prize.&quot;
+The | symbol means &quot;given that.&quot;</p>
+</li>
+<li><p>Probability in ML:
+ML models output probabilities to make decisions.
+Spam filter: P(spam | email words) -&gt; if &gt; 0.5, mark as spam.
+Disease model: P(disease | test result) -&gt; if &gt; 0.9, alert doctor.
+Every classifier is essentially a probability calculator.</p>
+</li>
+</ol>
+
+<div class="src-head">📝 <a href="../Concept/04_normal_distribution.md">04_normal_distribution.md</a></div>
+<h2 id="topic-04-normal-distribution">Topic 04 — Normal Distribution</h2>
+<p>Date:</p>
+<hr />
+<h2 id="the-story">The Story</h2>
+<p>You are a doctor measuring height of 1000 people.
+You plot them on a graph — height on x-axis, count on y-axis.</p>
+<p>Result:</p>
+<ul>
+<li>Very few people are extremely short</li>
+<li>Very few people are extremely tall</li>
+<li>Most people cluster around the average</li>
+</ul>
+<p>The graph makes a HILL SHAPE — tall in the middle, tapering on both sides.
+This hill shape is called the NORMAL DISTRIBUTION (also: Bell Curve).</p>
+<hr />
+<h2 id="why-does-this-shape-appear">Why Does This Shape Appear?</h2>
+<p>Most things in nature are influenced by many small random factors.
+When many small random factors combine, they almost always
+produce a bell curve.</p>
+<p>Height = influenced by hundreds of genes + nutrition + environment
+All these factors push most people toward the middle.</p>
+<h3>Real life examples that follow bell curve</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>What you measure</th>
+  <th>Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Heights of people</td>
+  <td>Bell curve</td>
+</tr>
+<tr>
+  <td>Cricket scores across players</td>
+  <td>Bell curve</td>
+</tr>
+<tr>
+  <td>Exam marks in a large class</td>
+  <td>Bell curve</td>
+</tr>
+<tr>
+  <td>Errors in manufacturing</td>
+  <td>Bell curve</td>
+</tr>
+<tr>
+  <td>Daily temperature in a city</td>
+  <td>Bell curve</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="what-the-bell-curve-looks-like">What the Bell Curve Looks Like</h2>
+<ul>
+<li>Perfectly symmetric — left side mirrors right side</li>
+<li>Peak is exactly at the mean (center)</li>
+<li>Tapers off on both sides — extreme values are rare</li>
+</ul>
+<h3>What symmetry means</h3>
+<p>If mean = 50:</p>
+<ul>
+<li>500 players scored ABOVE 50 (right side)</li>
+<li>500 players scored BELOW 50 (left side)</li>
+</ul>
+<p>Same number scored 60 (10 above) as scored 40 (10 below).
+Same number scored 70 as scored 30.
+Nature balances both sides perfectly around the average.</p>
+<hr />
+<h2 id="the-68-95-99-7-rule">The 68-95-99.7 Rule</h2>
+<p>The most important rule about normal distribution.
+(Example: Cricket scores, Mean = 50, Std Dev = 10)</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Band</th>
+  <th>Score range</th>
+  <th>Players out of 1000</th>
+  <th>Plain meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mean ± 1 SD</td>
+  <td>40 to 60</td>
+  <td>680 players</td>
+  <td>Most players — average</td>
+</tr>
+<tr>
+  <td>Mean ± 2 SD</td>
+  <td>30 to 70</td>
+  <td>950 players</td>
+  <td>Almost everyone</td>
+</tr>
+<tr>
+  <td>Mean ± 3 SD</td>
+  <td>20 to 80</td>
+  <td>997 players</td>
+  <td>Nearly the whole group</td>
+</tr>
+<tr>
+  <td>Beyond ± 3</td>
+  <td>&lt;20 or &gt;80</td>
+  <td>Only 3 players</td>
+  <td>Outliers — extremely rare</td>
+</tr>
+</tbody>
+</table>
+<p>Visual description:</p>
+<ul>
+<li>Inner band (green)  = 68% — tight cluster around mean</li>
+<li>Middle band (amber) = 95% — wider but still common</li>
+<li>Outer band (red)    = 99.7% — almost all data</li>
+<li>Beyond outer band   = Outliers</li>
+</ul>
+<hr />
+<h2 id="z-score-coming-next">Z-Score — Coming Next</h2>
+<p>The formula that connects a raw value to its position
+on the bell curve. Tells you: &quot;How many std devs away
+from the mean is this value?&quot;</p>
+<hr />
+<h2 id="ml-connection">ML Connection</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Where</th>
+  <th>How normal distribution is used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Outlier detection</td>
+  <td>Beyond 3 std devs = outlier = remove or investigate</td>
+</tr>
+<tr>
+  <td>StandardScaler</td>
+  <td>Transforms data to mean=0, std dev=1</td>
+</tr>
+<tr>
+  <td>Algorithm assumptions</td>
+  <td>Many ML algorithms assume normally distributed data</td>
+</tr>
+<tr>
+  <td>Fraud detection</td>
+  <td>Transaction beyond 3 std devs = suspicious</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="memory-hook">Memory Hook</h2>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="practice-working">Practice Working</h2>
+<p>(Your answers go here after practice questions)</p>
+<hr />
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<p>(Fill this after practice questions)</p>
+<hr />
+<hr />
+<h2 id="z-score">Z-Score</h2>
+<h3>The Problem it Solves</h3>
+<p>Comparing values from different datasets directly is unfair.
+Two students from different schools with different averages
+and different spreads — how do you compare them fairly?
+Z-score gives a fair comparison by measuring relative position.</p>
+<h3>Formula</h3>
+<p>z = (x - μ) / σ</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>z</td>
+  <td>Z-score — the final answer</td>
+</tr>
+<tr>
+  <td>x</td>
+  <td>The value you are checking</td>
+</tr>
+<tr>
+  <td>μ</td>
+  <td>Mean of the dataset</td>
+</tr>
+<tr>
+  <td>σ</td>
+  <td>Standard deviation</td>
+</tr>
+</tbody>
+</table>
+<h3>Plain English</h3>
+<p>Z-score tells you how many standard deviations a value
+is away from the mean.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Z-score</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>0</td>
+  <td>Exactly at the mean</td>
+</tr>
+<tr>
+  <td>+1</td>
+  <td>One std dev above mean</td>
+</tr>
+<tr>
+  <td>-1</td>
+  <td>One std dev below mean</td>
+</tr>
+<tr>
+  <td>+2</td>
+  <td>Two std devs above — getting rare</td>
+</tr>
+<tr>
+  <td>+3</td>
+  <td>Three std devs above — outlier</td>
+</tr>
+</tbody>
+</table>
+<h3>Calculation — Student comparison</h3>
+<p>Student A: x=75, mean=60, std dev=10
+z = (75-60)/10 = 15/10 = 1.5</p>
+<p>Student B: x=80, mean=70, std dev=20
+z = (80-70)/20 = 10/20 = 0.5</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Student</th>
+  <th>Raw Score</th>
+  <th>Z-score</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td>75</td>
+  <td>1.5</td>
+  <td>1.5 std devs above class mean</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>80</td>
+  <td>0.5</td>
+  <td>0.5 std devs above class mean</td>
+</tr>
+</tbody>
+</table>
+<p>Conclusion: Student A performed better RELATIVE to their class.
+Raw score alone is misleading — z-score gives fair comparison.</p>
+<h3>ML Connection — StandardScaler</h3>
+<p>Scikit-learn applies z = (x - mean) / std dev to every value.
+Result: mean becomes 0, std dev becomes 1.
+All features put on same scale — no feature dominates.</p>
+<h3>Why ML needs this</h3>
+<p>Without scaling:</p>
+<ul>
+<li>Sepal length: 4.3 to 7.9 cm (small numbers)</li>
+<li>House price: 50,000 to 5,00,000 rupees (huge numbers)
+House price dominates every calculation just because
+its numbers are bigger — not because it is more important.
+Z-score scaling fixes this.</li>
+</ul>
+<hr />
+<h3>Q1 — Factory bolts normal distribution</h3>
+<h3>Setup</h3>
+<p>A factory produces bolts. We want to know which bolts are
+normal and which are defective (outliers).</p>
+<p>Mean = 10 cm (average bolt length)
+Std Dev = 0.5 cm (how much bolts vary from average)</p>
+<hr />
+<h3>68-95-99.7 Rule Applied</h3>
+<p>BAND 1 — 68% of bolts (most common):
+Range = Mean ± 1 Std Dev
+= 10 ± 0.5
+= 9.5 cm to 10.5 cm
+Meaning: 680 out of every 1000 bolts fall in this range.
+These are your perfectly normal bolts.</p>
+<p>BAND 2 — 95% of bolts:
+Range = Mean ± 2 Std Dev
+= 10 ± (2 × 0.5)
+= 10 ± 1.0
+= 9.0 cm to 11.0 cm
+Meaning: 950 out of every 1000 bolts fall here.
+Still acceptable — slightly longer or shorter than average.</p>
+<p>BAND 3 — 99.7% of bolts:
+Range = Mean ± 3 Std Dev
+= 10 ± (3 × 0.5)
+= 10 ± 1.5
+= 8.5 cm to 11.5 cm
+Meaning: 997 out of every 1000 bolts fall here.
+Getting rare — these bolts are noticeably different.</p>
+<p>BEYOND BAND 3 — 0.3% of bolts:
+Shorter than 8.5 cm OR longer than 11.5 cm
+Only 3 out of every 1000 bolts.
+These are OUTLIERS — defective, needs inspection.</p>
+<p>Visual summary:
+8.5 --- 9.0 --- 9.5 ---[10 MEAN]--- 10.5 --- 11.0 --- 11.5
+|_____________99.7%___________________________|
+|_________95%_________________|
+|____68%_________|</p>
+<hr />
+<h3>Is the 11.5 cm bolt an outlier?</h3>
+<p>Step 1: Calculate Z-score
+z = (x - mean) / std dev
+z = (11.5 - 10) / 0.5
+z = 1.5 / 0.5
+z = 3.0</p>
+<p>Step 2: Check the rule</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Z-score range</th>
+  <th>Classification</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>-1 to +1</td>
+  <td>Very normal</td>
+  <td>No action</td>
+</tr>
+<tr>
+  <td>-2 to +2</td>
+  <td>Normal</td>
+  <td>No action</td>
+</tr>
+<tr>
+  <td>-3 to +3</td>
+  <td>Borderline</td>
+  <td>Monitor</td>
+</tr>
+<tr>
+  <td>Beyond ±3</td>
+  <td>Outlier</td>
+  <td>Inspect/Remove</td>
+</tr>
+</tbody>
+</table>
+<p>Step 3: Conclusion
+Z = 3.0 sits exactly at the boundary.
+This bolt is at the edge of the 99.7% range.
+Only 3 in 1000 bolts are this long.
+ACTION: Flag for quality inspection — likely defective.</p>
+<hr />
+<h3>ML Connection</h3>
+<p>This exact logic is used in:</p>
+<ul>
+<li>Fraud detection: transaction with Z &gt; 3 = suspicious</li>
+<li>Data cleaning: remove rows with Z &gt; 3 before training</li>
+<li>Anomaly detection: find unusual patterns in data</li>
+</ul>
+<p>In Scikit-learn:
+from scipy import stats
+z_scores = stats.zscore(data)
+outliers = data[abs(z_scores) &gt; 3]</p>
+<h3>Q2 — Bank fraud detection</h3>
+<p>Mean = ₹5000, Std Dev = ₹1000</p>
+<p>Customer A: z = (5800-5000)/1000 = 800/1000  = 0.8  → Normal
+Customer B: z = (8500-5000)/1000 = 3500/1000 = 3.5  → OUTLIER
+Customer C: z = (3200-5000)/1000 = -1800/1000 = -1.8 → Normal</p>
+<p>Note on negative Z-score:
+Negative = below mean. Not automatically suspicious.
+Just means the transaction was smaller than average.</p>
+<p>Flag: Customer B — Z = 3.5 exceeds ±3 boundary.
+Only 0.3% of transactions reach this level.</p>
+<p>ML Connection:
+This is exactly how bank fraud detection models work.
+Any transaction with Z &gt; 3 triggers an alert automatically.</p>
+<hr />
+<h2 id="reverse-calculation-proving-everything-from-raw-">Reverse Calculation — Proving Everything from Raw Data</h2>
+<h3>The Dataset</h3>
+<p>10 bank customers and their transaction amounts:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Customer</th>
+  <th>Transaction (₹)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>4000</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>5500</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>4800</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>6000</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>5200</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>4500</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>5800</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>4200</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>5100</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>8900</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>Stage 1 — Calculate Mean</h3>
+<p>Step 1: Add all transactions
+4000 + 5500 = 9500
+9500 + 4800 = 14300
+14300 + 6000 = 20300
+20300 + 5200 = 25500
+25500 + 4500 = 30000
+30000 + 5800 = 35800
+35800 + 4200 = 40000
+40000 + 5100 = 45100
+45100 + 8900 = 54000</p>
+<p>Sum = 54000</p>
+<p>Step 2: Divide by number of customers
+Mean = 54000 / 10 = 5400</p>
+<p>MEAN = ₹5400</p>
+<hr />
+<h3>Stage 2 — Calculate Standard Deviation</h3>
+<p>Step 1: Find distance of each value from mean (5400)
+Step 2: Square each distance (removes negatives)
+Step 3: Average the squared distances = Variance
+Step 4: Square root of Variance = Std Dev</p>
+<h3>Distance Table</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Customer</th>
+  <th>Transaction (x)</th>
+  <th>Distance (x-5400)</th>
+  <th>Squared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>4000</td>
+  <td>-1400</td>
+  <td>1,960,000</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>5500</td>
+  <td>+100</td>
+  <td>10,000</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>4800</td>
+  <td>-600</td>
+  <td>360,000</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>6000</td>
+  <td>+600</td>
+  <td>360,000</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>5200</td>
+  <td>-200</td>
+  <td>40,000</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>4500</td>
+  <td>-900</td>
+  <td>810,000</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>5800</td>
+  <td>+400</td>
+  <td>160,000</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>4200</td>
+  <td>-1200</td>
+  <td>1,440,000</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>5100</td>
+  <td>-300</td>
+  <td>90,000</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>8900</td>
+  <td>+3500</td>
+  <td>12,250,000</td>
+</tr>
+</tbody>
+</table>
+<p>Step 3: Add all squared distances
+1960000 + 10000     = 1970000
+1970000 + 360000    = 2330000
+2330000 + 360000    = 2690000
+2690000 + 40000     = 2730000
+2730000 + 810000    = 3540000
+3540000 + 160000    = 3700000
+3700000 + 1440000   = 5140000
+5140000 + 90000     = 5230000
+5230000 + 12250000  = 17480000</p>
+<p>Sum of squared distances = 17,480,000</p>
+<p>Step 4: Calculate Variance
+Variance = 17480000 / 10 = 1,748,000</p>
+<p>Step 5: Calculate Standard Deviation
+Std Dev = √1748000 = 1322.12</p>
+<p>STANDARD DEVIATION = ₹1322.12</p>
+<hr />
+<h3>Stage 3 — Calculate Z-Score for Customer 10</h3>
+<p>Customer 10 transaction = ₹8900
+Mean = ₹5400
+Std Dev = ₹1322.12</p>
+<p>Formula: z = (x - μ) / σ</p>
+<p>Step 1: Subtract mean from value
+8900 - 5400 = 3500</p>
+<p>Step 2: Divide by std dev
+3500 / 1322.12 = 2.64</p>
+<p>Z-SCORE = 2.64</p>
+<h3>Is Customer 10 an outlier?</h3>
+<p>Z = 2.64 -&gt; within ±3 boundary -&gt; NOT an outlier</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Z-score range</th>
+  <th>Classification</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>0 to ±1</td>
+  <td>Very normal</td>
+  <td>No action</td>
+</tr>
+<tr>
+  <td>±1 to ±2</td>
+  <td>Normal</td>
+  <td>No action</td>
+</tr>
+<tr>
+  <td>±2 to ±3</td>
+  <td>Borderline</td>
+  <td>Monitor</td>
+</tr>
+<tr>
+  <td>Beyond ±3</td>
+  <td>Outlier</td>
+  <td>Flag / Investigate</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>Stage 4 — Reverse Calculation (Fraud Threshold)</h3>
+<p>Question: Above what amount should the system flag a transaction?</p>
+<p>Formula: x = μ + (z × σ)</p>
+<p>Step 1: Plug in values
+x = 5400 + (3 × 1322.12)</p>
+<p>Step 2: Multiply
+3 × 1322.12 = 3966.36</p>
+<p>Step 3: Add mean
+5400 + 3966.36 = 9366.36</p>
+<p>FRAUD THRESHOLD = ₹9366.36</p>
+<p>Any transaction ABOVE ₹9366 gets flagged automatically.
+Customer 10's ₹8900 is below this threshold -&gt; safe.</p>
+<hr />
+<h3>Key Insight from This Exercise</h3>
+<p>The same transaction amount can be normal OR suspicious
+depending on the dataset.</p>
+<p>Example:</p>
+<ul>
+<li>Earlier example: Mean=5000, Std Dev=1000
+₹8500 -&gt; Z=3.5 -&gt; FLAGGED</li>
+<li>Our real dataset: Mean=5400, Std Dev=1322.12
+₹8900 -&gt; Z=2.64 -&gt; NOT flagged</li>
+</ul>
+<p>This proves why ML models always calculate from
+actual data — never from assumptions.
+The numbers only make sense in context of the full dataset.</p>
+<hr />
+<h3>Formula Summary</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>What</th>
+  <th>Formula</th>
+  <th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mean</td>
+  <td>μ = Σx / n</td>
+  <td>Find average</td>
+</tr>
+<tr>
+  <td>Variance</td>
+  <td>σ² = Σ(x-μ)² / n</td>
+  <td>Find spread (squared units)</td>
+</tr>
+<tr>
+  <td>Std Dev</td>
+  <td>σ = √σ²</td>
+  <td>Find spread (original units)</td>
+</tr>
+<tr>
+  <td>Z-score</td>
+  <td>z = (x-μ) / σ</td>
+  <td>Find position on bell curve</td>
+</tr>
+<tr>
+  <td>Reverse</td>
+  <td>x = μ + (z × σ)</td>
+  <td>Find value from Z-score</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>Q3 — Cricket batting analysis</h3>
+<p>Dataset: 32, 45, 55, 48, 60, 41, 38, 81</p>
+<h3>Stage 1 — Mean</h3>
+<p>32+45+55+48+60+41+38+81 = 400
+Mean = 400/8 = 50</p>
+<h3>Stage 2 — Standard Deviation</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Score</th>
+  <th>Distance (x-50)</th>
+  <th>Squared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>32</td>
+  <td>-18</td>
+  <td>324</td>
+</tr>
+<tr>
+  <td>45</td>
+  <td>-5</td>
+  <td>25</td>
+</tr>
+<tr>
+  <td>55</td>
+  <td>+5</td>
+  <td>25</td>
+</tr>
+<tr>
+  <td>48</td>
+  <td>-2</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>60</td>
+  <td>+10</td>
+  <td>100</td>
+</tr>
+<tr>
+  <td>41</td>
+  <td>-9</td>
+  <td>81</td>
+</tr>
+<tr>
+  <td>38</td>
+  <td>-12</td>
+  <td>144</td>
+</tr>
+<tr>
+  <td>81</td>
+  <td>+31</td>
+  <td>961</td>
+</tr>
+</tbody>
+</table>
+<p>Sum = 1664
+Variance = 1664/8 = 208
+Std Dev = √208 = 14.42</p>
+<p>MISTAKE TO AVOID: Always divide sum by n BEFORE
+taking square root. √(sum/n) not √sum/n</p>
+<h3>Stage 3 — Z-score for 81</h3>
+<p>z = (81-50) / 14.42
+z = 31/14.42
+z = 2.15</p>
+<h3>Stage 4 — Is 81 an outlier?</h3>
+<p>Z = 2.15 -&gt; within ±3 -&gt; NOT an outlier
+But getting close — worth monitoring.</p>
+<h3>Stage 5 — Outstanding performance threshold (Z=2)</h3>
+<p>x = μ + (z × σ)
+x = 50 + (2 × 14.42)
+x = 50 + 28.84
+x = 78.84</p>
+<p>Any score above 78.84 = exceptional performance.
+Score of 81 crosses this threshold -&gt; outstanding batsman.</p>
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<h3>Normal Distribution</h3>
+<p>A continuous probability distribution where data clusters
+symmetrically around the center. When plotted, it creates
+a perfectly balanced bell curve — values near the mean are
+most common, values far from the mean become increasingly rare.</p>
+<h3>68-95-99.7 Rule</h3>
+<p>For any normal distribution:</p>
+<ul>
+<li>68% of data falls within ±1 std dev from mean</li>
+<li>95% of data falls within ±2 std dev from mean</li>
+<li>99.7% of data falls within ±3 std dev from mean
+Anything beyond ±3 std dev = outlier (only 0.3% of data)</li>
+</ul>
+<h3>Z-Score</h3>
+<p>Measures exactly how many standard deviations a data point
+is from the mean.</p>
+<ul>
+<li>Z = 0  -&gt; exactly at the mean</li>
+<li>Z &gt; 0  -&gt; above average</li>
+<li>Z &lt; 0  -&gt; below average</li>
+<li>Z &gt; 3 or Z &lt; -3 -&gt; outlier, needs investigation</li>
+</ul>
+
+<div class="src-head">📝 <a href="../Concept/05_correlation.md">05_correlation.md</a></div>
+<h2 id="topic-05-correlation">Topic 05 — Correlation</h2>
+<p>Date:</p>
+<hr />
+<h2 id="the-story">The Story</h2>
+<h3>Ice cream shop — Positive Correlation</h3>
+<p>You notice: when temperature goes up, ice cream sales go up too.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Day</th>
+  <th>Temperature (°C)</th>
+  <th>Ice creams sold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>20</td>
+  <td>30</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>25</td>
+  <td>40</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>30</td>
+  <td>55</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>35</td>
+  <td>60</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>40</td>
+  <td>70</td>
+</tr>
+</tbody>
+</table>
+<p>Both move UP together -&gt; Positive Correlation</p>
+<h3>Same shop — Negative Correlation</h3>
+<p>When temperature goes up, hot coffee sales go DOWN.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Day</th>
+  <th>Temperature (°C)</th>
+  <th>Hot coffee sold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>20</td>
+  <td>70</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>25</td>
+  <td>60</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>30</td>
+  <td>45</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>35</td>
+  <td>25</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>40</td>
+  <td>10</td>
+</tr>
+</tbody>
+</table>
+<p>One goes UP, other goes DOWN -&gt; Negative Correlation</p>
+<hr />
+<h2 id="three-types-of-correlation">Three Types of Correlation</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Pattern</th>
+  <th>Name</th>
+  <th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Both go up/down together</td>
+  <td>Positive Correlation</td>
+  <td>Temperature &amp; Ice cream</td>
+</tr>
+<tr>
+  <td>One up, other down</td>
+  <td>Negative Correlation</td>
+  <td>Temperature &amp; Coffee</td>
+</tr>
+<tr>
+  <td>No pattern at all</td>
+  <td>No Correlation</td>
+  <td>Shoe size &amp; Runs scored</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-r-value-pearson-correlation-coefficient">The r Value — Pearson Correlation Coefficient</h2>
+<p>r always sits between -1 and +1. Always.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Value of r</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>r = +1</td>
+  <td>Perfect positive correlation</td>
+</tr>
+<tr>
+  <td>r = +0.7 to +1</td>
+  <td>Strong positive correlation</td>
+</tr>
+<tr>
+  <td>r = +0.3 to +0.7</td>
+  <td>Moderate positive correlation</td>
+</tr>
+<tr>
+  <td>r = 0</td>
+  <td>No correlation</td>
+</tr>
+<tr>
+  <td>r = -0.3 to -0.7</td>
+  <td>Moderate negative correlation</td>
+</tr>
+<tr>
+  <td>r = -0.7 to -1</td>
+  <td>Strong negative correlation</td>
+</tr>
+<tr>
+  <td>r = -1</td>
+  <td>Perfect negative correlation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="iris-dataset-connection">Iris Dataset Connection</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Feature pair</th>
+  <th>r value</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Petal length &amp; Petal width</td>
+  <td>0.96</td>
+  <td>Strong positive — move together</td>
+</tr>
+<tr>
+  <td>Sepal length &amp; Petal length</td>
+  <td>0.87</td>
+  <td>Strong positive — move together</td>
+</tr>
+<tr>
+  <td>Sepal length &amp; Sepal width</td>
+  <td>-0.12</td>
+  <td>Almost no relationship</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="why-correlation-matters-in-ml">Why Correlation Matters in ML</h2>
+<p>We drop features in TWO situations:</p>
+<h3>Situation 1 — No correlation (r near 0)</h3>
+<p>Feature is useless — adds no information to the model.
+Example: shoe size has no correlation with runs scored.
+Action: DROP the feature.</p>
+<h3>Situation 2 — Too high correlation (r near 1 or -1)</h3>
+<p>Two features saying the same thing twice.
+Example: petal length and petal width (r=0.96)
+Like telling a friend &quot;India scored 300. Also India scored 300.&quot;
+Second sentence adds ZERO new information.
+Action: DROP one of them, keep the more useful one.</p>
+<p>This process is called FEATURE SELECTION.</p>
+<hr />
+<h2 id="the-formula-pearson-correlation-coefficient">The Formula — Pearson Correlation Coefficient</h2>
+<p>r = Σ(x - x̄)(y - ȳ) / √[Σ(x - x̄)² × Σ(y - ȳ)²]</p>
+<h3>What every symbol means</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>r</td>
+  <td>Correlation coefficient — the answer</td>
+</tr>
+<tr>
+  <td>x</td>
+  <td>Each value of first variable</td>
+</tr>
+<tr>
+  <td>x̄</td>
+  <td>Mean of first variable</td>
+</tr>
+<tr>
+  <td>y</td>
+  <td>Each value of second variable</td>
+</tr>
+<tr>
+  <td>ȳ</td>
+  <td>Mean of second variable</td>
+</tr>
+<tr>
+  <td>Σ</td>
+  <td>Sum of everything</td>
+</tr>
+<tr>
+  <td>(x - x̄)</td>
+  <td>Distance of x from its mean</td>
+</tr>
+<tr>
+  <td>(y - ȳ)</td>
+  <td>Distance of y from its mean</td>
+</tr>
+</tbody>
+</table>
+<h3>What the formula is doing in plain English</h3>
+<ol>
+<li>Find how far each x value is from x mean</li>
+<li>Find how far each y value is from y mean</li>
+<li>Multiply those distances together for each row</li>
+<li>If they move in same direction -&gt; positive number -&gt; positive r</li>
+<li>If they move in opposite directions -&gt; negative number -&gt; negative r</li>
+</ol>
+<hr />
+<h2 id="practice-working">Practice Working</h2>
+<p>(Your answers go here)</p>
+<hr />
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<p>(Fill this after practice questions)</p>
+<hr />
+<h2 id="pearson-correlation-full-calculation">Pearson Correlation — Full Calculation</h2>
+<h3>Dataset</h3>
+<p>Ice cream shop: Temperature vs Sales
+Mean of x (temperature) = 30
+Mean of y (ice cream sales) = 51</p>
+<h3>Calculation Table</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Day</th>
+  <th>x</th>
+  <th>y</th>
+  <th>(x-30)</th>
+  <th>(y-51)</th>
+  <th>Product</th>
+  <th>(x-30)²</th>
+  <th>(y-51)²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>20</td>
+  <td>30</td>
+  <td>-10</td>
+  <td>-21</td>
+  <td>+210</td>
+  <td>100</td>
+  <td>441</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>25</td>
+  <td>40</td>
+  <td>-5</td>
+  <td>-11</td>
+  <td>+55</td>
+  <td>25</td>
+  <td>121</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>30</td>
+  <td>55</td>
+  <td>0</td>
+  <td>+4</td>
+  <td>0</td>
+  <td>0</td>
+  <td>16</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>35</td>
+  <td>60</td>
+  <td>+5</td>
+  <td>+9</td>
+  <td>+45</td>
+  <td>25</td>
+  <td>81</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>40</td>
+  <td>70</td>
+  <td>+10</td>
+  <td>+19</td>
+  <td>+190</td>
+  <td>100</td>
+  <td>361</td>
+</tr>
+<tr>
+  <td>Sum</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>500</td>
+  <td>250</td>
+  <td>1020</td>
+</tr>
+</tbody>
+</table>
+<h3>Final Calculation</h3>
+<p>r = 500 / √(250 × 1020)
+r = 500 / √255000
+r = 500 / 505
+r = 0.99</p>
+<h3>Conclusion</h3>
+<p>r = 0.99 -&gt; Almost perfect positive correlation.
+When temperature goes up, ice cream sales go up together.</p>
+<h3>ML Decision</h3>
+<p>If both features were in a dataset:
+r = 0.99 is too high -&gt; DROP one feature.
+Keeping both = telling the model same thing twice.</p>
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<h3>What is Correlation?</h3>
+<p>A statistical measure that describes the relationship
+between two or more variables. Measured by r value
+which always sits between -1 and +1.</p>
+<h3>Positive Correlation (0 to +1)</h3>
+<p>Both variables move in the same direction.
+As one increases, the other increases too.
+Example: Temperature and ice cream sales (r = 0.99)</p>
+<h3>Negative Correlation (0 to -1)</h3>
+<p>Variables move in opposite directions.
+As one increases, the other decreases.
+Example: Temperature and hot coffee sales.</p>
+<h3>No Correlation (r near 0)</h3>
+<p>No relationship between variables.
+Example: Shoe size and runs scored.</p>
+<h3>Why we use it in ML — Feature Selection</h3>
+<p>We drop features in two situations:</p>
+<ol>
+<li>r near 0 -&gt; useless, no relationship with target</li>
+<li>r near 1 or -1 -&gt; duplicate, saying same thing twice</li>
+</ol>
+<p>This makes the model simpler and more accurate.
+Real example: Iris petal length and petal width (r=0.96)
+-&gt; drop one, keep the other.</p>
+
+<div class="src-head">📝 <a href="../Concept/practise_question_set.md">practise_question_set.md</a></div>
+<h2 id="practice-working">Practice Working</h2>
+<h3>Q1 — Teacher exam scores</h3>
+<p>Scores: 72, 85, 90, 72, 68, 95, 72</p>
+<p>Mean:
+Sum = 72+85+90+72+68+95+72 = 554
+n = 7
+Mean = 554/7 = 79.14
+MISTAKE TO AVOID: (72+85+90+72+68+95+72)/7 not 72+85+90+72+68+95+72/7</p>
+<p>Median:
+Sorted: 68, 72, 72, 72, 85, 90, 95
+Middle value (4th out of 7) = 72</p>
+<p>Mode:
+72 appears 3 times — more than any other
+Mode = 72</p>
+<h3>Q2 — House prices (outlier effect)</h3>
+<p>Prices: 35, 40, 38, 42, 35, 200, 37</p>
+<p>Mean:
+Sum = 35+40+38+42+35+200+37 = 427
+n = 7
+Mean = 427/7 = 61</p>
+<p>Median:
+Sorted: 35, 35, 37, 38, 40, 42, 200
+Middle value (4th out of 7) = 38</p>
+<p>Which is better? Median = 38
+Reason: 200 lakh celebrity house is an outlier.
+Mean got pulled up to 61 — not representative.
+Median ignored the outlier — gives realistic picture.</p>
+<p>Real world: salary reports and real estate always use median, not mean.</p>
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<p>Statistics is about finding patterns in a dataset using three key measures.</p>
+<h3>Mean</h3>
+<p>Average of all values.
+Sum all values then divide by count.
+Example: [10,30,40,10,30,60,30]
+Mean = (10+30+40+10+30+60+30)/7 = 30</p>
+<h3>Median</h3>
+<p>Middle value after sorting lowest to highest.
+Example sorted: [10,10,30,30,30,40,60]
+Median = 30 (4th value out of 7)</p>
+<h3>Mode</h3>
+<p>Most frequently appearing value.
+Example: 30 appears 3 times — more than any other
+Mode = 30</p>
+<h3>Interesting observation</h3>
+<p>When Mean = Median = Mode (all = 30 here),
+data is perfectly balanced — no skew, no outliers.
+In real data this rarely happens.</p>
+<hr />
+<h3>Q1 — Student test scores</h3>
+<p>Scores: 30, 40, 50, 60, 70</p>
+<p>Mean = (30+40+50+60+70)/5 = 250/5 = 50</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Score</th>
+  <th>Distance (x-x̄)</th>
+  <th>Squared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>30</td>
+  <td>-20</td>
+  <td>400</td>
+</tr>
+<tr>
+  <td>40</td>
+  <td>-10</td>
+  <td>100</td>
+</tr>
+<tr>
+  <td>50</td>
+  <td>0</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>60</td>
+  <td>+10</td>
+  <td>100</td>
+</tr>
+<tr>
+  <td>70</td>
+  <td>+20</td>
+  <td>400</td>
+</tr>
+</tbody>
+</table>
+<p>Variance = (400+100+0+100+400)/5 = 1000/5 = 200
+Std Dev  = √200 = 14.14</p>
+<p>MISTAKE TO AVOID: Never add raw distances — always square first.
+Negatives cancel positives and give wrong answer of zero.</p>
+<h3>Q2 — Delivery driver hiring</h3>
+<p>Driver A: 30, 32, 29, 31, 30
+Driver B: 20, 45, 15, 50, 22</p>
+<p>Mean A = Mean B = 152/5 = 30.4 (same mean)</p>
+<p>Driver A Variance:
+(0.16+2.56+1.96+0.36+0.16)/5 = 5.2/5 = 1.04</p>
+<p>Driver B Variance:
+(108.16+213.16+237.16+384.16+70.56)/5 = 1013.2/5 = 202.64</p>
+<p>Decision: Hire Driver A
+Reason: Lower variance = consistent delivery times
+Driver B is unpredictable despite same average time</p>
+<p>MISTAKE TO AVOID: Always divide sum by n at the end.
+Variance = AVERAGE of squared distances, not just the sum.</p>
+<h3>Q3 — Study hours variance</h3>
+<p>Scores: 2, 8, 3, 7, 5</p>
+<p>Mean = (2+8+3+7+5)/5 = 25/5 = 5</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Score</th>
+  <th>Distance</th>
+  <th>Squared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2</td>
+  <td>-3</td>
+  <td>9</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>+3</td>
+  <td>9</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>-2</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>+2</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>0</td>
+  <td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Variance = (9+9+4+4+0)/5 = 26/5 = 5.2
+Std Dev = √5.2 = 2.28</p>
+<p>Friend's scores: 4, 5, 6, 5, 5
+Friend has lower variance — stays closer to mean of 5.</p>
+<p>MISTAKE TO AVOID: Be careful with the distance table.
+Write each row carefully — easy to mix up values.</p>
+<h2 id="my-understanding-in-my-own-words">My Understanding (in my own words)</h2>
+<p>Mean tells us the average but doesn't tell us how spread out the data is.</p>
+<p>Variance measures how far each value is from the mean —
+by squaring the distances (to remove negatives) and averaging them.</p>
+<p>Standard Deviation is the square root of Variance —
+brings the unit back to the original so it makes real sense.</p>
+<p>Low variance/std dev = data stays close to mean = consistent.
+High variance/std dev = data is scattered far from mean = unpredictable.</p>
+<p>Example: Two cricket players with same mean of 50.
+Player A std dev = 1.41 -&gt; consistent batsman.
+Player B std dev = 38.08 -&gt; unpredictable batsman.</p>
+
+<div class="foot"><a class="btn" href="../Concept/00_what_is_statistics.md">00_what_is_statistics.md ↗</a><a class="btn" href="../Concept/01_mean_median_mode.md">01_mean_median_mode.md ↗</a><a class="btn" href="../Concept/02_variance_std.md">02_variance_std.md ↗</a><a class="btn" href="../Concept/03_probability_basics.md">03_probability_basics.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

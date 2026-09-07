@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clustering K-Means — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Clustering K-Means</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#clustering-grouping-5000-customers-nobody-labell">Clustering — grouping 5000 customers nobody labelled</a><a href="#the-story-we-will-follow">The story we will follow</a><a href="#why-this-is-different-from-everything-before">Why this is different from everything before</a><a href="#k-means-in-one-line">K-Means in one line</a><a href="#1-the-5000-customers">1. The 5000 customers</a><a href="#2-first-look">2. First look</a><a href="#3-the-algorithm-you-worked-out-by-hand">3. The algorithm you worked out by hand</a><a href="#4-your-question-clustering-only-makes-groups-so-">4. Your question: clustering only makes groups, so w</a><a href="#5-the-result-coloured">5. The result, coloured</a><a href="#6-part-two-of-the-story-where-k-means-gets-it-wr">6. Part two of the story — where K-Means gets it wro</a><a href="#7-hierarchical-clustering-a-different-way-to-gro">7. Hierarchical clustering — a different way to grou</a><a href="#8-which-one-to-use">8. Which one to use</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Clustering K-Means</h1>
+  <p class="lede">Five thousand customers and not a single label. Find the groups anyway.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A shop had 5,000 customers and wanted to market to them in groups.</strong> Nobody had ever labelled a single customer.</p><p>Every model so far needed a right answer to learn from. Here there was none — no y column at all.</p><p><span class='beat'>This is a different kind of problem: not "predict the label" but "is there any structure here at all?"</span></p><p>K-Means drops k markers, assigns each customer to the nearest, then moves each marker to the middle of its crowd, and repeats until nothing moves. The elbow method tells you what k should have been.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Guess k centres, assign each point to the nearest, move the centres to the middle, repeat.</p></div>
+<div class="src-head">📓 <a href="../Concept/12_clustering.ipynb">12_clustering.ipynb</a></div>
+<h2 id="clustering-grouping-5000-customers-nobody-labell">Clustering — grouping 5000 customers nobody labelled</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning, scikit-learn module.</p>
+</div>
+<h2 id="the-story-we-will-follow">The story we will follow</h2>
+<p>You work for a shop that has 5000 customers. For every customer the system stores two numbers.</p>
+<p>Nobody ever wrote down what <em>kind</em> of customer each one is. That column does not exist, and
+nobody is going to fill it in by hand for 5000 rows.</p>
+<p>Your manager asks one question:</p>
+<div class="note"><div class="h">Note</div><p>&quot;How many kinds of customers do we actually have, and who belongs to which kind?&quot;</p>
+</div>
+<p>That question is clustering.</p>
+<h2 id="why-this-is-different-from-everything-before">Why this is different from everything before</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>every earlier notebook</th>
+  <th>this notebook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>the data</td>
+  <td><code>x</code> and <code>y</code></td>
+  <td>only <code>x</code></td>
+</tr>
+<tr>
+  <td>the job</td>
+  <td>predict the answer someone gave you</td>
+  <td>find groups nobody wrote down</td>
+</tr>
+<tr>
+  <td>example</td>
+  <td>this house costs 45 lakh</td>
+  <td>these 1200 customers behave alike</td>
+</tr>
+</tbody>
+</table>
+<h2 id="k-means-in-one-line">K-Means in one line</h2>
+<p>Two things, repeated:</p>
+<ul>
+<li><strong>distance</strong> — every point joins the nearest centre</li>
+<li><strong>average</strong> — every centre moves to the middle of its own points</li>
+</ul>
+<p>Repeat until nothing moves. That is the whole algorithm.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_blobs,make_moons
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt</pre></div>
+<h2 id="1-the-5000-customers">1. The 5000 customers</h2>
+<p><code>make_blobs</code> invents the data. It is not real shop data. It is practice data built to contain
+clear groups, so we can check whether the model finds them.</p>
+<ul>
+<li><code>n_samples=5000</code> — 5000 customers</li>
+<li><code>n_features=2</code> — 2 numbers per customer, so everything fits on a flat graph</li>
+<li><code>centers=4</code> — it secretly builds 4 groups</li>
+</ul>
+<p>The invented numbers can be negative, so do not read them as rupees. Just read every dot as
+<strong>one customer described by two measurements</strong>.</p>
+<p><code>y</code> holds the true group of each customer. <strong>In real work this column does not exist.</strong> We will
+look at it exactly once, only to check ourselves, and never to train the model.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">x,y = make_blobs(n_features=2,n_samples=5000,centers=4)</pre></div>
+<h2 id="2-first-look">2. First look</h2>
+<p>Before any model, just plot the customers and look.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11ea5f230&gt;</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The same picture again, with the four real groups named on top of it.</p>
+<p>This uses <code>y</code>, which is cheating. We do it once so you can see the answer the model is supposed
+to reach on its own.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">plt.scatter(x[:, 0], x[:, 1], s=5)
+
+for group in range(4):
+    plt.text(x[y == group, 0].mean(), x[y == group, 1].mean(), f&quot;group {group}&quot;,
+             fontsize=14, color=&quot;red&quot;)
+
+plt.title(&quot;the 4 real groups (we peeked at y only to write these names)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c07-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Four clumps of customers.</p>
+<p>One thing to expect: <strong>this picture changes every time you re-run the notebook.</strong> <code>make_blobs</code>
+picks new positions each run because we did not fix a random seed. Sometimes two groups land
+close enough to touch, sometimes all four sit far apart. The shapes stay round either way.</p>
+
+<h2 id="3-the-algorithm-you-worked-out-by-hand">3. The algorithm you worked out by hand</h2>
+<p><code>KMeans</code> does exactly the steps you did on paper:</p>
+<ol>
+<li>pick <code>K</code> — how many groups you want</li>
+<li>drop <code>K</code> centroids anywhere</li>
+<li><strong>distance</strong> — every customer joins the nearest centroid</li>
+<li><strong>average</strong> — every centroid moves to the middle of its own customers</li>
+<li>repeat 3 and 4 until nobody changes group</li>
+</ol>
+<p>A centroid is not a real customer. It is a marker sitting at the middle of a group, like a
+teacher standing in the middle of their own students.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.cluster import KMeans</pre></div>
+<h3>Why <code>n_clusters=4</code>?</h3>
+<p>Because we built the data with 4 groups, so we know the answer.</p>
+<p>In real work nobody tells you. Then you use the <strong>elbow method</strong> from your notes: run K-Means
+for K = 1, 2, 3, 4, 5..., and each time measure the total distance of every point from its own
+centroid. That total always falls as K grows, so the smallest value is a useless rule. You look
+for the <strong>bend</strong> in the curve — the K after which extra groups stop helping.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">kmeans = KMeans(n_clusters=4)</pre></div>
+<h3><code>.fit()</code> — what actually gets stored</h3>
+<p><code>.fit()</code> runs the whole loop and then keeps one thing: the final position of the 4 centroids.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">kmeans.fit(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>KMeans(n_clusters=4)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">kmeans.cluster_centers_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[-6.01051572,  0.53284882],
+       [-9.36776321, -9.00853513],
+       [ 1.64764966, -0.24159491],
+       [-1.34399725, -3.39635862]])</pre></div>
+<p>Four rows, two numbers each. <strong>Eight numbers.</strong></p>
+<p>That is the entire trained model. Not 5000 rows — just 8 numbers. Remember this, because the
+next section depends on it.</p>
+
+<h2 id="4-your-question-clustering-only-makes-groups-so-">4. Your question: clustering only makes groups, so what does it predict?</h2>
+<p>Good question. The answer is that K-Means does <strong>two different jobs</strong>, and they are easy to mix
+up.</p>
+<p><strong>Job 1 — grouping.</strong> <code>.fit()</code> looks at all 5000 customers and decides who belongs with whom.
+This is the job clustering is famous for.</p>
+<p><strong>Job 2 — predicting.</strong> A <strong>new</strong> customer walks in tomorrow, one the model has never seen.
+<code>.predict()</code> measures that new customer against the 4 stored centroids and returns the number
+of the nearest one.</p>
+<p>So, what does clustering predict?</p>
+<div class="note"><div class="h">Note</div><p>It does not predict a value like price or salary.
+It predicts <strong>which existing group a new row belongs to.</strong></p>
+</div>
+<p>That is all. It cannot invent a fifth group, and it cannot tell you what a group <em>means</em> —
+deciding that group 2 is &quot;our loyal big spenders&quot; is still a human job.</p>
+<h3>Why your line looks like it did nothing</h3>
+<p>You wrote <code>kmeans.predict(x)</code> on the <strong>same <code>x</code></strong> the model was fitted on. So it simply handed
+back the group of every customer it had already grouped. Nothing new could come out of it. The
+next cell proves that.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">predict = kmeans.predict(x)</pre></div>
+<h3>Proof: on the same data, <code>predict</code> only repeats what <code>fit</code> already decided</h3>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">print(&quot;predict :&quot;, predict[:8])
+print(&quot;labels_ :&quot;, kmeans.labels_[:8])
+print(&quot;same answer?&quot;, (predict == kmeans.labels_).all())</pre></div>
+<div class="out"><div class="h">Output</div><pre>predict : [2 0 2 1 3 1 1 3]
+labels_ : [2 0 2 1 3 1 1 3]
+same answer? True</pre></div>
+<p><code>True</code>. Same answer both times.</p>
+<p><code>labels_</code> is the grouping produced by <code>.fit()</code>. <code>predict(x)</code> measured those same 5000 customers
+against the same 4 centroids, so of course it got the same result.</p>
+
+<h3>Now a customer the model has never seen</h3>
+<p>A new customer walks in tomorrow. They were not part of the 5000, and the model was never
+trained on them.</p>
+<p>To keep the story concrete: their two numbers are very close to customer 0's numbers. We take
+customer 0's values and add <code>0.5</code> to both. So this is a different person who <strong>behaves</strong> like
+customer 0.</p>
+<p>Which group will the model put them in?</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">new_customer = [x[0] + 0.5]      # never seen before, but behaves a lot like customer 0
+
+print(&quot;customer 0 sits in group    :&quot;, predict[0])
+print(&quot;the new customer belongs to :&quot;, kmeans.predict(new_customer)[0])</pre></div>
+<div class="out"><div class="h">Output</div><pre>customer 0 sits in group    : 2
+the new customer belongs to : 2</pre></div>
+<p>Both lines print the same group number. A person who behaves like customer 0 lands in customer
+0's group.</p>
+<p>That is the whole prediction — one number, the id of the nearest centroid.</p>
+<p><strong>Why this matters in a real system:</strong> you fit once on your history, save those 8 numbers, and
+then every new customer that arrives is one cheap distance check against 4 centroids. No
+retraining, no scan of 5000 rows.</p>
+<p>If you think of it as a service you would build: <code>.fit()</code> is the nightly batch job that
+recomputes and caches 4 centroid rows. <code>.predict()</code> is the request-time lookup that compares one
+incoming row against that tiny cached table and answers in microseconds.</p>
+
+<h2 id="5-the-result-coloured">5. The result, coloured</h2>
+<p>Each customer is now painted with their group number.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">plt.scatter(x[:,0], x[:,1],c=predict)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12022df90&gt;</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c26-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The same plot again, with the important things marked:</p>
+<ul>
+<li><strong>red X</strong> — the 4 centroids, the 8 numbers that <em>are</em> the model</li>
+<li><strong>black star</strong> — the new customer from the cell above</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">centers = kmeans.cluster_centers_
+
+plt.scatter(x[:, 0], x[:, 1], c=predict, s=5)
+plt.scatter(centers[:, 0], centers[:, 1], c=&quot;red&quot;, marker=&quot;X&quot;, s=300)
+
+for i in range(4):
+    plt.text(centers[i, 0], centers[i, 1], f&quot;  C{i}&quot;, fontsize=14, color=&quot;red&quot;)
+
+plt.scatter(new_customer[0][0], new_customer[0][1], c=&quot;black&quot;, marker=&quot;*&quot;, s=400)
+plt.text(new_customer[0][0], new_customer[0][1], &quot;  new customer&quot;, fontsize=12)
+
+plt.title(&quot;red X = the 4 centroids   |   black star = the new customer&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c28-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Look at which coloured area the black star landed in. That colour is the number <code>predict</code>
+returned. The model did not think about it any harder than that — nearest red X wins.</p>
+<p>One more thing about the colours: the group numbers <code>0, 1, 2, 3</code> are <strong>only ids</strong>. Run the
+notebook again and the same clump may come back as a different number. There is no correct
+numbering, because nobody ever defined one.</p>
+
+<h2 id="6-part-two-of-the-story-where-k-means-gets-it-wr">6. Part two of the story — where K-Means gets it wrong</h2>
+<p>New data, new shape. <code>make_moons</code> builds two curved groups hooked into each other, like two
+hands holding on.</p>
+<p>Imagine two walking paths through a park that curve around each other. People on the same path
+belong together, even though the path bends.</p>
+<p>Note that <code>x, y</code> are reused here, so the customer data is gone from this point on.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">x, y = make_moons(n_samples=1000, noise=0.06)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">plt.scatter(x[:,0], x[:,1])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1205ec2d0&gt;</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c32-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">plt.scatter(x[:, 0], x[:, 1], s=5)
+
+plt.text(-0.7, 1.05, &quot;moon 0&quot;, fontsize=14, color=&quot;red&quot;)
+plt.text(1.2, -0.6, &quot;moon 1&quot;, fontsize=14, color=&quot;red&quot;)
+
+plt.title(&quot;two curved groups - this is the answer we want&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c33-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Two clear curved groups. Your eye separates them instantly.</p>
+<p>This is the answer we want. Now watch K-Means try.</p>
+
+<p>We ask for 2 groups, because there are clearly 2 shapes.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">kmeans = KMeans(n_clusters=2)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">kmeans.fit(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>KMeans(n_clusters=2)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">predict = kmeans.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">plt.scatter(x[:,0], x[:,1],c=predict)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1206f91d0&gt;</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c39-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">centers = kmeans.cluster_centers_
+
+plt.scatter(x[:, 0], x[:, 1], c=predict, s=5)
+plt.scatter(centers[:, 0], centers[:, 1], c=&quot;red&quot;, marker=&quot;X&quot;, s=300)
+
+plt.text(centers[0, 0], centers[0, 1], &quot;  C0&quot;, fontsize=14, color=&quot;red&quot;)
+plt.text(centers[1, 0], centers[1, 1], &quot;  C1&quot;, fontsize=14, color=&quot;red&quot;)
+
+plt.title(&quot;both moons cut in half - each colour holds a piece of both&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c40-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>This is wrong, and it is worth understanding <em>why</em> it is wrong.</p>
+<p>K-Means asks only one question: <strong>&quot;which centre is nearer?&quot;</strong> Look at where the two red X marks
+sit — in empty space, in the hollow of the curves.</p>
+<p>The far end of one moon is physically closer to the <em>other</em> moon's centre than to its own. So it
+gets the other colour. K-Means was not confused; it answered its own question perfectly. But
+that question cannot describe a curve.</p>
+<p><strong>The rule to remember:</strong> K-Means works on round, separated, similar-sized groups. Long or
+curved shapes need a different method.</p>
+
+<h2 id="7-hierarchical-clustering-a-different-way-to-gro">7. Hierarchical clustering — a different way to group</h2>
+<p>Opposite idea. No K at the start, no centroids at all.</p>
+<h3>The story</h3>
+<p>A party begins with everyone standing alone. Two friends spot each other and stand together. A
+third person joins that pair. Elsewhere another small circle forms. Slowly the circles merge,
+until the whole hall is one crowd.</p>
+<p>Hierarchical clustering records that whole story of who joined whom, and lets you stop at any
+point.</p>
+<h3>The steps</h3>
+<ol>
+<li>every point starts as its own cluster — 1000 points means 1000 clusters</li>
+<li>find the two <strong>closest</strong> clusters and merge them</li>
+<li>repeat until only one cluster is left</li>
+</ol>
+<p>The record of those merges is the <strong>dendrogram</strong> in your notes. Its height shows how far apart
+two things were when they merged: merged low means very similar, merged high means very
+different. To get 2 groups, you cut across the tallest vertical line.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">from sklearn.cluster import AgglomerativeClustering</pre></div>
+<h3><code>linkage</code> — the one setting that matters</h3>
+<p>A cluster is a group of points, not a single point. So &quot;distance between two clusters&quot; needs a
+definition. That definition is <code>linkage</code>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>linkage</th>
+  <th>it measures the distance between</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>single</code></td>
+  <td>the <strong>closest</strong> pair of points, one from each cluster</td>
+</tr>
+<tr>
+  <td><code>complete</code></td>
+  <td>the <strong>farthest</strong> pair of points</td>
+</tr>
+<tr>
+  <td><code>average</code></td>
+  <td>the average of all pairs</td>
+</tr>
+<tr>
+  <td><code>ward</code> (default)</td>
+  <td>how much the spread grows after merging</td>
+</tr>
+</tbody>
+</table>
+<p>Your notes also list <strong>centroid</strong> linkage, which compares the two centre points. <code>scipy</code> has it;
+<code>sklearn</code> offers <code>ward</code> in its place.</p>
+<p>We use <code>single</code> here. It merges on the closest pair, which lets a cluster grow along a chain of
+near neighbours — and a moon is exactly a chain of near neighbours.</p>
+<p><code>n_clusters</code> is not given, so it uses the default <code>2</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">ag1 = AgglomerativeClustering(linkage=&#x27;single&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 46</span></div><pre class="py">ag1.fit(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>AgglomerativeClustering(linkage=&#x27;single&#x27;)</pre></div>
+<h3>Back to your question — this model has <strong>no</strong> <code>predict()</code></h3>
+<p><code>AgglomerativeClustering</code> gives you <code>fit()</code> and then <code>labels_</code>, and that is all.</p>
+<p>Why: K-Means stored 4 centroids, so a new customer could be measured against them.
+Hierarchical clustering stores <strong>no centres</strong>. It only holds the merge history of the exact
+points you gave it. A new point has no place in that history, so there is nothing to measure it
+against.</p>
+<p>So the honest version of the earlier answer:</p>
+<ul>
+<li><strong>K-Means</strong> — groups your data <em>and</em> can place new rows into those groups.</li>
+<li><strong>Hierarchical</strong> — groups your data only. New rows mean running it again.</li>
+</ul>
+<p><code>labels_</code> below is one number per customer, <code>0</code> or <code>1</code>, in the same order as <code>x</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 48</span></div><pre class="py">ag1.labels_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1,
+       0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0,
+       1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0,
+       0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0,
+       0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1,
+       1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1,
+       1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0,
+       0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1,
+       0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1,
+       0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1,
+       1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0,
+       0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1,
+       1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1,
+       1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0,
+       1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0,
+       0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0,
+       1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1,
+       0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
+       1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0,
+       1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0,
+       1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1,
+       0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+       1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0,
+       1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+       0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1,
+       0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1,
+       1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1,
+       0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1,
+       1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0,
+       0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0,
+       1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0,
+       1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1,
+       1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1,
+       0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1,
+       1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+       1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1,</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 49</span></div><pre class="py">plt.scatter(x[:,0], x[:,1],c=ag1.labels_)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12081efd0&gt;</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c49-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">plt.scatter(x[:, 0], x[:, 1], c=ag1.labels_, s=5)
+
+plt.text(-0.7, 1.05, &quot;one whole moon&quot;, fontsize=14, color=&quot;red&quot;)
+plt.text(1.0, -0.6, &quot;the other whole moon&quot;, fontsize=14, color=&quot;red&quot;)
+
+plt.title(&quot;single linkage followed the curves - one colour per moon&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-clustering-c50-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Two clean moons, one colour each. The same data K-Means cut in half.</p>
+<p><strong>Why it worked:</strong> inside a moon the points sit in a chain, each one very close to its
+neighbour. <code>single</code> linkage merges on the closest pair, so the merging walks along the curve
+from one end to the other. The gap between the two moons is wider than any gap inside a moon, so
+the two moons never join.</p>
+<h2 id="8-which-one-to-use">8. Which one to use</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>K-Means</th>
+  <th>Agglomerative (hierarchical)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>tell it K first?</td>
+  <td>yes</td>
+  <td>no, you cut the tree afterwards</td>
+</tr>
+<tr>
+  <td>shapes it can find</td>
+  <td>round groups only</td>
+  <td>any shape, depends on linkage</td>
+</tr>
+<tr>
+  <td>what it stores</td>
+  <td>the centroids</td>
+  <td>nothing, only the merge history</td>
+</tr>
+<tr>
+  <td>new rows</td>
+  <td><code>predict()</code> works</td>
+  <td>not possible, run it again</td>
+</tr>
+<tr>
+  <td>speed on big data</td>
+  <td>fast</td>
+  <td>slow, it compares every pair</td>
+</tr>
+<tr>
+  <td>how you choose the number of groups</td>
+  <td>elbow plot</td>
+  <td>dendrogram</td>
+</tr>
+</tbody>
+</table>
+<p><strong>If you remember only one thing:</strong> clustering has no answer column, so it groups rows by
+distance alone. K-Means measures distance to a <strong>centre</strong>, so it can only draw round groups, and
+because it keeps those centres it can also place new rows. Hierarchical clustering measures
+distance <strong>between points</strong>, so it can follow any shape, but it keeps nothing to reuse.</p>
+
+<div class="foot"><a class="btn" href="../Concept/12_clustering.ipynb">12_clustering.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

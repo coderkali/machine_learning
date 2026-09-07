@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feature Scaling — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Feature Scaling</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#feature-scaling-standardization-amp-normalizatio">Feature Scaling — Standardization &amp;amp; Normalizatio</a><a href="#0-setup-and-a-bug-worth-fixing-first">0. Setup — and a Bug Worth Fixing First</a><a href="#1-standardization-standardscaler">1. Standardization — StandardScaler</a><a href="#2-reading-describe-on-applicantincome-ss-value-b">2. Reading describe() on ApplicantIncome_SS, Value b</a><a href="#3-does-scaling-remove-outliers">3. Does Scaling Remove Outliers?</a><a href="#4-does-scaling-change-the-data-s-nature-shape">4. Does Scaling Change the Data&#x27;s Nature (Shape)?</a><a href="#5-normalization-min-max-scaling-coapplicantincom">5. Normalization — Min-Max Scaling CoapplicantIncome</a><a href="#6-standardization-vs-normalization-which-one-whe">6. Standardization vs. Normalization — Which One, Wh</a><a href="#7-why-this-actually-matters-a-distance-example">7. Why This Actually Matters — a Distance Example</a><a href="#summary">Summary</a><a href="#feature-scaling-normalization-min-max">Feature Scaling — Normalization (Min-Max)</a><a href="#1-min-max-scaling-minmaxscaler">1. Min-Max Scaling — MinMaxScaler</a><a href="#2-reading-describe-on-coapplicantincome-mm-value">2. Reading describe() on CoapplicantIncome_MM, Value</a><a href="#3-does-min-max-remove-outliers">3. Does Min-Max Remove Outliers?</a><a href="#4-does-min-max-change-the-data-s-nature-shape">4. Does Min-Max Change the Data&#x27;s Nature (Shape)?</a><a href="#5-why-the-bounded-range-matters-outlier-sensitiv">5. Why the Bounded Range Matters — Outlier Sensitivi</a><a href="#summary">Summary</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Feature Scaling</h1>
+  <p class="lede">When one column shouts and another whispers, the model only hears the shouting.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Neha built a model on two columns: age (18–70) and salary (₹200,000–₹2,000,000).</strong></p><p>The model ignored age completely. Not because age was unimportant — because one year of age is a difference of 1, while a salary gap is 50,000. Measured as distance, salary drowned everything else.</p><p><span class='beat'>The units decided the outcome, not the meaning.</span> Had she recorded salary in lakhs instead of rupees, identical data would have given a different model.</p><p>Scaling removes the units. StandardScaler centres a column and divides by its spread; MinMaxScaler squeezes it to 0–1. Distance-based models need it; trees do not care.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Scaling puts every column on the same footing, so distance means the same in every direction.</p></div>
+<div class="src-head">📓 <a href="../Concept/15_Feature_Scaling.ipynb">15_Feature_Scaling.ipynb</a></div>
+<h2 id="feature-scaling-standardization-amp-normalizatio">Feature Scaling — Standardization &amp; Normalization</h2>
+<p><code>02_ML_Roadmap.MD</code> item 5: <strong>&quot;Normalizing &amp; Standardization — put features
+on the same scale (Min-Max vs Z-score) so no single feature dominates just
+because its numbers are bigger.&quot;</strong> This is different from outlier
+<em>removal</em> (<code>12_Outlier.ipynb</code> → <code>14_Outlier_Removal_Z_Score.ipynb</code>, which
+drop rows) — scaling touches <strong>every</strong> row, drops <strong>none</strong>, and only
+changes the <em>units</em> a column is measured in.</p>
+<p>Two techniques, same goal:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Formula</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Standardization</strong> (Z-score)</td>
+  <td><code>X_new = (Xi − X_mean) / std</code></td>
+  <td>centered at 0, spread ≈ 1 std</td>
+</tr>
+<tr>
+  <td><strong>Normalization</strong> (Min-Max)</td>
+  <td><code>X_new = (Xi − X_min) / (X_max − X_min)</code></td>
+  <td>squeezed into <code>[0, 1]</code></td>
+</tr>
+</tbody>
+</table>
+<p>Section 1 runs Standardization on <code>ApplicantIncome</code> (the column
+<code>12_Outlier.ipynb</code> used); Section 5 runs Normalization on
+<code>CoapplicantIncome</code> (the column <code>14_Outlier_Removal_Z_Score.ipynb</code> used) —
+reusing familiar columns so only the <em>technique</em> changes, not the data.
+The three questions this notebook answers along the way: <strong>does scaling
+remove outliers, what does <code>describe()</code> mean afterward, and does scaling
+change the data's shape?</strong></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler, MinMaxScaler</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<h2 id="0-setup-and-a-bug-worth-fixing-first">0. Setup — and a Bug Worth Fixing First</h2>
+<p><code>ApplicantIncome</code> has 2 missing values, same gap <code>12_Outlier.ipynb</code> worked
+around. Filling it the <em>obvious</em> way first, on purpose, to show why it
+silently doesn't work:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset[&quot;ApplicantIncome&quot;].fillna(dataset[&quot;ApplicantIncome&quot;].mean(), inplace=True)
+dataset[&quot;ApplicantIncome&quot;].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_45413/1792826338.py:1: ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+Such inplace method never works to update the original DataFrame or Series, because the intermediate object on which we are setting values always behaves as a copy (due to Copy-on-Write).
+
+For example, when doing &#x27;df[col].method(value, inplace=True)&#x27;, try using &#x27;df.method({col: value}, inplace=True)&#x27; instead, to perform the operation inplace on the original object, or try to avoid an inplace operation using &#x27;df[col] = df[col].method(value)&#x27;.
+
+See the documentation for a more detailed explanation: https://pandas.pydata.org/pandas-docs/stable/user_guide/copy_on_write.html
+  dataset[&quot;ApplicantIncome&quot;].fillna(dataset[&quot;ApplicantIncome&quot;].mean(), inplace=True)
+np.int64(2)</pre></div>
+<p>Still <strong>2</strong> — and the <code>ChainedAssignmentError</code> warning above explains
+why: <code>dataset[&quot;ApplicantIncome&quot;].fillna(..., inplace=True)</code> is chained
+indexing. Under pandas' Copy-on-Write, <code>dataset[&quot;ApplicantIncome&quot;]</code> hands
+back a <em>copy</em>, so <code>inplace=True</code> patches that throwaway copy — <code>dataset</code>
+itself never changes. Pandas' own suggested fix: call <code>.fillna</code> on
+<code>dataset</code> directly with a <code>{column: value}</code> dict.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset.fillna({&quot;ApplicantIncome&quot;: dataset[&quot;ApplicantIncome&quot;].mean()}, inplace=True)
+dataset[&quot;ApplicantIncome&quot;].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
+<p><strong>0</strong> — fixed. All 618 rows now carry a real <code>ApplicantIncome</code>
+value, so every <code>count</code> in this notebook reads <code>618</code>, not <code>616</code>. (Worth
+remembering when reading <code>describe()</code> further down — a <code>count</code> that's
+lower than the row total is usually this exact bug, not a real data gap.)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset[&quot;ApplicantIncome&quot;].describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>count      618.000000
+mean      4730.256494
+std       2177.405150
+min       1500.000000
+25%       3162.000000
+50%       4334.500000
+75%       5807.000000
+max      16981.000000
+Name: ApplicantIncome, dtype: float64</pre></div>
+<p>Raw shape: <code>mean</code> (4730.26) sits above the <code>median</code>/<code>50%</code> (4334.5) —
+the same right-skew <code>12_Outlier.ipynb</code> found, now with a clean 618-row
+count behind it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">sns.boxplot(x=dataset[&quot;ApplicantIncome&quot;], color=&quot;#d03b3b&quot;)
+plt.title(&quot;ApplicantIncome — raw&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/15-feature-scaling-c11-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Same string of outlier dots past the right whisker as
+<code>12_Outlier.ipynb</code>. Exactly <strong>21</strong> points, by the standard
+<code>Q3 + 1.5×IQR</code> rule — confirmed with numbers in Section 3, kept in mind for
+comparison after scaling.</p>
+
+<h2 id="1-standardization-standardscaler">1. Standardization — <code>StandardScaler</code></h2>
+<p><code>ss.fit(...)</code> learns two numbers from the column — <code>mean_</code> and <code>scale_</code>
+(population std, i.e. divided by <code>N</code>, not <code>N-1</code>) — and <code>ss.transform(...)</code>
+applies <code>(x − mean_) / scale_</code> to every value.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">ss = StandardScaler()
+ss.fit(dataset[[&quot;ApplicantIncome&quot;]])
+dataset[&quot;ApplicantIncome_SS&quot;] = ss.transform(dataset[[&quot;ApplicantIncome&quot;]])
+dataset[[&quot;ApplicantIncome&quot;, &quot;ApplicantIncome_SS&quot;]].head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   ApplicantIncome  ApplicantIncome_SS
+0           1686.0           -1.399245
+1           2437.0           -1.054059
+2           8313.0            1.646752</pre></div>
+<p>Check row 0 by hand: <code>(1686 − 4730.26) / 2175.64 ≈ -1.399</code> — matches
+<code>ApplicantIncome_SS</code> above exactly. Note <code>ss.scale_</code> (<strong>2175.64</strong>) is
+<em>not</em> the same number <code>describe()</code> reports as <code>std</code> (<strong>2177.41</strong>) — that
+gap is the subject of Section 2's first surprise.</p>
+
+<h2 id="2-reading-describe-on-applicantincome-ss-value-b">2. Reading <code>describe()</code> on <code>ApplicantIncome_SS</code>, Value by Value</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">dataset[&quot;ApplicantIncome_SS&quot;].describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>count    6.180000e+02
+mean    -1.422810e-16
+std      1.000810e+00
+min     -1.484737e+00
+25%     -7.208244e-01
+50%     -1.819033e-01
+75%      4.949082e-01
+max      5.630862e+00
+Name: ApplicantIncome_SS, dtype: float64</pre></div>
+<p>Row by row, against the raw <code>describe()</code> above:</p>
+<ul>
+<li><strong><code>count</code> = 618</strong> — not 616. Confirms Section 0's fix actually worked;
+the old bug would have leaked 2 <code>NaN</code>s straight through
+<code>(NaN − mean) / std = NaN</code> into this column too.</li>
+<li><strong><code>mean</code> = -1.42e-16</strong> — as good as exactly <strong>0</strong>. Standardization is
+<em>defined</em> to center the mean at 0; this isn't rounding error in the
+concept, it's rounding error in 64-bit floats representing an exact 0.</li>
+<li><strong><code>std</code> = 1.000810</strong> — close to 1, but not exactly. This is <em>not</em> a bug:
+<code>StandardScaler</code> divides by the <strong>population</strong> std (<code>÷N</code>), but pandas'
+<code>.std()</code> inside <code>describe()</code> uses the <strong>sample</strong> std (<code>÷(N-1)</code>,
+Bessel's correction) by default. The ratio between them is exactly
+<code>sqrt(N/(N-1))</code> = <code>sqrt(618/617)</code> = <strong>1.000810</strong> — matches to 6 decimal
+places. Two different, both-correct definitions of &quot;standard deviation,&quot;
+disagreeing by a predictable amount.</li>
+<li><strong><code>min</code> = -1.484737</strong> ↔ raw <code>min</code> <strong>1500</strong> — the least-poor applicant is
+<code>(1500 − 4730.26) / 2175.64 ≈ -1.48</code> std devs <em>below</em> the mean.</li>
+<li><strong><code>25%</code> = -0.720824</strong> ↔ raw <strong>3162</strong> — a quarter of applicants earn
+under 0.72 std devs below average.</li>
+<li><strong><code>50%</code> = -0.181903</strong> ↔ raw <strong>4334.5</strong>, the median — slightly negative,
+confirming the mean (pulled up by the right tail) sits <em>above</em> the
+typical applicant, i.e. the skew already visible in Section 0.</li>
+<li><strong><code>75%</code> = 0.494908</strong> ↔ raw <strong>5807</strong>.</li>
+<li><strong><code>max</code> = 5.630862</strong> ↔ raw <strong>16981</strong> — the single richest applicant is
+<strong>5.6 standard deviations</strong> above the mean. That's the same top outlier
+the boxplot flagged; scaling didn't hide it, it just re-labeled it in σ
+units instead of ₹.</li>
+</ul>
+
+<h2 id="3-does-scaling-remove-outliers">3. Does Scaling Remove Outliers?</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.boxplot(x=dataset[&quot;ApplicantIncome&quot;], color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.boxplot(x=dataset[&quot;ApplicantIncome_SS&quot;], color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — standardized (σ units)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/15-feature-scaling-c20-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Same number of dots past the whiskers in both plots — just relabeled
+on the x-axis. Confirmed with the actual IQR rule, not just eyeballing:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">def iqr_outlier_count(s):
+    q1, q3 = s.quantile(0.25), s.quantile(0.75)
+    iqr = q3 - q1
+    lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    return int(((s &lt; lo) | (s &gt; hi)).sum())
+
+print(&quot;raw outliers:     &quot;, iqr_outlier_count(dataset[&quot;ApplicantIncome&quot;]))
+print(&quot;standardized outliers:&quot;, iqr_outlier_count(dataset[&quot;ApplicantIncome_SS&quot;]))</pre></div>
+<div class="out"><div class="h">Output</div><pre>raw outliers:      21
+standardized outliers: 21</pre></div>
+<p><strong>21 and 21 — identical.</strong> Answer to &quot;does scaling remove outliers&quot;:
+<strong>no.</strong> Standardization is a strictly increasing linear transform
+(multiply by a positive <code>1/scale_</code>, then shift by <code>-mean_/scale_</code>) applied
+to <em>every</em> point, including <code>Q1</code> and <code>Q3</code> themselves. So &quot;further than
+<code>Q3 + 1.5×IQR</code>&quot; before scaling is exactly equivalent to &quot;further than
+<code>Q3' + 1.5×IQR'</code>&quot; after — the same points end up flagged, just measured in
+different units. Removing outliers is the deliberate, separate job of
+<code>12_Outlier.ipynb</code>–<code>14_Outlier_Removal_Z_Score.ipynb</code>; scaling moves
+<em>everyone</em> together and leaves who's-extreme completely untouched.</p>
+
+<h2 id="4-does-scaling-change-the-data-s-nature-shape">4. Does Scaling Change the Data's <em>Nature</em> (Shape)?</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.histplot(dataset[&quot;ApplicantIncome&quot;], kde=True, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.histplot(dataset[&quot;ApplicantIncome_SS&quot;], kde=True, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — standardized (σ units)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/15-feature-scaling-c25-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>(This is the corrected version of the original draft's before/after
+plot — that one had the titles swapped, labeling the <em>scaled</em> column
+&quot;Before&quot; and the <em>raw</em> column &quot;After.&quot;) Side by side, the two curves are
+the same shape — same right-skew, same bump position relative to the rest
+of the curve — just stretched onto a different x-axis. Proof, numerically,
+not just by eye:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">print(&quot;skew     — raw:&quot;, dataset[&quot;ApplicantIncome&quot;].skew(), &quot; scaled:&quot;, dataset[&quot;ApplicantIncome_SS&quot;].skew())
+print(&quot;kurtosis — raw:&quot;, dataset[&quot;ApplicantIncome&quot;].kurt(), &quot; scaled:&quot;, dataset[&quot;ApplicantIncome_SS&quot;].kurt())</pre></div>
+<div class="out"><div class="h">Output</div><pre>skew     — raw: 1.5834164129556014  scaled: 1.5834164129556014
+kurtosis — raw: 4.444551633369553  scaled: 4.444551633369551</pre></div>
+<p>Skew matches to <strong>13+ decimal places</strong>; kurtosis differs only at the
+<strong>13th</strong> decimal (float noise, not a real difference). Both are exactly
+equal because skewness and kurtosis are <em>scale-and-location invariant</em> —
+they're built from <code>(x − mean)</code> divided by <code>std</code>, raised to a power, which
+is the same ratio standardization itself computes. A transform that only
+shifts and rescales an axis mathematically <strong>cannot</strong> move these numbers.
+That's the rigorous version of &quot;the data's nature is not changed&quot;:
+standardization changes <em>where the ruler's 0 and 1 are</em>, never <em>the shape
+of what's being measured</em>.</p>
+
+<p><strong>The same fact, in two dimensions.</strong> Standardizing <code>ApplicantIncome</code>
+<em>and</em> <code>CoapplicantIncome</code> together and plotting one against the other —
+this is the whiteboard sketch (scatter cloud, off in a corner → same cloud,
+re-centered on the axes) made real with actual data:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">scaled_2d = StandardScaler().fit_transform(dataset[[&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]])
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
+axes[0].scatter(dataset[&quot;ApplicantIncome&quot;], dataset[&quot;CoapplicantIncome&quot;], s=14, alpha=0.5, color=&quot;#d03b3b&quot;)
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+axes[0].set_xlabel(&quot;ApplicantIncome&quot;); axes[0].set_ylabel(&quot;CoapplicantIncome&quot;)
+
+axes[1].scatter(scaled_2d[:, 0], scaled_2d[:, 1], s=14, alpha=0.5, color=&quot;#2a78d6&quot;)
+axes[1].axhline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].axvline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].set_title(&quot;After — standardized&quot;)
+axes[1].set_xlabel(&quot;ApplicantIncome_SS&quot;); axes[1].set_ylabel(&quot;CoapplicantIncome_SS&quot;)
+
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/15-feature-scaling-c30-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The cloud slides so its center sits on <code>(0, 0)</code> and stretches to a
+new scale — but the cloud's <em>shape</em> (which points are bunched together,
+which sit apart, the skew toward the top-right) is identical in both
+panels. Nothing about the data moved <em>relative to itself</em>; only where the
+axes' origin and unit-length are drawn moved.</p>
+
+<h2 id="5-normalization-min-max-scaling-coapplicantincom">5. Normalization — Min-Max Scaling <code>CoapplicantIncome</code></h2>
+<p><code>CoapplicantIncome</code> has 0 missing values (same reason <code>14</code> picked it) —
+no fillna detour needed. Min-Max uses <code>X_min</code>/<code>X_max</code> directly instead of
+<code>mean</code>/<code>std</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">mm = MinMaxScaler()
+dataset[&quot;CoapplicantIncome_MM&quot;] = mm.fit_transform(dataset[[&quot;CoapplicantIncome&quot;]])
+dataset[[&quot;CoapplicantIncome&quot;, &quot;CoapplicantIncome_MM&quot;]].head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   CoapplicantIncome  CoapplicantIncome_MM
+0               1020              0.099145
+1               1201              0.116738
+2               1065              0.103519</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">dataset[&quot;CoapplicantIncome_MM&quot;].describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>count    618.000000
+mean       0.134630
+std        0.156664
+min        0.000000
+25%        0.000000
+50%        0.105851
+75%        0.215567
+max        1.000000
+Name: CoapplicantIncome_MM, dtype: float64</pre></div>
+<p>Against the raw <code>CoapplicantIncome</code> stats (<code>min</code> 0, <code>max</code> 10288):</p>
+<ul>
+<li><strong><code>min</code> = 0.0, <code>max</code> = 1.0</strong>, exactly — by construction, <code>(X_min − X_min)/(range) = 0</code>
+and <code>(X_max − X_min)/(range) = 1</code>. Min-Max <em>guarantees</em> the endpoints;
+Standardization never guaranteed any specific min/max at all.</li>
+<li><strong><code>mean</code> = 0.1346, <code>std</code> = 0.1567</strong> — nowhere near <code>(0, 1)</code>. Min-Max only
+fixes the <em>endpoints</em>; the mean/std land wherever the raw distribution's
+own mean/spread happen to fall inside that <code>[0, 1]</code> window. A mean this
+low (0.13, not 0.5) is a symptom of the same right-skew as <code>ApplicantIncome</code>:
+most coapplicants cluster near the low end, one huge value stretches the
+range up to 1.</li>
+<li><strong><code>25%</code> = 0.0</strong> — literally a quarter of coapplicants report <strong>0</strong> raw
+income, so their scaled value is exactly the floor too.</li>
+<li><strong><code>50%</code> = 0.1059, <code>75%</code> = 0.2157</strong> — most of the data lives in the
+bottom fifth of the <code>[0, 1]</code> range; the last 79% of that range belongs to
+a small number of high earners.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">print(&quot;raw outliers:      &quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome&quot;]))
+print(&quot;min-max outliers:  &quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome_MM&quot;]))
+print()
+print(&quot;skew — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].skew(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].skew())</pre></div>
+<div class="out"><div class="h">Output</div><pre>raw outliers:       15
+min-max outliers:   15
+
+skew — raw: 1.5399420730801827  min-max: 1.5399420730801823</pre></div>
+<p><strong>15 and 15</strong>, skew matching to 13+ decimals — the same two
+conclusions from Sections 3–4 hold for Normalization too: outliers aren't
+removed, shape isn't changed. Min-Max is just a different formula for the
+same kind of transform (linear, applied uniformly to every point).</p>
+
+<h2 id="6-standardization-vs-normalization-which-one-whe">6. Standardization vs. Normalization — Which One, When</h2>
+<p>Both are linear, both preserve shape, neither removes outliers — so the
+real difference is <em>sensitivity to outliers while fitting</em>:</p>
+<ul>
+<li><strong>Standardization</strong> uses <code>mean</code>/<code>std</code>. A single extreme value pulls both,
+but a std is a squared-then-rooted average across <em>all</em> points, so one
+outlier's influence is diluted by the other 617.</li>
+<li><strong>Min-Max</strong> uses <code>X_min</code>/<code>X_max</code> directly — the <em>literal</em> most extreme
+point defines an endpoint of the output range. One outlier doesn't just
+influence the scale, it <strong>is</strong> the scale.</li>
+</ul>
+<p>Concretely, on this exact column:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">below_tenth = (dataset[&quot;CoapplicantIncome_MM&quot;] &lt; 0.1).sum()
+print(f&quot;{below_tenth} of 618 coapplicants ({below_tenth/618:.1%}) land below 0.1 on a 0–1 scale&quot;)
+print(&quot;because a single value —&quot;, dataset[&#x27;CoapplicantIncome&#x27;].max(), &quot;— alone stretches the range up to 1.0&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>297 of 618 coapplicants (48.1%) land below 0.1 on a 0–1 scale
+because a single value — 10288 — alone stretches the range up to 1.0</pre></div>
+<p><strong>297 of 618 (48%)</strong> get crushed into the bottom tenth of the <code>[0, 1]</code>
+range, purely because the max (<code>10288</code>) is so far from the typical value.
+This is exactly why running outlier detection (<code>12</code>–<code>14</code>) <em>before</em> Min-Max
+matters more than it does before Standardization: Min-Max hands the
+top-of-range slot to whatever the largest value is, outlier or not. As a
+default: Standardization is the safer everyday choice (most models — KNN,
+K-Means, PCA, anything gradient-descent-based — assume roughly this);
+reach for Min-Max specifically when an algorithm <em>needs</em> a bounded <code>[0, 1]</code>
+input (e.g. some neural-net input layers), and consider handling outliers
+first if you do.</p>
+
+<h2 id="7-why-this-actually-matters-a-distance-example">7. Why This Actually Matters — a Distance Example</h2>
+<p><code>02_ML_Roadmap.MD</code>'s own justification for item 5: <em>&quot;a distance-based
+algorithm would treat a ₹1,000 income difference as 'bigger' than a
+50-point credit-score difference, purely because of units.&quot;</em> Same idea,
+concretely, with two real applicants who differ in <strong>both</strong>
+<code>ApplicantIncome</code> and <code>Credit_History</code>:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">dataset.fillna({&quot;Credit_History&quot;: dataset[&quot;Credit_History&quot;].mode()[0]}, inplace=True)
+
+a, b = dataset.iloc[1], dataset.iloc[4]
+print(&quot;applicant 1:&quot;, a[&quot;ApplicantIncome&quot;], a[&quot;Credit_History&quot;])
+print(&quot;applicant 4:&quot;, b[&quot;ApplicantIncome&quot;], b[&quot;Credit_History&quot;])
+
+income_gap2 = (a[&quot;ApplicantIncome&quot;] - b[&quot;ApplicantIncome&quot;]) ** 2
+credit_gap2 = (a[&quot;Credit_History&quot;] - b[&quot;Credit_History&quot;]) ** 2
+raw_dist = np.sqrt(income_gap2 + credit_gap2)
+print(f&quot;\nraw euclidean distance: {raw_dist:.2f}&quot;)
+print(f&quot;  ApplicantIncome&#x27;s share of that distance:  {income_gap2/(income_gap2+credit_gap2):.4%}&quot;)
+print(f&quot;  Credit_History&#x27;s share of that distance:   {credit_gap2/(income_gap2+credit_gap2):.4%}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>applicant 1: 2437.0 1.0
+applicant 4: 3002.0 0.0
+
+raw euclidean distance: 565.00
+  ApplicantIncome&#x27;s share of that distance:  99.9997%
+  Credit_History&#x27;s share of that distance:   0.0003%</pre></div>
+<p>Applicant 1 earns ₹2437, applicant 4 earns ₹3002 — a modest ₹565
+gap. But their <code>Credit_History</code> (a strong real signal for loan approval)
+differs too: 1.0 vs 0.0. In raw units, income's much bigger numbers
+completely swamp the distance — <strong>Credit_History contributes 0.003%</strong>,
+essentially invisible to any distance-based algorithm. Now the same pair,
+standardized first:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 44</span></div><pre class="py">scaled_pair = StandardScaler().fit_transform(dataset[[&quot;ApplicantIncome&quot;, &quot;Credit_History&quot;]])
+sa, sb = scaled_pair[1], scaled_pair[4]
+
+s_income_gap2 = (sa[0] - sb[0]) ** 2
+s_credit_gap2 = (sa[1] - sb[1]) ** 2
+scaled_dist = np.sqrt(s_income_gap2 + s_credit_gap2)
+print(f&quot;scaled euclidean distance: {scaled_dist:.2f}&quot;)
+print(f&quot;  ApplicantIncome&#x27;s share of that distance:  {s_income_gap2/(s_income_gap2+s_credit_gap2):.4%}&quot;)
+print(f&quot;  Credit_History&#x27;s share of that distance:   {s_credit_gap2/(s_income_gap2+s_credit_gap2):.4%}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>scaled euclidean distance: 2.81
+  ApplicantIncome&#x27;s share of that distance:  0.8548%
+  Credit_History&#x27;s share of that distance:   99.1452%</pre></div>
+<p>The shares <strong>flip</strong>: <code>Credit_History</code> now drives <strong>99.15%</strong> of the
+distance, income only 0.85%. Nothing about which applicants are &quot;similar&quot;
+changed in reality — only the ruler did. A ₹565 gap is tiny relative to
+income's own spread (std ≈ ₹2176 → 0.26σ), while a full 0-vs-1 swing in a
+binary column <em>is</em> essentially its entire spread (std ≈ 0.37 → ~2.7σ).
+Pre-scaling, <code>Credit_History</code> — despite mattering enormously for whether a
+loan gets repaid — would be almost completely ignored by any Euclidean
+distance calculation (KNN, K-Means, ...) simply because it happens to be
+measured in units of 1s instead of thousands.</p>
+
+<h2 id="summary">Summary</h2>
+<ul>
+<li><strong>Standardization</strong> (<code>X_new = (Xi − mean)/std</code>): centers at 0, spreads
+to ≈1 std, unbounded range.</li>
+<li><strong>Normalization</strong> (<code>X_new = (Xi − min)/(max − min)</code>): bounded to
+<code>[0, 1]</code> exactly, more sensitive to outliers since a single extreme
+value defines an endpoint.</li>
+<li><strong>Neither removes outliers</strong> — proven with matching IQR counts before
+and after, for both techniques (Sections 3, 5). Outlier removal
+(<code>12</code>–<code>14</code>) is a separate, earlier decision.</li>
+<li><strong>Neither changes the data's shape/nature</strong> — proven with matching
+skew/kurtosis to 13+ decimal places, for both techniques (Sections 4, 5).
+Both are purely linear (shift + rescale) transforms, and shape statistics
+are invariant to exactly that kind of transform.</li>
+<li>What scaling <em>does</em> do: put differently-united columns on a comparable
+footing, so distance-based algorithms and gradient descent don't
+accidentally let one feature dominate just because its raw numbers are
+bigger (Section 7).</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/16_Feature_Scaling_Normalization.ipynb">16_Feature_Scaling_Normalization.ipynb</a></div>
+<h2 id="feature-scaling-normalization-min-max">Feature Scaling — Normalization (Min-Max)</h2>
+<p>Companion to <code>15_Feature_Scaling.ipynb</code> (Standardization) — same
+questions, same rigor, this time for the other half of
+<code>02_ML_Roadmap.MD</code> item 5: <strong>Min-Max scaling</strong>.</p>
+<p><code>X_new = (Xi − min(X)) / (max(X) − min(X))</code></p>
+<p>Unlike Standardization (<code>(Xi − mean)/std</code> — unbounded, centered at 0),
+Min-Max is defined entirely by the two most extreme points in the column:
+<code>min(X)</code> always maps to exactly <code>0</code>, <code>max(X)</code> always maps to exactly <code>1</code>,
+everything else lands somewhere in between. <code>CoapplicantIncome</code> again — 0
+missing values, no fillna detour needed (unlike <code>ApplicantIncome</code>, whose
+chained-assignment fillna bug <code>15</code> found and fixed).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler, StandardScaler</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<p><code>CoapplicantIncome</code> — <strong>0</strong> missing. Straight to scaling, no cleanup
+step needed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>count      618.000000
+mean      1385.077670
+std       1611.760337
+min          0.000000
+25%          0.000000
+50%       1089.000000
+75%       2217.750000
+max      10288.000000
+Name: CoapplicantIncome, dtype: float64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">sns.boxplot(x=dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;)
+plt.title(&quot;CoapplicantIncome — raw&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/16-feature-scaling-normaliza-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Right-skewed with a string of outlier dots past the right whisker —
+same starting point <code>14_Outlier_Removal_Z_Score.ipynb</code> used on this exact
+column. <code>min</code> is already 0 (a coapplicant with no income), which will
+matter in Section 2.</p>
+
+<h2 id="1-min-max-scaling-minmaxscaler">1. Min-Max Scaling — <code>MinMaxScaler</code></h2>
+<p><code>mm.fit(...)</code> learns two numbers from the column — <code>data_min_</code> and
+<code>data_max_</code> — and <code>mm.transform(...)</code> applies
+<code>(x − data_min_) / (data_max_ − data_min_)</code> to every value.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">mm = MinMaxScaler()
+mm.fit(dataset[[&quot;CoapplicantIncome&quot;]])
+dataset[&quot;CoapplicantIncome_MM&quot;] = mm.transform(dataset[[&quot;CoapplicantIncome&quot;]])
+dataset[[&quot;CoapplicantIncome&quot;, &quot;CoapplicantIncome_MM&quot;]].head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   CoapplicantIncome  CoapplicantIncome_MM
+0               1020              0.099145
+1               1201              0.116738
+2               1065              0.103519</pre></div>
+<p>Check row 0 by hand: <code>(1020 − 0) / (10288 − 0) ≈ 0.0991</code> — matches
+<code>CoapplicantIncome_MM</code> above exactly. <code>mm.data_min_</code> = <strong>0</strong>, <code>mm.data_max_</code>
+= <strong>10288</strong> — literally the raw column's own min and max, nothing
+estimated or averaged.</p>
+
+<h2 id="2-reading-describe-on-coapplicantincome-mm-value">2. Reading <code>describe()</code> on <code>CoapplicantIncome_MM</code>, Value by Value</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">dataset[&quot;CoapplicantIncome_MM&quot;].describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>count    618.000000
+mean       0.134630
+std        0.156664
+min        0.000000
+25%        0.000000
+50%        0.105851
+75%        0.215567
+max        1.000000
+Name: CoapplicantIncome_MM, dtype: float64</pre></div>
+<p>Row by row, against the raw <code>describe()</code> above (<code>min</code> 0, <code>max</code>
+10288):</p>
+<ul>
+<li><strong><code>min</code> = 0.0, <code>max</code> = 1.0</strong>, exactly — by construction:
+<code>(data_min_ − data_min_)/range = 0</code> and <code>(data_max_ − data_min_)/range = 1</code>.
+Min-Max <em>guarantees</em> these two endpoints; Standardization in <code>15</code> never
+guaranteed any specific min/max at all.</li>
+<li><strong><code>mean</code> = 0.1346, <code>std</code> = 0.1567</strong> — nowhere near <code>(0, 1)</code>. Min-Max only
+fixes the <em>endpoints</em>; mean/std land wherever the raw distribution's own
+center/spread happen to fall inside that <code>[0, 1]</code> window. A mean this low
+(0.13, not 0.5) is the same right-skew as the raw column: most
+coapplicants cluster near the low end, one large value stretches the
+range up to 1.</li>
+<li><strong><code>25%</code> = 0.0</strong> — literally a quarter of coapplicants report <strong>0</strong> raw
+income, so their scaled value is exactly the floor too.</li>
+<li><strong><code>50%</code> = 0.1059, <code>75%</code> = 0.2157</strong> — most of the data lives in the bottom
+fifth of the <code>[0, 1]</code> range; the remaining 79% of that range is claimed
+by a small number of high earners.</li>
+</ul>
+
+<h2 id="3-does-min-max-remove-outliers">3. Does Min-Max Remove Outliers?</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.boxplot(x=dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.boxplot(x=dataset[&quot;CoapplicantIncome_MM&quot;], color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — Min-Max (0–1 range)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/16-feature-scaling-normaliza-c15-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">def iqr_outlier_count(s):
+    q1, q3 = s.quantile(0.25), s.quantile(0.75)
+    iqr = q3 - q1
+    lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    return int(((s &lt; lo) | (s &gt; hi)).sum())
+
+print(&quot;raw outliers:    &quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome&quot;]))
+print(&quot;min-max outliers:&quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome_MM&quot;]))</pre></div>
+<div class="out"><div class="h">Output</div><pre>raw outliers:     15
+min-max outliers: 15</pre></div>
+<p><strong>15 and 15 — identical</strong>, same conclusion <code>15</code> reached for
+Standardization: no. Min-Max is also a strictly increasing linear
+transform (multiply by a positive <code>1/(data_max_ - data_min_)</code>, then shift)
+applied to every point, <code>Q1</code>/<code>Q3</code> included — so &quot;further than
+<code>Q3 + 1.5×IQR</code>&quot; survives the transform unchanged, just measured on a
+different scale. Removing outliers is still the separate, deliberate job
+of <code>12_Outlier.ipynb</code>–<code>14_Outlier_Removal_Z_Score.ipynb</code>.</p>
+
+<h2 id="4-does-min-max-change-the-data-s-nature-shape">4. Does Min-Max Change the Data's <em>Nature</em> (Shape)?</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.histplot(dataset[&quot;CoapplicantIncome_MM&quot;], kde=True, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — Min-Max (0–1 range)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/16-feature-scaling-normaliza-c19-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">print(&quot;skew — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].skew(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].skew())
+print(&quot;kurt — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].kurt(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].kurt())</pre></div>
+<div class="out"><div class="h">Output</div><pre>skew — raw: 1.5399420730801827  min-max: 1.5399420730801823
+kurt — raw: 3.2518566224060375  min-max: 3.2518566224060357</pre></div>
+<p>Same shape, matching to 13+ decimal places, same reason <code>15</code> proved
+for Standardization: skew/kurtosis are scale-and-location invariant, and
+Min-Max is exactly a scale-and-location transform. Different formula,
+same guarantee — shape can't move.</p>
+
+<p><strong>The same fact, in two dimensions</strong> — the visualization you asked
+for, this time for Min-Max:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">dataset.fillna({&quot;ApplicantIncome&quot;: dataset[&quot;ApplicantIncome&quot;].mean()}, inplace=True)
+
+scaled_2d_mm = MinMaxScaler().fit_transform(dataset[[&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]])
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
+axes[0].scatter(dataset[&quot;ApplicantIncome&quot;], dataset[&quot;CoapplicantIncome&quot;], s=14, alpha=0.5, color=&quot;#d03b3b&quot;)
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+axes[0].set_xlabel(&quot;ApplicantIncome&quot;); axes[0].set_ylabel(&quot;CoapplicantIncome&quot;)
+
+axes[1].scatter(scaled_2d_mm[:, 0], scaled_2d_mm[:, 1], s=14, alpha=0.5, color=&quot;#2a78d6&quot;)
+axes[1].axhline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].axvline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].axhline(1, color=&quot;#52514e&quot;, linewidth=0.8, linestyle=&quot;--&quot;)
+axes[1].axvline(1, color=&quot;#52514e&quot;, linewidth=0.8, linestyle=&quot;--&quot;)
+axes[1].set_xlim(-0.05, 1.05); axes[1].set_ylim(-0.05, 1.05)
+axes[1].set_title(&quot;After — Min-Max normalized&quot;)
+axes[1].set_xlabel(&quot;ApplicantIncome_MM&quot;); axes[1].set_ylabel(&quot;CoapplicantIncome_MM&quot;)
+
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/16-feature-scaling-normaliza-c23-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Compare this to <code>15</code>'s version of the same picture. There,
+Standardization pulled the cloud so it <em>straddled</em> the origin symmetrically
+(negative values allowed on both axes, since <code>(x-mean)/std</code> can go either
+way). Here, Min-Max pulls the same cloud into the <strong>unit square</strong> — the
+dashed lines mark the <code>1.0</code> boundary on each axis, and the solid lines mark
+<code>0</code>. Every point has non-negative coordinates, because a raw value at the
+column's minimum maps to exactly <code>0</code>, never below. The cloud's <em>shape</em> —
+same skew, same clustering, same points sitting apart from the rest — is
+still identical to the &quot;before&quot; panel; only the box it's confined to
+changed.</p>
+
+<h2 id="5-why-the-bounded-range-matters-outlier-sensitiv">5. Why the Bounded Range Matters — Outlier Sensitivity</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">below_tenth = (dataset[&quot;CoapplicantIncome_MM&quot;] &lt; 0.1).sum()
+print(f&quot;{below_tenth} of 618 ({below_tenth/618:.1%}) land below 0.1 on the 0-1 scale&quot;)
+print(&quot;driven by a single value —&quot;, dataset[&quot;CoapplicantIncome&quot;].max(), &quot;— which alone defines the top of the range&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>297 of 618 (48.1%) land below 0.1 on the 0-1 scale
+driven by a single value — 10288 — which alone defines the top of the range</pre></div>
+<p><strong>297 of 618 (48%)</strong> get crushed into the bottom tenth of <code>[0, 1]</code>,
+purely because the max is so far from the typical value. This is the
+practical cost of Min-Max's guarantee: fixing the endpoints to exactly
+<code>0</code>/<code>1</code> means <strong>one point</strong> — whichever is most extreme — single-handedly
+defines the whole scale. Standardization's <code>mean</code>/<code>std</code> dilute one
+outlier's pull across all 618 points instead; Min-Max hands it the entire
+top of the range. Worth running outlier detection (<code>12</code>–<code>14</code>) first if
+Min-Max is the plan.</p>
+
+<h2 id="summary">Summary</h2>
+<ul>
+<li><strong>Min-Max</strong>: <code>(Xi − min)/(max − min)</code>, bounded to <code>[0, 1]</code> exactly —
+guarantees the endpoints, not the mean/std.</li>
+<li><strong>Doesn't remove outliers</strong> — IQR count identical before and after
+(<code>15</code> and <code>15</code>, Section 3). It's still a linear transform; relative
+extremity is preserved.</li>
+<li><strong>Doesn't change the data's shape</strong> — skew/kurtosis identical to 13+
+decimals (Section 4), and the 2D scatter shows the same cloud shape,
+just confined to the unit square instead of centered at a point.</li>
+<li><strong>More outlier-sensitive than Standardization</strong> — the endpoints are
+defined by the single min/max value, not an average across all points
+(Section 5). Cross-reference: <code>15_Feature_Scaling.ipynb</code> for the
+Standardization side of this same comparison.</li>
+</ul>
+
+<div class="foot"><a class="btn" href="../Concept/15_Feature_Scaling.ipynb">15_Feature_Scaling.ipynb ↗</a><a class="btn" href="../Concept/16_Feature_Scaling_Normalization.ipynb">16_Feature_Scaling_Normalization.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hypothesis Testing Basics — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">02 DataScience › <b>Hypothesis Testing Basics</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#hypothesis-testing-z-test-two-sample">Hypothesis Testing (Z-Test) - Two Sample</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Data science and statistics</p>
+  <h1>Hypothesis Testing Basics</h1>
+  <p class="lede">Telling a real effect apart from a run of good luck.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A new checkout page converted at 12% against the old page's 10%.</strong> The team wanted to ship it.</p><p>But they had only tested 80 visitors. Flip a fair coin 80 times and you will often get 45 heads — the gap could easily be noise.</p><p><span class='beat'>The question is not "is the new number bigger?" It is "is it bigger than luck can explain?"</span></p><p>Hypothesis testing assumes there is no real difference, then computes how often chance alone would produce a gap this large. If that is rare enough, the difference is worth believing.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Assume nothing happened, then ask how surprising your result would be if that were true.</p></div>
+<div class="src-head">📓 <a href="../Concept/08_Hypothesis_Testing.ipynb">08_Hypothesis_Testing.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import scipy.stats as st
+import numpy as np</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">z_table = st.norm.ppf(0.95)
+z_table</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(1.644853626951472)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">s_x = 90
+p_u =82
+p_std = 20
+n = 81</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">z_cal = (s_x -p_u)/(p_std/np.sqrt(n))
+z_cal</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(3.5999999999999996)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">if z_table &lt; z_cal:
+    print(&quot;ha is right&quot;)
+else :
+    print(&quot;h1 is right&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>ha is right</pre></div>
+<div class="src-head">📓 <a href="../Concept/08_Hypothesis_Testing_1.ipynb">08_Hypothesis_Testing_1.ipynb</a></div>
+<h2 id="hypothesis-testing-z-test-two-sample">Hypothesis Testing (Z-Test) - Two Sample</h2>
+<p>H0 : mu_new = mu_old
+Ha : mu_new &gt; mu_old (right-tailed test)</p>
+<p>Z_test = [ (xbar_new - xbar_old) - (mu_new - mu_old) ] / (sigma / sqrt(n))</p>
+<p>condition: n &gt;= 30 (large sample, use Z-test not t-test)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import scipy.stats as st
+import numpy as np</pre></div>
+<p>Example 2 : e-commerce company (XYZ), check if new website design increased avg purchase amount vs old design.</p>
+<p>30 customers - old design, 30 customers - new design. Population std = 2.5</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">Old_design_data = np.array([45.2, 42.8, 38.9, 43.5, 41.0, 44.6, 40.5, 42.7, 39.8, 41.4,
+                             44.3, 39.7, 42.1, 40.6, 43.0, 42.2, 41.5, 39.6, 44.0, 43.1,
+                             38.7, 42.5, 40.9, 41.8, 43.4, 39.9, 42.0, 40.2, 44.1, 41.2])
+
+New_design_data = np.array([48.5, 49.1, 50.2, 47.8, 48.7, 49.9, 48.0, 50.5, 49.8, 49.6,
+                             48.2, 48.9, 49.7, 50.3, 49.4, 50.1, 48.6, 48.3, 49.0, 50.0,
+                             48.4, 49.3, 49.6, 48.8, 50.4, 49.2, 48.1, 49.5, 50.0, 48.9])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">pop_std = 2.5
+n_sp= len(New_design_data)
+apl = 0.05</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">mean_new = np.mean(New_design_data)
+mean_old = np.mean(Old_design_data)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">z_cal = (mean_new-mean_old)/(pop_std/np.sqrt(n_sp))
+z_cal</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(16.183375832419316)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">z_table = st.norm.ppf(0.95)
+z_table</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(1.644853626951472)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">if z_cal &gt; z_table:
+    print(&quot;ha is right&quot;)
+else:
+    print(&quot;h0 is right&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>ha is right</pre></div>
+<div class="foot"><a class="btn" href="../Concept/08_Hypothesis_Testing.ipynb">08_Hypothesis_Testing.ipynb ↗</a><a class="btn" href="../Concept/08_Hypothesis_Testing_1.ipynb">08_Hypothesis_Testing_1.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROC And AUC — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>ROC And AUC</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#14-roc-curve-and-auc">14 - ROC Curve and AUC</a><a href="#step-1-imports-and-data">Step 1 - Imports and data</a><a href="#step-2-split-then-train">Step 2 - Split, then train</a><a href="#step-3-the-model-returns-a-probability-not-a-lab">Step 3 - The model returns a probability, not a labe</a><a href="#step-4-what-the-curve-plots">Step 4 - What the curve plots</a><a href="#step-5-auc-one-number-for-the-whole-curve">Step 5 - AUC: one number for the whole curve</a><a href="#step-6-the-error-in-your-last-cell">Step 6 - The error in your last cell</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>ROC And AUC</h1>
+  <p class="lede">A model outputs a probability. The threshold is your decision, not the model&#x27;s.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ayesha's classifier gave 0.5 as its cut-off: above is positive, below is negative.</strong> The default.</p><p>For fraud detection that was far too relaxed — she would rather flag ten innocent transactions than miss one real fraud. For sending marketing emails it was far too aggressive.</p><p><span class='beat'>The right threshold depends on which mistake costs more, and the model has no idea what your costs are.</span></p><p>The ROC curve plots what happens at <em>every</em> threshold at once, so you can pick with your eyes open. AUC compresses that curve into one number: the chance the model ranks a random positive above a random negative.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>ROC sweeps every threshold; AUC summarises the whole curve as one number.</p></div>
+<div class="src-head">📓 <a href="../Concept/14_roc.ipynb">14_roc.ipynb</a></div>
+<h2 id="14-roc-curve-and-auc">14 - ROC Curve and AUC</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
+</div>
+<p><strong>What it is:</strong> a curve that shows how a classifier behaves at <strong>every</strong> cut-off,
+not just the default one.</p>
+<p><strong>Why we need it:</strong> <code>predict()</code> hides a decision. It answers &quot;class 1&quot; only when
+the probability is <code>&gt;= 0.50</code>. Nobody chose that <code>0.50</code> - it is a default. Move it
+and the model's mistakes change completely. Accuracy at one cut-off cannot show that.</p>
+<p><strong>What you get at the end:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Question</th>
+  <th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>How does the model behave at every cut-off?</td>
+  <td>the ROC curve</td>
+</tr>
+<tr>
+  <td>One number to compare two models</td>
+  <td>AUC</td>
+</tr>
+<tr>
+  <td>Which cut-off should I actually use?</td>
+  <td>the point on the curve you pick</td>
+</tr>
+</tbody>
+</table>
+<h2 id="step-1-imports-and-data">Step 1 - Imports and data</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn import datasets, metrics
+import pandas as pd
+from sklearn.datasets import make_classification</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">x,y = make_classification(n_classes=2,n_features=5,n_samples=1000,random_state=1)
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11fd05a90&gt;</pre></div>
+<figure class="shot"><img src="assets/14-roc-c02-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><code>n_classes=2</code> is a yes/no problem. The scatter shows only 2 of the 5 features,
+so the classes look mixed - that is fine, and it keeps the problem hard enough
+to be interesting.</p>
+<h2 id="step-2-split-then-train">Step 2 - Split, then train</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">X_train , X_test,Y_train, Y_test = train_test_split(x,y, test_size=0.2, random_state=1)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">c1 = LogisticRegression()
+c1.fit(X_train,Y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LogisticRegression()</pre></div>
+<h2 id="step-3-the-model-returns-a-probability-not-a-lab">Step 3 - The model returns a probability, not a label</h2>
+<p>This is the idea the whole notebook rests on. <code>predict_proba</code> gives the real
+output; <code>predict</code> is just that probability compared against <code>0.5</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">proba = c1.predict_proba(X_test)      # column 0 = P(class 0), column 1 = P(class 1)
+p1 = proba[:, 1]
+
+print(&quot;first 5 probabilities of class 1:&quot;, p1[:5].round(3))
+print(&quot;predict() is just p1 &gt;= 0.5    :&quot;, (c1.predict(X_test) == (p1 &gt;= 0.5)).all())</pre></div>
+<div class="out"><div class="h">Output</div><pre>first 5 probabilities of class 1: [0.55  0.608 0.991 0.922 0.814]
+predict() is just p1 &gt;= 0.5    : True</pre></div>
+<p><code>0.5</code> is a <strong>default, not a law</strong>. Nothing in your data chose it.</p>
+<h2 id="step-4-what-the-curve-plots">Step 4 - What the curve plots</h2>
+<p>Two rates, both read off the confusion matrix:</p>
+<div class="code"><pre>TPR (recall) = TP / (TP + FN)   of all real 1s, how many did we catch?
+FPR          = FP / (FP + TN)   of all real 0s, how many did we wrongly flag?
+</pre></div>
+<p>Lower the threshold → you catch more real 1s (<strong>TPR up</strong>) but raise more false
+alarms (<strong>FPR up</strong>). You cannot improve one without paying in the other.
+The ROC curve draws that trade for every threshold at once.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">fpr, tpr, thresholds = metrics.roc_curve(Y_test, p1)
+
+plt.figure(figsize=(6, 6))
+plt.plot(fpr, tpr, marker=&quot;.&quot;, label=&quot;Logistic Regression&quot;)
+plt.plot([0, 1], [0, 1], &quot;k--&quot;, label=&quot;coin flip&quot;)
+plt.xlabel(&quot;FPR - false alarms&quot;)
+plt.ylabel(&quot;TPR - caught positives&quot;)
+plt.title(&quot;ROC curve&quot;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-roc-c09-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>How to read it:</p>
+<ul>
+<li><strong>Top-left corner</strong> = perfect (catch everything, no false alarms).</li>
+<li><strong>Dashed diagonal</strong> = a coin flip. Below it means the model is worse than guessing.</li>
+<li><strong>High threshold</strong> sits bottom-left: cautious, few alarms, misses a lot.</li>
+<li><strong>Low threshold</strong> sits top-right: catches nearly everything, but shouts constantly.</li>
+</ul>
+<p>Each dot is one threshold. Picking a threshold means picking a point on this curve.</p>
+<h2 id="step-5-auc-one-number-for-the-whole-curve">Step 5 - AUC: one number for the whole curve</h2>
+<p><strong>AUC</strong> is the area under that curve. Read it as: <em>pick one random positive row
+and one random negative row - how often does the model score the positive one
+higher?</em> <code>1.0</code> is perfect, <code>0.5</code> is a coin flip.</p>
+<p>It never uses a threshold, which is why it is the fair way to compare two models.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">print(&quot;AUC     :&quot;, round(metrics.roc_auc_score(Y_test, p1), 3))
+print(&quot;accuracy:&quot;, round(c1.score(X_test, Y_test), 3))</pre></div>
+<div class="out"><div class="h">Output</div><pre>AUC     : 0.912
+accuracy: 0.815</pre></div>
+<p><strong>AUC = 0.912</strong> while accuracy at the default cut-off is only <strong>0.815</strong>.
+The ranking is good; the cut-off is the weak part.</p>
+<p>For example, moving the threshold from <code>0.50</code> down to about <code>0.35</code> raises recall
+from <code>0.77</code> to <code>0.91</code> - the model was always able to do that, the default was
+just hiding it.</p>
+<h2 id="step-6-the-error-in-your-last-cell">Step 6 - The error in your last cell</h2>
+<p><code>metrics.plot_roc_curve</code> was <strong>removed in scikit-learn 1.2</strong>. You are on 1.9, so
+the call raises <code>AttributeError</code>. The cell is kept below so the error is on record.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">metrics.plot_roc_curve(c1,X_test,Y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[8], line 1
+----&gt; 1 metrics.plot_roc_curve(c1,X_test,Y_test)
+
+AttributeError: module &#x27;sklearn.metrics&#x27; has no attribute &#x27;plot_roc_curve&#x27;</pre></div>
+<h3>The fix</h3>
+<p><code>RocCurveDisplay</code> replaced it. Same picture, one line:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">metrics.RocCurveDisplay.from_estimator(c1, X_test, Y_test)
+plt.plot([0, 1], [0, 1], &quot;k--&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-roc-c15-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li><strong>Treating <code>0.5</code> as part of the model.</strong> It is a default you are allowed to change.</li>
+<li><strong>Reporting accuracy on imbalanced data.</strong> A model that always says &quot;no&quot; can score 95% and catch zero positives - AUC exposes that, accuracy does not.</li>
+<li><strong>Using <code>plot_roc_curve</code>.</strong> Removed in sklearn 1.2; use <code>RocCurveDisplay</code>.</li>
+</ol>
+<h2 id="key-takeaway">Key takeaway</h2>
+<div class="note"><div class="h">Note</div><p><strong>If you remember only one thing...</strong>
+A classifier does not output a label, it outputs a <strong>score</strong>. ROC shows what
+happens at every possible cut-off of that score, and AUC says how good the
+ranking is before you pick one.</p>
+</div>
+<p>Related: the four boxes these rates come from → <a href="../../24_Model_Evaluation/Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb</a>.</p>
+
+<div class="foot"><a class="btn" href="../Concept/14_roc.ipynb">14_roc.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

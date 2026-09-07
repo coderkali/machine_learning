@@ -1,0 +1,2435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outliers — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Outliers</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#outliers-detecting-them-and-proving-they-matter">Outliers — Detecting Them and Proving They Matter</a><a href="#1-proving-it-first-does-one-value-really-matter-">1. Proving It First — Does One Value Really Matter T</a><a href="#2-why-this-matters-for-ml-models-not-just-arithm">2. Why This Matters for ML Models, Not Just Arithmet</a><a href="#3-detecting-outliers-the-box-plot-iqr-method">3. Detecting Outliers — the Box Plot / IQR Method</a><a href="#4-the-distribution-graph-the-same-bounds-as-a-be">4. The Distribution Graph — the Same Bounds, as a Be</a><a href="#5-iqr-vs-z-score-same-column-different-assumptio">5. IQR vs. Z-Score — Same Column, Different Assumpti</a><a href="#6-actually-removing-them">6. Actually Removing Them</a><a href="#outlier-removal-via-iqr">Outlier Removal via IQR</a><a href="#1-the-iqr-bounds">1. The IQR Bounds</a><a href="#2-filtering-and-proving-it-worked">2. Filtering — and Proving It Worked</a><a href="#3-the-impact-on-mean-and-std">3. The Impact on mean and std</a><a href="#4-removal-vs-the-alternatives">4. Removal vs. the Alternatives</a><a href="#5-cleaning-both-income-columns-together">5. Cleaning Both Income Columns Together</a><a href="#outlier-removal-via-z-score">Outlier Removal via Z-Score</a><a href="#1-two-equivalent-ways-to-apply-the-threshold">1. Two Equivalent Ways to Apply the Threshold</a><a href="#2-visualizing-the-z-score-removal">2. Visualizing the Z-Score Removal</a><a href="#3-iqr-vs-z-score-head-to-head-same-column">3. IQR vs. Z-Score, Head-to-Head, Same Column</a><a href="#4-the-final-correctly-cleaned-dataset">4. The Final, Correctly-Cleaned Dataset</a><a href="#21-outliers">21 - Outliers</a><a href="#why-are-we-learning-this">Why are we learning this?</a><a href="#first-the-words">First, the words</a><a href="#the-four-ways-we-will-do-it">The four ways we will do it</a><a href="#1-the-tools-on-the-table">1. The tools on the table</a><a href="#2-make-some-fake-data-we-can-trust">2. Make some fake data we can trust</a><a href="#why-do-we-use-x-0-and-x-1-in-a-scatter-plot">Why do we use x[:, 0] and x[:, 1] in a scatter plot?</a><a href="#3-dbscan-who-is-standing-in-a-crowd">3. DBSCAN - who is standing in a crowd?</a><a href="#4-elliptic-envelope-draw-one-oval-around-normal">4. Elliptic Envelope - draw one oval around normal</a><a href="#5-isolation-forest-how-fast-can-i-cut-you-off">5. Isolation Forest - how fast can I cut you off?</a><a href="#6-why-do-all-these-scatter-plots-look-the-same">6. Why do all these scatter plots look the same?</a><a href="#7-local-outlier-factor-strange-compared-to-your-">7. Local Outlier Factor - strange compared to your o</a><a href="#8-a-tiny-7-point-example-and-a-trap">8. A tiny 7-point example - and a trap</a><a href="#putting-the-four-side-by-side">Putting the four side by side</a><a href="#remember-this">Remember this</a><a href="#60-second-revision">60-second revision</a><a href="#test-yourself">Test yourself</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Outliers</h1>
+  <p class="lede">One wrong row can drag an entire model off course.</p>
+  <div class="tags"><span class="tag">4 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Farhan calculated the average salary on his team of ten.</strong> It came out at ₹41 lakh. Nobody on the team recognised that number.</p><p>Nine people earned between ₹8 and ₹15 lakh. The tenth was the founder, on ₹3 crore. The average described nobody at all.</p><p><span class='beat'>The mean is not robust — one extreme value pulls it anywhere.</span> The median stayed at ₹11 lakh and described the team honestly.</p><p>So outliers must be found (IQR, Z-score, DBSCAN) and then judged. A typing error gets removed. A genuine founder salary gets kept — and it tells you the mean was the wrong tool.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Find the extreme points, then judge: an error to remove, or a rare truth to keep?</p></div>
+<div class="src-head">📓 <a href="../Concept/12_Outlier.ipynb">12_Outlier.ipynb</a></div>
+<h2 id="outliers-detecting-them-and-proving-they-matter">Outliers — Detecting Them and Proving They Matter</h2>
+<p>An <strong>outlier</strong> is a value that sits unusually far from the rest of a column's
+values — not just &quot;a bit high,&quot; but far enough that it's more likely to be a
+data-entry error, a rare edge case, or a genuinely different population than
+the bulk of the data. <code>02_ML_Roadmap.MD</code>'s Feature Engineering step 3,
+<strong>Handling Outliers</strong>, is: detect (IQR or Z-score method), then decide —
+cap, remove, or transform. <code>DataScience_Y/04_IQR.ipynb</code> already worked
+through the IQR math once on the Titanic <code>Age</code>/<code>Fare</code> columns; this notebook
+redoes it on <code>../../_shared_data/loans.csv</code>, but leads with <strong>why</strong> it matters before the how,
+and reads the classic box-plot ↔ normal-distribution diagram directly.</p>
+<p>This notebook covers, in order:</p>
+<ol>
+<li><strong>Proof first</strong> — a tiny example showing exactly how much one extreme
+value can distort a statistic, before touching any real data.</li>
+<li><strong>Why it matters for ML models</strong>, not just arithmetic.</li>
+<li><strong>The box plot / IQR method</strong> — what each part of the diagram means, and
+applying it to <code>../../_shared_data/loans.csv</code>.</li>
+<li><strong>The distribution graph</strong> — the same bounds, seen as a bell curve with
+an outlier region, and what happens when real data isn't actually normal.</li>
+<li><strong>IQR vs. Z-score</strong>, compared on the same real column.</li>
+<li><strong>Actually removing</strong> the flagged rows.</li>
+</ol>
+
+<h2 id="1-proving-it-first-does-one-value-really-matter-">1. Proving It First — Does One Value Really Matter That Much?</h2>
+<p>Eight ordinary, close-together numbers — nothing dramatic — then the exact
+same list with one extra value thrown in.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">l = [5,6,7,5,4,6,7,5]
+sum(l)/len(l)</pre></div>
+<div class="out"><div class="h">Output</div><pre>5.625</pre></div>
+<p>Baseline: 8 values, all between 4 and 7, mean <strong>5.625</strong> — squarely in the
+middle of the data, as a mean should be.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">l_with_outlier = l + [100]
+sum(l_with_outlier)/len(l_with_outlier)</pre></div>
+<div class="out"><div class="h">Output</div><pre>16.11111111111111</pre></div>
+<p>One more value — <strong>100</strong>, a single entry out of 9 (11% of the data) — and
+the mean jumps to <strong>16.11</strong>. It nearly <strong>tripled</strong>, and it's now higher than
+every single original value except the outlier itself. That's the entire
+argument for why outliers matter, in one number: the mean doesn't describe
+&quot;the typical value&quot; anymore — it describes a tug-of-war that one point won.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">import statistics
+
+statistics.median(l), statistics.median(l_with_outlier)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(5.5, 6)</pre></div>
+<p>Same two lists, but the <strong>median</strong>: <code>5.5 → 6</code>. Barely moved. The median
+only cares about which value sits in the middle position, not how far away
+the extreme values are — this is exactly <em>why</em> <code>07_Filling_Missing_Values.MD</code>
+recommends median (not mean) for imputing a skewed/outlier-prone column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">statistics.pstdev(l), statistics.pstdev(l_with_outlier)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(0.9921567416492215, 29.673948336487737)</pre></div>
+<p>And the <strong>standard deviation</strong>: <code>0.99 → 29.67</code> — roughly <strong>30x</strong> larger,
+an even bigger blowup than the mean. Std dev squares every distance from the
+mean before averaging, so one point that's 94 away from the rest doesn't
+just add to the total — it dominates it. This is exactly why <code>StandardScaler</code>
+(which divides every value by the std dev) gets distorted by outliers: one
+extreme point inflates the denominator and squashes every normal value
+toward zero.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+
+labels = [&quot;Mean&quot;, &quot;Median&quot;]
+without = [sum(l)/len(l), statistics.median(l)]
+with_out = [sum(l_with_outlier)/len(l_with_outlier), statistics.median(l_with_outlier)]
+
+x = np.arange(len(labels))
+width = 0.35
+
+fig, ax = plt.subplots(figsize=(5.5, 3.5))
+bars1 = ax.bar(x - width/2, without, width, label=&quot;Without outlier&quot;, color=&quot;#2a78d6&quot;)
+bars2 = ax.bar(x + width/2, with_out, width, label=&quot;With outlier (100 added)&quot;, color=&quot;#d03b3b&quot;)
+ax.bar_label(bars1, fmt=&quot;%.2f&quot;, padding=2, fontsize=8.5)
+ax.bar_label(bars2, fmt=&quot;%.2f&quot;, padding=2, fontsize=8.5)
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.set_ylabel(&quot;Value&quot;)
+ax.set_title(&quot;One extra value moves the mean a lot, the median barely at all&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-outlier-c10-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 1 — the proof, side by side.</strong> Blue = the clean list,
+red = the same list plus one outlier (red used deliberately as a &quot;flagged/
+critical&quot; state, not just a fourth arbitrary color). The mean bar nearly
+triples; the median bar barely shifts. Same underlying data, wildly
+different sensitivity — which is exactly the property that makes outlier
+handling a real decision, not a formality.</p>
+
+<h2 id="2-why-this-matters-for-ml-models-not-just-arithm">2. Why This Matters for ML Models, Not Just Arithmetic</h2>
+<p>The toy example proved outliers distort a plain average. In an actual ML
+pipeline, that distortion shows up in more places than just <code>.mean()</code>:</p>
+<ul>
+<li><strong>Distance-based models</strong> (KNN, K-Means) — a single far-away point can
+dominate a Euclidean-distance calculation, pulling cluster centers toward
+itself or making it the &quot;nearest neighbor&quot; to points it has nothing in
+common with.</li>
+<li><strong>Linear / Logistic Regression</strong> — squared-error loss means one far-away
+point contributes a <em>disproportionately large</em> error term, giving it
+outsized leverage over the fitted coefficients (the line tilts to reduce
+that one huge error, at the cost of fitting everything else worse).</li>
+<li><strong>Feature scaling</strong> (<code>StandardScaler</code>, <code>MinMaxScaler</code>) — exactly the std-dev
+problem from Section 1: one outlier stretches the scale, compressing every
+normal value into a narrow band and throwing away resolution where the
+real data actually lives.</li>
+<li><strong>Anything relying on mean-based statistics elsewhere in the pipeline</strong> —
+e.g. mean-imputing a <em>different</em> column's missing values using a mean
+that an outlier already dragged off-center.</li>
+</ul>
+<p><strong>Worth not overdoing:</strong> this isn't &quot;always delete every outlier.&quot; Tree-based
+models (Decision Trees, Random Forest, XGBoost) split on ordered thresholds,
+not distances, so they're relatively unbothered by an extreme value. And in
+fraud detection, medical anomaly detection, etc., the outliers <em>are</em> the
+thing you're trying to find — removing them would delete the signal, not
+the noise. &quot;Detect, then decide&quot; (<code>02_ML_Roadmap.MD</code>'s phrasing) — removal
+is one option, not the automatic answer.</p>
+
+<h2 id="3-detecting-outliers-the-box-plot-iqr-method">3. Detecting Outliers — the Box Plot / IQR Method</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Part of the box plot</th>
+  <th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Q1</strong></td>
+  <td>25th percentile — a quarter of the data is below this</td>
+</tr>
+<tr>
+  <td><strong>Q3</strong></td>
+  <td>75th percentile — three-quarters of the data is below this</td>
+</tr>
+<tr>
+  <td><strong>IQR</strong></td>
+  <td><code>Q3 − Q1</code> — the width of the middle 50% of the data</td>
+</tr>
+<tr>
+  <td><strong>Median line</strong></td>
+  <td>the 50th percentile, drawn inside the box</td>
+</tr>
+<tr>
+  <td><strong>Lower whisker</strong></td>
+  <td>extends down to <code>Q1 − 1.5 × IQR</code></td>
+</tr>
+<tr>
+  <td><strong>Upper whisker</strong></td>
+  <td>extends up to <code>Q3 + 1.5 × IQR</code></td>
+</tr>
+<tr>
+  <td><strong>Outliers</strong></td>
+  <td>any point beyond either whisker — plotted as individual dots</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The <code>1.5 × IQR</code> number isn't arbitrary.</strong> For data that's genuinely
+<strong>normally distributed</strong>, <code>Q1</code> and <code>Q3</code> sit at about <code>±0.6745σ</code> from the
+mean, which puts the <code>1.5 × IQR</code> whiskers at about <strong><code>±2.698σ</code></strong>. Standard
+normal tables say that range covers roughly <strong>99.3%</strong> of all data (<code>24.65%</code>
+on each side of the median out to <code>±1σ</code>-ish, <code>50%</code> in the middle band) —
+leaving only about <strong>0.7% total (≈0.35% per tail)</strong> expected to fall outside
+as &quot;true&quot; outliers. That 0.7% is the benchmark to compare real data against
+further down — if a real column flags a lot more than that, its shape isn't
+actually normal, which is itself useful information.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">dataset.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 618 entries, 0 to 617
+Data columns (total 13 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Loan_ID            618 non-null    str    
+ 1   Gender             605 non-null    str    
+ 2   Married            612 non-null    str    
+ 3   Dependents         603 non-null    str    
+ 4   Education          609 non-null    str    
+ 5   Self_Employed      586 non-null    str    
+ 6   ApplicantIncome    616 non-null    float64
+ 7   CoapplicantIncome  618 non-null    int64  
+ 8   LoanAmount         596 non-null    float64
+ 9   Loan_Amount_Term   597 non-null    float64
+ 10  Credit_History     568 non-null    float64
+ 11  Property_Area      609 non-null    str    
+ 12  Loan_Status        618 non-null    str    
+dtypes: float64(4), int64(1), str(8)
+memory usage: 62.9 KB</pre></div>
+<p>Two income columns stand out as the obvious candidates for outlier
+checking — <code>ApplicantIncome</code> and <code>CoapplicantIncome</code> — both continuous,
+both the kind of real-world financial figure that tends to have a long
+right tail (most people earn a moderate amount; a few earn a lot).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">dataset.describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>       ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+count       616.000000         618.000000  596.000000        597.000000   
+mean       4730.256494        1385.077670  223.031879        312.723618   
+std        2180.942773        1611.760337   93.055097         89.102680   
+min        1500.000000           0.000000   40.000000         36.000000   
+25%        3160.500000           0.000000  152.000000        300.000000   
+50%        4325.000000        1089.000000  208.500000        360.000000   
+75%        5810.750000        2217.750000  282.000000        360.000000   
+max       16981.000000       10288.000000  480.000000        360.000000   
+
+       Credit_History  
+count      568.000000  
+mean         0.836268  
+std          0.370359  
+min          0.000000  
+25%          1.000000  
+50%          1.000000  
+75%          1.000000  
+max          1.000000</pre></div>
+<p>One number already hints at the shape before any plot: <code>ApplicantIncome</code>'s
+<code>mean</code> (4730) is noticeably higher than its <code>50%</code>/median (4325), and the
+<code>max</code> (16981) is nearly 3x the <code>75%</code> value (5811) — classic signature of a
+right-skewed column with high-end outliers pulling the mean up, exactly like
+the toy example in Section 1.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot;,data=dataset)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-outlier-c20-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>A cluster of dots strung out to the right of the box — each one a row
+flagged as beyond <code>Q3 + 1.5 × IQR</code>. Note the box itself sits low, hugging
+<code>0</code> — a large share of applicants have <strong>no</strong> co-applicant income at all
+(<code>Q1 = 0</code>, confirmed below), which is real, not an error; the outliers here
+are the <em>co-applicants who do have income</em>, on the high end.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">sns.boxplot(x=&quot;ApplicantIncome&quot;,data=dataset)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-outlier-c22-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Same pattern, more outlier dots — <code>ApplicantIncome</code> has a longer tail of
+high earners than <code>CoapplicantIncome</code> does. Visually convincing, but &quot;a
+cluster of dots&quot; isn't a number — the next cell computes the exact bounds
+and count the box plot is drawing from.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">for col in [&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]:
+    s = dataset[col].dropna()
+    Q1, Q3 = s.quantile(0.25), s.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound, upper_bound = Q1 - 1.5 * IQR, Q3 + 1.5 * IQR
+    is_outlier = (s &lt; lower_bound) | (s &gt; upper_bound)
+    print(f&quot;{col}: Q1={Q1:.1f}  Q3={Q3:.1f}  IQR={IQR:.1f}  &quot;
+          f&quot;bounds=({lower_bound:.1f}, {upper_bound:.1f})  &quot;
+          f&quot;outliers={is_outlier.sum()} ({100*is_outlier.mean():.2f}%)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>ApplicantIncome: Q1=3160.5  Q3=5810.8  IQR=2650.2  bounds=(-814.9, 9786.1)  outliers=21 (3.41%)
+CoapplicantIncome: Q1=0.0  Q3=2217.8  IQR=2217.8  bounds=(-3326.6, 5544.4)  outliers=15 (2.43%)</pre></div>
+<p>The dots made numeric: <code>ApplicantIncome</code> flags <strong>21 rows (3.41%)</strong> beyond
+<code>9786.1</code>; <code>CoapplicantIncome</code> flags <strong>15 rows (2.43%)</strong> beyond <code>5544.4</code>.
+Both lower bounds come out <strong>negative</strong> (<code>-814.9</code> and <code>-3326.6</code>) — since
+income can't be negative, there are effectively <strong>zero low-end outliers</strong>;
+every flagged row is a high earner. Both percentages are well above the
+<strong>~0.7%</strong> a normal distribution would predict (Section 3's table) —
+confirming numerically what the skew in <code>.describe()</code> already hinted at.</p>
+
+<h2 id="4-the-distribution-graph-the-same-bounds-as-a-be">4. The Distribution Graph — the Same Bounds, as a Bell Curve</h2>
+<p>The box plot and the distribution plot are two views of the same data —
+the whiskers computed above are the box plot's outlier boundary; here
+they're drawn over the actual density curve, matching the classic diagram
+where the box plot sits directly above a bell curve with its tails
+shaded as the outlier region.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">s = dataset[&quot;ApplicantIncome&quot;].dropna()
+Q1, Q3 = s.quantile(0.25), s.quantile(0.75)
+IQR = Q3 - Q1
+lower_bound, upper_bound = Q1 - 1.5 * IQR, Q3 + 1.5 * IQR
+
+fig, ax = plt.subplots(figsize=(8, 4))
+sns.histplot(s, kde=True, color=&quot;#2a78d6&quot;, ax=ax, stat=&quot;density&quot;, alpha=0.35)
+
+# Shade the outlier region in the tail that actually has data past the bound
+ax.axvspan(upper_bound, s.max(), color=&quot;#d03b3b&quot;, alpha=0.18, label=&quot;Outlier region&quot;)
+for val, label in [(Q1, &quot;Q1&quot;), (Q3, &quot;Q3&quot;), (upper_bound, &quot;Q3 + 1.5×IQR&quot;)]:
+    ax.axvline(val, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
+    ax.text(val, ax.get_ylim()[1]*0.96, label, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+
+ax.set_title(&quot;ApplicantIncome — distribution with the box plot&#x27;s outlier boundary&quot;)
+ax.set_xlabel(&quot;ApplicantIncome&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/12-outlier-c27-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 2 — the distribution graph.</strong> (Fixed from the original
+<code>sns.distplot(...)</code> call, which is deprecated as of Seaborn 0.14 and prints
+a <code>UserWarning</code> on every run — <code>sns.histplot(..., kde=True)</code> is the current
+equivalent: a density histogram with the same smoothed curve on top.)</p>
+<p>The blue curve is <em>not</em> a symmetric bell — it leans hard to the left with a
+long right tail, unlike the perfectly symmetric normal curve in the
+reference diagram. The red band marks everything past <code>Q3 + 1.5×IQR</code>: real,
+non-empty mass sitting inside what the box plot calls &quot;the outlier region.&quot;
+This is the visual version of the 3.41% vs. 0.7% gap from Section 3 — a
+symmetric normal curve would leave that red region nearly empty; this one
+clearly doesn't.</p>
+
+<h2 id="5-iqr-vs-z-score-same-column-different-assumptio">5. IQR vs. Z-Score — Same Column, Different Assumptions</h2>
+<p><code>02_ML_Roadmap.MD</code> names two detection methods: <strong>IQR</strong> (used above) and
+<strong>Z-score</strong> (<code>|z| &gt; 3</code>, i.e. more than 3 standard deviations from the mean).
+Z-score assumes the data is roughly normal — exactly the assumption Section
+4 just showed <code>ApplicantIncome</code> doesn't meet. Running both on the same
+column shows the practical consequence.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">mean, std = s.mean(), s.std()
+z_scores = (s - mean) / std
+iqr_outliers = (s &lt; lower_bound) | (s &gt; upper_bound)
+z_outliers = z_scores.abs() &gt; 3
+
+print(f&quot;IQR method:      {iqr_outliers.sum()} outliers flagged&quot;)
+print(f&quot;Z-score method:  {z_outliers.sum()} outliers flagged&quot;)
+print(f&quot;Flagged by IQR but not Z-score: {(iqr_outliers &amp; ~z_outliers).sum()}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>IQR method:      21 outliers flagged
+Z-score method:  8 outliers flagged
+Flagged by IQR but not Z-score: 13</pre></div>
+<p>IQR flags <strong>21</strong>, Z-score flags only <strong>8</strong> — IQR catches 13 rows the
+Z-score method misses entirely. That's the skew again: the mean and std dev
+Z-score relies on are themselves inflated by the very outliers being
+searched for (Section 1's whole point), so the <code>±3σ</code> cutoff sits further out
+than it should. IQR, built from percentiles rather than the mean/std, isn't
+thrown off the same way — which is why it's generally the safer default
+for skewed real-world columns like this one, and Z-score is more
+trustworthy on data that's actually close to normal.</p>
+
+<h2 id="6-actually-removing-them">6. Actually Removing Them</h2>
+<p>Detection answered &quot;which rows&quot;; this is &quot;decide, then act&quot; — the removal
+half of <code>02_ML_Roadmap.MD</code>'s &quot;detect → cap/remove/transform.&quot; Filtering to
+just the rows <em>inside</em> the IQR bounds:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">print(&quot;Shape before:&quot;, dataset.shape)
+
+cleaned = dataset[(dataset[&quot;ApplicantIncome&quot;] &gt;= lower_bound) &amp; (dataset[&quot;ApplicantIncome&quot;] &lt;= upper_bound)]
+
+print(&quot;Shape after:&quot;, cleaned.shape)
+print(&quot;Rows dropped:&quot;, dataset.shape[0] - cleaned.shape[0])</pre></div>
+<div class="out"><div class="h">Output</div><pre>Shape before: (618, 13)
+Shape after: (595, 13)
+Rows dropped: 23</pre></div>
+<p><strong>618 → 595, 23 rows dropped</strong> — one more than the 21 flagged as outliers
+in Section 3. The extra 2: <code>ApplicantIncome</code> has 2 missing values
+(<code>dataset.info()</code> showed <code>616 non-null</code> out of 618), and a comparison
+against <code>NaN</code> (<code>NaN &gt;= lower_bound</code>) always evaluates to <code>False</code> in pandas —
+so the two <code>NaN</code> rows get filtered out along with the real outliers,
+non-obviously. Worth being deliberate about: if the goal is <em>only</em> to drop
+outliers (not also drop missing values), impute <code>ApplicantIncome</code> first,
+the same way <code>07_Filling_Missing_Values.MD</code> and <code>09_one_hot_encoding.ipynb</code>
+did for other columns, before applying this filter.</p>
+<p><strong>Capping instead of dropping</strong> (briefly, as the alternative <code>02_ML_Roadmap.MD</code>
+also names): rather than removing rows outright — which loses whatever else
+those rows recorded (<code>LoanAmount</code>, <code>Credit_History</code>, etc.) — replace values
+past the bound with the bound itself: <code>dataset[&quot;ApplicantIncome&quot;].clip(lower_bound, upper_bound)</code>.
+That keeps every row while still preventing the extreme values from
+dominating a mean, a distance calculation, or a scaler — worth reaching for
+when the rest of a flagged row is still useful data.</p>
+
+<div class="src-head">📓 <a href="../Concept/13_Outlier_Removal_IQR.ipynb">13_Outlier_Removal_IQR.ipynb</a></div>
+<h2 id="outlier-removal-via-iqr">Outlier Removal via IQR</h2>
+<p><code>12_Outlier.ipynb</code> proved outliers distort statistics, explained why that
+matters for ML models, and detected them with the box-plot/IQR method —
+Section 6 there removed <code>ApplicantIncome</code>'s outliers as a quick closing
+example. This notebook is the deeper, dedicated version of that removal
+step, worked through on <code>CoapplicantIncome</code>:</p>
+<ol>
+<li>Recompute the IQR bounds (<code>Q1</code>, <code>Q3</code>, <code>min_range</code>, <code>max_range</code>) —
+same formulas as the whiteboard: <code>IQR = Q3 − Q1</code>, <code>min = Q1 − 1.5×IQR</code>,
+<code>max = Q3 + 1.5×IQR</code>.</li>
+<li>Filter the outliers out, and <strong>prove</strong> the filter actually worked —
+before/after box plots and distribution plots side by side, not just a
+shape number.</li>
+<li>Check the impact on <code>mean</code>/<code>std</code> — the same statistics <code>12_Outlier.ipynb</code>
+Section 1 showed outliers distort, now measured going the other direction.</li>
+<li>Compare removal against the alternatives (capping, trimming, transforming).</li>
+<li>Combine <code>CoapplicantIncome</code> <strong>and</strong> <code>ApplicantIncome</code> cleaning into one
+final dataset.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p>618 rows, 13 columns — the baseline to measure every filter against.</p>
+
+<h2 id="1-the-iqr-bounds">1. The IQR Bounds</h2>
+<p>Same three formulas as the whiteboard, on <code>CoapplicantIncome</code> this time
+instead of <code>ApplicantIncome</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
+q3 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.75)
+q1, q3</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(0.0), np.float64(2217.75))</pre></div>
+<p><code>Q1 = 0.0</code> — a quarter of applicants have <strong>zero</strong> co-applicant income (no
+co-applicant, or a co-applicant who doesn't earn). <code>Q3 = 2217.75</code> — the
+75th-percentile co-applicant earns that much or less. Nothing wrong with
+<code>Q1 = 0</code> here; it's a real, common value in this column, not a missing-data
+artifact.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">IQR = q3-q1
+IQR</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(2217.75)</pre></div>
+<p>The width of the middle 50% of the data: <code>2217.75</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">min_range = q1 - (1.5*IQR)
+max_range = q3 + (1.5*IQR)
+min_range , max_range</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(-3326.625), np.float64(5544.375))</pre></div>
+<p><code>min_range = -3326.6</code>, <code>max_range = 5544.4</code>. The lower bound is
+<strong>negative</strong> — and <code>CoapplicantIncome</code> can never be negative — so no row
+could ever fall below it. That's worth confirming rather than assuming, next.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">both_bounds = dataset[(dataset[&quot;CoapplicantIncome&quot;] &gt;= min_range) &amp; (dataset[&quot;CoapplicantIncome&quot;] &lt;= max_range)]
+upper_only = dataset[dataset[&quot;CoapplicantIncome&quot;] &lt;= max_range]
+both_bounds.shape, upper_only.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>((603, 13), (603, 13))</pre></div>
+<p><strong>Confirms it:</strong> filtering with both bounds and filtering with only
+<code>&lt;= max_range</code> produce the exact same shape. So the single-sided filter
+(<code>dataset[&quot;CoapplicantIncome&quot;] &lt;= max_range</code>, no lower-bound check) isn't a
+shortcut that risks missing anything here — it's the correct, minimal filter
+for a column that's bounded at zero in reality. That won't be true for every
+column (e.g. <code>ApplicantIncome</code>'s bound was also negative in <code>12_Outlier.ipynb</code>
+for the same reason, but a column like temperature or account balance really
+can go negative, where dropping the lower-bound check would be a genuine bug,
+not a harmless simplification).</p>
+
+<h2 id="2-filtering-and-proving-it-worked">2. Filtering — and Proving It Worked</h2>
+<p><code>12_Outlier.ipynb</code> Section 3 already counted <strong>15</strong> <code>CoapplicantIncome</code> rows
+past <code>max_range</code>. Filtering them out and checking the shape is a number;
+looking at the box plot before and after is the visual proof.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">new_dataset = dataset[dataset[&quot;CoapplicantIncome&quot;]&lt;=max_range]
+dataset.shape, new_dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>((618, 13), (603, 13))</pre></div>
+<p><code>(618, 13) → (603, 13)</code> — 15 rows dropped, matching the count from <code>12_Outlier.ipynb</code> exactly.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5), sharex=True)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=dataset, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(f&quot;Before  (n={dataset.shape[0]})&quot;)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=new_dataset, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(f&quot;After  (n={new_dataset.shape[0]})&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/13-outlier-removal-iqr-c16-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 1 — before/after box plots, side by side, same x-axis
+scale.</strong> Red (before) shows the string of outlier dots past the right
+whisker; blue (after) shows them gone — the whisker itself is now the
+rightmost thing in the plot. Same color convention as <code>12_Outlier.ipynb</code>:
+red for the flagged/unfiltered state, blue for the clean one.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
+sns.kdeplot(dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;, fill=True, alpha=0.25, label=f&quot;Before (n={dataset.shape[0]})&quot;, ax=ax)
+sns.kdeplot(new_dataset[&quot;CoapplicantIncome&quot;], color=&quot;#2a78d6&quot;, fill=True, alpha=0.35, label=f&quot;After (n={new_dataset.shape[0]})&quot;, ax=ax)
+ax.axvline(max_range, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
+ax.text(max_range, ax.get_ylim()[1]*0.96, &quot;max_range&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.set_title(&quot;CoapplicantIncome distribution — before vs. after removal&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/13-outlier-removal-iqr-c18-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 2 — the distribution version of the same proof.</strong> The red
+curve (before) has real density stretching well past <code>max_range</code>; the blue
+curve (after) is cut off cleanly at that line — nothing beyond it, because
+nothing beyond it survived the filter. Both curves overlaid on the same axes
+so the shortened tail is directly comparable, not just eyeballed across two
+separate plots.</p>
+
+<h2 id="3-the-impact-on-mean-and-std">3. The Impact on <code>mean</code> and <code>std</code></h2>
+<p><code>12_Outlier.ipynb</code> Section 1 proved outliers inflate the mean and (especially)
+the standard deviation, using a toy list. Same measurement, run the other
+way — on the real column, before and after removal.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">before_mean, before_std = dataset[&quot;CoapplicantIncome&quot;].mean(), dataset[&quot;CoapplicantIncome&quot;].std()
+after_mean, after_std = new_dataset[&quot;CoapplicantIncome&quot;].mean(), new_dataset[&quot;CoapplicantIncome&quot;].std()
+
+print(f&quot;mean:  {before_mean:.1f} -&gt; {after_mean:.1f}  ({100*(after_mean-before_mean)/before_mean:+.1f}%)&quot;)
+print(f&quot;std:   {before_std:.1f} -&gt; {after_std:.1f}  ({100*(after_std-before_std)/before_std:+.1f}%)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>mean:  1385.1 -&gt; 1248.6  (-9.9%)
+std:   1611.8 -&gt; 1360.1  (-15.6%)</pre></div>
+<p><code>mean</code> drops <strong>~10%</strong> (<code>1385 → 1249</code>), <code>std</code> drops even more, <strong>~16%</strong>
+(<code>1612 → 1360</code>) — smaller shifts than the toy example's dramatic 3x/30x,
+because here only 15 out of 618 rows (2.4%) were removed rather than 1 out
+of 9 (11%) — but the <em>direction</em> and the <em>std-drops-more-than-mean</em> pattern
+are identical. This is the real-data confirmation of Section 1's toy-list
+result: removing the outliers pulls both statistics back toward where the
+bulk of the data actually sits.</p>
+
+<h2 id="4-removal-vs-the-alternatives">4. Removal vs. the Alternatives</h2>
+<p>Dropping rows is the most aggressive option — worth seeing it next to the
+others <code>02_ML_Roadmap.MD</code> names (cap, remove, transform):</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Approach</th>
+  <th>What it does</th>
+  <th>Rows kept?</th>
+  <th>Best when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Removal</strong> (this notebook)</td>
+  <td>Drop any row outside <code>[min_range, max_range]</code></td>
+  <td>No — loses the row entirely, including its other columns</td>
+  <td>Outliers are a small share of rows and are likely genuine errors/noise, not rare-but-real cases</td>
+</tr>
+<tr>
+  <td><strong>Capping / winsorizing</strong></td>
+  <td><code>series.clip(min_range, max_range)</code> — squash extreme values <em>to</em> the bound instead of dropping them</td>
+  <td>Yes</td>
+  <td>The rest of the row is still useful data (e.g. <code>LoanAmount</code>, <code>Credit_History</code> for this same applicant)</td>
+</tr>
+<tr>
+  <td><strong>Trimming both tails symmetrically</strong></td>
+  <td>Drop a fixed top/bottom percentage (e.g. 1%) regardless of IQR</td>
+  <td>No</td>
+  <td>Distribution is heavily skewed and IQR's asymmetry isn't the behavior wanted</td>
+</tr>
+<tr>
+  <td><strong>Transformation</strong> (e.g. <code>np.log1p(series)</code>)</td>
+  <td>Compress the scale so extreme values stop dominating, without deleting or altering any row's rank</td>
+  <td>Yes</td>
+  <td>The column is right-skewed by nature (like income) rather than genuinely erroneous — keeps every data point, just on a friendlier scale</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why removal is reasonable here specifically:</strong> the goal on this pass is a
+clean baseline column for outlier mechanics, and 15 rows is 2.4% of 618 —
+small enough that dropping them doesn't meaningfully shrink the dataset.
+For a real modeling pipeline, capping or a log transform would usually be
+preferred over removal, precisely because they don't throw away the rest of
+that row's information.</p>
+
+<h2 id="5-cleaning-both-income-columns-together">5. Cleaning Both Income Columns Together</h2>
+<p><code>12_Outlier.ipynb</code> removed <code>ApplicantIncome</code>'s outliers; this notebook just
+removed <code>CoapplicantIncome</code>'s. A real pipeline wants both applied to the
+same final dataset — chaining the two filters.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">s = dataset[&quot;ApplicantIncome&quot;].dropna()
+Q1_app, Q3_app = s.quantile(0.25), s.quantile(0.75)
+IQR_app = Q3_app - Q1_app
+lo_app, hi_app = Q1_app - 1.5 * IQR_app, Q3_app + 1.5 * IQR_app
+
+cleaned = dataset[(dataset[&quot;ApplicantIncome&quot;] &gt;= lo_app) &amp; (dataset[&quot;ApplicantIncome&quot;] &lt;= hi_app)]
+cleaned = cleaned[cleaned[&quot;CoapplicantIncome&quot;] &lt;= max_range]
+
+print(&quot;Original:                       &quot;, dataset.shape)
+print(&quot;After ApplicantIncome filter:   &quot;, (dataset[(dataset[&quot;ApplicantIncome&quot;] &gt;= lo_app) &amp; (dataset[&quot;ApplicantIncome&quot;] &lt;= hi_app)]).shape)
+print(&quot;After both filters (chained):   &quot;, cleaned.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Original:                        (618, 13)
+After ApplicantIncome filter:    (595, 13)
+After both filters (chained):    (581, 13)</pre></div>
+<p><code>618 → 595 → 581</code> — the <code>ApplicantIncome</code> filter alone drops 23 rows (the
+same 21 outliers + 2 <code>NaN</code> rows <code>12_Outlier.ipynb</code> found), then the
+<code>CoapplicantIncome</code> filter drops 14 more on top, for <strong>37 rows removed in
+total</strong> (<code>618 - 581</code>). Not <code>23 + 15</code>: some of <code>CoapplicantIncome</code>'s 15
+outlier rows were likely already gone after the first filter, so the second
+filter's <em>marginal</em> drop (14) is slightly smaller than its standalone count —
+<code>581</code> is the number that actually reflects both filters combined.</p>
+<p><strong>One subtlety worth being deliberate about:</strong> <code>Q1_app</code>/<code>Q3_app</code> here are
+computed from the <em>original</em> <code>dataset</code>, not recomputed from <code>cleaned</code> after
+the <code>CoapplicantIncome</code> filter already ran. That's the right order — IQR
+bounds should reflect the data's real spread, not a spread that's already
+been narrowed by a previous filter (recomputing on shrinking data would make
+each successive filter more aggressive than intended, chasing a moving
+target instead of a fixed one).</p>
+
+<div class="src-head">📓 <a href="../Concept/14_Outlier_Removal_Z_Score.ipynb">14_Outlier_Removal_Z_Score.ipynb</a></div>
+<h2 id="outlier-removal-via-z-score">Outlier Removal via Z-Score</h2>
+<p><code>02_ML_Roadmap.MD</code> names two detection methods: IQR (<code>12_Outlier.ipynb</code>,
+<code>13_Outlier_Removal_IQR.ipynb</code>) and <strong>Z-score</strong> — this notebook. Same column
+as <code>13</code> (<code>CoapplicantIncome</code>), on purpose, so the two methods are directly
+comparable rather than compared across different data.</p>
+<p><strong>The formula:</strong> <code>z = (x − mean) / std</code> — literally &quot;how many standard
+deviations away from the mean is this value.&quot; This is the exact <code>σ</code> axis
+from the whiteboard diagram in <code>12_Outlier.ipynb</code>: a box plot's <code>Q1</code>/<code>Q3</code>
+lines up with <code>±0.6745σ</code>, and its <code>1.5×IQR</code> whiskers with <code>±2.698σ</code> — Z-score
+just measures distance in those same σ units directly, using <code>|z| &gt; 3</code> as
+the cutoff (the &quot;68-95-99.7 rule&quot;: ~99.7% of a truly normal distribution
+falls within 3 standard deviations, leaving ~0.3% flagged).</p>
+<p>This notebook, in order:</p>
+<ol>
+<li>Two ways to apply the same threshold (bounds vs. an explicit <code>z_score</code>
+column) — both from the original draft, checked against each other.</li>
+<li><strong>A real bug in the original draft</strong>, found and fixed — the &quot;be careful
+about what removal actually removes&quot; part.</li>
+<li>Visualizations: before/after box plot and distribution, plus a new one
+specific to Z-score — the z-values themselves.</li>
+<li><strong>IQR vs. Z-score, head-to-head, on the same column</strong> — where they agree,
+where they don't, and why.</li>
+<li>The final, correctly-cleaned dataset.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<p><code>CoapplicantIncome</code> has 0 missing values — no imputation needed before this one, unlike most other columns here.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>       ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+count       616.000000         618.000000  596.000000        597.000000   
+mean       4730.256494        1385.077670  223.031879        312.723618   
+std        2180.942773        1611.760337   93.055097         89.102680   
+min        1500.000000           0.000000   40.000000         36.000000   
+25%        3160.500000           0.000000  152.000000        300.000000   
+50%        4325.000000        1089.000000  208.500000        360.000000   
+75%        5810.750000        2217.750000  282.000000        360.000000   
+max       16981.000000       10288.000000  480.000000        360.000000   
+
+       Credit_History  
+count      568.000000  
+mean         0.836268  
+std          0.370359  
+min          0.000000  
+25%          1.000000  
+50%          1.000000  
+75%          1.000000  
+max          1.000000</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=dataset)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-outlier-removal-z-score-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Same starting point as <code>13_Outlier_Removal_IQR.ipynb</code> — the string of outlier dots past the right whisker.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#2a78d6&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-outlier-removal-z-score-c08-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>(Fixed from the original <code>sns.distplot(...)</code> — same deprecation <code>12_Outlier.ipynb</code>
+already flagged; <code>sns.histplot(..., kde=True)</code> is the current equivalent.)
+A long right tail — the same skew that made IQR and Z-score disagree on
+<code>ApplicantIncome</code> in <code>12_Outlier.ipynb</code> Section 5 is present here too.</p>
+
+<h2 id="1-two-equivalent-ways-to-apply-the-threshold">1. Two Equivalent Ways to Apply the Threshold</h2>
+<p><strong>Method 1 — mean ± 3×std, as explicit bounds</strong> (same shape as <code>13</code>'s
+<code>min_range</code>/<code>max_range</code>, just built from <code>mean</code>/<code>std</code> instead of <code>Q1</code>/<code>Q3</code>).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">min_range = dataset[&quot;CoapplicantIncome&quot;].mean() - (3*dataset[&quot;CoapplicantIncome&quot;].std())
+max_range = dataset[&quot;CoapplicantIncome&quot;].mean() + (3*dataset[&quot;CoapplicantIncome&quot;].std())
+min_range, max_range</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(-3450.2033416842687), np.float64(6220.358681490095))</pre></div>
+<p><code>min_range</code> is negative again (<code>-3450.2</code>) — same reasoning as <code>13</code>:
+<code>CoapplicantIncome</code> can never be negative, so only <code>max_range</code> (<code>6220.4</code>)
+can ever actually filter anything out. Confirmed by shape next.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">new_data = dataset[dataset[&quot;CoapplicantIncome&quot;]&lt;=max_range]
+new_data.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(610, 13)</pre></div>
+<p><code>(618, 13) → (610, 13)</code> — 8 rows removed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot; ,data= new_data)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-outlier-removal-z-score-c15-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Better than the original, but still has outlier dots visible — Z-score's
+threshold is looser than IQR's turned out to be (<code>13</code>'s box plot after
+removal was fully clean; this one isn't quite). Confirmed with numbers in
+Section 4.</p>
+
+<p><strong>Method 2 — an explicit <code>z_score</code> column.</strong> Mathematically the same
+threshold as Method 1, computed a different way: instead of converting the
+threshold into raw income units (<code>max_range</code>), convert every income value
+<em>into</em> σ units and compare against <code>3</code> directly.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">z_score = (dataset[&quot;CoapplicantIncome&quot;] - dataset[&quot;CoapplicantIncome&quot;].mean()) / (dataset[&quot;CoapplicantIncome&quot;].std())
+z_score.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0   -0.226509
+1   -0.114209
+2   -0.198589
+3   -0.859357
+4    0.557107
+Name: CoapplicantIncome, dtype: float64</pre></div>
+<p>Every value, re-expressed as &quot;how many standard deviations from the
+mean.&quot; Row 0's <code>CoapplicantIncome = 1020</code> becomes <code>z ≈ -0.23</code> — a bit below
+average, nowhere near the <code>±3</code> cutoff.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">(z_score &gt; 3).sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(8)</pre></div>
+<p><strong>8</strong> — same count Method 1's bounds produced. The two are the same
+threshold, just measured in different units (raw income vs. σ). Worth
+noting: only the positive side (<code>z_score &gt; 3</code>) is checked here, not
+<code>z_score.abs() &gt; 3</code> — safe on this specific column because its minimum
+z-score is <code>-0.86</code> (<code>CoapplicantIncome</code> is bounded at 0, so it can never
+drift 3 std devs <em>below</em> the mean), but that's a property of <em>this</em> column,
+not a general rule — a column that can genuinely go very negative (a
+temperature, a profit/loss figure) would need the <code>.abs()</code> version, or it
+would silently ignore real low-end outliers.</p>
+
+<h3>The bug — be careful what &quot;removal&quot; actually removes</h3>
+<p>The original draft's next two steps were:</p>
+<div class="code"><pre class="py">dataset[&quot;z_score&quot;] = z_score
+dataset[dataset[&quot;z_score&quot;] &lt; 3]
+</pre></div>
+<p>That <strong>writes <code>z_score</code> onto <code>dataset</code> itself</strong>, permanently, before
+filtering. The filtered result — meant to be the &quot;clean&quot; data — still
+carries that helper column (<code>14</code> columns instead of <code>13</code>). Two concrete
+problems that causes:</p>
+<ol>
+<li>If this &quot;clean&quot; dataset gets combined with <code>13</code>'s IQR-cleaned dataset
+(or fed into a model), the column counts won't match, or worse, a model
+would silently train on a feature that's <em>literally computed from the
+target column's own outlier-ness</em> — a diagnostic column masquerading as
+real data.</li>
+<li><code>dataset</code> — the variable every earlier cell in <em>this notebook</em> also
+refers to — is now permanently mutated. Any cell above this one, re-run
+after this point, sees a <code>dataset</code> with an extra column it didn't expect.</li>
+</ol>
+<p><strong>The fix:</strong> keep <code>z_score</code> as its own standalone <code>Series</code> (already true
+above — it was never attached to <code>dataset</code>), filter <code>dataset</code> directly
+against it, and never assign it back:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">z_cleaned = dataset[z_score.abs() &lt; 3]
+z_cleaned.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(610, 13)</pre></div>
+<p><code>(610, 13)</code> — 13 columns, not 14: no leaked <code>z_score</code> column, and <code>dataset</code>
+itself was never touched. Confirmed explicitly:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">&quot;z_score&quot; in z_cleaned.columns, &quot;z_score&quot; in dataset.columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>(False, False)</pre></div>
+<p><code>(False, False)</code> — clean on both counts. All three approaches (Method 1's bounds, Method 2's <code>z_score &gt; 3</code> count, and this fixed filter) agree on <strong>610 rows</strong>, verified next.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">new_data.shape[0] == z_cleaned.shape[0] == (618 - (z_score &gt; 3).sum())</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.True_</pre></div>
+<p><code>True</code> — same answer, three ways of getting there.</p>
+
+<h2 id="2-visualizing-the-z-score-removal">2. Visualizing the Z-Score Removal</h2>
+<p>Same before/after pair <code>13_Outlier_Removal_IQR.ipynb</code> used, on the
+Z-score-cleaned data this time, plus one new chart specific to Z-score:
+the σ-distances themselves.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5), sharex=True)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=dataset, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(f&quot;Before  (n={dataset.shape[0]})&quot;)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=z_cleaned, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(f&quot;After — Z-score  (n={z_cleaned.shape[0]})&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-outlier-removal-z-score-c30-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 1.</strong> Fewer outlier dots than &quot;before,&quot; but — unlike <code>13</code>'s
+IQR version — not completely clean. That's expected now, not a mistake:
+Section 4 shows exactly which points these are and why Z-score leaves them
+behind.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
+sns.histplot(z_score, kde=True, color=&quot;#2a78d6&quot;, alpha=0.35, ax=ax)
+ax.axvspan(3, z_score.max(), color=&quot;#d03b3b&quot;, alpha=0.18, label=&quot;z &gt; 3 (flagged)&quot;)
+ax.axvline(3, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
+ax.text(3, ax.get_ylim()[1]*0.96, &quot;z = 3&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.set_title(&quot;CoapplicantIncome — distances from the mean, in σ units&quot;)
+ax.set_xlabel(&quot;z-score&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-outlier-removal-z-score-c32-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 2 — new, Z-score-specific.</strong> Same shape as <code>12_Outlier.ipynb</code>'s
+distribution chart, but the x-axis is now <code>z_score</code> instead of raw income —
+this <em>is</em> the whiteboard's <code>σ</code> axis, with actual data plotted on it instead
+of a theoretical normal curve. The 8 points past <code>z = 3</code> are the red region;
+notice the curve is still right-skewed even in σ units — a truly normal
+column would look symmetric here.</p>
+
+<h2 id="3-iqr-vs-z-score-head-to-head-same-column">3. IQR vs. Z-Score, Head-to-Head, Same Column</h2>
+<p><code>13</code>'s IQR bound for this exact column was <strong><code>5544.4</code></strong>; Z-score's is
+<strong><code>6220.4</code></strong> — a real gap, not just rounding. Everything between those two
+numbers is flagged as an outlier by IQR but treated as normal by Z-score.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
+q3 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.75)
+iqr_bound = q3 + 1.5 * (q3 - q1)
+
+iqr_flagged = dataset[&quot;CoapplicantIncome&quot;] &gt; iqr_bound
+z_flagged = z_score &gt; 3
+
+print(f&quot;IQR bound:      {iqr_bound:.1f}   -&gt;  {iqr_flagged.sum()} rows flagged&quot;)
+print(f&quot;Z-score bound:  {max_range:.1f}   -&gt;  {z_flagged.sum()} rows flagged&quot;)
+print(f&quot;Flagged by both:            {(iqr_flagged &amp; z_flagged).sum()}&quot;)
+print(f&quot;Flagged by IQR, missed by Z-score: {(iqr_flagged &amp; ~z_flagged).sum()}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>IQR bound:      5544.4   -&gt;  15 rows flagged
+Z-score bound:  6220.4   -&gt;  8 rows flagged
+Flagged by both:            8
+Flagged by IQR, missed by Z-score: 7</pre></div>
+<p><strong>15 vs. 8.</strong> All 8 of Z-score's outliers are also in IQR's 15 — Z-score
+isn't wrong, it's just <strong>more conservative</strong>, missing 7 rows IQR catches.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">dataset.loc[iqr_flagged &amp; ~z_flagged, [&quot;CoapplicantIncome&quot;]].sort_values(&quot;CoapplicantIncome&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>     CoapplicantIncome
+133               5784
+514               5831
+232               5834
+90                6016
+384               6025
+428               6074
+576               6177</pre></div>
+<p>The 7 rows Z-score misses — all between <code>5544</code> (IQR's bound) and <code>6177</code>
+(just under <code>6220</code>, Z-score's bound). These aren't borderline by accident:
+they're genuinely unusual (comfortably above <code>Q3 = 2217.75</code>), but Z-score's
+own threshold got pushed out past them.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">fig, ax = plt.subplots(figsize=(9, 4))
+sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#2a78d6&quot;, alpha=0.3, ax=ax)
+ax.axvspan(iqr_bound, max_range, color=&quot;#fab219&quot;, alpha=0.35, label=f&quot;Gap — flagged by IQR, missed by Z-score ({(iqr_flagged &amp; ~z_flagged).sum()} rows)&quot;)
+ax.axvspan(max_range, dataset[&quot;CoapplicantIncome&quot;].max(), color=&quot;#d03b3b&quot;, alpha=0.2, label=f&quot;Flagged by both ({(iqr_flagged &amp; z_flagged).sum()} rows)&quot;)
+ax.axvline(iqr_bound, color=&quot;#2a78d6&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.axvline(max_range, color=&quot;#d03b3b&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(iqr_bound, ax.get_ylim()[1]*0.96, &quot;IQR bound&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.text(max_range, ax.get_ylim()[1]*0.96, &quot;Z-score bound&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.set_title(&quot;Why the two methods disagree — the gap between their bounds&quot;)
+ax.legend(frameon=False, fontsize=8.5)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-outlier-removal-z-score-c39-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Visualization 3 — the disagreement, made visual.</strong> The amber &quot;warning&quot;
+band is the 7 rows IQR flags that Z-score's own bound sits past — not
+because those points aren't unusual, but because Z-score's bound is built
+from <code>mean</code> and <code>std</code>, and <code>12_Outlier.ipynb</code> Section 1 already proved both
+of those get dragged outward by extreme values. <code>CoapplicantIncome</code>'s
+maximum (<code>10288</code>, nearly 5x the mean) is doing exactly that here: it
+inflates <code>std</code>, which widens <code>mean + 3×std</code>, which is precisely why the
+amber band exists. <strong>Z-score's threshold is computed from the same outliers
+it's trying to catch</strong> — a mild circularity IQR avoids by using percentiles
+(<code>Q1</code>/<code>Q3</code>), which barely move when a handful of extreme values get more
+extreme. This is the same story <code>12_Outlier.ipynb</code> Section 5 told on
+<code>ApplicantIncome</code> (21 vs. 8), now confirmed on a second column with the
+exact rows named.</p>
+
+<h2 id="4-the-final-correctly-cleaned-dataset">4. The Final, Correctly-Cleaned Dataset</h2>
+<p><code>z_cleaned</code> from Section 1 is already the right result — computed without
+mutating <code>dataset</code>, with no leaked <code>z_score</code> column. Side by side with
+<code>13</code>'s IQR-cleaned shape:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">print(&quot;Original:            &quot;, dataset.shape)
+print(&quot;IQR-cleaned (13):     &quot;, (dataset[dataset[&quot;CoapplicantIncome&quot;] &lt;= iqr_bound]).shape)
+print(&quot;Z-score-cleaned (14): &quot;, z_cleaned.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Original:             (618, 13)
+IQR-cleaned (13):      (603, 13)
+Z-score-cleaned (14):  (610, 13)</pre></div>
+<p><code>(618, 13) → (603, 13)</code> for IQR, <code>→ (610, 13)</code> for Z-score — IQR removes
+more, and Section 3 showed exactly why: it isn't fooled by the same
+outliers it's measuring against. <strong>For a skewed real-world column like
+this one, IQR is the more trustworthy default; Z-score stays simpler and
+perfectly fine on data that's actually close to normal</strong> — the same
+conclusion <code>12_Outlier.ipynb</code> reached, now backed by a dedicated,
+bug-fixed, head-to-head run on <code>CoapplicantIncome</code>.</p>
+
+<div class="src-head">📓 <a href="../Concept/21_Outliers.ipynb">21_Outliers.ipynb</a></div>
+<h2 id="21-outliers">21 - Outliers</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
+</div>
+<h2 id="why-are-we-learning-this">Why are we learning this?</h2>
+<p>You run an online store. Ten thousand orders arrive every day.</p>
+<p>Nine thousand nine hundred look ordinary. Then one order comes in: the same
+customer, 400 items, at 3 AM, shipping to a brand new address.</p>
+<p>Nobody labelled that order as fraud. Nobody could - you do not have a column
+that says <em>fraud: yes/no</em>. All you have is the order itself, sitting far
+away from every other order.</p>
+<p><strong>Finding that one strange row, when nobody has told you what strange means,
+is what this notebook is about.</strong></p>
+<h2 id="first-the-words">First, the words</h2>
+<p>Five words before any algorithm. Learn these and the rest gets easy.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>word</th>
+  <th>what it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>observation</strong></td>
+  <td>one row. One order, one request, one flower.</td>
+</tr>
+<tr>
+  <td><strong>feature</strong></td>
+  <td>one column. One measurement about that row.</td>
+</tr>
+<tr>
+  <td><strong>inlier</strong></td>
+  <td>a row that looks like the rest. The boring majority.</td>
+</tr>
+<tr>
+  <td><strong>outlier</strong></td>
+  <td>a row that does not look like the rest.</td>
+</tr>
+<tr>
+  <td><strong>anomaly</strong></td>
+  <td>another word for outlier. Same thing, sounds more serious.</td>
+</tr>
+</tbody>
+</table>
+<p>One warning that matters in real work:</p>
+<p><strong>Outlier does not mean wrong.</strong> It means <em>unusual</em>. It could be a bug, a
+fraud, a broken sensor - or your single best customer. The algorithm only
+raises its hand. A human still decides.</p>
+<h2 id="the-four-ways-we-will-do-it">The four ways we will do it</h2>
+<p>Four algorithms are coming. They answer the same question using four
+completely different mental pictures:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>the question it asks</th>
+  <th>algorithm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>&quot;Is this point standing in a <strong>crowd</strong>?&quot;</td>
+  <td>DBSCAN</td>
+</tr>
+<tr>
+  <td>&quot;Is this point outside the <strong>one oval</strong> that covers normal?&quot;</td>
+  <td>Elliptic Envelope</td>
+</tr>
+<tr>
+  <td>&quot;How <strong>easily can I cut this point off</strong> from everyone else?&quot;</td>
+  <td>Isolation Forest</td>
+</tr>
+<tr>
+  <td>&quot;Is this point's pocket <strong>thinner than its neighbours'</strong> pockets?&quot;</td>
+  <td>Local Outlier Factor</td>
+</tr>
+</tbody>
+</table>
+<p>Keep those four sentences in your head. Everything below is detail.</p>
+
+<h2 id="1-the-tools-on-the-table">1. The tools on the table</h2>
+<div class="code"><pre>   DBSCAN            -&gt;  the crowd method
+   EllipticEnvelope  -&gt;  the oval method
+   IsolationForest   -&gt;  the random-cut method
+   make_blobs        -&gt;  a fake data generator, so we can see what we are doing
+   matplotlib        -&gt;  draws the dots
+   numpy             -&gt;  array maths
+</pre></div>
+<p><code>LocalOutlierFactor</code> is imported later, at the point where you first use it.
+That is fine - Python does not mind.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">from sklearn.cluster import DBSCAN
+from sklearn.ensemble import IsolationForest
+from sklearn.covariance import EllipticEnvelope
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
+import numpy as np</pre></div>
+<h2 id="2-make-some-fake-data-we-can-trust">2. Make some fake data we can trust</h2>
+<p>Real data is messy, and you never know the right answer. Here we <em>make</em> the
+data, so we already know what the truth is. That is the only honest way to
+judge whether an algorithm behaved sensibly.</p>
+<h3>The words</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>argument</th>
+  <th>what it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_samples=500</code></td>
+  <td>make 500 points</td>
+</tr>
+<tr>
+  <td><code>centers=3</code></td>
+  <td>scatter them around 3 centre spots</td>
+</tr>
+<tr>
+  <td><code>cluster_std=0.4</code></td>
+  <td>how spread out each blob is. Small = tight ball, big = fuzzy cloud</td>
+</tr>
+<tr>
+  <td><code>random_state=0</code></td>
+  <td>the seed. Same number = the same 500 points every single run</td>
+</tr>
+</tbody>
+</table>
+<p><code>make_blobs</code> hands back two things:</p>
+<div class="code"><pre>   x  -&gt;  the coordinates.  500 rows, 2 columns   (the features)
+   y  -&gt;  which blob each point was born in: 0, 1 or 2   (the truth)
+</pre></div>
+<p><strong>Important:</strong> not one of the four algorithms will ever look at <code>y</code>. This is
+<strong>unsupervised learning</strong> - learning with no answer key. We keep <code>y</code> only so
+that <em>we</em> can peek at the truth.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">x,y = make_blobs(n_samples=500, centers=3, cluster_std=0.4,random_state=0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">import pandas as pd
+
+# Display the data created by make_blobs.
+data_view = pd.DataFrame(x, columns=[&#x27;feature_0&#x27;, &#x27;feature_1&#x27;])
+data_view[&#x27;true_blob&#x27;] = y
+
+print(f&#x27;x shape: {x.shape}&#x27;)
+print(f&#x27;y shape: {y.shape}&#x27;)
+print(f&#x27;Rows created: {x.shape[0]}&#x27;)
+print(f&#x27;Feature columns created: {x.shape[1]}&#x27;)
+display(data_view.head(10))</pre></div>
+<div class="out"><div class="h">Output</div><pre>x shape: (500, 2)
+y shape: (500,)
+Rows created: 500
+Feature columns created: 2
+   feature_0  feature_1  true_blob
+0   1.027035   4.464583          0
+1  -1.689281   3.207630          2
+2  -1.729911   2.497130          2
+3   1.232323   3.657005          0
+4   0.201758   4.379299          0
+5   0.964997   4.475120          0
+6   0.718823   3.414426          0
+7  -1.447717   3.350656          2
+8  -1.435683   2.998474          2
+9   1.275145   3.828209          0</pre></div>
+<h2 id="why-do-we-use-x-0-and-x-1-in-a-scatter-plot">Why do we use <code>x[:, 0]</code> and <code>x[:, 1]</code> in a scatter plot?</h2>
+<p>A scatter plot on a normal page has two axes:</p>
+<div class="code"><pre>x-axis (left to right)  &lt;- one column
+ y-axis (up and down)   &lt;- another column
+</pre></div>
+<p>So this line means:</p>
+<div class="code"><pre class="py">plt.scatter(x[:, 0], x[:, 1])
+</pre></div>
+<ul>
+<li><code>x[:, 0]</code> means <strong>every row from column 0</strong>. These values become the horizontal positions.</li>
+<li><code>x[:, 1]</code> means <strong>every row from column 1</strong>. These values become the vertical positions.</li>
+<li>The <code>:</code> means <strong>all rows</strong>.</li>
+</ul>
+<p>Python starts counting columns at 0, so columns 0 and 1 are the first and second columns. They are not row numbers.</p>
+<h3>What if the data has many columns?</h3>
+<p>A normal scatter plot can show only two columns at a time. If the data has more columns, we can:</p>
+<div class="code"><pre class="py">plt.scatter(x[:, 0], x[:, 2])  # compare columns 0 and 2
+plt.scatter(x[:, 1], x[:, 3])  # compare columns 1 and 3
+</pre></div>
+<p>The model can still use all columns. We choose two only for this visual picture. For many columns, we can also use a 3D plot or a dimensionality-reduction method such as PCA.</p>
+<h3>What do <code>n_samples</code>, <code>centers</code>, and <code>cluster_std</code> mean?</h3>
+<div class="code"><pre class="py">x, y = make_blobs(
+    n_samples=500,
+    centers=3,
+    cluster_std=0.4,
+    random_state=0
+)
+</pre></div>
+<p>These three settings answer three different questions:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>setting</th>
+  <th>simple meaning</th>
+  <th>result here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_samples=500</code></td>
+  <td>How many records or rows should be created?</td>
+  <td>500 rows</td>
+</tr>
+<tr>
+  <td><code>centers=3</code></td>
+  <td>Around how many group locations should the rows be placed?</td>
+  <td>3 groups</td>
+</tr>
+<tr>
+  <td><code>cluster_std=0.4</code></td>
+  <td>How far should points spread around the centre of their group?</td>
+  <td>fairly tight groups</td>
+</tr>
+</tbody>
+</table>
+<p><code>centers=3</code> does <strong>not</strong> create three columns. It creates three group locations. The feature columns are still two because <code>make_blobs</code> uses two features by default. Therefore, <code>x</code> has shape <code>(500, 2)</code>.</p>
+<p><code>cluster_std</code> means <strong>cluster standard deviation</strong>. It controls the spread of points around each centre:</p>
+<ul>
+<li>A small value, such as <code>0.2</code>, makes tight groups.</li>
+<li>A larger value, such as <code>1.0</code>, makes wider, more spread-out groups.</li>
+<li>It is not the number of rows and it is not the number of columns.</li>
+</ul>
+<p>Every row has two generated feature values in <code>x</code> and one original group label in <code>y</code>:</p>
+<div class="code"><pre>x row 0 -&gt; [feature_0, feature_1]
+y row 0 -&gt; original group number, such as 0, 1, or 2
+</pre></div>
+<h3>How many rows did <code>make_blobs</code> create?</h3>
+<p>Here, <code>n_samples=500</code> creates <strong>500 rows of data</strong>. The data inspection cell above displays the first ten rows. The full array contains 500 rows, but showing all 500 rows would make the notebook difficult to read.</p>
+<ul>
+<li><code>x</code> contains the two feature values used to position each point.</li>
+<li><code>y</code> contains one original blob label for each row: <code>0</code>, <code>1</code>, or <code>2</code>.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py"># Compare cluster_std: same 500 rows and 3 groups, different spread.
+std_values = [0.2, 0.4, 1.0]
+figure, axes = plt.subplots(1, 3, figsize=(14, 4), sharex=True, sharey=True)
+
+for axis, std_value in zip(axes, std_values):
+    demo_x, demo_y = make_blobs(
+        n_samples=500,
+        centers=3,
+        cluster_std=std_value,
+        random_state=0
+    )
+    axis.scatter(demo_x[:, 0], demo_x[:, 1], c=demo_y, s=12)
+    axis.set_title(f&#x27;cluster_std = {std_value}&#x27;)
+    axis.set_xlabel(&#x27;feature 0&#x27;)
+    axis.grid(alpha=0.2)
+
+axes[0].set_ylabel(&#x27;feature 1&#x27;)
+figure.suptitle(&#x27;The spread changes; rows, features, and groups stay the same&#x27;)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c07-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Reading the plot line, once</h3>
+<div class="code"><pre>   x[:, 0]   -&gt;  all rows, column 0  -&gt;  the horizontal position
+   x[:, 1]   -&gt;  all rows, column 1  -&gt;  the vertical position
+</pre></div>
+<p><code>:</code> simply means <em>everything</em>. So <code>x[:, 0]</code> is &quot;every row, first column only&quot;.</p>
+<p>You will type this same line many times below. The only part that changes is
+<code>c=...</code>, which decides the colour of each dot.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1202152b0&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c09-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="3-dbscan-who-is-standing-in-a-crowd">3. DBSCAN - who is standing in a crowd?</h2>
+<h3>The story</h3>
+<p>Look down at a wedding hall from the balcony.</p>
+<p>You see three tight groups of people talking. And a few people standing
+alone near the walls, part of no group at all.</p>
+<p>Nobody told you there were three groups. You saw them, instantly, because of
+<strong>how packed together people are</strong>. You spotted the lonely ones the same
+way - nobody near them.</p>
+<p>That is DBSCAN. The full name is <em>Density-Based Spatial Clustering of
+Applications with Noise</em>. Forget the name. Remember the balcony.</p>
+<h3>The words, before the algorithm</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>word</th>
+  <th>what it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>density</strong></td>
+  <td>how many points sit close together in a small area</td>
+</tr>
+<tr>
+  <td><strong><code>eps</code></strong></td>
+  <td>the radius of the circle you draw around a point. Your &quot;arm's length&quot;</td>
+</tr>
+<tr>
+  <td><strong><code>min_samples</code></strong></td>
+  <td>how many points must be inside that circle before it counts as crowded</td>
+</tr>
+<tr>
+  <td><strong>core point</strong></td>
+  <td>has at least <code>min_samples</code> neighbours inside its circle. Standing in the middle of a group</td>
+</tr>
+<tr>
+  <td><strong>border point</strong></td>
+  <td>close to a core point, but not enough neighbours of its own. Standing at the edge of the group</td>
+</tr>
+<tr>
+  <td><strong>noise point</strong></td>
+  <td>neither of the above. Nobody near it. DBSCAN labels it <strong>-1</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>How it actually runs</h3>
+<div class="code"><pre>   pick a point
+        |
+   draw a circle of radius eps around it
+        |
+   count the points inside (including itself)
+        |
+   count &gt;= min_samples ? ---- yes ---&gt; CORE point
+        |                               everyone inside joins its cluster
+        no
+        |
+   am I inside somebody else&#x27;s circle ? -- yes --&gt; BORDER point, I join them
+        |
+        no
+        |
+   NOISE.  label = -1
+</pre></div>
+<p>Core points that can reach each other chain together into one cluster. That
+chaining is why DBSCAN can follow a banana-shaped group, which K-Means
+cannot.</p>
+<h3>A tiny example you can do by hand</h3>
+<p>Say <code>eps = 1</code> and <code>min_samples = 3</code>.</p>
+<div class="code"><pre>   P1(1,1)   P2(1,2)   P3(2,1)              P9(9,9)
+
+   around P1, within distance 1 : P1, P2, P3  -&gt; 3 points -&gt; CORE
+   around P9, within distance 1 : only P9     -&gt; 1 point  -&gt; not core
+                                               -&gt; not in anyone else&#x27;s circle
+                                               -&gt; NOISE, label -1
+</pre></div>
+<p>Three lines of arithmetic, and you already know what the algorithm does.</p>
+<h3>Your settings</h3>
+<p><code>eps=0.3, min_samples=10</code> reads as: <em>a point is crowded if at least 10
+points sit within 0.3 of it.</em></p>
+<p><code>.fit(x)</code> runs that whole walk for all 500 points and stores the verdicts in
+<code>db.labels_</code>.</p>
+
+<h3>Before the library: let us measure it by hand</h3>
+<p>Six points. Few enough that you can check every single number yourself.</p>
+<div class="code"><pre>   A(1,1)  B(2,1)  C(1,2)  D(2,2)      E(3.2, 2)      F(6, 5)
+   \_____ a tight square of 4 _____/    a bit away     far away
+</pre></div>
+<p>Settings: <strong>eps = 1.5</strong> and <strong>MinPts = 3</strong>.</p>
+<p>Read that as: <em>draw a circle of radius 1.5 around a point. If 3 or more
+points sit inside it - counting the point itself - that point is standing in
+a crowd.</em></p>
+<p>Before you run the next cell, make a guess: which of the six will come out
+as core, which as boundary, and which as noise?</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py"># How DBSCAN measures. It is plain distance and counting - nothing else.
+import math
+
+eps = 1.5
+min_pts = 3
+
+names = [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;, &#x27;F&#x27;]
+points = [(1, 1), (2, 1), (1, 2), (2, 2), (3.2, 2), (6, 5)]
+
+print(&#x27;STEP 1 - distance from every point to every other point&#x27;)
+print(&#x27;         &#x27; + &#x27;     &#x27;.join(names))
+for name, p in zip(names, points):
+    row = &#x27;&#x27;
+    for q in points:
+        row = row + f&#x27;{math.dist(p, q):6.2f}&#x27;
+    print(f&#x27;    {name}  {row}&#x27;)
+
+print()
+print(f&#x27;STEP 2 - who is inside my circle of radius {eps}, including me?&#x27;)
+neighbours = {}
+for name, p in zip(names, points):
+    inside = [n for n, q in zip(names, points) if math.dist(p, q) &lt;= eps]
+    neighbours[name] = inside
+    verdict = &#x27;CORE&#x27; if len(inside) &gt;= min_pts else &#x27;not core&#x27;
+    print(f&#x27;    {name} -&gt; {str(inside):22s} count = {len(inside)}   {verdict}&#x27;)
+
+print()
+print(&#x27;STEP 3 - for the ones that are not core: border or noise?&#x27;)
+kind = {}
+for name in names:
+    if len(neighbours[name]) &gt;= min_pts:
+        kind[name] = &#x27;core&#x27;
+
+for name in names:
+    if name in kind:
+        continue
+    near_a_core = [c for c in names if kind.get(c) == &#x27;core&#x27; and name in neighbours[c]]
+    if near_a_core:
+        kind[name] = &#x27;border&#x27;
+        print(f&quot;    {name} is not core, but it sits inside {near_a_core}&#x27;s circle -&gt; BORDER&quot;)
+    else:
+        kind[name] = &#x27;noise&#x27;
+        print(f&quot;    {name} is not core and sits inside nobody&#x27;s circle -&gt; NOISE (label -1)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>STEP 1 - distance from every point to every other point
+         A     B     C     D     E     F
+    A    0.00  1.00  1.00  1.41  2.42  6.40
+    B    1.00  0.00  1.41  1.00  1.56  5.66
+    C    1.00  1.41  0.00  1.00  2.20  5.83
+    D    1.41  1.00  1.00  0.00  1.20  5.00
+    E    2.42  1.56  2.20  1.20  0.00  4.10
+    F    6.40  5.66  5.83  5.00  4.10  0.00
+
+STEP 2 - who is inside my circle of radius 1.5, including me?
+    A -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]   count = 4   CORE
+    B -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]   count = 4   CORE
+    C -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]   count = 4   CORE
+    D -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;] count = 5   CORE
+    E -&gt; [&#x27;D&#x27;, &#x27;E&#x27;]             count = 2   not core
+    F -&gt; [&#x27;F&#x27;]                  count = 1   not core
+
+STEP 3 - for the ones that are not core: border or noise?
+    E is not core, but it sits inside [&#x27;D&#x27;]&#x27;s circle -&gt; BORDER
+    F is not core and sits inside nobody&#x27;s circle -&gt; NOISE (label -1)</pre></div>
+<h3>Read what just happened</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>point</th>
+  <th>inside its own circle</th>
+  <th>count</th>
+  <th>verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td>A, B, C, D</td>
+  <td>4</td>
+  <td><strong>core</strong></td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>A, B, C, D</td>
+  <td>4</td>
+  <td><strong>core</strong></td>
+</tr>
+<tr>
+  <td>C</td>
+  <td>A, B, C, D</td>
+  <td>4</td>
+  <td><strong>core</strong></td>
+</tr>
+<tr>
+  <td>D</td>
+  <td>A, B, C, D, <strong>E</strong></td>
+  <td>5</td>
+  <td><strong>core</strong></td>
+</tr>
+<tr>
+  <td>E</td>
+  <td>D, E</td>
+  <td>2</td>
+  <td><strong>border</strong></td>
+</tr>
+<tr>
+  <td>F</td>
+  <td>F</td>
+  <td>1</td>
+  <td><strong>noise</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Look closely at <strong>E</strong>, because E carries the whole lesson.</p>
+<p>E has only 2 points inside its own circle, so it fails the MinPts test. E is
+not core. But E <em>does</em> sit inside D's circle, and D <strong>is</strong> core - so E gets
+pulled into D's cluster as a <strong>boundary point</strong>. It joins the group without
+ever qualifying to lead it.</p>
+<p>Now compare B and E. Their distance is <strong>1.562</strong>, just past 1.5. On the
+whiteboard that is a few millimetres, and yet B does not count E at all.</p>
+<p><strong>That is how sharp a threshold is.</strong> There is no &quot;almost inside&quot;.</p>
+<p>And F? Nothing within 1.5, and F sits inside nobody else's circle either.
+No one can reach it. <strong>Noise, label -1.</strong> F is your outlier.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py"># The whiteboard picture: one circle of radius eps around every point.
+colour = {&#x27;core&#x27;: &#x27;teal&#x27;, &#x27;border&#x27;: &#x27;orange&#x27;, &#x27;noise&#x27;: &#x27;black&#x27;}
+title = {&#x27;core&#x27;: &#x27;core point&#x27;, &#x27;border&#x27;: &#x27;boundary point&#x27;, &#x27;noise&#x27;: &#x27;noise point&#x27;}
+label_spot = {&#x27;A&#x27;: (12, -20), &#x27;B&#x27;: (12, -20), &#x27;C&#x27;: (-22, 10),
+              &#x27;D&#x27;: (-4, 14), &#x27;E&#x27;: (14, 6), &#x27;F&#x27;: (14, 6)}
+
+figure, axis = plt.subplots(figsize=(8, 6.5))
+already_named = []
+
+for name, p in zip(names, points):
+    this_kind = kind[name]
+    axis.add_patch(plt.Circle(p, eps, fill=False, linestyle=&#x27;--&#x27;,
+                              edgecolor=&#x27;grey&#x27;, alpha=0.7))
+    legend_text = None
+    if this_kind not in already_named:
+        legend_text = title[this_kind]
+        already_named.append(this_kind)
+    axis.plot(p[0], p[1], &#x27;o&#x27;, markersize=14, color=colour[this_kind],
+              label=legend_text)
+    axis.annotate(name, p, xytext=label_spot[name], textcoords=&#x27;offset points&#x27;,
+                  fontsize=13, fontweight=&#x27;bold&#x27;)
+
+# what eps actually measures, drawn out from A into empty space
+axis.annotate(&#x27;&#x27;, xy=(1 - eps, 1), xytext=(1, 1),
+              arrowprops=dict(arrowstyle=&#x27;&lt;-&gt;&#x27;, color=&#x27;crimson&#x27;))
+axis.text(-0.45, 1.12, f&#x27;eps = {eps}&#x27;, color=&#x27;crimson&#x27;, fontsize=11)
+
+# D is core and E sits inside D&#x27;s circle, so D reaches E in one step
+axis.annotate(&#x27;&#x27;, xy=(3.15, 2), xytext=(2.05, 2),
+              arrowprops=dict(arrowstyle=&#x27;-&gt;&#x27;, color=&#x27;seagreen&#x27;, lw=2))
+axis.text(1.95, 1.62, &#x27;D --&gt; E : directly density-reachable&#x27;,
+          color=&#x27;seagreen&#x27;, fontsize=10)
+
+axis.set_title(f&#x27;eps = {eps},   MinPts = {min_pts}&#x27;, fontsize=13)
+axis.set_xlabel(&#x27;feature 1&#x27;)
+axis.set_ylabel(&#x27;feature 2&#x27;)
+axis.set_aspect(&#x27;equal&#x27;)
+axis.grid(alpha=0.2)
+axis.legend(loc=&#x27;upper left&#x27;, fontsize=10)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c14-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>The picture, in words</h3>
+<p>Every dashed circle has radius <code>eps = 1.5</code>. <strong>That circle is the only thing
+DBSCAN ever looks at.</strong></p>
+<div class="code"><pre>   teal    = CORE     at least 3 points inside its own circle
+   orange  = BORDER   fails that test, but sits inside a core point&#x27;s circle
+   black   = NOISE    fails, and is inside nobody&#x27;s circle  -&gt;  label -1
+</pre></div>
+<p>Two more terms from the whiteboard, and both are simpler than they sound.</p>
+<p><strong>Directly density-reachable</strong> (the green arrow). E is directly
+density-reachable from D, because D is core and E is inside D's circle. Say
+it plainly: <em>D can reach E in one step.</em></p>
+<p><strong>And it only works one way.</strong> D reaches E. E cannot reach D - because E is
+not core, and a non-core point is not allowed to pull anybody in. The arrow
+has a direction. This is the detail most people miss.</p>
+<p><strong>Density-connected.</strong> A and E are 2.42 apart, so neither is in the other's
+circle. But A reaches D, and D reaches E. Chain the hops and they land in
+the same cluster:</p>
+<div class="code"><pre>   A --&gt; D --&gt; E        every hop passes through a CORE point
+</pre></div>
+<p>That chaining is why DBSCAN can follow a long curved shape. K-Means, which
+only measures distance to a centre, cannot.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py"># Does sklearn agree with the hand working?
+check = DBSCAN(eps=eps, min_samples=min_pts).fit(np.array(points))
+
+print(&#x27;point order              :&#x27;, names)
+print(&#x27;sklearn labels_          :&#x27;, check.labels_)
+print(&#x27;sklearn core points      :&#x27;, [names[i] for i in check.core_sample_indices_])
+print(&#x27;my hand answer           :&#x27;, [kind[n] for n in names])</pre></div>
+<div class="out"><div class="h">Output</div><pre>point order              : [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;, &#x27;F&#x27;]
+sklearn labels_          : [ 0  0  0  0  0 -1]
+sklearn core points      : [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]
+my hand answer           : [&#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;border&#x27;, &#x27;noise&#x27;]</pre></div>
+<h3>sklearn agrees with you</h3>
+<div class="code"><pre>   labels_       = [ 0  0  0  0  0 -1]
+   core points   = [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]
+</pre></div>
+<p>Line by line:</p>
+<ul>
+<li>A, B, C, D, E all got label <strong>0</strong>. One cluster - and E is inside it, as a
+boundary point.</li>
+<li>F got <strong>-1</strong>. Noise. Your outlier.</li>
+<li>The core list is exactly the four you counted by hand.</li>
+</ul>
+<p>One thing worth noticing: <code>labels_</code> does <strong>not</strong> separate core from border.
+Both are just <code>0</code>. To tell them apart you need <code>core_sample_indices_</code> -
+which is precisely what the three-panel cell further down uses to colour
+them.</p>
+<h3>Now scale it up</h3>
+<p>Your next cell runs these same three steps on 500 points with <code>eps=0.3</code> and
+<code>min_samples=10</code>. Nothing new happens. Just 500 circles instead of 6, and a
+required count of 10 instead of 3.</p>
+<p><strong>If you followed A to F, you already understand DBSCAN.</strong></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">db = DBSCAN(eps=0.3,min_samples=10).fit(x)</pre></div>
+<h3>Two pictures, same dots, different meaning</h3>
+<p>This is where people get confused, so slow down here.</p>
+<div class="code"><pre>   plt.scatter(..., c=y)           &lt;- colour by the TRUTH
+                                      which blob make_blobs created it in
+
+   plt.scatter(..., c=db.labels_)  &lt;- colour by what DBSCAN DISCOVERED
+                                      cluster 0, 1, 2 ... and -1 for noise
+</pre></div>
+<p>The dots do not move. Only the colours change.</p>
+<p>In the second picture, look at the dark dots sitting alone around the edges.
+Those are the <strong>-1</strong> points.</p>
+<p>Two things just happened, and both are worth noticing. DBSCAN found the same
+three groups <strong>without ever seeing <code>y</code></strong>. And it also pointed at the loners,
+which <code>y</code> never does - <code>make_blobs</code> gave every point a blob number, even the
+strays.</p>
+<p>The cluster numbers will not match <code>y</code>. DBSCAN's &quot;cluster 0&quot; might be <code>y</code>'s
+blob 2. It invented its own numbering, and that is fine.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120478b90&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c20-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=db.labels_)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1204d25d0&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c21-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Let's change one thing and watch</h3>
+<p>The data will not move. We change only <code>eps</code> - the arm's length - and run
+DBSCAN three times.</p>
+<p>Answer this before you look at the picture: <strong>if I make the circle smaller,
+will there be more noise or less?</strong></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py"># Teaching experiment: separate names preserve your original x, y, and db.
+lesson_db_x = x.copy()
+lesson_fig, lesson_axes = plt.subplots(1, 3, figsize=(14, 4), sharex=True, sharey=True)
+for lesson_axis, lesson_eps in zip(lesson_axes, [0.15, 0.3, 0.6]):
+    lesson_labels = DBSCAN(eps=lesson_eps, min_samples=10).fit_predict(lesson_db_x)
+    lesson_noise = lesson_labels == -1  # one True/False value per row
+    lesson_groups = len(set(lesson_labels) - {-1})
+    lesson_axis.scatter(lesson_db_x[~lesson_noise, 0], lesson_db_x[~lesson_noise, 1],
+                        s=14, color=&#x27;steelblue&#x27;, label=&#x27;in a cluster&#x27;)
+    lesson_axis.scatter(lesson_db_x[lesson_noise, 0], lesson_db_x[lesson_noise, 1],
+                        s=35, marker=&#x27;x&#x27;, color=&#x27;crimson&#x27;, label=&#x27;noise&#x27;)
+    lesson_axis.set_title(f&#x27;eps={lesson_eps}: {lesson_groups} clusters, {lesson_noise.sum()} noise&#x27;)
+    lesson_axis.set_xlabel(&#x27;feature 1&#x27;)
+    lesson_axis.legend(fontsize=8)
+lesson_axes[0].set_ylabel(&#x27;feature 2&#x27;)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c23-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>What happened</h3>
+<table class="tbl"><thead>
+<tr>
+  <th><code>eps</code></th>
+  <th>clusters found</th>
+  <th>noise points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>0.15</td>
+  <td>5</td>
+  <td><strong>256</strong></td>
+</tr>
+<tr>
+  <td>0.30</td>
+  <td>3</td>
+  <td><strong>25</strong></td>
+</tr>
+<tr>
+  <td>0.60</td>
+  <td>3</td>
+  <td><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Small circle → hardly anyone has 10 neighbours within reach → half of your
+data gets called noise, and real blobs even break into pieces (5 clusters
+instead of 3).</p>
+<p>Big circle → everyone can reach everyone → nobody is lonely → zero noise.</p>
+<p><strong>Nothing about the data changed. Only your definition of &quot;close&quot; changed.</strong></p>
+<h3>Remember this</h3>
+<p>DBSCAN does not find outliers by measuring distance from a centre. It finds
+them by asking <em>is anyone near you</em>. <code>eps</code> and <code>min_samples</code> are you telling
+it what &quot;near&quot; and &quot;enough&quot; mean. Those two numbers decide the answer.</p>
+<p>Its weak spot: one single <code>eps</code> for the entire dataset. If one group is
+tight and another is spread out, no single radius suits both.</p>
+
+<h2 id="4-elliptic-envelope-draw-one-oval-around-normal">4. Elliptic Envelope - draw one oval around normal</h2>
+<h3>The story</h3>
+<p>A tailor measures a thousand men for shirts: height and chest size.</p>
+<p>Plot them and you get one slanted cloud - taller men usually have a wider
+chest, so the cloud leans. The tailor draws a single oval around the bulk of
+it and says: <strong>inside this oval is a normal body. Outside it, I stitch by
+hand.</strong></p>
+<p>That is Elliptic Envelope. One oval. Everything outside it is an outlier.</p>
+<h3>The words</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>word</th>
+  <th>what it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>centre</strong></td>
+  <td>the middle of the normal cloud. Roughly the average row</td>
+</tr>
+<tr>
+  <td><strong>spread</strong></td>
+  <td>how far points usually stray from that centre</td>
+</tr>
+<tr>
+  <td><strong>covariance</strong></td>
+  <td>spread <em>plus tilt</em>. It also records that height and chest grow together, which is what makes the oval slant instead of sitting upright</td>
+</tr>
+<tr>
+  <td><strong>robust</strong></td>
+  <td>the important one. While measuring centre and spread, it deliberately ignores the most suspicious rows, so a few freak values cannot drag the oval towards themselves</td>
+</tr>
+<tr>
+  <td><strong><code>contamination</code></strong></td>
+  <td><em>you</em> tell it what fraction of the data you believe is junk</td>
+</tr>
+</tbody>
+</table>
+<p>Why does &quot;robust&quot; matter so much? Because a plain average is easy to fool.
+One order of ₹4,00,000 in a shop where everything costs ₹400 drags the
+average up - and then the crazy order looks close to average and escapes.
+Robust fitting refuses to let that happen.</p>
+<h3>How a point gets judged</h3>
+<p>Not by plain distance from the centre. By distance <strong>measured in units of
+the cloud's own spread, along the cloud's own direction</strong>.</p>
+<div class="code"><pre>   a tall, thin cloud:
+
+        |             a point 2 units to the RIGHT  -&gt;  far outside
+        |             a point 2 units UP            -&gt;  perfectly normal
+        |
+                      same &quot;2&quot;, opposite verdicts
+</pre></div>
+<p>Then it sorts every row by that distance and chops off the worst
+<code>contamination</code> share.</p>
+<h3>Your setting</h3>
+<p><code>contamination=0.1</code> means <em>&quot;I believe about 10% of this data is junk&quot;</em>. With
+2000 rows that is a promise to flag about 200 of them - <strong>whether or not 200
+bad rows actually exist</strong>.</p>
+<p>This is a knob you turn, not a truth the model discovered. Hold on to that.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">x,y = make_blobs(n_samples=2000, centers=2, cluster_std=0.9,random_state=0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12071d450&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c27-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Two steps, and the label code</h3>
+<div class="code"><pre>   ee.fit(x)       -&gt;  learn the centre, the spread, and the cutoff distance
+   ee.predict(x)   -&gt;  give every row a verdict
+</pre></div>
+<p>The verdict is not True/False. It is:</p>
+<div class="code"><pre>   +1  -&gt;  inlier   (normal)
+   -1  -&gt;  outlier  (unusual)
+</pre></div>
+<p><strong>Every outlier detector in sklearn uses this same +1 / -1 code.</strong> DBSCAN is
+the odd one out, because it is really a clustering algorithm - there, -1
+means &quot;noise, belongs to no cluster&quot;.</p>
+<p>When you plot with <code>c=prediction</code>, matplotlib gives the +1 group one colour
+and the -1 group another. That is why this picture has exactly two colours,
+while the DBSCAN picture had four.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">ee = EllipticEnvelope(contamination=0.1)
+ee.fit(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>EllipticEnvelope()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">prediction = ee.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">plt.scatter(x[:,0],x[:,1], c= prediction)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12076b4d0&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c31-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>But where is the oval, actually?</h3>
+<p>The colour picture shows you <em>which</em> points were rejected. It does not show
+you <em>the shape that rejected them</em>.</p>
+<p>This experiment draws that boundary line, so you can finally see the oval
+the model learned.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py"># Use your already-fitted ee and its current two-cloud x.
+lesson_ee_flags = ee.predict(x) == -1
+lesson_gx, lesson_gy = np.meshgrid(
+    np.linspace(x[:, 0].min() - 1, x[:, 0].max() + 1, 180),
+    np.linspace(x[:, 1].min() - 1, x[:, 1].max() + 1, 180)
+)
+lesson_grid = np.column_stack([lesson_gx.ravel(), lesson_gy.ravel()])
+lesson_surface = ee.decision_function(lesson_grid).reshape(lesson_gx.shape)
+plt.figure(figsize=(7, 5))
+plt.scatter(x[~lesson_ee_flags, 0], x[~lesson_ee_flags, 1], s=10,
+            color=&#x27;steelblue&#x27;, label=&#x27;inlier (+1)&#x27;)
+plt.scatter(x[lesson_ee_flags, 0], x[lesson_ee_flags, 1], s=25,
+            color=&#x27;crimson&#x27;, marker=&#x27;x&#x27;, label=&#x27;outlier (-1)&#x27;)
+plt.contour(lesson_gx, lesson_gy, lesson_surface, levels=[0], colors=&#x27;black&#x27;)
+plt.title(f&#x27;One fitted ellipse; {lesson_ee_flags.sum()} of {len(x)} rows flagged&#x27;)
+plt.xlabel(&#x27;feature 1&#x27;)
+plt.ylabel(&#x27;feature 2&#x27;)
+plt.legend()
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c33-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>What happened</h3>
+<p><strong>200 rows out of 2000 flagged.</strong> Exactly 10% - exactly what you asked for
+with <code>contamination=0.1</code>. The model kept its promise.</p>
+<p>Now look at the shape: one slanted oval. Your data here was <code>centers=2</code> with
+<code>cluster_std=0.9</code> - two blobs so spread out that they overlap into a single
+long diagonal cloud. That is why an oval still fits well.</p>
+<p><strong>And that is also the model's weakness.</strong> Had those two blobs been far
+apart, the oval would have stretched to cover both, and the empty gap
+<em>between</em> them would sit comfortably inside &quot;normal&quot;. Elliptic Envelope
+believes there is exactly one cloud. When that belief is wrong, it is
+confidently wrong.</p>
+<h3>Remember this</h3>
+<p>DBSCAN asks <em>is anyone near you</em>.
+Elliptic Envelope asks <em>how far are you from the one centre, in the cloud's
+own units</em>.</p>
+<p>Use it when normal data really is one oval blob. Do not use it for several
+separate families, or for curved shapes.</p>
+
+<h2 id="5-isolation-forest-how-fast-can-i-cut-you-off">5. Isolation Forest - how fast can I cut you off?</h2>
+<h3>The story</h3>
+<p>Twenty Guess Who cards on the table. All the faces look similar - same age
+range, similar hair - except one man wearing a bright red hat.</p>
+<p>You start asking random yes/no questions. <em>&quot;Is the hair dark?&quot; &quot;Glasses?&quot;</em></p>
+<p>The red hat man is alone after <strong>two</strong> questions.
+The other nineteen take <strong>eight or nine</strong> questions each, because they keep
+looking like one another and keep splitting into pairs.</p>
+<p><strong>Being easy to separate is the definition of being strange.</strong></p>
+<p>That is the entire algorithm. Notice what it never does: it never measures a
+distance, and it never computes a centre.</p>
+<h3>The words</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>word</th>
+  <th>what it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>isolate</strong></td>
+  <td>keep cutting until this one point sits alone in its own box</td>
+</tr>
+<tr>
+  <td><strong>random cut</strong></td>
+  <td>pick a column at random, pick a value at random, split there. No cleverness, no learning</td>
+</tr>
+<tr>
+  <td><strong>path length</strong></td>
+  <td>how many cuts it took before that point was alone. The question count</td>
+</tr>
+<tr>
+  <td><strong>tree</strong></td>
+  <td>one full run of random cuts</td>
+</tr>
+<tr>
+  <td><strong>forest</strong></td>
+  <td>100 such trees, because one run of random luck proves nothing</td>
+</tr>
+</tbody>
+</table>
+<h3>The picture</h3>
+<div class="code"><pre>   500 points
+        |
+   random cut  -------------&gt;  the lonely point is already alone
+        |                      path length = 2
+   random cut
+        |
+   ...  a crowded point keeps getting
+        split along with others, for
+        8, 9, 10 more cuts
+</pre></div>
+<div class="code"><pre>   short average path over 100 trees  -&gt;  OUTLIER
+   long  average path over 100 trees  -&gt;  normal
+</pre></div>
+<h3>Why 100 random trees instead of one careful one?</h3>
+<p>One tree could get lucky and cut a perfectly normal point off early. Average
+across 100 independent trees and that luck cancels out.</p>
+<p>Same reason a Random Forest grows many trees - you saw exactly this in
+notebook 20. The idea travels.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">x,y = make_blobs(n_samples=500, centers=3, cluster_std=0.4,random_state=0)</pre></div>
+<h3>Your four lines</h3>
+<div class="code"><pre>   iso = IsolationForest()    -&gt;  build the recipe. Nothing has happened yet
+   iso.fit(x)                 -&gt;  grow 100 trees of random cuts on your data
+   pred = iso.predict(x)      -&gt;  +1 / -1 for every row
+   plt.scatter(..., c=pred)   -&gt;  colour the dots by that verdict
+</pre></div>
+<p>You left the settings at their defaults, which means:</p>
+<ul>
+<li><code>n_estimators=100</code> - one hundred trees.</li>
+<li><code>contamination='auto'</code> - <em>&quot;you work out the cutoff, do not ask me.&quot;</em></li>
+</ul>
+<p>Now compare this picture with the DBSCAN picture higher up. <strong>Same 500
+points.</strong></p>
+<ul>
+<li>DBSCAN flagged <strong>25</strong> lonely points, right at the far edges.</li>
+<li>Isolation Forest flagged an entire <strong>outer shell</strong> around each blob.</li>
+</ul>
+<p>Neither is wrong. They were asked different questions. DBSCAN was told
+&quot;10 neighbours within 0.3 is enough&quot;. Isolation Forest was told nothing, so
+<code>'auto'</code> applied its own generous cutoff and called every fringe point
+unusual.</p>
+<p><strong>A detector is only as strict as the threshold you hand it.</strong></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">iso = IsolationForest()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">iso.fit(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>IsolationForest()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">pred = iso.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120ab8b90&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c41-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Inside the box: from path length to +1 / -1</h3>
+<p>Three names, in the order they get computed.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>name</th>
+  <th>what it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>score_samples(x)</code></td>
+  <td>the raw score for each row, built from its average path length. <strong>More negative = isolated faster = more suspicious</strong></td>
+</tr>
+<tr>
+  <td><code>offset_</code></td>
+  <td>the cutoff line. With <code>contamination='auto'</code> it is fixed at <strong>-0.5</strong></td>
+</tr>
+<tr>
+  <td><code>decision_function(x)</code></td>
+  <td>just <code>score_samples - offset_</code>. It slides the cutoff to <strong>zero</strong></td>
+</tr>
+</tbody>
+</table>
+<p>After that, the rule is a single comparison:</p>
+<div class="code"><pre>   decision_function(row)  &lt;  0   -&gt;  -1  (outlier)
+   decision_function(row) &gt;=  0   -&gt;  +1  (inlier)
+</pre></div>
+<p>Now read the three printed rows with that in mind:</p>
+<div class="code"><pre>   row 442 :  raw -0.645  -&gt;  -0.645 - (-0.5) = -0.145  -&gt;  negative  -&gt;  -1
+   row 415 :  raw -0.470  -&gt;  -0.470 - (-0.5) = +0.030  -&gt;  positive  -&gt;  +1
+   row 181 :  raw -0.425  -&gt;  -0.425 - (-0.5) = +0.075  -&gt;  positive  -&gt;  +1
+</pre></div>
+<p>Do that subtraction once with your own pen. After that
+<code>decision_function</code> will never look mysterious again.</p>
+<p><strong>The big idea:</strong> the model produces a <em>continuous score</em> - a smooth line
+running from very suspicious to very normal. The +1 / -1 label is only that
+score with a cutoff applied. Change <code>contamination</code> and you move the cutoff;
+the scores themselves do not move at all.</p>
+<p>That should feel familiar. It is the same threshold idea from the ROC
+notebook, wearing a different costume.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py"># Reproducible score experiment on the same three-cloud data.
+lesson_iso = IsolationForest(random_state=0).fit(x)
+lesson_raw = lesson_iso.score_samples(x)
+lesson_decision = lesson_iso.decision_function(x)
+lesson_flags = lesson_iso.predict(x) == -1
+print(&#x27;score offset:&#x27;, lesson_iso.offset_)
+print(&#x27;row | score_samples | decision score | predicted label&#x27;)
+for lesson_i in np.argsort(lesson_raw)[[0, len(x) // 2, -1]]:
+    print(f&#x27;{lesson_i:3d} | {lesson_raw[lesson_i]:13.3f} | &#x27;
+          f&#x27;{lesson_decision[lesson_i]:14.3f} | {(-1 if lesson_flags[lesson_i] else 1):+d}&#x27;)
+plt.figure(figsize=(8, 3))
+plt.hist(lesson_decision, bins=25, color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+plt.axvline(0, color=&#x27;crimson&#x27;, linestyle=&#x27;--&#x27;, label=&#x27;label cutoff = 0&#x27;)
+plt.xlabel(&#x27;decision score: negative → flagged; nonnegative → inlier&#x27;)
+plt.ylabel(&#x27;number of observations&#x27;)
+plt.title(&#x27;Continuous scores become labels after applying a cutoff&#x27;)
+plt.legend()
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>score offset: -0.5
+row | score_samples | decision score | predicted label
+442 |        -0.645 |         -0.145 | -1
+415 |        -0.470 |          0.030 | +1
+181 |        -0.425 |          0.075 | +1</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c43-11.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Reading the histogram</h3>
+<p>Each bar counts how many rows landed at that score. The dashed red line is
+zero - the cutoff.</p>
+<p>Everything to the left got <code>-1</code>. Everything to the right got <code>+1</code>.</p>
+<p>Notice there is <strong>no gap at the line</strong>. The scores flow smoothly straight
+across it. A row just left of the line and a row just right of it are
+practically identical points. They ended up in different classes only
+because a line had to be drawn somewhere.</p>
+
+<h2 id="6-why-do-all-these-scatter-plots-look-the-same">6. Why do all these scatter plots look the same?</h2>
+<p>You spotted this yourself, and it is a good catch. Every plot is the same
+500 dots in the same positions. Only <code>c=</code> changes.</p>
+<div class="code"><pre>   c=y             -&gt;  the truth from make_blobs        3 colours
+   c=db.labels_    -&gt;  clusters DBSCAN discovered       3 colours + noise (-1)
+   c=pred          -&gt;  Isolation Forest verdict         2 colours (+1 / -1)
+</pre></div>
+<p>Underneath, two different jobs are being mixed up:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>clustering</th>
+  <th>outlier detection</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>the question</td>
+  <td>&quot;which group does this belong to?&quot;</td>
+  <td>&quot;is this one strange?&quot;</td>
+</tr>
+<tr>
+  <td>the output</td>
+  <td>a group number: 0, 1, 2, ...</td>
+  <td>a verdict: +1 or -1</td>
+</tr>
+<tr>
+  <td>how many colours</td>
+  <td>as many as there are groups</td>
+  <td>always two</td>
+</tr>
+<tr>
+  <td>in this notebook</td>
+  <td>DBSCAN</td>
+  <td>Elliptic Envelope, Isolation Forest, LOF</td>
+</tr>
+</tbody>
+</table>
+<p>DBSCAN is quietly doing <em>both</em>. It produces groups <strong>and</strong> a leftover pile
+labelled -1. That leftover pile is the only reason it appears in a notebook
+about outliers.</p>
+<p>So the honest answer to <em>&quot;is clustering happening here?&quot;</em> - in the DBSCAN
+plot, yes. In the Isolation Forest plot, no.</p>
+
+<h3>And what is clustering, really?</h3>
+<p>Two words worth separating properly, because everything here rests on them.</p>
+<p><strong>Supervised learning</strong> - you have the answer column. The iris species in
+notebook 20, for example. You show the model the answers, and it learns to
+reproduce them.</p>
+<p><strong>Unsupervised learning</strong> - there is no answer column. Nobody knows the
+right groups. The algorithm has to notice the structure on its own.</p>
+<div class="code"><pre>   supervised    :  here are 500 flowers AND their species
+                    -&gt; learn to predict the species
+
+   unsupervised  :  here are 500 points.
+                    -&gt; anything interesting?
+</pre></div>
+<p>Everything in this notebook is unsupervised. Real anomaly work usually is,
+for one simple reason: <strong>nobody labelled the fraud for you.</strong> If you already
+had a clean &quot;fraud yes/no&quot; column, you would train a classifier and go home.</p>
+<p>Where clustering earns its keep in real systems: grouping customers who
+behave alike, grouping sensors that misbehave together, grouping support
+tickets about the same underlying problem.</p>
+
+<h3>Back to DBSCAN: opening the box</h3>
+<p>The next cell re-runs DBSCAN on the three-blob data and lays the stages side
+by side. It also rebuilds <code>x</code>, <code>y</code> and <code>db</code>, so from here on those names
+point at the three-blob data again.</p>
+<div class="code"><pre>   panel 1 :  raw dots. No groups yet. What the algorithm starts with.
+   panel 2 :  the labels DBSCAN produced. Black = -1 = noise.
+   panel 3 :  the three kinds of point, in colour.
+</pre></div>
+<p><code>db.core_sample_indices_</code> is the list of rows that qualified as core points.
+Anything that is neither core nor noise is a border point.</p>
+<p>The counts it prints:</p>
+<div class="code"><pre>   core points   : 415   &lt;- had 10+ neighbours within 0.3. The heart of each blob
+   border points :  60   &lt;- touching a core point, but thin on their own. The rim
+   noise points  :  25   &lt;- reached by nobody. THESE are the outliers
+   clusters      :   3
+</pre></div>
+<p>415 + 60 + 25 = 500. Every single point is exactly one of the three kinds.</p>
+<h3>Remember this</h3>
+<p>DBSCAN's outliers are not a percentage you chose. They are simply whoever is
+left over once the crowds have claimed everyone they can reach.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 48</span></div><pre class="py"># Visualize DBSCAN&#x27;s discovered clusters and point types
+from matplotlib.lines import Line2D
+
+# Use the three-cluster data for a clear DBSCAN example.
+x, y = make_blobs(
+    n_samples=500,
+    centers=3,
+    cluster_std=0.4,
+    random_state=0
+)
+db = DBSCAN(eps=0.3, min_samples=10).fit(x)
+labels = db.labels_
+core_mask = np.zeros(labels.shape, dtype=bool)
+core_mask[db.core_sample_indices_] = True
+
+fig, axes = plt.subplots(1, 3, figsize=(16, 4))
+
+# 1. Raw points: no groups have been assigned yet.
+axes[0].scatter(x[:, 0], x[:, 1], s=18, color=&quot;steelblue&quot;)
+axes[0].set_title(&quot;1. Raw points&quot;)
+
+# 2. DBSCAN&#x27;s discovered cluster IDs.
+cluster_ids = sorted(set(labels))
+colors = plt.cm.tab10(np.linspace(0, 1, max(len(cluster_ids), 1)))
+for color, cluster_id in zip(colors, cluster_ids):
+    point_mask = labels == cluster_id
+    point_color = &quot;black&quot; if cluster_id == -1 else color
+    axes[1].scatter(
+        x[point_mask, 0],
+        x[point_mask, 1],
+        s=22,
+        color=point_color,
+        label=&quot;noise (-1)&quot; if cluster_id == -1 else f&quot;cluster {cluster_id}&quot;
+    )
+axes[1].set_title(&quot;2. DBSCAN cluster labels&quot;)
+axes[1].legend(fontsize=8)
+
+# 3. Core points build the dense regions; border points join from the edge.
+noise_mask = labels == -1
+border_mask = ~core_mask &amp; ~noise_mask
+axes[2].scatter(
+    x[noise_mask, 0], x[noise_mask, 1],
+    s=28, color=&quot;black&quot;, label=&quot;noise (-1)&quot;
+)
+axes[2].scatter(
+    x[border_mask, 0], x[border_mask, 1],
+    s=28, color=&quot;orange&quot;, label=&quot;border point&quot;
+)
+axes[2].scatter(
+    x[core_mask, 0], x[core_mask, 1],
+    s=48, color=&quot;teal&quot;, edgecolors=&quot;white&quot;, label=&quot;core point&quot;
+)
+axes[2].set_title(&quot;3. Core, border, and noise points&quot;)
+axes[2].legend(fontsize=8)
+
+for axis in axes:
+    axis.set_xlabel(&quot;feature 1&quot;)
+    axis.set_ylabel(&quot;feature 2&quot;)
+    axis.grid(alpha=0.2)
+
+plt.tight_layout()
+plt.show()
+
+print(f&quot;Clusters found: {len(set(labels)) - (1 if -1 in labels else 0)}&quot;)
+print(f&quot;Core points: {core_mask.sum()}&quot;)
+print(f&quot;Border points: {border_mask.sum()}&quot;)
+print(f&quot;Noise points: {noise_mask.sum()}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Clusters found: 3
+Core points: 415
+Border points: 60
+Noise points: 25</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c48-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="7-local-outlier-factor-strange-compared-to-your-">7. Local Outlier Factor - strange compared to your own neighbours</h2>
+<h3>The story</h3>
+<p>Two people, each standing 5 metres away from anyone else.</p>
+<p>The first is in the middle of a packed festival, where everybody else is
+half a metre apart. Five metres there is <strong>very</strong> odd. Something is wrong.</p>
+<p>The second is in a quiet park where people naturally spread out ten metres
+apart. Five metres there is perfectly normal.</p>
+<p><strong>Same 5 metres. Two opposite verdicts.</strong></p>
+<p>The other three methods cannot express this. They judge a point against
+<em>the whole dataset</em>. LOF judges a point against <strong>its own immediate
+neighbours only</strong>. That is the work the word <strong>Local</strong> is doing in the name.</p>
+<h3>The words</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>word</th>
+  <th>what it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>neighbours</strong></td>
+  <td>your <code>k</code> nearest points. Nobody else is consulted</td>
+</tr>
+<tr>
+  <td><strong>local density</strong></td>
+  <td>how tightly packed your own little neighbourhood is. Neighbours close by = high density</td>
+</tr>
+<tr>
+  <td><strong>LOF score</strong></td>
+  <td>your neighbours' density ÷ your density</td>
+</tr>
+</tbody>
+</table>
+<h3>Reading the score</h3>
+<div class="code"><pre>   LOF around 1  -&gt;  I am as crowded as my neighbours     -&gt;  normal
+   LOF above 1   -&gt;  my neighbours are packed, I am not   -&gt;  OUTLIER
+   LOF below 1   -&gt;  I sit in an even denser spot         -&gt;  very normal
+</pre></div>
+<p>It is a <strong>ratio</strong>, not a distance. That single design choice is the whole
+trick.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.neighbors import LocalOutlierFactor</pre></div>
+<h3>What <code>LocalOutlierFactor(n_neighbors=3)</code> does</h3>
+<p><code>n_neighbors=3</code> means: <strong>my neighbourhood is my 3 nearest points.</strong></p>
+<p>For every row:</p>
+<div class="code"><pre>   1. find my 3 nearest neighbours
+   2. measure how tightly packed I am                -&gt;  my density
+   3. measure how tightly packed each of them is
+   4. LOF = their average density / my density
+   5. LOF clearly above 1  -&gt;  label -1
+</pre></div>
+<p>Two syntax details worth knowing, because both will trip you up otherwise.</p>
+<p><strong>Use <code>fit_predict(x)</code>, not <code>fit</code> then <code>predict</code>.</strong> By default LOF has no
+<code>.predict()</code> at all. It is built to examine one fixed dataset, not to judge
+new rows later. Calling <code>fit</code> on its own trains it but hands you nothing
+back. <code>fit_predict</code> trains <em>and</em> returns the +1 / -1 array - which is why
+your cell calls it right after <code>fit</code>.</p>
+<p><strong><code>negative_outlier_factor_</code> stores the scores negated</strong> - it holds -1.2
+where the real LOF is 1.2. sklearn's house rule is <em>higher means more
+normal</em>, and that rule must hold for every detector it ships. So
+<code>-clf.negative_outlier_factor_</code> gives you back the plain LOF value that you
+can compare against 1.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 52</span></div><pre class="py">clf = LocalOutlierFactor(n_neighbors=3)
+clf.fit(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LocalOutlierFactor(n_neighbors=3)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 53</span></div><pre class="py">pred = clf.fit_predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 54</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120da7c50&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c54-13.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Look at what LOF flagged</h3>
+<p>Put this picture next to the Isolation Forest one.</p>
+<p>Isolation Forest flagged a clean outer ring around each blob. LOF flagged a
+scattered handful instead - and some of them are not at the outer edge at
+all.</p>
+<p>That is correct behaviour, not a bug. LOF is not asking <em>&quot;are you far from
+the middle?&quot;</em>. It is asking <em>&quot;is your little pocket thinner than your
+neighbours' pockets?&quot;</em></p>
+<p>A point sitting in a small hole <em>inside</em> a blob can fail that test. A point
+right on the outer edge, with company nearby, can pass it.</p>
+<h3>Remember this</h3>
+<p>LOF compares densities. Reach for it when your data has regions of different
+density - a dense city and a sparse village in the same table - because the
+other three methods would simply flag the whole village.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 56</span></div><pre class="py">x = np.array([[1,5],[1,6],[1,7],[2,5],[2,6],[6,5],[9,1]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 57</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c57-14.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="8-a-tiny-7-point-example-and-a-trap">8. A tiny 7-point example - and a trap</h2>
+<p>Seven points, small enough to hold in your head:</p>
+<div class="code"><pre>   A(1,5)  B(1,6)  C(1,7)  D(2,5)  E(2,6)      F(6,5)       G(9,1)
+   \_________ five points, packed together ____/   far away   very far away
+</pre></div>
+<p>Before running anything, answer out loud: which ones do you expect to be
+flagged?</p>
+<h3>Now read the next cell very carefully</h3>
+<div class="code"><pre class="py">X = x[:,0]           # takes ONLY column 0  -&gt;  1, 1, 1, 2, 2, 6, 9
+y = x[:,1]           # column 1 kept aside, only for drawing
+X = X.reshape(-1,1)  # make it a column: 7 rows, 1 column
+clf.fit(X)           # so LOF sees ONE feature
+</pre></div>
+<p><strong>This is the trap, and it catches almost everybody once.</strong></p>
+<p><code>reshape(-1,1)</code> did <strong>not</strong> add any information. It only changed the shape,
+from a flat list of 7 numbers into 7 rows of 1 number - because sklearn
+always wants <code>(rows, columns)</code>. The <code>-1</code> means <em>&quot;you work that number out
+yourself&quot;</em>.</p>
+<p>So the model is now solving a <strong>one-feature</strong> problem. But your scatter plot
+still draws both columns. The picture looks two-dimensional while the model
+was blind in one eye.</p>
+<p><strong>Whenever a result surprises you, check the shape of what you actually fed
+the model.</strong> That habit will save you hours.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 59</span></div><pre class="py">X = x[:,0]
+y = x[:,1]
+
+X = X.reshape(-1,1)
+clf = LocalOutlierFactor(n_neighbors=3)
+clf.fit(X)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LocalOutlierFactor(n_neighbors=3)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 60</span></div><pre class="py">pred = clf.fit_predict(X)
+plt.scatter(X, y,c=pred)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120efc190&gt;</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c60-15.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>The same seven dots, twice</h3>
+<p>Left panel: LOF sees column 1 only, exactly like your cell above.
+Right panel: LOF sees both columns.</p>
+<p>Both panels <em>draw</em> both columns, so the comparison is fair - only the input
+to the model changed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 62</span></div><pre class="py"># Compare without overwriting your original X, y, clf, or pred.
+lesson_small = x.copy()
+lesson_inputs = [lesson_small[:, [0]], lesson_small]
+lesson_titles = [&#x27;LOF sees feature 1 only&#x27;, &#x27;LOF sees both features&#x27;]
+lesson_fig, lesson_axes = plt.subplots(1, 2, figsize=(11, 4), sharex=True, sharey=True)
+lesson_names = list(&#x27;ABCDEFG&#x27;)
+for lesson_axis, lesson_input, lesson_title in zip(lesson_axes, lesson_inputs, lesson_titles):
+    lesson_lof = LocalOutlierFactor(n_neighbors=3)
+    lesson_prediction = lesson_lof.fit_predict(lesson_input)
+    lesson_positive_lof = -lesson_lof.negative_outlier_factor_
+    print(&#x27;\n&#x27; + lesson_title + f&#x27;; input shape = {lesson_input.shape}&#x27;)
+    print(&#x27;row | positive LOF | label&#x27;)
+    for lesson_name, lesson_score, lesson_label in zip(lesson_names, lesson_positive_lof, lesson_prediction):
+        print(f&#x27;{lesson_name:3s} | {lesson_score:12.3f} | {lesson_label:+d}&#x27;)
+    for lesson_label, lesson_color, lesson_marker, lesson_text in [
+        (1, &#x27;steelblue&#x27;, &#x27;o&#x27;, &#x27;inlier (+1)&#x27;), (-1, &#x27;crimson&#x27;, &#x27;x&#x27;, &#x27;outlier (-1)&#x27;)
+    ]:
+        lesson_mask = lesson_prediction == lesson_label
+        lesson_axis.scatter(lesson_small[lesson_mask, 0], lesson_small[lesson_mask, 1],
+                            color=lesson_color, marker=lesson_marker, s=70, label=lesson_text)
+    for lesson_name, lesson_point in zip(lesson_names, lesson_small):
+        lesson_axis.annotate(lesson_name, lesson_point, xytext=(5, 5), textcoords=&#x27;offset points&#x27;)
+    lesson_axis.set_title(lesson_title)
+    lesson_axis.set_xlabel(&#x27;feature 1&#x27;)
+    lesson_axis.legend()
+lesson_axes[0].set_ylabel(&#x27;feature 2 (displayed in BOTH panels)&#x27;)
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>
+LOF sees feature 1 only; input shape = (7, 1)
+row | positive LOF | label
+A   |        1.000 | +1
+B   |        1.000 | +1
+C   |        1.000 | +1
+D   |        1.000 | +1
+E   |        1.000 | +1
+F   |        3.611 | -1
+G   |        4.400 | -1
+
+LOF sees both features; input shape = (7, 2)
+row | positive LOF | label
+A   |        0.898 | +1
+B   |        1.205 | +1
+C   |        1.073 | +1
+D   |        1.032 | +1
+E   |        0.898 | +1
+F   |        3.316 | -1
+G   |        4.139 | -1</pre></div>
+<figure class="shot"><img src="assets/21-outliers-c62-16.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>What changed</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>point</th>
+  <th>LOF, 1 feature</th>
+  <th>LOF, 2 features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td>1.000</td>
+  <td>0.898</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>1.000</td>
+  <td>1.205</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td>1.000</td>
+  <td>1.073</td>
+</tr>
+<tr>
+  <td>D</td>
+  <td>1.000</td>
+  <td>1.032</td>
+</tr>
+<tr>
+  <td>E</td>
+  <td>1.000</td>
+  <td>0.898</td>
+</tr>
+<tr>
+  <td><strong>F</strong></td>
+  <td><strong>3.611</strong></td>
+  <td><strong>3.316</strong></td>
+</tr>
+<tr>
+  <td><strong>G</strong></td>
+  <td><strong>4.400</strong></td>
+  <td><strong>4.139</strong></td>
+</tr>
+</tbody>
+</table>
+<p>With one feature, A to E score <strong>exactly 1.000</strong>. Look at why: dropping
+column 1 collapsed A, B and C onto the identical value (all three have
+feature 1 = 1). Their neighbourhood became perfectly tight - suspiciously
+perfect.</p>
+<p>With both features they get honest, slightly different scores. F and G are
+flagged either way here, but now for a real reason rather than by accident.</p>
+<p><strong>Syntax note:</strong> <code>x[:, [0]]</code>, with the column number <em>inside a list</em>, keeps
+the result two-dimensional - shape <code>(7, 1)</code>. Plain <code>x[:, 0]</code> gives shape
+<code>(7,)</code> and sklearn refuses it. It is the tidier alternative to
+<code>reshape(-1,1)</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 64</span></div><pre class="py">print(&#x27;k | positive LOF for F | positive LOF for G | rows flagged&#x27;)
+for lesson_k in [2, 3, 6]:
+    lesson_k_model = LocalOutlierFactor(n_neighbors=lesson_k)
+    lesson_k_labels = lesson_k_model.fit_predict(lesson_small)
+    lesson_k_scores = -lesson_k_model.negative_outlier_factor_
+    lesson_flag_names = [name for name, label in zip(lesson_names, lesson_k_labels) if label == -1]
+    print(f&#x27;{lesson_k} | {lesson_k_scores[5]:18.3f} | {lesson_k_scores[6]:18.3f} | {lesson_flag_names}&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>k | positive LOF for F | positive LOF for G | rows flagged
+2 |              4.062 |              4.070 | [&#x27;F&#x27;, &#x27;G&#x27;]
+3 |              3.316 |              4.139 | [&#x27;F&#x27;, &#x27;G&#x27;]
+6 |              1.074 |              0.970 | []</pre></div>
+<h3>The last experiment: what does <code>k</code> really control?</h3>
+<table class="tbl"><thead>
+<tr>
+  <th><code>k</code></th>
+  <th>LOF of F</th>
+  <th>LOF of G</th>
+  <th>flagged</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2</td>
+  <td>4.062</td>
+  <td>4.070</td>
+  <td>F, G</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>3.316</td>
+  <td>4.139</td>
+  <td>F, G</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>1.074</td>
+  <td>0.970</td>
+  <td><strong>nobody</strong></td>
+</tr>
+</tbody>
+</table>
+<p>At <code>k=6</code>, with only 7 points in total, &quot;my neighbourhood&quot; has become almost
+the entire dataset. Local stopped being local.</p>
+<p>Look at G at <code>k=6</code>: its score drops <em>below</em> 1. The algorithm now considers
+the loneliest point in the data perfectly normal.</p>
+<p><strong><code>n_neighbors</code> is not a small tuning detail. It is your definition of the
+word &quot;local&quot;, and it can flip the answer completely.</strong></p>
+<p>Rough guidance: too small, and random noise starts looking like structure.
+Too large, and you throw away the very locality that made LOF worth using.
+<code>k=20</code> is the usual starting point on real data. Seven points is far too few
+for LOF to mean anything - which is exactly why it makes a good teaching
+example.</p>
+<hr />
+<h2 id="putting-the-four-side-by-side">Putting the four side by side</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>method</th>
+  <th>the question it asks</th>
+  <th>you must choose</th>
+  <th>what it flags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>DBSCAN</strong></td>
+  <td>is anyone near me?</td>
+  <td><code>eps</code>, <code>min_samples</code></td>
+  <td>whoever is left over</td>
+</tr>
+<tr>
+  <td><strong>Elliptic Envelope</strong></td>
+  <td>how far am I from the one centre?</td>
+  <td><code>contamination</code></td>
+  <td>exactly that percentage</td>
+</tr>
+<tr>
+  <td><strong>Isolation Forest</strong></td>
+  <td>how few cuts to isolate me?</td>
+  <td><code>contamination</code></td>
+  <td>that percentage, or <code>'auto'</code></td>
+</tr>
+<tr>
+  <td><strong>LOF</strong></td>
+  <td>is my pocket thinner than my neighbours'?</td>
+  <td><code>n_neighbors</code></td>
+  <td>those with a high ratio</td>
+</tr>
+</tbody>
+</table>
+<h3>When to use which</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>your situation</th>
+  <th>use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>one roughly oval cloud of normal data</td>
+  <td>Elliptic Envelope</td>
+</tr>
+<tr>
+  <td>many columns, plenty of rows, no idea of the shape</td>
+  <td>Isolation Forest - the usual first choice</td>
+</tr>
+<tr>
+  <td>odd-shaped groups, and you want the groups too</td>
+  <td>DBSCAN</td>
+</tr>
+<tr>
+  <td>dense and sparse regions in the same dataset</td>
+  <td>LOF</td>
+</tr>
+</tbody>
+</table>
+<h3>When NOT to use them</h3>
+<ul>
+<li>Elliptic Envelope on several separate clouds - the oval swallows the empty
+gap between them and calls it normal.</li>
+<li>DBSCAN when groups have very different densities - one <code>eps</code> cannot serve
+both.</li>
+<li>LOF with <code>k</code> close to the size of your data - locality disappears, as you
+just saw.</li>
+<li>Any of them on unscaled columns. Rupees in lakhs sitting beside age in
+years means the rupee column decides everything. Scale first.</li>
+</ul>
+<hr />
+<h2 id="remember-this">Remember this</h2>
+<p><strong>These algorithms do not find wrong rows. They find rows that do not fit
+the pattern they were told to look for.</strong></p>
+<p>Four different definitions of &quot;the pattern&quot; gave four different answers on
+the very same 500 points. That definition is your choice - and that choice,
+not the algorithm, is where the real engineering work sits.</p>
+<h2 id="60-second-revision">60-second revision</h2>
+<ol>
+<li>Outlier = unusual, not wrong. A human still decides.</li>
+<li>Unsupervised - no answer key. That is why these methods exist at all.</li>
+<li>sklearn's verdict code: <strong>+1 normal, -1 unusual</strong>.</li>
+<li>DBSCAN: crowds. <code>eps</code> = arm's length, <code>min_samples</code> = enough. Noise = -1.</li>
+<li>Elliptic Envelope: one robust oval, and <em>you</em> set <code>contamination</code>.</li>
+<li>Isolation Forest: random cuts. Isolated fast = strange. Score first,
+label after a cutoff.</li>
+<li>LOF: my density vs my neighbours' density. Ratio near 1 = normal.</li>
+<li><code>reshape(-1,1)</code> changes shape, never information.</li>
+</ol>
+<h2 id="test-yourself">Test yourself</h2>
+<ul>
+<li>Why did <code>eps=0.6</code> produce zero noise points?</li>
+<li>With <code>contamination=0.1</code> on 2000 rows, how many rows get flagged - before
+you have even looked at the data?</li>
+<li>A point sits far from everything, but its few neighbours are also spread
+far apart. High LOF or low?</li>
+<li>Which of the four never measures a distance at all?</li>
+</ul>
+
+<div class="foot"><a class="btn" href="../Concept/12_Outlier.ipynb">12_Outlier.ipynb ↗</a><a class="btn" href="../Concept/13_Outlier_Removal_IQR.ipynb">13_Outlier_Removal_IQR.ipynb ↗</a><a class="btn" href="../Concept/14_Outlier_Removal_Z_Score.ipynb">14_Outlier_Removal_Z_Score.ipynb ↗</a><a class="btn" href="../Concept/21_Outliers.ipynb">21_Outliers.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

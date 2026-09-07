@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Collection — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Data Collection</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#phase-3-classical-ml-concepts-strategy">Phase 3 — Classical ML Concepts: Strategy</a><a href="#purpose">Purpose</a><a href="#the-spine-one-evolving-dataset">The Spine: One Evolving Dataset</a><a href="#topics-13">Topics (13)</a><a href="#folder-structure">Folder Structure</a><a href="#teaching-rhythm-per-topic">Teaching Rhythm (per topic)</a><a href="#recurring-add-ons-practice-faq-interview-prep">Recurring Add-Ons (Practice, FAQ, Interview Prep)</a><a href="#notes">Notes</a><a href="#phase-3-topic-1-data-collection">Phase 3, Topic 1 — Data Collection</a><a href="#the-story">The Story</a><a href="#the-core-lesson">The Core Lesson</a><a href="#three-levels-of-understanding">Three Levels of Understanding</a><a href="#genai-rag-bridge">GenAI / RAG Bridge</a><a href="#verification-confirmed-understanding">Verification (confirmed understanding)</a><a href="#status">Status</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Data Collection</h1>
+  <p class="lede">Where the numbers come from, and the failure hiding inside each source.</p>
+  <div class="tags"><span class="tag">2 notes</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Riverstone wanted to know why customers were leaving.</strong> The team pulled numbers from three places: the app database, a customer survey, and a bought-in market report.</p><p>All three disagreed. The database said churn was 8%, the survey said 22%, the report said 15%.</p><p><span class='beat'>None was lying — each answered a different question.</span> The database only knew people who had an account. The survey only heard from people annoyed enough to reply. The report described the whole market, not Riverstone's customers.</p><p>So data collection is not "get the data". It is knowing what each source can and cannot see, before a single model is fitted on top of it.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Every data source is blind in its own particular way. Knowing which blindness you have is the skill.</p></div>
+<div class="src-head">📝 <a href="../Concept/00_strategy.md">00_strategy.md</a></div>
+<h2 id="phase-3-classical-ml-concepts-strategy">Phase 3 — Classical ML Concepts: Strategy</h2>
+<h2 id="purpose">Purpose</h2>
+<p>Phase 3 builds the vocabulary of traditional/classical ML — the terms and
+concepts that show up constantly in AI discussions, LLM evaluation, RAG
+evaluation, and production model quality checks, even for someone whose
+target role is Agentic AI Engineer, not Data Scientist.</p>
+<p><strong>Depth rule:</strong> Light conceptual understanding only. No implementing every
+algorithm manually, no deep statistics, no Kaggle-style depth, no
+research-level model comparison. See <code>AI_Engineering_Roadmap.md</code> Section 7
+for the full scope boundary.</p>
+<h2 id="the-spine-one-evolving-dataset">The Spine: One Evolving Dataset</h2>
+<p>Instead of switching examples every topic, all 13 topics in this phase use
+the <strong>same evolving dataset</strong> — a bank loan-default prediction problem. This
+mirrors how a real ML project actually works: you don't get a fresh clean
+dataset per concept, you take one messy dataset through the full pipeline.</p>
+<p><strong>Setting:</strong> Riverstone Bank
+<strong>Loan officer:</strong> Arjun
+<strong>Customers (8):</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>ID</th>
+  <th>Name</th>
+  <th>Age</th>
+  <th>Monthly Income (₹)</th>
+  <th>Loan Requested (₹)</th>
+  <th>Existing Loan</th>
+  <th>Credit Score</th>
+  <th>Employment</th>
+  <th>Defaulted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Ravi</td>
+  <td>29</td>
+  <td>45,000</td>
+  <td>200,000</td>
+  <td>No</td>
+  <td>720</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Sunita</td>
+  <td>34</td>
+  <td>62,000</td>
+  <td>350,000</td>
+  <td>Yes</td>
+  <td>680</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Farhan</td>
+  <td>41</td>
+  <td>38,000</td>
+  <td>150,000</td>
+  <td>No</td>
+  <td>610</td>
+  <td>Self-employed</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Meena</td>
+  <td>26</td>
+  <td>30,000</td>
+  <td>100,000</td>
+  <td>No</td>
+  <td>590</td>
+  <td>Salaried</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Deepak</td>
+  <td>50</td>
+  <td>85,000</td>
+  <td>500,000</td>
+  <td>Yes</td>
+  <td><em>(missing)</em></td>
+  <td>Self-employed</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Kavya</td>
+  <td>31</td>
+  <td>55,000</td>
+  <td>250,000</td>
+  <td>No</td>
+  <td>700</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>Imran</td>
+  <td>45</td>
+  <td>40,000</td>
+  <td>180,000</td>
+  <td>Yes</td>
+  <td>615</td>
+  <td>Self-employed</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Priya</td>
+  <td>27</td>
+  <td>12,00,000 <em>(outlier)</em></td>
+  <td>300,000</td>
+  <td>No</td>
+  <td>750</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+</tbody>
+</table>
+<p>Two data quality issues are <strong>deliberately embedded from the start</strong>, not
+introduced later as a &quot;gotcha&quot;:</p>
+<ul>
+<li><strong>Deepak's credit score is missing</strong> — the credit bureau API call timed
+out (external system failure).</li>
+<li><strong>Priya's monthly income is an outlier</strong> — likely a data-entry typo on
+the application form (human-entered source failure), ₹1,20,000 vs
+₹12,00,000.</li>
+</ul>
+<p>These carry forward through the rest of the phase — cleaning, encoding,
+feature engineering, and later model training will all reference back to
+these same two problems.</p>
+<h2 id="topics-13">Topics (13)</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Topic</th>
+  <th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Data Collection</td>
+  <td>✅ Complete</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Data Cleaning, Missing Values, Outliers</td>
+  <td>✅ Complete</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Feature Engineering, Encoding</td>
+  <td>⬜ Next up</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Regression</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Classification</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Clustering</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>Training / Test / Validation Data</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Overfitting, Underfitting</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>Accuracy, Precision, Recall, F1</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>Confusion Matrix</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>Model Tuning Basics</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>Bringing It Together (mini scenario)</td>
+  <td>⬜</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td>End-to-End Recap (conceptual only, no coding)</td>
+  <td>⬜</td>
+</tr>
+</tbody>
+</table>
+<h2 id="folder-structure">Folder Structure</h2>
+<p>Each topic gets its own subfolder under <code>phase_3_classical_ml/</code>, rather
+than flat files at the root. Convention:</p>
+<div class="code"><pre>phase_3_classical_ml/
+  00_strategy.md
+  01_data_collection/
+    01_data_collection.md
+  02_data_cleaning/
+    02_data_cleaning.md
+    images/
+      02_income_outlier_iqr.svg
+  03_feature_engineering/
+    03_feature_engineering.md
+    images/           (only if that topic has visuals)
+  ...
+</pre></div>
+<p>Each topic folder contains its own <code>images/</code> subfolder if that topic has
+any embedded diagrams — keeps visuals scoped to the topic they belong to
+instead of one shared folder growing unmanageably across 13 topics.</p>
+<h2 id="teaching-rhythm-per-topic">Teaching Rhythm (per topic)</h2>
+<ol>
+<li><strong>Story-first</strong> — real-world scenario with concrete numbers, using the
+Riverstone Bank dataset.</li>
+<li><strong>3-level explanation</strong> — child level, software engineer level,
+interview-ready level.</li>
+<li><strong>Conceptual verification question</strong> — answered before notes are
+generated. Not optional; this is the teaching contract.</li>
+<li><strong>GenAI/RAG bridge</strong> — explicit mapping from the classical ML concept to
+its later GenAI/RAG equivalent.</li>
+<li><strong>Visuals where they help</strong> — diagrams/charts generated whenever a
+number-heavy or spatial concept (spread, distribution, boundaries)
+benefits from seeing it, not just reading it. Saved as an actual <code>.svg</code>
+file under <code>images/</code> and embedded in the notes with markdown image
+syntax — not just described in prose — so it renders on GitHub.</li>
+<li><strong>Notes generated</strong> — only after understanding is confirmed.</li>
+<li><strong>Commit to GitHub</strong> — before advancing to the next topic.</li>
+</ol>
+<h2 id="recurring-add-ons-practice-faq-interview-prep">Recurring Add-Ons (Practice, FAQ, Interview Prep)</h2>
+<p>These layer on top of the core rhythm above, starting from Topic 2 onward
+(and retrofitted to earlier topics if requested).</p>
+<h3>Riverstone Case Files (practice sessions)</h3>
+<p>After a topic's notes are committed, before moving to the next topic, a new
+mini-scenario is introduced in the same Riverstone Bank universe — a new
+customer or a new twist — that requires applying the just-learned concept.
+Rules:</p>
+<ul>
+<li><strong>Solved independently first</strong> — no walkthrough given up front, same
+paper-work-checked-not-solved contract as the main teaching flow.</li>
+<li>Kept in the same story world deliberately, instead of abstract drills,
+so the practice reinforces the mental model rather than testing
+formula recall in isolation.</li>
+<li>Every few topics, a <strong>cumulative case file</strong> quietly requires concepts
+from 2-3 topics back as well as the current one — informal spaced
+repetition without calling it that.</li>
+<li>A short rapid-fire round (2-3 quick &quot;why/what&quot; conceptual questions, not
+calculations) can follow the case file to test verbal recall, mimicking
+how the concept would come up in an interview setting.</li>
+</ul>
+<h3>FAQ section (per topic notes file)</h3>
+<p>A small set (3-5) of common conceptual mix-ups for that topic, written
+generally — &quot;what someone learning this topic commonly gets confused
+about&quot; — as distinct from the verbatim &quot;Clarifying Questions Asked&quot; log
+(which captures the actual back-and-forth from that specific learning
+session). Both can coexist in the same notes file; they serve different
+purposes.</p>
+<h3>Interview Questions &amp; Answers (per topic notes file)</h3>
+<p>3-5 realistic interview-style questions for that topic with concise model
+answers, pitched at the interview-ready level from the 3-level explanation.
+Builds directly toward the interview-prep work planned for later in the
+roadmap (post Phase 4+), so this doesn't need to be redone from scratch
+later — just aggregated.</p>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Topic 13 is a conceptual recap only — no coding project.</li>
+<li>Math/paper-work verification (as used heavily in Phase 2) applies only
+where a topic involves actual computation (e.g., a metric calculation in
+Topic 9). Purely conceptual topics like Data Collection are verified
+through reasoning questions instead.</li>
+</ul>
+
+<div class="src-head">📝 <a href="../Concept/01_data_collection.md">01_data_collection.md</a></div>
+<h2 id="phase-3-topic-1-data-collection">Phase 3, Topic 1 — Data Collection</h2>
+<h2 id="the-story">The Story</h2>
+<p>Arjun is a loan officer at <strong>Riverstone Bank</strong>. His task: assemble a dataset
+of the bank's last 8 loan applicants so the bank can start predicting who's
+likely to default, before another case like last year's happens again.</p>
+<p>Arjun doesn't have one clean spreadsheet waiting for him. He has to pull
+data from four separate systems, each with its own behavior:</p>
+<ol>
+<li><strong>Loan application form</strong> (customer-entered) → name, age, requested loan
+amount, employment type</li>
+<li><strong>Core banking system</strong> (internal DB) → existing monthly income, existing
+loans</li>
+<li><strong>Credit bureau API</strong> (external, third-party) → credit score</li>
+<li><strong>Loan history records</strong> (internal, historical) → whether the customer
+defaulted</li>
+</ol>
+<p>By Friday, Arjun has this raw table:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>ID</th>
+  <th>Name</th>
+  <th>Age</th>
+  <th>Monthly Income (₹)</th>
+  <th>Loan Requested (₹)</th>
+  <th>Existing Loan</th>
+  <th>Credit Score</th>
+  <th>Employment</th>
+  <th>Defaulted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Ravi</td>
+  <td>29</td>
+  <td>45,000</td>
+  <td>200,000</td>
+  <td>No</td>
+  <td>720</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Sunita</td>
+  <td>34</td>
+  <td>62,000</td>
+  <td>350,000</td>
+  <td>Yes</td>
+  <td>680</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Farhan</td>
+  <td>41</td>
+  <td>38,000</td>
+  <td>150,000</td>
+  <td>No</td>
+  <td>610</td>
+  <td>Self-employed</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Meena</td>
+  <td>26</td>
+  <td>30,000</td>
+  <td>100,000</td>
+  <td>No</td>
+  <td>590</td>
+  <td>Salaried</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Deepak</td>
+  <td>50</td>
+  <td>85,000</td>
+  <td>500,000</td>
+  <td>Yes</td>
+  <td><em>(missing)</em></td>
+  <td>Self-employed</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Kavya</td>
+  <td>31</td>
+  <td>55,000</td>
+  <td>250,000</td>
+  <td>No</td>
+  <td>700</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>Imran</td>
+  <td>45</td>
+  <td>40,000</td>
+  <td>180,000</td>
+  <td>Yes</td>
+  <td>615</td>
+  <td>Self-employed</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Priya</td>
+  <td>27</td>
+  <td>12,00,000</td>
+  <td>300,000</td>
+  <td>No</td>
+  <td>750</td>
+  <td>Salaried</td>
+  <td>No</td>
+</tr>
+</tbody>
+</table>
+<p>Two problems show up immediately, before any analysis begins:</p>
+<ul>
+<li><strong>Deepak's credit score is missing</strong> — the credit bureau <strong>API call timed
+out</strong>. This is an external-system failure, unrelated to Deepak's own
+attributes (e.g., not related to his employment type — it's simply that
+the API didn't respond).</li>
+<li><strong>Priya's monthly income (₹12,00,000)</strong> looks like a <strong>data-entry typo</strong>
+on the application form — most likely ₹1,20,000 mistyped, since a
+customer types this value in directly.</li>
+</ul>
+<p>This isn't a constructed edge case — this is what real data collection
+looks like by default, because it's stitched together from independent
+systems that don't validate against each other.</p>
+<h2 id="the-core-lesson">The Core Lesson</h2>
+<p>Different <strong>source types</strong> fail in different, characteristic ways:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Source type</th>
+  <th>Example in this story</th>
+  <th>Typical failure mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Human-entered (form)</td>
+  <td>Loan application form</td>
+  <td>Wrong/mistyped values (outliers, typos)</td>
+</tr>
+<tr>
+  <td>External system (API)</td>
+  <td>Credit bureau</td>
+  <td>Missing values (timeouts, failures, rate limits)</td>
+</tr>
+<tr>
+  <td>Internal DB</td>
+  <td>Core banking system</td>
+  <td>Stale or inconsistent values</td>
+</tr>
+<tr>
+  <td>Historical records</td>
+  <td>Loan history table</td>
+  <td>Usually most reliable — already validated over time</td>
+</tr>
+</tbody>
+</table>
+<p>The takeaway is <strong>not</strong> &quot;one source is the riskiest overall.&quot; It's that
+<strong>each source type carries its own predictable failure mode</strong>, and a good
+data collection process anticipates the <em>specific</em> way each pipeline is
+likely to break — rather than treating &quot;bad data&quot; as one generic risk.</p>
+<p>This distinction matters directly for the next topic (Data Cleaning):
+knowing <em>why</em> a value is missing or wrong changes how you should fix it.
+A missing value from an API timeout might just need a retry or a
+default/flag. A likely-typo outlier needs a different kind of correction
+(e.g., validation range checks) than a genuinely-missing field does.</p>
+<h2 id="three-levels-of-understanding">Three Levels of Understanding</h2>
+<p><strong>Child level:</strong>
+Imagine making a fruit salad, but the fruits aren't in your kitchen yet —
+some are in the fridge, some are at the store, some your friend is bringing
+over. Data collection is just going and getting all the fruit first, from
+wherever it lives, before you can start cutting anything.</p>
+<p><strong>Software engineer level:</strong>
+Arjun's process is an ETL job. He pulls from four systems of record — a
+form submission (like a POST body), an internal DB query, a third-party
+REST API (credit bureau), and a historical records table — and merges them
+into one row per customer, keyed by customer ID. Each source has its own
+reliability profile, exactly like integrating multiple systems in a Spring
+Boot service: an API call can time out (→ missing value), user-entered form
+data can have typos (→ outlier), and different systems can disagree on the
+same fact. Data collection is the <strong>ingestion layer</strong> — before cleaning,
+before feature engineering, before any model.</p>
+<p><strong>Interview-ready level:</strong></p>
+<div class="note"><div class="h">Note</div><p>Data collection is the process of gathering raw data from all relevant
+sources — internal systems, external APIs, forms, logs, or historical
+records — into a single dataset used for analysis or model training. It's
+the first stage of the ML pipeline, and its quality directly caps the
+quality of everything downstream: missing values, outliers, and
+inconsistent formats introduced at this stage propagate forward unless
+explicitly handled during cleaning. Different source types tend to fail
+in different, predictable ways — human-entered data skews toward
+incorrect values, external APIs skew toward missing values, internal DBs
+skew toward staleness.</p>
+</div>
+<h2 id="genai-rag-bridge">GenAI / RAG Bridge</h2>
+<p>Data collection is the same first step in a RAG pipeline. Before chunking
+documents and generating embeddings, you first <strong>collect</strong> the raw
+documents — pulling PDFs from SharePoint, scraping a knowledge base,
+hitting a Confluence API, exporting tickets from a helpdesk system. Just
+like Arjun's dataset:</p>
+<ul>
+<li>A failed scrape or API timeout → a <strong>missing document</strong> (same failure
+mode as Deepak's credit score).</li>
+<li>Garbled OCR text or a corrupted export → a <strong>bad/outlier document</strong>
+(same failure mode as Priya's income).</li>
+</ul>
+<p>If document collection is sloppy, no amount of clever retrieval or
+prompting downstream fixes it. Garbage in, garbage out applies identically
+to ML training data and RAG source documents.</p>
+<h2 id="verification-confirmed-understanding">Verification (confirmed understanding)</h2>
+<p><strong>Question asked:</strong> Which of the four data sources is most likely to
+introduce quality problems, and why?</p>
+<p><strong>Answer reached:</strong> Not one single source is &quot;the riskiest&quot; — different
+source types introduce different <em>kinds</em> of problems. Human-entered data
+(forms) tends to produce wrong values; external APIs tend to produce
+missing values; internal DBs tend to produce stale/inconsistent values.
+Good data collection means anticipating the specific failure mode of each
+source, not defending against &quot;bad data&quot; as one generic category.</p>
+<h2 id="status">Status</h2>
+<p>✅ Topic 1 understood and confirmed. Ready to proceed to Topic 2: Data
+Cleaning, Missing Values, Outliers — which will directly resolve Deepak's
+missing credit score and Priya's income outlier.</p>
+
+<div class="foot"><a class="btn" href="../Concept/00_strategy.md">00_strategy.md ↗</a><a class="btn" href="../Concept/01_data_collection.md">01_data_collection.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

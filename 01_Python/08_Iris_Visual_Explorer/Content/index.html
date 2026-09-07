@@ -1,293 +1,1554 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore Iris flower anatomy, measurements, distributions, correlations, and a simple classifier in plain HTML, CSS, and JavaScript.">
-  <title>Iris Flower Visual Explorer</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iris Visual Explorer — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 </head>
 <body>
-  <header class="hero">
-    <nav class="nav" aria-label="Main navigation">
-      <a class="brand" href="#top" aria-label="Iris Explorer home">
-        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-        Iris Explorer
-      </a>
-      <div class="nav-links">
-        <a href="#anatomy">Flower</a>
-        <a href="#computations">Computations</a>
-        <a href="#explore">Explore</a>
-        <a href="#connections">Connections</a>
-      </div>
-    </nav>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">01 Python › <b>Iris Visual Explorer</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#the-iris-dataset-what-is-actually-inside-it">The Iris Dataset — What Is Actually Inside It</a><a href="#1-what-is-it">1. What is it?</a><a href="#2-why-does-everyone-use-it">2. Why does everyone use it?</a><a href="#3-the-five-columns">3. The five columns</a><a href="#4-sepal-and-petal-what-are-they">4. Sepal and petal — what are they?</a><a href="#5-the-whole-dataset-in-one-picture">5. The whole dataset in one picture</a><a href="#6-shape-types-and-data-quality">6. Shape, types, and data quality</a><a href="#7-class-balance">7. Class balance</a><a href="#8-what-range-are-the-numbers-in">8. What range are the numbers in?</a><a href="#9-the-core-table-averages-per-species">9. The core table — averages per species</a><a href="#10-averages-hide-overlap-look-at-the-spread">10. Averages hide overlap — look at the spread</a><a href="#11-one-chart-that-shows-everything-pairplot">11. One chart that shows everything — pairplot</a><a href="#12-how-the-columns-relate-to-each-other">12. How the columns relate to each other</a><a href="#13-so-how-separable-is-it-really">13. So how separable is it really?</a><a href="#14-common-mistakes">14. Common mistakes</a><a href="#15-key-takeaway">15. Key takeaway</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Python and the data toolkit</p>
+  <h1>Iris Visual Explorer</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">7 notebooks</span></div>
+</div>
+<div class="src-head">📓 <a href="../Concept/iris_dataset_explained.ipynb">iris_dataset_explained.ipynb</a></div>
+<h2 id="the-iris-dataset-what-is-actually-inside-it">The Iris Dataset — What Is Actually Inside It</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M02 Data Visualization (Seaborn)</p>
+</div>
+<p>Before plotting a dataset, you should know what its columns mean. This notebook
+opens up <code>iris</code> column by column, so that every later Seaborn chart is a chart
+you can read.</p>
+<p>Related: <a href="./test.ipynb"><code>test.ipynb</code></a> — the Seaborn plot-type practice that uses this dataset.</p>
 
-    <div class="hero-content" id="top">
-      <div>
-        <p class="eyebrow">Interactive dataset guide</p>
-        <h1>Understand Iris flowers through color, values, and connections.</h1>
-        <p class="lead">Each point is one flower. Hover, focus, or tap a point to see its exact measurements, then use the correlation map to learn how those measurements move together.</p>
-        <a class="primary-link" href="#explore">Start exploring</a>
-      </div>
-      <aside class="dataset-summary" aria-label="Dataset summary">
-        <p><strong>150</strong><span>flowers</span></p>
-        <p><strong>3</strong><span>species</span></p>
-        <p><strong>4</strong><span>measurements</span></p>
-      </aside>
-    </div>
-  </header>
+<h2 id="1-what-is-it">1. What is it?</h2>
+<p>The iris dataset is <strong>150 flowers</strong>. Each flower has <strong>4 measurements</strong> taken with
+a ruler, plus the <strong>name of its species</strong>.</p>
+<p>There are 3 species — <em>setosa</em>, <em>versicolor</em>, <em>virginica</em> — and exactly 50 flowers
+of each.</p>
+<p>The measurements were collected in 1935 by the botanist Edgar Anderson. The
+statistician Ronald Fisher used them in a 1936 paper, and the data has been the
+standard teaching example ever since.</p>
+<h2 id="2-why-does-everyone-use-it">2. Why does everyone use it?</h2>
+<ul>
+<li>It is <strong>small</strong>. 150 rows loads instantly and prints on one screen.</li>
+<li>It is <strong>clean</strong>. No missing values, no weird encodings, no date parsing.</li>
+<li>It is <strong>balanced</strong>. 50 of each species, so accuracy numbers are honest.</li>
+<li>The answer is <strong>visible</strong>. You can see the species separate in a scatter plot.
+You do not need a model to believe the result.</li>
+</ul>
+<p><strong>Engineering view:</strong> iris is a seed-data fixture. It is the <code>data.sql</code> you keep
+in test resources. You use it to prove the <em>pipeline</em> runs — the loader, the
+plot call, the training loop. You never use it to prove the <em>model</em> is good.
+Any algorithm scores well on iris. That says nothing about your real problem.</p>
 
-  <main>
-    <section class="measurement-guide" aria-labelledby="measurement-title">
-      <div class="section-heading compact">
-        <p class="eyebrow">First, know the columns</p>
-        <h2 id="measurement-title">Four measurements describe every flower</h2>
-        <p>Sepals are the outer leaf-like parts. Petals are the inner parts. Every value is measured in centimeters.</p>
-      </div>
-      <div class="measurement-list">
-        <article><span>01</span><h3>Sepal length</h3><p>End-to-end length of the sepal.</p></article>
-        <article><span>02</span><h3>Sepal width</h3><p>Width across the broadest part.</p></article>
-        <article><span>03</span><h3>Petal length</h3><p>End-to-end length of the petal.</p></article>
-        <article><span>04</span><h3>Petal width</h3><p>Width across the broadest part.</p></article>
-      </div>
-    </section>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
-    <section class="anatomy-section" id="anatomy" aria-labelledby="anatomy-title">
-      <div class="section-heading">
-        <p class="eyebrow">See the real flower structure</p>
-        <h2 id="anatomy-title">Sepals outside, petals inside</h2>
-        <p>The notebook draws the flower schematically because the dataset contains measurements, not photographs. Hover, focus, or tap either flower part to see what its two columns mean.</p>
-      </div>
+# One consistent look and one consistent colour per species for the whole notebook.
+sns.set_theme(style=&quot;whitegrid&quot;, context=&quot;notebook&quot;)
 
-      <div class="anatomy-layout">
-        <div class="anatomy-card">
-          <h3>Where the measured parts sit</h3>
-          <div class="anatomy-stage">
-            <span class="part-label petal-label">Petal <small>inner leaf</small></span>
-            <span class="part-label sepal-label">Sepal <small>outer leaf</small></span>
-            <div class="flower-shape anatomy-flower" aria-label="Schematic Iris flower">
-              <button class="flower-leaf sepal leaf-1" type="button" data-flower-part="sepal" aria-label="Sepal, the outer leaf" aria-pressed="false"></button>
-              <button class="flower-leaf sepal leaf-2" type="button" data-flower-part="sepal" aria-label="Sepal, the outer leaf" aria-pressed="false"></button>
-              <button class="flower-leaf sepal leaf-3" type="button" data-flower-part="sepal" aria-label="Sepal, the outer leaf" aria-pressed="false"></button>
-              <button class="flower-leaf petal leaf-4" type="button" data-flower-part="petal" aria-label="Petal, the inner leaf" aria-pressed="false"></button>
-              <button class="flower-leaf petal leaf-5" type="button" data-flower-part="petal" aria-label="Petal, the inner leaf" aria-pressed="false"></button>
-              <button class="flower-leaf petal leaf-6" type="button" data-flower-part="petal" aria-label="Petal, the inner leaf" aria-pressed="false"></button>
-              <span class="flower-center" aria-hidden="true"></span>
-            </div>
-          </div>
-          <div id="anatomy-readout" class="anatomy-readout" aria-live="polite">
-            <strong>Hover a petal or sepal</strong>
-            <span>The matching dataset columns will appear here.</span>
-          </div>
-        </div>
+SPECIES_ORDER = [&quot;setosa&quot;, &quot;versicolor&quot;, &quot;virginica&quot;]
+SPECIES_COLORS = {
+    &quot;setosa&quot;:     &quot;#0173B2&quot;,  # blue
+    &quot;versicolor&quot;: &quot;#DE8F05&quot;,  # orange
+    &quot;virginica&quot;:  &quot;#029E73&quot;,  # green
+}
 
-        <div class="average-size-card">
-          <h3>The four numbers at average size</h3>
-          <div class="average-leaves" aria-label="Average sepal and petal measurements">
-            <figure>
-              <div class="average-leaf sepal-sample"><span class="vertical-measure">5.8 cm</span><span class="horizontal-measure">3.1 cm</span></div>
-              <figcaption><strong>Sepal</strong><span>length × width</span></figcaption>
-            </figure>
-            <figure>
-              <div class="average-leaf petal-sample"><span class="vertical-measure">3.8 cm</span><span class="horizontal-measure">1.2 cm</span></div>
-              <figcaption><strong>Petal</strong><span>length × width</span></figcaption>
-            </figure>
-          </div>
-          <p>The average sepal is longer and wider, but petal measurements separate the species much more clearly.</p>
-        </div>
-      </div>
-    </section>
+FEATURES = [&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;]
 
-    <section class="species-mean-section" aria-labelledby="species-mean-title">
-      <div class="section-heading">
-        <p class="eyebrow">Dataset → species → one average flower</p>
-        <h2 id="species-mean-title">Only the values change between species</h2>
-        <p>Every row has the same four feature columns. These HTML flowers are scaled from the computed species averages, so the petal growth you see comes directly from the data.</p>
-      </div>
-      <div id="mean-flowers" class="mean-flower-grid"></div>
-      <div id="mean-flower-readout" class="mean-flower-readout" aria-live="polite">
-        <strong>Compare the colored flowers</strong>
-        <span>Hover, focus, or tap one to inspect its four computed averages.</span>
-      </div>
-    </section>
+iris = sns.load_dataset(&quot;iris&quot;)
+iris.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal_length  sepal_width  petal_length  petal_width species
+0           5.1          3.5           1.4          0.2  setosa
+1           4.9          3.0           1.4          0.2  setosa
+2           4.7          3.2           1.3          0.2  setosa
+3           4.6          3.1           1.5          0.2  setosa
+4           5.0          3.6           1.4          0.2  setosa</pre></div>
+<h2 id="3-the-five-columns">3. The five columns</h2>
+<p><code>sns.load_dataset(&quot;iris&quot;)</code> returns a normal Pandas DataFrame. Five columns:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column</th>
+  <th>Meaning</th>
+  <th>Type</th>
+  <th>Unit</th>
+  <th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>sepal_length</code></td>
+  <td>length of the outer leaf</td>
+  <td><code>float64</code></td>
+  <td>cm</td>
+  <td>feature</td>
+</tr>
+<tr>
+  <td><code>sepal_width</code></td>
+  <td>width of the outer leaf</td>
+  <td><code>float64</code></td>
+  <td>cm</td>
+  <td>feature</td>
+</tr>
+<tr>
+  <td><code>petal_length</code></td>
+  <td>length of the inner leaf</td>
+  <td><code>float64</code></td>
+  <td>cm</td>
+  <td>feature</td>
+</tr>
+<tr>
+  <td><code>petal_width</code></td>
+  <td>width of the inner leaf</td>
+  <td><code>float64</code></td>
+  <td>cm</td>
+  <td>feature</td>
+</tr>
+<tr>
+  <td><code>species</code></td>
+  <td>which flower it is</td>
+  <td><code>str</code></td>
+  <td>—</td>
+  <td><strong>label</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Two words you will see constantly:</p>
+<ul>
+<li>A <strong>feature</strong> is an input. Something you measure. Usually written <code>X</code>.</li>
+<li>A <strong>label</strong> (or <em>target</em>) is the answer you want to predict. Usually written <code>y</code>.</li>
+</ul>
+<p>So iris is 4 features and 1 label. In plotting terms, the 4 features go on your
+axes, and the label goes into <code>hue</code>.</p>
 
-    <section class="computation-section" id="computations" aria-labelledby="computation-title">
-      <div class="section-heading">
-        <p class="eyebrow">Compute before you chart</p>
-        <h2 id="computation-title">The checks and calculations behind the visuals</h2>
-        <p>All numbers below are calculated in JavaScript from the same 150 rows embedded in this page.</p>
-      </div>
+<h2 id="4-sepal-and-petal-what-are-they">4. Sepal and petal — what are they?</h2>
+<p>This trips up most people, because the words are botanical, not technical.</p>
+<ul>
+<li>A <strong>petal</strong> is the coloured inner leaf. This is the part you think of as &quot;the flower&quot;.</li>
+<li>A <strong>sepal</strong> is the outer leaf. It wrapped and protected the flower while it was
+still a closed bud. On an iris it is large and looks like a second set of petals.</li>
+</ul>
+<p>Every flower has both. The dataset measures the <strong>length</strong> and the <strong>width</strong> of
+one of each — that is where the 4 numbers come from.</p>
 
-      <div id="quality-checks" class="quality-checks" aria-label="Dataset quality checks"></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.6))
+for ax in (ax1, ax2):
+    ax.set_aspect(&quot;equal&quot;); ax.axis(&quot;off&quot;); ax.grid(False)
 
-      <div class="computation-layout">
-        <article class="balance-panel">
-          <p class="mini-label">Class balance</p>
-          <h3>50 flowers in every species</h3>
-          <p>A balanced label column makes accuracy easier to interpret.</p>
-          <div id="balance-bars" class="balance-bars"></div>
-          <p class="balance-note">Each species is 33.3% of the data. By contrast, a 140 / 5 / 5 split could make an always-majority guess look 93.3% accurate while learning nothing useful.</p>
-        </article>
+SEPAL_C, PETAL_C = &quot;#7A9E5B&quot;, &quot;#8B6BB1&quot;
 
-        <article class="formula-panel">
-          <p class="mini-label">What each calculation answers</p>
-          <dl>
-            <div><dt>Mean</dt><dd><code>sum ÷ count</code><span>What is a typical value?</span></dd></div>
-            <div><dt>Range</dt><dd><code>maximum − minimum</code><span>How far do values spread?</span></dd></div>
-            <div><dt>Correlation</dt><dd><code>−1 to +1</code><span>Do two columns move together?</span></dd></div>
-            <div><dt>Accuracy</dt><dd><code>correct ÷ total × 100</code><span>How often are the rules right?</span></dd></div>
-          </dl>
-        </article>
-      </div>
+# --- Left: where the parts sit on the flower ---
+ax1.set_title(&quot;Where they sit on the flower&quot;, fontsize=11, weight=&quot;bold&quot;)
+from matplotlib.patches import Ellipse
+for angle in (90, 210, 330):            # 3 outer sepals, drooping
+    r = np.deg2rad(angle)
+    ax1.add_patch(Ellipse((1.05*np.cos(r), 1.05*np.sin(r)), 0.85, 2.0,
+                          angle=angle - 90, color=SEPAL_C, alpha=.85))
+for angle in (30, 150, 270):            # 3 inner petals, upright
+    r = np.deg2rad(angle)
+    ax1.add_patch(Ellipse((0.60*np.cos(r), 0.60*np.sin(r)), 0.60, 1.25,
+                          angle=angle - 90, color=PETAL_C, alpha=.9))
+ax1.add_patch(plt.Circle((0, 0), 0.22, color=&quot;#E8C547&quot;))
+ax1.annotate(&quot;sepal\n(outer leaf)&quot;, xy=(0.95, 1.55), xytext=(1.6, 2.3),
+             color=SEPAL_C, weight=&quot;bold&quot;, ha=&quot;center&quot;,
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=SEPAL_C, lw=1.6))
+ax1.annotate(&quot;petal\n(inner leaf)&quot;, xy=(0.45, 0.75), xytext=(-1.9, 2.3),
+             color=PETAL_C, weight=&quot;bold&quot;, ha=&quot;center&quot;,
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=PETAL_C, lw=1.6))
+ax1.set_xlim(-2.9, 2.9); ax1.set_ylim(-2.6, 3.0)
 
-      <article class="summary-panel">
-        <div>
-          <p class="mini-label">JavaScript version of <code>describe()</code></p>
-          <h3>Numeric summary of all four measurements</h3>
-        </div>
-        <div class="table-scroll">
-          <table id="summary-table">
-            <caption>Descriptive statistics in centimeters</caption>
-          </table>
-        </div>
-      </article>
+# --- Right: the 4 measurements, drawn to the real average size ---
+ax2.set_title(&quot;The 4 numbers, at real average size (cm)&quot;, fontsize=11, weight=&quot;bold&quot;)
+m = iris[[&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;]].mean()
 
-      <article class="distribution-panel">
-        <div>
-          <p class="mini-label">Distribution and overlap</p>
-          <h3>Averages do not show the whole range</h3>
-          <p>Each line runs from minimum to maximum, the thicker box covers the middle 50%, and the tick marks the median. Hover, focus, or tap a species row for exact values.</p>
-        </div>
-        <div id="distribution-plots" class="distribution-plots"></div>
-        <div id="distribution-readout" class="distribution-readout" aria-live="polite">
-          <strong>Why this matters</strong>
-          <span>Setosa petals form a separate group, while Versicolor and Virginica overlap.</span>
-        </div>
-      </article>
-    </section>
+def draw(cx, w, h, colour, name, wkey, hkey):
+    ax2.add_patch(Ellipse((cx, h/2), w, h, color=colour, alpha=.55))
+    ax2.annotate(&quot;&quot;, xy=(cx - w/2 - .35, 0), xytext=(cx - w/2 - .35, h),
+                 arrowprops=dict(arrowstyle=&quot;&lt;-&gt;&quot;, color=&quot;#333&quot;, lw=1.5))
+    ax2.text(cx - w/2 - .5, h/2, f&quot;{hkey}\n{m[hkey]:.1f} cm&quot;, ha=&quot;right&quot;,
+             va=&quot;center&quot;, fontsize=9)
+    ax2.annotate(&quot;&quot;, xy=(cx - w/2, -.45), xytext=(cx + w/2, -.45),
+                 arrowprops=dict(arrowstyle=&quot;&lt;-&gt;&quot;, color=&quot;#333&quot;, lw=1.5))
+    ax2.text(cx, -.8, f&quot;{wkey}\n{m[wkey]:.1f} cm&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, fontsize=9)
+    ax2.text(cx, h + .3, name, ha=&quot;center&quot;, fontsize=11, weight=&quot;bold&quot;, color=colour)
 
-    <section class="explore-section" id="explore" aria-labelledby="explore-title">
-      <div class="section-heading">
-        <p class="eyebrow">Explore every flower</p>
-        <h2 id="explore-title">One point represents one Iris flower</h2>
-        <p>Species use consistent colors and shapes: Setosa is a blue circle, Versicolor is an orange triangle, and Virginica is a green diamond. The axis selectors provide an interactive web version of the notebook pairplot: choose any two measurements to compare.</p>
-      </div>
+draw(0.0, m[&quot;sepal_width&quot;], m[&quot;sepal_length&quot;], SEPAL_C, &quot;SEPAL&quot;, &quot;sepal_width&quot;, &quot;sepal_length&quot;)
+draw(5.2, m[&quot;petal_width&quot;], m[&quot;petal_length&quot;], PETAL_C, &quot;PETAL&quot;, &quot;petal_width&quot;, &quot;petal_length&quot;)
+ax2.set_xlim(-2.6, 7.4); ax2.set_ylim(-1.9, 7.2)
 
-      <div class="controls" aria-label="Scatter plot controls">
-        <label>Horizontal axis
-          <select id="x-feature">
-            <option value="sepalLength">Sepal length</option>
-            <option value="sepalWidth">Sepal width</option>
-            <option value="petalLength" selected>Petal length</option>
-            <option value="petalWidth">Petal width</option>
-          </select>
-        </label>
-        <label>Vertical axis
-          <select id="y-feature">
-            <option value="sepalLength">Sepal length</option>
-            <option value="sepalWidth">Sepal width</option>
-            <option value="petalLength">Petal length</option>
-            <option value="petalWidth" selected>Petal width</option>
-          </select>
-        </label>
-        <fieldset class="species-filters">
-          <legend>Species filter</legend>
-          <div>
-            <button type="button" class="filter-button active" data-filter="all" aria-pressed="true">All <small>150</small></button>
-            <button type="button" class="filter-button setosa" data-filter="setosa" aria-pressed="false"><i class="shape circle" aria-hidden="true"></i>Setosa <small>50</small></button>
-            <button type="button" class="filter-button versicolor" data-filter="versicolor" aria-pressed="false"><i class="shape triangle" aria-hidden="true"></i>Versicolor <small>50</small></button>
-            <button type="button" class="filter-button virginica" data-filter="virginica" aria-pressed="false"><i class="shape diamond" aria-hidden="true"></i>Virginica <small>50</small></button>
-          </div>
-        </fieldset>
-      </div>
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Notice on the right: the <strong>average sepal is bigger than the average petal</strong>, and
+the petal is the narrower of the two. Keep that in mind — the petal columns turn
+out to be the important ones.</p>
 
-      <div class="explorer-layout">
-        <div class="chart-panel">
-          <div class="chart-meta"><span id="chart-context">All species · 150 flowers</span><span id="chart-pair">Petal length × Petal width</span></div>
-          <div class="chart-wrap">
-            <svg id="scatterplot" class="scatterplot" viewBox="0 0 760 470" role="img" aria-labelledby="scatter-title scatter-description">
-              <title id="scatter-title">Interactive Iris measurement scatter plot</title>
-              <desc id="scatter-description">Flowers plotted by two selectable measurements. Hover or focus a point to reveal its values.</desc>
-            </svg>
-            <div id="point-tooltip" class="point-tooltip" hidden aria-live="polite"></div>
-          </div>
-          <p class="chart-help">Hover or focus for exact values. Click, tap, Enter, or Space to keep a flower selected.</p>
-        </div>
+<h2 id="5-the-whole-dataset-in-one-picture">5. The whole dataset in one picture</h2>
+<p>Here is the structure you just described, drawn out. Read it top to bottom:</p>
+<p><strong>Iris → 3 species → every flower carries the same 4 measurements.</strong></p>
+<p>Each flower below is drawn at its species' <strong>true average size</strong>, straight from the
+numbers in the dataset. The three are to scale against each other, so the size
+differences you see are real.</p>
 
-        <aside id="flower-details" class="flower-details" aria-live="polite"></aside>
-      </div>
-    </section>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">from matplotlib.patches import Ellipse, FancyBboxPatch
 
-    <section class="rule-section" id="rules" aria-labelledby="rules-title">
-      <div class="section-heading">
-        <p class="eyebrow">A computation from the chart</p>
-        <h2 id="rules-title">Two straight lines classify 96% of the flowers</h2>
-        <p>The notebook turns the petal plot into two simple <code>if</code> statements. The page computes every prediction and the confusion matrix below.</p>
-      </div>
+means = iris.groupby(&quot;species&quot;)[FEATURES].mean()
 
-      <div class="rule-layout">
-        <article class="rule-steps">
-          <ol>
-            <li><span>1</span><div><strong>If petal length &lt; 2.5 cm</strong><p>Predict Setosa.</p></div></li>
-            <li><span>2</span><div><strong>Otherwise, if petal width &lt; 1.75 cm</strong><p>Predict Versicolor.</p></div></li>
-            <li><span>3</span><div><strong>Otherwise</strong><p>Predict Virginica.</p></div></li>
-          </ol>
-          <button id="show-rule-lines" class="primary-link" type="button" aria-pressed="false">Show rule lines on the scatter plot</button>
-        </article>
+def draw_flower(ax, cx, cy, sl, sw, pl, pw, colour):
+    &quot;&quot;&quot;One schematic iris: 3 outer sepals + 3 inner petals, drawn to real cm.&quot;&quot;&quot;
+    for a in (90, 210, 330):                                    # sepals (outer, faded)
+        r = np.deg2rad(a)
+        ax.add_patch(Ellipse((cx + (sl/2)*np.cos(r), cy + (sl/2)*np.sin(r)),
+                             sw, sl, angle=a-90, facecolor=colour, alpha=.30,
+                             edgecolor=colour, lw=1.2))
+    for a in (30, 150, 270):                                    # petals (inner, solid)
+        r = np.deg2rad(a)
+        ax.add_patch(Ellipse((cx + (pl/2)*np.cos(r), cy + (pl/2)*np.sin(r)),
+                             pw, pl, angle=a-90, facecolor=colour, alpha=.85,
+                             edgecolor=colour, lw=1.2))
+    ax.add_patch(plt.Circle((cx, cy), .45, facecolor=&quot;#E8C547&quot;, edgecolor=&quot;white&quot;, lw=1.5))
 
-        <article class="rule-results">
-          <p class="mini-label">Full dataset · 150 flowers</p>
-          <div id="rule-score" class="rule-score"></div>
-          <div class="table-scroll">
-            <table id="confusion-table">
-              <caption>Actual species compared with the two-rule prediction</caption>
-            </table>
-          </div>
-          <p>All six mistakes happen where Versicolor and Virginica overlap. Setosa is separated perfectly by the first rule.</p>
-        </article>
-      </div>
-    </section>
+def node(ax, cx, cy, text, colour, w, h, fs):
+    ax.add_patch(FancyBboxPatch((cx-w/2, cy-h/2), w, h, boxstyle=&quot;round,pad=0.35&quot;,
+                                linewidth=2, edgecolor=colour, facecolor=&quot;white&quot;, zorder=3))
+    ax.text(cx, cy, text, ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=fs,
+            weight=&quot;bold&quot;, color=colour, zorder=4)
 
-    <section class="connections-section" id="connections" aria-labelledby="connections-title">
-      <div class="section-heading">
-        <p class="eyebrow">See the connections</p>
-        <h2 id="connections-title">Correlation shows which measurements move together</h2>
-        <p>Values near +1 move together, values near −1 move in opposite directions, and values near 0 have a weak linear relationship. Hover a cell for an explanation; click it to update the scatter plot.</p>
-      </div>
+fig, ax = plt.subplots(figsize=(13, 10))
+ax.set_aspect(&quot;equal&quot;); ax.axis(&quot;off&quot;); ax.grid(False)
 
-      <div class="connection-layout">
-        <div class="heatmap-panel">
-          <div class="heatmap-meta"><span id="heatmap-context">All species · 150 flowers</span><span><i class="negative-key"></i> Negative <i class="positive-key"></i> Positive</span></div>
-          <div id="heatmap" class="heatmap" role="grid" aria-label="Iris feature correlation matrix"></div>
-        </div>
-        <aside id="correlation-details" class="correlation-details" aria-live="polite"></aside>
-      </div>
+XS = [0, 20, 40]
+TOP_Y, BUS_Y, SP_Y, FLOWER_Y = 40, 34, 30, 17
+TABLE_Y = FLOWER_Y - means.sepal_length.max() - 2.6      # one shared baseline
+LINE = &quot;#9AA5B1&quot;
 
-      <div class="learning-note">
-        <p class="eyebrow">Important data lesson</p>
-        <h3>The group you choose can change the relationship.</h3>
-        <p>Petal length and petal width have a very strong correlation of about 0.96 across all flowers. Filter to one species and the value changes because you are comparing flowers within one cluster instead of across three clusters.</p>
-      </div>
-    </section>
+# the flow, named down the left edge
+for y, step, note in [(TOP_Y, &quot;1 - the dataset&quot;, &quot;one table, 150 rows&quot;),
+                      (SP_Y, &quot;2 - species&quot;, &quot;the label column&quot;),
+                      (FLOWER_Y, &quot;3 - one flower&quot;, &quot;= one row&quot;),
+                      (TABLE_Y - 4.5, &quot;4 - measurements&quot;, &quot;the 4 feature columns&quot;)]:
+    ax.text(-15, y, step, ha=&quot;left&quot;, va=&quot;center&quot;, fontsize=11, weight=&quot;bold&quot;, color=&quot;#5A6472&quot;)
+    ax.text(-15, y - 1.7, note, ha=&quot;left&quot;, va=&quot;center&quot;, fontsize=9, style=&quot;italic&quot;, color=&quot;#98A2B0&quot;)
 
-    <section class="takeaways" aria-labelledby="takeaway-title">
-      <div class="section-heading compact">
-        <p class="eyebrow">Read the pattern</p>
-        <h2 id="takeaway-title">Three things to remember</h2>
-      </div>
-      <div class="takeaway-list">
-        <article><span>01</span><div><h3>Petals separate species best</h3><p>Setosa petal length stops at 1.9 cm, while Versicolor starts at 3.0 cm.</p></div></article>
-        <article><span>02</span><div><h3>Some species overlap</h3><p>Versicolor and Virginica share a boundary region, so one measurement is not always enough.</p></div></article>
-        <article><span>03</span><div><h3>Sepal width tells a different story</h3><p>Its overall relationships are weak or negative, unlike the strong petal connection.</p></div></article>
-      </div>
-    </section>
-  </main>
+# level 1: the dataset
+node(ax, 20, TOP_Y, &quot;IRIS\n150 flowers measured&quot;, &quot;#333&quot;, 17, 4.6, 14)
+ax.plot([20, 20], [TOP_Y-2.3, BUS_Y], color=LINE, lw=2, zorder=1)
+ax.plot([XS[0], XS[2]], [BUS_Y, BUS_Y], color=LINE, lw=2, zorder=1)
+for x in XS:
+    ax.plot([x, x], [BUS_Y, SP_Y+1.9], color=LINE, lw=2, zorder=1)
 
-  <footer>
-    <p>Iris Flower Visual Explorer</p>
-    <p>The same canonical 150 Iris rows loaded by Seaborn in the notebook · values in centimeters</p>
-    <a href="iris_dataset_explained.ipynb">Open source notebook</a>
-  </footer>
+# levels 2-4: species -&gt; flower at true average size -&gt; its 4 numbers
+for x, sp in zip(XS, SPECIES_ORDER):
+    c, m = SPECIES_COLORS[sp], means.loc[sp]
+    node(ax, x, SP_Y, f&quot;{sp}\n50 flowers&quot;, c, 14, 3.8, 13)
+    ax.plot([x, x], [SP_Y-1.9, FLOWER_Y+m.sepal_length+.6], color=LINE, lw=2, zorder=1)
+    draw_flower(ax, x, FLOWER_Y, m.sepal_length, m.sepal_width, m.petal_length, m.petal_width, c)
+
+    ax.text(x, TABLE_Y, &quot;average measurements&quot;, ha=&quot;center&quot;, va=&quot;top&quot;,
+            fontsize=9, style=&quot;italic&quot;, color=&quot;#666&quot;)
+    for i, k in enumerate(FEATURES):
+        yy, strong = TABLE_Y - 1.9 - i*1.55, k.startswith(&quot;petal&quot;)
+        ax.text(x-.6, yy, k, ha=&quot;right&quot;, va=&quot;center&quot;, fontsize=9.5,
+                color=&quot;#333&quot; if strong else &quot;#8A94A0&quot;, weight=&quot;bold&quot; if strong else &quot;normal&quot;)
+        ax.text(x+.6, yy, f&quot;{m[k]:.2f} cm&quot;, ha=&quot;left&quot;, va=&quot;center&quot;, fontsize=9.5,
+                color=c if strong else &quot;#8A94A0&quot;, weight=&quot;bold&quot; if strong else &quot;normal&quot;)
+
+ax.text(20, TABLE_Y - 9.2,
+        &quot;Same 4 columns for every flower - only the numbers change.\n&quot;
+        &quot;Petals (solid) grow sharply across species; sepals (faded) barely move.&quot;,
+        ha=&quot;center&quot;, va=&quot;top&quot;, fontsize=11, color=&quot;#444&quot;)
+ax.set_xlim(-16, 50); ax.set_ylim(TABLE_Y - 13, 44)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c08-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Reading the result</strong></p>
+<ul>
+<li>Every flower, in all three species, has <strong>exactly the same 4 columns</strong>. The
+structure never changes — only the values do. That is what makes this a table.</li>
+<li>Walk left to right and watch the <strong>solid petals grow</strong>: 1.46 → 4.26 → 5.55 cm.
+Setosa's petals are so small they nearly vanish behind the yellow centre.</li>
+<li>Now watch the <strong>faded sepals</strong>: 5.01 → 5.94 → 6.59 cm. They grow too, but gently —
+and <code>sepal_width</code> actually dips before rising (3.43 → 2.77 → 2.97).</li>
+</ul>
+<p>That contrast is the entire dataset in one image. It is the same finding the charts
+later in this notebook arrive at numerically.</p>
+<p><strong>Mapping the diagram to the table:</strong> level 3 — one flower — is <strong>one row</strong> of the
+DataFrame. Level 4 is its 4 numeric columns, the features (<code>X</code>). Level 2 is the
+<code>species</code> column, the label (<code>y</code>). Level 1 is the whole 150-row table.</p>
+
+<h2 id="6-shape-types-and-data-quality">6. Shape, types, and data quality</h2>
+<p>The first three things to check on any new dataset: how big is it, what types are
+the columns, and what is missing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">print(&quot;rows, columns :&quot;, iris.shape)
+print(&quot;missing values:&quot;, iris.isnull().sum().sum())
+print(&quot;duplicate rows:&quot;, iris.duplicated().sum())
+print()
+iris.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>rows, columns : (150, 5)
+missing values: 0
+duplicate rows: 1
+
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 150 entries, 0 to 149
+Data columns (total 5 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   sepal_length  150 non-null    float64
+ 1   sepal_width   150 non-null    float64
+ 2   petal_length  150 non-null    float64
+ 3   petal_width   150 non-null    float64
+ 4   species       150 non-null    str    
+dtypes: float64(4), str(1)
+memory usage: 6.0 KB</pre></div>
+<p><strong>Reading the result</strong></p>
+<ul>
+<li><strong>150 rows, 5 columns.</strong> Tiny. Everything fits in memory with room to spare.</li>
+<li><strong>0 missing values.</strong> This is why iris is a teaching set and not a realistic one.
+Real datasets are mostly cleaning work. Here there is none.</li>
+<li><strong>1 duplicate row.</strong> Two flowers happened to measure identically. It is a genuine
+reading, not a data error, so it is normally left alone.</li>
+<li><strong>4 float columns + 1 text column.</strong> That split matters: Seaborn treats numeric
+and text columns differently. Numbers go on axes; text goes into <code>hue</code>.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">iris[iris.duplicated(keep=False)]   # the two identical flowers</pre></div>
+<div class="out"><div class="h">Output</div><pre>     sepal_length  sepal_width  petal_length  petal_width    species
+101           5.8          2.7           5.1          1.9  virginica
+142           5.8          2.7           5.1          1.9  virginica</pre></div>
+<h2 id="7-class-balance">7. Class balance</h2>
+<p>Before trusting any accuracy number, count the labels.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">counts = iris[&quot;species&quot;].value_counts()[SPECIES_ORDER]
+print(counts.to_string())
+
+fig, ax = plt.subplots(figsize=(6, 3.4))
+sns.countplot(data=iris, y=&quot;species&quot;, order=SPECIES_ORDER,
+              hue=&quot;species&quot;, hue_order=SPECIES_ORDER,
+              palette=SPECIES_COLORS, legend=False, ax=ax)
+for i, v in enumerate(counts):
+    ax.text(v + 1, i, str(v), va=&quot;center&quot;, fontsize=10, color=&quot;#444&quot;)
+ax.set_xlim(0, 60); ax.set_xlabel(&quot;number of flowers&quot;); ax.set_ylabel(&quot;&quot;)
+ax.set_title(&quot;50 of each species — a perfectly balanced dataset&quot;, fontsize=11)
+sns.despine(left=True); plt.tight_layout(); plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>species
+setosa        50
+versicolor    50
+virginica     50</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c15-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Why this matters.</strong> Suppose the split were 140 / 5 / 5 instead. A model that
+always answered <em>&quot;setosa&quot;</em> would score 93% accuracy while being useless. That is
+the <strong>imbalanced class problem</strong>, and it is one of the most common ways an ML
+result lies to you.</p>
+<p>Iris has none of it. 50 / 50 / 50 means a random guess scores 33%, so anything
+above that is real signal. This is another reason it is a good first dataset —
+one fewer thing to get wrong.</p>
+
+<h2 id="8-what-range-are-the-numbers-in">8. What range are the numbers in?</h2>
+<p><code>describe()</code> gives the five-number summary of every numeric column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">iris.describe().round(2)</pre></div>
+<div class="out"><div class="h">Output</div><pre>       sepal_length  sepal_width  petal_length  petal_width
+count        150.00       150.00        150.00       150.00
+mean           5.84         3.06          3.76         1.20
+std            0.83         0.44          1.77         0.76
+min            4.30         2.00          1.00         0.10
+25%            5.10         2.80          1.60         0.30
+50%            5.80         3.00          4.35         1.30
+75%            6.40         3.30          5.10         1.80
+max            7.90         4.40          6.90         2.50</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">long = iris.melt(id_vars=&quot;species&quot;, var_name=&quot;measurement&quot;, value_name=&quot;cm&quot;)
+
+fig, ax = plt.subplots(figsize=(9, 4.2))
+sns.boxplot(data=long, x=&quot;cm&quot;, y=&quot;measurement&quot;, color=&quot;#B8CBD9&quot;,
+            width=.6, fliersize=3, ax=ax)
+ax.set_xlabel(&quot;centimetres&quot;); ax.set_ylabel(&quot;&quot;)
+ax.set_title(&quot;All 4 measurements on one scale (all 150 flowers together)&quot;, fontsize=11)
+sns.despine(left=True); plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c19-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Reading the result</strong></p>
+<ul>
+<li>Everything sits between <strong>0.1 cm and 7.9 cm</strong>. All four columns are already on a
+similar scale, so this dataset does not need feature scaling. Most real datasets do.</li>
+<li><code>sepal_width</code> is the tightest column (2.0–4.4, std 0.44).</li>
+<li><code>petal_length</code> is the widest spread (1.0–6.9, std 1.77) — and that wide spread is
+a hint. A column that varies a lot is a column that might separate the groups.</li>
+</ul>
+<p>Note that this chart mixes all three species together. That is exactly why the
+petal boxes look so stretched — we are seeing three groups stacked into one box.
+Splitting by species is the next step.</p>
+
+<h2 id="9-the-core-table-averages-per-species">9. The core table — averages per species</h2>
+<p>This one table is the heart of the dataset.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">means = iris.groupby(&quot;species&quot;)[
+    [&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;]
+].mean().round(2).loc[SPECIES_ORDER]
+means</pre></div>
+<div class="out"><div class="h">Output</div><pre>            sepal_length  sepal_width  petal_length  petal_width
+species                                                         
+setosa              5.01         3.43          1.46         0.25
+versicolor          5.94         2.77          4.26         1.33
+virginica           6.59         2.97          5.55         2.03</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">fig, ax = plt.subplots(figsize=(9, 4.4))
+sns.barplot(data=long, x=&quot;measurement&quot;, y=&quot;cm&quot;,
+            hue=&quot;species&quot;, hue_order=SPECIES_ORDER,
+            palette=SPECIES_COLORS, errorbar=None, ax=ax)
+for container in ax.containers:
+    ax.bar_label(container, fmt=&quot;%.1f&quot;, fontsize=8.5, padding=2, color=&quot;#444&quot;)
+ax.set_ylim(0, 7.2); ax.set_xlabel(&quot;&quot;); ax.set_ylabel(&quot;average cm&quot;)
+ax.set_title(&quot;Average of each measurement, per species&quot;, fontsize=11)
+ax.legend(title=&quot;species&quot;, frameon=False)
+sns.despine(); plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c23-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Reading the result</strong> — look at the size of the gaps, not the heights.</p>
+<ul>
+<li><strong><code>sepal_width</code></strong>: 3.43 / 2.77 / 2.97. The gaps are tiny, and setosa is the
+<em>highest</em> while the other two are close together. This column barely helps.</li>
+<li><strong><code>sepal_length</code></strong>: 5.01 / 5.94 / 6.59. A real trend, but the gaps are under 1 cm
+and the individual flowers overlap heavily.</li>
+<li><strong><code>petal_length</code></strong>: 1.46 / 4.26 / 5.55. Setosa is nearly <strong>3 cm</strong> below versicolor.
+That is a huge gap.</li>
+<li><strong><code>petal_width</code></strong>: 0.25 / 1.33 / 2.03. Cleanly stepped, each about 0.7 cm apart.</li>
+</ul>
+<p>The pattern: <strong>petal columns separate the species; sepal columns mostly do not.</strong></p>
+
+<h2 id="10-averages-hide-overlap-look-at-the-spread">10. Averages hide overlap — look at the spread</h2>
+<p>An average can lie. Two species can have different means and still overlap
+completely. So plot the full distribution of each feature, split by species.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">features = FEATURES
+
+fig, axes = plt.subplots(2, 2, figsize=(11, 6.6))
+for ax, feat in zip(axes.flat, features):
+    sns.kdeplot(data=iris, x=feat, hue=&quot;species&quot;, hue_order=SPECIES_ORDER,
+                palette=SPECIES_COLORS, fill=True, alpha=.35,
+                common_norm=False, legend=(feat == &quot;petal_length&quot;), ax=ax)
+    ax.set_title(feat, fontsize=11, weight=&quot;bold&quot;)
+    ax.set_xlabel(&quot;cm&quot;); ax.set_ylabel(&quot;&quot;)
+    ax.set_yticks([])
+    if feat == &quot;petal_length&quot;:                 # park it in the empty top-right
+        sns.move_legend(ax, &quot;upper right&quot;, frameon=False, title=&quot;species&quot;)
+sns.despine(left=True)
+fig.suptitle(&quot;Where each species sits on each measurement&quot;, fontsize=12, y=1.0)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c26-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Reading the result</strong> — now the story is obvious.</p>
+<ul>
+<li><strong>Top row (sepal)</strong>: the three curves sit on top of each other. Given only a
+sepal measurement, you often cannot tell the species.</li>
+<li><strong>Bottom row (petal)</strong>: blue setosa is a completely separate hill, with <strong>empty
+space</strong> between it and the other two. Orange and green overlap a little at their
+edges, but their peaks are clearly apart.</li>
+</ul>
+<p>That empty gap in the petal charts is the whole reason iris works as a teaching
+dataset. It is a classification problem you can literally see.</p>
+
+<h2 id="11-one-chart-that-shows-everything-pairplot">11. One chart that shows everything — <code>pairplot</code></h2>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum</em></p>
+</div>
+<p><code>sns.pairplot</code> plots every feature against every other feature in one grid. For a
+small dataset it is usually the very first thing to run.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">g = sns.pairplot(iris, hue=&quot;species&quot;, hue_order=SPECIES_ORDER,
+                 palette=SPECIES_COLORS, diag_kind=&quot;kde&quot;,
+                 plot_kws=dict(s=28, alpha=.75, edgecolor=&quot;white&quot;, linewidth=.4),
+                 height=1.9)
+g.figure.suptitle(&quot;Every feature against every other feature&quot;, y=1.02, fontsize=12)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c29-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>How to read a pairplot</strong></p>
+<ul>
+<li>The <strong>diagonal</strong> is each feature on its own — the same distribution curves as above.</li>
+<li>Each <strong>off-diagonal</strong> cell is a scatter of one feature against another.</li>
+<li>The grid is mirrored across the diagonal, so you only need to read one half.</li>
+</ul>
+<p><strong>What to look for:</strong> find the cell where the coloured clouds separate most cleanly.
+Here it is <code>petal_length</code> against <code>petal_width</code> — blue setosa sits alone in the
+bottom-left corner with clear space around it, and orange and green form two
+mostly-separate clusters that touch only at the boundary.</p>
+<p>Compare that with the <code>sepal_length</code> / <code>sepal_width</code> cell, where all three colours
+are mixed into one blob. Same flowers, different columns, completely different
+usefulness.</p>
+
+<h2 id="12-how-the-columns-relate-to-each-other">12. How the columns relate to each other</h2>
+<p>A correlation says how strongly two columns move together. <code>+1.0</code> means they rise
+together perfectly, <code>0.0</code> means no relationship, <code>-1.0</code> means one rises as the
+other falls.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">corr = iris[features].corr()
+
+fig, ax = plt.subplots(figsize=(6.2, 5))
+sns.heatmap(corr, annot=True, fmt=&quot;.2f&quot;, cmap=&quot;RdBu_r&quot;, center=0,
+            vmin=-1, vmax=1, square=True, linewidths=2, linecolor=&quot;white&quot;,
+            cbar_kws=dict(label=&quot;correlation&quot;, shrink=.8), ax=ax)
+ax.set_title(&quot;How the 4 measurements move together&quot;, fontsize=11, pad=12)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c32-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Reading the result</strong></p>
+<ul>
+<li><strong><code>petal_length</code> and <code>petal_width</code>: 0.96.</strong> Almost perfectly linked. A long petal
+is a wide petal. These two columns carry nearly the same information.</li>
+<li><strong><code>sepal_length</code> with either petal column: 0.87 / 0.82.</strong> Strong. Bigger flowers
+are bigger all over.</li>
+<li><strong><code>sepal_width</code> with everything: -0.12 to -0.43.</strong> Weak and negative. This column
+behaves differently from the other three.</li>
+</ul>
+<p><strong>Why an engineer cares.</strong> Two columns at 0.96 are largely redundant. Feeding both
+into a linear model causes <em>multicollinearity</em> — the model cannot tell which of the
+two deserves the credit, so the individual coefficients become unstable and hard to
+interpret. The predictions are usually still fine; the explanation is not. This is
+the motivation for dimensionality reduction such as PCA, which you will meet later.</p>
+
+<h2 id="13-so-how-separable-is-it-really">13. So how separable is it really?</h2>
+<p>The charts suggest that petal size alone almost solves the problem. Let us check
+that with the crudest possible model: two <code>if</code> statements, no machine learning.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py"># A hand-written decision tree, straight off the petal charts.
+prediction = np.where(iris.petal_length &lt; 2.5, &quot;setosa&quot;,
+             np.where(iris.petal_width  &lt; 1.75, &quot;versicolor&quot;, &quot;virginica&quot;))
+
+print(&quot;2-rule accuracy      :&quot;, f&quot;{(prediction == iris.species).mean():.1%}&quot;)
+print(&quot;setosa rule alone    :&quot;, f&quot;{((iris.petal_length &lt; 2.5) == (iris.species == &#x27;setosa&#x27;)).mean():.1%}&quot;)
+print()
+print(pd.crosstab(iris.species, prediction,
+                  rownames=[&quot;actual&quot;], colnames=[&quot;predicted&quot;]).to_string())</pre></div>
+<div class="out"><div class="h">Output</div><pre>2-rule accuracy      : 96.0%
+setosa rule alone    : 100.0%
+
+predicted   setosa  versicolor  virginica
+actual                                   
+setosa          50           0          0
+versicolor       0          49          1
+virginica        0           5         45</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">fig, ax = plt.subplots(figsize=(7.6, 5.4))
+sns.scatterplot(data=iris, x=&quot;petal_length&quot;, y=&quot;petal_width&quot;,
+                hue=&quot;species&quot;, hue_order=SPECIES_ORDER, palette=SPECIES_COLORS,
+                s=70, alpha=.85, edgecolor=&quot;white&quot;, linewidth=.7, ax=ax)
+ax.axvline(2.5,  color=&quot;#666&quot;, ls=&quot;--&quot;, lw=1.4)
+ax.axhline(1.75, color=&quot;#666&quot;, ls=&quot;--&quot;, lw=1.4, xmin=.28)
+ax.text(2.40, 1.15, &quot;petal_length = 2.5&quot;, rotation=90, ha=&quot;right&quot;, va=&quot;center&quot;,
+        fontsize=9, color=&quot;#555&quot;)
+ax.text(2.75, 1.83, &quot;petal_width = 1.75&quot;, ha=&quot;left&quot;, va=&quot;bottom&quot;,
+        fontsize=9, color=&quot;#555&quot;)
+for label, x, y, colour in [(&quot;setosa&quot;, 1.45, .85, SPECIES_COLORS[&quot;setosa&quot;]),
+                            (&quot;versicolor&quot;, 4.0, .55, SPECIES_COLORS[&quot;versicolor&quot;]),
+                            (&quot;virginica&quot;, 6.3, 2.60, SPECIES_COLORS[&quot;virginica&quot;])]:
+    ax.text(x, y, label, color=colour, fontsize=11, weight=&quot;bold&quot;, ha=&quot;center&quot;)
+ax.set_ylim(0, 2.8)
+ax.set_xlabel(&quot;petal_length (cm)&quot;); ax.set_ylabel(&quot;petal_width (cm)&quot;)
+ax.set_title(&quot;Two straight lines get 96% of the flowers right&quot;, fontsize=11)
+ax.legend(title=&quot;species&quot;, frameon=False, loc=&quot;lower right&quot;)
+sns.despine(); plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-dataset-explained-c36-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Reading the result</strong></p>
+<ul>
+<li><strong>Setosa is 100% separated</strong> by a single rule: <code>petal_length &lt; 2.5</code>. Not one
+mistake in 50 flowers. In ML terms setosa is <em>linearly separable</em> from the rest.</li>
+<li><strong>The 2-rule model scores 96%</strong> — 6 wrong out of 150. Every mistake is a
+versicolor / virginica mix-up, in the band where the orange and green clouds
+touch.</li>
+<li>No training. No library. Two numbers read off a chart.</li>
+</ul>
+<p>This is the honest lesson of iris: a good chart found the answer before any model
+did, and a real classifier will only recover the last few percent. <strong>Always plot
+the data before reaching for an algorithm.</strong></p>
+
+<h2 id="14-common-mistakes">14. Common mistakes</h2>
+<ol>
+<li><strong>Thinking sepal columns are as useful as petal columns.</strong> They are not. Two of
+the four features do most of the work.</li>
+<li><strong>Judging a model by iris.</strong> 95%+ is the floor here, not an achievement. A
+result on iris tells you your code runs, not that your model is good.</li>
+<li><strong>Using <code>species</code> as a plot axis.</strong> It is text. It belongs in <code>hue</code>, or on a
+categorical axis in a <code>countplot</code> / <code>boxplot</code>.</li>
+<li><strong>Letting the colours change between charts.</strong> If setosa is blue in one chart and
+orange in the next, the reader has to re-learn the legend every time. Fix the
+palette once — as this notebook does with <code>SPECIES_COLORS</code>.</li>
+<li><strong>Forgetting the versicolor / virginica overlap.</strong> People remember &quot;iris is easy&quot;
+and forget that two of the three species genuinely touch. That overlap is where
+all the interesting model differences show up.</li>
+</ol>
+
+<h2 id="15-key-takeaway">15. Key takeaway</h2>
+<div class="note"><div class="h">Note</div><p><strong>If you remember only one thing...</strong> iris is 150 flowers × 4 measurements ×
+3 species, and <strong>the petal columns are the ones that matter</strong>. <code>petal_length</code> and
+<code>petal_width</code> separate the species almost perfectly — two straight lines get 96%
+right — while the sepal columns overlap and mostly do not help.</p>
+</div>
+<p><strong>Cheat sheet for your later work:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>You want</th>
+  <th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Load it</td>
+  <td><code>iris = sns.load_dataset(&quot;iris&quot;)</code></td>
+</tr>
+<tr>
+  <td>Features (<code>X</code>)</td>
+  <td><code>iris[[&quot;sepal_length&quot;,&quot;sepal_width&quot;,&quot;petal_length&quot;,&quot;petal_width&quot;]]</code></td>
+</tr>
+<tr>
+  <td>Label (<code>y</code>)</td>
+  <td><code>iris[&quot;species&quot;]</code></td>
+</tr>
+<tr>
+  <td>Best 2 columns for a clean chart</td>
+  <td><code>petal_length</code>, <code>petal_width</code></td>
+</tr>
+<tr>
+  <td>Worst single column</td>
+  <td><code>sepal_width</code></td>
+</tr>
+<tr>
+  <td>Colour by species</td>
+  <td><code>hue=&quot;species&quot;</code></td>
+</tr>
+<tr>
+  <td>See everything at once</td>
+  <td><code>sns.pairplot(iris, hue=&quot;species&quot;)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Next:</strong> go back to <a href="./test.ipynb"><code>test.ipynb</code></a> and re-read your plots. You now
+know why the <code>petal_length</code> scatter separates so cleanly, and why a <code>lineplot</code> on
+this data is the wrong chart type — iris has no time or sequence axis, so the
+connecting line joins unrelated flowers.</p>
+
+<div class="src-head">📓 <a href="../Concept/iris_exploartion_dashboard.ipynb">iris_exploartion_dashboard.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+%matplotlib inline
+
+sns.set_style(&#x27;darkgrid&#x27;)
+sns.set_palette(&#x27;viridis&#x27;)
+
+print(&quot;All libraries imported successfully!&quot;)
+print(&quot;NumPy version:&quot;, np.__version__)
+print(&quot;Pandas version:&quot;, pd.__version__)
+print(&quot;Seaborn version:&quot;, sns.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>All libraries imported successfully!
+NumPy version: 2.4.6
+Pandas version: 3.0.3
+Seaborn version: 0.13.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Load iris dataset — built into seaborn just like tips!
+df = sns.load_dataset(&#x27;iris&#x27;)
+
+print(&quot;Dataset loaded successfully!&quot;)
+print(&quot;Shape:&quot;, df.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dataset loaded successfully!
+Shape: (150, 5)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+fig.suptitle(&#x27;Iris Dataset — Complete Analysis Dashboard&#x27;, 
+             fontsize=16, fontweight=&#x27;bold&#x27;, y=1.02)
+
+colors = {&#x27;setosa&#x27;: &#x27;steelblue&#x27;, &#x27;versicolor&#x27;: &#x27;tomato&#x27;, &#x27;virginica&#x27;: &#x27;green&#x27;}
+
+# ── Chart 1 — top left — Petal Length Distribution by Species ──
+for species in [&#x27;setosa&#x27;, &#x27;versicolor&#x27;, &#x27;virginica&#x27;]:
+    data = df[df[&#x27;species&#x27;]==species][&#x27;petal_length&#x27;]
+    axes[0,0].hist(data, bins=15, alpha=0.6,
+                   label=species, color=colors[species], edgecolor=&#x27;white&#x27;)
+axes[0,0].set_title(&#x27;Petal Length Distribution&#x27;)
+axes[0,0].set_xlabel(&#x27;Petal Length (cm)&#x27;)
+axes[0,0].set_ylabel(&#x27;Count&#x27;)
+axes[0,0].legend()
+
+# ── Chart 2 — top right — Scatter plot petal_length vs petal_width ──
+for species, group in df.groupby(&#x27;species&#x27;):
+    axes[0,1].scatter(group[&#x27;petal_length&#x27;], group[&#x27;petal_width&#x27;],
+               label=species,
+               color=colors[species],
+               alpha=0.7, s=60)
+axes[0,1].set_title(&#x27;Petal Length Distribution&#x27;)
+axes[0,1].set_xlabel(&#x27;Petal Length (cm)&#x27;)
+axes[0,1].set_ylabel(&#x27;Count&#x27;)
+axes[0,1].legend()
+
+# ── Chart 3 — bottom left — Box plot of all 4 measurements ──
+# Melt the dataframe
+# Chart 3 — bottom left — Box plot all 4 measurements
+df_melted = df.melt(id_vars=&#x27;species&#x27;,
+                    var_name=&#x27;measurement&#x27;,
+                    value_name=&#x27;value&#x27;)
+sns.boxplot(data=df_melted,
+            x=&#x27;measurement&#x27;,
+            y=&#x27;value&#x27;,
+            hue=&#x27;species&#x27;,
+            ax=axes[1,0])
+axes[1,0].set_title(&#x27;All Measurements by Species&#x27;)
+axes[1,0].set_xlabel(&#x27;Measurement&#x27;)
+axes[1,0].set_ylabel(&#x27;Value (cm)&#x27;)
+
+# ── Chart 4 — bottom right — Correlation Heatmap ──
+correlation = df.drop(&#x27;species&#x27;, axis=1).corr()
+print(correlation.round(2))
+
+sns.heatmap(correlation,
+            annot=True,
+            fmt=&#x27;.2f&#x27;,
+            cmap=&#x27;coolwarm&#x27;,
+            center=0,
+            ax=axes[1,1])
+
+
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>              sepal_length  sepal_width  petal_length  petal_width
+sepal_length          1.00        -0.12          0.87         0.82
+sepal_width          -0.12         1.00         -0.43        -0.37
+petal_length          0.87        -0.43          1.00         0.96
+petal_width           0.82        -0.37          0.96         1.00</pre></div>
+<figure class="shot"><img src="assets/iris-exploartion-dashboard-c02-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">fig.savefig(&#x27;iris_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)</pre></div>
+<div class="src-head">📓 <a href="../Concept/iris_exploration.ipynb">iris_exploration.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">#150 flowers, 3 species, each species has distinctly different petal sizes — and that difference is what makes them identifiable.
+#Flowers 1-50 → Setosa → tiny petals (~1.5cm)
+#Flowers 51-100 → Versicolor → medium petals (~4.3cm)
+#Flowers 101-150 → Virginica → large petals (~5.5cm)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Sepal vs Petal — simple story
+# Imagine you&#x27;re holding an iris flower:
+# The first thing you see from outside are the big green-ish flaps that wrap around the flower — those are the sepals. 
+# They protect the flower when it&#x27;s still a bud. Think of them as the flower&#x27;s jacket.
+# When you look inside, you see the colourful purple parts standing upright — those are the petals. 
+# They attract bees and butterflies. Think of them as the flower&#x27;s dress.
+# So Fisher measured both — the jacket (sepal) and the dress (petal) — in two ways each: length and width.</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+%matplotlib inline
+
+sns.set_style(&#x27;darkgrid&#x27;)
+sns.set_palette(&#x27;viridis&#x27;)
+
+print(&quot;All libraries imported successfully!&quot;)
+print(&quot;NumPy version:&quot;, np.__version__)
+print(&quot;Pandas version:&quot;, pd.__version__)
+print(&quot;Seaborn version:&quot;, sns.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>All libraries imported successfully!
+NumPy version: 2.4.6
+Pandas version: 3.0.3
+Seaborn version: 0.13.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py"># Load iris dataset — built into seaborn just like tips!
+df = sns.load_dataset(&#x27;iris&#x27;)
+
+print(&quot;Dataset loaded successfully!&quot;)
+print(&quot;Shape:&quot;, df.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dataset loaded successfully!
+Shape: (150, 5)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py"># Setosa has tiny petals — around 1.5cm
+# Versicolor has medium petals — around 4.3cm
+# Virginica has large petals — around 5.5cm</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py"># Look at ONLY Setosa flowers
+# print(df)
+# print(&quot;\n&quot;)
+Versicolor = df[df[&#x27;species&#x27;] == &#x27;versicolor&#x27;]
+print(&quot;Versicolor flowers:&quot;)
+print(Versicolor[Versicolor[&#x27;petal_length&#x27;] &gt; 1.9])
+
+# print(setosa.head())
+# print(&quot;Shape:&quot;, setosa.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Versicolor flowers:
+    sepal_length  sepal_width  petal_length  petal_width     species
+50           7.0          3.2           4.7          1.4  versicolor
+51           6.4          3.2           4.5          1.5  versicolor
+52           6.9          3.1           4.9          1.5  versicolor
+53           5.5          2.3           4.0          1.3  versicolor
+54           6.5          2.8           4.6          1.5  versicolor
+55           5.7          2.8           4.5          1.3  versicolor
+56           6.3          3.3           4.7          1.6  versicolor
+57           4.9          2.4           3.3          1.0  versicolor
+58           6.6          2.9           4.6          1.3  versicolor
+59           5.2          2.7           3.9          1.4  versicolor
+60           5.0          2.0           3.5          1.0  versicolor
+61           5.9          3.0           4.2          1.5  versicolor
+62           6.0          2.2           4.0          1.0  versicolor
+63           6.1          2.9           4.7          1.4  versicolor
+64           5.6          2.9           3.6          1.3  versicolor
+65           6.7          3.1           4.4          1.4  versicolor
+66           5.6          3.0           4.5          1.5  versicolor
+67           5.8          2.7           4.1          1.0  versicolor
+68           6.2          2.2           4.5          1.5  versicolor
+69           5.6          2.5           3.9          1.1  versicolor
+70           5.9          3.2           4.8          1.8  versicolor
+71           6.1          2.8           4.0          1.3  versicolor
+72           6.3          2.5           4.9          1.5  versicolor
+73           6.1          2.8           4.7          1.2  versicolor
+74           6.4          2.9           4.3          1.3  versicolor
+75           6.6          3.0           4.4          1.4  versicolor
+76           6.8          2.8           4.8          1.4  versicolor
+77           6.7          3.0           5.0          1.7  versicolor
+78           6.0          2.9           4.5          1.5  versicolor
+79           5.7          2.6           3.5          1.0  versicolor
+80           5.5          2.4           3.8          1.1  versicolor
+81           5.5          2.4           3.7          1.0  versicolor
+82           5.8          2.7           3.9          1.2  versicolor
+83           6.0          2.7           5.1          1.6  versicolor
+84           5.4          3.0           4.5          1.5  versicolor
+85           6.0          3.4           4.5          1.6  versicolor
+86           6.7          3</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py"># Versicolor
+versicolor = df[df[&#x27;species&#x27;] == &#x27;versicolor&#x27;]
+print(&quot;Versicolor flowers:&quot;)
+print(versicolor.head())
+
+# Virginica
+virginica = df[df[&#x27;species&#x27;] == &#x27;virginica&#x27;]
+print(&quot;Virginica flowers:&quot;)
+print(virginica.head())</pre></div>
+<div class="out"><div class="h">Output</div><pre>Versicolor flowers:
+    sepal_length  sepal_width  petal_length  petal_width     species
+50           7.0          3.2           4.7          1.4  versicolor
+51           6.4          3.2           4.5          1.5  versicolor
+52           6.9          3.1           4.9          1.5  versicolor
+53           5.5          2.3           4.0          1.3  versicolor
+54           6.5          2.8           4.6          1.5  versicolor
+Virginica flowers:
+     sepal_length  sepal_width  petal_length  petal_width    species
+100           6.3          3.3           6.0          2.5  virginica
+101           5.8          2.7           5.1          1.9  virginica
+102           7.1          3.0           5.9          2.1  virginica
+103           6.3          2.9           5.6          1.8  virginica
+104           6.5          3.0           5.8          2.2  virginica</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py"># First 5 rows
+print(&quot;First 5 rows:&quot;)
+print(df.head())
+
+print(&quot;\nLast 5 rows:&quot;)
+print(df.tail())</pre></div>
+<div class="out"><div class="h">Output</div><pre>First 5 rows:
+   sepal_length  sepal_width  petal_length  petal_width species
+0           5.1          3.5           1.4          0.2  setosa
+1           4.9          3.0           1.4          0.2  setosa
+2           4.7          3.2           1.3          0.2  setosa
+3           4.6          3.1           1.5          0.2  setosa
+4           5.0          3.6           1.4          0.2  setosa
+
+Last 5 rows:
+     sepal_length  sepal_width  petal_length  petal_width    species
+145           6.7          3.0           5.2          2.3  virginica
+146           6.3          2.5           5.0          1.9  virginica
+147           6.5          3.0           5.2          2.0  virginica
+148           6.2          3.4           5.4          2.3  virginica
+149           5.9          3.0           5.1          1.8  virginica</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py"># Compare all species — average of every measurement
+print(df.groupby(&#x27;species&#x27;).mean())</pre></div>
+<div class="out"><div class="h">Output</div><pre>            sepal_length  sepal_width  petal_length  petal_width
+species                                                         
+setosa             5.006        3.428         1.462        0.246
+versicolor         5.936        2.770         4.260        1.326
+virginica          6.588        2.974         5.552        2.026</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py"># Which single flower has the longest petal?
+print(&quot;Longest petal flower:&quot;)
+print(df[df[&#x27;petal_length&#x27;] == df[&#x27;petal_length&#x27;].max()])
+
+# Which single flower has the shortest petal?
+print(&quot;\nShortest petal flower:&quot;)
+print(df[df[&#x27;petal_length&#x27;] == df[&#x27;petal_length&#x27;].min()])</pre></div>
+<div class="out"><div class="h">Output</div><pre>Longest petal flower:
+     sepal_length  sepal_width  petal_length  petal_width    species
+118           7.7          2.6           6.9          2.3  virginica
+
+Shortest petal flower:
+    sepal_length  sepal_width  petal_length  petal_width species
+22           4.6          3.6           1.0          0.2  setosa</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py"># Quick summary — min and max per species for petal_length only
+print(df.groupby(&#x27;species&#x27;)[&#x27;petal_length&#x27;].agg([&#x27;min&#x27;, &#x27;max&#x27;, &#x27;mean&#x27;]))</pre></div>
+<div class="out"><div class="h">Output</div><pre>            min  max   mean
+species                    
+setosa      1.0  1.9  1.462
+versicolor  3.0  5.1  4.260
+virginica   4.5  6.9  5.552</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">print(&quot;Column data types:&quot;)
+print(df.dtypes)
+print(&quot;\nDataset info:&quot;)
+df.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Column data types:
+sepal_length    float64
+sepal_width     float64
+petal_length    float64
+petal_width     float64
+species             str
+dtype: object
+
+Dataset info:
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 150 entries, 0 to 149
+Data columns (total 5 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   sepal_length  150 non-null    float64
+ 1   sepal_width   150 non-null    float64
+ 2   petal_length  150 non-null    float64
+ 3   petal_width   150 non-null    float64
+ 4   species       150 non-null    str    
+dtypes: float64(4), str(1)
+memory usage: 6.0 KB</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">print(df[&#x27;species&#x27;].dtype)</pre></div>
+<div class="out"><div class="h">Output</div><pre>str</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">print(&quot;Missing values per column:&quot;)
+print(df.isnull().sum())
+
+print(&quot;\nTotal missing values:&quot;, df.isnull().sum().sum())</pre></div>
+<div class="out"><div class="h">Output</div><pre>Missing values per column:
+sepal_length    0
+sepal_width     0
+petal_length    0
+petal_width     0
+species         0
+dtype: int64
+
+Total missing values: 0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">print(&quot;Unique species:&quot;, df[&#x27;species&#x27;].unique())
+print(&quot;Count per species:&quot;)
+print(df[&#x27;species&#x27;].value_counts())</pre></div>
+<div class="out"><div class="h">Output</div><pre>Unique species: &lt;StringArray&gt;
+[&#x27;setosa&#x27;, &#x27;versicolor&#x27;, &#x27;virginica&#x27;]
+Length: 3, dtype: str
+Count per species:
+species
+setosa        50
+versicolor    50
+virginica     50
+Name: count, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">print(df.describe())</pre></div>
+<div class="out"><div class="h">Output</div><pre>       sepal_length  sepal_width  petal_length  petal_width
+count    150.000000   150.000000    150.000000   150.000000
+mean       5.843333     3.057333      3.758000     1.199333
+std        0.828066     0.435866      1.765298     0.762238
+min        4.300000     2.000000      1.000000     0.100000
+25%        5.100000     2.800000      1.600000     0.300000
+50%        5.800000     3.000000      4.350000     1.300000
+75%        6.400000     3.300000      5.100000     1.800000
+max        7.900000     4.400000      6.900000     2.500000</pre></div>
+<p>Module 2 — Statistical Summary</p>
+
+<p>The problem with just looking at raw data:
+You have 50 Setosa flowers. Looking at all 50 petal lengths:</p>
+<p>1.4, 1.4, 1.3, 1.5, 1.4, 1.7, 1.4, 1.5, 1.4, 1.5...</p>
+<p>Your brain can't process 50 numbers at once. You need a way to summarize them into a few meaningful numbers.</p>
+<p>That's what statistics does — it compresses many numbers into a few that tell the whole story.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py"># Calculate mean for each species — one shot
+print(&quot;Mean of all measurements per species:&quot;)
+print(df.groupby(&#x27;species&#x27;).mean().round(2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Mean of all measurements per species:
+            sepal_length  sepal_width  petal_length  petal_width
+species                                                         
+setosa              5.01         3.43          1.46         0.25
+versicolor          5.94         2.77          4.26         1.33
+virginica           6.59         2.97          5.55         2.03</pre></div>
+<p>Now let's compare Mean vs Median:</p>
+
+<p>Mean   = add all values, divide by count (affected by extreme values)</p>
+<p>Median = the middle value when sorted (not affected by extreme values)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py"># Compare mean vs median for petal_length per species
+print(&quot;Mean petal_length per species:&quot;)
+print(df.groupby(&#x27;species&#x27;)[&#x27;petal_length&#x27;].mean().round(2))
+
+print(&quot;\nMedian petal_length per species:&quot;)
+print(df.groupby(&#x27;species&#x27;)[&#x27;petal_length&#x27;].median().round(2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Mean petal_length per species:
+species
+setosa        1.46
+versicolor    4.26
+virginica     5.55
+Name: petal_length, dtype: float64
+
+Median petal_length per species:
+species
+setosa        1.50
+versicolor    4.35
+virginica     5.55
+Name: petal_length, dtype: float64</pre></div>
+<p>Cell 3 — Standard Deviation</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">print(&quot;Standard deviation per species:&quot;)
+print(df.groupby(&#x27;species&#x27;)[&#x27;petal_length&#x27;].std().round(2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Standard deviation per species:
+species
+setosa        0.17
+versicolor    0.47
+virginica     0.55
+Name: petal_length, dtype: float64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py"># See actual spread of Setosa vs Virginica petal lengths
+print(&quot;Setosa petal lengths:&quot;)
+print(df[df[&#x27;species&#x27;] == &#x27;setosa&#x27;][&#x27;petal_length&#x27;].values)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Setosa petal lengths:
+[1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 1.5 1.6 1.4 1.1 1.2 1.5 1.3 1.4
+ 1.7 1.5 1.7 1.5 1.  1.7 1.9 1.6 1.6 1.5 1.4 1.6 1.6 1.5 1.5 1.4 1.5 1.2
+ 1.3 1.4 1.3 1.5 1.3 1.3 1.3 1.6 1.9 1.4 1.6 1.4 1.5 1.4]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">print(&quot;\nVirginica petal lengths:&quot;)
+print(df[df[&#x27;species&#x27;] == &#x27;virginica&#x27;][&#x27;petal_length&#x27;].values)</pre></div>
+<div class="out"><div class="h">Output</div><pre>
+Virginica petal lengths:
+[6.  5.1 5.9 5.6 5.8 6.6 4.5 6.3 5.8 6.1 5.1 5.3 5.5 5.  5.1 5.3 5.5 6.7
+ 6.9 5.  5.7 4.9 6.7 4.9 5.7 6.  4.8 4.9 5.6 5.8 6.1 6.4 5.6 5.1 5.6 6.1
+ 5.6 5.5 4.8 5.4 5.6 5.1 5.1 5.9 5.7 5.2 5.  5.2 5.4 5.1]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py"># Print all 50 Setosa petal lengths in sorted order
+setosa_petals = df[df[&#x27;species&#x27;] == &#x27;setosa&#x27;][&#x27;petal_length&#x27;].sort_values().values
+print(&quot;All 50 Setosa petal lengths sorted:&quot;)
+print(setosa_petals)</pre></div>
+<div class="out"><div class="h">Output</div><pre>All 50 Setosa petal lengths sorted:
+[1.  1.1 1.2 1.2 1.3 1.3 1.3 1.3 1.3 1.3 1.3 1.4 1.4 1.4 1.4 1.4 1.4 1.4
+ 1.4 1.4 1.4 1.4 1.4 1.4 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5
+ 1.5 1.6 1.6 1.6 1.6 1.6 1.6 1.6 1.7 1.7 1.7 1.7 1.9 1.9]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py"># Now all 50 Virginica petal lengths sorted  
+virginica_petals = df[df[&#x27;species&#x27;] == &#x27;virginica&#x27;][&#x27;petal_length&#x27;].sort_values().values
+print(&quot;\nAll 50 Virginica petal lengths sorted:&quot;)
+print(virginica_petals)</pre></div>
+<div class="out"><div class="h">Output</div><pre>
+All 50 Virginica petal lengths sorted:
+[4.5 4.8 4.8 4.9 4.9 4.9 5.  5.  5.  5.1 5.1 5.1 5.1 5.1 5.1 5.1 5.2 5.2
+ 5.3 5.3 5.4 5.4 5.5 5.5 5.5 5.6 5.6 5.6 5.6 5.6 5.6 5.7 5.7 5.7 5.8 5.8
+ 5.8 5.9 5.9 6.  6.  6.1 6.1 6.1 6.3 6.4 6.6 6.7 6.7 6.9]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">print(&quot;Setosa std:   &quot;, df[df[&#x27;species&#x27;] == &#x27;setosa&#x27;][&#x27;petal_length&#x27;].std().round(2))
+print(&quot;Virginica std:&quot;, df[df[&#x27;species&#x27;] == &#x27;virginica&#x27;][&#x27;petal_length&#x27;].std().round(2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Setosa std:    0.17
+Virginica std: 0.55</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py"># How std is calculated — step by step on Setosa
+setosa_petals = df[df[&#x27;species&#x27;] == &#x27;setosa&#x27;][&#x27;petal_length&#x27;]
+#print(&quot;Setosa Petals :: &quot;,setosa_petals)
+
+# Step 1 — find the mean
+mean = setosa_petals.mean()
+print(&quot;Step 1 - Mean:&quot;, round(mean, 2))
+
+# Step 2 — find difference of each value from mean
+differences = setosa_petals - mean
+print(&quot;\nStep 2 - Differences from mean:&quot;)
+print(differences.round(2).values)
+
+# Step 3 — square the differences (make all positive)
+squared = differences ** 2
+print(&quot;\nStep 3 - Squared differences:&quot;)
+print(squared.round(4).values)
+
+# Step 4 — find mean of squared differences
+variance = squared.mean()
+print(&quot;\nStep 4 - Variance (mean of squares):&quot;, round(variance, 4))
+
+# Step 5 — square root to get back to original scale
+std = variance ** 0.5
+print(&quot;\nStep 5 - Std (square root of variance):&quot;, round(std, 2))
+
+# Verify — matches pandas!
+print(&quot;\nPandas std:&quot;, round(setosa_petals.std(), 2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Step 1 - Mean: 1.46
+
+Step 2 - Differences from mean:
+[-0.06 -0.06 -0.16  0.04 -0.06  0.24 -0.06  0.04 -0.06  0.04  0.04  0.14
+ -0.06 -0.36 -0.26  0.04 -0.16 -0.06  0.24  0.04  0.24  0.04 -0.46  0.24
+  0.44  0.14  0.14  0.04 -0.06  0.14  0.14  0.04  0.04 -0.06  0.04 -0.26
+ -0.16 -0.06 -0.16  0.04 -0.16 -0.16 -0.16  0.14  0.44 -0.06  0.14 -0.06
+  0.04 -0.06]
+
+Step 3 - Squared differences:
+[0.0038 0.0038 0.0262 0.0014 0.0038 0.0566 0.0038 0.0014 0.0038 0.0014
+ 0.0014 0.019  0.0038 0.131  0.0686 0.0014 0.0262 0.0038 0.0566 0.0014
+ 0.0566 0.0014 0.2134 0.0566 0.1918 0.019  0.019  0.0014 0.0038 0.019
+ 0.019  0.0014 0.0014 0.0038 0.0014 0.0686 0.0262 0.0038 0.0262 0.0014
+ 0.0262 0.0262 0.0262 0.019  0.1918 0.0038 0.019  0.0038 0.0014 0.0038]
+
+Step 4 - Variance (mean of squares): 0.0296
+
+Step 5 - Std (square root of variance): 0.17
+
+Pandas std: 0.17</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">import numpy as np
+
+class_a = np.array([48, 50, 52, 50, 50])
+class_b = np.array([20, 80, 10, 90, 50])
+
+print(&quot;Class A mean:&quot;, np.mean(class_a))
+print(&quot;Class A std: &quot;, round(np.std(class_a), 2))
+
+print(&quot;\nClass B mean:&quot;, np.mean(class_b))
+print(&quot;Class B std: &quot;, round(np.std(class_b), 2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Class A mean: 50.0
+Class A std:  1.26
+
+Class B mean: 50.0
+Class B std:  31.62</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py"># Full statistical summary per species
+print(df.groupby(&#x27;species&#x27;)[&#x27;petal_length&#x27;].agg([
+    &#x27;mean&#x27;,
+    &#x27;median&#x27;,
+    &#x27;std&#x27;,
+    &#x27;min&#x27;,
+    &#x27;max&#x27;
+]).round(2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>            mean  median   std  min  max
+species                                 
+setosa      1.46    1.50  0.17  1.0  1.9
+versicolor  4.26    4.35  0.47  3.0  5.1
+virginica   5.55    5.55  0.55  4.5  6.9</pre></div>
+<div class="src-head">📓 <a href="../Concept/iris_exploration_2.ipynb">iris_exploration_2.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+%matplotlib inline
+
+sns.set_style(&#x27;darkgrid&#x27;)
+sns.set_palette(&#x27;viridis&#x27;)
+
+print(&quot;All libraries imported successfully!&quot;)
+print(&quot;NumPy version:&quot;, np.__version__)
+print(&quot;Pandas version:&quot;, pd.__version__)
+print(&quot;Seaborn version:&quot;, sns.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>All libraries imported successfully!
+NumPy version: 2.4.6
+Pandas version: 3.0.3
+Seaborn version: 0.13.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Load iris dataset — built into seaborn just like tips!
+df = sns.load_dataset(&#x27;iris&#x27;)
+
+print(&quot;Dataset loaded successfully!&quot;)
+print(&quot;Shape:&quot;, df.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dataset loaded successfully!
+Shape: (150, 5)</pre></div>
+<p>Cell 1 — First histogram: petal_length overall</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.hist(df[&#x27;petal_length&#x27;], bins=20, 
+        color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.set_title(&#x27;Distribution of Petal Length — All Species&#x27;, 
+             fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
+ax.set_ylabel(&#x27;Number of Flowers&#x27;)
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-2-c03-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py"># Count frequency of each petal length value
+print(df[&#x27;petal_length&#x27;].value_counts().sort_index())</pre></div>
+<div class="out"><div class="h">Output</div><pre>petal_length
+1.0     1
+1.1     1
+1.2     2
+1.3     7
+1.4    13
+1.5    13
+1.6     7
+1.7     4
+1.9     2
+3.0     1
+3.3     2
+3.5     2
+3.6     1
+3.7     1
+3.8     1
+3.9     3
+4.0     5
+4.1     3
+4.2     4
+4.3     2
+4.4     4
+4.5     8
+4.6     3
+4.7     5
+4.8     4
+4.9     5
+5.0     4
+5.1     8
+5.2     2
+5.3     2
+5.4     2
+5.5     3
+5.6     6
+5.7     3
+5.8     3
+5.9     2
+6.0     2
+6.1     3
+6.3     1
+6.4     1
+6.6     1
+6.7     2
+6.9     1
+Name: count, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py"># See the range of petal lengths
+print(&quot;Smallest petal:&quot;, df[&#x27;petal_length&#x27;].min())
+print(&quot;Largest petal:&quot;, df[&#x27;petal_length&#x27;].max())
+print(&quot;Total range:&quot;, df[&#x27;petal_length&#x27;].max() - df[&#x27;petal_length&#x27;].min())
+print(&quot;Total unique values:&quot;, df[&#x27;petal_length&#x27;].nunique())</pre></div>
+<div class="out"><div class="h">Output</div><pre>Smallest petal: 1.0
+Largest petal: 6.9
+Total range: 5.9
+Total unique values: 43</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py"># Manually count flowers in first 3 bins
+bin_width = 5.9 / 20
+print(&quot;Each bin width:&quot;, round(bin_width, 3))
+
+# Bin 1: 1.0 to 1.295
+bin1 = df[(df[&#x27;petal_length&#x27;] &gt;= 1.0) &amp; (df[&#x27;petal_length&#x27;] &lt; 1.295)]
+print(&quot;\nBin 1 (1.0 to 1.295):&quot;, len(bin1), &quot;flowers&quot;)
+
+# Bin 2: 1.295 to 1.59
+bin2 = df[(df[&#x27;petal_length&#x27;] &gt;= 1.295) &amp; (df[&#x27;petal_length&#x27;] &lt; 1.59)]
+print(&quot;Bin 2 (1.295 to 1.59):&quot;, len(bin2), &quot;flowers&quot;)
+
+# Bin 3: 1.59 to 1.885
+bin3 = df[(df[&#x27;petal_length&#x27;] &gt;= 1.59) &amp; (df[&#x27;petal_length&#x27;] &lt; 1.885)]
+print(&quot;Bin 3 (1.59 to 1.885):&quot;, len(bin3), &quot;flowers&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Each bin width: 0.295
+
+Bin 1 (1.0 to 1.295): 4 flowers
+Bin 2 (1.295 to 1.59): 33 flowers
+Bin 3 (1.59 to 1.885): 11 flowers</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Plot each species separately with different colors
+ax.hist(df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;], 
+        bins=20, alpha=0.7, label=&#x27;Setosa&#x27;, color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.hist(df[df[&#x27;species&#x27;]==&#x27;versicolor&#x27;][&#x27;petal_length&#x27;], 
+        bins=20, alpha=0.7, label=&#x27;Versicolor&#x27;, color=&#x27;tomato&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.hist(df[df[&#x27;species&#x27;]==&#x27;virginica&#x27;][&#x27;petal_length&#x27;], 
+        bins=20, alpha=0.7, label=&#x27;Virginica&#x27;, color=&#x27;green&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.set_title(&#x27;Petal Length Distribution by Species&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
+ax.set_ylabel(&#x27;Number of Flowers&#x27;)
+ax.legend()
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-2-c07-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py"># These are ALL values going into the histogram
+print(&quot;Total values passed to histogram:&quot;, len(df[&#x27;petal_length&#x27;]))
+print(&quot;First 10 values:&quot;)
+print(df[&#x27;petal_length&#x27;].head(10).values)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Total values passed to histogram: 150
+First 10 values:
+[1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.hist(df[&#x27;petal_length&#x27;], bins=20, 
+        color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.set_title(&#x27;Distribution of Petal Length — All Species&#x27;, 
+             fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
+ax.set_ylabel(&#x27;Number of Flowers&#x27;)
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-2-c09-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>What is on the X axis = the range of ALL petal length values
+from smallest (1.0cm) to largest (6.9cm)
+divided into 20 equal bins</p>
+<p>What is on the Y axis    → number of flowers in each bin</p>
+<p>What does the tallest bar tell you  → many flowers have that petal length</p>
+<p>What does the gap tell you       → no flowers exist in that range</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.hist(df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;], 
+        bins=20, alpha=0.7, label=&#x27;Setosa&#x27;, 
+        color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.hist(df[df[&#x27;species&#x27;]==&#x27;versicolor&#x27;][&#x27;petal_length&#x27;], 
+        bins=20, alpha=0.7, label=&#x27;Versicolor&#x27;, 
+        color=&#x27;tomato&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.hist(df[df[&#x27;species&#x27;]==&#x27;virginica&#x27;][&#x27;petal_length&#x27;], 
+        bins=20, alpha=0.7, label=&#x27;Virginica&#x27;, 
+        color=&#x27;green&#x27;, edgecolor=&#x27;white&#x27;)
+
+ax.set_title(&#x27;Petal Length Distribution by Species&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
+ax.set_ylabel(&#x27;Number of Flowers&#x27;)
+ax.legend()
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-2-c12-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="src-head">📓 <a href="../Concept/iris_exploration_3.ipynb">iris_exploration_3.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+%matplotlib inline
+
+sns.set_style(&#x27;darkgrid&#x27;)
+sns.set_palette(&#x27;viridis&#x27;)
+
+print(&quot;All libraries imported successfully!&quot;)
+print(&quot;NumPy version:&quot;, np.__version__)
+print(&quot;Pandas version:&quot;, pd.__version__)
+print(&quot;Seaborn version:&quot;, sns.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>All libraries imported successfully!
+NumPy version: 2.4.6
+Pandas version: 3.0.3
+Seaborn version: 0.13.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Load iris dataset — built into seaborn just like tips!
+df = sns.load_dataset(&#x27;iris&#x27;)
+
+print(&quot;Dataset loaded successfully!&quot;)
+print(&quot;Shape:&quot;, df.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dataset loaded successfully!
+Shape: (150, 5)</pre></div>
+<p>Cell 3 — Box Plot</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py"># Before we code — quick reminder of how to read a box plot from what you learned earlier:
+
+# Top whisker    → Maximum value
+# Top of box     → 75% of data below this
+# Middle line    → Median
+# Bottom of box  → 25% of data below this
+# Bottom whisker → Minimum value</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Group data by species for box plot
+setosa_petals = df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;]
+versicolor_petals = df[df[&#x27;species&#x27;]==&#x27;versicolor&#x27;][&#x27;petal_length&#x27;]
+virginica_petals = df[df[&#x27;species&#x27;]==&#x27;virginica&#x27;][&#x27;petal_length&#x27;]
+
+ax.boxplot([setosa_petals, versicolor_petals, virginica_petals],
+           labels=[&#x27;Setosa&#x27;, &#x27;Versicolor&#x27;, &#x27;Virginica&#x27;])
+
+ax.set_title(&#x27;Petal Length Distribution by Species&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Species&#x27;)
+ax.set_ylabel(&#x27;Petal Length (cm)&#x27;)
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_23508/2813677711.py:8: MatplotlibDeprecationWarning: The &#x27;labels&#x27; parameter of boxplot() has been renamed &#x27;tick_labels&#x27; since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  ax.boxplot([setosa_petals, versicolor_petals, virginica_petals],</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-3-c04-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Why box plot is better than histogram for outliers:</p>
+<p>Histogram → shows you distribution but outliers hide in the bars</p>
+<p>Box plot  → explicitly marks outliers as separate circles</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py"># Find Setosa outliers in petal_length
+Q1 = df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;].quantile(0.25)
+Q3 = df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;].quantile(0.75)
+IQR = Q3 - Q1
+
+print(&quot;Q1:&quot;, Q1)
+print(&quot;Q3:&quot;, Q3)
+print(&quot;IQR:&quot;, IQR)
+print(&quot;Lower boundary:&quot;, Q1 - 1.5 * IQR)
+print(&quot;Upper boundary:&quot;, Q3 + 1.5 * IQR)
+
+# Any values outside boundaries are outliers
+outliers = df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][
+    (df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;] &lt; Q1 - 1.5*IQR) |
+    (df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;] &gt; Q3 + 1.5*IQR)
+]
+print(&quot;\nSetosa outliers:&quot;)
+print(outliers)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Q1: 1.4
+Q3: 1.5750000000000002
+IQR: 0.17500000000000027
+Lower boundary: 1.1374999999999995
+Upper boundary: 1.8375000000000006
+
+Setosa outliers:
+    sepal_length  sepal_width  petal_length  petal_width species
+13           4.3          3.0           1.1          0.1  setosa
+22           4.6          3.6           1.0          0.2  setosa
+24           4.8          3.4           1.9          0.2  setosa
+44           5.1          3.8           1.9          0.4  setosa</pre></div>
+<div class="src-head">📓 <a href="../Concept/iris_exploration_4.ipynb">iris_exploration_4.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+%matplotlib inline
+
+sns.set_style(&#x27;darkgrid&#x27;)
+sns.set_palette(&#x27;viridis&#x27;)
+
+print(&quot;All libraries imported successfully!&quot;)
+print(&quot;NumPy version:&quot;, np.__version__)
+print(&quot;Pandas version:&quot;, pd.__version__)
+print(&quot;Seaborn version:&quot;, sns.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>All libraries imported successfully!
+NumPy version: 2.4.6
+Pandas version: 3.0.3
+Seaborn version: 0.13.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Load iris dataset — built into seaborn just like tips!
+df = sns.load_dataset(&#x27;iris&#x27;)
+
+print(&quot;Dataset loaded successfully!&quot;)
+print(&quot;Shape:&quot;, df.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dataset loaded successfully!
+Shape: (150, 5)</pre></div>
+<p>You have 4 measurements — sepal_length, sepal_width, petal_length, petal_width.</p>
+<p>Which one separates the 3 species the best?</p>
+<p>We'll plot all 4 in one dashboard and compare:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+measurements = [&#x27;sepal_length&#x27;, &#x27;sepal_width&#x27;, &#x27;petal_length&#x27;, &#x27;petal_width&#x27;]
+colors = {&#x27;setosa&#x27;: &#x27;steelblue&#x27;, &#x27;versicolor&#x27;: &#x27;tomato&#x27;, &#x27;virginica&#x27;: &#x27;green&#x27;}
+positions = [(0,0), (0,1), (1,0), (1,1)]
+
+for measurement, pos in zip(measurements, positions):
+    ax = axes[pos[0], pos[1]]
+    for species in [&#x27;setosa&#x27;, &#x27;versicolor&#x27;, &#x27;virginica&#x27;]:
+        data = df[df[&#x27;species&#x27;]==species][measurement]
+        ax.hist(data, bins=15, alpha=0.6, 
+                label=species, color=colors[species], 
+                edgecolor=&#x27;white&#x27;)
+    ax.set_title(f&#x27;Distribution of {measurement}&#x27;, fontweight=&#x27;bold&#x27;)
+    ax.set_xlabel(measurement)
+    ax.set_ylabel(&#x27;Count&#x27;)
+    ax.legend(fontsize=8)
+
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-4-c03-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="src-head">📓 <a href="../Concept/iris_exploration_5.ipynb">iris_exploration_5.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+%matplotlib inline
+
+sns.set_style(&#x27;darkgrid&#x27;)
+sns.set_palette(&#x27;viridis&#x27;)
+
+print(&quot;All libraries imported successfully!&quot;)
+print(&quot;NumPy version:&quot;, np.__version__)
+print(&quot;Pandas version:&quot;, pd.__version__)
+print(&quot;Seaborn version:&quot;, sns.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>All libraries imported successfully!
+NumPy version: 2.4.6
+Pandas version: 3.0.3
+Seaborn version: 0.13.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Load iris dataset — built into seaborn just like tips!
+df = sns.load_dataset(&#x27;iris&#x27;)
+
+print(&quot;Dataset loaded successfully!&quot;)
+print(&quot;Shape:&quot;, df.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dataset loaded successfully!
+Shape: (150, 5)</pre></div>
+<p>Module 4 — Relationship Analysis</p>
+
+<p>The question we're asking:</p>
+<p>In Module 3 we looked at one measurement at a time — just petal_length, just sepal_width etc.</p>
+<p>In Module 4 we look at two measurements together — does petal_length and petal_width together tell us more than each one alone?</p>
+
+<p>Real life analogy:</p>
+<p>Imagine you're trying to identify a person:</p>
+<p>Height alone → not enough, many people are 6ft</p>
+<p>Weight alone → not enough, many people are 180lbs</p>
+<p>Height AND weight together → much better picture!</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.scatter(df[&#x27;petal_length&#x27;], df[&#x27;petal_width&#x27;],
+           alpha=0.7, color=&#x27;steelblue&#x27;, s=60)
+
+ax.set_title(&#x27;Petal Length vs Petal Width&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
+ax.set_ylabel(&#x27;Petal Width (cm)&#x27;)
+ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-5-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+colors = {&#x27;setosa&#x27;: &#x27;steelblue&#x27;, &#x27;versicolor&#x27;: &#x27;tomato&#x27;, &#x27;virginica&#x27;: &#x27;green&#x27;}
+
+for species, group in df.groupby(&#x27;species&#x27;):
+    ax.scatter(group[&#x27;petal_length&#x27;], group[&#x27;petal_width&#x27;],
+               label=species,
+               color=colors[species],
+               alpha=0.7, s=60)
+
+ax.set_title(&#x27;Petal Length vs Petal Width by Species&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
+ax.set_ylabel(&#x27;Petal Width (cm)&#x27;)
+ax.legend()
+ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-5-c06-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Cell 3 — Pair plot — the most powerful Seaborn chart:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">sns.pairplot(df, hue=&#x27;species&#x27;, 
+             palette={&#x27;setosa&#x27;: &#x27;steelblue&#x27;, 
+                      &#x27;versicolor&#x27;: &#x27;tomato&#x27;, 
+                      &#x27;virginica&#x27;: &#x27;green&#x27;})
+
+plt.suptitle(&#x27;Pair Plot — All Measurements vs All Measurements&#x27;, 
+             y=1.02, fontsize=14, fontweight=&#x27;bold&#x27;)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-5-c08-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">import pandas as pd
+import seaborn as sns
+
+# Simple 3 column dataset
+simple_data = pd.DataFrame({
+    &#x27;math&#x27;:    [90, 70, 85, 60, 95, 75, 80],
+    &#x27;science&#x27;: [85, 72, 80, 65, 90, 70, 82],
+    &#x27;height&#x27;:  [160, 155, 158, 150, 165, 157, 162]
+})
+
+sns.pairplot(simple_data)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-5-c09-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Cell 4 — Correlation Heatmap</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 6))
+
+# Calculate correlation between all measurements
+correlation = df.drop(&#x27;species&#x27;, axis=1).corr()
+print(correlation.round(2))
+
+sns.heatmap(correlation,
+            annot=True,
+            fmt=&#x27;.2f&#x27;,
+            cmap=&#x27;coolwarm&#x27;,
+            center=0,
+            ax=ax)
+
+ax.set_title(&#x27;Correlation Between Measurements&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>              sepal_length  sepal_width  petal_length  petal_width
+sepal_length          1.00        -0.12          0.87         0.82
+sepal_width          -0.12         1.00         -0.43        -0.37
+petal_length          0.87        -0.43          1.00         0.96
+petal_width           0.82        -0.37          0.96         1.00</pre></div>
+<figure class="shot"><img src="assets/iris-exploration-5-c11-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="foot"><a class="btn" href="../Concept/iris_dataset_explained.ipynb">iris_dataset_explained.ipynb ↗</a><a class="btn" href="../Concept/iris_exploartion_dashboard.ipynb">iris_exploartion_dashboard.ipynb ↗</a><a class="btn" href="../Concept/iris_exploration.ipynb">iris_exploration.ipynb ↗</a><a class="btn" href="../Concept/iris_exploration_2.ipynb">iris_exploration_2.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
 </body>
 </html>

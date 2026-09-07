@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Function Transformer — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Function Transformer</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#function-transformer">Function Transformer</a><a href="#example-1-remove-outliers-first-then-transform">Example 1 — Remove Outliers First, Then Transform</a><a href="#example-2-same-log-transform-without-removing-ou">Example 2 — Same Log Transform, Without Removing Out</a><a href="#example-3-what-happens-with-square-x-2">Example 3 — What Happens With Square (x**2)?</a><a href="#example-4-is-x-x-different-from-x-2">Example 4 — Is x*x Different From x**2?</a><a href="#putting-it-all-together">Putting It All Together</a><a href="#summary">Summary</a><a href="#faq">FAQ</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Function Transformer</h1>
+  <p class="lede">When the relationship is curved, reshape the column instead of abandoning the model.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Priya plotted income against spending and got a banana.</strong> Most people clustered on the left, a long thin tail stretched far to the right.</p><p>A straight line through that shape fitted nobody: it sat above the crowd and below the tail.</p><p><span class='beat'>The model was not wrong — the column was the wrong shape.</span></p><p>Taking the log of income pulled the tail in and spread the crowd out. The same straight line then fitted well. FunctionTransformer applies that reshaping as a proper, reusable pipeline step.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>A log or square-root transform can straighten a skewed column so a straight-line model can use it.</p></div>
+<div class="src-head">📓 <a href="../Concept/19_Function_Transformer.ipynb">19_Function_Transformer.ipynb</a></div>
+<h2 id="function-transformer">Function Transformer</h2>
+<p><code>15_Feature_Scaling.ipynb</code> and <code>16_Feature_Scaling_Normalization.ipynb</code>
+changed the <strong>range</strong> of a column (squeeze it into 0–1, or center it
+around 0). This notebook changes the <strong>shape</strong> of a column instead.</p>
+<p>A <code>FunctionTransformer</code> is a small sklearn wrapper. You give it any
+function, and it applies that function to every value in a column. It
+works the same way as the other sklearn tools you already used
+(<code>fit</code>, then <code>transform</code>) — the only difference is <em>you</em> write the
+function.</p>
+<p>Why would we want to change the shape of a column? Many models work
+best when a column looks like a normal distribution (a symmetric,
+bell-shaped curve). <code>CoapplicantIncome</code> does not look like that at all —
+most people have a low or zero co-applicant income, and a few have a
+very high one. That long tail on the right is called <strong>right skew</strong>
+(also &quot;positive skew&quot;). This notebook tries different functions to fix
+that shape, and looks closely at one case where the fix makes things
+<em>worse</em>, not better — and why.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd 
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<p><code>CoapplicantIncome</code> has <code>0</code> missing values — nothing to fill in here.
+Good, because that means anything we see in the shape of this column is
+about real data, not about missing-value gaps.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">sns.distplot(dataset[&quot;CoapplicantIncome&quot;])
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/1899262194.py:1: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])</pre></div>
+<figure class="shot"><img src="assets/19-function-transformer-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(1.5399420730801827)</pre></div>
+<p>The picture above is <strong>non-normal</strong>. It has a tall spike near <code>0</code> and a
+long tail stretching right, out past <code>6000</code>. <code>.skew()</code> puts a number on
+that shape:</p>
+<ul>
+<li><code>0</code> means perfectly symmetric (a normal curve).</li>
+<li>A positive number means the tail is on the <strong>right</strong> (right skew).</li>
+<li>A negative number means the tail is on the <strong>left</strong> (left skew).</li>
+</ul>
+<p>Here <code>.skew()</code> is about <strong><code>1.54</code></strong> — clearly right-skewed, matching what
+the picture shows. We will use this number again and again below, to
+check whether each transform actually helps or not — not just by
+eyeballing the picture.</p>
+
+<p>One common first step before transforming a skewed column is to remove
+outliers — the few extreme values that stretch the tail out so far. The
+same IQR method from <code>13_Outlier_Removal_IQR.ipynb</code> finds the cutoff
+below.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
+q3 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.75)
+iqr = q3-q1
+iqr</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(2217.75)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">min_r = q1-(1.5*iqr)
+max_r = q3+(1.5*iqr)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">min_r, max_r</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(-3326.625), np.float64(5544.375))</pre></div>
+<h2 id="example-1-remove-outliers-first-then-transform">Example 1 — Remove Outliers First, Then Transform</h2>
+<p>Any row with <code>CoapplicantIncome</code> above <code>max_r</code> gets dropped. Then we
+will apply a transform to what's left.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">dataset = dataset[dataset[&quot;CoapplicantIncome&quot;]&lt;=max_r]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>      Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0    LP001001    Male     Yes          0  Not Graduate            No   
+1    LP001002    Male     Yes          0  Not Graduate            No   
+2    LP001003  Female      No          0      Graduate            No   
+3    LP001004    Male     Yes          0      Graduate            No   
+4    LP001005    Male      No          2      Graduate            No   
+..        ...     ...     ...        ...           ...           ...   
+613  LP001614  Female     Yes          2      Graduate            No   
+614  LP001615    Male     Yes        NaN      Graduate            No   
+615  LP001616    Male      No          2      Graduate            No   
+616  LP001617    Male     Yes          0      Graduate            No   
+617  LP001618    Male     Yes          2  Not Graduate           Yes   
+
+     ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0             1686.0               1020        80.0             360.0   
+1             2437.0               1201       122.0             360.0   
+2             8313.0               1065       319.0             360.0   
+3             5069.0                  0       218.0             360.0   
+4             3002.0               2283       194.0             360.0   
+..               ...                ...         ...               ...   
+613           3153.0                  0       114.0             360.0   
+614           3995.0               1736       215.0             360.0   
+615           3916.0               4134       250.0             360.0   
+616           2366.0                  0       101.0             360.0   
+617           3757.0                  0       124.0             360.0   
+
+     Credit_History Property_Area Loan_Status  
+0               1.0     Semiurban           Y  
+1               1.0         Urban           Y  
+2               1.0         Urban           Y  
+3               1.0     Semiurban           Y  
+4               0.0         Urban           N  
+..              ...           ...         ...  
+613             0.0         Rural           N  
+614             1.0         Urban           Y  
+615             0.0     Semiurban           N  
+616             1.0     Semiurban           Y  
+617             1.0     Semiurban           Y  
+
+[603 rows x 13 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">sns.distplot(dataset[&quot;CoapplicantIncome&quot;])
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/1899262194.py:1: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])</pre></div>
+<figure class="shot"><img src="assets/19-function-transformer-c15-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.9655444212412013)</pre></div>
+<p>Skew dropped from <code>1.54</code> to about <strong><code>0.97</code></strong> — removing <code>15</code> outlier rows
+(<code>618 → 603</code>) helped, but only cut the skew by about a third. The picture
+still leans right, just a little less far. Outlier removal alone did not
+make this column normal. We still need a transform.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">from sklearn.preprocessing import FunctionTransformer</pre></div>
+<p>The function we try first is <code>np.log1p</code>. It means &quot;log of (x + 1).&quot;</p>
+<p>Two things to know about it, in plain terms:</p>
+<ul>
+<li><strong>Log makes big numbers much smaller, but small numbers only a
+little smaller.</strong> That's exactly what a right-skewed column needs —
+pull the few huge values down close to the rest, without squashing
+the small values too.</li>
+<li><strong>The <code>+ 1</code> part matters.</strong> Plain <code>log(0)</code> is undefined (you can't
+take the log of zero). <code>CoapplicantIncome</code> has plenty of <code>0</code> rows, so
+plain <code>np.log</code> would crash. <code>log1p(x) = log(x + 1)</code> sidesteps that:
+<code>log1p(0) = log(1) = 0</code>.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">ft = FunctionTransformer(func=np.log1p)
+ft.fit(dataset[&quot;CoapplicantIncome&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>FunctionTransformer(func=&lt;ufunc &#x27;log1p&#x27;&gt;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">dataset[&quot;CoapplicantIncome_tf&quot;]=ft.transform(dataset[&quot;CoapplicantIncome&quot;])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">plt.figure(figsize=(10,4))
+plt.subplot(1,2,1)
+sns.distplot(dataset[&quot;CoapplicantIncome&quot;])
+plt.title(&quot;Before&quot;)
+
+plt.subplot(1,2,2)
+sns.distplot(dataset[&quot;CoapplicantIncome_tf&quot;])
+plt.title(&quot;After&quot;)
+
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/1020236315.py:3: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/1020236315.py:7: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome_tf&quot;])</pre></div>
+<figure class="shot"><img src="assets/19-function-transformer-c22-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew(), dataset[&quot;CoapplicantIncome_tf&quot;].skew()</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(0.9655444212412013), np.float64(-0.32165545273566626))</pre></div>
+<p>Skew went from <code>0.97</code> to about <strong><code>-0.32</code></strong> — much closer to <code>0</code> (a small
+negative number now, almost flat). The &quot;After&quot; picture backs this up: the
+spike near <code>0</code> is gone, and the shape now looks close to a normal curve.
+Log did its job.</p>
+
+<h2 id="example-2-same-log-transform-without-removing-ou">Example 2 — Same Log Transform, Without Removing Outliers First</h2>
+<p>You asked a fair question: what if we skip the outlier-removal step
+completely, and run <code>log1p</code> straight on the original, untouched column?
+Let's actually try it, instead of guessing. We load a fresh copy of the
+data so the outlier removal above doesn't affect this example.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">dataset_raw = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset_raw[&quot;CoapplicantIncome&quot;].skew()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(1.5399420730801827)</pre></div>
+<p>Same <code>1.54</code> as before — makes sense, this is the exact same raw column,
+outliers and all. Now apply <code>log1p</code> directly to it, no filtering first.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">ft2 = FunctionTransformer(func=np.log1p)
+ft2.fit(dataset_raw[[&quot;CoapplicantIncome&quot;]])
+
+dataset_raw[&quot;CoapplicantIncome_tf&quot;] = ft2.transform(dataset_raw[&quot;CoapplicantIncome&quot;])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+sns.distplot(dataset_raw[&quot;CoapplicantIncome&quot;])
+plt.title(&quot;Before (with outliers)&quot;)
+
+plt.subplot(1, 2, 2)
+sns.distplot(dataset_raw[&quot;CoapplicantIncome_tf&quot;])
+plt.title(&quot;After (log1p, with outliers)&quot;)
+
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/3115430268.py:3: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset_raw[&quot;CoapplicantIncome&quot;])
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/3115430268.py:7: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset_raw[&quot;CoapplicantIncome_tf&quot;])</pre></div>
+<figure class="shot"><img src="assets/19-function-transformer-c29-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">dataset_raw[&quot;CoapplicantIncome&quot;].skew(), dataset_raw[&quot;CoapplicantIncome_tf&quot;].skew()</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(1.5399420730801827), np.float64(-0.3558417035137675))</pre></div>
+<p>Skew went from <code>1.54</code> all the way to about <strong><code>-0.36</code></strong> — and that's
+<em>without</em> removing a single row first. Compare the two log results:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Skew before log</th>
+  <th>Skew after log</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Outliers removed first (Example 1)</td>
+  <td><code>0.97</code></td>
+  <td><code>-0.32</code></td>
+</tr>
+<tr>
+  <td>Outliers kept in (Example 2)</td>
+  <td><code>1.54</code></td>
+  <td><code>-0.36</code></td>
+</tr>
+</tbody>
+</table>
+<p>Both end up close to <code>0</code>, close to each other. This is a real finding,
+not something to explain away: <code>log1p</code> is strong enough to pull in even
+the biggest, untouched values on its own. Removing outliers first is
+still a reasonable thing to do, but for this column it wasn't strictly
+necessary before applying <code>log1p</code>.</p>
+
+<h2 id="example-3-what-happens-with-square-x-2">Example 3 — What Happens With Square (<code>x**2</code>)?</h2>
+<p>This is the one from your screenshot. Instead of <code>log1p</code>, use <code>x**2</code> —
+multiply every value by itself. We'll use the outlier-removed <code>dataset</code>
+from Example 1, so the numbers line up with what you saw.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">ft3 = FunctionTransformer(func=lambda x: x**2)
+ft3.fit(dataset[[&quot;CoapplicantIncome&quot;]])
+
+dataset[&quot;CoapplicantIncome_sq&quot;] = ft3.transform(dataset[&quot;CoapplicantIncome&quot;])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+sns.distplot(dataset[&quot;CoapplicantIncome&quot;])
+plt.title(&quot;Before&quot;)
+
+plt.subplot(1, 2, 2)
+sns.distplot(dataset[&quot;CoapplicantIncome_sq&quot;])
+plt.title(&quot;After (x**2)&quot;)
+
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/1102268995.py:3: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/1102268995.py:7: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome_sq&quot;])</pre></div>
+<figure class="shot"><img src="assets/19-function-transformer-c34-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].max(), dataset[&quot;CoapplicantIncome_sq&quot;].max()</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.int64(5521), np.int64(30481441))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew(), dataset[&quot;CoapplicantIncome_sq&quot;].skew()</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(0.9655444212412013), np.float64(2.6205982156525023))</pre></div>
+<p>This is why the &quot;After&quot; graph looks so strange.</p>
+<p><strong>The biggest value exploded.</strong> The largest <code>CoapplicantIncome</code> in this
+data is about <code>5,521</code>. Squared, it becomes about <code>30,481,441</code> — over 30
+million. That is why the x-axis on the right jumps to <code>1e7</code> (10 million)
+and beyond. One line of code did that: <code>5521 ** 2 = 30,481,441</code>.</p>
+<p><strong>Small values barely moved.</strong> Most rows are small numbers, close to
+<code>0</code>. Squaring a small number keeps it small (<code>10 ** 2 = 100</code>, still
+tiny). So the big spike of small values near <code>0</code> stays almost exactly
+where it was.</p>
+<p>Put those two together: the small values are still bunched up near <code>0</code>,
+but the few big values just flew off far to the right. The gap between
+&quot;most of the data&quot; and &quot;the extreme few&quot; got much, much bigger, not
+smaller. That's the tall thin spike plus the long, flat, almost-invisible
+tail out to <code>3×10⁷</code> in the picture.</p>
+<p>The skew number proves it went the wrong way: it went <strong>up</strong>, from
+<code>0.97</code> to about <strong><code>2.62</code></strong> — more skewed than before, not less.</p>
+<p><strong>Rule of thumb:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column shape</th>
+  <th>Function that usually helps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Right-skewed (long tail on the right, like income)</td>
+  <td><code>log</code>, <code>sqrt</code> — these pull big numbers down</td>
+</tr>
+<tr>
+  <td>Left-skewed (long tail on the left)</td>
+  <td><code>square</code>, <code>cube</code> — these push big numbers up</td>
+</tr>
+</tbody>
+</table>
+<p><code>CoapplicantIncome</code> is right-skewed, so <code>log1p</code> (Examples 1 and 2) was
+the right tool, and <code>x**2</code> (this example) was the wrong one — on
+purpose, so we could see what &quot;wrong&quot; actually looks like on a graph.</p>
+
+<h2 id="example-4-is-x-x-different-from-x-2">Example 4 — Is <code>x*x</code> Different From <code>x**2</code>?</h2>
+<p>You noticed the graph looked different when you tried <code>x*x</code> instead of
+<code>x**2</code>. Let's check directly, on the same data, in the same cell —
+instead of guessing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">ft3b = FunctionTransformer(func=lambda x: x * x)
+ft3b.fit(dataset[[&quot;CoapplicantIncome&quot;]])
+
+dataset[&quot;CoapplicantIncome_mul&quot;] = ft3b.transform(dataset[&quot;CoapplicantIncome&quot;])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">(dataset[&quot;CoapplicantIncome_sq&quot;] == dataset[&quot;CoapplicantIncome_mul&quot;]).all()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.True_</pre></div>
+<p><code>True</code> — every single row matches. <code>x*x</code> and <code>x**2</code> are two different
+ways of writing the exact same math: &quot;multiply the number by itself.&quot;
+There is no version of this data where they can give different graphs.</p>
+<p>So if your two graphs looked different earlier, the function was not the
+cause. The most likely reason: the two runs used different data — for
+example, one used the outlier-removed <code>dataset</code>, the other used the
+original data with outliers still in it (like Example 3 vs. how squaring
+the raw column with a max of <code>10,288</code> would push the biggest value up to
+about <code>105,842,944</code> instead of <code>30,481,441</code>). Same function, different
+input, different-looking graph.</p>
+
+<h2 id="putting-it-all-together">Putting It All Together</h2>
+<p>One picture, three shapes side by side: the original column, the log
+version, and the square version. Each title shows the skew number, so
+you can compare all three at a glance instead of scrolling back up.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(16, 4))
+
+sns.distplot(dataset[&quot;CoapplicantIncome&quot;], ax=axes[0], color=&quot;#8a8f98&quot;)
+axes[0].set_title(f&quot;Original\nskew = {dataset[&#x27;CoapplicantIncome&#x27;].skew():.2f}&quot;)
+
+sns.distplot(dataset[&quot;CoapplicantIncome_tf&quot;], ax=axes[1], color=&quot;#2f9e6f&quot;)
+axes[1].set_title(f&quot;log1p\nskew = {dataset[&#x27;CoapplicantIncome_tf&#x27;].skew():.2f}&quot;)
+
+sns.distplot(dataset[&quot;CoapplicantIncome_sq&quot;], ax=axes[2], color=&quot;#d03b3b&quot;)
+axes[2].set_title(f&quot;x**2\nskew = {dataset[&#x27;CoapplicantIncome_sq&#x27;].skew():.2f}&quot;)
+
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/3976394420.py:3: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome&quot;], ax=axes[0], color=&quot;#8a8f98&quot;)
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/3976394420.py:6: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome_tf&quot;], ax=axes[1], color=&quot;#2f9e6f&quot;)
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_36888/3976394420.py:9: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;CoapplicantIncome_sq&quot;], ax=axes[2], color=&quot;#d03b3b&quot;)</pre></div>
+<figure class="shot"><img src="assets/19-function-transformer-c43-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The middle chart is the closest to a normal, bell-shaped curve. The right
+chart is the most skewed of all three, even more than the untouched
+original on the left. One last chart: every skew number from this
+notebook, side by side, with a red dashed line at <code>0</code> (perfectly
+symmetric) to measure everything against.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">skew_values = {
+    &quot;raw&quot;: dataset_raw[&quot;CoapplicantIncome&quot;].skew(),
+    &quot;raw\n+ log1p&quot;: dataset_raw[&quot;CoapplicantIncome_tf&quot;].skew(),
+    &quot;outliers\nremoved&quot;: dataset[&quot;CoapplicantIncome&quot;].skew(),
+    &quot;removed\n+ log1p&quot;: dataset[&quot;CoapplicantIncome_tf&quot;].skew(),
+    &quot;removed\n+ x**2&quot;: dataset[&quot;CoapplicantIncome_sq&quot;].skew(),
+}
+
+plt.figure(figsize=(9, 4.5))
+bars = plt.bar(skew_values.keys(), skew_values.values(),
+                color=[&quot;#8a8f98&quot;, &quot;#2f9e6f&quot;, &quot;#8a8f98&quot;, &quot;#2f9e6f&quot;, &quot;#d03b3b&quot;])
+plt.axhline(0, color=&quot;#d03b3b&quot;, linestyle=&quot;--&quot;, linewidth=1)
+plt.ylabel(&quot;skew&quot;)
+plt.title(&quot;Skew across every version of CoapplicantIncome in this notebook&quot;)
+for b in bars:
+    y = b.get_height()
+    plt.text(b.get_x() + b.get_width() / 2, y + (0.08 if y &gt;= 0 else -0.18),
+              f&quot;{y:.2f}&quot;, ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/19-function-transformer-c45-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="summary">Summary</h2>
+<ul>
+<li><code>FunctionTransformer</code> lets you plug any function into the usual
+sklearn <code>fit</code> / <code>transform</code> pattern. You pick the function.</li>
+<li><code>.skew()</code> gives a number for the shape of a column: <code>0</code> is symmetric,
+positive means a right tail, negative means a left tail. Use it to
+check a transform's result, not just the picture.</li>
+<li><code>CoapplicantIncome</code> starts right-skewed (<code>skew = 1.54</code>). <code>log1p</code> fixes
+that well, whether or not outliers were removed first (<code>-0.32</code> with
+outliers removed, <code>-0.36</code> without). Removing outliers helped a little
+on its own (<code>1.54 → 0.97</code>), but <code>log1p</code> did most of the real work.</li>
+<li><code>x**2</code> made things worse (<code>0.97 → 2.62</code>), because squaring barely
+moves small numbers but sends big numbers flying (<code>5,521 → 30,481,441</code>).
+Square and cube are tools for <strong>left</strong>-skewed data, not right-skewed
+data like this column.</li>
+<li><code>x*x</code> and <code>x**2</code> are the same operation — checked directly, every row
+matched. A different-looking graph always means different input data,
+never a different function.</li>
+</ul>
+
+<h2 id="faq">FAQ</h2>
+<p><strong>1. In the simplest words, what does <code>FunctionTransformer</code> actually do?</strong>
+It runs a function on every value in a column. That's the whole thing.
+You pick the function (<code>log1p</code>, <code>x**2</code>, or literally anything else). It
+does not think, learn, or decide anything on its own — it just applies
+your function, one value at a time, to the whole column.</p>
+<p><strong>2. Other tools like <code>StandardScaler</code> learn something in <code>.fit()</code> (the
+mean, the min, the max). What does <code>FunctionTransformer</code> learn?</strong>
+For a plain function like <code>log1p</code> or <code>x**2</code> — nothing. There is nothing
+to learn: <code>log1p(5)</code> is always <code>log1p(5)</code>, no matter what the rest of
+the column looks like. <code>.fit()</code> here is basically empty. It's still
+there so <code>FunctionTransformer</code> has the same shape (<code>fit</code>, then
+<code>transform</code>) as every other sklearn tool, which matters later when you
+chain several tools together in a <code>Pipeline</code>.</p>
+<p><strong>3. Then why not just write <code>dataset[&quot;col&quot;] = np.log1p(dataset[&quot;col&quot;])</code>
+directly, and skip <code>FunctionTransformer</code> completely?</strong>
+For one column, in one notebook, that's genuinely simpler — and works
+exactly the same. <code>FunctionTransformer</code> earns its place when you build a
+<code>Pipeline</code>: a single sklearn object that bundles several steps together
+(fill missing values → encode → transform → scale → model) so the exact
+same steps replay automatically on new data later, without you retyping
+every line by hand each time.</p>
+<p><strong>4. In this notebook, <code>.fit()</code> sometimes gets <code>dataset[&quot;CoapplicantIncome&quot;]</code>
+(single brackets) and sometimes <code>dataset[[&quot;CoapplicantIncome&quot;]]</code> (double
+brackets). Does that matter?</strong>
+Single brackets pull out a <strong>Series</strong> — one column, treated as a flat
+list of numbers. Double brackets pull out a <strong>DataFrame</strong> — a table,
+even if that table only has one column in it. Checked directly: for a
+simple function like <code>log1p</code>, <code>FunctionTransformer</code> works fine either
+way, and just gives back the same shape you put in (Series in → Series
+out, DataFrame in → DataFrame out). Double brackets is the safer habit,
+because some other sklearn tools (not this one) <em>require</em> a table and
+will error on a plain Series.</p>
+<p><strong>5. Is this the same thing as Feature Scaling from <code>15_Feature_Scaling.ipynb</code>
+and <code>16_Feature_Scaling_Normalization.ipynb</code>?</strong>
+No — different job. Scaling changes the <strong>range</strong> of numbers (for
+example, squeeze everything into <code>0</code>–<code>1</code>) but keeps the same shape.
+<code>FunctionTransformer</code> with <code>log1p</code> or <code>x**2</code> changes the <strong>shape</strong> of the
+distribution (how skewed it is) but not the range in the same way. It's
+common to do both: fix the shape first with a transform, then scale the
+range.</p>
+<p><strong>6. How do I pick a function for my own column, without a screenshot to
+copy from?</strong>
+Two steps. First, plot it and run <code>.skew()</code>. If the number is already
+close to <code>0</code>, you likely don't need a transform at all. If it's a big
+positive number (right-skewed, long tail on the right — like
+<code>CoapplicantIncome</code>), try <code>log</code> or <code>sqrt</code>. If it's a big negative number
+(left-skewed, long tail on the left), try <code>square</code> or <code>cube</code>. Then
+check <code>.skew()</code> again on the result — don't just trust the picture, let
+the number confirm it.</p>
+<p><strong>7. Does transforming a column ever add or remove rows?</strong>
+No. A transform changes the <strong>value</strong> inside each row, one number in,
+one number out — the row count never changes. That's different from
+outlier removal (Example 1's <code>dataset[dataset[&quot;CoapplicantIncome&quot;] &lt;= max_r]</code>
+step), which does drop rows. Easy to mix the two up because they often
+happen back to back, but they're separate operations.</p>
+<p><strong>8. Can I undo a transform and get the original numbers back?</strong>
+Yes, if the function has an opposite. <code>log1p</code> can be undone with
+<code>np.expm1</code> (its exact opposite). <code>FunctionTransformer</code> even has an
+<code>inverse_func</code> argument for this — pass the undo-function in when you
+create it, and call <code>.inverse_transform()</code> later. Square can be undone
+with square-root, but only safely for numbers that were <code>0</code> or positive
+to begin with.</p>
+<p><strong>9. What if a column has negative numbers — can I still use <code>log1p</code>?</strong>
+Not safely. <code>log</code> of a negative number does not exist, so <code>log1p</code> on
+negative values gives back <code>NaN</code> (not-a-number) instead of erroring
+loudly, which can be an easy mistake to miss. <code>CoapplicantIncome</code> never
+goes negative, so this notebook never hit the problem, but it's worth
+checking <code>.min()</code> on any new column before reaching for <code>log1p</code>.</p>
+
+<div class="foot"><a class="btn" href="../Concept/19_Function_Transformer.ipynb">19_Function_Transformer.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

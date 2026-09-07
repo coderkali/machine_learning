@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculus — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">03 Math › <b>Calculus</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#topic-01-amp-02-slope-and-derivative">Topic 01 &amp;amp; 02 — Slope and Derivative</a><a href="#part-1-slope">Part 1 — Slope</a><a href="#part-2-derivative">Part 2 — Derivative</a><a href="#one-line-summary">One Line Summary</a><a href="#topic-01-slope">Topic 01 — Slope</a><a href="#what-is-slope">What is Slope?</a><a href="#real-life-story-walking-up-a-road">Real Life Story — Walking Up a Road</a><a href="#the-formula">The Formula</a><a href="#important-rule">Important Rule</a><a href="#what-slope-values-mean">What Slope Values Mean</a><a href="#common-mistake-to-avoid">Common Mistake to Avoid</a><a href="#practice-question">Practice Question</a><a href="#why-slope-matters-in-ml">Why Slope Matters in ML</a><a href="#topic-02-derivative">Topic 02 — Derivative</a><a href="#the-problem-with-slope">The Problem With Slope</a><a href="#real-life-story-the-speedometer">Real Life Story — The Speedometer 🚗</a><a href="#the-secret-shrinking-the-gap">The Secret — Shrinking the Gap</a><a href="#slope-vs-derivative">Slope vs Derivative</a><a href="#the-formula">The Formula</a><a href="#in-my-own-words">In My Own Words</a><a href="#why-derivative-matters-in-ml">Why Derivative Matters in ML</a><a href="#topic-02-derivative">Topic 02 — Derivative</a><a href="#the-problem-with-slope">The Problem With Slope</a><a href="#what-is-a-derivative">What is a Derivative?</a><a href="#real-life-story-priya-s-car-journey">Real Life Story — Priya&#x27;s Car Journey 🚗</a><a href="#how-to-find-the-derivative-step-by-step">How To Find The Derivative — Step By Step</a><a href="#the-beautiful-pattern">The Beautiful Pattern</a><a href="#why-left-and-right-sides-are-different">Why Left and Right Sides Are Different</a><a href="#slope-vs-derivative">Slope vs Derivative</a><a href="#the-formula">The Formula</a><a href="#key-concept-convergence">Key Concept — Convergence</a><a href="#think-of-it-like-this">Think Of It Like This 🔍</a><a href="#in-my-own-words">In My Own Words</a><a href="#practice-questions">Practice Questions</a><a href="#why-derivative-matters-in-ml">Why Derivative Matters in ML</a><a href="#topic-03-gradient-descent">Topic 03 — Gradient Descent</a><a href="#why-do-we-need-gradient-descent">Why Do We Need Gradient Descent?</a><a href="#real-life-story-raju-s-chai-shop">Real Life Story — Raju&#x27;s Chai Shop ☕</a><a href="#how-gradient-descent-works-the-dark-mountain">How Gradient Descent Works — The Dark Mountain 🏔️</a><a href="#the-three-things-gradient-descent-uses-every-ste">The Three Things Gradient Descent Uses Every Step</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Mathematics for ML</p>
+  <h1>Calculus</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">5 notes</span></div>
+</div>
+<div class="src-head">📝 <a href="../Concept/01_02_slope_and_derivative.md">01_02_slope_and_derivative.md</a></div>
+<h2 id="topic-01-amp-02-slope-and-derivative">Topic 01 &amp; 02 — Slope and Derivative</h2>
+<hr />
+<h2 id="part-1-slope">Part 1 — Slope</h2>
+<h3>What is Slope?</h3>
+<p>Slope tells you how fast one thing changes when another thing changes.</p>
+<p>In simple words:</p>
+<div class="note"><div class="h">Note</div><p>For every 1 step forward, how much did the other thing grow?</p>
+</div>
+<hr />
+<h3>Real Life Story — Raju's Savings 💰</h3>
+<p>Raju saves money every month. His mother writes it in a diary:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Month</th>
+  <th>Total Savings (₹)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>January (Month 1)</td>
+  <td>₹1000</td>
+</tr>
+<tr>
+  <td>February (Month 2)</td>
+  <td>₹1500</td>
+</tr>
+<tr>
+  <td>March (Month 3)</td>
+  <td>₹2000</td>
+</tr>
+<tr>
+  <td>April (Month 4)</td>
+  <td>₹2500</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Question: How fast is Raju saving money?</strong></p>
+<hr />
+<h3>Every Point Has Two Numbers (x, y)</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Number</th>
+  <th>Name</th>
+  <th>Means</th>
+  <th>In Our Story</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>First number</td>
+  <td>x</td>
+  <td>Time — how far along</td>
+  <td>Month number</td>
+</tr>
+<tr>
+  <td>Second number</td>
+  <td>y</td>
+  <td>Value — what happened</td>
+  <td>Savings in ₹</td>
+</tr>
+</tbody>
+</table>
+<p>So:</p>
+<ul>
+<li>Point A = (1, 1000) → Month 1, savings ₹1000</li>
+<li>Point B = (3, 2000) → Month 3, savings ₹2000</li>
+</ul>
+<hr />
+<h3>Calculating Slope — Step By Step</h3>
+<p><strong>Step 1 — Rise (how much did savings grow?)</strong></p>
+<p>Rise = y₂ − y₁ = 2000 − 1000 = <strong>₹1000</strong></p>
+<p>Rise always uses the SECOND numbers (y values)</p>
+<p><strong>Step 2 — Run (how many months passed?)</strong></p>
+<p>Run = x₂ − x₁ = 3 − 1 = <strong>2 months</strong></p>
+<p>Run always uses the FIRST numbers (x values)</p>
+<p><strong>Step 3 — Slope</strong></p>
+<div class="code"><pre>Slope = Rise / Run = 1000 / 2 = 500
+</pre></div>
+<p><strong>Slope = 500 → Every month Raju saves ₹500 more</strong></p>
+<hr />
+<h3>Verification</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Month</th>
+  <th>Savings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>January (Month 1)</td>
+  <td>₹1000</td>
+</tr>
+<tr>
+  <td>February (Month 2)</td>
+  <td>1000 + 500 = ₹1500 ✅</td>
+</tr>
+<tr>
+  <td>March (Month 3)</td>
+  <td>1500 + 500 = ₹2000 ✅</td>
+</tr>
+<tr>
+  <td>April (Month 4)</td>
+  <td>2000 + 500 = ₹2500 ✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>The Formula</h3>
+<div class="code"><pre>         Rise     Δy     y₂ − y₁
+Slope = ------ = ---- = ---------
+         Run      Δx     x₂ − x₁
+</pre></div>
+<h3>What Each Symbol Means</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Rise</td>
+  <td>How much y grew</td>
+</tr>
+<tr>
+  <td>Run</td>
+  <td>How much x moved forward</td>
+</tr>
+<tr>
+  <td>Δy</td>
+  <td>y₂ − y₁ (second numbers subtracted)</td>
+</tr>
+<tr>
+  <td>Δx</td>
+  <td>x₂ − x₁ (first numbers subtracted)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>Common Mistake to Avoid</h3>
+<p>Given points (1, 1000) and (3, 2000):</p>
+<p>❌ Wrong: Run = 3 numbers → 1, 2, 3 = 3
+✅ Right: Run = gap → 3 − 1 = 2</p>
+<p>Always subtract. Never count the numbers themselves.</p>
+<hr />
+<h3>In My Own Words</h3>
+<p>Slope is something that finds the average between two points.
+How much Raju saved between January to March — the average basically.</p>
+<hr />
+<h2 id="part-2-derivative">Part 2 — Derivative</h2>
+<h3>The Problem With Slope</h3>
+<p>Slope needs two points. But what if someone asks:</p>
+<div class="note"><div class="h">Note</div><p>&quot;How fast was Raju saving on exactly 15th February — that one specific day?&quot;</p>
+</div>
+<p>Not January to March average. Not monthly rate. That one exact day.</p>
+<p>Slope cannot answer this. That is where Derivative comes in.</p>
+<hr />
+<h3>How Derivative Works — Zooming In</h3>
+<p>Raju's mother starts measuring smaller and smaller gaps around 15th February:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>From</th>
+  <th>To</th>
+  <th>Gap</th>
+  <th>Savings per day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1st Feb</td>
+  <td>1st March</td>
+  <td>30 days</td>
+  <td>₹16.6/day</td>
+</tr>
+<tr>
+  <td>10th Feb</td>
+  <td>20th Feb</td>
+  <td>10 days</td>
+  <td>₹16.5/day</td>
+</tr>
+<tr>
+  <td>14th Feb</td>
+  <td>16th Feb</td>
+  <td>2 days</td>
+  <td>₹16.5/day</td>
+</tr>
+<tr>
+  <td>14th Feb 11pm</td>
+  <td>15th Feb 1am</td>
+  <td>2 hours</td>
+  <td>≈ ₹16.5/day</td>
+</tr>
+</tbody>
+</table>
+<p>Every time the gap gets smaller → answer gets more precise.</p>
+<p>When the gap becomes almost zero → you get the exact saving rate on that one day.</p>
+<p><strong>That is the Derivative.</strong></p>
+<hr />
+<h3>Slope vs Derivative — In Raju's Story</h3>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Slope</th>
+  <th>Derivative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Question</strong></td>
+  <td>How much did Raju save from Jan to March?</td>
+  <td>How much did Raju save on exactly 15th Feb?</td>
+</tr>
+<tr>
+  <td><strong>Needs</strong></td>
+  <td>Two points</td>
+  <td>One single point</td>
+</tr>
+<tr>
+  <td><strong>Gap</strong></td>
+  <td>Big — whole months</td>
+  <td>Shrinks to almost zero</td>
+</tr>
+<tr>
+  <td><strong>Answer</strong></td>
+  <td>₹500 per month (average)</td>
+  <td>₹16.5 per day (exact)</td>
+</tr>
+<tr>
+  <td><strong>Symbol</strong></td>
+  <td>Δy / Δx</td>
+  <td>dy / dx</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>The Formula</h3>
+<p>Regular slope:</p>
+<div class="code"><pre>Δy / Δx
+</pre></div>
+<p>Derivative:</p>
+<div class="code"><pre>dy / dx
+</pre></div>
+<h3>What Each Symbol Means</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Δ (Delta)</td>
+  <td>A real measurable gap between two points</td>
+</tr>
+<tr>
+  <td>d</td>
+  <td>A gap so tiny it is almost zero</td>
+</tr>
+<tr>
+  <td>dy</td>
+  <td>An infinitely tiny change in y</td>
+</tr>
+<tr>
+  <td>dx</td>
+  <td>An infinitely tiny change in x</td>
+</tr>
+<tr>
+  <td>dy/dx</td>
+  <td>Exact rate of change at one single point</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>Think Of It Like This 🔍</h3>
+<p>Slope is like a regular camera photo — you see the whole picture but not fine details.</p>
+<p>Derivative is like zooming in 100x on one spot — you see exactly what is happening at that one point.</p>
+<hr />
+<h3>In My Own Words</h3>
+<p>Slope finds the average between two points.
+How much Raju saved between January to March — the average basically.</p>
+<p>Derivative finds exactly how much he saved on that particular day.
+It is not about how much he saved before — it is about how much he saved on that exact day.</p>
+<hr />
+<h2 id="one-line-summary">One Line Summary</h2>
+<div class="note"><div class="h">Note</div><p><strong>Slope</strong> = average rate of change between two points
+<strong>Derivative</strong> = exact rate of change at one single specific point</p>
+</div>
+
+<div class="src-head">📝 <a href="../Concept/01_slope.md">01_slope.md</a></div>
+<h2 id="topic-01-slope">Topic 01 — Slope</h2>
+<h2 id="what-is-slope">What is Slope?</h2>
+<p>Slope is a measure of the steepness and direction of a line.
+It tells you how much y changes for every 1 unit change in x.</p>
+<p>In simple words:</p>
+<div class="note"><div class="h">Note</div><p>For every 1 step forward, how many steps did you go up?</p>
+</div>
+<hr />
+<h2 id="real-life-story-walking-up-a-road">Real Life Story — Walking Up a Road</h2>
+<p>You are walking up a road. Someone marks your position:</p>
+<ul>
+<li>Start: (1, 1) → at minute 1, height = 1 metre</li>
+<li>End:   (3, 5) → at minute 3, height = 5 metres</li>
+</ul>
+<p>How steep is this road?</p>
+<ul>
+<li>Rise = how much you went UP = 5 − 1 = <strong>4 metres</strong></li>
+<li>Run = how much you went FORWARD = 3 − 1 = <strong>2 minutes</strong></li>
+</ul>
+<p><strong>Slope = 4 ÷ 2 = 2</strong></p>
+<p>Meaning: every 1 minute forward → you go up 2 metres.</p>
+<hr />
+<h2 id="the-formula">The Formula</h2>
+<div class="code"><pre>         Rise     Δy     y₂ − y₁
+Slope = ------ = ---- = ---------
+         Run      Δx     x₂ − x₁
+</pre></div>
+<h3>What Each Symbol Means</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Rise</td>
+  <td>How much you went UP (change in y)</td>
+</tr>
+<tr>
+  <td>Run</td>
+  <td>How much you went FORWARD (change in x)</td>
+</tr>
+<tr>
+  <td>Δy</td>
+  <td>y₂ − y₁ (second numbers in the points)</td>
+</tr>
+<tr>
+  <td>Δx</td>
+  <td>x₂ − x₁ (first numbers in the points)</td>
+</tr>
+<tr>
+  <td>y₂, y₁</td>
+  <td>Height at end point and start point</td>
+</tr>
+<tr>
+  <td>x₂, x₁</td>
+  <td>Position at end point and start point</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="important-rule">Important Rule</h2>
+<p>Every point is written as <strong>(x, y)</strong>:</p>
+<ul>
+<li>First number = how far forward (x)</li>
+<li>Second number = height (y)</li>
+</ul>
+<p>So:</p>
+<ul>
+<li>Rise always uses the <strong>SECOND numbers</strong> (y values)</li>
+<li>Run always uses the <strong>FIRST numbers</strong> (x values)</li>
+</ul>
+<hr />
+<h2 id="what-slope-values-mean">What Slope Values Mean</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Slope Value</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>5</td>
+  <td>Very steep — going up fast</td>
+</tr>
+<tr>
+  <td>1</td>
+  <td>Gentle — going up slowly</td>
+</tr>
+<tr>
+  <td>0</td>
+  <td>Completely flat</td>
+</tr>
+<tr>
+  <td>−2</td>
+  <td>Going downhill (negative = going down)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="common-mistake-to-avoid">Common Mistake to Avoid</h2>
+<p>Given points (1, 1) and (3, 5):</p>
+<p>❌ Wrong: counting numbers → 1, 2, 3 = 3 (incorrect)<br />
+✅ Right: counting gaps → 3 − 1 = 2 (correct)</p>
+<p>Always subtract. Never count the numbers themselves.</p>
+<hr />
+<h2 id="practice-question">Practice Question</h2>
+<p>Points: (2, 3) and (6, 11)</p>
+<ul>
+<li>Rise = 11 − 3 = 8</li>
+<li>Run = 6 − 2 = 4</li>
+<li>Slope = 8 ÷ 4 = <strong>2</strong></li>
+</ul>
+<p>Meaning: every 1 step forward → go up 2 metres.</p>
+<hr />
+<h2 id="why-slope-matters-in-ml">Why Slope Matters in ML</h2>
+<p>In Machine Learning, your model's errors form a curve — like a valley.
+The model needs to find the <strong>BOTTOM</strong> of that valley (minimum error).</p>
+<p>To do that, it checks the slope at every point:</p>
+<ul>
+<li>Slope tells the model: am I still going down? Or did I pass the bottom?</li>
+</ul>
+<p>This is the foundation of <strong>Gradient Descent</strong> — coming next.</p>
+
+<div class="src-head">📝 <a href="../Concept/02_derivative.md">02_derivative.md</a></div>
+<h2 id="topic-02-derivative">Topic 02 — Derivative</h2>
+<h2 id="the-problem-with-slope">The Problem With Slope</h2>
+<p>Slope needs <strong>two points</strong> to calculate steepness.</p>
+<p>But what if you want the steepness at <strong>one single point?</strong></p>
+<p>For example — you are driving a car. What is your speed at <strong>exactly 2:00:00 PM?</strong>
+Not an average. Not between two points. This exact moment.</p>
+<p>Regular slope cannot answer that. That is why we need the <strong>derivative.</strong></p>
+<hr />
+<h2 id="real-life-story-the-speedometer">Real Life Story — The Speedometer 🚗</h2>
+<p>Your friend notes your car position every minute:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Time (min)</th>
+  <th>Position (km)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>2</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>5</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>8</td>
+</tr>
+</tbody>
+</table>
+<p>Using slope, your friend calculates average speed between minute 1 and minute 3:</p>
+<div class="code"><pre>Slope = (8 − 2) / (3 − 1) = 3 km/min
+</pre></div>
+<p>That is the <strong>average</strong> over two points.</p>
+<p>But your <strong>speedometer</strong> shows your speed at exactly minute 2 — not an average.</p>
+<hr />
+<h2 id="the-secret-shrinking-the-gap">The Secret — Shrinking the Gap</h2>
+<p>Your friend tries getting closer and closer to minute 2:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>From</th>
+  <th>To</th>
+  <th>Gap</th>
+  <th>Speed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Minute 1</td>
+  <td>Minute 3</td>
+  <td>2 minutes</td>
+  <td>3 km/min</td>
+</tr>
+<tr>
+  <td>Minute 1.5</td>
+  <td>Minute 2.5</td>
+  <td>1 minute</td>
+  <td>3 km/min</td>
+</tr>
+<tr>
+  <td>Minute 1.9</td>
+  <td>Minute 2.1</td>
+  <td>0.2 min</td>
+  <td>3 km/min</td>
+</tr>
+<tr>
+  <td>Minute 1.99</td>
+  <td>Minute 2.01</td>
+  <td>0.02 min</td>
+  <td>3 km/min</td>
+</tr>
+</tbody>
+</table>
+<p>The gap keeps shrinking — but the answer stays the same.</p>
+<p>When the gap becomes so tiny it is almost <strong>zero</strong> — that is your speed at exactly that moment.</p>
+<p><strong>That is the derivative.</strong></p>
+<hr />
+<h2 id="slope-vs-derivative">Slope vs Derivative</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Slope</th>
+  <th>Derivative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Steepness between <strong>two points</strong></td>
+  <td>Steepness at <strong>one single point</strong></td>
+</tr>
+<tr>
+  <td>Gap between points is real and measurable</td>
+  <td>Gap shrinks to almost zero</td>
+</tr>
+<tr>
+  <td>Δy / Δx</td>
+  <td>dy / dx</td>
+</tr>
+<tr>
+  <td>Average speed</td>
+  <td>Speedometer reading</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-formula">The Formula</h2>
+<p>Regular slope:</p>
+<div class="code"><pre>Δy / Δx
+</pre></div>
+<p>Derivative:</p>
+<div class="code"><pre>dy / dx
+</pre></div>
+<h3>What Each Symbol Means</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Δ (Delta)</strong></td>
+  <td>A real measurable gap between two points</td>
+</tr>
+<tr>
+  <td><strong>d</strong></td>
+  <td>A gap so tiny it is almost zero</td>
+</tr>
+<tr>
+  <td><strong>dy</strong></td>
+  <td>An infinitely tiny change in y</td>
+</tr>
+<tr>
+  <td><strong>dx</strong></td>
+  <td>An infinitely tiny change in x</td>
+</tr>
+<tr>
+  <td><strong>dy/dx</strong></td>
+  <td>How much y changes per infinitely tiny change in x</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="in-my-own-words">In My Own Words</h2>
+<p>A derivative is the mathematical tool for finding the exact slope of a curve
+at a single, specific point.</p>
+<p>While standard slope measures constant steepness across a straight line,
+curves constantly change direction — requiring derivatives to calculate their
+instantaneous rate of change.</p>
+<hr />
+<h2 id="why-derivative-matters-in-ml">Why Derivative Matters in ML</h2>
+<p>In Machine Learning, the model's errors form a curve.
+The model needs to find the <strong>bottom of that curve</strong> (minimum error).</p>
+<p>At every point on the curve, the model checks the derivative:</p>
+<ul>
+<li>Derivative is <strong>positive</strong> → still going up → move the other way</li>
+<li>Derivative is <strong>negative</strong> → going down → keep going this way</li>
+<li>Derivative is <strong>zero</strong> → you are at the bottom ✅</li>
+</ul>
+<p>This is the foundation of <strong>Gradient Descent</strong> — coming next.</p>
+
+<div class="src-head">📝 <a href="../Concept/02_derivative_new.md">02_derivative_new.md</a></div>
+<h2 id="topic-02-derivative">Topic 02 — Derivative</h2>
+<h2 id="the-problem-with-slope">The Problem With Slope</h2>
+<p>Slope needs <strong>two points</strong> to calculate steepness.</p>
+<p>But what if you want the rate of change at <strong>one single point?</strong></p>
+<p>For example — Priya is driving a car. What is her exact speed at <strong>exactly second 2?</strong>
+Not an average. Not between two points. This exact moment.</p>
+<p>Regular slope cannot answer that. That is why we need the <strong>derivative.</strong></p>
+<hr />
+<h2 id="what-is-a-derivative">What is a Derivative?</h2>
+<div class="note"><div class="h">Note</div><p>Derivative is finding the exact rate of change at one single specific point —
+by shrinking the gap from both sides and averaging them.</p>
+</div>
+<hr />
+<h2 id="real-life-story-priya-s-car-journey">Real Life Story — Priya's Car Journey 🚗</h2>
+<p>Priya is driving a car. Her position is tracked every second:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Time (seconds)</th>
+  <th>Distance (metres)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>10</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>18</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Question: What is Priya's exact speed at second 2?</strong></p>
+<hr />
+<h2 id="how-to-find-the-derivative-step-by-step">How To Find The Derivative — Step By Step</h2>
+<h3>Step 1 — Big Gap First (Slope from second 1 to second 3)</h3>
+<div class="code"><pre>Rise = 18 − 4 = 14
+Run  = 3 − 1  = 2
+Slope = 14 ÷ 2 = 7 m/s
+</pre></div>
+<h3>Step 2 — Left Side (Slope from second 1 to second 2)</h3>
+<div class="code"><pre>Rise = 10 − 4 = 6
+Run  = 2 − 1  = 1
+Slope = 6 ÷ 1 = 6 m/s
+</pre></div>
+<h3>Step 3 — Right Side (Slope from second 2 to second 3)</h3>
+<div class="code"><pre>Rise = 18 − 10 = 8
+Run  = 3 − 2   = 1
+Slope = 8 ÷ 1  = 8 m/s
+</pre></div>
+<h3>Step 4 — Average Left and Right → Derivative</h3>
+<div class="code"><pre>Derivative = (6 + 8) ÷ 2 = 14 ÷ 2 = 7 m/s ✅
+</pre></div>
+<p><strong>At exactly second 2 — Priya was driving at 7 metres per second.</strong></p>
+<hr />
+<h2 id="the-beautiful-pattern">The Beautiful Pattern</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>What We Calculated</th>
+  <th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Big gap slope (1→3)</td>
+  <td>7 m/s</td>
+</tr>
+<tr>
+  <td>Left side (1→2)</td>
+  <td>6 m/s</td>
+</tr>
+<tr>
+  <td>Right side (2→3)</td>
+  <td>8 m/s</td>
+</tr>
+<tr>
+  <td><strong>Derivative at second 2</strong></td>
+  <td><strong>7 m/s</strong> ✅</td>
+</tr>
+</tbody>
+</table>
+<p>The big gap slope and the derivative gave the <strong>same answer.</strong>
+This happens because Priya's movement follows a smooth pattern.</p>
+<hr />
+<h2 id="why-left-and-right-sides-are-different">Why Left and Right Sides Are Different</h2>
+<p>Left side = 6 m/s (slower)
+Right side = 8 m/s (faster)</p>
+<p>This means Priya is <strong>accelerating</strong> — pressing the accelerator harder.
+So of course her speed just before second 2 and just after second 2 are different.
+The derivative gives the exact speed <strong>in between</strong> — at that precise moment.</p>
+<hr />
+<h2 id="slope-vs-derivative">Slope vs Derivative</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Slope</th>
+  <th>Derivative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Question</strong></td>
+  <td>Average speed from second 1 to second 3?</td>
+  <td>Exact speed at second 2?</td>
+</tr>
+<tr>
+  <td><strong>Needs</strong></td>
+  <td>Two points</td>
+  <td>One single point</td>
+</tr>
+<tr>
+  <td><strong>Gap</strong></td>
+  <td>Big and measurable</td>
+  <td>Shrinks to almost zero</td>
+</tr>
+<tr>
+  <td><strong>Answer</strong></td>
+  <td>Average rate</td>
+  <td>Exact rate at one moment</td>
+</tr>
+<tr>
+  <td><strong>Symbol</strong></td>
+  <td>Δy / Δx</td>
+  <td>dy / dx</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-formula">The Formula</h2>
+<p>Regular slope:</p>
+<div class="code"><pre>Δy / Δx
+</pre></div>
+<p>Derivative:</p>
+<div class="code"><pre>dy / dx
+</pre></div>
+<h3>What Each Symbol Means</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Δ (Delta)</td>
+  <td>A real measurable gap between two points</td>
+</tr>
+<tr>
+  <td>d</td>
+  <td>A gap so tiny it is almost zero</td>
+</tr>
+<tr>
+  <td>dy</td>
+  <td>An infinitely tiny change in y</td>
+</tr>
+<tr>
+  <td>dx</td>
+  <td>An infinitely tiny change in x</td>
+</tr>
+<tr>
+  <td>dy/dx</td>
+  <td>Exact rate of change at one single point</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-concept-convergence">Key Concept — Convergence</h2>
+<p>As the gap shrinks smaller and smaller — the answer settles to one fixed value.</p>
+<p>Example from Raju's savings story:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Gap Size</th>
+  <th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>30 days</td>
+  <td>₹16.6/day</td>
+</tr>
+<tr>
+  <td>10 days</td>
+  <td>₹16.5/day</td>
+</tr>
+<tr>
+  <td>2 days</td>
+  <td>₹16.5/day</td>
+</tr>
+<tr>
+  <td>2 hours</td>
+  <td>₹16.5/day</td>
+</tr>
+</tbody>
+</table>
+<p>The answer <strong>converges</strong> (settles) to ₹16.5 — that is the derivative.</p>
+<hr />
+<h2 id="think-of-it-like-this">Think Of It Like This 🔍</h2>
+<p>Slope is like a regular camera photo — you see the whole picture but not fine details.</p>
+<p>Derivative is like zooming in 100x on one spot — you see exactly what is
+happening at that one precise point.</p>
+<hr />
+<h2 id="in-my-own-words">In My Own Words</h2>
+<p>Derivative is finding the exact speed or value at one single specific point.</p>
+<p>Not before it. Not after it. That exact moment.</p>
+<p>We find it by checking just before the point and just after the point,
+then averaging those two slopes to get the exact value.</p>
+<hr />
+<h2 id="practice-questions">Practice Questions</h2>
+<h3>Question 1 — Arjun's Bicycle 🚴</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Time (seconds)</th>
+  <th>Distance (metres)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>3</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>8</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>15</td>
+</tr>
+</tbody>
+</table>
+<p>Find exact speed at second 2:</p>
+<ul>
+<li>Left slope (1→2) = (8−3) ÷ (2−1) = 5 m/s</li>
+<li>Right slope (2→3) = (15−8) ÷ (3−2) = 7 m/s</li>
+<li>Derivative = (5+7) ÷ 2 = <strong>6 m/s</strong> ✅</li>
+</ul>
+<h3>Question 2 — Priya's Car 🚗</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Time (seconds)</th>
+  <th>Distance (metres)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>10</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>18</td>
+</tr>
+</tbody>
+</table>
+<p>Find exact speed at second 2:</p>
+<ul>
+<li>Left slope (1→2) = (10−4) ÷ (2−1) = 6 m/s</li>
+<li>Right slope (2→3) = (18−10) ÷ (3−2) = 8 m/s</li>
+<li>Derivative = (6+8) ÷ 2 = <strong>7 m/s</strong> ✅</li>
+</ul>
+<hr />
+<h2 id="why-derivative-matters-in-ml">Why Derivative Matters in ML</h2>
+<p>In Machine Learning the model's errors form a curve — like a valley.
+The model needs to find the <strong>bottom</strong> of that valley (minimum error).</p>
+<p>At every point on the curve the model checks the derivative:</p>
+<ul>
+<li>Derivative is <strong>negative</strong> → curve is going down → step this way ✅</li>
+<li>Derivative is <strong>positive</strong> → curve is going up → step the other way</li>
+<li>Derivative is <strong>zero</strong> → you are at the bottom ✅ stop here</li>
+</ul>
+<p>This is the foundation of <strong>Gradient Descent</strong> — coming next.</p>
+
+<div class="src-head">📝 <a href="../Concept/03_gradient_descent.md">03_gradient_descent.md</a></div>
+<h2 id="topic-03-gradient-descent">Topic 03 — Gradient Descent</h2>
+<hr />
+<h2 id="why-do-we-need-gradient-descent">Why Do We Need Gradient Descent?</h2>
+<p>In Machine Learning, the model makes predictions. Those predictions have errors.
+If you plot the error on a graph it looks like a valley:</p>
+<div class="code"><pre>Error
+  |
+  |  \              /
+  |    \          /
+  |      \      /
+  |        \  /
+  |          ★  ← minimum error — this is the goal
+  |
+  +----------------------
+</pre></div>
+<p>The model's job is to find the BOTTOM of this valley — where error is smallest.
+To do that — it needs to check the slope at every point.
+That is where Gradient Descent comes in.</p>
+<hr />
+<h2 id="real-life-story-raju-s-chai-shop">Real Life Story — Raju's Chai Shop ☕</h2>
+<p>Raju opens a chai shop. He tries different prices and notes his profit:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Price per cup (₹)</th>
+  <th>Profit (₹)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>₹2</td>
+  <td>₹10</td>
+</tr>
+<tr>
+  <td>₹4</td>
+  <td>₹40</td>
+</tr>
+<tr>
+  <td>₹6</td>
+  <td>₹60</td>
+</tr>
+<tr>
+  <td>₹8</td>
+  <td>₹40</td>
+</tr>
+<tr>
+  <td>₹10</td>
+  <td>₹10</td>
+</tr>
+</tbody>
+</table>
+<p>Plotted on a graph this looks like a hill — profit goes up then comes back down.
+Raju wants to find the price that gives MAXIMUM profit.</p>
+<p>He cannot try every possible price. He needs a smarter way.
+That smarter way is Gradient Descent.</p>
+<hr />
+<h2 id="how-gradient-descent-works-the-dark-mountain">How Gradient Descent Works — The Dark Mountain 🏔️</h2>
+<p>Imagine you are standing on a dark mountain. You cannot see anything.
+Your only goal is to reach the bottom of the valley.</p>
+<p>What do you do?
+→ You slowly put your foot down and check how steep the ground is.
+→ You take one small step downhill.
+→ You repeat this — one step at a time — until the ground feels flat.</p>
+<p>That is exactly what Gradient Descent does.</p>
+<hr />
+<h2 id="the-three-things-gradient-descent-uses-every-ste">The Three Things Gradient Descent Uses Every Step</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Thing</th>
+  <th>What It Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Current position</td>
+  <td>Where the model is right now</td>
+</tr>
+<tr>
+  <td>Derivative</td>
+  <td>How steep is the ground at this point</td>
+</tr>
+<tr>
+  <td>Learning Rate</td>
+  <td>How big a step to take</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="how-derivative-is-calculated-at-each-point">How Derivative Is Calculated At Each Point</h2>
+<p>To find the derivative at any point — we use what we already know:</p>
+<div class="note"><div class="h">Note</div><p>Check slope from the LEFT → check slope from the RIGHT → average them</p>
+</div>
+<h3>Example — At Price ₹6</h3>
+<p>Raju's data around ₹6:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Point</th>
+  <th>Price</th>
+  <th>Profit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Left</td>
+  <td>₹4</td>
+  <td>₹40</td>
+</tr>
+<tr>
+  <td>Here</td>
+  <td>₹6</td>
+  <td>₹60</td>
+</tr>
+<tr>
+  <td>Right</td>
+  <td>₹8</td>
+  <td>₹40</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 1 — Left Slope (₹4 to ₹6)</strong></p>
+<div class="code"><pre>Rise = 60 − 40 = 20
+Run  = 6 − 4   = 2
+Left Slope = 20 ÷ 2 = +10
+</pre></div>
+<p><strong>Step 2 — Right Slope (₹6 to ₹8)</strong></p>
+<div class="code"><pre>Rise = 40 − 60 = −20  ← negative because profit went DOWN
+Run  = 8 − 6   = 2
+Right Slope = −20 ÷ 2 = −10
+</pre></div>
+<p><strong>Step 3 — Derivative</strong></p>
+<div class="code"><pre>Derivative = (Left Slope + Right Slope) ÷ 2
+           = (10 + (−10)) ÷ 2
+           = 0 ÷ 2
+           = 0  ← completely flat = top of the hill ✅
+</pre></div>
+<hr />
+<h2 id="what-the-derivative-tells-the-model">What The Derivative Tells The Model</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Derivative Value</th>
+  <th>Meaning</th>
+  <th>What Model Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Positive (+15)</td>
+  <td>Curve going UP</td>
+  <td>Move in opposite direction</td>
+</tr>
+<tr>
+  <td>Negative (−10)</td>
+  <td>Curve going DOWN</td>
+  <td>Keep moving this way</td>
+</tr>
+<tr>
+  <td>Zero (0)</td>
+  <td>Completely flat</td>
+  <td>STOP — minimum found ✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="derivative-at-every-price-point">Derivative At Every Price Point</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Price</th>
+  <th>Left Slope</th>
+  <th>Right Slope</th>
+  <th>Derivative</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>₹2</td>
+  <td>none</td>
+  <td>+15</td>
+  <td>+15</td>
+  <td>Increase price ↗</td>
+</tr>
+<tr>
+  <td>₹4</td>
+  <td>+15</td>
+  <td>+10</td>
+  <td>+12.5</td>
+  <td>Increase price ↗</td>
+</tr>
+<tr>
+  <td>₹6</td>
+  <td>+10</td>
+  <td>−10</td>
+  <td>0</td>
+  <td>STOP ✅</td>
+</tr>
+<tr>
+  <td>₹8</td>
+  <td>−10</td>
+  <td>−15</td>
+  <td>−12.5</td>
+  <td>Decrease price ↙</td>
+</tr>
+<tr>
+  <td>₹10</td>
+  <td>−15</td>
+  <td>none</td>
+  <td>−15</td>
+  <td>Decrease price ↙</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="learning-rate-the-step-size">Learning Rate — The Step Size</h2>
+<p>The Learning Rate controls how big each step is.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Learning Rate</th>
+  <th>What Happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Too big</td>
+  <td>You jump over the bottom and miss it</td>
+</tr>
+<tr>
+  <td>Too small</td>
+  <td>You take forever to reach the bottom</td>
+</tr>
+<tr>
+  <td>Just right</td>
+  <td>You reach the bottom smoothly ✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-exact-steps-every-single-time">The Exact Steps Every Single Time</h2>
+<ol>
+<li>Start at a random point</li>
+<li>Check derivative at this point — how steep is the ground?</li>
+<li>Derivative positive → move one way</li>
+<li>Derivative negative → move the other way</li>
+<li>Take one small step — size controlled by Learning Rate</li>
+<li>Land at new point</li>
+<li>Repeat from step 2</li>
+<li>Derivative close to zero → STOP ✅</li>
+</ol>
+<hr />
+<h2 id="important-real-life-is-never-perfect">IMPORTANT — Real Life Is Never Perfect</h2>
+<p>In real life — left and right slopes almost never cancel perfectly.</p>
+<p>So the derivative is almost never exactly zero.</p>
+<p>The model keeps taking smaller and smaller steps until the derivative
+becomes TINY ENOUGH — like 0.001 — and then it stops.</p>
+<p>This tiny number is called the THRESHOLD.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Derivative</th>
+  <th>What Happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>−1.75</td>
+  <td>Still moving — take a step</td>
+</tr>
+<tr>
+  <td>−0.5</td>
+  <td>Getting close — take a smaller step</td>
+</tr>
+<tr>
+  <td>−0.01</td>
+  <td>Almost flat — nearly there</td>
+</tr>
+<tr>
+  <td>−0.001</td>
+  <td>Close enough → STOP ✅</td>
+</tr>
+</tbody>
+</table>
+<p>Think of it like the dark mountain — you never find perfectly flat ground.
+But at some point the ground feels almost flat enough — and you stop there.</p>
+<hr />
+<h2 id="why-gradient-descent-matters-in-ml">Why Gradient Descent Matters In ML</h2>
+<p>Every ML model you will ever use — linear regression, neural networks,
+deep learning — they all learn using Gradient Descent.</p>
+<p>When a model trains on data, what it is actually doing is:</p>
+<div class="note"><div class="h">Note</div><p>Running Gradient Descent thousands of times to find the best possible answer.</p>
+</div>
+<p>Slope → Derivative → Gradient Descent → This is how ML models learn.</p>
+<hr />
+<h2 id="the-full-journey-so-far">The Full Journey So Far</h2>
+<div class="code"><pre>Slope
+  → measures steepness between two points
+
+Derivative
+  → measures exact steepness at one single point
+  → calculated by averaging left slope and right slope
+
+Gradient Descent
+  → uses the derivative at every step
+  → takes small steps downhill
+  → stops when derivative is close to zero
+  → this is how ML models find minimum error
+</pre></div>
+<hr />
+<h2 id="in-my-own-words">In My Own Words</h2>
+<p>Gradient Descent is like walking down a dark mountain one step at a time.
+Before every step — you check how steep the ground is (derivative).
+The steepness tells you which way to step.
+You keep stepping until the ground is almost flat.
+That flat point is where the model has minimum error — its best answer.</p>
+
+<div class="foot"><a class="btn" href="../Concept/01_02_slope_and_derivative.md">01_02_slope_and_derivative.md ↗</a><a class="btn" href="../Concept/01_slope.md">01_slope.md ↗</a><a class="btn" href="../Concept/02_derivative.md">02_derivative.md ↗</a><a class="btn" href="../Concept/02_derivative_new.md">02_derivative_new.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

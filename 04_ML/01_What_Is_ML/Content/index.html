@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Is ML — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>What Is ML</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#machine-learning-01-what-is-ml-foundations">Machine Learning — 01. What Is ML? (Foundations)</a><a href="#what-is-machine-learning">What Is Machine Learning?</a><a href="#a-brief-interesting-history-of-ml">A Brief, Interesting History of ML</a><a href="#how-does-machine-learning-work">How Does Machine Learning Work?</a><a href="#classification-of-machine-learning">Classification of Machine Learning</a><a href="#advantages-of-machine-learning">Advantages of Machine Learning</a><a href="#disadvantages-of-machine-learning">Disadvantages of Machine Learning</a><a href="#where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</a><a href="#coming-up-next-from-the-course">Coming Up Next (from the course)</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a><a href="#machine-learning-02-the-course-roadmap-where-thi">Machine Learning — 02. The Course Roadmap (Where Thi</a><a href="#the-full-pipeline">The Full Pipeline</a><a href="#zoom-in-1-feature-engineering-5-sub-skills">Zoom In 1: Feature Engineering (5 sub-skills)</a><a href="#zoom-in-2-feature-selection-6-techniques">Zoom In 2: Feature Selection (6 techniques)</a><a href="#zoom-in-3-ml-algorithms-3-categories-5-models">Zoom In 3: ML Algorithms (3 categories → 5 models)</a><a href="#zoom-in-4-hyperparameter-tuning-4-search-methods">Zoom In 4: Hyperparameter Tuning (4 search methods)</a><a href="#zoom-in-5-model-deployment">Zoom In 5: Model Deployment</a><a href="#zoom-in-6-docker-amp-kubernetes">Zoom In 6: Docker &amp;amp; Kubernetes</a><a href="#zoom-in-7-end-to-end-ml-projects">Zoom In 7: End-to-End ML Projects</a><a href="#the-ml-toolbox">The ML Toolbox</a><a href="#where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</a><a href="#coming-up-next-from-the-course">Coming Up Next (from the course)</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>What Is ML</h1>
+  <p class="lede">Where the rules stop being written by hand, and start being learned from examples.</p>
+  <div class="tags"><span class="tag">2 notes</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Anita wrote a spam filter.</strong> Her rule was simple: if the subject line contains "FREE", move it to spam.</p><p>It worked for a week. Then the spam arrived as "F R E E", then "Fr&#101;e", then "no cost to you". Every time she added a rule, the senders changed one character and walked around it.</p><p><span class='beat'>The problem was never the rules — it was that she was writing them.</span> No human can hand-write a rule for every disguise, because disguises are invented faster than rules.</p><p>So she flipped the direction. Instead of writing rules to get answers, she gave a program ten thousand emails already labelled spam or not, and asked it to work out the rule itself. That flip is machine learning.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Traditional code is rules in, answers out. Machine learning is answers in, rules out.</p></div>
+<div class="src-head">📝 <a href="../Concept/01._LEARNING.MD">01._LEARNING.MD</a></div>
+<h2 id="machine-learning-01-what-is-ml-foundations">Machine Learning — 01. What Is ML? (Foundations)</h2>
+<p>Source: external course (WsCubeTech ML playlist — screenshots shared as you go).
+This file: my own running notes on top of it — history, examples, diagrams, and
+how each idea connects back to <code>phase_3_classical_ml/</code> in this repo.</p>
+<hr />
+<h2 id="what-is-machine-learning">What Is Machine Learning?</h2>
+<p><strong>In one line:</strong> feed a computer enough examples of a problem, and it writes
+its own rules instead of you writing them by hand.</p>
+<p>The course's definition, unpacked line by line:</p>
+<div class="note"><div class="h">Note</div><p>&quot;Machine Learning is the science of getting computers to learn and act
+like humans do, and improve their learning over time in autonomous
+fashion, by feeding them data and information in the form of observations
+and real-world interactions.&quot;</p>
+</div>
+<table class="tbl"><thead>
+<tr>
+  <th>Phrase</th>
+  <th>What it actually means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>&quot;getting computers to learn&quot;</td>
+  <td>behavior comes from <em>data</em>, not from fixed logic you typed in</td>
+</tr>
+<tr>
+  <td>&quot;improve... over time, autonomous fashion&quot;</td>
+  <td>no engineer manually retunes the rules every time a new pattern shows up</td>
+</tr>
+<tr>
+  <td>&quot;feeding them data... observations and interactions&quot;</td>
+  <td>the fuel is <strong>examples</strong>, not instructions</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The 12-years-of-Java version:</strong> you've spent your career writing business
+rules by hand — <code>if (creditScore &lt; 650 &amp;&amp; existingLoan) reject();</code>. Machine
+Learning replaces that hand-written rulebook with a rulebook the <strong>machine
+derives itself</strong> by looking at thousands of past examples of &quot;who actually
+defaulted.&quot; Same goal — a decision function — completely different way of
+arriving at it. That shift (rules you write → rules the machine finds) is
+the whole idea. Everything else in ML is detail on top of it.</p>
+<hr />
+<h2 id="a-brief-interesting-history-of-ml">A Brief, Interesting History of ML</h2>
+<p>ML didn't arrive with ChatGPT — it's 70+ years of boom, bust, and quiet
+comebacks. Worth knowing because the vocabulary you'll hit later (deep
+learning, transformers, RLHF) is just the latest chapter of this same story.</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    Y1[&quot;1950 — Alan Turing&lt;br/&gt;&#x27;Can machines think?&#x27; (Turing Test)&quot;] --&gt; Y2
+    Y2[&quot;1957 — Frank Rosenblatt&#x27;s Perceptron&lt;br/&gt;first trainable neural net&quot;] --&gt; Y3
+    Y3[&quot;1959 — Arthur Samuel&lt;br/&gt;plays himself at checkers, coins &#x27;Machine Learning&#x27;&quot;] --&gt; Y4
+    Y4[&quot;1969–1980 — First AI Winter&lt;br/&gt;Minsky &amp;amp; Papert show Perceptron can&#x27;t even solve XOR&quot;] --&gt; Y5
+    Y5[&quot;1986 — Backpropagation popularized&lt;br/&gt;(Rumelhart, Hinton, Williams) revives neural nets&quot;] --&gt; Y6
+    Y6[&quot;1990s — Statistical ML era&lt;br/&gt;SVMs, Random Forests, boosting — ML splits from &#x27;AI&#x27;&quot;] --&gt; Y7
+    Y7[&quot;1997 — IBM Deep Blue beats Kasparov&lt;br/&gt;(search + rules, not learning — but the headline moment)&quot;] --&gt; Y8
+    Y8[&quot;2006 — &#x27;Deep Learning&#x27; coined&lt;br/&gt;Geoffrey Hinton trains deep nets layer by layer&quot;] --&gt; Y9
+    Y9[&quot;2012 — AlexNet crushes ImageNet&lt;br/&gt;GPUs make deep learning practical — the real turning point&quot;] --&gt; Y10
+    Y10[&quot;2017 — &#x27;Attention Is All You Need&#x27;&lt;br/&gt;the Transformer — backbone of every LLM since&quot;] --&gt; Y11
+    Y11[&quot;2020s — GPT / Claude / Gemini&lt;br/&gt;→ this is exactly where your own roadmap is headed&quot;]
+
+    style Y4 fill:#8a8f98,stroke:#5c6068,color:#fff
+    style Y11 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<p>A few of these are worth remembering as <em>stories</em>, not just dates:</p>
+<ul>
+<li><strong>Arthur Samuel's checkers program (1959)</strong> is the origin of the term. He
+had it play thousands of games against <strong>itself</strong>, and it got better each
+time — the first working demo of &quot;a program that improves without being
+re-programmed.&quot; That is still, 65+ years later, the entire definition of ML.</li>
+<li><strong>The First AI Winter (1969)</strong> happened because Rosenblatt's Perceptron
+had been hyped — the <em>New York Times</em> wrote it would soon &quot;walk, talk,
+see, write, reproduce itself.&quot; Minsky and Papert then proved mathematically
+that a single-layer Perceptron can't even learn XOR. Funding dried up for
+a decade. <strong>Lesson that still applies today:</strong> hype cycles in AI aren't new
+— you're living through another one right now with GenAI.</li>
+<li><strong>2012 (AlexNet)</strong> is the real hinge point of modern AI. Not because the
+idea (deep neural nets) was new — Hinton had been pushing it since the
+80s — but because GPUs finally made it <em>cheap enough to run</em>. Same
+algorithm, waited 25 years for the hardware to catch up.</li>
+</ul>
+<hr />
+<h2 id="how-does-machine-learning-work">How Does Machine Learning Work?</h2>
+<h3>The paradigm shift</h3>
+<p>This is the single most important diagram in the whole course — everything
+else is an elaboration of it.</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    subgraph T[&quot;Traditional Programming&quot;]
+        direction LR
+        TD1((&quot;Data&quot;)) --&gt; TB[&quot;Computer&quot;]
+        TP1((&quot;Program&lt;br/&gt;rules you write&quot;)) --&gt; TB
+        TB --&gt; TO((&quot;Output&quot;))
+    end
+
+    subgraph M[&quot;Machine Learning&quot;]
+        direction LR
+        MD1((&quot;Data&quot;)) --&gt; MB[&quot;Computer&quot;]
+        MO1((&quot;Output&lt;br/&gt;known answers&quot;)) --&gt; MB
+        MB --&gt; MP((&quot;Program&lt;br/&gt;the model&quot;))
+    end
+
+    style TB fill:#3a3d42,stroke:#1c1c1c,color:#fff
+    style MB fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style MP fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<p>Read it as: traditional programming feeds in <strong>Data + Program</strong>, and the
+computer's job is to produce the <strong>Output</strong>. Machine Learning feeds in
+<strong>Data + (known) Output</strong>, and the computer's job is to produce the
+<strong>Program</strong> itself — which, in ML vocabulary, is called the <strong>model</strong>.</p>
+<h3>The training → prediction pipeline</h3>
+<p>Once you accept that the &quot;program&quot; is now something the machine builds,
+here's the actual pipeline that builds it and then uses it:</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    A[&quot;Past / historical data&quot;] --&gt;|Training| B[&quot;ML algorithm&lt;br/&gt;learns the pattern&quot;]
+    B --&gt; C[&quot;Model&lt;br/&gt;the learned rulebook&quot;]
+    D[&quot;New, unseen data&quot;] --&gt; C
+    C --&gt; E[&quot;Output / Prediction&quot;]
+
+    style B fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style C fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<h3>Worked example: spam filter, both ways</h3>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Traditional Programming</th>
+  <th>Machine Learning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>You provide</td>
+  <td>Data (emails) <strong>+</strong> hand-written rules (<code>if contains &quot;lottery&quot; → spam</code>)</td>
+  <td>Data (emails) <strong>+</strong> correct labels (spam / not spam)</td>
+</tr>
+<tr>
+  <td>Computer produces</td>
+  <td>Output (spam or not, per your rules)</td>
+  <td>A <strong>model</strong> that can label emails on its own</td>
+</tr>
+<tr>
+  <td>Who found the pattern?</td>
+  <td>You did, by reading emails and guessing keywords</td>
+  <td>The algorithm did, by statistically comparing thousands of spam vs. real emails</td>
+</tr>
+<tr>
+  <td>What breaks it</td>
+  <td>A spammer who avoids your exact keywords</td>
+  <td>Needs enough good examples — garbage in, garbage out</td>
+</tr>
+</tbody>
+</table>
+<p>This is exactly the same shift you'll see formalized in
+<code>phase_3_classical_ml/</code> — Riverstone Bank doesn't hand-code &quot;reject if
+credit score &lt; 650&quot;; it trains a model on 8 (eventually many more) past
+loan outcomes and lets the model find that threshold itself.</p>
+<hr />
+<h2 id="classification-of-machine-learning">Classification of Machine Learning</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    ML[&quot;Machine Learning&quot;] --&gt; S[&quot;Supervised Learning&lt;br/&gt;learns from labeled data&quot;]
+    ML --&gt; U[&quot;Unsupervised Learning&lt;br/&gt;finds structure in unlabeled data&quot;]
+    ML --&gt; R[&quot;Reinforcement Learning&lt;br/&gt;learns from reward / penalty&quot;]
+
+    S --&gt; S1[&quot;Classification&lt;br/&gt;e.g. spam / not spam&quot;]
+    S --&gt; S2[&quot;Regression&lt;br/&gt;e.g. predict house price&quot;]
+    U --&gt; U1[&quot;Clustering&lt;br/&gt;e.g. customer segments&quot;]
+    U --&gt; U2[&quot;Dimensionality Reduction&lt;br/&gt;e.g. compress features&quot;]
+    R --&gt; R1[&quot;Agent + Environment&lt;br/&gt;e.g. AlphaGo, self-driving cars&quot;]
+
+    style S fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style U fill:#b3781f,stroke:#8a5c16,color:#fff
+    style R fill:#7a3f66,stroke:#552b47,color:#fff
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Supervised Learning</th>
+  <th>Unsupervised Learning</th>
+  <th>Reinforcement Learning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Data has</td>
+  <td>Labels (the &quot;correct answer&quot; is given)</td>
+  <td>No labels</td>
+  <td>No labels — a <strong>reward signal</strong> instead</td>
+</tr>
+<tr>
+  <td>Goal</td>
+  <td>Predict the label for new input</td>
+  <td>Discover hidden structure / groups</td>
+  <td>Learn a strategy (<strong>policy</strong>) that maximizes reward over time</td>
+</tr>
+<tr>
+  <td>Classic examples</td>
+  <td>Spam detection, loan-default prediction, house-price prediction, medical diagnosis</td>
+  <td>Customer segmentation, fraud/anomaly detection, market-basket analysis (&quot;people who buy X also buy Y&quot;)</td>
+  <td>AlphaGo, self-driving cars, game-playing bots, robotics</td>
+</tr>
+<tr>
+  <td>Sub-types</td>
+  <td>Classification (categories) vs. Regression (numbers)</td>
+  <td>Clustering vs. Dimensionality Reduction</td>
+  <td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Analogy for all three, same classroom:</strong></p>
+<ul>
+<li><strong>Supervised</strong> = a student solving practice problems <strong>with an answer
+key</strong> — every attempt gets checked against the correct answer.</li>
+<li><strong>Unsupervised</strong> = a student handed a box of mixed puzzle pieces with
+<strong>no picture on the box</strong> — they group pieces by shape and color because
+that's the structure they can find, not because anyone told them the
+groups.</li>
+<li><strong>Reinforcement</strong> = a kid learning to ride a bicycle — nobody grades each
+individual pedal stroke. They fall (penalty) or stay balanced (reward),
+and improve purely through trial and error over many attempts.</li>
+</ul>
+<p><strong>Why this matters for where you're headed:</strong> Reinforcement Learning is not
+just &quot;self-driving cars and games&quot; — <strong>RLHF (Reinforcement Learning from
+Human Feedback)</strong> is literally one of the techniques used to fine-tune
+models like Claude/GPT: the model generates a response, a human (or another
+model) rates it, and that reward signal shapes future behavior. Same
+category, three phases later on your roadmap.</p>
+<hr />
+<h2 id="advantages-of-machine-learning">Advantages of Machine Learning</h2>
+<p>After seeing <em>how</em> ML works, here's why it's worth the extra complexity
+over hand-written rules:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Advantage</th>
+  <th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>Easily identifies trends and patterns</strong></td>
+  <td>Finds correlations too large or too subtle for a human to eyeball — a fraud model can notice &quot;small transactions at odd hours from a new device&quot; as a pattern across millions of rows, not just flag one suspicious case.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>No human intervention needed (automation)</strong></td>
+  <td>Once trained, the model runs on its own — nobody manually rewrites the spam rulebook every morning.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Continuous improvement</strong></td>
+  <td>Feed it more (good) data and the model keeps getting better. A static, hand-written rulebook never improves on its own.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>Handles multi-dimensional, multi-variety data</strong></td>
+  <td>A human rulebook struggles past 4–5 variables at once. ML routinely combines dozens of features at once — income, credit score, browsing history, sensor readings — across numbers, text, and images together.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><strong>Wide applications</strong></td>
+  <td>The same underlying techniques power fraud detection, medical diagnosis, self-driving cars, recommendation engines, and crop-yield prediction — a general-purpose tool, not a one-off trick.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="disadvantages-of-machine-learning">Disadvantages of Machine Learning</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Disadvantage</th>
+  <th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>Data acquisition</strong></td>
+  <td>ML is only as good as the data you can get. Collecting, cleaning, and — especially — <em>labeling</em> enough good examples is often the single most expensive part of a project. (Recall Deepak's missing credit score and Priya's outlier income from <code>phase_3_classical_ml/00_strategy.md</code> — real projects start messy, not clean.)</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>Time and resources</strong></td>
+  <td>Training, especially deep learning, needs real compute (GPUs/TPUs) plus human time for data prep and tuning — this isn't a five-minute script.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Interpretation of results</strong></td>
+  <td>Many models are a &quot;black box&quot; — they predict well but can't easily explain <em>why</em>. In lending or healthcare, &quot;the model said no&quot; is a legal problem, not just an academic one.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>High error-susceptibility</strong></td>
+  <td>A model trained on biased or noisy data will confidently repeat that bias or noise. Unlike a human, it doesn't know it might be wrong.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>From the history files</strong> — these aren't hypothetical risks:</p>
+<ul>
+<li><strong>ImageNet (2009)</strong> — the dataset that made AlexNet possible in 2012 took
+years and <strong>14 million hand-labeled images</strong> (crowd-sourced via Mechanical
+Turk) to build. <em>Data acquisition</em> isn't a footnote in an ML project —
+it's most of the actual work.</li>
+<li><strong>Amazon's hiring algorithm (2018)</strong> — trained on 10 years of resumes, it
+taught itself to downgrade any resume containing the word &quot;women's&quot; (as
+in &quot;women's chess club captain&quot;), because the historical hiring data it
+learned from was itself biased toward men. Amazon scrapped it before
+full rollout. A textbook case of <em>high error-susceptibility</em> — the model
+wasn't buggy, it was accurately reproducing a biased history.</li>
+<li><strong>Microsoft's Tay chatbot (2016)</strong> — designed to learn conversational
+patterns from real Twitter users, it picked up racist and offensive
+language within <strong>16 hours</strong> of launch and had to be shut down.
+<em>Continuous improvement</em> cuts both ways — it improves at whatever it's
+shown, good or bad.</li>
+</ul>
+<h3>Every strength has a shadow side</h3>
+<p>Notice that each advantage above has a matching disadvantage that comes
+from the <em>exact same mechanism</em> — it's not a coincidence, it's the same
+property viewed from two angles.</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    A1[&quot;Finds patterns easily&quot;] -.-&gt; A2[&quot;High error-susceptibility&quot;]
+    B1[&quot;No human intervention&quot;] -.-&gt; B2[&quot;Hard to interpret&lt;br/&gt;(black box)&quot;]
+    C1[&quot;Continuous improvement&quot;] -.-&gt; C2[&quot;Needs constant&lt;br/&gt;time &amp;amp; resources&quot;]
+    D1[&quot;Handles multi-dimensional data&quot;] -.-&gt; D2[&quot;Needs a lot of&lt;br/&gt;(good) data&quot;]
+
+    style A1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style B1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style C1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style D1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style A2 fill:#b33a3a,stroke:#7a2626,color:#fff
+    style B2 fill:#b33a3a,stroke:#7a2626,color:#fff
+    style C2 fill:#b33a3a,stroke:#7a2626,color:#fff
+    style D2 fill:#b33a3a,stroke:#7a2626,color:#fff
+</pre></div>
+<p>A model that's great at finding patterns is, by the same token, great at
+finding <em>fake</em> patterns (bias) if that's what the data contains. A model
+that needs no daily human intervention is, by the same token, one nobody
+can easily interrogate when it's wrong. This tension — not &quot;ML is good&quot; or
+&quot;ML is bad&quot; — is the honest way to think about it.</p>
+<hr />
+<h2 id="where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</h2>
+<ul>
+<li>This file = <strong>conceptual intro</strong>, external course, casual pace.</li>
+<li><code>phase_3_classical_ml/</code> = your <strong>structured, hands-on</strong> Phase 3 work —
+Topic 4 (Regression) and Topic 5 (Classification) are Supervised Learning
+in practice, using the Riverstone Bank dataset. Topic 6 (Clustering) is
+Unsupervised Learning in practice.</li>
+<li>So: this note gives you the map; Phase 3 is where you actually walk the
+terrain with real data.</li>
+</ul>
+<hr />
+<h2 id="coming-up-next-from-the-course">Coming Up Next (from the course)</h2>
+<p>Your slide deck lists one more topic from the original &quot;what you will
+learn&quot; list:</p>
+<ul>
+<li>⬜ Use of Machine Learning Technology</li>
+</ul>
+<p>Send that screenshot whenever you get to it and I'll extend this same file.</p>
+<hr />
+<h2 id="faq-common-mix-ups">FAQ — Common Mix-Ups</h2>
+<ol>
+<li><strong>&quot;Isn't AI = ML = Deep Learning, just three names for the same thing?&quot;</strong>
+No — they nest: <strong>AI ⊃ ML ⊃ Deep Learning</strong>. AI is the broad goal
+(machines acting intelligently). ML is one <em>approach</em> to AI (learn from
+data instead of hand-coded rules). Deep Learning is one <em>technique</em>
+within ML (neural networks with many layers).</li>
+<li><strong>&quot;Isn't ML just statistics with a rebrand?&quot;</strong>
+Heavy overlap, not identical. ML borrows most of its math from
+statistics, but adds an engineering focus statistics alone didn't have:
+learning from very large/high-dimensional data, automating the
+pattern-finding, and optimizing for prediction accuracy over
+interpretability.</li>
+<li><strong>&quot;Supervised learning = classification.&quot;</strong>
+Common mix-up — supervised learning is the broader category and
+includes <strong>both</strong> Classification (predict a category) <strong>and</strong> Regression
+(predict a number).</li>
+<li><strong>&quot;Reinforcement learning needs labeled data too, just delayed.&quot;</strong>
+No — RL never gets told &quot;the correct answer.&quot; It only gets a
+reward/penalty signal after acting, and has to figure out <em>which of its
+actions</em> deserved credit for that outcome.</li>
+</ol>
+<hr />
+<h2 id="interview-style-q-amp-a">Interview-Style Q&amp;A</h2>
+<p><strong>Q: In one sentence, how is Machine Learning different from traditional
+programming?</strong>
+A: Traditional programming takes data + rules to produce output; ML takes
+data + (known) output to produce the rules — that program is called the
+model.</p>
+<p><strong>Q: Same dataset of customers — give one supervised and one unsupervised
+question you could ask it.</strong>
+A: Supervised: &quot;Will this customer default on their loan?&quot; (needs a labeled
+history of past defaults). Unsupervised: &quot;What natural groups exist among
+these customers?&quot; (no labels needed — just group by similarity).</p>
+<p><strong>Q: Why can't you just call Reinforcement Learning &quot;supervised learning
+with a delay&quot;?</strong>
+A: Supervised learning is told the correct answer for every example. RL is
+never told the correct action — only whether the outcome was good or bad
+after the fact — so it has to explore and assign credit itself, which is a
+fundamentally different learning problem (exploration vs. exploitation).</p>
+
+<div class="src-head">📝 <a href="../Concept/02_ML_Roadmap.MD">02_ML_Roadmap.MD</a></div>
+<h2 id="machine-learning-02-the-course-roadmap-where-thi">Machine Learning — 02. The Course Roadmap (Where This Is All Headed)</h2>
+<p>Source: external course (WsCubeTech) — the course's own roadmap slide, plus
+its tool-stack slide. These aren't new concepts to learn today — this file
+is the <strong>map of the whole classical-ML journey</strong>, with what's already
+covered (per your check-marks on the slide) and what's still ahead.</p>
+<hr />
+<h2 id="the-full-pipeline">The Full Pipeline</h2>
+<p>Reading the slide bottom-to-top, this is one continuous pipeline — each
+stage feeds the next:</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    P[&quot;Programming Language&lt;br/&gt;Python, R&quot;] --&gt; EDA[&quot;Exploratory Data Analysis&quot;]
+    EDA --&gt; FE[&quot;Feature Engineering&quot;]
+    FE --&gt; FS[&quot;Feature Selection&quot;]
+    FS --&gt; ALGO[&quot;ML Algorithms&lt;br/&gt;Regression · Classification · Clustering&quot;]
+    ALGO --&gt; MODELS[&quot;Core Models&lt;br/&gt;Linear/Logistic Regression, Decision Tree,&lt;br/&gt;Random Forest, K-Means&quot;]
+    MODELS --&gt; HPT[&quot;Hyperparameter Tuning&quot;]
+    HPT --&gt; METHODS[&quot;GridSearch, RandomizedSearch,&lt;br/&gt;Hyperopt, Genetic Algorithms&quot;]
+    METHODS --&gt; DEPLOY[&quot;Model Deployment&quot;]
+    DEPLOY --&gt; DOCK[&quot;Docker &amp;amp; Kubernetes&quot;]
+    DOCK --&gt; E2E[&quot;End-to-End ML Projects&quot;]
+
+    style P fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style EDA fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style FE fill:#c9a227,stroke:#8a6f16,color:#fff
+</pre></div>
+<p><strong>Legend:</strong> 🟢 done · 🟡 partially done · ⬜ upcoming (plain nodes above).</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Stage</th>
+  <th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Programming Language — Python, R</td>
+  <td>✅ Done</td>
+</tr>
+<tr>
+  <td>Exploratory Data Analysis</td>
+  <td>✅ Done</td>
+</tr>
+<tr>
+  <td>Feature Engineering</td>
+  <td>🟡 Partially done (see breakdown below)</td>
+</tr>
+<tr>
+  <td>Feature Selection</td>
+  <td>⬜ Upcoming</td>
+</tr>
+<tr>
+  <td>ML Algorithms — Regression, Classification, Clustering</td>
+  <td>⬜ Upcoming</td>
+</tr>
+<tr>
+  <td>Core Models — Linear/Logistic Regression, Decision Tree, Random Forest, K-Means</td>
+  <td>⬜ Upcoming</td>
+</tr>
+<tr>
+  <td>Hyperparameter Tuning</td>
+  <td>⬜ Upcoming</td>
+</tr>
+<tr>
+  <td>GridSearch, RandomizedSearch, Hyperopt, Genetic Algorithms</td>
+  <td>⬜ Upcoming</td>
+</tr>
+<tr>
+  <td>Model Deployment</td>
+  <td>⬜ Upcoming</td>
+</tr>
+<tr>
+  <td>Docker &amp; Kubernetes</td>
+  <td>⬜ Upcoming</td>
+</tr>
+<tr>
+  <td>End-to-End ML Projects</td>
+  <td>⬜ Upcoming</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="zoom-in-1-feature-engineering-5-sub-skills">Zoom In 1: Feature Engineering (5 sub-skills)</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    FE[&quot;Feature Engineering&quot;] --&gt; FE1[&quot;1. Exploratory Data Analysis&quot;]
+    FE --&gt; FE2[&quot;2. Handling Missing Values&quot;]
+    FE --&gt; FE3[&quot;3. Handling Outliers&quot;]
+    FE --&gt; FE4[&quot;4. Categorical Encoding&quot;]
+    FE --&gt; FE5[&quot;5. Normalizing &amp;amp; Standardization&quot;]
+
+    style FE1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style FE2 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Sub-skill</th>
+  <th>What it means</th>
+  <th>You've already touched this in...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>Exploratory Data Analysis</strong> ✅</td>
+  <td>Looking at the data before modeling — spread, shape, outliers, relationships</td>
+  <td><code>DataScience_Y/</code> — variability, std dev, IQR, skewness, correlation, CLT are <em>literally</em> EDA</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>Handling Missing Values</strong> ✅</td>
+  <td>Decide: drop the row, impute (mean/median/mode), or flag it as its own category</td>
+  <td><code>phase_3_classical_ml/02_data_cleaning/</code> — Deepak's missing credit score</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Handling Outliers</strong></td>
+  <td>Detect (IQR or Z-score method) and decide: cap, remove, or transform</td>
+  <td><code>DataScience_Y/04_IQR.ipynb</code> + Priya's outlier income in <code>02_data_cleaning/</code></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>Categorical Encoding</strong></td>
+  <td>Turn text categories into numbers a model can use — One-Hot, Label, Ordinal, Target encoding</td>
+  <td>New — first real exposure coming in Phase 3 Topic 3</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><strong>Normalizing &amp; Standardization</strong></td>
+  <td>Put features on the same scale (Min-Max vs Z-score) so no single feature dominates just because its numbers are bigger</td>
+  <td>New — matters a lot for distance-based algorithms (K-Means, KNN) and gradient descent speed</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why #5 matters, concretely:</strong> in the Riverstone Bank dataset, <em>Monthly
+Income</em> is in the tens of thousands while <em>Credit Score</em> is in the
+hundreds. Without scaling, a distance-based algorithm would treat a ₹1,000
+income difference as &quot;bigger&quot; than a 50-point credit-score difference,
+purely because of units — not because it actually matters more.</p>
+<hr />
+<h2 id="zoom-in-2-feature-selection-6-techniques">Zoom In 2: Feature Selection (6 techniques)</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    FS[&quot;Feature Selection&quot;] --&gt; FS1[&quot;1. Correlation&quot;]
+    FS --&gt; FS2[&quot;2. Forward Elimination&quot;]
+    FS --&gt; FS3[&quot;3. Backward Elimination&quot;]
+    FS --&gt; FS4[&quot;4. Univariate Selection&quot;]
+    FS --&gt; FS5[&quot;5. Random Forest Importance&quot;]
+    FS --&gt; FS6[&quot;6. Feature Selection with Decision Trees&quot;]
+</pre></div>
+<p>Feature <em>Engineering</em> prepares/transforms your columns. Feature
+<em>Selection</em> decides <strong>which of those columns are even worth keeping</strong> —
+this is the direct fix for the &quot;handles multi-dimensional data ↔ needs a
+lot of good data&quot; tension from <code>01._LEARNING.MD</code>: fewer, better features
+means less data needed and less overfitting risk.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Technique</th>
+  <th>One-line idea</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>Correlation</strong></td>
+  <td>Drop one of two features that are almost perfectly correlated with each other — they're carrying the same information twice.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>Forward Elimination</strong></td>
+  <td>Start with zero features, add the one that helps most, repeat — build up.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Backward Elimination</strong></td>
+  <td>Start with <em>all</em> features, remove the least useful one, repeat — trim down.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>Univariate Selection</strong></td>
+  <td>Score each feature <em>independently</em> against the target using a statistical test (Chi-Square, ANOVA F-test), keep the top scorers.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><strong>Random Forest Importance</strong></td>
+  <td>Train a Random Forest, read off its built-in <code>feature_importances_</code> ranking.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><strong>Feature Selection with Decision Trees</strong></td>
+  <td>Same idea as #5, one tree at a time — features that produce the biggest drop in impurity (Gini) near the top of the tree matter most.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="zoom-in-3-ml-algorithms-3-categories-5-models">Zoom In 3: ML Algorithms (3 categories → 5 models)</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    ALGO[&quot;ML Algorithms&quot;] --&gt; R[&quot;Regression&quot;]
+    ALGO --&gt; C[&quot;Classification&quot;]
+    ALGO --&gt; K[&quot;Clustering&quot;]
+
+    R --&gt; R1[&quot;Linear Regression&quot;]
+    C --&gt; C1[&quot;Logistic Regression&quot;]
+    C --&gt; C2[&quot;Decision Tree&quot;]
+    C --&gt; C3[&quot;Random Forest&quot;]
+    K --&gt; K1[&quot;K-Means&quot;]
+
+    style R fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style C fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style K fill:#b3781f,stroke:#8a5c16,color:#fff
+    style R1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Category</th>
+  <th>Type</th>
+  <th>Model</th>
+  <th>One-liner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Regression</td>
+  <td>Supervised</td>
+  <td><strong>Linear Regression</strong> ✅ (recap)</td>
+  <td>Predicts a continuous number by fitting a line through the data — you've already hand-derived cost function + gradient descent + the exact <code>w</code> formula in <code>math_for_ml/phase_5_linear_regression/</code>.</td>
+</tr>
+<tr>
+  <td>Classification</td>
+  <td>Supervised</td>
+  <td><strong>Logistic Regression</strong></td>
+  <td>Predicts a probability, then thresholds it into a class (e.g. default / no default) — despite the name, this is classification, not regression.</td>
+</tr>
+<tr>
+  <td>Classification</td>
+  <td>Supervised</td>
+  <td><strong>Decision Tree</strong></td>
+  <td>A flowchart of yes/no questions on features, learned from data, ending in a predicted class.</td>
+</tr>
+<tr>
+  <td>Classification</td>
+  <td>Supervised</td>
+  <td><strong>Random Forest</strong></td>
+  <td>Many Decision Trees trained on random subsets of data/features, voting together — reduces any single tree's tendency to overfit.</td>
+</tr>
+<tr>
+  <td>Clustering</td>
+  <td>Unsupervised</td>
+  <td><strong>K-Means</strong></td>
+  <td>Groups data into K clusters by repeatedly assigning points to the nearest cluster center and recomputing centers — no labels needed.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Random Forest shows up twice in this roadmap</strong> — here as a classifier,
+and earlier in Feature Selection as an importance-ranking tool. Same
+algorithm, two different jobs: predicting a class, or scoring which
+features matter most.</p>
+<hr />
+<h2 id="zoom-in-4-hyperparameter-tuning-4-search-methods">Zoom In 4: Hyperparameter Tuning (4 search methods)</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    HPT[&quot;Hyperparameter Tuning&quot;] --&gt; M1[&quot;1. GridSearch&quot;]
+    HPT --&gt; M2[&quot;2. RandomizedSearch&quot;]
+    HPT --&gt; M3[&quot;3. Hyperopt&quot;]
+    HPT --&gt; M4[&quot;4. Genetic Algorithms&quot;]
+</pre></div>
+<p><strong>Parameter vs. hyperparameter — the distinction that trips people up:</strong>
+a <em>parameter</em> (like a regression weight) is <strong>learned from data</strong> during
+training. A <em>hyperparameter</em> (like &quot;how many trees in the forest&quot; or &quot;K in
+K-Means&quot;) is <strong>set by you before training starts</strong> and controls <em>how</em> the
+learning happens. The four methods below are just different strategies
+for searching the hyperparameter space.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Method</th>
+  <th>Idea</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>GridSearch</strong></td>
+  <td>Try every combination of hyperparameters in a defined grid — exhaustive, reliable, slow.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>RandomizedSearch</strong></td>
+  <td>Try a random sample of combinations instead of all of them — much faster, usually nearly as good.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Hyperopt</strong></td>
+  <td>A smarter (&quot;Bayesian optimization&quot;) search — uses the results of earlier trials to decide which combination to try next, instead of guessing blindly.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>Genetic Algorithms</strong></td>
+  <td>Treats hyperparameter combinations like a population that &quot;evolves&quot; — keep the best performers, mutate/combine them, repeat across generations.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="zoom-in-5-model-deployment">Zoom In 5: Model Deployment</h2>
+<p>Not broken into a numbered list on the slide, but this is what &quot;deployment&quot;
+actually decomposes into once you get there:</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    DEPLOY[&quot;Model Deployment&quot;] --&gt; D1[&quot;1. Export the model&lt;br/&gt;pickle / joblib / ONNX&quot;]
+    DEPLOY --&gt; D2[&quot;2. Wrap it in an API&lt;br/&gt;Flask/FastAPI, or a Spring Boot service&quot;]
+    DEPLOY --&gt; D3[&quot;3. Version it&lt;br/&gt;track which model is live&quot;]
+    DEPLOY --&gt; D4[&quot;4. Serve predictions&lt;br/&gt;batch vs. real-time&quot;]
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Step</th>
+  <th>One-liner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>Export the model</strong></td>
+  <td>Save the trained model to a file so it can be loaded without retraining — <code>pickle</code>/<code>joblib</code> for scikit-learn, ONNX for cross-framework portability.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>Wrap it in an API</strong></td>
+  <td>Put the loaded model behind an HTTP endpoint that takes input, returns a prediction — usually Flask/FastAPI in the Python world, but architecturally identical to any REST endpoint you've written in Spring Boot.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Version it</strong></td>
+  <td>Track <em>which</em> trained model is currently live, so a bad model can be rolled back the same way a bad code deploy would be.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>Serve predictions</strong></td>
+  <td>Batch (score a big file overnight) vs. real-time (answer one request at a time, low latency) — the same batch-vs-online distinction you already know from regular backend systems.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="zoom-in-6-docker-amp-kubernetes">Zoom In 6: Docker &amp; Kubernetes</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    DOCK[&quot;Docker &amp;amp; Kubernetes&quot;] --&gt; K1[&quot;1. Dockerfile&lt;br/&gt;package model + API + dependencies&quot;]
+    K1 --&gt; K2[&quot;2. Image registry&lt;br/&gt;push/pull the built image&quot;]
+    K2 --&gt; K3[&quot;3. Kubernetes Deployment&lt;br/&gt;run N replicas of the container&quot;]
+    K3 --&gt; K4[&quot;4. Service / Load Balancer&lt;br/&gt;route traffic across replicas&quot;]
+    K4 --&gt; K5[&quot;5. Autoscaling&lt;br/&gt;add/remove replicas with load&quot;]
+</pre></div>
+<p>This is likely <strong>the single most familiar stage in this entire roadmap for
+you.</strong> If you've containerized a Spring Boot microservice before, this is
+the same mental model end to end — the only thing that changed is the
+payload inside the container (a model + a small prediction API, instead of
+a business-logic service).</p>
+<hr />
+<h2 id="zoom-in-7-end-to-end-ml-projects">Zoom In 7: End-to-End ML Projects</h2>
+<p>This last stage isn't a new skill — it's <strong>all of the above, run as one
+loop</strong>, and it's the first place the pipeline stops being a straight line:</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    A[&quot;Data Collection&quot;] --&gt; B[&quot;Data Cleaning&quot;]
+    B --&gt; C[&quot;Feature Engineering&lt;br/&gt;&amp;amp; Selection&quot;]
+    C --&gt; D[&quot;Model Training&quot;]
+    D --&gt; E[&quot;Hyperparameter Tuning&quot;]
+    E --&gt; F[&quot;Evaluation&quot;]
+    F --&gt; G[&quot;Deployment&quot;]
+    G --&gt; H[&quot;Monitoring&quot;]
+    H -.-&gt;|new data arrives| A
+
+    style H fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<p>The loop-back from <strong>Monitoring</strong> to <strong>Data Collection</strong> is the important
+part: a deployed model's accuracy quietly decays as real-world data drifts
+away from what it was trained on (&quot;model drift&quot;), which is exactly <em>why</em>
+production ML projects are never really &quot;done&quot; the way a shipped feature
+is.</p>
+<p><strong>Worth flagging:</strong> in your own <code>AI_Engineering_Roadmap.md</code>, deployment,
+Docker/CI-CD, and production concerns (Zoom Ins 5–7 above) are deliberately
+scoped into <strong>Phase 10 (MLOps, Observability, Security, Cloud Deployment)</strong>
+and the <strong>Phase 11 Capstone</strong>, not Phase 3 — Phase 3's own depth rule is
+&quot;light conceptual understanding only.&quot; So this course is running slightly
+ahead of your formal roadmap here. Not a problem — just don't feel behind
+if Phase 3 notes don't go this deep yet; this exact ground gets revisited
+properly, hands-on, in Phase 10/11.</p>
+<hr />
+<h2 id="the-ml-toolbox">The ML Toolbox</h2>
+<p>The course's tool-stack slide, all Python-ecosystem libraries:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Library</th>
+  <th>What it's for</th>
+  <th>Already in this repo?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Python</strong></td>
+  <td>The language everything below runs in</td>
+  <td>✅ <code>Pandas/</code>, <code>NumPy/</code>, etc.</td>
+</tr>
+<tr>
+  <td><strong>NumPy</strong></td>
+  <td>Fast numerical arrays — the math substrate under everything else here</td>
+  <td>✅ <code>NumPy/</code></td>
+</tr>
+<tr>
+  <td><strong>Pandas</strong></td>
+  <td>DataFrames — loading, cleaning, filtering tabular data</td>
+  <td>✅ <code>Pandas/</code></td>
+</tr>
+<tr>
+  <td><strong>Matplotlib</strong></td>
+  <td>Base plotting library</td>
+  <td>✅ <code>Matplotlib/</code></td>
+</tr>
+<tr>
+  <td><strong>seaborn</strong></td>
+  <td>Statistical plotting, built on Matplotlib, nicer defaults</td>
+  <td>✅ <code>seaborn/</code></td>
+</tr>
+<tr>
+  <td><strong>SciPy</strong></td>
+  <td>Scientific/statistical functions (the actual <code>t.ppf</code>, <code>chi2</code> etc. behind your hypothesis-testing notebooks)</td>
+  <td>New folder, familiar math</td>
+</tr>
+<tr>
+  <td><strong>scikit-learn</strong></td>
+  <td><strong>The</strong> classical-ML library — every algorithm in the &quot;ML Algorithms Preview&quot; section above (Linear/Logistic Regression, Decision Tree, Random Forest, K-Means) lives here</td>
+  <td>New</td>
+</tr>
+<tr>
+  <td><strong>TensorFlow</strong></td>
+  <td>Deep learning framework — a preview of your own <strong>Phase 4 (Neural Network Fundamentals)</strong>, further out on your roadmap</td>
+  <td>New</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</h2>
+<ul>
+<li><strong>Feature Engineering &amp; Feature Selection</strong> → <code>phase_3_classical_ml/</code>
+Topic 3, which is next up per <code>00_strategy.md</code>.</li>
+<li><strong>ML Algorithms (Regression/Classification/Clustering)</strong> →
+<code>phase_3_classical_ml/</code> Topics 4–6.</li>
+<li><strong>Hyperparameter Tuning</strong> → <code>phase_3_classical_ml/</code> Topic 11 (Model
+Tuning Basics).</li>
+<li><strong>Model Deployment, Docker/Kubernetes, End-to-End Projects</strong> → your own
+<strong>Phase 10 (MLOps)</strong> later, and the <strong>Capstone (Phase 11)</strong> — this course
+is giving you an early preview.</li>
+</ul>
+<hr />
+<h2 id="coming-up-next-from-the-course">Coming Up Next (from the course)</h2>
+<p>Everything in the pipeline table above marked ⬜/🟡 — send screenshots as
+you reach them and this file (or a new dated one) will track it.</p>
+<hr />
+<h2 id="faq-common-mix-ups">FAQ — Common Mix-Ups</h2>
+<ol>
+<li><strong>&quot;Isn't Logistic Regression used for predicting numbers, like Linear
+Regression?&quot;</strong> No — despite the name, Logistic Regression is a
+<strong>classification</strong> algorithm. It outputs a probability (0–1), which is
+then thresholded into a class.</li>
+<li><strong>&quot;Feature Engineering and Feature Selection are the same thing.&quot;</strong> No
+— Engineering <em>creates/transforms</em> features (encoding, scaling,
+imputing). Selection <em>chooses which</em> of those features to actually keep.</li>
+<li><strong>&quot;GridSearch and RandomizedSearch are different algorithms.&quot;</strong> No —
+they're both searching the <em>same</em> hyperparameter grid; the only
+difference is exhaustive vs. random sampling of that grid.</li>
+<li><strong>&quot;K-Means needs labeled data like the classification algorithms
+above it.&quot;</strong> No — K-Means is Unsupervised Learning (clustering); it's
+listed alongside Regression/Classification models on the slide because
+they're all in scikit-learn, not because they all learn the same way.</li>
+</ol>
+
+<div class="foot"><a class="btn" href="../Concept/01._LEARNING.MD">01._LEARNING.MD ↗</a><a class="btn" href="../Concept/02_ML_Roadmap.MD">02_ML_Roadmap.MD ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

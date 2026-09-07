@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chi Square Test — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">02 DataScience › <b>Chi Square Test</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#chi-square-test-chi-2-test">Chi-Square Test ($\chi^2$ Test)</a><a href="#example-1-goodness-of-fit-chi-square-test">Example 1 (Goodness of Fit, Chi-Square Test)</a><a href="#faq">FAQ</a><a href="#chi-square-test-of-independence">Chi-Square Test of Independence</a><a href="#example-2-independence-chi-square-test">Example 2 (Independence, Chi-Square Test)</a><a href="#faq">FAQ</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Data science and statistics</p>
+  <h1>Chi Square Test</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<div class="src-head">📓 <a href="../Concept/15_Hypothesis_Testing_Chi_Square_Test.ipynb">15_Hypothesis_Testing_Chi_Square_Test.ipynb</a></div>
+<h2 id="chi-square-test-chi-2-test">Chi-Square Test ($\chi^2$ Test)</h2>
+<p>The Chi-Square test is a <strong>non-parametric</strong> hypothesis test — unlike the <a href="../../07_Z_Test/Concept/11_Hypothesis_Testing_Z-Test.ipynb">Z-Test</a> and <a href="../../08_T_Test/Concept/09_Hypothesis_Testing_T-Test.ipynb">T-Test</a> notebooks, it doesn't compare <strong>means</strong>, it compares <strong>frequencies/counts</strong> of categorical data. It checks whether the values you <em>observed</em> ($O$) are close enough to the values you'd <em>expect</em> ($E$) under some assumption, or whether they differ by more than chance would explain.</p>
+<h3>Applicable in Two Types of Situations</h3>
+<ul>
+<li><strong>Goodness of Fit</strong> — tests whether the observed frequency distribution of a <strong>single categorical variable</strong> matches an expected/theoretical distribution (e.g. &quot;is this die fair?&quot;). This is the case worked through below.</li>
+<li><strong>Independence</strong> — tests whether <strong>two categorical variables</strong> are related/associated or independent of each other (e.g. &quot;is smoking status independent of gender?&quot;), using a contingency table. See the FAQ at the end for how this differs.</li>
+</ul>
+<h3>The Formula</h3>
+<div class='formula'>\chi^2 = \sum \dfrac{(O_i - E_i)^2}{E_i}</div>
+
+<p>Where:</p>
+<ul>
+<li>$O_i$ = <strong>Observed</strong> value/frequency (what actually happened, from the data)</li>
+<li>$E_i$ = <strong>Expected</strong> value/frequency (what should happen if $H_0$ is true)</li>
+<li>The sum is taken over all $i$ categories (here, the 6 faces of the die)</li>
+</ul>
+<p>Squaring $(O_i - E_i)$ makes every deviation positive (so an over-count and an under-count don't cancel out) and penalizes bigger deviations more heavily. Dividing by $E_i$ scales the deviation relative to the size of the expected count, so a miss of 5 matters more when $E_i=10$ than when $E_i=1000$.</p>
+
+<h2 id="example-1-goodness-of-fit-chi-square-test">Example 1 (Goodness of Fit, Chi-Square Test)</h2>
+<p>A <strong>fair die</strong> is rolled <strong>120 times</strong> and the following results are obtained:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Face</th>
+  <th>1</th>
+  <th>2</th>
+  <th>3</th>
+  <th>4</th>
+  <th>5</th>
+  <th>6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Observed frequency</td>
+  <td>22</td>
+  <td>17</td>
+  <td>20</td>
+  <td>26</td>
+  <td>22</td>
+  <td>13</td>
+</tr>
+</tbody>
+</table>
+<p>Test at a <strong>5% level of significance</strong> whether the die is fair.</p>
+
+<h3>Step 1 - State the Null and Alternate Hypothesis</h3>
+<div class='formula'>H_0: \text{the die is fair (observed frequencies match the expected uniform distribution)}</div>
+
+<div class='formula'>H_1: \text{the die is not fair}</div>
+
+<ul>
+<li>$H_0$ (Null Hypothesis) — each face has an equal $\frac{1}{6}$ probability of showing up; any difference between observed and expected counts is just random variation.</li>
+<li>$H_1$ (Alternate Hypothesis) — the faces are <strong>not</strong> equally likely; the die is biased.</li>
+</ul>
+<p>Note this is inherently a form of <strong>one-tailed</strong> test in the sense that the Chi-Square statistic is always $\geq 0$ and only the <strong>right tail</strong> (large deviations) leads to rejection — a small $\chi^2$ just means the fit is good, there's no &quot;too fair&quot; side to worry about.</p>
+
+<h3>Step 2 - Significance Value</h3>
+<div class='formula'>\alpha = 0.05</div>
+
+<p>Unlike the two-tailed t-tests in earlier notebooks, $\alpha$ is <strong>not</strong> split across two tails here — the entire 5% sits in the <strong>right tail</strong> of the Chi-Square distribution, since only large positive deviations count as evidence against $H_0$.</p>
+
+<h3>Step 3 - Degrees of Freedom</h3>
+<div class='formula'>df = n - 1 = 6 - 1 = 5</div>
+
+<p>For a <strong>Goodness of Fit</strong> test, <code>df</code> is the number of categories ($n=6$ faces) minus 1 — analogous to the <a href="../../09_Paired_T_Test/Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb">Paired T-Test's</a> $df=n-1$, but here $n$ counts <em>categories</em>, not <em>pairs of observations</em>. (The Independence test uses a different formula — see the FAQ.)</p>
+
+<h3>Step 4 - Observed vs Expected Frequencies, and the Chi-Square Statistic</h3>
+<p><strong>Observed ($O$):</strong> the actual roll counts — 22, 17, 20, 26, 22, 13.</p>
+<p><strong>Expected ($E$):</strong> if the die were perfectly fair, each of the 6 faces should show up equally often across 120 rolls:</p>
+<div class='formula'>E_i = \dfrac{120}{6} = 20 \text{ for every face}</div>
+
+<p>Then compute $\chi^2_{calc} = \sum \dfrac{(O_i-E_i)^2}{E_i}$ face by face, exactly like the formula in Step &quot;The Formula&quot; above.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">import numpy as np</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">ob = np.array([22,17,20,26,22,13])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">ex = np.array([20,20,20,20,20,20])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">result = ob-ex
+result</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 2, -3,  0,  6,  2, -7])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">squaredValue = np.square(result)
+squaredValue</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 4,  9,  0, 36,  4, 49])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">np.sum(squaredValue/ex)</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(5.1000000000000005)</pre></div>
+<div class='formula'>\chi^2_{calc} = 5.1</div>
+
+<h3>Step 5 - Decision Boundary (Critical $\chi^2$ Value)</h3>
+<p>Look up the Chi-Square table at <strong>df = 5</strong>, right-tail $\alpha = 0.05$:</p>
+<div class='formula'>\chi^2_{table} \approx 11.07</div>
+
+<p>Anything <strong>below</strong> 11.07 falls in the <strong>acceptance region</strong> (fail to reject $H_0$); anything <strong>at or above</strong> it falls in the <strong>rejection region</strong> (reject $H_0$).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">import scipy.stats as st
+
+n = len(ob)          # 6 faces
+df = n - 1            # 5
+alpha = 0.05
+
+chi_calc = np.sum(squaredValue / ex)          # same 5.1 computed above
+chi_critical = st.chi2.ppf(1 - alpha, df)      # ~11.07
+
+print(&quot;df:&quot;, df)
+print(&quot;chi_calc:&quot;, round(chi_calc, 4))
+print(&quot;chi_critical:&quot;, round(chi_critical, 4))</pre></div>
+<div class="out"><div class="h">Output</div><pre>df: 5
+chi_calc: 5.1
+chi_critical: 11.0705</pre></div>
+<h3>Step 6 - Decision &amp; Conclusion</h3>
+<p><strong>Decision rule:</strong> If $\chi^2_{calc}$ is greater than $\chi^2_{table}$, reject the null hypothesis.</p>
+<div class='formula'>\chi^2_{calc} (5.1) \; vs \; \chi^2_{table} (11.07)</div>
+
+<p>$5.1 &lt; 11.07$, so $\chi^2_{calc}$ falls well <strong>inside</strong> the acceptance region → <strong>fail to reject $H_0$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 5% level of significance, there is <strong>not enough evidence</strong> to say the die is biased. The observed roll counts are close enough to the expected 20-per-face that the deviations are consistent with ordinary random variation from a fair die.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">if chi_calc &gt; chi_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (the die is NOT fair)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence the die is biased, at alpha=0.05)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Fail to reject H0 -&gt; H0 holds (no significant evidence the die is biased, at alpha=0.05)</pre></div>
+<h3>Visualizing the Chi-Square Distribution (df = 5)</h3>
+<p>Where does $\chi^2_{calc}=5.1$ land relative to the rejection region (right tail beyond $\chi^2_{table}=11.07$)?</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">import matplotlib.pyplot as plt
+
+x = np.linspace(0, 20, 500)
+y = st.chi2.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection region - right tail only
+x_reject = np.linspace(chi_critical, 20, 100)
+ax.fill_between(x_reject, st.chi2.pdf(x_reject, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+
+# acceptance region
+x_accept = np.linspace(0, chi_critical, 200)
+ax.fill_between(x_accept, st.chi2.pdf(x_accept, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (95%)&quot;)
+
+ax.axvline(chi_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(chi_critical, -0.01, f&quot;{chi_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.axvline(chi_calc, color=&quot;darkorange&quot;, linewidth=2)
+ax.plot(chi_calc, st.chi2.pdf(chi_calc, df), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=8, zorder=5)
+ax.annotate(f&quot;chi_calc = {chi_calc:.3f}\n(well inside acceptance region)&quot;,
+            xy=(chi_calc, st.chi2.pdf(chi_calc, df)),
+            xytext=(chi_calc + 2, max(y) * 0.7),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;darkorange&quot;),
+            color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;chi-square value&quot;)
+ax.set_title(f&quot;Chi-Square Goodness of Fit Decision Boundary (df={df}, 95% CI)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/15-hypothesis-testing-chi-sq-c17-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Cross-Check with <code>scipy.stats</code></h3>
+<p><code>scipy.stats.chisquare</code> computes the same statistic directly from the observed/expected arrays, and also returns the <strong>p-value</strong> — the probability of seeing a deviation this large (or larger) purely by chance if the die really is fair. A large p-value ($&gt; \alpha$) agrees with &quot;fail to reject $H_0$&quot;.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">scipy_result = st.chisquare(f_obs=ob, f_exp=ex)
+print(&quot;scipy chi-square statistic:&quot;, scipy_result.statistic)
+print(&quot;scipy p-value:&quot;, scipy_result.pvalue)
+print(&quot;p-value &gt; alpha (0.05)?&quot;, scipy_result.pvalue &gt; alpha, &quot;-&gt; fail to reject H0&quot; if scipy_result.pvalue &gt; alpha else &quot;-&gt; reject H0&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>scipy chi-square statistic: 5.1000000000000005
+scipy p-value: 0.40379845710420864
+p-value &gt; alpha (0.05)? True -&gt; fail to reject H0</pre></div>
+<hr />
+<h2 id="faq">FAQ</h2>
+<p><strong>1. What's the difference between the &quot;Goodness of Fit&quot; and &quot;Independence&quot; situations mentioned at the top?</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Goodness of Fit (this notebook)</th>
+  <th>Independence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Number of categorical variables</td>
+  <td>1 (the die's face)</td>
+  <td>2 (e.g. gender × smoking status)</td>
+</tr>
+<tr>
+  <td>Question asked</td>
+  <td>Does <em>this one</em> variable's distribution match an expected/theoretical distribution?</td>
+  <td>Are <em>these two</em> variables associated, or independent of each other?</td>
+</tr>
+<tr>
+  <td>Data layout</td>
+  <td>A single list of category counts</td>
+  <td>A <strong>contingency table</strong> (rows × columns of counts)</td>
+</tr>
+<tr>
+  <td>$E_i$ formula</td>
+  <td>$E_i = \dfrac{\text{total}}{\text{number of categories}}$ (or any theoretical proportion)</td>
+  <td>$E_{row,col} = \dfrac{(\text{row total}) \times (\text{column total})}{\text{grand total}}$</td>
+</tr>
+<tr>
+  <td>Degrees of freedom</td>
+  <td>$df = k - 1$ ($k$ = number of categories)</td>
+  <td>$df = (r-1)(c-1)$ ($r$ = rows, $c$ = columns)</td>
+</tr>
+<tr>
+  <td>Example</td>
+  <td>&quot;Is this die fair?&quot; (this notebook)</td>
+  <td>&quot;Is smoking status independent of gender?&quot;</td>
+</tr>
+</tbody>
+</table>
+<p>Both situations reuse the <strong>exact same</strong> $\chi^2 = \sum \frac{(O-E)^2}{E}$ formula and the same right-tailed decision rule — only <em>how $E$ is computed</em> and <em>how $df$ is computed</em> differ, because Independence has two dimensions of categories to account for instead of one.</p>
+<p><strong>2. Why is $df = n-1$ here specifically, and not something else?</strong></p>
+<p>With 6 observed counts that must sum to a fixed total (120 rolls), only 5 of them are free to vary — the 6th is always determined by the other 5 (<code>120 - sum of the other 5</code>). That &quot;one less than the number of independent pieces of information&quot; logic is the same reasoning behind $df=n-1$ in the <a href="../../09_Paired_T_Test/Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb">Paired T-Test notebook</a>, just applied to category counts instead of paired differences.</p>
+<p><strong>3. Why does the Chi-Square test use only the right tail, unlike the two-tailed t-tests in earlier notebooks?</strong></p>
+<p>$\chi^2$ is a <strong>sum of squared</strong> terms, so it can never be negative — a $\chi^2$ near 0 always means &quot;observed matches expected very closely,&quot; which is evidence <em>for</em> $H_0$, not against it. There is no symmetric &quot;too small&quot; rejection region the way there is for a t-test, so all of $\alpha$ is placed in the right tail where large, real deviations show up.</p>
+<p><strong>4. When would this test conclude the die is biased?</strong></p>
+<p>If any face came up dramatically more or less than ~20 times — e.g. face 6 showing up only 2 times instead of 13 — $\chi^2_{calc}$ would climb past 11.07 and $H_0$ would be rejected. Try changing the <code>ob</code> array above (e.g. <code>[10, 10, 10, 10, 10, 70]</code>) and re-running the cells to see the statistic cross into the rejection region.</p>
+
+<div class="src-head">📓 <a href="../Concept/16_Hypothesis_Testing_Chi_Square_Test.ipynb">16_Hypothesis_Testing_Chi_Square_Test.ipynb</a></div>
+<h2 id="chi-square-test-of-independence">Chi-Square Test of Independence</h2>
+<p>This continues from the <a href="../Concept/15_Hypothesis_Testing_Chi_Square_Test.ipynb">Chi-Square Goodness of Fit notebook</a>, which tested whether <strong>one</strong> categorical variable (a die's face) matched an expected distribution. This notebook covers the <strong>second</strong> situation mentioned there — <strong>Independence</strong> — which tests whether <strong>two categorical variables</strong> are associated with each other, or independent.</p>
+<p>The formula is exactly the same:</p>
+<div class='formula'>\chi^2 = \sum \dfrac{(O_i - E_i)^2}{E_i}</div>
+
+<p>What changes is <em>how the categories are laid out</em> (a <strong>contingency table</strong> — rows × columns — instead of a single list) and <em>how the expected frequencies $E_i$ are computed</em> (from row/column totals, instead of an even split).</p>
+
+<h2 id="example-2-independence-chi-square-test">Example 2 (Independence, Chi-Square Test)</h2>
+<p>A study was conducted to investigate whether there is a relationship between <strong>gender</strong> and the <strong>preferred genre of music</strong>. A sample of <strong>235 people</strong> was selected, and the data collected is shown below. Test at a <strong>5% level of significance</strong> whether there is a significant association between gender and music preference.</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Pop</th>
+  <th>Hip Hop</th>
+  <th>Classical</th>
+  <th>Rock</th>
+  <th><strong>Row Total</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Male</strong></td>
+  <td>40</td>
+  <td>45</td>
+  <td>25</td>
+  <td>10</td>
+  <td><strong>120</strong></td>
+</tr>
+<tr>
+  <td><strong>Female</strong></td>
+  <td>35</td>
+  <td>30</td>
+  <td>20</td>
+  <td>30</td>
+  <td><strong>115</strong></td>
+</tr>
+<tr>
+  <td><strong>Column Total</strong></td>
+  <td>75</td>
+  <td>75</td>
+  <td>45</td>
+  <td>40</td>
+  <td><strong>235</strong></td>
+</tr>
+</tbody>
+</table>
+
+<h3>Step 1 - State the Null and Alternate Hypothesis</h3>
+<div class='formula'>H_0: \text{gender and music preference are independent (no association)}</div>
+
+<div class='formula'>H_1: \text{gender and music preference are associated}</div>
+
+<ul>
+<li>$H_0$ (Null Hypothesis) — a person's preferred genre does <strong>not</strong> depend on their gender; any difference between observed and expected counts is just random sampling variation.</li>
+<li>$H_1$ (Alternate Hypothesis) — preference <strong>does</strong> depend on gender; the two variables are related.</li>
+</ul>
+<p>Just like the Goodness of Fit test, this is a <strong>one-tailed (right-tail only)</strong> test — $\chi^2$ can never be negative, so only large deviations (evidence <em>of</em> association) push into the rejection region.</p>
+
+<h3>Step 2 - Significance Value</h3>
+<div class='formula'>\alpha = 0.05</div>
+
+<p>As before, the entire 5% sits in the <strong>right tail</strong> of the Chi-Square distribution — there's no &quot;too independent&quot; side to split it with.</p>
+
+<h3>Step 3 - Degrees of Freedom</h3>
+<div class='formula'>df = (\text{rows}-1)(\text{cols}-1) = (2-1)(4-1) = 3</div>
+
+<p>For the <strong>Independence</strong> test, <code>df</code> depends on <strong>both</strong> dimensions of the contingency table: 2 rows (Male/Female) and 4 columns (Pop/Hip Hop/Classical/Rock). This differs from the Goodness of Fit formula ($df=k-1$) because once the row and column totals are fixed, only $(r-1)(c-1)$ of the interior cells are free to vary — every other cell is forced by the margins that must add up to those fixed totals.</p>
+
+<h3>Step 4 - Observed vs Expected Frequencies, and the Chi-Square Statistic</h3>
+<p><strong>Observed ($O$):</strong> the raw contingency table counts — <code>row1</code> = Male counts, <code>row2</code> = Female counts.</p>
+<p><strong>Expected ($E$):</strong> if gender and genre really were independent, each cell's expected count is driven purely by its <strong>row total</strong> and <strong>column total</strong> relative to the <strong>grand total</strong> (235):</p>
+<div class='formula'>E_{row,col} = \dfrac{(\text{row total}) \times (\text{column total})}{\text{grand total}}</div>
+
+<p>Intuitively: if 120/235 people are Male overall, and 75/235 people overall prefer Pop, then under independence we'd expect $235 \times \frac{120}{235} \times \frac{75}{235} = \frac{120 \times 75}{235} \approx 38.3$ Male-Pop respondents. The cells below compute the row sums, column sums, and every $E_{row,col}$ from that formula, then $\chi^2_{calc} = \sum \frac{(O-E)^2}{E}$ across all 8 cells.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">import numpy as np</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">row1 = np.array([40,45,25,10])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">row2 = np.array([35,30,20,30])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">sum_rows1 = np.sum(row1) 
+sum_rows2 = np.sum(row2) 
+sum_rows1, sum_rows2</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.int64(120), np.int64(115))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">sum_rows = row1 + row2 
+sum_rows</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([75, 75, 45, 40])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">sum_row = np.array([sum_rows1,sum_rows2])
+sum_row</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([120, 115])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">
+exp = []
+for i in sum_row:
+    for j in sum_rows:
+        value = (i*j)/235
+        exp.append(value)
+
+exp</pre></div>
+<div class="out"><div class="h">Output</div><pre>[np.float64(38.297872340425535),
+ np.float64(38.297872340425535),
+ np.float64(22.97872340425532),
+ np.float64(20.425531914893618),
+ np.float64(36.702127659574465),
+ np.float64(36.702127659574465),
+ np.float64(22.02127659574468),
+ np.float64(19.574468085106382)]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">obj = np.array([40,45,25,10,35,30,20,30])
+obj</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([40, 45, 25, 10, 35, 30, 20, 30])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">substract = obj-exp
+substract</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([  1.70212766,   6.70212766,   2.0212766 , -10.42553191,
+        -1.70212766,  -6.70212766,  -2.0212766 ,  10.42553191])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">np.sum(np.square(substract)/exp)</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(13.788747987117553)</pre></div>
+<div class='formula'>\chi^2_{calc} \approx 13.79</div>
+
+<h3>Step 5 - Decision Boundary (Critical $\chi^2$ Value)</h3>
+<p>Look up the Chi-Square table at <strong>df = 3</strong>, right-tail $\alpha = 0.05$:</p>
+<div class='formula'>\chi^2_{table} \approx 7.815</div>
+
+<p>Anything <strong>below</strong> 7.815 falls in the <strong>acceptance region</strong> (fail to reject $H_0$); anything <strong>at or above</strong> it falls in the <strong>rejection region</strong> (reject $H_0$).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">import scipy.stats as st
+
+rows = 2
+cols = 4
+df = (rows - 1) * (cols - 1)   # 3
+alpha = 0.05
+
+chi_calc = np.sum(np.square(substract) / exp)   # same value computed above
+chi_critical = st.chi2.ppf(1 - alpha, df)         # ~7.815
+
+print(&quot;df:&quot;, df)
+print(&quot;chi_calc:&quot;, round(chi_calc, 4))
+print(&quot;chi_critical:&quot;, round(chi_critical, 4))</pre></div>
+<div class="out"><div class="h">Output</div><pre>df: 3
+chi_calc: 13.7887
+chi_critical: 7.8147</pre></div>
+<h3>Step 6 - Decision &amp; Conclusion</h3>
+<p><strong>Decision rule:</strong> If $\chi^2_{calc}$ is greater than $\chi^2_{table}$, reject the null hypothesis.</p>
+<div class='formula'>\chi^2_{calc} (13.79) \; vs \; \chi^2_{table} (7.815)</div>
+
+<p>$13.79 &gt; 7.815$, so $\chi^2_{calc}$ falls in the <strong>rejection region</strong> → <strong>reject $H_0$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 5% level of significance, there <strong>is enough evidence</strong> to say gender and music preference are associated. The observed genre preferences differ from what independence would predict by more than random sampling variation can explain — e.g. Rock skews strongly Female (30 vs. an expected ~19.6) while Pop/Hip Hop skew Male.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">if chi_calc &gt; chi_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (gender and music preference ARE associated)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant association, at alpha=0.05)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Reject H0 -&gt; H1 is right (gender and music preference ARE associated)</pre></div>
+<h3>Visualizing the Chi-Square Distribution (df = 3)</h3>
+<p>Where does $\chi^2_{calc}=13.79$ land relative to the rejection region (right tail beyond $\chi^2_{table}=7.815$)? Note this distribution (df=3) is shaped differently from the df=5 one in the <a href="../Concept/15_Hypothesis_Testing_Chi_Square_Test.ipynb">Goodness of Fit notebook</a> — with fewer degrees of freedom the peak sits closer to 0 and the tail is thinner, so a given $\chi^2$ value crosses into &quot;significant&quot; territory faster.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">import matplotlib.pyplot as plt
+
+x = np.linspace(0, 20, 500)
+y = st.chi2.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection region - right tail only
+x_reject = np.linspace(chi_critical, 20, 100)
+ax.fill_between(x_reject, st.chi2.pdf(x_reject, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+
+# acceptance region
+x_accept = np.linspace(0, chi_critical, 200)
+ax.fill_between(x_accept, st.chi2.pdf(x_accept, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (95%)&quot;)
+
+ax.axvline(chi_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(chi_critical, -0.01, f&quot;{chi_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.axvline(chi_calc, color=&quot;darkorange&quot;, linewidth=2)
+ax.plot(chi_calc, st.chi2.pdf(chi_calc, df), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=8, zorder=5)
+ax.annotate(f&quot;chi_calc = {chi_calc:.3f}\n(in rejection region)&quot;,
+            xy=(chi_calc, st.chi2.pdf(chi_calc, df)),
+            xytext=(chi_calc + 2, max(y) * 0.7),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;darkorange&quot;),
+            color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;chi-square value&quot;)
+ax.set_title(f&quot;Chi-Square Independence Test Decision Boundary (df={df}, 95% CI)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/16-hypothesis-testing-chi-sq-c21-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Visualizing Observed vs Expected Counts (Where the Association Comes From)</h3>
+<p>The distribution plot above shows <em>that</em> $\chi^2_{calc}$ is significant, but not <em>why</em>. The chart below puts <strong>Observed</strong> next to <strong>Expected</strong> for every gender × genre cell — the bigger the gap between the two bars, the more that cell is pulling $\chi^2_{calc}$ upward. Rock immediately stands out: Females observed at 30 vs. an expected ~19.6, and Males observed at only 10 vs. an expected ~20.4.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">genres = [&quot;Pop&quot;, &quot;Hip Hop&quot;, &quot;Classical&quot;, &quot;Rock&quot;]
+male_exp = np.array(exp[:4])
+female_exp = np.array(exp[4:])
+
+color_obs = &quot;#2a78d6&quot;   # Observed
+color_exp = &quot;#eb6834&quot;   # Expected (hatched, since it&#x27;s a derived/theoretical value)
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.5), sharey=True)
+bar_width = 0.35
+x = np.arange(len(genres))
+
+for ax, obs_vals, exp_vals, title in zip(axes, [row1, row2], [male_exp, female_exp], [&quot;Male&quot;, &quot;Female&quot;]):
+    bars_obs = ax.bar(x - bar_width/2, obs_vals, bar_width, label=&quot;Observed&quot;, color=color_obs, zorder=3)
+    bars_exp = ax.bar(x + bar_width/2, exp_vals, bar_width, label=&quot;Expected&quot;, color=color_exp,
+                       hatch=&quot;//&quot;, edgecolor=&quot;white&quot;, linewidth=0.5, zorder=3)
+
+    ax.bar_label(bars_obs, fmt=&quot;%.0f&quot;, padding=2, fontsize=9, color=&quot;#52514e&quot;)
+    ax.bar_label(bars_exp, fmt=&quot;%.1f&quot;, padding=2, fontsize=9, color=&quot;#52514e&quot;)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(genres)
+    ax.set_title(title, fontsize=11, color=&quot;#0b0b0b&quot;)
+    for spine in (&quot;top&quot;, &quot;right&quot;, &quot;left&quot;):
+        ax.spines[spine].set_visible(False)
+    ax.grid(axis=&quot;y&quot;, color=&quot;#e1e0d9&quot;, linewidth=0.8, zorder=0)
+    ax.set_axisbelow(True)
+    ax.tick_params(colors=&quot;#898781&quot;)
+
+axes[0].set_ylabel(&quot;Count&quot;)
+handles, labels = axes[0].get_legend_handles_labels()
+fig.legend(handles, labels, loc=&quot;upper center&quot;, ncol=2, frameon=False, bbox_to_anchor=(0.5, 1.06))
+fig.suptitle(&quot;Observed vs Expected Music Preference, by Gender&quot;, y=1.14, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/16-hypothesis-testing-chi-sq-c23-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Cross-Check with <code>scipy.stats</code></h3>
+<p>For the Independence test, <code>scipy.stats.chi2_contingency</code> takes the <strong>raw contingency table</strong> directly (no manual row/column-sum loop needed), and returns the statistic, the <strong>p-value</strong>, <code>dof</code>, and the full expected-frequency table in one call — useful for confirming the manual calculation above.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">observed_table = np.array([row1, row2])   # 2 x 4 contingency table
+
+scipy_chi2, scipy_p, scipy_dof, scipy_expected = st.chi2_contingency(observed_table)
+
+print(&quot;scipy chi-square statistic:&quot;, scipy_chi2)
+print(&quot;scipy dof:&quot;, scipy_dof)
+print(&quot;scipy p-value:&quot;, scipy_p)
+print(&quot;scipy expected frequencies:\n&quot;, scipy_expected)
+print(&quot;p-value &lt;= alpha (0.05)?&quot;, scipy_p &lt;= alpha, &quot;-&gt; reject H0&quot; if scipy_p &lt;= alpha else &quot;-&gt; fail to reject H0&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>scipy chi-square statistic: 13.788747987117553
+scipy dof: 3
+scipy p-value: 0.003207271194419188
+scipy expected frequencies:
+ [[38.29787234 38.29787234 22.9787234  20.42553191]
+ [36.70212766 36.70212766 22.0212766  19.57446809]]
+p-value &lt;= alpha (0.05)? True -&gt; reject H0</pre></div>
+<hr />
+<h2 id="faq">FAQ</h2>
+<p><strong>1. Why does $E_{row,col} = \dfrac{\text{row total} \times \text{col total}}{\text{grand total}}$ represent &quot;no association&quot;?</strong></p>
+<p>If gender and genre were truly independent, $P(\text{Male and Pop}) = P(\text{Male}) \times P(\text{Pop})$ (the multiplication rule for independent events). Multiplying that joint probability back out by the grand total (235) gives exactly $\frac{\text{row total} \times \text{col total}}{\text{grand total}}$. So $E$ isn't an arbitrary formula — it's &quot;what the counts would look like if the two variables truly didn't interact,&quot; which is the whole premise of $H_0$.</p>
+<p><strong>2. Why is $df=(r-1)(c-1)=3$ and not, say, $8-1=7$ (treating all 8 cells like one flat list)?</strong></p>
+<p>Unlike the Goodness of Fit test's single running total, here <strong>both</strong> the row totals (120, 115) <em>and</em> the column totals (75, 75, 45, 40) are fixed by the data. Once you fill in $(r-1)(c-1)=3$ cells freely, every remaining cell in that row/column is forced so the margins still add up correctly — so only 3 cells actually carry new information, not 7.</p>
+<p><strong>3. This example's $\chi^2_{calc}=13.79$ comfortably clears $\chi^2_{table}=7.815$ — how strong is the association, not just &quot;significant&quot;?</strong></p>
+<p>Statistical significance only says the association is unlikely to be pure chance; it says nothing about <em>size</em>. For that, a standardized effect-size measure like <strong>Cramér's V</strong> is used: $V = \sqrt{\dfrac{\chi^2}{n \times \min(r-1, c-1)}}$. Here $V = \sqrt{13.79 / (235 \times 1)} \approx 0.24$, which by conventional (Cohen's) thresholds is a <strong>small-to-moderate</strong> association — real, but not overwhelming (contrast with, say, $V &gt; 0.5$).</p>
+<p><strong>4. Does rejecting $H_0$ tell us gender <em>causes</em> a genre preference?</strong></p>
+<p>No — this test only detects <strong>association</strong>, not <strong>causation</strong>. A significant $\chi^2$ means the variables aren't distributed independently in this sample; it says nothing about <em>why</em> (e.g. cultural exposure, marketing, sampling quirks in how the 235 people were recruited). Same caveat that applies to correlation in the <a href="../../08_T_Test/Concept/09_Hypothesis_Testing_T-Test.ipynb">T-Test notebooks</a> applies here.</p>
+<p><strong>5. What if the observed counts had matched the expected counts almost exactly?</strong></p>
+<p>Then $\chi^2_{calc}$ would land near 0, well inside the acceptance region, and the conclusion would flip to &quot;fail to reject $H_0$&quot; — no evidence of association, same as the fair-die result in the <a href="../Concept/15_Hypothesis_Testing_Chi_Square_Test.ipynb">Goodness of Fit notebook</a>. Try shrinking the gaps in <code>row1</code>/<code>row2</code> above (e.g. making Female Rock closer to its ~19.6 expected value) and re-running to watch $\chi^2_{calc}$ drop toward — and eventually below — 7.815.</p>
+
+<div class="foot"><a class="btn" href="../Concept/15_Hypothesis_Testing_Chi_Square_Test.ipynb">15_Hypothesis_Testing_Chi_Square_Test.ipynb ↗</a><a class="btn" href="../Concept/16_Hypothesis_Testing_Chi_Square_Test.ipynb">16_Hypothesis_Testing_Chi_Square_Test.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

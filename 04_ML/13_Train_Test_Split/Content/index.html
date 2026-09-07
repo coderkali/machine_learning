@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train Test Split — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Train Test Split</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#train-test-predict-from-scratch-field-notes">Train / Test / Predict, from Scratch — Field Notes</a><a href="#the-data">The data</a><a href="#diagram-1-the-full-pipeline">Diagram 1 — the full pipeline</a><a href="#diagram-2-how-fit-actually-finds-12-50">Diagram 2 — how .fit() actually finds 12.50</a><a href="#the-same-story-told-plainly">The same story, told plainly</a><a href="#faq-the-questions-that-came-up-along-the-way">FAQ — the questions that came up along the way</a><a href="#scikit-learn-train-test-split">scikit-learn — train_test_split</a><a href="#what-is-scikit-learn">What is scikit-learn?</a><a href="#the-shape-of-the-whole-library">The shape of the whole library</a><a href="#step-0-imports">Step 0 — Imports</a><a href="#step-1-load-the-data">Step 1 — Load the data</a><a href="#step-2-choose-the-input-and-the-target">Step 2 — Choose the input and the target</a><a href="#step-3-the-split-parameter-by-parameter">Step 3 — The split, parameter by parameter</a><a href="#step-4-read-the-result">Step 4 — Read the result</a><a href="#step-5-now-the-experiments">Step 5 — Now the experiments</a><a href="#experiment-1-shuffle-false-makes-random-state-do">Experiment 1 — shuffle=False makes random_state do n</a><a href="#experiment-2-random-state-with-shuffling-turned-">Experiment 2 — random_state with shuffling turned on</a><a href="#visualisation-1-which-row-goes-where">Visualisation 1 — which row goes where</a><a href="#visualisation-2-the-same-split-on-the-real-data">Visualisation 2 — the same split on the real data</a><a href="#experiment-3-test-size-controls-how-much-you-hol">Experiment 3 — test_size controls how much you hold </a><a href="#gotcha-stratify-cannot-work-without-shuffling">Gotcha — stratify cannot work without shuffling</a><a href="#what-this-means-for-your-code">What this means for your code</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#starting-over-simple-train-test-predict-from-scr">Starting Over, Simple — Train / Test / Predict, from</a><a href="#step-1-import-pandas">Step 1 — Import pandas</a><a href="#step-2-build-the-dataset-by-hand">Step 2 — Build the dataset by hand</a><a href="#step-3-split-into-x-and-y">Step 3 — Split into X and y</a><a href="#step-3-continued-confirm-the-shapes">Step 3 (continued) — Confirm the shapes</a><a href="#step-4-split-into-train-and-test">Step 4 — Split into train and test</a><a href="#step-5-build-the-model-and-train-it">Step 5 — Build the model, and train it</a><a href="#step-6-look-inside-the-trained-model">Step 6 — Look inside the trained model</a><a href="#step-7-see-the-split-as-a-picture">Step 7 — See the split as a picture</a><a href="#step-8-predict-on-the-test-set">Step 8 — Predict on the test set</a><a href="#step-8-continued-the-real-answers-to-compare-aga">Step 8 (continued) — The real answers, to compare ag</a><a href="#step-9-turn-the-comparison-into-one-score">Step 9 — Turn the comparison into one score</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Train Test Split</h1>
+  <p class="lede">Hiding some rows before you start is the only way to find out if the model actually learned.</p>
+  <div class="tags"><span class="tag">2 notebooks · 1 note</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Sanjay trained a model and scored it on the same rows he trained it with.</strong> 100%. Perfect.</p><p>He shipped it. On real customers it was barely better than guessing.</p><p><span class='beat'>He had given the student the exam paper during the lesson.</span> Reciting answers you have already seen proves nothing about the next question.</p><p><code>train_test_split</code> hides a slice of rows before learning starts. The model never sees them, so the score on those rows is the first honest number you get.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Score on rows the model has never seen, or you are measuring memory instead of skill.</p></div>
+<div class="src-head">📝 <a href="../Concept/23_Simple_Dataset_Practice.MD">23_Simple_Dataset_Practice.MD</a></div>
+<h2 id="train-test-predict-from-scratch-field-notes">Train / Test / Predict, from Scratch — Field Notes</h2>
+<p>The companion notebook is
+<a href="../Concept/23_Simple_Dataset_Practice.ipynb"><code>23_Simple_Dataset_Practice.ipynb</code></a> —
+20 students, one feature (<code>Hours_Studied</code>), one target (<code>Passed</code>). This
+note is the clean summary of everything that came out of that
+notebook's step-by-step build, for whenever you want the picture without
+re-reading every cell.</p>
+<h2 id="the-data">The data</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Student</th>
+  <th>Hours Studied</th>
+  <th>Passed?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1–9</td>
+  <td>1–9</td>
+  <td>0 (all failed)</td>
+</tr>
+<tr>
+  <td><strong>10</strong></td>
+  <td><strong>10</strong></td>
+  <td><strong>1 (surprise pass)</strong></td>
+</tr>
+<tr>
+  <td><strong>11–12</strong></td>
+  <td><strong>11–12</strong></td>
+  <td><strong>0 (surprise fails)</strong></td>
+</tr>
+<tr>
+  <td>13–20</td>
+  <td>13–20</td>
+  <td>1 (all passed)</td>
+</tr>
+</tbody>
+</table>
+<p>20 rows, deliberately not a perfectly clean line — students <code>10</code>, <code>11</code>,
+<code>12</code> break the obvious pattern on purpose, so the model has something
+real to figure out.</p>
+<h2 id="diagram-1-the-full-pipeline">Diagram 1 — the full pipeline</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    A[&quot;Block A\ndataset\n20 students, 2 columns&quot;] --&gt; B[&quot;Block B\nX = dataset.drop(columns=[&#x27;Passed&#x27;])&quot;]
+    A --&gt; C[&quot;Block C\ny = dataset[&#x27;Passed&#x27;]&quot;]
+    B --&gt; D[&quot;Block D\ntrain_test_split(X, y, test_size=0.2,\nrandom_state=42, stratify=y)&quot;]
+    C --&gt; D
+    D --&gt; E[&quot;Block E\nX_train (16 students)&quot;]
+    D --&gt; F[&quot;Block F\nX_test (4 students)&quot;]
+    D --&gt; G[&quot;Block G\ny_train (16 answers)&quot;]
+    D --&gt; H[&quot;Block H\ny_test (4 answers)&quot;]
+    E --&gt; I[&quot;Block I\nmodel.fit(X_train, y_train)&quot;]
+    G --&gt; I
+    I --&gt; J[&quot;Block J\ntrained model:\nHours_Studied &lt;= 12.50&quot;]
+    J --&gt; K[&quot;Block K\nmodel.predict(X_test)&quot;]
+    F --&gt; K
+    K --&gt; L[&quot;Block L\ny_pred (4 guesses)&quot;]
+    L --&gt; M[&quot;Block M\naccuracy_score(y_test, y_pred)&quot;]
+    H --&gt; M
+    M --&gt; N[&quot;Block N\naccuracy = 1.0 (4 of 4 correct)&quot;]
+    style A fill:#8a8f98,color:#fff
+    style D fill:#2a78d6,color:#fff
+    style I fill:#2a78d6,color:#fff
+    style K fill:#eb6834,color:#fff
+    style N fill:#2f9e6f,color:#fff
+</pre></div>
+<h3>Why each block exists</h3>
+<ul>
+<li><strong>A — <code>dataset</code>.</strong> One shared table. Everything below is a slice of
+it, so rows can never get mismatched.</li>
+<li><strong>B — <code>X</code>.</strong> Drops <code>Passed</code>. Purpose: the model must never see the
+answer while learning, or the score means nothing.</li>
+<li><strong>C — <code>y</code>.</strong> Just <code>Passed</code>, saved separately — needed later to teach
+(<code>G</code>) and to grade (<code>H</code>), never as an input.</li>
+<li><strong>D — <code>train_test_split</code>.</strong> Shuffles <code>X</code>/<code>y</code> together, then cuts into
+two pools — one to learn from, one untouched, to prove the learning
+is real.</li>
+<li><strong>E / F — <code>X_train</code> (16) / <code>X_test</code> (4).</strong> The bigger share trains;
+the held-back share tests honestly.</li>
+<li><strong>G / H — <code>y_train</code> / <code>y_test</code>.</strong> <code>G</code> teaches. <code>H</code> stays locked away
+from prediction — it only exists to grade, at <code>M</code>.</li>
+<li><strong>I — <code>.fit(X_train, y_train)</code>.</strong> The actual training: search every
+possible cutoff, keep whichever one makes the fewest mistakes. See
+Diagram 2 for the full mechanics.</li>
+<li><strong>J — the trained model.</strong> One rule, sitting in memory:
+<code>Hours_Studied &lt;= 12.50</code> → fail, else → pass. Nothing predicted yet.</li>
+<li><strong>K — <code>.predict(X_test)</code>.</strong> Runs that one rule against 4 unseen
+students. Only features go in — <code>y_test</code> never touches this step.</li>
+<li><strong>L — <code>y_pred</code>.</strong> The model's 4 guesses, made blind.</li>
+<li><strong>M — <code>accuracy_score</code>.</strong> The one place <code>y_test</code> finally gets used —
+purely to grade guesses that already exist.</li>
+<li><strong>N — <code>1.0</code>.</strong> All 4 guesses matched. A genuinely good result here,
+not a guaranteed one — see the note at the end.</li>
+</ul>
+<h2 id="diagram-2-how-fit-actually-finds-12-50">Diagram 2 — how <code>.fit()</code> actually finds <code>12.50</code></h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    START[&quot;16 training students\nHours_Studied + real Passed answer,\nsorted: 1,2,3,5,6,8,9,10,11,12,13,14,15,17,18,20&quot;] --&gt; T1
+    START --&gt; T2
+    START --&gt; T3
+    START --&gt; T4
+
+    subgraph TRY [&quot;Try candidate cutoff lines, one at a time&quot;]
+        T1[&quot;Line 9.5\nLeft: 7 students, 0 passed -&gt; guess FAIL\nRight: 9 students, 7 passed -&gt; guess PASS\nMistakes: 0 + 2 = 2&quot;]
+        T2[&quot;Line 11.5\nLeft: 9 students, 1 passed -&gt; guess FAIL\nRight: 7 students, 6 passed -&gt; guess PASS\nMistakes: 1 + 1 = 2&quot;]
+        T3[&quot;Line 12.5\nLeft: 10 students, 1 passed -&gt; guess FAIL\nRight: 6 students, 6 passed -&gt; guess PASS\nMistakes: 1 + 0 = 1&quot;]
+        T4[&quot;Line 13.5\nLeft: 11 students, 2 passed -&gt; guess FAIL\nRight: 5 students, 5 passed -&gt; guess PASS\nMistakes: 2 + 0 = 2&quot;]
+    end
+
+    T1 --&gt; COMPARE
+    T2 --&gt; COMPARE
+    T3 --&gt; COMPARE
+    T4 --&gt; COMPARE
+    COMPARE{&quot;Line up every mistake count\ntried: ...3, 2, 2, 1, 2, 3...\n(plus every other candidate\nfrom 1.5 up to 19.0)&quot;}
+    COMPARE --&gt; WINNER[&quot;WINNER: Hours_Studied &lt;= 12.50\nfewest mistakes of every\nline tried: just 1 out of 16&quot;]
+    WINNER --&gt; STORED[&quot;Stored inside model as its\none and only rule (max_depth=1)&quot;]
+
+    style START fill:#8a8f98,color:#fff
+    style T3 fill:#2f9e6f,color:#fff
+    style WINNER fill:#2f9e6f,color:#fff
+    style STORED fill:#2a78d6,color:#fff
+</pre></div>
+<p>This isn't the full set of candidates — <code>.fit()</code> actually tries <strong>every</strong>
+midpoint between neighboring <code>Hours_Studied</code> values in the training
+data (<code>1.5, 2.5, 4.0, 5.5, 7.0, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 16.0, 17.5, 19.0</code> — 15 candidates total for these 16 students). The
+diagram zooms in on the 4 closest to the winner so the comparison is
+readable; every other candidate scored worse still (up to 7 mistakes at
+the extreme ends, like a line at <code>1.5</code>).</p>
+<p><code>.fit()</code> isn't guesswork — it's brute-force search over every one of
+those candidates, scored by mistakes, keeping the single best. Proven
+by hand in the notebook: <code>12.5</code> makes 1 mistake (student <code>10</code>, who
+passed despite only 10 hours); its closest rivals (<code>9.5</code>, <code>11.5</code>,
+<code>13.5</code>) all make 2.</p>
+<h2 id="the-same-story-told-plainly">The same story, told plainly</h2>
+<p>Twenty real students studied for an exam, for different numbers of
+hours. We already know, from records, who passed and who failed —
+that's <code>dataset</code>.</p>
+<p>To test whether &quot;hours studied&quot; can predict &quot;pass or fail,&quot; we hide the
+real results from 4 of the 20 students (<code>X_test</code>/<code>y_test</code>) and only let
+the model study the other 16, answers included (<code>X_train</code>/<code>y_train</code>).</p>
+<p>The model studies those 16 by trying out every possible &quot;cutoff&quot; —
+<em>what if I guessed everyone under this many hours fails, and everyone
+over it passes?</em> — and checks each guess against what those 16
+students actually did. Whichever cutoff is wrong the fewest times
+becomes its one rule: <strong><code>12.50</code> hours</strong>.</p>
+<p>Then it's tested: given only the 4 hidden students' study hours (never
+their real results), it applies that one rule and guesses. Only after
+guessing do we reveal the real results and check — 4 out of 4 correct.</p>
+<h2 id="faq-the-questions-that-came-up-along-the-way">FAQ — the questions that came up along the way</h2>
+<p><strong>Does <code>y_test</code> &quot;identify&quot; who passes or fails?</strong>
+No. <code>y_test</code> is pre-existing data — the real, already-known result for
+those 4 students, typed in by hand back when the dataset was built. It
+never computes or predicts anything. It only gets used once, at the
+very end, to grade <code>y_pred</code> — the model's guess, made without ever
+seeing it.</p>
+<p><strong>What does &quot;mistake&quot; mean in the threshold search?</strong>
+For a candidate line, every student on one side gets the <em>same</em> single
+guess (whatever the majority of that side actually did). &quot;Mistakes&quot; =
+how many real students on that side don't match that one guess. Sum
+both sides for the total.</p>
+<p><strong>Why <code>12.50</code> and not <code>9.5</code> or <code>11.5</code>?</strong>
+All were tried. <code>12.5</code> scored 1 total mistake; every neighboring
+candidate scored 2 or more. Not a close call — a clean win, verified in
+the notebook by listing all 16 training students individually.</p>
+<p><strong>Is a perfect <code>1.0</code> test score normal?</strong>
+Not guaranteed — it happened here because all 4 test students landed
+clearly on one side of <code>12.50</code>, away from the messy middle where
+students <code>10</code>–<code>12</code> live. With only 4 test rows, one wrong guess would
+have dropped the score to <code>0.75</code>.</p>
+
+<div class="src-head">📓 <a href="../Concept/01_train_test_split_data.ipynb">01_train_test_split_data.ipynb</a></div>
+<h2 id="scikit-learn-train-test-split">scikit-learn — <code>train_test_split</code></h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning</p>
+</div>
+<p><strong>Status:</strong> 🟡 Learning. This notebook covers <strong>splitting data only</strong>. No model is trained yet.</p>
+<h2 id="what-is-scikit-learn">What is scikit-learn?</h2>
+<p>scikit-learn is the standard Python library for <strong>classical</strong> machine learning —
+everything before neural networks. Regression, decision trees, clustering, scaling,
+encoding, and model evaluation all live here.</p>
+<p>It sits on top of NumPy and Pandas. You hand it a table of numbers. It hands back
+either a cleaned table or a prediction.</p>
+<h2 id="the-shape-of-the-whole-library">The shape of the whole library</h2>
+<p>Every object in scikit-learn is an <strong>estimator</strong>, and estimators have three verbs:</p>
+<div class="code"><pre>   .fit(X, y)        LEARN     read the data, remember what you found
+   .transform(X)     RESHAPE   apply what you learned, return a new X
+   .predict(X)       ANSWER    apply what you learned, return a prediction
+</pre></div>
+<p>Anything learned during <code>fit</code> is stored with a trailing underscore — <code>model.coef_</code>,
+<code>scaler.mean_</code>. No underscore means you supplied it. Underscore means the data taught it.</p>
+<p><code>train_test_split</code> is not an estimator. It is a plain function. But it comes <strong>first</strong>,
+before any estimator, and this notebook explains why.</p>
+<h2 id="step-0-imports">Step 0 — Imports</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+from sklearn.model_selection import train_test_split</pre></div>
+<h2 id="step-1-load-the-data">Step 1 — Load the data</h2>
+<p>The dataset lives in the Pandas folder, one level up from here:</p>
+<div class="code"><pre>02_data_toolkit_apps/
+├── 02_pandas/
+│   └── DataSet/
+│       └── age1.csv        &lt;- the file we read
+└── 08_sklearn/
+    └── example_01.ipynb    &lt;- we are here
+</pre></div>
+<p><code>../../../01_Python/03_Pandas/Data/age1.csv</code> is a <strong>relative</strong> path. It starts from the folder
+holding this notebook. <code>..</code> steps up one level, then we walk back down.</p>
+<p>A path starting with <code>/</code> means the root of the whole computer, not the root of this
+repository. That mistake raises <code>FileNotFoundError</code> even though the file clearly exists.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">data1 = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/age1.csv&quot;)
+data1</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age  Income
+0   20   10000
+1   30   15000
+2   80   50000
+3   50   30000
+4   10    5000
+5   45   25000
+6   30   20000
+7   55   35000
+8   60   40000
+9   70   45000</pre></div>
+<h2 id="step-2-choose-the-input-and-the-target">Step 2 — Choose the input and the target</h2>
+<p>Two names, and the capitalisation is a real convention:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Name</th>
+  <th>Meaning</th>
+  <th>Why the case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>X</code></td>
+  <td>the <strong>input</strong> — what the model is allowed to see</td>
+  <td>Capital, because it is normally a 2-D table of many columns</td>
+</tr>
+<tr>
+  <td><code>y</code></td>
+  <td>the <strong>target</strong> — what the model must predict</td>
+  <td>Lowercase, because it is normally a single 1-D column</td>
+</tr>
+</tbody>
+</table>
+<p>Here <code>Age</code> is the input and <code>Income</code> is the target. The question being set up is:
+<em>given a person's age, can we predict their income?</em></p>
+<p><strong>One thing to know for later.</strong> <code>data1['Age']</code> returns a <strong>Series</strong>, which is 1-D.
+<code>train_test_split</code> is happy with that. But when you later call <code>model.fit(X, y)</code>,
+scikit-learn will demand a 2-D <code>X</code> and raise an error asking you to reshape.
+<code>data1[['Age']]</code> — with double brackets — returns a 1-column <strong>DataFrame</strong>, which is
+already 2-D. Not needed yet; remember it for the first model.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">X = data1[&#x27;Age&#x27;]
+Y = data1[&#x27;Income&#x27;]</pre></div>
+<h2 id="step-3-the-split-parameter-by-parameter">Step 3 — The split, parameter by parameter</h2>
+<div class="code"><pre class="py">X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=0, shuffle=False)
+</pre></div>
+<h3>Why split at all?</h3>
+<p>A model that is scored on the same rows it learned from will always look brilliant.
+That is memorisation, not learning. So you hide some rows, train on the rest, and score
+against the hidden ones. Those hidden rows are the only honest measure you have.</p>
+<div class="code"><pre>   10 rows
+     ↓
+   SPLIT  ──→  8 train rows  ──→  the model learns from these
+          └─→  2 test rows   ──→  never seen during training, used only to score
+</pre></div>
+<p><strong>Engineering view.</strong> It is a holdout set, the same idea as keeping a validation dataset
+your integration tests never train against. The moment the model sees a test row, that
+row stops measuring anything.</p>
+<h3>Every parameter</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Parameter</th>
+  <th>What it does</th>
+  <th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>X, Y</code></td>
+  <td>The arrays to split. You may pass several; each is split <strong>the same way</strong>, so rows stay aligned.</td>
+  <td>required</td>
+</tr>
+<tr>
+  <td><code>test_size</code></td>
+  <td>Size of the test part. A float is a fraction (<code>0.2</code> = 20%); an int is a row count.</td>
+  <td><code>0.25</code></td>
+</tr>
+<tr>
+  <td><code>train_size</code></td>
+  <td>The other side. Normally left alone — it is inferred from <code>test_size</code>.</td>
+  <td><code>None</code></td>
+</tr>
+<tr>
+  <td><code>shuffle</code></td>
+  <td>Whether to mix the rows before cutting. <strong>This is the important one.</strong></td>
+  <td><code>True</code></td>
+</tr>
+<tr>
+  <td><code>random_state</code></td>
+  <td>Seed for the shuffling, so a &quot;random&quot; split is repeatable.</td>
+  <td><code>None</code></td>
+</tr>
+<tr>
+  <td><code>stratify</code></td>
+  <td>Keep the class balance of a column in both parts. Used for classification.</td>
+  <td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h3>What it returns</h3>
+<p>Four objects, <strong>always in this order</strong>:</p>
+<div class="code"><pre>   train_test_split(X, Y)  -&gt;  X_train, X_test, y_train, y_test
+                                  │        │       │        │
+                                  └── X ───┘       └── Y ───┘
+                                   input pair       target pair
+</pre></div>
+<p>Getting the order wrong is a classic bug. It does not raise an error — it just silently
+trains on the wrong data. Note that it is X, X, y, y — <strong>not</strong> X, y, X, y.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2,random_state=0, shuffle=False)
+# I wanted t you to test the with different values show me those outputs in different visulisation ways like changing the random state , then huffle , i wanted to explain each and every bit of this method</pre></div>
+<h2 id="step-4-read-the-result">Step 4 — Read the result</h2>
+<p>Print all four parts. Watch the <strong>index numbers</strong> on the left of each Series — those are
+the original row labels, and they tell you exactly which rows were taken.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">print(X_train,&#x27;\n&#x27;)
+print(X_test,&#x27;\n&#x27;)
+print(y_train,&#x27;\n&#x27;)
+print(y_test,&#x27;\n&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    20
+1    30
+2    80
+3    50
+4    10
+5    45
+6    30
+7    55
+Name: Age, dtype: int64 
+
+8    60
+9    70
+Name: Age, dtype: int64 
+
+0    10000
+1    15000
+2    50000
+3    30000
+4     5000
+5    25000
+6    20000
+7    35000
+Name: Income, dtype: int64 
+
+8    40000
+9    45000
+Name: Income, dtype: int64</pre></div>
+<h2 id="step-5-now-the-experiments">Step 5 — Now the experiments</h2>
+<p>You asked to see what happens with different values. Below, each parameter is changed
+on its own so you can see precisely what it controls.</p>
+<p>First a small helper that reports <strong>which original rows</strong> ended up in the test set.
+Everything after this uses it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">def test_rows(**kwargs):
+    &quot;&quot;&quot;Return the original row labels that land in the test set.&quot;&quot;&quot;
+    _, X_test, _, _ = train_test_split(X, Y, **kwargs)
+    return list(X_test.index)
+
+
+print(&quot;your current settings -&gt;&quot;, test_rows(test_size=0.2, random_state=0, shuffle=False))</pre></div>
+<div class="out"><div class="h">Output</div><pre>your current settings -&gt; [8, 9]</pre></div>
+<h2 id="experiment-1-shuffle-false-makes-random-state-do">Experiment 1 — <code>shuffle=False</code> makes <code>random_state</code> do nothing</h2>
+<p>Your call passes <code>random_state=0</code> <strong>and</strong> <code>shuffle=False</code>. These two fight each other.</p>
+<p><code>random_state</code> seeds the shuffling. If there is no shuffling, there is nothing to seed.
+The split becomes a plain slice: <em>take the last 20% of the rows, in file order</em>.</p>
+<p>Change the seed to anything you like and the answer will not move.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">a = test_rows(test_size=0.2, random_state=0,   shuffle=False)
+b = test_rows(test_size=0.2, random_state=99,  shuffle=False)
+c = test_rows(test_size=0.2, random_state=1234, shuffle=False)
+
+print(&quot;random_state=0    -&gt;&quot;, a)
+print(&quot;random_state=99   -&gt;&quot;, b)
+print(&quot;random_state=1234 -&gt;&quot;, c)
+print()
+print(&quot;all identical:&quot;, a == b == c)
+print(&quot;-&gt; with shuffle=False, random_state is ignored completely&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>random_state=0    -&gt; [8, 9]
+random_state=99   -&gt; [8, 9]
+random_state=1234 -&gt; [8, 9]
+
+all identical: True
+-&gt; with shuffle=False, random_state is ignored completely</pre></div>
+<p><strong>Why this matters.</strong> <code>shuffle=False</code> is not neutral. It hands you whatever happens to
+sit at the bottom of the file.</p>
+<p>If a CSV is sorted — by date, by customer, by class label — the last 20% is a <em>biased</em>
+sample. Imagine the file were sorted by age: your test set would contain only the oldest
+people, and your score would be meaningless.</p>
+<p><code>shuffle=False</code> is correct in exactly one common case: <strong>time series</strong>, where you must
+train on the past and test on the future, and shuffling would leak tomorrow into today.
+For ordinary tabular data like this, leave <code>shuffle</code> at its default <code>True</code>.</p>
+
+<h2 id="experiment-2-random-state-with-shuffling-turned-">Experiment 2 — <code>random_state</code> with shuffling turned on</h2>
+<p>Now <code>shuffle</code> is at its default (<code>True</code>), so the seed actually does something.
+Each seed picks a different pair of rows.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">for rs in [0, 1, 42]:
+    print(f&quot;random_state={rs:&lt;3} -&gt; test rows {test_rows(test_size=0.2, random_state=rs)}&quot;)
+
+print()
+print(&quot;Same seed, called twice:&quot;)
+print(&quot;  &quot;, test_rows(test_size=0.2, random_state=7))
+print(&quot;  &quot;, test_rows(test_size=0.2, random_state=7), &quot; &lt;- identical, every time&quot;)
+
+print()
+print(&quot;No seed at all (random_state=None), called twice:&quot;)
+print(&quot;  &quot;, test_rows(test_size=0.2))
+print(&quot;  &quot;, test_rows(test_size=0.2), &quot; &lt;- different, every run&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>random_state=0   -&gt; test rows [2, 8]
+random_state=1   -&gt; test rows [2, 9]
+random_state=42  -&gt; test rows [8, 1]
+
+Same seed, called twice:
+   [8, 5]
+   [8, 5]  &lt;- identical, every time
+
+No seed at all (random_state=None), called twice:
+   [1, 7]
+   [0, 2]  &lt;- different, every run</pre></div>
+<p><strong>What <code>random_state</code> really buys you: reproducibility, not randomness.</strong></p>
+<p>Without a seed, every run reshuffles. Your accuracy score moves between runs and you
+cannot tell whether a change you made helped, or whether you simply got a friendlier
+split. Debugging becomes guesswork.</p>
+<p>With a fixed seed, the split is identical forever. Anyone who clones this repository and
+runs the notebook sees your exact numbers.</p>
+<p><strong>Engineering view.</strong> It is a fixed seed in a test fixture. You are not trying to remove
+randomness — you are pinning it so results are comparable. The particular value (<code>0</code>,
+<code>42</code>, <code>7</code>) means nothing. Only its fixedness matters.</p>
+<p>⚠️ Never <em>tune</em> the seed. Trying seeds until the score looks good is fitting to the test
+set, which is the thing splitting was supposed to prevent.</p>
+
+<h2 id="visualisation-1-which-row-goes-where">Visualisation 1 — which row goes where</h2>
+<p>Printing indexes works, but a picture makes the pattern obvious. Each square is one row
+of the dataset, labelled with its index. Green = train, orange = test.</p>
+<p>Read the first two rows of the chart together: they are different seeds with
+<code>shuffle=False</code>, and they are <strong>identical</strong>. That is Experiment 1, drawn.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">import matplotlib.pyplot as plt
+
+configs = [
+    (&quot;shuffle=False, rs=0&quot;,   dict(test_size=0.2, random_state=0,  shuffle=False)),
+    (&quot;shuffle=False, rs=99&quot;,  dict(test_size=0.2, random_state=99, shuffle=False)),
+    (&quot;shuffle=True,  rs=0&quot;,   dict(test_size=0.2, random_state=0)),
+    (&quot;shuffle=True,  rs=1&quot;,   dict(test_size=0.2, random_state=1)),
+    (&quot;shuffle=True,  rs=42&quot;,  dict(test_size=0.2, random_state=42)),
+]
+
+fig, ax = plt.subplots(figsize=(9, 3.4))
+
+for row, (label, kw) in enumerate(configs):
+    held_out = test_rows(**kw)
+    for col in range(len(X)):
+        is_test = col in held_out
+        ax.add_patch(plt.Rectangle((col, -row), 0.88, 0.88,
+                                   facecolor=&quot;#f59e0b&quot; if is_test else &quot;#86efac&quot;,
+                                   edgecolor=&quot;white&quot;, linewidth=2))
+        ax.text(col + 0.44, -row + 0.44, str(col),
+                ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=9, color=&quot;#1f2937&quot;)
+
+ax.set_xlim(-0.1, len(X)); ax.set_ylim(-len(configs) + 0.05, 1.0)
+ax.set_yticks([-r + 0.44 for r in range(len(configs))])
+ax.set_yticklabels([c[0] for c in configs], fontsize=9, family=&quot;monospace&quot;)
+ax.set_xticks([]); ax.set_frame_on(False)
+ax.set_title(&quot;Which row goes where?   green = train,   orange = test&quot;, fontsize=11)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/01-train-test-split-data-c19-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="visualisation-2-the-same-split-on-the-real-data">Visualisation 2 — the same split on the real data</h2>
+<p>The grid above shows <em>positions</em>. This shows the actual <code>Age</code> and <code>Income</code> values, so
+you can see <strong>what kind of people</strong> end up in the test set.</p>
+<p>With <code>shuffle=False</code> the test set is whatever sits at the end of the file. With
+<code>shuffle=True</code> it is drawn from across the range.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">pairs = [
+    (&quot;shuffle=False (your call)&quot;, dict(test_size=0.2, random_state=0, shuffle=False)),
+    (&quot;shuffle=True,  rs=0&quot;,       dict(test_size=0.2, random_state=0)),
+]
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharex=True, sharey=True)
+
+for ax, (label, kw) in zip(axes, pairs):
+    held_out  = test_rows(**kw)
+    kept      = [i for i in X.index if i not in held_out]
+    ax.scatter(X.loc[kept],     Y.loc[kept],     s=110, c=&quot;#16a34a&quot;, label=&quot;train&quot;)
+    ax.scatter(X.loc[held_out], Y.loc[held_out], s=170, c=&quot;#f59e0b&quot;,
+               marker=&quot;D&quot;, edgecolor=&quot;#7c2d12&quot;, label=&quot;test&quot;)
+    for i in X.index:
+        ax.annotate(str(i), (X.loc[i], Y.loc[i]), fontsize=8,
+                    xytext=(6, 6), textcoords=&quot;offset points&quot;, color=&quot;#6b7280&quot;)
+    ax.set_title(label, fontsize=10)
+    ax.set_xlabel(&quot;Age&quot;)
+    ax.legend(loc=&quot;upper left&quot;, fontsize=9)
+
+axes[0].set_ylabel(&quot;Income&quot;)
+fig.suptitle(&quot;Same data, two split strategies&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/01-train-test-split-data-c21-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="experiment-3-test-size-controls-how-much-you-hol">Experiment 3 — <code>test_size</code> controls how much you hold back</h2>
+<p><code>test_size=0.2</code> means 20% of rows go to test. With 10 rows that is 2.</p>
+<p>The trade-off is real and has no perfect answer:</p>
+<ul>
+<li><strong>Too small a test set</strong> — the score is noisy. With 2 rows, one unusual person swings
+your accuracy by 50%.</li>
+<li><strong>Too large a test set</strong> — the model has less to learn from and looks worse than it is.</li>
+</ul>
+<p><code>0.2</code> and <code>0.25</code> are the usual defaults. On a genuinely small dataset like this one,
+neither is really enough, and cross-validation is the proper answer. That comes later.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">sizes = [0.1, 0.2, 0.3, 0.5]
+counts = []
+
+for ts in sizes:
+    X_tr, X_te, _, _ = train_test_split(X, Y, test_size=ts, random_state=0)
+    counts.append((len(X_tr), len(X_te)))
+    print(f&quot;test_size={ts}  -&gt;  train {len(X_tr)} rows, test {len(X_te)} rows&quot;)
+
+labels = [f&quot;test_size={s}&quot; for s in sizes]
+train_n = [c[0] for c in counts]
+test_n  = [c[1] for c in counts]
+
+fig, ax = plt.subplots(figsize=(7.5, 3.4))
+ax.barh(labels, train_n, color=&quot;#86efac&quot;, label=&quot;train&quot;)
+ax.barh(labels, test_n, left=train_n, color=&quot;#f59e0b&quot;, label=&quot;test&quot;)
+
+for i, (a, b) in enumerate(counts):
+    ax.text(a / 2,     i, str(a), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=10)
+    ax.text(a + b / 2, i, str(b), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=10)
+
+ax.set_xlabel(&quot;number of rows&quot;)
+ax.set_title(&quot;test_size decides how many rows are held back&quot;)
+ax.legend(loc=&quot;lower right&quot;, fontsize=9)
+ax.invert_yaxis()
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>test_size=0.1  -&gt;  train 9 rows, test 1 rows
+test_size=0.2  -&gt;  train 8 rows, test 2 rows
+test_size=0.3  -&gt;  train 7 rows, test 3 rows
+test_size=0.5  -&gt;  train 5 rows, test 5 rows</pre></div>
+<figure class="shot"><img src="assets/01-train-test-split-data-c23-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="gotcha-stratify-cannot-work-without-shuffling">Gotcha — <code>stratify</code> cannot work without shuffling</h2>
+<p><code>stratify</code> keeps the balance of a class column the same in both parts. If 30% of your
+rows are &quot;fraud&quot;, stratifying keeps 30% fraud in train <strong>and</strong> in test.</p>
+<p>It needs to choose rows freely to do that, so it cannot run on an ordered slice.
+Combining it with <code>shuffle=False</code> raises an error rather than quietly misbehaving —
+which is the good kind of API design.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">try:
+    train_test_split(X, Y, test_size=0.2, shuffle=False, stratify=Y)
+except ValueError as e:
+    print(&quot;ValueError:&quot;, e)</pre></div>
+<div class="out"><div class="h">Output</div><pre>ValueError: Stratified train/test split is not implemented for shuffle=False</pre></div>
+<h2 id="what-this-means-for-your-code">What this means for your code</h2>
+<div class="code"><pre class="py">X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=0, shuffle=False)
+</pre></div>
+<p>The call is correct and it runs. Two observations, not corrections:</p>
+<ol>
+<li><strong><code>random_state=0</code> is doing nothing here</strong>, because <code>shuffle=False</code> turns shuffling
+off. Keeping both is harmless but misleading to a reader — it looks like a
+reproducible random split when it is actually a fixed slice. Either drop
+<code>random_state</code>, or drop <code>shuffle=False</code> and let the seed matter.</li>
+<li><strong><code>shuffle=False</code> on ordinary tabular data is usually not what you want.</strong> It is the
+right choice for time series. For this dataset, the default <code>shuffle=True</code> gives a
+more representative test set.</li>
+</ol>
+<p>Try removing <code>shuffle=False</code> from your cell above and re-running the prints. Compare the
+index numbers to Visualisation 1.</p>
+<h2 id="common-mistakes">Common mistakes</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Mistake</th>
+  <th>What goes wrong</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Unpacking as <code>X_train, y_train, X_test, y_test</code></td>
+  <td>Returns are <code>X, X, y, y</code>. No error is raised — you just train on the wrong arrays.</td>
+</tr>
+<tr>
+  <td>Splitting after scaling or encoding</td>
+  <td>The transformer already saw the test rows. This is <strong>data leakage</strong> and your score becomes a lie. Split first, always.</td>
+</tr>
+<tr>
+  <td>Changing <code>random_state</code> until the score improves</td>
+  <td>You are now fitting to the test set. Fix the seed once and leave it.</td>
+</tr>
+<tr>
+  <td>Passing <code>shuffle=False</code> on sorted data</td>
+  <td>The test set is a biased slice of whatever the file ends with.</td>
+</tr>
+<tr>
+  <td>Using <code>stratify</code> on a continuous target</td>
+  <td>It only makes sense for classes. On <code>Income</code> it would try to balance 10 distinct values.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> <code>train_test_split</code> returns
+<strong><code>X_train, X_test, y_train, y_test</code> in that order</strong>, and <code>random_state</code> only means
+anything when <code>shuffle=True</code>. Split before you learn anything from the data — including
+scaling and encoding — or the test set stops being a test.</p>
+
+<div class="src-head">📓 <a href="../Concept/23_Simple_Dataset_Practice.ipynb">23_Simple_Dataset_Practice.ipynb</a></div>
+<h2 id="starting-over-simple-train-test-predict-from-scr">Starting Over, Simple — Train / Test / Predict, from Scratch</h2>
+<p><code>22_Forward_Backward_Practice.ipynb</code> moved too fast, with 5 features and
+noise mixed in. This file uses the smallest possible dataset instead —
+one feature, numbers you can check by eye — and goes one single step at
+a time. Nothing gets typed until you understand <em>why</em> it's the next
+step, not just what to type.</p>
+
+<h2 id="step-1-import-pandas">Step 1 — Import pandas</h2>
+<p><code>pandas</code> gives us the <code>DataFrame</code> — a table where rows and columns stay
+lined up together. Every step below builds on top of a DataFrame, so
+this import always comes first, before anything else can run.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd</pre></div>
+<h2 id="step-2-build-the-dataset-by-hand">Step 2 — Build the dataset by hand</h2>
+<p>Two plain Python lists, <code>hours_studied</code> and <code>passed</code>, written in matching
+order — position 1 in both lists belongs to student 1, position 2 to
+student 2, and so on. <code>pd.DataFrame({...})</code> glues the two lists into one
+table, column by column.</p>
+<p>The last two lines just relabel the row numbers as <code>Student</code> (<code>1</code> to
+<code>20</code>) instead of pandas' default <code>0</code> to <code>19</code> — purely for readability.
+<code>Student</code> is never treated as real data the model can use; it's only a
+name for each row, not a feature.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">hours_studied = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+passed = [0,0,0,0,0,0,0,0,0,1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+
+dataset = pd.DataFrame({&quot;Hours_Studied&quot;: hours_studied, &quot;Passed&quot;: passed})
+dataset.index = range(1, 21)
+dataset.index.name = &quot;Student&quot;
+dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>         Hours_Studied  Passed
+Student                       
+1                    1       0
+2                    2       0
+3                    3       0
+4                    4       0
+5                    5       0
+6                    6       0
+7                    7       0
+8                    8       0
+9                    9       0
+10                  10       1
+11                  11       0
+12                  12       0
+13                  13       1
+14                  14       1
+15                  15       1
+16                  16       1
+17                  17       1
+18                  18       1
+19                  19       1
+20                  20       1</pre></div>
+<h2 id="step-3-split-into-x-and-y">Step 3 — Split into X and y</h2>
+<p><code>X</code> is everything the model is <em>allowed</em> to see — here, just
+<code>Hours_Studied</code>, since we drop <code>Passed</code>. <code>y</code> is the answer key,
+<code>Passed</code> on its own, kept separate.</p>
+<p>This has to happen before training: if <code>Passed</code> stayed inside <code>X</code>, the
+model could read the real answer straight off its own input instead of
+learning a genuine pattern from <code>Hours_Studied</code> — the resulting score
+would be meaningless.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">X = dataset.drop(columns=[&quot;Passed&quot;])
+y = dataset[&quot;Passed&quot;]</pre></div>
+<h2 id="step-3-continued-confirm-the-shapes">Step 3 (continued) — Confirm the shapes</h2>
+<p>A quick sanity check before moving on. <code>X</code> should come back as a table —
+2 numbers, rows and columns — even with only 1 feature column. <code>y</code>
+should come back as a flat list — 1 number, just a count of values —
+since it's a single column pulled out on its own, not a table.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">X.shape, y.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>((20, 1), (20,))</pre></div>
+<h2 id="step-4-split-into-train-and-test">Step 4 — Split into train and test</h2>
+<p>We need two separate pools of students: one to actually teach the model
+(<code>X_train</code>/<code>y_train</code>), and a second pool the model never sees during
+training (<code>X_test</code>/<code>y_test</code>) — so there's an honest way to check
+afterward whether it learned something real, instead of just memorizing.</p>
+<ul>
+<li><code>test_size=0.2</code> reserves 20% of the 20 students for that second,
+held-back pool.</li>
+<li><code>random_state=42</code> fixes the shuffle, so it's identical every time this
+cell reruns.</li>
+<li><code>stratify=y</code> keeps the pass/fail mix in both pools close to the full
+dataset's mix, instead of risking an unlucky shuffle that dumps most
+of one class into a single pool.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+X_train.shape, X_test.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>((16, 1), (4, 1))</pre></div>
+<h2 id="step-5-build-the-model-and-train-it">Step 5 — Build the model, and train it</h2>
+<p><code>DecisionTreeClassifier(max_depth=1, ...)</code> creates a model that's only
+allowed to ask <strong>one single yes/no question</strong> before giving its final
+answer — kept this simple on purpose, so every part of it can be
+checked by hand.</p>
+<p><code>model.fit(X_train, y_train)</code> is the actual training step. Here is
+exactly what it does, in order:</p>
+<ol>
+<li>Look at all 16 training students' <code>Hours_Studied</code> values, together
+with their real <code>Passed</code> answers.</li>
+<li>Try every possible dividing line between neighboring <code>Hours_Studied</code>
+values in the training data (<code>1.5, 2.5, 4.0, ... 19.0</code>).</li>
+<li>For each candidate line, split the 16 students into a left group and
+a right group. For each group, guess whatever the majority of that
+group actually did — e.g. if most of the left group failed, guess
+&quot;fail&quot; for the whole left group.</li>
+<li>Count how many real students that guess gets wrong, for every
+candidate line.</li>
+<li>Keep whichever line makes the <em>fewest</em> mistakes. Here, that line is
+<code>Hours_Studied &lt;= 12.50</code>, with only 1 mistake out of 16 (student 10,
+who studied just 10 hours but passed anyway).</li>
+</ol>
+<p>Nothing here is guesswork — <code>.fit()</code> is a brute-force search over every
+possible line, scored by mistakes, keeping the best one. It just runs
+in milliseconds instead of by hand.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">
+from sklearn.tree import DecisionTreeClassifier
+
+model = DecisionTreeClassifier(max_depth=1, random_state=42)
+model.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(max_depth=1, random_state=42)</pre></div>
+<h3>Proof: why <code>12.50</code> actually wins</h3>
+<p>Not just an assertion — here's the mistake count for every candidate
+line near the middle, computed by hand from the 16 training students:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>candidate line</th>
+  <th>left group</th>
+  <th>left guess</th>
+  <th>mistakes (left)</th>
+  <th>right group</th>
+  <th>right guess</th>
+  <th>mistakes (right)</th>
+  <th><strong>total mistakes</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>8.5</td>
+  <td>1,2,3,5,6,8 (0 passed)</td>
+  <td>&quot;fail&quot;</td>
+  <td>0</td>
+  <td>9,10,11,12,13,14,15,17,18,20 (7 passed)</td>
+  <td>&quot;pass&quot;</td>
+  <td>3</td>
+  <td>3</td>
+</tr>
+<tr>
+  <td>9.5</td>
+  <td>1,2,3,5,6,8,9 (0 passed)</td>
+  <td>&quot;fail&quot;</td>
+  <td>0</td>
+  <td>10,11,12,13,14,15,17,18,20 (7 passed)</td>
+  <td>&quot;pass&quot;</td>
+  <td>2</td>
+  <td>2</td>
+</tr>
+<tr>
+  <td>11.5</td>
+  <td>1,2,3,5,6,8,9,10,11 (1 passed)</td>
+  <td>&quot;fail&quot;</td>
+  <td>1</td>
+  <td>12,13,14,15,17,18,20 (6 passed)</td>
+  <td>&quot;pass&quot;</td>
+  <td>1</td>
+  <td>2</td>
+</tr>
+<tr>
+  <td><strong>12.5</strong></td>
+  <td><strong>1,2,3,5,6,8,9,10,11,12 (1 passed)</strong></td>
+  <td><strong>&quot;fail&quot;</strong></td>
+  <td><strong>1</strong></td>
+  <td><strong>13,14,15,17,18,20 (6 passed)</strong></td>
+  <td><strong>&quot;pass&quot;</strong></td>
+  <td><strong>0</strong></td>
+  <td><strong>1</strong></td>
+</tr>
+<tr>
+  <td>13.5</td>
+  <td>1,2,3,5,6,8,9,10,11,12,13 (2 passed)</td>
+  <td>&quot;fail&quot;</td>
+  <td>2</td>
+  <td>14,15,17,18,20 (5 passed)</td>
+  <td>&quot;pass&quot;</td>
+  <td>0</td>
+  <td>2</td>
+</tr>
+</tbody>
+</table>
+<p><code>12.5</code> is the only line with just <strong>1</strong> mistake — every neighboring
+candidate makes at least 2.</p>
+<p>Now the same winning line, but every one of the 16 students listed
+individually, so &quot;mistake&quot; has nothing hidden in it:</p>
+<p><strong>Left of <code>12.5</code></strong> — the tree's one guess for this whole group is
+&quot;fail&quot; (9 out of 10 actually failed):</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Student</th>
+  <th>Hours</th>
+  <th>Real answer</th>
+  <th>Group's guess</th>
+  <th>Mistake?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>1</td>
+  <td>0 (failed)</td>
+  <td>0 (fail)</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>2</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>3</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>5</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>6</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>8</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>9</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td><strong>10</strong></td>
+  <td><strong>10</strong></td>
+  <td><strong>1 (passed)</strong></td>
+  <td><strong>0 (fail)</strong></td>
+  <td><strong>YES</strong></td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>11</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>12</td>
+  <td>0</td>
+  <td>0</td>
+  <td>No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Right of <code>12.5</code></strong> — the tree's one guess for this whole group is
+&quot;pass&quot; (all 6 actually passed):</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Student</th>
+  <th>Hours</th>
+  <th>Real answer</th>
+  <th>Group's guess</th>
+  <th>Mistake?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>13</td>
+  <td>13</td>
+  <td>1 (passed)</td>
+  <td>1 (pass)</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td>14</td>
+  <td>1</td>
+  <td>1</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td>15</td>
+  <td>1</td>
+  <td>1</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td>17</td>
+  <td>1</td>
+  <td>1</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td>18</td>
+  <td>1</td>
+  <td>1</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td>20</td>
+  <td>1</td>
+  <td>1</td>
+  <td>No</td>
+</tr>
+</tbody>
+</table>
+<p><code>1</code> mistake on the left (student <code>10</code>) <code>+</code> <code>0</code> mistakes on the right
+<code>=</code> <strong>1 total mistake</strong> — the number that made <code>12.5</code> beat every other
+candidate line above.</p>
+
+<h2 id="step-6-look-inside-the-trained-model">Step 6 — Look inside the trained model</h2>
+<p><code>.fit()</code> doesn't print anything by itself — the tree it built is just
+sitting inside <code>model</code>, in memory. <code>export_text()</code> turns that into a
+readable printout, so we can actually see the one question it settled
+on (<code>Hours_Studied &lt;= 12.50</code>) and what it guesses on each side
+(<code>class: 0</code> = fail, <code>class: 1</code> = pass).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">from sklearn.tree import export_text
+print(export_text(model, feature_names=[&quot;Hours_Studied&quot;]))</pre></div>
+<div class="out"><div class="h">Output</div><pre>|--- Hours_Studied &lt;= 12.50
+|   |--- class: 0
+|--- Hours_Studied &gt;  12.50
+|   |--- class: 1</pre></div>
+<h2 id="step-7-see-the-split-as-a-picture">Step 7 — See the split as a picture</h2>
+<p>A number-line plot of all 16 training students, positioned by
+<code>Hours_Studied</code>, colored by their real <code>Passed</code> answer (blue = failed,
+orange = passed). The dashed line marks <code>12.50</code> — the exact cutoff
+<code>.fit()</code> found back in Step 5. This is the same result as the
+mistake-counting table from Step 5, just drawn instead of counted, so
+&quot;1 mistake on the left, 0 mistakes on the right&quot; is visible at a
+glance.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">import matplotlib.pyplot as plt
+
+train_view = X_train.join(y_train).sort_values(&quot;Hours_Studied&quot;)
+fail = train_view[train_view[&quot;Passed&quot;] == 0]
+passed_rows = train_view[train_view[&quot;Passed&quot;] == 1]
+
+fig, ax = plt.subplots(figsize=(10, 2.5))
+
+ax.scatter(fail[&quot;Hours_Studied&quot;], [0]*len(fail), color=&quot;#2a78d6&quot;, s=120, label=&quot;Failed (0)&quot;, zorder=3)
+ax.scatter(passed_rows[&quot;Hours_Studied&quot;], [0]*len(passed_rows), color=&quot;#eb6834&quot;, s=120, label=&quot;Passed (1)&quot;, zorder=3)
+
+for hrs in train_view[&quot;Hours_Studied&quot;]:
+    ax.text(hrs, 0.15, str(hrs), ha=&quot;center&quot;, fontsize=9, color=&quot;#52514e&quot;)
+
+ax.axvline(12.5, color=&quot;#0b0b0b&quot;, linestyle=&quot;--&quot;, linewidth=1.5)
+ax.text(12.5, -0.35, &quot;threshold: 12.50&quot;, ha=&quot;center&quot;, fontsize=10)
+ax.axvspan(0, 12.5, color=&quot;#2a78d6&quot;, alpha=0.07)
+ax.axvspan(12.5, 21, color=&quot;#eb6834&quot;, alpha=0.07)
+
+ax.set_xlim(0, 21)
+ax.set_ylim(-0.5, 0.5)
+ax.set_yticks([])
+ax.set_xlabel(&quot;Hours Studied&quot;)
+ax.set_title(&quot;The 16 training students, split at Hours_Studied &lt;= 12.5&quot;)
+ax.legend(loc=&quot;upper left&quot;, frameon=False)
+for spine in [&quot;top&quot;, &quot;right&quot;, &quot;left&quot;]:
+    ax.spines[spine].set_visible(False)
+
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/23-simple-dataset-practice-c17-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-8-predict-on-the-test-set">Step 8 — Predict on the test set</h2>
+<p><code>model.predict(X_test)</code> runs the <strong>one</strong> rule <code>.fit()</code> found
+(<code>Hours_Studied &lt;= 12.50</code> → fail, else pass) against the 4 students the
+model has never seen, and returns one guess per row, in the same row
+order as <code>X_test</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.metrics import accuracy_score
+
+y_pred = model.predict(X_test)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0, 1, 1, 0])</pre></div>
+<h2 id="step-8-continued-the-real-answers-to-compare-aga">Step 8 (continued) — The real answers, to compare against</h2>
+<p><code>y_test</code> never got shown to the model at any point — not during
+<code>.fit()</code>, not during <code>.predict()</code>. Printing it now, only <em>after</em> the
+guesses already exist, is purely for grading — same rule as the
+flashcard story from Step 4.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">y_test</pre></div>
+<div class="out"><div class="h">Output</div><pre>Student
+4     0
+19    1
+16    1
+7     0
+Name: Passed, dtype: int64</pre></div>
+<h2 id="step-9-turn-the-comparison-into-one-score">Step 9 — Turn the comparison into one score</h2>
+<p><code>accuracy_score(y_test, y_pred)</code> lines up both lists row by row, counts
+how many match, and divides by the total. Exactly the same &quot;count the
+mistakes&quot; idea from Step 5 — just run once, on 4 brand-new students the
+rule has never seen before.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">accuracy_score(y_test, y_pred)</pre></div>
+<div class="out"><div class="h">Output</div><pre>1.0</pre></div>
+<h3>The result: 100% — checked by hand</h3>
+<p>All 4 test students, using nothing but the single rule
+<code>Hours_Studied &lt;= 12.50</code>:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Student</th>
+  <th>Hours</th>
+  <th>Rule says</th>
+  <th>Real answer</th>
+  <th>Match?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>4</td>
+  <td>4</td>
+  <td><code>4 &lt;= 12.50</code> → fail (0)</td>
+  <td>0</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>7</td>
+  <td><code>7 &lt;= 12.50</code> → fail (0)</td>
+  <td>0</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td>16</td>
+  <td><code>16 &gt; 12.50</code> → pass (1)</td>
+  <td>1</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td>19</td>
+  <td><code>19 &gt; 12.50</code> → pass (1)</td>
+  <td>1</td>
+  <td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>4 out of 4 correct → <code>accuracy_score</code> returns <code>1.0</code>. Worth noticing: this
+isn't the <em>guaranteed</em> outcome of training a model — it's a genuinely
+good result here because the test students all happened to sit clearly
+on one side of <code>12.50</code> or the other, nowhere near the messy middle where
+student <code>10</code> and student <code>12</code> live. A tiny test set like this (just 4
+students) also means every single row matters a lot to the score — one
+wrong guess here would have dropped it straight to <code>0.75</code>.</p>
+<p>That's the full loop, start to finish: build data → split → train →
+inspect → predict → grade. Same shape as <code>20_Feature_Selection_techniques.ipynb</code>
+and <code>22_Forward_Backward_Practice.ipynb</code>, just small enough this time to
+verify every single number by hand.</p>
+
+<div class="foot"><a class="btn" href="../Concept/01_train_test_split_data.ipynb">01_train_test_split_data.ipynb ↗</a><a class="btn" href="../Concept/23_Simple_Dataset_Practice.ipynb">23_Simple_Dataset_Practice.ipynb ↗</a><a class="btn" href="../Concept/23_Simple_Dataset_Practice.MD">23_Simple_Dataset_Practice.MD ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

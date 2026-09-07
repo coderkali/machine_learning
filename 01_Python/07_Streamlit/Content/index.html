@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Streamlit — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">01 Python › <b>Streamlit</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#streamlit">Streamlit</a><a href="#files">Files</a><a href="#run-it-locally">Run it locally</a><a href="#the-mental-model-the-one-thing-to-get-right">The mental model — the one thing to get right</a><a href="#covered-so-far">Covered so far</a><a href="#verified-behaviour">Verified behaviour</a><a href="#deploying-it">Deploying it</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#sales-analysis-project-code-review-and-walkthrou">Sales Analysis Project — Code Review and Walkthrough</a><a href="#1-what-the-app-does">1. What the app does</a><a href="#2-verified-run-what-actually-happens">2. Verified run — what actually happens</a><a href="#3-issue-1-the-dashboard-vanishes-the-button-re-r">3. Issue 1 — the dashboard vanishes (the button re-r</a><a href="#4-issue-2-raising-minimum-sales-crashes-the-app">4. Issue 2 — raising Minimum Sales crashes the app</a><a href="#5-issue-3-a-deprecated-argument-that-is-already-">5. Issue 3 — a deprecated argument that is already p</a><a href="#6-design-observations-not-bugs-but-worth-decidin">6. Design observations — not bugs, but worth decidin</a><a href="#7-fix-priority">7. Fix priority</a><a href="#8-what-this-app-demonstrates-you-can-already-do">8. What this app demonstrates you can already do</a><a href="#9-try-it-in-this-order">9. Try it in this order</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Python and the data toolkit</p>
+  <h1>Streamlit</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">2 notes</span></div>
+</div>
+<div class="src-head">📝 <a href="../Concept/README.md">README.md</a></div>
+<h2 id="streamlit">Streamlit</h2>
+<p><strong>Curriculum module:</strong> M04 - Streamlit<br />
+<strong>Status:</strong> 🟡 Learning</p>
+<p>Streamlit turns a plain Python script into a web app. There is no HTML, no CSS, no
+JavaScript, no route table, and no front-end build. You write top-to-bottom Python;
+Streamlit renders it in a browser and re-runs it whenever the user touches something.</p>
+<h2 id="files">Files</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>File</th>
+  <th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="../Content/sales_analysis.py"><code>sales_analysis.py</code></a></td>
+  <td>🧪 <strong>My app.</strong> Sales Analysis Project — sidebar bounds, a generated dataset, summary statistics, and charts across matplotlib, seaborn, and plotly.</td>
+</tr>
+<tr>
+  <td><a href="../Concept/sales_analysis_explained.md"><code>sales_analysis_explained.md</code></a></td>
+  <td>Line-by-line review of that app: data flow, two verified bugs with minimal fixes, and design observations.</td>
+</tr>
+<tr>
+  <td><a href="../Content/app.py"><code>app.py</code></a></td>
+  <td>Tips Explorer — reference app. Sidebar filters, metrics, tabs, plotly charts, a data table, a CSV download, and session state. Explanation lives in the comments, section by section.</td>
+</tr>
+<tr>
+  <td><a href="../Content/requirements.txt"><code>requirements.txt</code></a></td>
+  <td>Dependency manifest. Exists because Streamlit Community Cloud needs it to build the app.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="run-it-locally">Run it locally</h2>
+<div class="code"><pre>streamlit run AI_ML_Series/02_data_toolkit_apps/07_streamlit/app.py
+</pre></div>
+<p>It opens on <code>http://localhost:8501</code>. Edit <code>app.py</code>, save, and the browser offers to
+re-run — that loop is the whole development experience.</p>
+<h2 id="the-mental-model-the-one-thing-to-get-right">The mental model — the one thing to get right</h2>
+<p><strong>The entire script re-runs, top to bottom, on every interaction.</strong></p>
+<div class="code"><pre>   user moves a slider
+            |
+            v
+   Streamlit re-runs app.py FROM LINE 1
+            |
+            +--&gt; every widget returns its CURRENT value
+            +--&gt; every chart is rebuilt
+            +--&gt; every variable is recreated
+            |
+            v
+   the browser is patched with the new output
+</pre></div>
+<p>There is no callback, no <code>onChange</code>, no component lifecycle. A widget call like</p>
+<div class="code"><pre class="py">chosen_days = st.sidebar.multiselect(&quot;Day&quot;, options=all_days, default=all_days)
+</pre></div>
+<p>does two jobs at once: it <strong>draws</strong> the widget and it <strong>returns</strong> what the user
+currently has selected. That is why the code below it can just use <code>chosen_days</code> as an
+ordinary list.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>Coming from React, the instinct is to look for state, effects, and re-render rules.
+Drop it. Streamlit is closer to a <strong>stateless request handler</strong>: each interaction is a
+fresh request that recomputes the whole response. Your Spring Boot controller does not
+remember the last request either — and for the same reason, it is much easier to reason
+about.</p>
+<p>Two consequences follow directly from that:</p>
+<ul>
+<li><strong><code>@st.cache_data</code></strong> is your caching layer. Without it, a slow query or file read
+happens on <em>every</em> keystroke. With it, the function body runs once per distinct set
+of arguments.</li>
+<li><strong><code>st.session_state</code></strong> is the only thing that survives a re-run. It is the session
+store. Everything else is rebuilt from scratch.</li>
+</ul>
+</div>
+<h2 id="covered-so-far">Covered so far</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Area</th>
+  <th>What <code>app.py</code> uses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Page setup</td>
+  <td><code>st.set_page_config</code> (must be the first Streamlit call)</td>
+</tr>
+<tr>
+  <td>Text</td>
+  <td><code>st.title</code>, <code>st.caption</code>, <code>st.write</code>, <code>st.divider</code></td>
+</tr>
+<tr>
+  <td>Inputs</td>
+  <td><code>st.multiselect</code>, <code>st.slider</code> (range), <code>st.checkbox</code>, <code>st.selectbox</code>, <code>st.button</code></td>
+</tr>
+<tr>
+  <td>Layout</td>
+  <td><code>st.sidebar</code>, <code>st.columns</code>, <code>st.tabs</code></td>
+</tr>
+<tr>
+  <td>Data display</td>
+  <td><code>st.metric</code>, <code>st.dataframe</code>, <code>st.download_button</code></td>
+</tr>
+<tr>
+  <td>Charts</td>
+  <td><code>st.plotly_chart(fig, width=&quot;stretch&quot;)</code></td>
+</tr>
+<tr>
+  <td>Control flow</td>
+  <td><code>st.warning</code> + <code>st.stop</code> for the empty-result path</td>
+</tr>
+<tr>
+  <td>Performance</td>
+  <td><code>@st.cache_data</code></td>
+</tr>
+<tr>
+  <td>State</td>
+  <td><code>st.session_state</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Not covered yet:</strong> forms (<code>st.form</code>), file upload, <code>st.chat_message</code> and chat apps,
+multipage apps (<code>pages/</code>), <code>st.secrets</code>, theming via <code>.streamlit/config.toml</code>,
+<code>st.fragment</code> for partial re-runs, and <code>st.connection</code> for databases.</p>
+<h2 id="verified-behaviour">Verified behaviour</h2>
+<p><code>app.py</code> was executed through Streamlit's own test harness
+(<code>streamlit.testing.v1.AppTest</code>), not just eyeballed:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Check</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Script runs clean</td>
+  <td>0 exceptions</td>
+</tr>
+<tr>
+  <td>Default metrics</td>
+  <td>244 bills · $4,827.77 total · 16.1% average tip</td>
+</tr>
+<tr>
+  <td>Filter to Saturday</td>
+  <td>87 bills · $1,778.40 — matches the plotly notebook's verified sum</td>
+</tr>
+<tr>
+  <td>Empty filter</td>
+  <td>shows the warning and stops, no traceback</td>
+</tr>
+<tr>
+  <td>Button + session state</td>
+  <td>click counter increments across re-runs</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="deploying-it">Deploying it</h2>
+<h3>First, the thing to be clear about</h3>
+<p><strong>GitHub cannot run this app.</strong> GitHub stores the code; GitHub Pages serves <em>static</em>
+files only. A Streamlit app is a <strong>Python server</strong> — it needs a running process, a
+WebSocket connection, and a Python environment.</p>
+<div class="code"><pre>   GitHub            = where the code lives
+   Streamlit Cloud   = what actually runs it, reading from GitHub
+</pre></div>
+<p>So &quot;deploy to GitHub&quot; is really two steps: push the code to GitHub, then point a host at
+that repo.</p>
+<h3>Hosting options</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Host</th>
+  <th>Cost</th>
+  <th>Good for</th>
+  <th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Streamlit Community Cloud</strong></td>
+  <td>free</td>
+  <td>this repo, learning, sharing a link</td>
+  <td>deploys straight from a public GitHub repo; <strong>start here</strong></td>
+</tr>
+<tr>
+  <td>Hugging Face Spaces</td>
+  <td>free tier</td>
+  <td>ML demos</td>
+  <td>needs its own repo layout</td>
+</tr>
+<tr>
+  <td>Render / Railway / Fly.io</td>
+  <td>small paid</td>
+  <td>apps that need a real backend</td>
+  <td>you manage the container</td>
+</tr>
+<tr>
+  <td>AWS (ECS / App Runner / EC2)</td>
+  <td>paid</td>
+  <td>production, private data, VPC access</td>
+  <td>the route that matches your day job</td>
+</tr>
+</tbody>
+</table>
+<h3>The plan — Streamlit Community Cloud</h3>
+<p>This repo is already public at <code>github.com/coderkali/machine_learning</code>, so the
+prerequisites are met.</p>
+<div class="code"><pre>   1. requirements.txt sits next to app.py            [done]
+   2. commit and push to main
+   3. share.streamlit.io -&gt; sign in with GitHub
+   4. &quot;New app&quot; -&gt; &quot;Deploy a public app from GitHub&quot;
+        Repository    coderkali/machine_learning
+        Branch        main
+        Main file     AI_ML_Series/02_data_toolkit_apps/07_streamlit/app.py
+   5. Advanced settings -&gt; Python version
+   6. Deploy
+</pre></div>
+<p><strong>Step 5 matters.</strong> This machine runs Python 3.14, which Streamlit Cloud may not offer
+yet. Pick the newest version in its list (3.12 or 3.13 at time of writing). Nothing in
+<code>app.py</code> or <code>requirements.txt</code> depends on 3.14, so it will run fine on either.</p>
+<p><strong>Step 1 matters too.</strong> Streamlit Cloud looks for the dependency file next to the
+entrypoint. Keeping <code>requirements.txt</code> in this folder — rather than at the repo root —
+means the app installs three packages, not everything this learning repo has ever used.</p>
+<p>After deploying you get a public URL like
+<code>https://&lt;something&gt;.streamlit.app</code>. Every push to <code>main</code> redeploys automatically.</p>
+<h3>Deployment checklist</h3>
+<ul>
+<li>[ ] <code>requirements.txt</code> lists every third-party import in <code>app.py</code></li>
+<li>[ ] No absolute paths — this app uses <code>px.data.tips()</code>, which ships inside plotly, so
+there is no dataset file to find and nothing to break on a different machine</li>
+<li>[ ] No secrets in the code. Streamlit Cloud has a <strong>Secrets</strong> UI; read them with
+<code>st.secrets[&quot;key&quot;]</code>. Never commit a <code>.env</code></li>
+<li>[ ] The virtualenvs (<code>pizza_env/</code>, <code>.venv/</code>) stay out of git — Python's <code>venv</code> writes
+its own <code>.gitignore</code> containing <code>*</code>, so this is already handled</li>
+<li>[ ] App is public — do not deploy anything with private data to the free tier</li>
+</ul>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>Community Cloud gives you one container, sleeping after inactivity, with no horizontal
+scaling and no private networking. That is correct for a demo and wrong for production.
+The moment an app needs a VPC, a real database, or an SLA, it belongs in a container on
+your own infrastructure — and <code>streamlit run</code> behind a load balancer is the same
+deployment shape you already know.</p>
+</div>
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li>Expecting a widget to fire a callback. It does not — the script re-runs and the widget
+returns its new value.</li>
+<li>Loading data without <code>@st.cache_data</code>, then wondering why every click is slow.</li>
+<li>Putting a <code>st.set_page_config</code> call anywhere but first. It raises.</li>
+<li>Assuming a variable survives the re-run. Only <code>st.session_state</code> does.</li>
+<li>Deploying without <code>requirements.txt</code> and getting <code>ModuleNotFoundError</code> in the build log.</li>
+</ol>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> Streamlit re-runs your whole script on every
+interaction. Widgets are not event sources — they are functions that return the current
+value. Once that clicks, the rest of the API is just a widget catalogue.</p>
+
+<div class="src-head">📝 <a href="../Concept/sales_analysis_explained.md">sales_analysis_explained.md</a></div>
+<h2 id="sales-analysis-project-code-review-and-walkthrou">Sales Analysis Project — Code Review and Walkthrough</h2>
+<div class="note"><div class="h">Note</div><p>🧪 <strong>My Experiment</strong> — learner-written Streamlit app, reviewed line by line.</p>
+<p>Source: <a href="../Content/sales_analysis.py"><code>sales_analysis.py</code></a>. The file is kept <strong>exactly as
+written</strong>. Every fix below is shown here as the smallest change; none of them has been
+applied to your file.</p>
+</div>
+<p>Verified against <strong>Streamlit 1.61.1</strong>, pandas 3.0.3, plotly 6.9.0, Python 3.14. Behaviour
+claims come from running the app through <code>streamlit.testing.v1.AppTest</code>, not from reading
+it.</p>
+<hr />
+<h2 id="1-what-the-app-does">1. What the app does</h2>
+<p>A synthetic sales dashboard. You set four bounds in the sidebar, click a button, and the
+app invents twelve months of data and describes it six ways.</p>
+<div class="code"><pre>   SIDEBAR                    BUTTON            BODY
+   -------                    ------            ----
+   Minimum Sales    5000  \                  /  DataFrame (12 x 6)
+   Maximum Sales   20000   \   Generate     /   Basic calculations
+   Minimum Profit   1000   /   Dataset     /    Summary statistics
+   Maximum Profit   7000  /       |       /     4 matplotlib figures
+                                  |             1 plotly figure
+                                  v
+                          np.random.randint  -&gt;  df
+</pre></div>
+<h3>The data flow</h3>
+<div class="code"><pre>   min/max inputs
+        |
+        v
+   np.random.seed(10)                 &lt;- fixes the sequence
+        |
+        v
+   np.random.randint(low, high+1, 12) &lt;- 4 columns x 12 months
+        |
+        v
+   df[&quot;Profit_Margin&quot;] = Profit / Sales * 100   &lt;- derived column
+        |
+        +--&gt; st.dataframe        raw table
+        +--&gt; st.write            mean, sum, describe()
+        +--&gt; ax.hist x2          distribution of Sales, of Profit
+        +--&gt; ax.plot             monthly trend
+        +--&gt; sns.heatmap         correlation matrix
+        +--&gt; px.line             interactive Sales + Profit
+</pre></div>
+<p><strong>What is good here, genuinely:</strong> the structure is clean, every widget has an explicit
+<code>key</code>, the <code>else</code> branch handles the empty state, <code>high + 1</code> correctly compensates for
+<code>randint</code> being exclusive at the top, and <code>select_dtypes(include=np.number)</code> correctly
+keeps the <code>Month</code> string column out of the correlation. Those are not beginner instincts.</p>
+<hr />
+<h2 id="2-verified-run-what-actually-happens">2. Verified run — what actually happens</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Step</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>First load</td>
+  <td><code>st.info</code> message only. 0 dataframes, 0 subheaders. Correct.</td>
+</tr>
+<tr>
+  <td>Click <strong>Generate Dataset</strong></td>
+  <td>7 subheaders, 2 dataframes, 5 figures, no exceptions. Correct.</td>
+</tr>
+<tr>
+  <td>Then change <strong>Minimum Sales</strong></td>
+  <td><strong>The whole dashboard disappears.</strong> Back to 0 dataframes and the info message.</td>
+</tr>
+<tr>
+  <td>Set <strong>Minimum Sales</strong> to 25000</td>
+  <td><strong>App crashes</strong> with <code>StreamlitValueBelowMinError</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>The first two rows are your app working. The last two are the two bugs.</p>
+<hr />
+<h2 id="3-issue-1-the-dashboard-vanishes-the-button-re-r">3. Issue 1 — the dashboard vanishes (the button re-run trap)</h2>
+<h3>What happens</h3>
+<div class="code"><pre>   click &quot;Generate Dataset&quot;
+        -&gt; re-run: button returns True   -&gt; dashboard renders
+
+   change &quot;Minimum Sales&quot;
+        -&gt; re-run: button returns FALSE  -&gt; else branch -&gt; everything gone
+</pre></div>
+<p>Verified: after clicking Generate and then changing one number input, the app drops from
+7 subheaders and 2 dataframes back to <code>['Select inputs from the sidebar and click Generate Dataset']</code>.</p>
+<h3>Why</h3>
+<p>This is the re-run model from the <a href="../Concept/README.md">README</a> biting for real:</p>
+<div class="note"><div class="h">Note</div><p><strong><code>st.button</code> returns <code>True</code> for exactly one re-run — the one caused by the click.</strong>
+On every later re-run it returns <code>False</code> again.</p>
+</div>
+<p>A button is not a switch. It does not stay pressed. It is a one-shot signal, and
+<code>if generate_data:</code> gates your entire dashboard on that one-shot.</p>
+<p>For a Spring engineer: the button is not a stateful toggle in a session, it is a single
+<code>POST</code> that you have not persisted anywhere. The next request knows nothing about it.</p>
+<h3>The smallest fix</h3>
+<p>Latch the click into session state, which is the only thing that survives a re-run:</p>
+<div class="code"><pre class="py">generate_data = st.sidebar.button(
+    &quot;Generate Dataset&quot;,
+    key=&quot;generate_sales_data&quot;)
+
+# --- add these two lines ---
+if generate_data:
+    st.session_state.show_dashboard = True
+
+if st.session_state.get(&quot;show_dashboard&quot;):   # &lt;- was: if generate_data:
+</pre></div>
+<p>Everything below stays exactly as you wrote it. One flag, one changed condition.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>There are three standard shapes for this, and it is worth knowing which one you want:</p>
+<p>| Shape | Behaviour | Use when |
+|---|---|---|
+| <code>st.session_state</code> latch (above) | dashboard stays; <strong>data regenerates on every widget change</strong> | you want live updating |
+| <code>st.form</code> + <code>st.form_submit_button</code> | nothing re-runs until Submit is pressed | inputs are expensive or must be applied together |
+| move generation into <code>@st.cache_data</code> | dashboard stays; data only changes when inputs change | the generation step is slow |</p>
+<p>Your app is a good candidate for <code>st.form</code>, because the four inputs are meant to be set
+together and only then applied.</p>
+</div>
+<hr />
+<h2 id="4-issue-2-raising-minimum-sales-crashes-the-app">4. Issue 2 — raising Minimum Sales crashes the app</h2>
+<h3>What happens</h3>
+<p>Set <strong>Minimum Sales</strong> to <code>25000</code> and the app dies:</p>
+<div class="code"><pre>streamlit.errors.StreamlitValueBelowMinError:
+    The `value` 20000 is less than the `min_value` 25000.
+    at sales_analysis.py line 20, in number_input(&quot;Maximum Sales&quot;, ...)
+</pre></div>
+<h3>Why</h3>
+<p>Look at the coupling you created:</p>
+<div class="code"><pre class="py">max_sales = st.sidebar.number_input(
+    &quot;Maximum Sales&quot;,
+    min_value=min_sales,     # &lt;-- follows the other widget
+    value=20000,             # &lt;-- but this is a FIXED literal
+    key=&quot;max_sales&quot;)
+</pre></div>
+<p>The intent is right — max should never fall below min. But the two arguments disagree the
+moment <code>min_sales</code> climbs past <code>20000</code>:</p>
+<div class="code"><pre>   min_sales = 5000    -&gt;  min_value=5000,  stored value 20000   OK
+   min_sales = 25000   -&gt;  min_value=25000, stored value 20000   CONTRADICTION -&gt; raise
+</pre></div>
+<p><code>value=</code> is only the <em>initial</em> value, used on the first run. After that the widget's
+value lives in <code>st.session_state[&quot;max_sales&quot;]</code>. Streamlit re-validates it against
+<code>min_value</code> on every re-run, and refuses to silently move a value the user chose.</p>
+<h3>The smallest fix</h3>
+<p>Clamp the stored value up to the new floor before the widget is created:</p>
+<div class="code"><pre class="py"># --- add above the max_sales widget ---
+if st.session_state.get(&quot;max_sales&quot;, 20000) &lt; min_sales:
+    st.session_state.max_sales = min_sales
+
+max_sales = st.sidebar.number_input(
+    &quot;Maximum Sales&quot;,
+    min_value=min_sales,
+    value=20000,
+    key=&quot;max_sales&quot;)
+</pre></div>
+<p>The same contradiction exists between <code>min_profit</code> and <code>max_profit</code> — it just needs a
+larger number to trigger. Fix both or neither.</p>
+<div class="note"><div class="h">Note</div><p><strong>Alternative worth knowing:</strong> one <code>st.slider</code> with a tuple gives you a range that
+cannot invert, and removes the whole class of bug:</p>
+<div class="code"><pre class="py">min_sales, max_sales = st.sidebar.slider(
+    &quot;Sales range&quot;, 1000, 50000, (5000, 20000))
+</pre></div>
+</div>
+<hr />
+<h2 id="5-issue-3-a-deprecated-argument-that-is-already-">5. Issue 3 — a deprecated argument that is already past its removal date</h2>
+<div class="code"><pre class="py">st.plotly_chart(fig, use_container_width=True)
+</pre></div>
+<p>Running the app prints:</p>
+<div class="code"><pre>Please replace `use_container_width` with `width`.
+`use_container_width` will be removed after 2025-12-31.
+</pre></div>
+<p><strong>Fix:</strong></p>
+<div class="code"><pre class="py">st.plotly_chart(fig, width=&quot;stretch&quot;)
+</pre></div>
+<p>Same change as in <a href="../Content/app.py"><code>app.py</code></a>. Worth grepping for whenever you upgrade Streamlit.</p>
+<hr />
+<h2 id="6-design-observations-not-bugs-but-worth-decidin">6. Design observations — not bugs, but worth deciding on</h2>
+<h3>6.1 &quot;Generate Dataset&quot; does not generate a new dataset</h3>
+<div class="code"><pre class="py">np.random.seed(10)
+</pre></div>
+<p>The seed is reset inside the <code>if</code>, so <strong>every click produces byte-identical data</strong>. Jan is
+always <code>6289</code> in sales.</p>
+<p>That is a legitimate choice — reproducibility is why seeds exist, and it makes the app
+easy to teach from. But the button says <em>Generate</em>, which promises new numbers. Pick one:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>You want</th>
+  <th>Do this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>the same data every time (reproducible)</td>
+  <td>keep the seed, rename the button &quot;Build Dashboard&quot;</td>
+</tr>
+<tr>
+  <td>new data on every click</td>
+  <td>delete the <code>np.random.seed(10)</code> line</td>
+</tr>
+<tr>
+  <td>reproducible but controllable</td>
+  <td>add a seed input: <code>np.random.seed(st.sidebar.number_input(&quot;Seed&quot;, value=10))</code></td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 The correlation heatmap has a built-in artifact</h3>
+<p><code>Profit_Margin</code> is computed <em>from</em> <code>Sales</code> and <code>Profit</code>, then correlated <em>against</em> them.
+The verified matrix at default settings:</p>
+<div class="code"><pre>                 Sales  Profit  Orders  Customers  Profit_Margin
+   Sales         1.000   0.247  -0.030      0.186     -0.597
+   Profit        0.247   1.000   0.426     -0.020      0.586
+   Profit_Margin -0.597   0.586   0.470     -0.006      1.000
+                 ^^^^^^  ^^^^^
+                 these two are guaranteed by the formula, not discovered
+</pre></div>
+<p><code>Profit_Margin = Profit / Sales</code>, so of course it rises with Profit and falls with Sales.
+Those two cells carry no information — they are arithmetic showing up as a finding.</p>
+<p>This matters far beyond this app. Feeding a derived column and its own inputs into a
+correlation matrix (or a model) is how people convince themselves they have found a
+strong signal. <strong>Correlate inputs with inputs; keep derived columns out, or drop their
+parents.</strong></p>
+<p>The other numbers <em>are</em> real, and they show the data is pure noise: Sales↔Profit is
+<code>0.247</code>, Orders↔Customers <code>0.568</code> — random columns, so any structure is accidental. Fine
+for a layout exercise, but there is nothing to analyse here. A real next step would be
+replacing <code>randint</code> with data that has a relationship you can then go and detect.</p>
+<h3>6.3 Matplotlib figures are never closed</h3>
+<p>Each click builds 4 figures via <code>plt.subplots()</code> and never closes them. Matplotlib warns
+after 20 open figures — so <strong>on the 5th click</strong> you get a <code>RuntimeWarning</code> in the logs,
+and memory grows all session.</p>
+<div class="code"><pre class="py">st.pyplot(fig)
+plt.close(fig)     # &lt;- one line after each st.pyplot
+</pre></div>
+<h3>6.4 The metrics could use <code>st.metric</code></h3>
+<div class="code"><pre class="py">st.write(&quot;Average Sales&quot;)
+st.write(round(df[&quot;Sales&quot;].mean(), 2))
+</pre></div>
+<p>Works, but produces two stacked blocks per number and eight in total. <code>st.metric</code> in
+columns is one line each and reads as a dashboard:</p>
+<div class="code"><pre class="py">c1, c2, c3, c4 = st.columns(4)
+c1.metric(&quot;Average Sales&quot;, f&quot;{df[&#x27;Sales&#x27;].mean():,.2f}&quot;)
+c2.metric(&quot;Average Profit&quot;, f&quot;{df[&#x27;Profit&#x27;].mean():,.2f}&quot;)
+c3.metric(&quot;Total Sales&quot;, f&quot;{df[&#x27;Sales&#x27;].sum():,}&quot;)
+c4.metric(&quot;Total Profit&quot;, f&quot;{df[&#x27;Profit&#x27;].sum():,}&quot;)
+</pre></div>
+<h3>6.5 Three plotting libraries in one app</h3>
+<p>You used matplotlib, seaborn, <strong>and</strong> plotly here. For learning, that is a good deliberate
+comparison — you can see the same data through all three in one screen. For a real app,
+pick one: plotly, since Streamlit renders it interactively and it is the only one of the
+three the user can hover and zoom.</p>
+<hr />
+<h2 id="7-fix-priority">7. Fix priority</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Issue</th>
+  <th>Severity</th>
+  <th>Fix size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Dashboard vanishes on any widget change</td>
+  <td><strong>breaks the app for users</strong></td>
+  <td>3 lines</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>StreamlitValueBelowMinError</code> on high Minimum Sales</td>
+  <td><strong>crashes</strong></td>
+  <td>2 lines</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>use_container_width</code> past removal date</td>
+  <td>breaks on upgrade</td>
+  <td>1 word</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Figures never closed</td>
+  <td>slow leak, warning at 5 clicks</td>
+  <td>1 line x4</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Seed makes &quot;Generate&quot; a misnomer</td>
+  <td>confusing, not broken</td>
+  <td>1 line</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Derived column in the correlation matrix</td>
+  <td>misleading analysis</td>
+  <td>1 line</td>
+</tr>
+</tbody>
+</table>
+<p>Issues 1 and 2 are the ones a user would hit in the first thirty seconds.</p>
+<hr />
+<h2 id="8-what-this-app-demonstrates-you-can-already-do">8. What this app demonstrates you can already do</h2>
+<ul>
+<li>Sidebar inputs with explicit <code>key</code>s, and coupled bounds (<code>min_value=min_sales</code>) — the
+right instinct, executed one step short</li>
+<li>Conditional rendering with a sensible empty state</li>
+<li>Building a DataFrame from NumPy and adding a derived column</li>
+<li>Four different chart types across three libraries, each wired into Streamlit correctly
+(<code>st.pyplot</code> for matplotlib/seaborn, <code>st.plotly_chart</code> for plotly)</li>
+<li><code>select_dtypes(include=np.number)</code> before <code>.corr()</code> — a real correctness detail that
+beginners usually miss</li>
+</ul>
+<p>The gap is not layout or syntax. It is <strong>the re-run model</strong>: what a widget returns, when
+it returns it, and what survives to the next run. Both real bugs come from that single
+idea, which is why it is worth fixing them yourself rather than reading a patched file.</p>
+<hr />
+<h2 id="9-try-it-in-this-order">9. Try it in this order</h2>
+<ol>
+<li>Reproduce issue 1: click Generate, then change any sidebar number. Watch the dashboard
+disappear. Sit with <em>why</em> before fixing it.</li>
+<li>Apply the session-state latch. Confirm the dashboard now survives.</li>
+<li>Reproduce issue 2: set Minimum Sales to 25000. Read the traceback — it names the exact
+line and both conflicting numbers.</li>
+<li>Fix it, then decide whether a range slider would have been the better design.</li>
+<li>Rebuild the four <code>st.write</code> pairs as <code>st.metric</code> in columns.</li>
+<li>Replace the four numeric columns with data that has a real relationship (for example,
+<code>Profit = Sales * margin + noise</code>), then see whether the heatmap finds it.</li>
+</ol>
+<p><strong>If you remember only one thing:</strong> <code>st.button</code> is true for exactly one re-run. Anything
+you want to keep on screen after that has to live in <code>st.session_state</code>.</p>
+
+<div class="foot"><a class="btn" href="../Concept/README.md">README.md ↗</a><a class="btn" href="../Concept/sales_analysis_explained.md">sales_analysis_explained.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

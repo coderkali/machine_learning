@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paired T Test — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">02 DataScience › <b>Paired T Test</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#example-3-paired-dependent-two-sample-t-test-two">Example 3 (Paired / Dependent Two-Sample T-Test, Two</a><a href="#faq">FAQ</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Data science and statistics</p>
+  <h1>Paired T Test</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<div class="src-head">📓 <a href="../Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb">14_Hypothesis_Testing_T-Test_Paired.ipynb</a></div>
+<h2 id="example-3-paired-dependent-two-sample-t-test-two">Example 3 (Paired / Dependent Two-Sample T-Test, Two-Tailed)</h2>
+<p>A company wants to test whether a new <strong>training program</strong> improves the <strong>typing speed</strong> of its employees. The typing speed of <strong>20 employees</strong> was recorded <strong>before</strong> and <strong>after</strong> the training program. Test at a <strong>5% level of significance</strong> whether the training program has an effect on the typing speed of the employees.</p>
+<ul>
+<li><strong>Before:</strong> 50, 60, 45, 65, 55, 70, 40, 75, 80, 65, 70, 60, 50, 55, 45, 75, 60, 50, 65, 70</li>
+<li><strong>After:</strong> 60, 70, 55, 75, 65, 80, 50, 85, 90, 70, 75, 65, 55, 60, 50, 80, 65, 55, 70, 75</li>
+</ul>
+<p>This is a <strong>paired</strong> (dependent) sample — the <em>same</em> 20 employees are measured twice (before and after), unlike <a href="../../08_T_Test/Concept/10_Hypothesis_Testing_T-Test.ipynb">Example 2</a> where Team A and Team B were two <em>different, independent</em> groups of people.</p>
+
+<h3>Step 1 - State the Null and Alternate Hypothesis</h3>
+<div class='formula'>H_0: t_B - t_A = 0</div>
+
+<div class='formula'>H_1: t_B - t_A \neq 0 \quad \text{(two-tailed test)}</div>
+
+<ul>
+<li>$H_0$ (Null Hypothesis) — the training program has <strong>no effect</strong> on typing speed; any difference between before ($t_A$) and after ($t_B$) is just random variation.</li>
+<li>$H_1$ (Alternate Hypothesis) — the training program <strong>does have an effect</strong> (positive or negative) on typing speed.</li>
+</ul>
+<p>It's two-tailed because the question asks whether the program has &quot;an effect&quot; — not specifically whether it <em>improves</em> speed — so both directions matter.</p>
+
+<h3>Step 2 - Significance Value</h3>
+<div class='formula'>\alpha = 0.05</div>
+
+<p>Since this is a <strong>two-tailed test</strong>, $\alpha$ is split evenly across both tails:</p>
+<div class='formula'>\dfrac{\alpha}{2} = \dfrac{0.05}{2} = 0.025 \text{ on each side}</div>
+
+
+<h3>Step 3 - Degrees of Freedom</h3>
+<div class='formula'>df = n - 1 = 20 - 1 = 19</div>
+
+<p>For a <strong>paired</strong> t-test, <code>df</code> is based on the number of <em>pairs</em> ($n = 20$ employees), minus 1 — not $n_A + n_B - 2$ like the independent two-sample case in <a href="../../08_T_Test/Concept/10_Hypothesis_Testing_T-Test.ipynb">Example 2</a>. That's because there's really only one sample here (20 differences), not two independent ones.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
+import numpy as np
+import matplotlib.pyplot as plt
+
+Before = np.array([50, 60, 45, 65, 55, 70, 40, 75, 80, 65, 70, 60, 50, 55, 45, 75, 60, 50, 65, 70])
+After  = np.array([60, 70, 55, 75, 65, 80, 50, 85, 90, 70, 75, 65, 55, 60, 50, 80, 65, 55, 70, 75])
+
+n = len(Before)
+print(&quot;n (pairs):&quot;, n)</pre></div>
+<div class="out"><div class="h">Output</div><pre>n (pairs): 20</pre></div>
+<h3>Step 4 - Decision Boundary (Critical t-value)</h3>
+<p>Look up the t-table at <strong>df = 19</strong>, two-tailed $\alpha = 0.05$ (i.e. 0.025 in each tail):</p>
+<div class='formula'>t_{critical} \approx \pm 2.093</div>
+
+<p>The region between $-2.093$ and $+2.093$ is the <strong>acceptance region</strong> (fail to reject $H_0$). Anything beyond that, in either tail, is the <strong>rejection region</strong> (reject $H_0$).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">df = n - 1          # 19
+alpha = 0.05
+
+t_critical = st.t.ppf(1 - alpha / 2, df)   # ~2.093
+print(&quot;df:&quot;, df)
+print(&quot;t_critical: +-&quot;, round(t_critical, 4))
+
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions - both tails
+x_left = np.linspace(-4, -t_critical, 100)
+x_right = np.linspace(t_critical, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.4)
+
+# acceptance region
+x_mid = np.linspace(-t_critical, t_critical, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (95%)&quot;)
+
+ax.axvline(0, color=&quot;black&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0 (tB-tA=0)&quot;, ha=&quot;center&quot;)
+ax.axvline(-t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_critical, -0.01, f&quot;-{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_critical, -0.01, f&quot;+{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 95% CI)&quot;)
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>df: 19
+t_critical: +- 2.093</pre></div>
+<figure class="shot"><img src="assets/14-hypothesis-testing-t-test-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Step 5 - Calculate the T-Test Statistic</h3>
+<div class='formula'>t_{test} = \dfrac{\bar{x}_{After} - \bar{x}_{Before}}{\sqrt{\dfrac{S_{After}^2}{n} + \dfrac{S_{Before}^2}{n}}}</div>
+
+<p>Where:</p>
+<ul>
+<li>$\bar{x}<em>{After}, \bar{x}</em>{Before}$ = Sample means of the After / Before groups</li>
+<li>$S_{After}, S_{Before}$ = Sample standard deviations of the After / Before groups</li>
+<li>$n$ = number of employees (20)</li>
+</ul>
+<p>This is the same shape of formula as the independent two-sample t-test in <a href="../../08_T_Test/Concept/10_Hypothesis_Testing_T-Test.ipynb">Example 2</a>, just applied here to the Before/After typing-speed data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">mean_before = np.mean(Before)
+mean_after  = np.mean(After)
+std_before  = np.std(Before)
+std_after   = np.std(After)
+
+t_test = (mean_after - mean_before) / np.sqrt((std_after**2) / n + (std_before**2) / n)
+
+print(&quot;mean_before:&quot;, mean_before, &quot; std_before:&quot;, round(std_before, 4))
+print(&quot;mean_after: &quot;, mean_after,  &quot; std_after: &quot;, round(std_after, 4))
+print(&quot;t_test:&quot;, t_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>mean_before: 60.25  std_before: 11.0085
+mean_after:  67.5  std_after:  11.2361
+t_test: 2.061200527128206</pre></div>
+<h3>Step 6 - Decision &amp; Conclusion</h3>
+<p><strong>Decision rule:</strong> If $t_{test}$ is less than $-2.093$ or greater than $+2.093$, reject the null hypothesis.</p>
+<div class='formula'>|t_{test}| (2.061) \; vs \; t_{critical} (2.093)</div>
+
+<p>$2.061 &lt; 2.093$, so $t_{test}$ falls <strong>just inside</strong> the acceptance region → <strong>fail to reject $H_0$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 5% level of significance, there is <strong>not quite enough evidence</strong> to say the training program had a statistically significant effect on typing speed — even though the average speed did rise from <strong>60.25 → 67.5</strong> in the sample. It's a very close call ($t_{test} = 2.061$ vs $t_{critical} = 2.093$), so a slightly bigger sample or bigger effect would likely have tipped this to &quot;reject $H_0$&quot; (see the FAQ below for why the paired-difference version of this test <em>does</em> find significance).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (training DOES affect typing speed)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect, at alpha=0.05)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect, at alpha=0.05)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+x_left = np.linspace(-4, -t_critical, 100)
+x_right = np.linspace(t_critical, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.3)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.3)
+
+x_mid = np.linspace(-t_critical, t_critical, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.25)
+
+ax.axvline(-t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_critical, -0.01, f&quot;-{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_critical, -0.01, f&quot;+{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.axvline(t_test, color=&quot;darkorange&quot;, linewidth=2)
+ax.plot(t_test, st.t.pdf(t_test, df), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=8, zorder=5)
+ax.annotate(f&quot;t_test = {t_test:.3f}\n(just inside acceptance region)&quot;,
+            xy=(t_test, st.t.pdf(t_test, df)),
+            xytext=(t_test - 3.3, max(y) * 0.55),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;darkorange&quot;),
+            color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;Where does t_test land? (df={df}, 95% CI)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/14-hypothesis-testing-t-test-c11-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Before vs After — Visual Comparison</h3>
+<p>Two views of the same data:</p>
+<ol>
+<li><strong>Slopegraph</strong> — every employee's typing speed, before → after. Green lines rose, gray lines stayed flat, red lines fell.</li>
+<li><strong>Bar chart</strong> — the group means with $\pm 1$ standard deviation error bars, next to the mean gain per employee.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">diffs = After - Before
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+
+# --- Slopegraph: each employee, Before -&gt; After ---
+ax = axes[0]
+for b, a in zip(Before, After):
+    color = &quot;seagreen&quot; if a &gt; b else (&quot;crimson&quot; if a &lt; b else &quot;gray&quot;)
+    ax.plot([0, 1], [b, a], color=color, alpha=0.6, linewidth=1.5)
+
+ax.plot([0, 1], [mean_before, mean_after], color=&quot;black&quot;, linewidth=3, marker=&quot;o&quot;, label=&quot;Mean&quot;)
+ax.set_xticks([0, 1])
+ax.set_xticklabels([&quot;Before&quot;, &quot;After&quot;])
+ax.set_xlim(-0.2, 1.2)
+ax.set_ylabel(&quot;Typing speed&quot;)
+ax.set_title(&quot;Each employee: Before -&gt; After&quot;)
+ax.legend()
+
+# --- Bar chart: group means +/- std, and mean gain ---
+ax = axes[1]
+bars = ax.bar([&quot;Before&quot;, &quot;After&quot;], [mean_before, mean_after],
+               yerr=[std_before, std_after], capsize=6,
+               color=[&quot;steelblue&quot;, &quot;seagreen&quot;], alpha=0.85)
+for bar, val in zip(bars, [mean_before, mean_after]):
+    ax.text(bar.get_x() + bar.get_width() / 2, val + 1.5, f&quot;{val:.2f}&quot;, ha=&quot;center&quot;, fontweight=&quot;bold&quot;)
+
+ax.set_ylabel(&quot;Mean typing speed&quot;)
+ax.set_title(f&quot;Mean gain = {mean_after - mean_before:.2f}  (n={n} employees, all improved or held steady)&quot;)
+ax.set_ylim(0, max(After) + 15)
+
+plt.tight_layout()
+plt.show()
+
+print(&quot;Employees who improved:&quot;, int(np.sum(diffs &gt; 0)), &quot;/&quot;, n)
+print(&quot;Employees who stayed the same:&quot;, int(np.sum(diffs == 0)), &quot;/&quot;, n)
+print(&quot;Employees who got worse:&quot;, int(np.sum(diffs &lt; 0)), &quot;/&quot;, n)
+print(&quot;Mean gain (After - Before):&quot;, diffs.mean())</pre></div>
+<div class="out"><div class="h">Output</div><pre>Employees who improved: 20 / 20
+Employees who stayed the same: 0 / 20
+Employees who got worse: 0 / 20
+Mean gain (After - Before): 7.25</pre></div>
+<figure class="shot"><img src="assets/14-hypothesis-testing-t-test-c13-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Conclusion of the Before vs After comparison:</strong> every single one of the 20 employees typed at the same speed or faster after the training (10 gained exactly +10, 10 gained exactly +5 — nobody got worse), and the group mean rose from <strong>60.25 to 67.5 wpm</strong>. Visually the effect looks real and consistent. But the formal hypothesis test in Step 6 came back as <strong>&quot;fail to reject $H_0$&quot;</strong> at $\alpha = 0.05$ — the independent-samples-style formula used above is a conservative/approximate way to compare Before vs After here, and it nearly (but not quite) misses this effect. See the FAQ below for the more appropriate paired test, which resolves this contradiction.</p>
+
+<hr />
+<h2 id="faq">FAQ</h2>
+<p><strong>1. Why does the graph so clearly show improvement, but the test says &quot;fail to reject $H_0$&quot;?</strong></p>
+<p>The formula used above,</p>
+<div class='formula'>t_{test} = \dfrac{\bar{x}_{After}-\bar{x}_{Before}}{\sqrt{S_{After}^2/n + S_{Before}^2/n}},</div>
+
+<p>is the <strong>independent two-sample</strong> formula (same shape as <a href="../../08_T_Test/Concept/10_Hypothesis_Testing_T-Test.ipynb">Example 2</a>). It treats Before and After as if they came from two <em>different</em> groups of 20 people, so it ignores that each employee is compared to <em>themselves</em> — it throws away the pairing information.</p>
+<p><strong>2. What's the correct way to test paired data like this?</strong></p>
+<p>A true <strong>paired t-test</strong> works on the per-employee <em>differences</em> ($d_i = After_i - Before_i$) directly:</p>
+<div class='formula'>t_{test} = \dfrac{\bar{d}}{S_d / \sqrt{n}}</div>
+
+<p>Because every employee's typing speed moved in a consistent, predictable direction (+10 or +5, never negative), the <em>spread of the differences</em> is tiny compared to the spread of the raw scores — and that's exactly what the paired test is designed to detect.</p>
+<p><strong>3. Does that change the conclusion?</strong></p>
+<p>Yes — quite dramatically. Cross-checking both versions with <code>scipy.stats</code> below, the paired test gives $t \approx 12.7$ (p $\approx 10^{-10}$), a massively significant result, while the independent-style version used above gives $t \approx 2.06$ (p $\approx 0.051$), just barely missing $\alpha = 0.05$. This is the textbook reason paired designs are used whenever the same subjects are measured twice: pairing removes person-to-person variability (some people just type faster than others in general) and isolates the <em>effect of the training itself</em>, giving far more statistical power from the same sample size.</p>
+<p><strong>4. Why does <a href="../../08_T_Test/Concept/12_Hypothesis_Testing_T-Test_95.ipynb">Example 3 / IQ notebook</a> use $t_{test} = \dfrac{\bar{x}-\mu}{S/\sqrt{n}}$, while this notebook uses $t_{test} = \dfrac{\bar{x}<em>{After}-\bar{x}</em>{Before}}{\sqrt{S_{After}^2/n + S_{Before}^2/n}}$?</strong></p>
+<p>They look different because they're answering two structurally different questions — <strong>&quot;one sample vs a known constant&quot;</strong> vs <strong>&quot;one sample vs another sample.&quot;</strong></p>
+<p><em>One-sample formula (IQ notebook):</em></p>
+<div class='formula'>t_{test} = \dfrac{\bar{x} - \mu}{S/\sqrt{n}}</div>
+
+<p>Here $\mu = 100$ is the <strong>population mean</strong> — a fixed, already-known number, not something estimated from data. There is only <strong>one</strong> quantity with sampling uncertainty in the whole formula: the sample mean $\bar{x}$. Its standard error is $S/\sqrt{n}$, so that's the only term under the square root — there's nothing to add to it.</p>
+<p><em>Two-sample-style formula (this notebook, Before vs After):</em></p>
+<div class='formula'>t_{test} = \dfrac{\bar{x}_{After} - \bar{x}_{Before}}{\sqrt{S_{After}^2/n + S_{Before}^2/n}}</div>
+
+<p>Here there is <strong>no known population constant</strong> to compare against — both $\bar{x}<em>{After}$ and $\bar{x}</em>{Before}$ are <em>estimates</em>, each with their own sampling error. Whenever you subtract two independent random estimates, their <strong>variances add</strong> (this is the general rule $Var(X-Y) = Var(X)+Var(Y)$ for independent $X,Y$):</p>
+<div class='formula'>SE_{diff} = \sqrt{Var(\bar{x}_{After}) + Var(\bar{x}_{Before})} = \sqrt{\dfrac{S_{After}^2}{n} + \dfrac{S_{Before}^2}{n}}</div>
+
+<p>So the extra term under the square root isn't arbitrary — it's the price of comparing two <em>estimated</em> means instead of one estimate against a known constant.</p>
+<p><strong>What every symbol actually means</strong> — before the table, since it's easy to mix up &quot;a mean&quot; with &quot;a standard deviation&quot; when the letters look similar across notebooks:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Is it a mean, a std. deviation, or a count?</th>
+  <th>IQ notebook value</th>
+  <th>This notebook value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\mu$</td>
+  <td><strong>Mean</strong> — of the whole <em>population</em>, treated as a known, fixed constant (not calculated from any sample)</td>
+  <td>$\mu = 100$ (known average IQ of the entire population)</td>
+  <td><em>(not used — there's no known population constant here)</em></td>
+</tr>
+<tr>
+  <td>$\bar{x}$</td>
+  <td><strong>Mean</strong> of one <em>sample</em> (the average of that sample's own values)</td>
+  <td>$\bar{x} = 140$ (mean IQ of the 30 medicated participants)</td>
+  <td>$\bar{x}<em>{Before}=60.25$, $\bar{x}</em>{After}=67.5$ (mean typing speed of the 20 employees, before / after)</td>
+</tr>
+<tr>
+  <td>$S$</td>
+  <td><strong>Standard deviation</strong> of a sample (how spread out that sample's values are around its own mean) — <em>not</em> a mean</td>
+  <td>$S = 20$ (std. dev. of IQ within the 30-person sample)</td>
+  <td>$S_{Before}=11.0085$, $S_{After}=11.236$ (std. dev. of typing speed, before / after)</td>
+</tr>
+<tr>
+  <td>$n$</td>
+  <td><strong>Count</strong> — number of observations in the sample. Neither a mean nor a std. dev.</td>
+  <td>$n = 30$ participants</td>
+  <td>$n = 20$ employees</td>
+</tr>
+<tr>
+  <td>$S/\sqrt{n}$</td>
+  <td><strong>Standard error</strong> of a sample mean — a derived quantity built from $S$ and $n$, not itself a raw mean or std. dev.</td>
+  <td>$20/\sqrt{30} = 3.6515$</td>
+  <td>not used directly (see next row)</td>
+</tr>
+<tr>
+  <td>$\sqrt{S_{After}^2/n + S_{Before}^2/n}$</td>
+  <td><strong>Standard error of the difference</strong> between two sample means — combines both samples' standard errors</td>
+  <td><em>(not used — only one sample here)</em></td>
+  <td>$\sqrt{11.236^2/20 + 11.0085^2/20} = 3.5174$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step-by-step side by side, using the actual numbers from both notebooks:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>IQ notebook (one-sample)</th>
+  <th>This notebook (two-sample-style)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>What's fixed vs estimated</td>
+  <td>$\mu=100$ fixed, $\bar{x}$ estimated</td>
+  <td>Both $\bar{x}<em>{After}$, $\bar{x}</em>{Before}$ estimated</td>
+</tr>
+<tr>
+  <td>Inputs</td>
+  <td>$\bar{x}=140,\ \mu=100,\ S=20,\ n=30$</td>
+  <td>$\bar{x}<em>{After}=67.5,\ \bar{x}</em>{Before}=60.25,\ S_{After}=11.236,\ S_{Before}=11.0085,\ n=20$</td>
+</tr>
+<tr>
+  <td>Numerator</td>
+  <td>$\bar{x}-\mu = 140-100 = 40$</td>
+  <td>$\bar{x}<em>{After}-\bar{x}</em>{Before} = 67.5-60.25 = 7.25$</td>
+</tr>
+<tr>
+  <td>Denominator (SE)</td>
+  <td>$S/\sqrt{n} = 20/\sqrt{30} = 3.6515$</td>
+  <td>$\sqrt{S_{After}^2/n+S_{Before}^2/n} = \sqrt{11.236^2/20+11.0085^2/20} = \sqrt{6.3128+6.0594} = \sqrt{12.3722} = 3.5174$</td>
+</tr>
+<tr>
+  <td>$t_{test}$</td>
+  <td>$40 / 3.6515 \approx 10.96$</td>
+  <td>$7.25 / 3.5174 \approx 2.06$</td>
+</tr>
+<tr>
+  <td>$df$</td>
+  <td>$n-1 = 29$</td>
+  <td>$n-1 = 19$ (treated here as pairs; a <em>true</em> independent two-sample test would instead use $n_A+n_B-2=38$)</td>
+</tr>
+</tbody>
+</table>
+<p>Both formulas are really the <strong>same underlying idea</strong> — $t = \dfrac{\text{observed difference}}{\text{standard error of that difference}}$ — they just differ in <em>what</em> is being differenced (a sample mean vs a known constant, or a sample mean vs another sample mean) and therefore in how the standard error is built (one variance term, or two added together).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">diffs = After - Before
+
+# Paired t-test, done manually (matches Step 5 formula shape, but on the differences)
+mean_d = diffs.mean()
+std_d = diffs.std(ddof=1)
+t_paired_manual = mean_d / (std_d / np.sqrt(n))
+print(&quot;Manual paired t_test:&quot;, t_paired_manual, &quot; df:&quot;, n - 1)
+
+# Cross-check both approaches against scipy.stats
+paired_result = st.ttest_rel(After, Before)
+indep_result = st.ttest_ind(After, Before)
+
+print(&quot;\nscipy paired t-test   (correct for this design):&quot;, paired_result)
+print(&quot;scipy independent t-test (what Step 5 approximates):&quot;, indep_result)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Manual paired t_test: 12.704488986340237  df: 19
+
+scipy paired t-test   (correct for this design): TtestResult(statistic=np.float64(12.704488986340237), pvalue=np.float64(9.827262801162758e-11), df=np.int64(19))
+scipy independent t-test (what Step 5 approximates): TtestResult(statistic=np.float64(2.009009764133045), pvalue=np.float64(0.05167910600233631), df=np.float64(38.0))</pre></div>
+<div class="foot"><a class="btn" href="../Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb">14_Hypothesis_Testing_T-Test_Paired.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

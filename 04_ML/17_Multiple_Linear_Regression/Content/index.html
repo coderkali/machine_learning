@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multiple Linear Regression — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Multiple Linear Regression</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#multiple-linear-regression">Multiple Linear Regression</a><a href="#1-the-data">1. The data</a><a href="#2-look-at-one-input-at-a-time">2. Look at one input at a time</a><a href="#3-two-charts-are-not-two-models">3. Two charts are not two models</a><a href="#4-x-becomes-a-table-with-two-columns">4. X becomes a table with two columns</a><a href="#5-split-before-fitting">5. Split before fitting</a><a href="#6-fit-find-the-flat-sheet-closest-to-the-dots">6. fit() — find the flat sheet closest to the dots</a><a href="#7-predict-put-the-row-into-the-formula">7. predict() — put the row into the formula</a><a href="#8-score-r-and-why-0-976-means-little-here">8. score() — R², and why 0.976 means little here</a><a href="#9-coef-one-number-per-column">9. coef_ — one number per column</a><a href="#10-intercept-the-anchor">10. intercept_ — the anchor</a><a href="#11-proof-rebuild-predict-by-hand">11. Proof — rebuild predict() by hand</a><a href="#12-the-visual-one-line-becomes-a-plane">12. The visual — one line becomes a plane</a><a href="#13-what-quot-holding-the-other-column-fixed-quot">13. What &amp;quot;holding the other column fixed&amp;quot; </a><a href="#14-predict-every-row">14. Predict every row</a><a href="#15-sns-regplot-x-y-y-y-pred-actual-against-predi">15. sns.regplot(x=y, y=y_pred) — actual against pred</a><a href="#16-the-same-check-drawn-honestly">16. The same check, drawn honestly</a><a href="#17-wrap-up">17. Wrap up</a><a href="#27-multiple-linear-regression-hands-on-with-scik">27. Multiple Linear Regression — Hands-On with sciki</a><a href="#step-1-load-the-dataset">Step 1 — Load the dataset</a><a href="#step-2-peek-at-the-first-few-rows">Step 2 — Peek at the first few rows</a><a href="#step-3-check-the-shape">Step 3 — Check the shape</a><a href="#step-4-check-for-missing-values">Step 4 — Check for missing values</a><a href="#step-5-visualize-how-every-column-relates-to-eve">Step 5 — Visualize how every column relates to every</a><a href="#step-6-quantify-those-relationships-correlation-">Step 6 — Quantify those relationships (correlation h</a><a href="#step-7-split-into-inputs-x-and-target-y">Step 7 — Split into inputs (x) and target (y)</a><a href="#step-8-confirm-x-is-already-2-d">Step 8 — Confirm x is already 2-D</a><a href="#step-9-pull-out-y-the-target">Step 9 — Pull out y (the target)</a><a href="#step-10-sanity-check-the-shape">Step 10 — Sanity-check the shape</a><a href="#step-11-split-into-train-and-test-sets">Step 11 — Split into train and test sets</a><a href="#step-12-train-the-model">Step 12 — Train the model</a><a href="#step-13-score-the-model-on-unseen-data">Step 13 — Score the model on unseen data</a><a href="#step-14-the-general-equation">Step 14 — The general equation</a><a href="#step-15-look-at-the-learned-coefficients-the-slo">Step 15 — Look at the learned coefficients (the slop</a><a href="#step-16-look-at-the-intercept">Step 16 — Look at the intercept</a><a href="#step-17-confirm-which-coefficient-belongs-to-whi">Step 17 — Confirm which coefficient belongs to which</a><a href="#step-18-write-out-the-fitted-equation-with-real-">Step 18 — Write out the fitted equation with real nu</a><a href="#step-19-predict-on-the-test-set">Step 19 — Predict on the test set</a><a href="#step-20-visualize-actual-vs-predicted-salary">Step 20 — Visualize actual vs. predicted salary</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Multiple Linear Regression</h1>
+  <p class="lede">More than one input column: the line becomes a plane, and coefficients change meaning.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ravi added a second column to his price model and the first coefficient changed.</strong> Distance had been worth ₹61 per unit; beside "number of parcels" it dropped to ₹20.</p><p>Nothing about distance had changed. He suspected a bug.</p><p><span class='beat'>There was no bug. The meaning of the number had changed.</span> Alone, distance was quietly taking credit for parcels too, because long trips carried more parcels. Once parcels had their own column, they took their share back.</p><p>A coefficient in a multi-column model always means: the effect of this column <em>while the others are held still</em>. That is why coefficients cannot be read one at a time.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>With several columns each coefficient is a partial effect — the others being held still.</p></div>
+<div class="src-head">📓 <a href="../Concept/06_multiple_linear_regression.ipynb">06_multiple_linear_regression.ipynb</a></div>
+<h2 id="multiple-linear-regression">Multiple Linear Regression</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning, scikit-learn module.</p>
+</div>
+<p>The last notebook had <strong>one</strong> input:</p>
+<div class="code"><pre>Income = m * Age + c
+</pre></div>
+<p>Real life is rarely one column. Income depends on age <strong>and</strong> education. So we give the
+model both columns:</p>
+<div class="code"><pre>Income = b0 + w1 * Age + w2 * Degrees
+</pre></div>
+<p>That is multiple linear regression. Same class, <code>LinearRegression</code>. Same three verbs.
+Only <code>X</code> gets wider.</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Simple</th>
+  <th>Multiple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>input columns</td>
+  <td>1</td>
+  <td>2 or more</td>
+</tr>
+<tr>
+  <td>formula</td>
+  <td><code>y = m*x + c</code></td>
+  <td><code>y = b0 + w1*x1 + w2*x2 + ...</code></td>
+</tr>
+<tr>
+  <td><code>coef_</code></td>
+  <td>one number</td>
+  <td><strong>one number per column</strong></td>
+</tr>
+<tr>
+  <td><code>intercept_</code></td>
+  <td>one number</td>
+  <td>still one number</td>
+</tr>
+<tr>
+  <td>picture</td>
+  <td>a line</td>
+  <td>a <strong>flat sheet</strong> (a plane)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>&quot;Linear&quot; does not mean one line.</strong> It means every input keeps its own <em>fixed</em> rate.
+Age always costs the same per year, whatever the number of degrees. Nothing bends,
+nothing multiplies. That is what makes the model easy to read — and what makes it fail
+when reality bends.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<h2 id="1-the-data">1. The data</h2>
+<p>Three columns, six rows.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>column</th>
+  <th>role</th>
+  <th>name in code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Age</code></td>
+  <td>input (feature)</td>
+  <td><code>x</code></td>
+</tr>
+<tr>
+  <td><code>Degrees</code></td>
+  <td>input (feature)</td>
+  <td><code>x</code></td>
+</tr>
+<tr>
+  <td><code>Income</code></td>
+  <td>the answer we want (target)</td>
+  <td><code>y</code></td>
+</tr>
+</tbody>
+</table>
+<p>Six rows is a <strong>toy</strong> dataset. It is the right size for learning the mechanics and the
+wrong size for trusting any number that comes out. That warning comes back at <code>score()</code>.</p>
+<div class="note"><div class="h">Note</div><p>The path here is absolute, so this cell only runs on this machine. A repo-relative
+path — <code>../../../01_Python/03_Pandas/Data/age2.csv</code> — travels better.</p>
+</div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">df  = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/age2.csv&quot;)
+df.head(5)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age  Degrees  Income
+0   50        5    5000
+1   60        3    4500
+2   10        1    7000
+3   20        2    6000
+4   40        7    3500</pre></div>
+<h2 id="2-look-at-one-input-at-a-time">2. Look at one input at a time</h2>
+<p>Before fitting anything, plot each input against the target. Two inputs, two charts.</p>
+<p>Both charts slope <strong>downward</strong>: older people in this table earn less, and more degrees
+also means less income. That is odd for real life, and a good reminder that six invented
+rows are not the world.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">import matplotlib.pyplot as plt
+plt.scatter(df[&#x27;Age&#x27;],df[&#x27;Income&#x27;])
+plt.xlabel(&#x27;Age&#x27;)
+plt.ylabel(&#x27;Income&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/06-multiple-linear-regressio-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">plt.scatter(df[&#x27;Degrees&#x27;],df[&#x27;Income&#x27;])
+plt.xlabel(&#x27;Degrees&#x27;)
+plt.ylabel(&#x27;Income&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/06-multiple-linear-regressio-c06-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="3-two-charts-are-not-two-models">3. Two charts are not two models</h2>
+<p>Here is the trap. It feels like you could fit a line on each chart and add them up.
+You cannot, and this is the whole idea of multiple regression.</p>
+<p><code>Age</code> and <code>Degrees</code> are <strong>not independent</strong> in this table — they move together
+(correlation <code>0.78</code>). So part of what &quot;age&quot; seems to explain is really education
+sneaking in through the back door.</p>
+<p>Fit the columns separately and together, and the same column gets a different number:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>model</th>
+  <th>what <code>Age</code> is worth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Age</code> alone</td>
+  <td><strong>−61</strong> income per year</td>
+</tr>
+<tr>
+  <td><code>Age</code> <strong>and</strong> <code>Degrees</code> together</td>
+  <td><strong>−20.4</strong> income per year</td>
+</tr>
+</tbody>
+</table>
+<p>Same data, same column. The coefficient dropped by two thirds because <code>Degrees</code> took
+back the credit it was owed.</p>
+<div class="code"><pre>   Age alone           →  &quot;everything that comes with getting older&quot;
+   Age beside Degrees  →  &quot;age only, education already accounted for&quot;
+</pre></div>
+<p>That second reading is the useful one, and it exists only when the columns are fitted
+<strong>together</strong>. This is why we pass a table to <code>fit</code>, not one column at a time.</p>
+
+<h2 id="4-x-becomes-a-table-with-two-columns">4. <code>X</code> becomes a table with two columns</h2>
+<div class="code"><pre class="py">x = df[[&#x27;Age&#x27;, &#x27;Degrees&#x27;]]   # double brackets -&gt; DataFrame, 2 columns
+y = df[&#x27;Income&#x27;]             # single brackets -&gt; Series, 1 column
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>brackets</th>
+  <th>type</th>
+  <th>shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>x</code></td>
+  <td><code>[['Age','Degrees']]</code></td>
+  <td>DataFrame</td>
+  <td><code>(6, 2)</code></td>
+</tr>
+<tr>
+  <td><code>y</code></td>
+  <td><code>['Income']</code></td>
+  <td>Series</td>
+  <td><code>(6,)</code></td>
+</tr>
+</tbody>
+</table>
+<p>sklearn always wants <code>X</code> <strong>2-D</strong> and <code>y</code> <strong>1-D</strong>. In the last notebook the double
+brackets looked like a nuisance; here they are simply how you ask for two columns.</p>
+<p><strong>The column order you type is the order <code>coef_</code> comes back in.</strong> Remember that — it is
+the only link between a number and the column it belongs to.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">x = df[[&#x27;Age&#x27;, &#x27;Degrees&#x27;]]
+y = df[&#x27;Income&#x27;]</pre></div>
+<h2 id="5-split-before-fitting">5. Split before fitting</h2>
+<p><code>test_size=0.3</code> on 6 rows: <strong>4 rows to learn from, 2 rows kept hidden</strong>.</p>
+<p><code>random_state=0</code> fixes which rows go where, so this notebook gives the same numbers
+every run.</p>
+<p>Be honest about the size: 4 rows to find 3 numbers (<code>b0</code>, <code>w1</code>, <code>w2</code>) is almost no
+information. The workflow is correct; the confidence in the result should stay low.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(x,y,test_size=0.3,random_state=0)
+X_train</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age  Degrees
+1   60        3
+3   20        2
+0   50        5
+4   40        7</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">X_test</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age  Degrees
+5   80        9
+2   10        1</pre></div>
+<h2 id="6-fit-find-the-flat-sheet-closest-to-the-dots">6. <code>fit()</code> — find the flat sheet closest to the dots</h2>
+<p>With one input, <code>fit</code> looked for the best <strong>line</strong>. With two inputs, it looks for the
+best <strong>plane</strong> — a flat sheet floating over the Age–Degrees floor.</p>
+<p>&quot;Best&quot; means the same thing as before: the total of the squared vertical gaps between
+the real dots and the sheet is as small as possible. This is <strong>least squares</strong>.</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    A[&quot;X_train (4 rows x 2 cols)&lt;br/&gt;y_train (4 values)&quot;] --&gt; B[&quot;fit()&quot;]
+    B --&gt; C[&quot;intercept_ = 7111.11&lt;br/&gt;coef_ = [-20.37, -351.85]&quot;]
+    E[&quot;a new row&lt;br/&gt;Age=80, Degrees=9&quot;] --&gt; D[&quot;predict()&quot;]
+    C --&gt; D
+    D --&gt; F[&quot;7111.11 - 20.37*80 - 351.85*9&lt;br/&gt;= 2314.81&quot;]
+    style C fill:#2f6fed,color:#fff
+    style F fill:#2f9e6f,color:#fff
+</pre></div>
+<p>Four rows went in. <strong>Three numbers</strong> came out, and the rows are not kept. That is the
+whole model — you could email it.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor
+curriculum.</em> There is no loop and no learning rate here. <code>LinearRegression</code> solves the
+least-squares system directly with linear algebra (<code>scipy.linalg.lstsq</code>). Gradient
+descent belongs to models that have no closed-form answer.</p>
+</div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+clf = LinearRegression()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">clf.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<h2 id="7-predict-put-the-row-into-the-formula">7. <code>predict()</code> — put the row into the formula</h2>
+<p>No learning happens here. Each test row is multiplied out and added up:</p>
+<div class="code"><pre>Age=80, Degrees=9 → 7111.11 - 20.37*80 - 351.85*9 = 2314.81   (real answer: 2000)
+Age=10, Degrees=1 → 7111.11 - 20.37*10 - 351.85*1 = 6555.56   (real answer: 7000)
+</pre></div>
+<p>Those two numbers are exactly what the cell prints. One multiply per column, then one
+add. Nothing else is inside <code>predict</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">clf.predict(X_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2314.81481481, 6555.55555556])</pre></div>
+<h2 id="8-score-r-and-why-0-976-means-little-here">8. <code>score()</code> — R², and why 0.976 means little here</h2>
+<p><code>score</code> returns <strong>R²</strong>: how much of the movement in <code>y</code> the model explains.
+<code>1.0</code> is perfect, <code>0.0</code> is no better than always guessing the average.</p>
+<p>We got <strong>0.976</strong> on the test rows — and this is where a beginner celebrates and a
+reviewer squints:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>rows</th>
+  <th>R²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>train</td>
+  <td>4</td>
+  <td><strong>0.795</strong></td>
+</tr>
+<tr>
+  <td>test</td>
+  <td>2</td>
+  <td><strong>0.976</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The test score is <em>higher</em> than the train score. That is not skill, it is luck. With two
+test points, R² is decided by two numbers, and it swings wildly with a different
+<code>random_state</code>.</p>
+<p><strong>Takeaway:</strong> a score computed on 2 rows is a number, not evidence. Real evaluation
+needs enough test rows, or <code>cross_val_score</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">clf.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9762688614540466</pre></div>
+<h2 id="9-coef-one-number-per-column">9. <code>coef_</code> — one number per column</h2>
+<div class="code"><pre>array([ -20.37037037, -351.85185185 ])
+             │              │
+             │              └── Degrees   (column 2)
+             └── Age                      (column 1)
+</pre></div>
+<p>The array follows the order you built <code>x</code> in. Two columns, two coefficients. Twenty
+columns would give twenty.</p>
+<p><strong>How to read one coefficient:</strong> <em>if this input goes up by 1 and everything else stays
+exactly the same, <code>y</code> moves by this much.</em></p>
+<ul>
+<li><code>Age = -20.37</code> → one more year, <strong>holding degrees fixed</strong>, and income drops by ~20.</li>
+<li><code>Degrees = -351.85</code> → one more degree, <strong>holding age fixed</strong>, and income drops by ~352.</li>
+</ul>
+<p>That phrase &quot;holding the other fixed&quot; is the whole difference from the simple model, and
+section 12 draws it.</p>
+<p>⚠️ <strong>Do not rank importance by size.</strong> <code>351</code> is not &quot;17 times more important&quot; than <code>20</code>.
+The units are different — one is <em>per year</em>, the other is <em>per degree</em>. To compare
+columns fairly, scale them first (<code>StandardScaler</code>), then compare.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">clf.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ -20.37037037, -351.85185185])</pre></div>
+<h2 id="10-intercept-the-anchor">10. <code>intercept_</code> — the anchor</h2>
+<p><code>7111.11</code> is the income the formula predicts when <strong>every input is 0</strong>: a person aged 0
+with 0 degrees.</p>
+<p>Nobody in the table is 0 years old. So the intercept is not a prediction about a real
+person — it is the height at which the plane is pinned so that it sits correctly over
+the rows we actually have.</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Simple regression</th>
+  <th>Multiple regression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>coef_</code></td>
+  <td>tilts the line</td>
+  <td>tilts the plane, <strong>once per column</strong></td>
+</tr>
+<tr>
+  <td><code>intercept_</code></td>
+  <td>slides the line up/down</td>
+  <td>slides the plane up/down</td>
+</tr>
+</tbody>
+</table>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">clf.intercept_</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(7111.11111111111)</pre></div>
+<h2 id="11-proof-rebuild-predict-by-hand">11. Proof — rebuild <code>predict()</code> by hand</h2>
+<p>If the model really is <code>b0 + w1*Age + w2*Degrees</code>, then writing that out ourselves must
+give exactly the same numbers. <code>x.values @ coef_</code> is the dot product: multiply each
+column by its coefficient and add the results.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">import numpy as np
+
+b0 = clf.intercept_          # 7111.11
+w  = clf.coef_               # [-20.37, -351.85]
+
+by_hand    = b0 + X_test.values @ w      # @ = dot product = w1*Age + w2*Degrees
+by_sklearn = clf.predict(X_test)
+
+print(&quot;by hand   :&quot;, by_hand)
+print(&quot;by sklearn:&quot;, by_sklearn)
+print(&quot;same? -&gt;&quot;, np.allclose(by_hand, by_sklearn))
+
+# spell out one row completely
+age, deg = X_test.iloc[0]
+print(f&quot;\nrow 0: {b0:.2f} + ({w[0]:.2f} * {age}) + ({w[1]:.2f} * {deg}) = {b0 + w[0]*age + w[1]*deg:.2f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>by hand   : [2314.81481481 6555.55555556]
+by sklearn: [2314.81481481 6555.55555556]
+same? -&gt; True
+
+row 0: 7111.11 + (-20.37 * 80) + (-351.85 * 9) = 2314.81</pre></div>
+<h2 id="12-the-visual-one-line-becomes-a-plane">12. The visual — one line becomes a plane</h2>
+<p>This is the picture worth keeping. Two inputs make a floor (Age × Degrees), and the
+model is a <strong>flat sheet</strong> hovering above that floor. The red sticks are the errors: the
+vertical distance from each real person to the sheet. <code>fit()</code> chose the sheet that makes
+the total of those squared sticks as small as possible.</p>
+<div class="code"><pre>   1 input  →  a LINE      in 2-D   (x, y)
+   2 inputs →  a PLANE     in 3-D   (x1, x2, y)
+   n inputs →  a HYPERPLANE in n+1-D  — same maths, no picture
+</pre></div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">import numpy as np
+import matplotlib.pyplot as plt
+
+b0 = clf.intercept_
+w1, w2 = clf.coef_
+
+fig = plt.figure(figsize=(9, 6.5))
+ax = fig.add_subplot(111, projection=&#x27;3d&#x27;, computed_zorder=False)
+
+# the fitted plane: Income = b0 + w1*Age + w2*Degrees
+ages    = np.linspace(0, 90, 15)
+degrees = np.linspace(0, 10, 15)
+AG, DG = np.meshgrid(ages, degrees)
+INCOME = b0 + w1 * AG + w2 * DG
+
+ax.plot_wireframe(AG, DG, INCOME, color=&quot;tab:blue&quot;, lw=0.7, alpha=0.9)
+ax.plot_surface(AG, DG, INCOME, color=&quot;tab:blue&quot;, alpha=0.20, shade=False)
+
+# red stick = the error for that person
+for age, deg, real in zip(df[&#x27;Age&#x27;], df[&#x27;Degrees&#x27;], y):
+    ax.plot([age, age], [deg, deg], [real, b0 + w1*age + w2*deg],
+            color=&quot;crimson&quot;, lw=1.2, zorder=10)
+
+ax.scatter(X_train[&#x27;Age&#x27;], X_train[&#x27;Degrees&#x27;], y_train, s=70, color=&quot;black&quot;,
+           depthshade=False, label=&quot;train rows&quot;, zorder=11)
+ax.scatter(X_test[&#x27;Age&#x27;], X_test[&#x27;Degrees&#x27;], y_test, s=110, color=&quot;crimson&quot;,
+           marker=&quot;^&quot;, depthshade=False, label=&quot;test rows (actual)&quot;, zorder=11)
+
+ax.set_xlabel(&quot;Age&quot;); ax.set_ylabel(&quot;Degrees&quot;); ax.set_zlabel(&quot;Income&quot;)
+ax.set_title(f&quot;Two inputs -&gt; the model is a PLANE\nIncome = {b0:.2f} + ({w1:.2f} * Age) + ({w2:.2f} * Degrees)&quot;)
+ax.legend(loc=&quot;upper left&quot;)
+ax.view_init(22, -58)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/06-multiple-linear-regressio-c27-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="13-what-quot-holding-the-other-column-fixed-quot">13. What &quot;holding the other column fixed&quot; actually looks like</h2>
+<p>Slice the plane at a fixed number of degrees and you get a <strong>line</strong>. Slice it at a
+different number of degrees and you get another line — same tilt, different height.</p>
+<ul>
+<li><strong>Left chart:</strong> three slices. All parallel. Their shared tilt <em>is</em> <code>coef_[0] = -20.37</code>.
+Changing <code>Degrees</code> only moves the line up or down, never bends it. That is what
+&quot;linear&quot; buys you.</li>
+<li><strong>Right chart:</strong> the same <code>Age</code> column fitted alone (red) versus inside the two-column
+model (blue). The red line is much steeper, because when <code>Degrees</code> is missing, <code>Age</code>
+is forced to carry its effect too.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+import numpy as np
+import matplotlib.pyplot as plt
+
+b0 = clf.intercept_
+w1, w2 = clf.coef_
+ages = np.linspace(0, 90, 50)
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 4.5))
+
+# --- left: slice the plane at fixed Degrees -&gt; parallel lines
+for d in [1, 5, 9]:
+    ax[0].plot(ages, b0 + w1*ages + w2*d, label=f&quot;Degrees = {d}&quot;)
+ax[0].scatter(df[&#x27;Age&#x27;], y, color=&quot;black&quot;, s=45, zorder=5, label=&quot;real people&quot;)
+ax[0].set_title(&quot;coef_[0] = the tilt of ONE slice\n(Degrees held fixed)&quot;)
+
+# --- right: Age alone vs Age inside the multiple model
+simple = LinearRegression().fit(df[[&#x27;Age&#x27;]], y)
+ax[1].scatter(df[&#x27;Age&#x27;], y, color=&quot;black&quot;, s=45, zorder=5)
+ax[1].plot(ages, simple.intercept_ + simple.coef_[0]*ages, color=&quot;crimson&quot;, lw=2,
+           label=f&quot;Age alone: {simple.coef_[0]:.1f} per year&quot;)
+ax[1].plot(ages, b0 + w1*ages + w2*df[&#x27;Degrees&#x27;].mean(), color=&quot;tab:blue&quot;, lw=2,
+           label=f&quot;Age + Degrees: {w1:.1f} per year&quot;)
+ax[1].set_title(&quot;same column, different coefficient&quot;)
+
+for a in ax:
+    a.set_xlabel(&quot;Age&quot;); a.set_ylabel(&quot;Income&quot;); a.legend(fontsize=8)
+
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/06-multiple-linear-regressio-c29-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="14-predict-every-row">14. Predict every row</h2>
+<p>The same formula applied to all six rows, so predictions can be drawn next to the real
+values. (Rows 0–3 were used for training, so this is not a fair test — it is only for
+the picture.)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">y_pred = clf.predict(x)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([4333.33333333, 4833.33333333, 6555.55555556, 6000.        ,
+       3833.33333333, 2314.81481481])</pre></div>
+<h2 id="15-sns-regplot-x-y-y-y-pred-actual-against-predi">15. <code>sns.regplot(x=y, y=y_pred)</code> — actual against predicted</h2>
+<p>This chart does <strong>not</strong> show the model's plane. It puts the real income on the x-axis
+and the predicted income on the y-axis, one dot per person.</p>
+<p>A perfect model would put every dot on the 45° diagonal, because predicted would equal
+actual. <code>regplot</code> then fits its <strong>own</strong> fresh straight line through those dots and
+shades a confidence band around it.</p>
+<p>Read it as a <strong>report card</strong>, not as the model: the closer the dots hug the diagonal,
+the better. (Both axes get labelled <code>Income</code>, which is confusing — the next cell fixes
+that.)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">import seaborn as sns
+sns.regplot(x=y, y=y_pred)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;Income&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/06-multiple-linear-regressio-c33-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="16-the-same-check-drawn-honestly">16. The same check, drawn honestly</h2>
+<p><code>regplot</code> draws the <em>best line through the dots</em>. What we actually want to compare
+against is the <strong>45° line where predicted = actual</strong>. Those are different lines, and the
+gap between a dot and the diagonal is the real error.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">import matplotlib.pyplot as plt
+
+y_pred = clf.predict(x)
+
+fig, ax = plt.subplots(figsize=(6.5, 6))
+lim = [y.min() * 0.85, y.max() * 1.08]
+
+ax.plot(lim, lim, ls=&quot;--&quot;, color=&quot;grey&quot;, label=&quot;perfect prediction (y = x)&quot;)
+ax.scatter(y, y_pred, s=70, color=&quot;tab:blue&quot;, zorder=5)
+for actual, pred in zip(y, y_pred):
+    ax.plot([actual, actual], [actual, pred], color=&quot;crimson&quot;, lw=1.2)   # the error
+
+for actual, pred in zip(y, y_pred):
+    ax.annotate(f&quot;{pred - actual:+.0f}&quot;, (actual, pred), textcoords=&quot;offset points&quot;,
+                xytext=(8, -4), fontsize=8, color=&quot;crimson&quot;)
+
+ax.set_xlabel(&quot;Actual Income&quot;); ax.set_ylabel(&quot;Predicted Income&quot;)
+ax.set_title(&quot;Actual vs Predicted  (red stick = error)&quot;)
+ax.set_xlim(lim); ax.set_ylim(lim); ax.set_aspect(&quot;equal&quot;); ax.legend(fontsize=8)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/06-multiple-linear-regressio-c35-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="17-wrap-up">17. Wrap up</h2>
+<h3>The whole model in one line</h3>
+<div class="code"><pre>Income = 7111.11 + (-20.37 * Age) + (-351.85 * Degrees)
+          │            │                │
+      intercept_    coef_[0]         coef_[1]
+</pre></div>
+<h3>Common mistakes</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Mistake</th>
+  <th>What actually happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Reading <code>coef_</code> in the wrong order</td>
+  <td>The array follows <strong>your</strong> column order in <code>x</code>. Reorder the columns and the numbers move with them. Print <code>dict(zip(x.columns, clf.coef_))</code> instead of trusting memory.</td>
+</tr>
+<tr>
+  <td>&quot;The biggest coefficient is the most important column&quot;</td>
+  <td>Only true if every column shares the same unit and scale. Years and degrees do not. Scale first, then compare.</td>
+</tr>
+<tr>
+  <td>Passing a single column as <code>df['Age']</code></td>
+  <td><code>LinearRegression</code> needs <code>X</code> 2-D. One column must still be <code>df[['Age']]</code>.</td>
+</tr>
+<tr>
+  <td>Trusting a high R² from a tiny test set</td>
+  <td>Ours is <code>0.976</code> from <strong>2 rows</strong>, while training sits at <code>0.795</code>. Change <code>random_state</code> and it moves a lot.</td>
+</tr>
+<tr>
+  <td>Adding every available column &quot;because more is better&quot;</td>
+  <td>Correlated columns (here <code>0.78</code>) split the credit between themselves, so the individual coefficients get unstable — <strong>multicollinearity</strong>. The predictions can still be fine; the <em>explanations</em> are what break.</td>
+</tr>
+<tr>
+  <td>Reading the intercept as a real person</td>
+  <td><code>Age = 0, Degrees = 0</code> does not exist in this data. It anchors the plane, nothing more.</td>
+</tr>
+</tbody>
+</table>
+<h3>Where this is used</h3>
+<p>Baseline before anything fancy — price estimates, demand forecasts, delivery-time
+prediction, capacity planning. It stays in production because it is fast, and because
+each coefficient can be explained to a regulator or a business owner. A gradient-boosted
+model may score better and still lose the argument.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering view.</strong> Three floats and a column order — that is the entire
+artefact. It is smaller than a config file, it serves in microseconds, and it needs
+no GPU. The risky part of shipping it is not the model, it is guaranteeing that the
+columns arrive in the <strong>same order</strong> at serving time as at training time. That is a
+data-contract problem, and it is exactly what <code>Pipeline</code> exists to lock down.</p>
+</div>
+<h3>Interview view</h3>
+<ol>
+<li>Simple vs multiple regression: one input column vs many; a line vs a plane.</li>
+<li>A coefficient is a <strong>partial</strong> effect — the effect of that column with the others
+held fixed.</li>
+<li><code>coef_</code> is an array whose order is the column order of <code>X</code>.</li>
+<li>Coefficient magnitudes are only comparable after scaling.</li>
+<li>Correlated inputs (multicollinearity) destabilise coefficients but not necessarily
+predictions.</li>
+</ol>
+<h3>Key takeaway</h3>
+<p><strong>If you remember only one thing:</strong> multiple linear regression is still one straight
+formula — <code>y = b0 + w1*x1 + w2*x2 + ...</code> — and each coefficient answers <em>&quot;if only this
+column moves by 1, how much does y move?&quot;</em>. Adding a column can change every other
+coefficient, so a coefficient is a statement about <strong>the model it lives in</strong>, never
+about the column on its own.</p>
+
+<div class="src-head">📓 <a href="../Concept/27_Multiple_Linear_Regression.ipynb">27_Multiple_Linear_Regression.ipynb</a></div>
+<h2 id="27-multiple-linear-regression-hands-on-with-scik">27. Multiple Linear Regression — Hands-On with scikit-learn</h2>
+<p>Multiple Linear Regression is the extension of Simple Linear Regression (see <a href="../../16_Linear_Regression/Concept/25_Simple_Linear_Regression.MD"><code>25_Simple_Linear_Regression.MD</code></a> and <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_Simple_Linear_Regression.ipynb</code></a>) to more than one predictor. Instead of one <code>x</code> predicting <code>y</code>, we now have several input columns predicting one output column — the equation grows from <code>y = m·x + c</code> to <code>y = m1·x1 + m2·x2 + c</code>.</p>
+<p><code>../../_shared_data/regression_dataset.csv</code> has three columns — <code>Age</code>, <code>Experience</code>, <code>Salary</code> — for 1000 people. <code>Salary</code> is what we want to predict; <code>Age</code> and <code>Experience</code> are the two predictor variables.</p>
+<p>This notebook walks the full flow: load the data, look at it (a pairplot and a correlation heatmap this time, since there's more than one relationship to check), split it into inputs/target, train a <code>LinearRegression</code> model on two predictors at once, read back what it learned, and finish with two charts that show how good the fit actually is.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                   # pandas: load the CSV and work with it as a table (DataFrame)
+import seaborn as sns                                  # seaborn: nicer statistical plots (pairplot, heatmap), built on matplotlib
+import matplotlib.pyplot as plt                        # matplotlib: base plotting library, used for titles/labels/showing figures
+from sklearn.model_selection import train_test_split   # splits our data into a training pool and a held-back testing pool
+from sklearn.linear_model import LinearRegression      # the model class — now fitting more than one predictor at once</pre></div>
+<h2 id="step-1-load-the-dataset">Step 1 — Load the dataset</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/regression_dataset.csv&quot;)  # read the CSV file from disk into a pandas DataFrame called &quot;dataset&quot;</pre></div>
+<h2 id="step-2-peek-at-the-first-few-rows">Step 2 — Peek at the first few rows</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.head(3)  # show only the first 3 rows, just to eyeball the columns and their values</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age  Experience  Salary
+0   25           4   30794
+1   52          23  103892
+2   47          15   75315</pre></div>
+<h2 id="step-3-check-the-shape">Step 3 — Check the shape</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset.shape  # (rows, columns) — confirms 1000 people, 3 columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>(1000, 3)</pre></div>
+<h2 id="step-4-check-for-missing-values">Step 4 — Check for missing values</h2>
+<p>Same habit as every earlier <code>ML/</code> topic and <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_Simple_Linear_Regression.ipynb</code></a>: before training anything, confirm there are no gaps. <code>scikit-learn</code> cannot train on missing (<code>NaN</code>) values.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset.isnull().sum()  # count missing values per column — all 0 here, since this dataset was generated clean</pre></div>
+<div class="out"><div class="h">Output</div><pre>Age           0
+Experience    0
+Salary        0
+dtype: int64</pre></div>
+<h2 id="step-5-visualize-how-every-column-relates-to-eve">Step 5 — Visualize how every column relates to every other (pairplot)</h2>
+<p>With Simple Linear Regression there was only one <code>x</code>, so a single scatter plot showed the whole relationship. Now that there are two predictors (<code>Age</code>, <code>Experience</code>) plus the target (<code>Salary</code>), a <code>pairplot</code> is the equivalent tool: it draws a scatter plot for every pair of columns, and a histogram for each column against itself on the diagonal. It's a fast way to eyeball whether <code>Salary</code> roughly rises with <code>Age</code> and <code>Experience</code>, and whether the two predictors already look related to each other before the model ever sees them.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">sns.pairplot(data=dataset)   # scatter every column against every other column, histogram on the diagonal
+plt.show()                   # render the grid of plots</pre></div>
+<figure class="shot"><img src="assets/27-multiple-linear-regressio-c11-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-6-quantify-those-relationships-correlation-">Step 6 — Quantify those relationships (correlation heatmap)</h2>
+<p>The pairplot shows relationships visually; a correlation heatmap puts a number on each one. Correlation ranges from <code>-1</code> (perfectly opposite) to <code>+1</code> (perfectly together), with <code>0</code> meaning no straight-line relationship at all. <code>annot=True</code> prints the actual number inside each cell. What matters most here is how strongly <code>Age</code> and <code>Experience</code> each correlate with <code>Salary</code> — that's what the model leans on — and, as a side note, how strongly <code>Age</code> and <code>Experience</code> correlate with <em>each other</em>. Two predictors that are too similar to one another give the model overlapping, less useful information — a topic called multicollinearity, worth knowing exists but not something we need to solve here.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">sns.heatmap(data=dataset.corr(), annot=True)   # dataset.corr() computes the correlation table; heatmap colors + prints each value</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div>
+<figure class="shot"><img src="assets/27-multiple-linear-regressio-c13-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-7-split-into-inputs-x-and-target-y">Step 7 — Split into inputs (<code>x</code>) and target (<code>y</code>)</h2>
+<p>Same idea as Simple Linear Regression, just wider: <code>x</code> needs to hold <em>both</em> predictor columns now, not one. <code>dataset.iloc[:, :-1]</code> is positional slicing — &quot;every row, every column except the last one&quot; — a habit worth having since it works no matter how many predictor columns a dataset has. <code>y</code> stays a single column, same as before.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">x = dataset.iloc[:, :-1]   # every row, every column except the last (&quot;Salary&quot;) — this is now a 2-column table
+x                          # display it, to see what we just built</pre></div>
+<div class="out"><div class="h">Output</div><pre>     Age  Experience
+0     25           4
+1     52          23
+2     47          15
+3     39          16
+4     38           2
+..   ...         ...
+995   46           0
+996   42          12
+997   36          15
+998   59          10
+999   41           5
+
+[1000 rows x 2 columns]</pre></div>
+<h2 id="step-8-confirm-x-is-already-2-d">Step 8 — Confirm <code>x</code> is already 2-D</h2>
+<p>In <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_Simple_Linear_Regression.ipynb</code></a>, <code>x</code> was a single column (a 1-D Series) and had to be manually reshaped into a 2-D table before <code>scikit-learn</code> would accept it. Here, <code>x</code> already has two columns, so pandas hands it back as a 2-D DataFrame automatically — no reshaping needed. <code>.ndim</code> confirms that: <code>2</code> means &quot;a table with rows and columns,&quot; which is the shape (<code>n_samples, n_features</code>) every <code>scikit-learn</code> model expects for its inputs.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">x.ndim   # 2 = already a 2-D table (rows x columns) — no reshape needed, unlike the single-column case</pre></div>
+<div class="out"><div class="h">Output</div><pre>2</pre></div>
+<h2 id="step-9-pull-out-y-the-target">Step 9 — Pull out <code>y</code> (the target)</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">y = dataset[&quot;Salary&quot;]   # pull out just the &quot;Salary&quot; column — this is what the model will learn to predict
+y                        # display it, to see what we just built</pre></div>
+<div class="out"><div class="h">Output</div><pre>0       30794
+1      103892
+2       75315
+3       67706
+4       43926
+        ...  
+995     43949
+996     63166
+997     58387
+998     80121
+999     55561
+Name: Salary, Length: 1000, dtype: int64</pre></div>
+<h2 id="step-10-sanity-check-the-shape">Step 10 — Sanity-check the shape</h2>
+<p>A quick re-check that slicing <code>x</code> and <code>y</code> out of <code>dataset</code> didn't accidentally drop or duplicate any rows — still 1000 rows, 3 original columns in the source data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">dataset.shape   # still (1000, 3) — slicing into x and y doesn&#x27;t change the original dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>(1000, 3)</pre></div>
+<h2 id="step-11-split-into-train-and-test-sets">Step 11 — Split into train and test sets</h2>
+<p><code>train_test_split</code> holds back 20% of the rows (<code>test_size=0.2</code>) as a test set the model never sees during training. That's the only fair way to check later whether the model actually learned the pattern, or just memorized the training rows. <code>random_state=42</code> fixes the shuffle so the split is reproducible — same rows in train/test every time this notebook re-runs.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)   # 80% train, 20% held back for testing</pre></div>
+<h2 id="step-12-train-the-model">Step 12 — Train the model</h2>
+<p><code>.fit()</code> is where the actual learning happens: <code>scikit-learn</code> searches for the <code>m1</code>, <code>m2</code>, and <code>c</code> that make <code>y = m1·Age + m2·Experience + c</code> fit the <em>training</em> rows as closely as possible — same least-squares idea as Simple Linear Regression, just solving for two slopes instead of one.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">lr = LinearRegression()      # create an (untrained) Linear Regression model
+lr.fit(x_train, y_train)     # train it — this step learns m1, m2, and c from the training rows</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<h2 id="step-13-score-the-model-on-unseen-data">Step 13 — Score the model on unseen data</h2>
+<p><code>.score()</code> on regression models returns R² — the fraction of the variation in <code>Salary</code> that <code>Age</code> and <code>Experience</code> together explain, on the <em>test</em> rows the model never trained on. Multiplying by 100 turns it into a percentage. An R² of ~75% means the two predictors explain about three-quarters of why salaries differ in this data; the rest comes from the random noise baked into how this dataset was generated (in a real dataset, it would be other factors the two columns don't capture) — same caveat as any regression. Backend analogy: like test coverage, but for how well a formula predicts outcomes rather than how much code got run.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">lr.score(x_test, y_test) * 100   # R² on the test set, as a percentage — how much of Salary&#x27;s variation Age+Experience explain</pre></div>
+<div class="out"><div class="h">Output</div><pre>75.26418389841064</pre></div>
+<h2 id="step-14-the-general-equation">Step 14 — The general equation</h2>
+<p>Simple Linear Regression fit a line: <code>y = m·x + c</code>. Multiple Linear Regression fits a flat plane (or higher-dimensional equivalent) instead: one slope per predictor, all added together, plus one intercept.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">#y = m1x1 + m2x2 + c</pre></div>
+<h2 id="step-15-look-at-the-learned-coefficients-the-slo">Step 15 — Look at the learned coefficients (the slopes)</h2>
+<p><code>lr.coef_</code> returns one number per predictor, <strong>in the same order as <code>x</code>'s columns</strong>. Each number is that predictor's <code>m</code>: &quot;holding the other predictor fixed, how much does <code>Salary</code> change for every +1 unit of this one?&quot;</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">lr.coef_   # [m1, m2] — one slope per predictor column, in the same order as x.columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 719.07681097, 1784.49764362])</pre></div>
+<h2 id="step-16-look-at-the-intercept">Step 16 — Look at the intercept</h2>
+<p><code>lr.intercept_</code> is <code>c</code> — the model's predicted <code>Salary</code> when <em>every</em> predictor is 0. As with Simple Linear Regression's intercept, treat this as a mathematical anchor for the line/plane, not a literal prediction: nobody in this dataset has <code>Age = 0</code>, so this number is an extrapolation outside the real data, not a meaningful salary on its own.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">lr.intercept_   # c — the fitted plane&#x27;s value when Age = 0 and Experience = 0 (an extrapolation, not a real scenario)</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(13428.445576810147)</pre></div>
+<h2 id="step-17-confirm-which-coefficient-belongs-to-whi">Step 17 — Confirm which coefficient belongs to which column</h2>
+<p><code>lr.coef_</code> is a plain array with no column labels attached, so the mapping to <code>Age</code> vs <code>Experience</code> depends entirely on column <em>position</em> — like calling a function with positional args instead of named ones. <code>x.columns</code> confirms the order: <code>coef_[0]</code> → <code>Age</code>, <code>coef_[1]</code> → <code>Experience</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">x.columns   # confirms coef_[0] belongs to Age and coef_[1] belongs to Experience, in this order</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;Age&#x27;, &#x27;Experience&#x27;], dtype=&#x27;str&#x27;)</pre></div>
+<h2 id="step-18-write-out-the-fitted-equation-with-real-">Step 18 — Write out the fitted equation with real numbers</h2>
+<p>Plugging <code>lr.coef_</code> and <code>lr.intercept_</code> into <code>y = m1·x1 + m2·x2 + c</code> gives the actual formula this model learned — every prediction below is just this line of arithmetic run on a row's <code>Age</code> and <code>Experience</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py"># y_prd = 719.07681097*Age + 1784.49764362*Experience + 13428.445576810147</pre></div>
+<h2 id="step-19-predict-on-the-test-set">Step 19 — Predict on the test set</h2>
+<p><code>.predict()</code> runs that exact equation on every row of <code>x_test</code> and returns the predicted salaries — one number per test row, ready to compare against the real <code>y_test</code> values.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">lr.predict(x_test)   # run the fitted equation on every test row — returns 200 predicted salaries</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 39981.51004756,  40380.63160446,  76522.48356907,  40700.58685853,
+        43923.2381241 ,  79319.62451012,  52872.11510983,  69384.49299458,
+        94367.46000531,  77907.85965579,  94740.1927946 ,  53937.53594248,
+        37504.32436057,  52898.50387744,  76096.97324455,  60781.96003052,
+        50714.88467691,  44269.58214578,  60409.22724123,  71515.33465988,
+        47944.13250348,  48663.20931445,  63285.53448512,  32843.51947306,
+        48930.38703329,  67227.26256166,  41419.6636695 ,  83980.42939763,
+        47492.23341134,  43550.5053348 , 110107.98354386,  59317.41764097,
+        42191.5180157 ,  67520.82904811,  61794.60332795,  60010.10568432,
+        63631.8785068 ,  57879.26401902,  31751.7098728 ,  62220.11365247,
+        39981.51004756,  51780.30550956,  39262.43323658,  38197.01240393,
+        29248.1354182 ,  93648.38319434,  41073.31964782,  91863.88555071,
+        68586.24988076,  37850.66838225,  59422.97271142,  50074.97416878,
+        46054.0797894 ,  60834.73756575, 108669.82992191,  57532.91999734,
+        47145.88938966,  52552.15985576,  59317.41764097,  29248.1354182 ,
+        69038.1489729 ,  44695.0924703 ,  34281.67309501, 104355.36905608,
+        59396.58394381,  96178.34641655,  29967.21222917,  56893.00948921,
+        90798.46471806,  40700.58685853,  90052.99913948,  60062.88321955,
+        94367.46000531,  91144.80873974,  82621.44207853,  63605.48973919,
+        34281.67309501,  83980.42939763,  54043.09101293,  53271.23666674,
+        87255.85819843, 113304.24604181,  67174.48502643,  57160.18720805,
+        83686.86291118,  61474.64807388,  73698.95386041,  95459.26960558,
+        80117.86762393,  29967.21222917,  76548.87233669,  56919.39825682,
+        36066.17073863,  68239.90585908,  51513.12779073,  62912.80169583,
+        55375.68956443,  85791.31580887, 100466.41851477,  51513.12779073,
+        68612.63864838,  31751.7098728 ,  37131.59157128,  58651.11836522,
+        74711.59715784,  57958.43032186,  85125.01653313,  46106.85732463,
+        63579.10097157,  77587.90440172,  54415.82380223,  88268.50149585,
+        84699.50620861,  29967.21222917,  38543.35642561,  61181.08158743,
+        57186.57597566,  38596.13396084,  78973.28048844,  81823.19896472,
+        77535.1268665 ,  46773.15660037,  89360.31109612,  65096.42089636,
+        44322.359681  , 104728.10184537,  32470.78668377,  47225.05569251,
+        96871.03445991,  29248.1354182 ,  81130.51092136,  52924.89264506,
+        45067.82525959,  46505.97888153, 113304.24604181,  33536.20751642,
+        41472.44120473,  38223.40117155,  49009.55</pre></div>
+<h2 id="step-20-visualize-actual-vs-predicted-salary">Step 20 — Visualize actual vs. predicted salary</h2>
+<p>With one predictor, Simple Linear Regression's fit could be drawn as a single line through a scatter plot. With two predictors, there's no single line or 2-D plot that shows the fit directly. The standard workaround: plot every test row's <strong>actual</strong> <code>Salary</code> on the x-axis against its <strong>predicted</strong> <code>Salary</code> on the y-axis. A perfect model would put every point exactly on the diagonal line; the tighter the cloud of points hugs that diagonal, the better the model.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">y_pred = lr.predict(x_test)   # predicted salaries for every test row (same call as Step 19, saved this time for reuse below)
+
+plt.figure(figsize=(5, 5))
+sns.scatterplot(x=y_test, y=y_pred)                                          # actual salary on x, predicted salary on y
+lims = [min(y_test.min(), y_pred.min()), max(y_test.max(), y_pred.max())]    # shared axis limits so the diagonal spans the full plot
+plt.plot(lims, lims, color=&quot;red&quot;, linestyle=&quot;--&quot;, label=&quot;Perfect prediction (actual = predicted)&quot;)
+plt.xlabel(&quot;Actual Salary&quot;)
+plt.ylabel(&quot;Predicted Salary&quot;)
+plt.title(&quot;Actual vs Predicted Salary (Test Set)&quot;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/27-multiple-linear-regressio-c41-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-21-visualize-which-predictor-moves-salary-m">Step 21 — Visualize which predictor moves salary more</h2>
+<p><code>lr.coef_</code> already gave the two slopes as numbers; a bar chart makes the comparison easier to read at a glance. One caveat worth flagging: <code>Age</code> (roughly 22–60) and <code>Experience</code> (roughly 0–35) sit on different scales, so comparing raw coefficient size is only a rough guide here, not a precise &quot;feature importance&quot; ranking — putting both predictors on the same scale first (see <a href="../../08_Feature_Scaling/Concept/16_Feature_Scaling_Normalization.ipynb"><code>16_Feature_Scaling_Normalization.ipynb</code></a>) would make this comparison fully fair.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">plt.figure(figsize=(5, 4))
+plt.bar(x.columns, lr.coef_, color=[&quot;#2a78d6&quot;, &quot;#eb6834&quot;])   # one bar per predictor, height = its fitted slope
+plt.axhline(0, color=&quot;#c3c2b7&quot;, linewidth=1)                 # baseline for reference
+plt.ylabel(&quot;Coefficient (₹ change in Salary per +1 unit)&quot;)
+plt.title(&quot;Fitted Coefficients by Predictor&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/27-multiple-linear-regressio-c43-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="key-takeaways">Key Takeaways</h2>
+<ul>
+<li>Multiple Linear Regression just widens the equation: <code>y = m·x + c</code> becomes <code>y = m1·x1 + m2·x2 + ... + c</code>, one slope per predictor.</li>
+<li>With 2+ predictor columns, <code>x</code> is already 2-D — no manual reshape needed, unlike the single-predictor case in <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_Simple_Linear_Regression.ipynb</code></a>.</li>
+<li><code>lr.coef_</code> has no column labels — it's matched to <code>x.columns</code> purely by <em>position</em>, so always confirm the order before reading the numbers.</li>
+<li>R² (<code>.score()</code>) tells you how much of the target's variation the predictors explain overall — it doesn't tell you which single predictor deserves the credit.</li>
+<li>With one predictor you can draw the fit as a line; with two or more, &quot;actual vs predicted&quot; is the standard way to <em>see</em> how well a multi-predictor model fits.</li>
+<li>Comparing raw coefficients across predictors is only fair once they're on the same scale — otherwise a big coefficient might just mean &quot;small units,&quot; not &quot;more important.&quot;</li>
+</ul>
+
+<h2 id="faq">FAQ</h2>
+<p><strong>Q: <code>scikit-learn</code> already has <code>.fit()</code> and <code>.predict()</code> — why learn all the underlying concepts? Isn't everything going forward just going to be library calls?</strong></p>
+<p>Mostly yes — going forward, real work almost always means calling a library (<code>scikit-learn</code> now, <code>PyTorch</code> / <code>HuggingFace</code> later for the GenAI phase of this roadmap), not hand-writing gradient descent. That part doesn't go away. But the library only does the &quot;turn the crank&quot; step: given <code>x_train</code>, <code>y_train</code>, and a chosen algorithm, it computes the numbers. It cannot decide <em>which</em> algorithm fits the problem, cannot explain <em>why</em> a result is bad, and cannot fix a data problem it doesn't know exists — that judgment is exactly what the concepts are for.</p>
+<p>Backend analogy: nobody reimplements <code>HashMap</code> or Spring's <code>DispatcherServlet</code> — but understanding hashing and the request lifecycle is still what lets you debug a slow map or a controller that's silently never invoked. <code>lr.fit()</code> / <code>lr.predict()</code> sit exactly where a Spring Data repository's <code>save()</code> / <code>findById()</code> sit: trivial to call, useless to debug or design around without knowing what's happening underneath.</p>
+<p>Concretely, right in this notebook: the model scored ~75% R² (Step 13), not 100%. <code>scikit-learn</code> doesn't say whether that's <em>good</em> or a sign something's wrong — only understanding what R² measures, and what could be dragging it down (noise, a missing predictor, bad data), answers that.</p>
+<p>Where the concepts earn their keep even though the library does the arithmetic:</p>
+<ul>
+<li><strong>Picking the right algorithm</strong> for the data — linear vs. tree-based vs. neural net. <code>scikit-learn</code> offers dozens; nothing picks for you.</li>
+<li><strong>Diagnosing a bad result</strong> — wrong scaling, data leakage, overfitting, the wrong evaluation metric.</li>
+<li><strong>Tuning hyperparameters</strong> on purpose instead of blind grid search.</li>
+<li><strong>Preparing data correctly</strong> (scaling, encoding, outliers) <em>before</em> it reaches <code>.fit()</code> — the library trusts that was done right.</li>
+</ul>
+<p>On &quot;for complicated data, don't we need to build it from scratch?&quot; — no: <code>scikit-learn</code> and libraries like <code>XGBoost</code> handle massive real production tabular data as-is (fraud detection, credit scoring, recommendation systems all run on them). Implementing an algorithm from scratch is a one-time <em>teaching</em> exercise to build intuition for what <code>.fit()</code> is doing internally — the same reason a CS course has you implement a linked list once, even though production Java code never hand-rolls one. It's not what ships.</p>
+<p>The reasoning skill this phase is building — is this model appropriate, is this result trustworthy, why did it fail — doesn't expire when the library changes. It's the same skill that later shows up as judging RAG retrieval quality, evaluating LLM outputs, or deciding fine-tune vs. prompt in the GenAI phase of the roadmap.</p>
+
+<div class="foot"><a class="btn" href="../Concept/06_multiple_linear_regression.ipynb">06_multiple_linear_regression.ipynb ↗</a><a class="btn" href="../Concept/27_Multiple_Linear_Regression.ipynb">27_Multiple_Linear_Regression.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

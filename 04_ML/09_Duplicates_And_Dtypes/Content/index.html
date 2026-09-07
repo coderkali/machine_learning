@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duplicates And Data Types — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Duplicates And Data Types</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#handling-duplicate-data">Handling Duplicate Data</a><a href="#1-the-mechanics-a-small-controlled-example">1. The Mechanics — A Small, Controlled Example</a><a href="#2-checking-shared-data-loans-csv-for-real-duplic">2. Checking ../../_shared_data/loans.csv for Real Du</a><a href="#3-seeing-it-actually-remove-something">3. Seeing It Actually Remove Something</a><a href="#4-near-duplicates-a-quick-sanity-check">4. Near-Duplicates — A Quick Sanity Check</a><a href="#summary">Summary</a><a href="#replace-amp-change-data-type">Replace &amp;amp; Change Data Type</a><a href="#1-the-copy-on-write-trap-a-controlled-repro">1. The Copy-on-Write Trap — A Controlled Repro</a><a href="#2-real-data-shared-data-loans-csv-s-dependents-c">2. Real Data — ../../_shared_data/loans.csv&#x27;s Depend</a><a href="#3-changing-the-dtype">3. Changing the Dtype</a><a href="#summary">Summary</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Duplicates And Data Types</h1>
+  <p class="lede">The same row twice, and numbers stored as text — two quiet defects that break scoring.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ramesh exported his sales table twice and appended it to itself by mistake.</strong> The model scored 99%.</p><p>Every row in the test set also sat in the training set. The model was not predicting — it was reciting rows it had already seen.</p><p><span class='beat'>Duplication does not look like a bug. It looks like success.</span></p><p>The second defect is quieter still: a price column loaded as text. <code>df['price'].mean()</code> then either crashes or glues strings together. Both are caught by looking at <code>.info()</code> and <code>.duplicated()</code> before modelling.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>A duplicate row leaks between train and test. A number stored as text silently disables arithmetic.</p></div>
+<div class="src-head">📓 <a href="../Concept/17_Handling_Duploicate_Data.ipynb">17_Handling_Duploicate_Data.ipynb</a></div>
+<h2 id="handling-duplicate-data">Handling Duplicate Data</h2>
+<p><code>04_Data_Cleaning.MD</code> names this as sub-skill #5 — genuinely new ground,
+not covered by any earlier notebook (<code>06</code>–<code>14</code> were all about <em>missing</em>
+values and outliers, never repeated rows). Its own table draws a sharp
+line between two different problems that both get called &quot;duplicates&quot;:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Type</th>
+  <th>What it looks like</th>
+  <th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Exact duplicates</strong></td>
+  <td>Two rows, every column identical</td>
+  <td>Drop one copy</td>
+</tr>
+<tr>
+  <td><strong>Near-duplicates</strong></td>
+  <td>Same real record, different text — <code>&quot;Apple&quot;</code> vs <code>&quot;APPLE &quot;</code></td>
+  <td>Normalize first, <em>then</em> compare</td>
+</tr>
+</tbody>
+</table>
+<p>Section 1 builds a small 6-row example where both cases are visible at
+once. Section 2 runs the exact-duplicate check on the real <code>../../_shared_data/loans.csv</code>.
+Section 3 sanity-checks for near-duplicates too.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt</pre></div>
+<h2 id="1-the-mechanics-a-small-controlled-example">1. The Mechanics — A Small, Controlled Example</h2>
+<p>Six students, two subjects. Two rows (<code>0</code> and <code>4</code>) are planted as <strong>exact</strong>
+duplicates — same name, same marks in both subjects. Two more (<code>2</code> and <code>5</code>)
+share a name and an <code>eng</code> score but differ in <code>hindi</code> — a <strong>partial</strong>
+match, not a true duplicate, deliberately included to show how the
+<code>subset</code> parameter can get this wrong.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">data = {
+    &quot;name&quot;:  [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;c&quot;],
+    &quot;eng&quot;:   [8,   7,   5,   8,   8,   4],
+    &quot;hindi&quot;: [2,   3,   4,   5,   2,   6],
+}
+df = pd.DataFrame(data)
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+0    a    8      2
+1    b    7      3
+2    c    5      4
+3    d    8      5
+4    a    8      2
+5    c    4      6</pre></div>
+<p>Row <code>4</code> is byte-for-byte identical to row <code>0</code> (<code>a</code>, <code>8</code>, <code>2</code>) — a
+real duplicate. Row <code>5</code> looks similar to row <code>2</code> (<code>c</code>, <code>5</code>) but its
+<code>hindi</code> score is <code>6</code>, not <code>4</code> — a <em>different</em> record that happens to
+share two of three columns. Keep an eye on both as the checks below
+run.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">df.duplicated()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    False
+1    False
+2    False
+3    False
+4     True
+5    False
+dtype: bool</pre></div>
+<p><code>duplicated()</code> compares <strong>every column</strong> and returns one boolean per
+row: <code>True</code> if that exact combination already appeared earlier in the
+DataFrame. Default behaviour is <code>keep=&quot;first&quot;</code> — the <em>first</em> time a
+combination shows up it's the original (<code>False</code>); every repeat after that
+is flagged (<code>True</code>). Only row <code>4</code> comes back <code>True</code> here — it's the only
+row that matches an earlier row on <em>all</em> columns. Row <code>5</code> stays <code>False</code>,
+because <code>hindi</code> breaks the match with row <code>2</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">df.duplicated(keep=&quot;last&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     True
+1    False
+2    False
+3    False
+4    False
+5    False
+dtype: bool</pre></div>
+<p>Same comparison, opposite choice of &quot;which copy is the original.&quot;
+With <code>keep=&quot;last&quot;</code>, the <em>last</em> occurrence of a combination is treated as
+the one to keep, so now row <code>0</code> flips to <code>True</code> and row <code>4</code> flips to
+<code>False</code> — the pair is the same, only which one counts as &quot;the duplicate&quot;
+changed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">df.duplicated(keep=False)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     True
+1    False
+2    False
+3    False
+4     True
+5    False
+dtype: bool</pre></div>
+<p><code>keep=False</code> stops picking a &quot;keeper&quot; altogether — <em>every</em> row that
+belongs to a duplicate set is marked <code>True</code>, first occurrence included.
+Both row <code>0</code> and row <code>4</code> come back <code>True</code> here; useful when the goal is
+&quot;flag anything involved in a duplicate,&quot; not &quot;flag the extras.&quot;</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">df.duplicated(subset=[&quot;name&quot;, &quot;eng&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    False
+1    False
+2    False
+3    False
+4     True
+5    False
+dtype: bool</pre></div>
+<p><code>subset</code> narrows the comparison to just the listed columns. Compared
+on <code>name</code> + <code>eng</code> only, row <code>5</code> (<code>c</code>, <code>5</code>) now matches row <code>2</code> (<code>c</code>, <code>5</code>)
+— <code>hindi</code> is no longer part of the comparison, so the fact that they
+differ there (<code>4</code> vs <code>6</code>) is invisible to this check. This is exactly the
+risk <code>04_Data_Cleaning.MD</code> doesn't spell out but implies: narrowing the
+subset can turn two genuinely different records into &quot;duplicates.&quot;</p>
+
+<h3>Now actually removing them — <code>drop_duplicates()</code></h3>
+<p>Same three <code>keep</code> choices, but this time returning a filtered DataFrame
+instead of a boolean mask.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">df.drop_duplicates()</pre></div>
+<div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+0    a    8      2
+1    b    7      3
+2    c    5      4
+3    d    8      5
+5    c    4      6</pre></div>
+<p>Default <code>keep=&quot;first&quot;</code>: row <code>4</code> is gone, the other 5 rows remain —
+including <em>both</em> row <code>2</code> and row <code>5</code>, since comparing on all columns
+correctly sees them as different records.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">df.drop_duplicates(keep=False)</pre></div>
+<div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+1    b    7      3
+2    c    5      4
+3    d    8      5
+5    c    4      6</pre></div>
+<p><code>keep=False</code> removes <strong>both</strong> copies of any exact duplicate, not
+just the extra one — row <code>0</code> and row <code>4</code> are <em>both</em> gone, leaving 4 rows.
+This is the right call when neither copy can be trusted (which one is the
+&quot;real&quot; one is unknowable), not just when there's one too many.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">df.drop_duplicates(subset=[&quot;name&quot;, &quot;eng&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+0    a    8      2
+1    b    7      3
+2    c    5      4
+3    d    8      5
+5    c    4      6</pre></div>
+<p>Also 4 rows left — but for a different reason than <code>keep=False</code>
+above. Here row <code>5</code> is dropped alongside row <code>4</code>, and row <code>5</code> was <strong>not</strong>
+an exact duplicate — its <code>hindi = 6</code> was real, distinct information,
+discarded because <code>subset</code> never looked at that column. Same row count as
+the previous cell, two very different (and not equally safe) outcomes.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">strategies = {
+    &quot;original&quot;:                          df.shape[0],
+    &quot;drop_duplicates()\n(default)&quot;:       df.drop_duplicates().shape[0],
+    &quot;drop_duplicates(\nkeep=False)&quot;:      df.drop_duplicates(keep=False).shape[0],
+    &quot;drop_duplicates(subset=\n[&#x27;name&#x27;,&#x27;eng&#x27;])&quot;: df.drop_duplicates(subset=[&quot;name&quot;, &quot;eng&quot;]).shape[0],
+}
+
+plt.figure(figsize=(8, 4.2))
+bars = plt.bar(strategies.keys(), strategies.values(),
+                color=[&quot;#52514e&quot;, &quot;#2a78d6&quot;, &quot;#d03b3b&quot;, &quot;#fab219&quot;])
+plt.ylabel(&quot;rows remaining&quot;)
+plt.title(&quot;Same 6-row DataFrame, four different dedup strategies&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width()/2, b.get_height() + 0.07,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/17-handling-duploicate-data-c20-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Same starting data, four different &quot;correct&quot; answers — deduplication
+isn't one fixed operation, it's a decision about which columns define &quot;the
+same row&quot; and which copy (if any) is worth keeping.</p>
+
+<h2 id="2-checking-shared-data-loans-csv-for-real-duplic">2. Checking <code>../../_shared_data/loans.csv</code> for Real Duplicates</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">dataset.duplicated().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
+<p><strong>0.</strong> No two of the 618 rows match on all 13 columns — including
+<code>Loan_ID</code>, which is already unique per applicant by design, so a full-row
+duplicate here would require the exact same ID appearing twice. It
+doesn't.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">cols_without_id = [c for c in dataset.columns if c != &quot;Loan_ID&quot;]
+dataset.duplicated(subset=cols_without_id).sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
+<p>Still <strong>0</strong> — a stronger check than the one above. This asks &quot;did
+two <em>different</em> applicants (different <code>Loan_ID</code>) happen to submit
+identical values on every other field?&quot;, ignoring the one column that's
+guaranteed unique. Comes back clean too: <code>../../_shared_data/loans.csv</code> genuinely has no
+duplicate rows, exact or otherwise. That's a real finding, not a failed
+check — worth confirming explicitly rather than assuming.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">dataset.drop_duplicates(inplace=True)
+dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p><code>(618, 13) → (618, 13)</code>, unchanged — nothing to remove, as expected.
+<code>inplace=True</code> is safe to use here: this is a direct call on the whole
+<code>dataset</code> object, not the <code>dataset[&quot;col&quot;].fillna(..., inplace=True)</code>
+pattern <code>15_Feature_Scaling.ipynb</code> found silently broken under pandas'
+Copy-on-Write — that bug was specific to mutating a <em>column selection</em>,
+not the DataFrame itself.</p>
+
+<h2 id="3-seeing-it-actually-remove-something">3. Seeing It Actually Remove Something</h2>
+<p><code>../../_shared_data/loans.csv</code> has no real duplicates to demonstrate on, so — the way
+<code>04_Data_Cleaning.MD</code> frames it (&quot;two identical loan applications from a
+scraping glitch&quot;) — deliberately re-introduce a few, and confirm
+<code>drop_duplicates()</code> finds exactly those and nothing else.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">glitchy = pd.concat([dataset, dataset.sample(5, random_state=42)], ignore_index=True)
+glitchy.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(623, 13)</pre></div>
+<p><strong>623</strong> rows — the original 618 plus 5 rows sampled from the same
+data and appended a second time, simulating a scraping glitch that
+submitted the same application twice.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">glitchy.duplicated().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(5)</pre></div>
+<p><strong>5</strong> — exactly the 5 rows that now exist twice. Nothing else in
+the 618 original rows got miscounted as a duplicate.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">fig, ax = plt.subplots(figsize=(6.5, 4.2))
+counts = {&quot;before dedup&quot;: glitchy.shape[0],
+          &quot;after dedup&quot;:  glitchy.drop_duplicates().shape[0]}
+bars = ax.bar(counts.keys(), counts.values(), color=[&quot;#d03b3b&quot;, &quot;#2a78d6&quot;])
+ax.set_ylabel(&quot;rows&quot;)
+ax.set_title(&quot;Simulated scraping glitch — 5 duplicated loan applications&quot;)
+for b in bars:
+    ax.text(b.get_x() + b.get_width()/2, b.get_height() + 3,
+             str(int(b.get_height())), ha=&quot;center&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/17-handling-duploicate-data-c35-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">glitchy.drop_duplicates(inplace=True)
+glitchy.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p>Back to <strong><code>(618, 13)</code></strong> — exactly the original clean shape.
+<code>drop_duplicates()</code> removed precisely the 5 artificial repeats and no real
+row got caught in the crossfire.</p>
+
+<h2 id="4-near-duplicates-a-quick-sanity-check">4. Near-Duplicates — A Quick Sanity Check</h2>
+<p><code>duplicated()</code> only catches <strong>exact</strong> string matches. <code>04_Data_Cleaning.MD</code>'s
+<code>&quot;Apple&quot;</code> vs <code>&quot;APPLE &quot;</code> example would sail straight through it — two rows
+that are the same real category, spelled differently, are just two
+different strings as far as <code>duplicated()</code> is concerned. Before trusting
+the &quot;0 duplicates&quot; result above, check whether any categorical column in
+<code>../../_shared_data/loans.csv</code> actually has that problem.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">for col in [&quot;Gender&quot;, &quot;Married&quot;, &quot;Dependents&quot;, &quot;Education&quot;,
+            &quot;Self_Employed&quot;, &quot;Property_Area&quot;, &quot;Loan_Status&quot;]:
+    print(col, &quot;-&gt;&quot;, sorted(dataset[col].dropna().unique().tolist()))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Gender -&gt; [&#x27;Female&#x27;, &#x27;Male&#x27;]
+Married -&gt; [&#x27;No&#x27;, &#x27;Yes&#x27;]
+Dependents -&gt; [&#x27;0&#x27;, &#x27;1&#x27;, &#x27;2&#x27;, &#x27;3+&#x27;]
+Education -&gt; [&#x27;Graduate&#x27;, &#x27;Not Graduate&#x27;]
+Self_Employed -&gt; [&#x27;No&#x27;, &#x27;Yes&#x27;]
+Property_Area -&gt; [&#x27;Rural&#x27;, &#x27;Semiurban&#x27;, &#x27;Urban&#x27;]
+Loan_Status -&gt; [&#x27;N&#x27;, &#x27;Y&#x27;]</pre></div>
+<p>Every column already has one consistent spelling per category —
+<code>&quot;Male&quot;</code>/<code>&quot;Female&quot;</code>, never a <code>&quot;male&quot;</code>/<code>&quot;Male&quot;</code> mix; <code>&quot;Yes&quot;</code>/<code>&quot;No&quot;</code>, never
+<code>&quot;yes&quot;</code>/<code>&quot;Yes &quot;</code>. No normalizing needed here. Worth checking explicitly,
+though: a mixed-case column would have silently defeated the exact-match
+<code>duplicated()</code> calls in Section 2 — <code>&quot;Male&quot;</code> and <code>&quot;male&quot;</code> read as two
+different values, not one category counted twice.</p>
+
+<h2 id="summary">Summary</h2>
+<ul>
+<li><code>duplicated()</code> flags repeats; <code>drop_duplicates()</code> removes them — both
+default to comparing <strong>every</strong> column and keeping the <strong>first</strong>
+occurrence (<code>keep=&quot;first&quot;</code>).</li>
+<li><code>keep=&quot;last&quot;</code> flips which copy survives; <code>keep=False</code> drops <strong>every</strong>
+member of a duplicate set, not just the extras.</li>
+<li><code>subset=[...]</code> narrows which columns count toward &quot;the same row&quot; — and
+can silently treat genuinely different records as duplicates if the
+ignored columns actually differ (Section 1's row <code>5</code>).</li>
+<li><code>../../_shared_data/loans.csv</code> has <strong>zero</strong> exact duplicates, checked two ways (with and
+without <code>Loan_ID</code>), and no near-duplicate spelling issues in any
+categorical column either — confirmed by running the checks, not
+assumed.</li>
+<li><code>inplace=True</code> is safe on a direct <code>dataset.drop_duplicates(...)</code> call —
+unlike the chained <code>dataset[&quot;col&quot;].fillna(..., inplace=True)</code> pattern
+<code>15_Feature_Scaling.ipynb</code> found silently broken under Copy-on-Write.</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/18_Replace_Change_Data_Type.ipynb">18_Replace_Change_Data_Type.ipynb</a></div>
+<h2 id="replace-amp-change-data-type">Replace &amp; Change Data Type</h2>
+<p><code>04_Data_Cleaning.MD</code> files this under sub-skill #6, <strong>Dealing with
+Inconsistent Data</strong> — a column that's fully <em>present</em> but encoded in a
+way a model (or <code>astype()</code>) can't use as-is. <code>../../_shared_data/loans.csv</code>'s <code>Dependents</code>
+column is exactly that: four categories where three are digits (<code>0</code>,
+<code>1</code>, <code>2</code>) and the fourth is <code>&quot;3+&quot;</code> — a string a numeric dtype has no way
+to parse.</p>
+<p>Two separate operations, easy to blur together:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Operation</th>
+  <th>Question it answers</th>
+  <th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Replace</strong></td>
+  <td>&quot;Same column, different <em>values</em>?&quot;</td>
+  <td><code>.replace(old, new)</code></td>
+</tr>
+<tr>
+  <td><strong>Change dtype</strong></td>
+  <td>&quot;Same values, different <em>storage type</em>?&quot;</td>
+  <td><code>.astype(dtype)</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>&quot;3+&quot;</code> needs both, in that order: replace the value with something
+numeric-looking (<code>&quot;3&quot;</code>), <em>then</em> convert the column to <code>int64</code>. Reverse
+the order and <code>astype()</code> throws — it still has <code>&quot;3+&quot;</code> to parse.</p>
+<p>This notebook also exists because the first attempt got the values right
+but the DataFrame never actually changed — a genuine Copy-on-Write bug in
+the <code>dataset[&quot;col&quot;].replace(..., inplace=True)</code> pattern, not a dtype
+problem despite what the resulting error looked like. Section 1
+reproduces that bug on purpose before Section 2 touches the real data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt</pre></div>
+<h2 id="1-the-copy-on-write-trap-a-controlled-repro">1. The Copy-on-Write Trap — A Controlled Repro</h2>
+<p>Before touching <code>../../_shared_data/loans.csv</code>, reproduce the actual bug on a throwaway
+3-row DataFrame: does <code>.replace(..., inplace=True)</code> on a <em>column
+selection</em> (<code>df[&quot;col&quot;]</code>) really leave the DataFrame unchanged? Small
+enough to see every step.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">demo = pd.DataFrame({&quot;bucket&quot;: [&quot;0&quot;, &quot;1&quot;, &quot;3+&quot;]})
+demo</pre></div>
+<div class="out"><div class="h">Output</div><pre>  bucket
+0      0
+1      1
+2     3+</pre></div>
+<p>Call <code>.replace()</code> chained off the column selection — exactly the way
+it's tempting to write it:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">demo[&quot;bucket&quot;].replace(&quot;3+&quot;, &quot;3&quot;, inplace=True)
+demo</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_35352/597682250.py:1: ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+Such inplace method never works to update the original DataFrame or Series, because the intermediate object on which we are setting values always behaves as a copy (due to Copy-on-Write).
+
+For example, when doing &#x27;df[col].method(value, inplace=True)&#x27;, try using &#x27;df.method({col: value}, inplace=True)&#x27; instead, to perform the operation inplace on the original object, or try to avoid an inplace operation using &#x27;df[col] = df[col].method(value)&#x27;.
+
+See the documentation for a more detailed explanation: https://pandas.pydata.org/pandas-docs/stable/user_guide/copy_on_write.html
+  demo[&quot;bucket&quot;].replace(&quot;3+&quot;, &quot;3&quot;, inplace=True)
+  bucket
+0      0
+1      1
+2     3+</pre></div>
+<p>The warning names the exact problem: <code>demo[&quot;bucket&quot;]</code> builds a temporary
+copy under pandas' Copy-on-Write rules, and <code>inplace=True</code> only mutates
+<em>that</em> copy — <code>demo</code> itself never sees the change. <code>&quot;3+&quot;</code> is still
+sitting in the real DataFrame, confirmed by the output above. This is
+the same failure the real <code>Dependents</code> column hit originally:
+<code>value_counts()</code> kept showing <code>3+</code> no matter how many times the
+<code>inplace=True</code> cell was re-run, and the follow-up <code>astype(&quot;int64&quot;)</code> then
+failed trying to parse a <code>&quot;3+&quot;</code> that was never actually removed.</p>
+<p>The fix: don't chain — reassign the column instead.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">demo[&quot;bucket&quot;] = demo[&quot;bucket&quot;].replace(&quot;3+&quot;, &quot;3&quot;)
+demo</pre></div>
+<div class="out"><div class="h">Output</div><pre>  bucket
+0      0
+1      1
+2      3</pre></div>
+<p>Same method, same arguments — the only change is
+<code>demo[&quot;bucket&quot;] = ...</code> instead of <code>inplace=True</code>. No warning, and
+<code>&quot;3+&quot;</code> is actually gone this time. That's the pattern used on the real
+column below.</p>
+
+<h2 id="2-real-data-shared-data-loans-csv-s-dependents-c">2. Real Data — <code>../../_shared_data/loans.csv</code>'s <code>Dependents</code> Column</h2>
+<p>Load, check dtype, check for missing values, check the categories
+actually present — same order as the toy example, on the real
+column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">dataset.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 618 entries, 0 to 617
+Data columns (total 13 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Loan_ID            618 non-null    str    
+ 1   Gender             605 non-null    str    
+ 2   Married            612 non-null    str    
+ 3   Dependents         603 non-null    str    
+ 4   Education          609 non-null    str    
+ 5   Self_Employed      586 non-null    str    
+ 6   ApplicantIncome    616 non-null    float64
+ 7   CoapplicantIncome  618 non-null    int64  
+ 8   LoanAmount         596 non-null    float64
+ 9   Loan_Amount_Term   597 non-null    float64
+ 10  Credit_History     568 non-null    float64
+ 11  Property_Area      609 non-null    str    
+ 12  Loan_Status        618 non-null    str    
+dtypes: float64(4), int64(1), str(8)
+memory usage: 62.9 KB</pre></div>
+<p><code>Dtype: str</code> here — not the classic <code>object</code> dtype pandas showed before
+its newer string backend, but that distinction isn't the bug: chained
+<code>inplace=True</code> breaks identically regardless of dtype, as Section 1 just
+showed with a plain toy DataFrame. What <em>does</em> matter from this output:
+<code>Dependents</code> is <code>603</code> non-null out of <code>618</code> rows — <code>15</code> missing —
+confirmed next by <code>isnull().sum()</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dependents
+0     356
+2     108
+1      82
+3+     57
+Name: count, dtype: int64</pre></div>
+<p>Four categories, but only three (<code>0</code>, <code>1</code>, <code>2</code>) are digits — <code>3+</code> is
+deliberately non-numeric (a household could have more than 3
+dependents, but the source data caps the label instead of guessing an
+exact count). Counts add up to <code>356 + 108 + 82 + 57 = 603</code> — matching
+the <code>603</code> non-null count from <code>.info()</code> above; the other <code>15</code> rows are
+the missing values <code>isnull().sum()</code> just confirmed. Two separate
+problems to fix, in order: the missing <code>15</code> first, then the <code>3+</code> label.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].fillna(dataset[&quot;Dependents&quot;].mode()[0])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dependents
+0     371
+2     108
+1      82
+3+     57
+Name: count, dtype: int64</pre></div>
+<p><code>0</code> grew from <code>356</code> → <code>371</code> — exactly the <code>15</code> previously-missing rows,
+now filled with the column's mode (<code>&quot;0&quot;</code>, the most common value). Every
+other category is untouched; <code>.mode()[0]</code> only ever fills gaps, never
+overwrites a value that was already there. <code>3+</code> is still <code>57</code> — next.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].replace(&quot;3+&quot;, &quot;3&quot;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Dependents
+0    371
+2    108
+1     82
+3     57
+Name: count, dtype: int64</pre></div>
+<p><code>3+</code> → <code>3</code>. Still <code>57</code> rows, same position in the distribution — only
+the label changed, not which rows belong to it. Confirmed by reassigning
+rather than chaining <code>inplace=True</code>, per the repro in Section 1. Every
+value in the column is now a plain digit string (<code>&quot;0&quot;</code>–<code>&quot;3&quot;</code>), and there
+are no more missing rows — ready for <code>astype()</code>.</p>
+
+<h2 id="3-changing-the-dtype">3. Changing the Dtype</h2>
+<p>Values are numeric-looking now (<code>&quot;0&quot;</code>, <code>&quot;1&quot;</code>, <code>&quot;2&quot;</code>, <code>&quot;3&quot;</code>), but the
+column is still text — <code>astype(&quot;int64&quot;)</code> is the step that actually
+changes storage type. Worth checking what that buys beyond &quot;the
+<code>ValueError</code> goes away&quot;: dtype and memory footprint, before and after.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">before_dtype = dataset[&quot;Dependents&quot;].dtype
+before_mem = dataset[&quot;Dependents&quot;].memory_usage(deep=True)
+before_dtype, before_mem</pre></div>
+<div class="out"><div class="h">Output</div><pre>(&lt;StringDtype(storage=&#x27;python&#x27;, na_value=nan)&gt;, 31032)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].astype(&quot;int64&quot;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">after_dtype = dataset[&quot;Dependents&quot;].dtype
+after_mem = dataset[&quot;Dependents&quot;].memory_usage(deep=True)
+after_dtype, after_mem</pre></div>
+<div class="out"><div class="h">Output</div><pre>(dtype(&#x27;int64&#x27;), 5076)</pre></div>
+<p>Same 618 values, two different storage types — and a smaller memory
+footprint isn't the only payoff. A <code>str</code>-dtype column can't run numeric
+methods at all; try <code>.mean()</code> before conversion and pandas has no
+sensible way to average <code>&quot;0&quot;</code> and <code>&quot;3&quot;</code> as text. After <code>astype(&quot;int64&quot;)</code>
+it's a one-line call.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">dataset[&quot;Dependents&quot;].mean()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.7588996763754046)</pre></div>
+<p>That number only exists because the column is <code>int64</code> now — it would
+have raised on the original <code>&quot;3+&quot;</code>-containing text column, and even on
+the cleaned-but-still-<code>str</code> version just before <code>astype()</code>. Two
+visualizations to close out: the memory difference from above, and what
+the fully cleaned distribution looks like.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">fig, ax = plt.subplots(figsize=(6, 4.2))
+mem = {&quot;before\n(str)&quot;: before_mem, &quot;after\n(int64)&quot;: after_mem}
+bars = ax.bar(mem.keys(), mem.values(), color=[&quot;#d03b3b&quot;, &quot;#2a78d6&quot;])
+ax.set_ylabel(&quot;bytes (Dependents column, memory_usage(deep=True))&quot;)
+ax.set_title(&quot;Same 618 values, two storage types&quot;)
+for b in bars:
+    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + max(mem.values()) * 0.01,
+             f&quot;{int(b.get_height()):,}&quot;, ha=&quot;center&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/18-replace-change-data-type-c29-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><code>31,032</code> bytes as <code>str</code> → <code>5,076</code> bytes as <code>int64</code> — about <strong>83% less</strong>
+memory for the exact same 618 values. <code>int64</code> stores each entry as a
+fixed 8-byte number; the string version pays for Python string-object
+overhead per row on top of the actual digit. Small on one column,
+compounding fast across a real dataset with many categorical-looking
+numeric columns. And separately from size: <code>dataset[&quot;Dependents&quot;].mean()</code>
+now returns <code>0.759</code> — a real number, only possible because the dtype is
+genuinely numeric, not text that merely looks like digits.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">counts_after = dataset[&quot;Dependents&quot;].value_counts().sort_index()
+plt.figure(figsize=(6.5, 4.2))
+bars = plt.bar(counts_after.index.astype(str), counts_after.values, color=&quot;#2a78d6&quot;)
+plt.xlabel(&quot;Dependents&quot;)
+plt.ylabel(&quot;rows&quot;)
+plt.title(&quot;Dependents — cleaned &amp; numeric (618 rows, 0 missing)&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width() / 2, b.get_height() + 3,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/18-replace-change-data-type-c31-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>All four bars now line up on plain integer labels (<code>0</code>–<code>3</code>), x-axis
+sorted ascending, no <code>3+</code> in sight and no gap for the <code>15</code> rows that
+used to be missing — every one of the 618 rows lands in exactly one
+bucket.</p>
+
+<h2 id="summary">Summary</h2>
+<ul>
+<li><strong><code>.replace()</code></strong> changes <em>values</em>; <strong><code>.astype()</code></strong> changes <em>storage
+type</em>. <code>&quot;3+&quot;</code> needed both, in that order — <code>astype(&quot;int64&quot;)</code> can't
+parse a <code>+</code>, so replace has to run first.</li>
+<li><strong>Copy-on-Write trap:</strong> <code>df[&quot;col&quot;].method(..., inplace=True)</code> silently
+no-ops — <code>df[&quot;col&quot;]</code> builds a temporary copy, and <code>inplace=True</code> only
+mutates that copy, never the real DataFrame. Reassign instead:
+<code>df[&quot;col&quot;] = df[&quot;col&quot;].method(...)</code>. Reproduced deliberately on a toy
+3-row DataFrame in Section 1 before touching real data, because this
+is exactly the bug that made the original <code>Dependents</code> cleanup look
+broken.</li>
+<li><code>fillna(mode)</code> moved the <code>15</code> missing rows into the <code>&quot;0&quot;</code> bucket
+(<code>356 → 371</code>); every other category was untouched.</li>
+<li><code>replace(&quot;3+&quot;, &quot;3&quot;)</code> relabeled the <code>57</code>-row bucket without moving any
+rows — same count, same position, just a parseable value.</li>
+<li><code>astype(&quot;int64&quot;)</code> is the step that actually changes storage: smaller
+memory footprint (measured directly via <code>memory_usage(deep=True)</code>),
+and it's what turns <code>.mean()</code> from a <code>TypeError</code> into a real number —
+numeric methods only work on a genuinely numeric dtype, not a string
+that merely <em>looks</em> numeric.</li>
+</ul>
+
+<div class="foot"><a class="btn" href="../Concept/17_Handling_Duploicate_Data.ipynb">17_Handling_Duploicate_Data.ipynb ↗</a><a class="btn" href="../Concept/18_Replace_Change_Data_Type.ipynb">18_Replace_Change_Data_Type.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

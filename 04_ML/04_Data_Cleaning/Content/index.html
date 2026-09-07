@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Cleaning — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Data Cleaning</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#phase-3-topic-2-data-cleaning-missing-values-amp">Phase 3, Topic 2 — Data Cleaning: Missing Values &amp;am</a><a href="#the-story">The Story</a><a href="#problem-1-missing-value-imputation">Problem 1: Missing Value — Imputation</a><a href="#problem-2-outlier-iqr-method">Problem 2: Outlier — IQR Method</a><a href="#visual">Visual</a><a href="#clarifying-questions-asked-during-this-topic">Clarifying Questions Asked During This Topic</a><a href="#visual-walkthrough">Visual Walkthrough</a><a href="#key-takeaways">Key Takeaways</a><a href="#genai-rag-bridge">GenAI / RAG Bridge</a><a href="#faq">FAQ</a><a href="#interview-questions-amp-answers">Interview Questions &amp;amp; Answers</a><a href="#status">Status</a><a href="#machine-learning-04-data-cleaning">Machine Learning — 04. Data Cleaning</a><a href="#what-is-data-cleaning">What Is Data Cleaning?</a><a href="#the-raw-cleaned-example-from-the-slide">The Raw → Cleaned Example (from the slide)</a><a href="#the-6-sub-skills-of-data-cleaning">The 6 Sub-Skills of Data Cleaning</a><a href="#new-ground-handling-duplicates">New Ground: Handling Duplicates</a><a href="#new-ground-dealing-with-inconsistent-data">New Ground: Dealing with Inconsistent Data</a><a href="#where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a><a href="#data-cleaning-practice-loan-dataset">Data Cleaning Practice — Loan Dataset</a><a href="#1-load-the-dataset">1. Load the dataset</a><a href="#2-shape-how-many-rows-and-columns">2. Shape — how many rows and columns?</a><a href="#3-which-columns-have-missing-values-and-how-many">3. Which columns have missing values, and how many?</a><a href="#4-missing-values-as-a-percentage-of-each-column">4. Missing values as a percentage of each column</a><a href="#5-overall-what-of-the-entire-dataset-is-missing">5. Overall — what % of the entire dataset is missing</a><a href="#6-visualize-the-missing-values">6. Visualize the missing values</a><a href="#7-the-50-rule-when-a-column-isn-t-worth-saving">7. The 50% Rule — when a column isn&#x27;t worth saving</a><a href="#reading-the-result">Reading the result</a><a href="#8-filling-the-missing-values">8. Filling the Missing Values</a><a href="#reading-the-result-section-8">Reading the result (Section 8)</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Data Cleaning</h1>
+  <p class="lede">Real data arrives broken. This is the work nobody photographs.</p>
+  <div class="tags"><span class="tag">1 notebook · 2 notes</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Deepak got the loan dataset and went straight to the model.</strong> Fit, predict, score — 94% on the first try. He was delighted.</p><p>Then he looked at the table. Income had blanks. Gender was recorded as "Male", "male", "M" and "  Male ". Two hundred rows were exact duplicates. One applicant was 3 years old.</p><p><span class='beat'>The 94% was measuring the mess, not the customers.</span> The duplicated rows sat in both train and test, so the model was scored on rows it had already memorised.</p><p>Cleaning is not tidying for its own sake. Every defect above quietly changes the number the model reports back to you.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>A model can only be as honest as the table you hand it. Clean first, model second.</p></div>
+<div class="src-head">📝 <a href="../Concept/02_data_cleaning.md">02_data_cleaning.md</a></div>
+<h2 id="phase-3-topic-2-data-cleaning-missing-values-amp">Phase 3, Topic 2 — Data Cleaning: Missing Values &amp; Outliers</h2>
+<h2 id="the-story">The Story</h2>
+<p>With all 8 rows collected (Topic 1), Arjun's manager asks: &quot;Can we use this
+data as-is?&quot; Two problems block the answer:</p>
+<ol>
+<li><strong>Deepak's credit score is missing</strong> (API timeout).</li>
+<li><strong>Priya's income (₹12,00,000)</strong> looks like a data-entry typo.</li>
+</ol>
+<p>Each problem needs a different fix, because — as established in Topic 1 —
+they came from different failure modes.</p>
+<h2 id="problem-1-missing-value-imputation">Problem 1: Missing Value — Imputation</h2>
+<p>With only 8 rows total, dropping Deepak's entire record over one missing
+field is wasteful. Instead, the missing credit score is <strong>imputed</strong> —
+filled in using a statistic computed from the other 7 known scores.</p>
+<p><strong>Known credit scores (7 customers, Deepak excluded):</strong>
+720, 680, 610, 590, 700, 615, 750</p>
+<p><strong>Mean:</strong>
+Sum = 720 + 680 + 610 + 590 + 700 + 615 + 750 = 4,665
+Mean = 4,665 ÷ 7 = <strong>666.43</strong></p>
+<p><strong>Median:</strong>
+Sorted: 590, 610, 615, 680, 700, 720, 750
+7 values (odd count) → middle value directly = <strong>680</strong></p>
+<p><strong>Decision: use the mean (666.43) to impute Deepak's credit score.</strong></p>
+<p>Note: mean and median are fairly close here (666.43 vs 680) — there's no
+strong skew in this particular set of 7 scores, so either would have been a
+reasonable choice. The general rule to remember for future topics: when a
+dataset has significant skew or extreme values, the <strong>median</strong> is more
+robust because the mean gets pulled toward outliers; when the data is
+fairly evenly spread (like this one), the mean is often used by default
+since it uses all data points rather than just the middle one.</p>
+<h2 id="problem-2-outlier-iqr-method">Problem 2: Outlier — IQR Method</h2>
+<p>Instead of eyeballing that ₹12,00,000 &quot;looks wrong,&quot; the IQR method proves
+it statistically.</p>
+<p><strong>All 8 monthly incomes, sorted (₹):</strong>
+30,000 · 38,000 · 40,000 · 45,000 · 55,000 · 62,000 · 85,000 · 12,00,000</p>
+<p><strong>Step 1 — split into lower half and upper half (4 each):</strong></p>
+<ul>
+<li>Lower half: 30,000, 38,000, 40,000, 45,000</li>
+<li>Upper half: 55,000, 62,000, 85,000, 12,00,000</li>
+</ul>
+<p><strong>Step 2 — Q1 = median of lower half</strong> (even count → average the two middle
+values):
+Q1 = (38,000 + 40,000) ÷ 2 = <strong>39,000</strong></p>
+<p><strong>Step 3 — Q3 = median of upper half</strong> (even count → average the two middle
+values):
+Q3 = (62,000 + 85,000) ÷ 2 = <strong>73,500</strong></p>
+<p><strong>Step 4 — IQR (Interquartile Range):</strong>
+IQR = Q3 − Q1 = 73,500 − 39,000 = <strong>34,500</strong></p>
+<p>This is the width of the &quot;normal middle 50%&quot; of the data.</p>
+<p><strong>Step 5 — Upper bound:</strong>
+Upper bound = Q3 + 1.5 × IQR = 73,500 + (1.5 × 34,500) = 73,500 + 51,750 =
+<strong>125,250</strong></p>
+<p>The 1.5× multiplier (a convention introduced by statistician John Tukey) is
+a buffer added on top of the normal range — wide enough that ordinary
+variation stays inside it, narrow enough that genuinely extreme values
+still get flagged. Flagging everything outside Q1–Q3 directly would mark
+50% of all data as outliers, which is useless — hence the buffer.</p>
+<p><strong>Step 6 — Compare:</strong>
+Priya's income (₹12,00,000) vs. upper bound (₹125,250) → <strong>₹12,00,000 is
+about 9.6× past the upper bound.</strong> Confirmed statistical outlier, not just
+a visual impression.</p>
+<h2 id="visual">Visual</h2>
+<p>A number line plot showed the 7 clustered &quot;normal&quot; incomes, the IQR box
+(Q1 to Q3), the upper bound as a dashed line, and Priya's income sitting far
+beyond it on a broken axis — visually confirming how far outside normal
+range her value falls.</p>
+<h2 id="clarifying-questions-asked-during-this-topic">Clarifying Questions Asked During This Topic</h2>
+<p>These are the specific points of confusion that came up, kept here because
+they're worth remembering — not just the final answer, but <em>why</em> the
+confusion made sense.</p>
+<p><strong>Q: Median is just &quot;sort and pick the middle number&quot; — why did you
+average two numbers for Q1?</strong>
+A: That rule still holds. The averaging only happens when there's no
+single middle value — i.e. an <strong>even</strong> count of numbers. {10, 20, 30} (odd)
+has one clean middle: 20. {10, 20} (even) has two numbers tied for the
+middle, so the convention is to average them: (10+20)/2 = 15. Each half of
+the 8 incomes has 4 values (even), which is why finding Q1 and Q3 both
+required averaging two middle values.</p>
+<p><strong>Q: What is IQR and what is the upper bound — these were never properly
+explained before being used?</strong>
+A: Worked from a small 4-number example first (10, 20, 30, 40) before
+applying to the real data:</p>
+<ul>
+<li>Q1 = median of the lower half = &quot;the value below which the bottom 25%
+sits.&quot;</li>
+<li>Q3 = median of the upper half = &quot;the value below which the bottom 75%
+sits.&quot;</li>
+<li>IQR = Q3 − Q1 = the width of the middle 50% of the data — where
+&quot;typical&quot; values live.</li>
+<li>Upper bound = Q3 + 1.5×IQR — a buffer zone added beyond the normal
+range, so that only values well outside typical spread get flagged.</li>
+</ul>
+<p><strong>Q: Why 1.5 × IQR specifically — where does that number come from?</strong>
+A: It's a convention introduced by statistician John Tukey, not something
+derived from this specific dataset. Flagging everything simply outside
+Q1–Q3 would mark 50% of all data as outliers — useless. 1.5× IQR acts as a
+buffer: wide enough that ordinary variation stays inside it, narrow enough
+that genuinely extreme values (like Priya's income) still get caught.
+(A stricter 3×IQR threshold exists for &quot;extreme outliers,&quot; but 1.5× is the
+standard cutoff.)</p>
+<h2 id="visual-walkthrough">Visual Walkthrough</h2>
+<p><figure class="shot"><img src="../Data/images/02_income_outlier_iqr.svg" alt="Income outlier chart showing Q1, Q3, IQR box, upper bound, and Priya&#x27;s flagged outlier value"><figcaption>Income outlier chart showing Q1, Q3, IQR box, upper bound, and Priya&#x27;s flagged outlier value</figcaption></figure></p>
+<p>A labeled number-line chart plotted all 8 customers together:</p>
+<ul>
+<li>The 7 &quot;normal&quot; customers (Meena, Farhan, Imran, Ravi, Kavya, Sunita,
+Deepak) shown as gray dots, each labeled with name and exact income
+(30,000 through 85,000).</li>
+<li>A dashed vertical line at <strong>Q1 = 39,000</strong>, positioned between Farhan
+(38,000) and Imran (40,000) — matching the calculation, since Q1 is the
+average of those two middle values.</li>
+<li>A dashed vertical line at <strong>Q3 = 73,500</strong>, positioned between Sunita
+(62,000) and Deepak (85,000) — again matching the calculation.</li>
+<li>A teal box spanning from the Q1 line to the Q3 line, with the IQR
+calculation labeled directly inside it: <strong>IQR = Q3 − Q1 = 73,500 −
+39,000 = 34,500</strong>.</li>
+<li>A red dashed line marking the <strong>upper bound (125,250)</strong>, positioned just
+past Deepak's dot — clearly beyond all 7 normal incomes.</li>
+<li>A broken/zigzag mark on the axis line, signaling the scale jumps
+discontinuously — because Priya's value is too far away to plot to true
+scale alongside the others.</li>
+<li>Priya's dot, shown in red past the break, labeled <strong>12,00,000</strong>, with a
+caption underneath: <em>&quot;Priya's 12,00,000 is about 9.6x past the upper
+bound.&quot;</em></li>
+</ul>
+<p>The visual reinforces the same conclusion as the arithmetic: all 7 normal
+incomes cluster tightly near the IQR box, while Priya's value sits in
+completely different territory — not just &quot;a bit high,&quot; but far enough out
+to be flagged as a statistical outlier rather than a judgment call.</p>
+<h2 id="key-takeaways">Key Takeaways</h2>
+<ul>
+<li><strong>Missing values</strong> are handled through imputation (mean or median),
+chosen based on how skewed the rest of the data is. Mean uses all data
+points; median is robust to skew/extremes.</li>
+<li><strong>Median calculation rule:</strong> odd count → middle value directly; even
+count → average the two middle values. This same even/odd rule applies
+when finding Q1 and Q3, since each is itself a median of a sub-group.</li>
+<li><strong>IQR method</strong> for outliers: IQR = Q3 − Q1 defines the &quot;normal&quot; spread;
+1.5×IQR is a buffer added beyond Q3 (or subtracted below Q1, for low
+outliers) before a value is flagged.</li>
+<li>Knowing <em>why</em> a value is missing or wrong (Topic 1) directly informs
+<em>how</em> to fix it (Topic 2) — an API-timeout gap gets imputed, a
+likely-typo outlier gets flagged and corrected/excluded.</li>
+</ul>
+<h2 id="genai-rag-bridge">GenAI / RAG Bridge</h2>
+<p>In a RAG pipeline, the equivalent of imputation is handling missing or
+incomplete document fields — e.g., a scraped page missing its title or
+publish date, filled with a reasonable default rather than dropping the
+whole document. The equivalent of outlier detection is filtering out
+corrupted or nonsensical chunks (e.g., garbled OCR text, a scraping error
+that returned raw HTML instead of content) before they get embedded and
+pollute retrieval results — using rule-based thresholds much like the IQR
+method flags Priya's income.</p>
+<h2 id="faq">FAQ</h2>
+<p>General points people commonly get confused about with this topic — not
+specific to this conversation, just worth having on record.</p>
+<p><strong>Q: Should missing values always be imputed with the mean?</strong>
+A: No. Mean works well when the data is roughly symmetric (no strong
+skew), because it uses every data point. When data is skewed or has
+extreme values, the mean gets pulled toward those extremes — median is
+more robust in that case since it only cares about the middle position,
+not the actual magnitude of outlying values.</p>
+<p><strong>Q: Isn't it simpler to just drop rows with missing or outlier values?</strong>
+A: Simpler, yes — but costly, especially with small datasets. Dropping
+Deepak's entire row over one missing field throws away 7 other perfectly
+good fields. The tradeoff is data loss vs. introduced bias: imputation
+keeps the row but adds an estimate; dropping keeps everything &quot;real&quot; but
+shrinks the dataset. With only 8 rows, dropping is rarely worth it.</p>
+<p><strong>Q: Does the IQR method work well on any dataset size?</strong>
+A: It works on any size mathematically, but with very small samples (like
+8 rows here), Q1 and Q3 are less statistically stable — a single value
+shifts them more than it would in a dataset of thousands. The method is
+still the right conceptual tool to learn on; production datasets are
+usually much larger, which makes IQR bounds more reliable.</p>
+<p><strong>Q: If I find more than one outlier, do I just drop all of them
+automatically?</strong>
+A: No — IQR flags candidates, it doesn't make the decision for you. Each
+flagged value still needs a judgment call: is it a data-entry error (like
+Priya's likely typo), a legitimate rare case (a genuinely high earner),
+or a sign of a deeper data issue? The fix (correct, cap, or drop) depends
+on which of those it turns out to be.</p>
+<h2 id="interview-questions-amp-answers">Interview Questions &amp; Answers</h2>
+<p><strong>Q: What's the difference between mean and median imputation, and when
+would you choose one over the other?</strong>
+A: Mean imputation replaces a missing value with the average of the known
+values; median imputation uses the middle value of the sorted known
+values. Mean is preferred on roughly symmetric, non-skewed data since it
+uses all available information. Median is preferred when the data is
+skewed or contains outliers, since the mean would be distorted by those
+extreme values while the median stays stable.</p>
+<p><strong>Q: How does the IQR method detect outliers? What's the formula?</strong>
+A: Sort the data, split it into a lower half and upper half, and compute
+Q1 (median of the lower half) and Q3 (median of the upper half). IQR =
+Q3 − Q1 represents the spread of the middle 50% of the data. Any value
+above <code>Q3 + 1.5 × IQR</code> (or below <code>Q1 − 1.5 × IQR</code>) is flagged as a
+statistical outlier.</p>
+<p><strong>Q: Why not just delete every row with a missing or outlier value?</strong>
+A: Deleting is the simplest option but can meaningfully shrink a dataset
+and introduce bias if the missingness or outlier isn't random — for
+example, if higher earners are more likely to have data-entry issues,
+deleting those rows systematically removes a segment of the population
+rather than &quot;bad data&quot; at random. Imputation or correction preserves more
+of the dataset's signal, provided the substitution method is reasonable.</p>
+<p><strong>Q: Where does data cleaning fit in a production ML pipeline, and why
+does it matter for model performance?</strong>
+A: It sits right after data collection and before feature engineering —
+the raw ingested data is rarely usable as-is. It matters because model
+quality is bounded by input quality: unresolved missing values can break
+training entirely (many algorithms can't handle nulls), and unresolved
+outliers can distort learned relationships, especially in models sensitive
+to scale like linear regression. Clean data isn't a nice-to-have step —
+it's a prerequisite for anything trained afterward to be trustworthy.</p>
+<h2 id="status">Status</h2>
+<p>✅ Topic 2 understood and confirmed. Deepak's credit score → imputed with
+mean (666.43). Priya's income → confirmed statistical outlier via IQR
+method. Ready to proceed to Topic 3: Feature Engineering, Encoding.</p>
+
+<div class="src-head">📝 <a href="../Concept/04_Data_Cleaning.MD">04_Data_Cleaning.MD</a></div>
+<h2 id="machine-learning-04-data-cleaning">Machine Learning — 04. Data Cleaning</h2>
+<p>Source: external course (WsCubeTech). This overlaps heavily with Feature
+Engineering from <code>02_ML_Roadmap.MD</code> — same underlying work, different
+course's name for the umbrella. Two of the six items here are genuinely
+new ground: Handling Duplicates and Dealing with Inconsistent Data.</p>
+<hr />
+<h2 id="what-is-data-cleaning">What Is Data Cleaning?</h2>
+<div class="note"><div class="h">Note</div><p>&quot;Data cleaning is the process of preparing data for analysis / ML / DL
+by removing or modifying data that is incorrect, incomplete, irrelevant,
+duplicated, or improperly formatted.&quot;</p>
+</div>
+<p>Five distinct problems live inside that one sentence:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Problem</th>
+  <th>Meaning</th>
+  <th>Quick example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Incorrect</strong></td>
+  <td>The value is factually wrong</td>
+  <td>Age = 250</td>
+</tr>
+<tr>
+  <td><strong>Incomplete</strong></td>
+  <td>The value is missing</td>
+  <td>Credit score = <em>(blank)</em></td>
+</tr>
+<tr>
+  <td><strong>Irrelevant</strong></td>
+  <td>The column/row doesn't help predict anything</td>
+  <td>A row for a customer outside your target market</td>
+</tr>
+<tr>
+  <td><strong>Duplicated</strong></td>
+  <td>The same real-world record appears more than once</td>
+  <td>Two identical loan applications from a scraping glitch</td>
+</tr>
+<tr>
+  <td><strong>Improperly formatted</strong></td>
+  <td>The value is present and correct, just not usable as-is</td>
+  <td><code>&quot;APPLE iPhone 8 Plus (Gold, 64 GB)&quot;</code> as a single text field</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-raw-cleaned-example-from-the-slide">The Raw → Cleaned Example (from the slide)</h2>
+<p>The slide's two spreadsheets are a before/after pair, and it's a genuinely
+good illustration of <em>why</em> cleaning exists:</p>
+<p><strong>Before (raw, scraped from an e-commerce site):</strong> a <code>Product Name</code> column
+like <code>&quot;APPLE iPhone 8 Plus (Gold, 64 GB)&quot;</code> right next to
+<code>&quot;Apple iPhone XR ((PRODUCT)RED, 128 GB) (Includes EarPods, Power Adapter)&quot;</code>
+— inconsistent capitalization (<code>APPLE</code> vs <code>Apple</code>), inconsistent length,
+extra bundled info, all crammed into one free-text field.</p>
+<p><strong>After (cleaned):</strong> columns like <code>iphone_no</code>, <code>iphone_variant</code>,
+<code>iphone_color</code>, <code>iphone_gb</code> — the <em>same information</em>, but split into
+separate, structured, numeric-coded fields.</p>
+<p><strong>Why this matters:</strong> a model cannot read
+<code>&quot;APPLE iPhone 8 Plus (Gold, 64 GB)&quot;</code> as a feature — it's not a number and
+it's not a clean category, it's several different variables mashed into
+one string (device line, color, storage size). Cleaning here means
+<strong>parsing that one messy text column into several clean ones</strong> — which is
+exactly the Categorical Encoding idea from <code>03_Types_Of_Variables.MD</code>,
+applied to a real Mixed Variable.</p>
+<hr />
+<h2 id="the-6-sub-skills-of-data-cleaning">The 6 Sub-Skills of Data Cleaning</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    DC[&quot;Data Cleaning&quot;] --&gt; DC1[&quot;1. Handling Missing Data&quot;]
+    DC --&gt; DC2[&quot;2. Outlier Detection &amp;amp; Handling&quot;]
+    DC --&gt; DC3[&quot;3. Data Scaling &amp;amp; Transformation&quot;]
+    DC --&gt; DC4[&quot;4. Encoding Categorical Variables&quot;]
+    DC --&gt; DC5[&quot;5. Handling Duplicates&quot;]
+    DC --&gt; DC6[&quot;6. Dealing with Inconsistent Data&quot;]
+
+    style DC1 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style DC2 fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Sub-skill</th>
+  <th>Status</th>
+  <th>Same as...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Handling Missing Data</td>
+  <td>✅ Done</td>
+  <td><code>phase_3_classical_ml/02_data_cleaning/</code> (Deepak's missing credit score); Feature Engineering step 2</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Outlier Detection and Handling</td>
+  <td>✅ Done</td>
+  <td><code>DataScience_Y/04_IQR.ipynb</code>; Priya's outlier income; Feature Engineering step 3</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Data Scaling and Transformation</td>
+  <td>⬜ Upcoming</td>
+  <td>&quot;Normalizing &amp; Standardization,&quot; Feature Engineering step 5</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Encoding Categorical Variables</td>
+  <td>⬜ Upcoming</td>
+  <td>&quot;Categorical Encoding,&quot; Feature Engineering step 4 + the Ordinal/Nominal split from <code>03_Types_Of_Variables.MD</code></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><strong>Handling Duplicates</strong></td>
+  <td>⬜ Upcoming — <strong>new</strong></td>
+  <td>Not covered anywhere yet</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><strong>Dealing with Inconsistent Data</strong></td>
+  <td>⬜ Upcoming — <strong>new</strong></td>
+  <td>Not covered anywhere yet — this is exactly the <code>APPLE</code> vs <code>Apple</code> problem above</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notice #3 and #4 are the same two skills as Feature Engineering steps 5
+and 4 in <code>02_ML_Roadmap.MD</code></strong> — this course is just presenting them again
+under a &quot;Data Cleaning&quot; label instead of a &quot;Feature Engineering&quot; label.
+Different books draw that boundary in different places; the technique is
+identical either way. Only #5 and #6 below are genuinely new territory.</p>
+<hr />
+<h2 id="new-ground-handling-duplicates">New Ground: Handling Duplicates</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Type</th>
+  <th>What it looks like</th>
+  <th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Exact duplicates</strong></td>
+  <td>Two rows, every column identical — usually a scraping/entry glitch</td>
+  <td>Drop one copy</td>
+</tr>
+<tr>
+  <td><strong>Near-duplicates</strong></td>
+  <td>Same real-world record, slightly different text — <code>&quot;Apple iPhone 8 Plus&quot;</code> vs <code>&quot;APPLE iPhone 8 Plus &quot;</code> (trailing space, different case)</td>
+  <td><strong>Normalize first</strong> (lowercase, trim whitespace, standardize punctuation), <em>then</em> compare — matching on the raw strings would miss these entirely</td>
+</tr>
+</tbody>
+</table>
+<p>The order matters: cleaning has to happen <strong>before</strong> deduplication, not
+after — an exact-match dedup step run on raw text will silently miss every
+near-duplicate.</p>
+<hr />
+<h2 id="new-ground-dealing-with-inconsistent-data">New Ground: Dealing with Inconsistent Data</h2>
+<p>Data that's fully <em>present</em> but represented in more than one way for the
+same real thing:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Kind of inconsistency</th>
+  <th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Capitalization</td>
+  <td><code>&quot;APPLE&quot;</code> vs <code>&quot;Apple&quot;</code> — straight from the slide</td>
+</tr>
+<tr>
+  <td>Category spelling/synonyms</td>
+  <td><code>&quot;Male&quot;</code>, <code>&quot;male&quot;</code>, <code>&quot;M&quot;</code> all meaning the same category</td>
+</tr>
+<tr>
+  <td>Units</td>
+  <td>Some rows in ₹, others in $, in the same price column</td>
+</tr>
+<tr>
+  <td>Date formats</td>
+  <td><code>07/08/2026</code> — is that July 8th or August 7th?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fix:</strong> standardize before doing anything else — consistent casing
+(<code>.str.lower()</code> / <code>.str.title()</code>), a mapping table for known synonyms, one
+unit and one date format enforced across the whole column.</p>
+<hr />
+<h2 id="where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</h2>
+<p><code>phase_3_classical_ml/02_data_cleaning/</code> (✅ complete per <code>00_strategy.md</code>)
+covered exactly sub-skills #1 and #2 above — its own title is literally
+&quot;Data Cleaning, Missing Values, Outliers.&quot; Duplicates, inconsistent data,
+scaling, and encoding are scoped into <strong>Topic 3 (Feature Engineering,
+Encoding)</strong>, which is next up — this file is filling in the vocabulary
+ahead of that topic starting.</p>
+<hr />
+<h2 id="faq-common-mix-ups">FAQ — Common Mix-Ups</h2>
+<ol>
+<li><strong>&quot;Isn't Data Cleaning just a different course's name for Feature
+Engineering?&quot;</strong> Mostly, yes — heavy overlap. Different sources draw the
+line differently; some call scaling/encoding &quot;cleaning,&quot; others call it
+&quot;engineering.&quot; The skill is the same regardless of the label.</li>
+<li><strong>&quot;Duplicates always mean two identical rows.&quot;</strong> The easy case, yes —
+but near-duplicates (same entity, differently formatted text) are the
+more common real-world case, and they require normalizing the text
+<em>first</em> before they can even be detected.</li>
+<li><strong>&quot;Inconsistent data is basically the same as missing data.&quot;</strong> No —
+missing data isn't there at all. Inconsistent data <em>is</em> there, just
+represented multiple different ways for the same real value. Different
+problem, different fix (standardize, don't impute).</li>
+</ol>
+<hr />
+<h2 id="interview-style-q-amp-a">Interview-Style Q&amp;A</h2>
+<p><strong>Q: How do you detect duplicates that aren't byte-for-byte identical,
+like <code>&quot;Apple&quot;</code> vs <code>&quot;APPLE&quot;</code>?</strong>
+A: Normalize the text first — lowercase, trim whitespace, standardize
+punctuation — then compare. An exact-match dedup on raw strings will miss
+these; cleaning has to happen before deduplication.</p>
+<p><strong>Q: Why can't a model use a raw column like <code>&quot;APPLE iPhone 8 Plus (Gold, 64 GB)&quot;</code> directly?</strong>
+A: It's not one variable, it's several (device line, color, storage)
+packed into a single unstructured string. It has to be parsed into
+separate clean columns first — exactly what the slide's &quot;after&quot; table
+shows.</p>
+<p><strong>Q: Give an example of inconsistent data that has nothing to do with
+capitalization.</strong>
+A: Mixed date formats in the same column (<code>07/08/2026</code> reads differently
+in different locales), mixed units (₹ and $ in one price column), or
+synonym categories that all mean the same thing (<code>&quot;N/A&quot;</code>, <code>&quot;n/a&quot;</code>,
+<code>&quot;Not Available&quot;</code>) but aren't recognized as identical by the system.</p>
+
+<div class="src-head">📓 <a href="../Concept/05_Data_Cleaning_Practice.ipynb">05_Data_Cleaning_Practice.ipynb</a></div>
+<h2 id="data-cleaning-practice-loan-dataset">Data Cleaning Practice — Loan Dataset</h2>
+<p>Hands-on companion to <code>04_Data_Cleaning.MD</code>, sub-skill #1: <strong>Handling Missing Data</strong>.</p>
+<p>Dataset: <code>../../_shared_data/loans.csv</code> — 618 loan applications, 13 columns (Gender, Married, Dependents, Education, Self_Employed, ApplicantIncome, CoapplicantIncome, LoanAmount, Loan_Amount_Term, Credit_History, Property_Area, Loan_Status, and the Loan_ID key).</p>
+<p>Goal for this notebook: <strong>find out where the missing values are</strong>, before deciding what to do about them.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<h2 id="1-load-the-dataset">1. Load the dataset</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+5  LP001006  Female     Yes          0      Graduate            No   
+6  LP001007    Male      No          0      Graduate            No   
+7  LP001008     NaN     Yes          0  Not Graduate           Yes   
+8  LP001009    Male      No          0  Not Graduate            No   
+9  LP001010    Male     Yes          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+5           3918.0               1966       219.0             360.0   
+6           4255.0               2274       205.0             360.0   
+7           5890.0               2699       305.0             360.0   
+8           2296.0               1371       104.0             360.0   
+9           2897.0               4815       228.0             240.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y  
+3             1.0     Semiurban           Y  
+4             0.0         Urban           N  
+5             1.0           NaN           Y  
+6             1.0         Rural           Y  
+7             1.0         Urban           Y  
+8             1.0     Semiurban           Y  
+9             1.0     Semiurban           Y</pre></div>
+<h2 id="2-shape-how-many-rows-and-columns">2. Shape — how many rows and columns?</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<h2 id="3-which-columns-have-missing-values-and-how-many">3. Which columns have missing values, and how many?</h2>
+<p><code>isnull()</code> marks every cell <code>True</code>/<code>False</code>, <code>.sum()</code> adds those up per column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<h2 id="4-missing-values-as-a-percentage-of-each-column">4. Missing values as a percentage of each column</h2>
+<p>Raw counts are hard to compare across columns of different sizes — percentage puts every column on the same scale.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">(dataset.isnull().sum() / dataset.shape[0]) * 100</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID              0.000000
+Gender               2.103560
+Married              0.970874
+Dependents           2.427184
+Education            1.456311
+Self_Employed        5.177994
+ApplicantIncome      0.323625
+CoapplicantIncome    0.000000
+LoanAmount           3.559871
+Loan_Amount_Term     3.398058
+Credit_History       8.090615
+Property_Area        1.456311
+Loan_Status          0.000000
+dtype: float64</pre></div>
+<h2 id="5-overall-what-of-the-entire-dataset-is-missing">5. Overall — what % of the <em>entire</em> dataset is missing?</h2>
+<p><code>dataset.shape[0] * dataset.shape[1]</code> is the total number of cells (rows × columns); <code>.isnull().sum().sum()</code> is the total number of missing cells across every column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">(dataset.isnull().sum().sum() / (dataset.shape[0] * dataset.shape[1])) * 100</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(2.2280308688075676)</pre></div>
+<h2 id="6-visualize-the-missing-values">6. Visualize the missing values</h2>
+<p>Numbers tell you <em>how much</em> is missing; a picture tells you <em>where</em> — whether the gaps are scattered randomly or clustered in specific rows or columns. Two views below: a full heatmap of every cell, and a bar chart ranking the columns that actually have gaps.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.colors import ListedColormap</pre></div>
+<h3>Heatmap — do columns go missing together?</h3>
+<p>A raw row-by-row map of all 618 rows gets visually noisy and doesn't render cleanly as a static image at that many rows. A more useful view instead: <strong>nullity correlation</strong> — does missingness in one column tend to happen alongside missingness in another? Near 0 = no relationship; near +1 = the two columns tend to be missing on the same rows; near −1 = when one is missing, the other tends to be present.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">plt.figure(figsize=(8, 6))
+sns.heatmap(
+    dataset.isnull().corr(), annot=True, fmt=&quot;.2f&quot;, cmap=&quot;coolwarm&quot;,
+    center=0, vmin=-1, vmax=1, square=True,
+    cbar_kws={&quot;label&quot;: &quot;Correlation of missingness&quot;},
+)
+plt.title(&quot;Do Columns Go Missing Together? (Nullity Correlation)&quot;)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/05-data-cleaning-practice-c15-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Bar chart — which columns are worst?</h3>
+<p>Same numbers as <code>isnull().sum()</code> above, ranked so the worst offender is impossible to miss.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">missing_counts = dataset.isnull().sum()
+missing_counts = missing_counts[missing_counts &gt; 0].sort_values(ascending=True)
+
+plt.figure(figsize=(8, 5))
+bars = plt.barh(missing_counts.index, missing_counts.values, color=&quot;#b33a3a&quot;)
+plt.bar_label(bars, padding=3)
+plt.xlabel(&quot;Number of missing values (out of 618 rows)&quot;)
+plt.title(&quot;Missing Values per Column&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/05-data-cleaning-practice-c17-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="7-the-50-rule-when-a-column-isn-t-worth-saving">7. The 50% Rule — when a column isn't worth saving</h2>
+<p>Imputing a column that's more than half missing means inventing more data than you actually observed — past a certain point, dropping the column outright is more honest than filling it. Common rule of thumb: if a column is <strong>≥ 50% missing, ignore (drop) it</strong> rather than impute it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">def flag_high_missing_columns(df, threshold=50):
+    &quot;&quot;&quot;Return columns whose missing-value percentage is &gt;= threshold, worst first.&quot;&quot;&quot;
+    missing_pct = (df.isnull().sum() / df.shape[0]) * 100
+    return missing_pct[missing_pct &gt;= threshold].sort_values(ascending=False)
+
+high_missing = flag_high_missing_columns(dataset, threshold=50)
+
+if high_missing.empty:
+    print(&quot;No column crosses the 50% threshold — nothing to ignore on this rule.&quot;)
+else:
+    print(&quot;Columns to ignore (&gt;= 50% missing):&quot;)
+    print(high_missing)</pre></div>
+<div class="out"><div class="h">Output</div><pre>No column crosses the 50% threshold — nothing to ignore on this rule.</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">dataset_cleaned = dataset.drop(columns=high_missing.index)
+
+print(&quot;Shape before:&quot;, dataset.shape)
+print(&quot;Shape after dropping high-missing columns:&quot;, dataset_cleaned.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Shape before: (618, 13)
+Shape after dropping high-missing columns: (618, 13)</pre></div>
+<p>Worst column here (<code>Credit_History</code>) is only ~8% missing — nowhere near the 50% line, so the rule doesn't drop anything from <em>this</em> dataset, and <code>dataset_cleaned</code> above is identical to <code>dataset</code>. That's the correct outcome, not a wasted check: this guard is what you'd want running automatically before feature engineering on messier real-world data, where some column blowing past 50% missing is common — better to have it silently do nothing here than to have to remember to add it later when it actually matters.</p>
+
+<h2 id="reading-the-result">Reading the result</h2>
+<ul>
+<li><strong><code>Credit_History</code></strong> is the worst-affected column (~8% missing) — and it's also usually the single strongest predictor of <code>Loan_Status</code> in this kind of dataset, so this is the column worth the most care, not the least.</li>
+<li><strong><code>Self_Employed</code></strong> (~5% missing) is next — a categorical column, so mean/median imputation doesn't apply; mode (most frequent category) is the usual starting point.</li>
+<li><strong><code>CoapplicantIncome</code></strong> and <strong><code>Loan_Status</code></strong> have zero missing — nothing to do there (and note they, along with <code>Loan_ID</code>, show up blank in the correlation heatmap — correlation is undefined for a column with zero variance, i.e. nothing ever missing).</li>
+<li>Overall, ~2.2% of all cells in the dataset are missing — a small fraction, but concentrated unevenly across columns rather than spread evenly, which is the normal case in real data.</li>
+<li>The nullity correlation heatmap is essentially all near 0 — missingness in one column doesn't predict missingness in another here, i.e. each column's gaps look like independent, unrelated causes rather than one shared root problem (e.g. one bad data-entry batch that blanked out several fields at once).</li>
+<li>Applying the <strong>50% ignore-rule</strong> from section 7 removes zero columns here — every column is well under the line — so <code>dataset_cleaned</code> is safe to carry forward as-is into imputation, with no columns needing to be dropped outright first.</li>
+</ul>
+<p><strong>Next up:</strong> deciding <em>how</em> to fill each of these in — drop, mean/median (numeric), mode (categorical), or a model-based imputer — which is where <code>04_Data_Cleaning.MD</code>'s Handling Missing Data section picks back up.</p>
+
+<h2 id="8-filling-the-missing-values">8. Filling the Missing Values</h2>
+<p>Full walkthrough in <code>07_Filling_Missing_Values.MD</code> — this is that note's code, run for real against <code>dataset_cleaned</code> (the column-checked dataframe from Section 7). Categorical columns get their mode; numerical columns get their median, except <code>Credit_History</code>, which is a 0/1 flag stored as a number, not a real continuous quantity — it gets mode too.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">categorical_cols = dataset_cleaned.select_dtypes(include=&quot;str&quot;).columns
+
+for col in categorical_cols:
+    dataset_cleaned[col] = dataset_cleaned[col].fillna(dataset_cleaned[col].mode()[0])
+
+dataset_cleaned[categorical_cols].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID          0
+Gender           0
+Married          0
+Dependents       0
+Education        0
+Self_Employed    0
+Property_Area    0
+Loan_Status      0
+dtype: int64</pre></div>
+<p>Every categorical column is now at 0 missing. Note the reassignment pattern (<code>dataset_cleaned[col] = ...fillna(...)</code>) rather than <code>inplace=True</code> — see <code>07_Filling_Missing_Values.MD</code> for why the <code>inplace=True</code> version from the course slide silently fails under pandas 3.0's Copy-on-Write.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">numerical_cols = dataset_cleaned.select_dtypes(include=[&quot;int64&quot;, &quot;float64&quot;]).columns
+
+for col in numerical_cols:
+    if col == &quot;Credit_History&quot;:
+        dataset_cleaned[col] = dataset_cleaned[col].fillna(dataset_cleaned[col].mode()[0])
+    else:
+        dataset_cleaned[col] = dataset_cleaned[col].fillna(dataset_cleaned[col].median())
+
+dataset_cleaned[numerical_cols].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>ApplicantIncome      0
+CoapplicantIncome    0
+LoanAmount           0
+Loan_Amount_Term     0
+Credit_History       0
+dtype: int64</pre></div>
+<p>Every numerical column is at 0 missing too — <code>Credit_History</code> filled with its mode (the more common of 0/1), everything else filled with its median.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">dataset_cleaned.isnull().sum().sum()   # 0 = fully filled</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
+<h3>Visualizing the change</h3>
+<p>The clearest way to show what filling actually did: the same per-column missing-count bar chart from Section 6, before and after, side by side.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">before_counts = dataset.isnull().sum()
+after_counts = dataset_cleaned.isnull().sum()
+cols = before_counts[before_counts &gt; 0].sort_values(ascending=False).index
+
+y = range(len(cols))
+height = 0.35
+
+plt.figure(figsize=(8, 6))
+plt.barh([i + height / 2 for i in y], before_counts[cols].values, height=height, color=&quot;#b33a3a&quot;, label=&quot;Before filling&quot;)
+plt.barh([i - height / 2 for i in y], after_counts[cols].values, height=height, color=&quot;#2f9e6f&quot;, label=&quot;After filling&quot;)
+plt.yticks(list(y), cols)
+plt.gca().invert_yaxis()
+plt.xlabel(&quot;Number of missing values&quot;)
+plt.title(&quot;Missing Values: Before vs. After Filling&quot;)
+plt.legend(frameon=False)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/05-data-cleaning-practice-c30-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="reading-the-result-section-8">Reading the result (Section 8)</h2>
+<ul>
+<li>Every column that had gaps in Section 3 now reads 0 in the &quot;after&quot; bars — <code>dataset_cleaned</code> is fully filled, 618 rows × 13 columns, no missing values anywhere.</li>
+<li><code>Credit_History</code> (the worst column at ~8%) and <code>Self_Employed</code> (~5%) were the tallest &quot;before&quot; bars and are now flat — the two columns most worth double-checking if this were a real modeling project, since imputed values are still guesses, not observations.</li>
+<li>This <code>dataset_cleaned</code> dataframe is what would move on to Feature Engineering next (<code>02_ML_Roadmap.MD</code> Topic 3) — encoding the categorical columns and scaling the numerical ones.</li>
+</ul>
+
+<div class="foot"><a class="btn" href="../Concept/05_Data_Cleaning_Practice.ipynb">05_Data_Cleaning_Practice.ipynb ↗</a><a class="btn" href="../Concept/02_data_cleaning.md">02_data_cleaning.md ↗</a><a class="btn" href="../Concept/04_Data_Cleaning.MD">04_Data_Cleaning.MD ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

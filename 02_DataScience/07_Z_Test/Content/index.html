@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Z Test — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">02 DataScience › <b>Z Test</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#hypothesis-testing-z-test">Hypothesis Testing - Z-Test</a><a href="#z-test-formula">Z-Test Formula</a><a href="#example-1-two-tailed-z-test">Example 1 (Two-Tailed Z-Test)</a><a href="#faq">FAQ</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Data science and statistics</p>
+  <h1>Z Test</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<div class="src-head">📓 <a href="../Concept/11_Hypothesis_Testing_Z-Test.ipynb">11_Hypothesis_Testing_Z-Test.ipynb</a></div>
+<h2 id="hypothesis-testing-z-test">Hypothesis Testing - Z-Test</h2>
+<p><strong>Assumption:</strong> data → Normal Distribution</p>
+<ol>
+<li>Population → mean ($\mu$), Std ($\sigma$) — <strong>known</strong></li>
+<li>Sample → Mean ($\bar{x}$)</li>
+<li>No. of samples ($n$) $\geq$ 30</li>
+</ol>
+<p>When the population standard deviation $\sigma$ is known and the sample size is large ($n \geq 30$), we use the <strong>Z-test</strong>.</p>
+
+<h2 id="z-test-formula">Z-Test Formula</h2>
+<div class='formula'>z_{test} = \dfrac{\bar{x} - \mu}{\dfrac{\sigma}{\sqrt{n}}}</div>
+
+<p>Where:</p>
+<ul>
+<li>$\bar{x}$ = Sample Mean</li>
+<li>$\mu$ = Population Mean</li>
+<li>$\sigma$ = Population Std (known)</li>
+<li>$n$ = No. of samples</li>
+</ul>
+<p>Unlike the t-test, there's no <code>df</code> here — since $\sigma$ is known, we use the standard normal distribution directly, no correction needed for estimating std from the sample.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import scipy.stats as st
+import numpy as np
+import matplotlib.pyplot as plt</pre></div>
+<h2 id="example-1-two-tailed-z-test">Example 1 (Two-Tailed Z-Test)</h2>
+<p>The average height of all residents in a city is <strong>168 cm</strong>, with a population standard deviation $\sigma = 3.9$. A doctor believes the mean to be <strong>different</strong>. He measures the height of <strong>36 individuals</strong> and finds the average to be <strong>169.5 cm</strong>.</p>
+<p><strong>(a)</strong> State the null and alternate hypothesis.
+<strong>(b)</strong> At a <strong>95% confidence interval</strong>, is there enough evidence to reject the null hypothesis?</p>
+<p><strong>Given:</strong></p>
+<ul>
+<li>$\mu = 168$ cm (population mean)</li>
+<li>$\sigma = 3.9$ (population std)</li>
+<li>$n = 36$ (sample size)</li>
+<li>$\bar{x} = 169.5$ cm (sample mean)</li>
+</ul>
+
+<h3>Step 1 - State the hypotheses</h3>
+<p>Since the doctor believes the mean is <em>different</em> (not specifically higher or lower), this is a <strong>two-tailed test</strong>.</p>
+<div class='formula'>H_0: \mu = 168 \text{ cm}</div>
+
+<div class='formula'>H_1: \mu \neq 168 \text{ cm} \quad \text{(two-tailed)}</div>
+
+<h3>Step 2 - Significance level</h3>
+<div class='formula'>CI = 0.95 \;(95\%) \implies \alpha = 1 - CI = 1 - 0.95 = 0.05</div>
+
+<p>Because it's two-tailed, $\alpha$ splits equally between both tails:</p>
+<div class='formula'>\dfrac{\alpha}{2} = 0.025 \text{ on each side}</div>
+
+
+<h3>Step 3 - Critical z-value (from z-table)</h3>
+<p>We need the z-value where the cumulative area is $1 - 0.025 = 0.975$:</p>
+<div class='formula'>z_{critical} = \pm 1.96</div>
+
+<p><strong>Decision boundary:</strong> the middle 95% (from $-1.96$ to $+1.96$) is the <strong>acceptance region</strong>. Anything beyond that, in either tail (2.5% each side), is the <strong>rejection region</strong>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">z_crit = st.norm.ppf(0.975)   # 1.96
+x = np.linspace(-4, 4, 500)
+y = st.norm.pdf(x)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# shade rejection regions (both tails)
+x_left = np.linspace(-4, -z_crit, 100)
+x_right = np.linspace(z_crit, 4, 100)
+ax.fill_between(x_left, st.norm.pdf(x_left), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+ax.fill_between(x_right, st.norm.pdf(x_right), color=&quot;crimson&quot;, alpha=0.4)
+
+# acceptance region
+x_mid = np.linspace(-z_crit, z_crit, 200)
+ax.fill_between(x_mid, st.norm.pdf(x_mid), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (95%)&quot;)
+
+ax.axvline(0, color=&quot;black&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0 (μ=168)&quot;, ha=&quot;center&quot;)
+ax.axvline(-z_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(z_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-z_crit, -0.02, &quot;-1.96&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(z_crit, -0.02, &quot;+1.96&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.legend()
+ax.set_title(&quot;Z-Test Decision Boundary (Two-Tailed, 95% CI)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/11-hypothesis-testing-z-test-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Step 4 - Calculate the test statistic</h3>
+<div class='formula'>z_{test} = \dfrac{\bar{x} - \mu}{\dfrac{\sigma}{\sqrt{n}}} = \dfrac{169.5 - 168}{\dfrac{3.9}{\sqrt{36}}} = \dfrac{1.5}{0.65} \approx 2.31</div>
+
+<h3>Step 5 - Decision rule</h3>
+<p>Reject $H_0$ if $z_{test}$ falls <strong>outside</strong> the acceptance region $[-1.96, +1.96]$:</p>
+<div class='formula'>z_{test} (2.31) &gt; z_{critical} (1.96)</div>
+
+<p>This is true — $z_{test}$ falls in the rejection region → <strong>reject $H_0$, accept $H_1$</strong>.</p>
+<p><strong>Conclusion:</strong> At the 95% confidence level, there is enough evidence that the average height of the 36 sampled individuals is significantly different from the city's population mean of 168 cm.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">mu = 168
+sigma = 3.9
+n = 36
+x_bar = 169.5
+alpha = 0.05
+
+z_critical = st.norm.ppf(1 - alpha / 2)   # two-tailed -&gt; 1.96
+z_test = (x_bar - mu) / (sigma / np.sqrt(n))
+
+print(&quot;z_critical:&quot;, round(z_critical, 4))
+print(&quot;z_test:&quot;, round(z_test, 4))
+
+if abs(z_test) &gt; z_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (mean height is significantly different from 168cm)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence mean differs from 168cm)&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>z_critical: 1.96
+z_test: 2.3077
+Reject H0 -&gt; H1 is right (mean height is significantly different from 168cm)</pre></div>
+<h3>Plotting the actual z_test value</h3>
+<p>The earlier plot only showed the critical boundaries ($\pm 1.96$). Here we mark the <strong>actual computed value, $z_{test} = 2.31$</strong>, on the same curve — this is what makes the decision visual.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">mu = 168
+sigma = 3.9
+n = 36
+x_bar = 169.5
+alpha = 0.05
+
+z_critical = st.norm.ppf(1 - alpha / 2)
+z_test = (x_bar - mu) / (sigma / np.sqrt(n))
+
+x = np.linspace(-4, 4, 500)
+y = st.norm.pdf(x)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions
+x_left = np.linspace(-4, -z_critical, 100)
+x_right = np.linspace(z_critical, 4, 100)
+ax.fill_between(x_left, st.norm.pdf(x_left), color=&quot;crimson&quot;, alpha=0.3)
+ax.fill_between(x_right, st.norm.pdf(x_right), color=&quot;crimson&quot;, alpha=0.3)
+
+# acceptance region
+x_mid = np.linspace(-z_critical, z_critical, 200)
+ax.fill_between(x_mid, st.norm.pdf(x_mid), color=&quot;seagreen&quot;, alpha=0.25)
+
+# critical boundaries
+ax.axvline(-z_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(z_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-z_critical, -0.02, f&quot;-{z_critical:.2f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(z_critical, -0.02, f&quot;+{z_critical:.2f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+# actual test statistic, plotted on the curve
+ax.axvline(z_test, color=&quot;darkorange&quot;, linewidth=2)
+ax.plot(z_test, st.norm.pdf(z_test), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=8, zorder=5)
+ax.annotate(f&quot;z_test = {z_test:.2f}\n(in rejection region)&quot;,
+            xy=(z_test, st.norm.pdf(z_test)),
+            xytext=(z_test + 0.15, max(y) * 0.55),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;darkorange&quot;),
+            color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
+
+ax.set_title(&quot;Where does z_test = 2.31 actually land?&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/11-hypothesis-testing-z-test-c10-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="faq">FAQ</h2>
+<p><strong>1. How do we decide the confidence level (95%, 99%...)?</strong></p>
+<p>It isn't calculated from the data — it's chosen <em>in advance</em> based on how much Type I error (wrongly rejecting a true $H_0$) you're willing to accept. <strong>95%</strong> is the standard convention (5% risk). Use <strong>99%</strong> for high-stakes/safety-critical decisions (medicine, aviation), <strong>90%</strong> for exploratory work where being less strict is fine.</p>
+<p><strong>2. In Step 2, where does $\alpha = 1 - CI$ come from?</strong></p>
+<p>$CI$ is the area under the curve where we <strong>correctly fail to reject</strong> $H_0$ (the acceptance region). Total area under any probability distribution is always 1, so whatever isn't acceptance area must be rejection area:</p>
+<div class='formula'>\alpha = 1 - CI</div>
+
+<p>For a <strong>two-tailed</strong> test, this total risk $\alpha$ is split equally between both tails ($\alpha/2$ each) — because before collecting data, we don't know which direction the deviation might go.</p>
+<p><strong>3. How do we know it's two-tailed? Give a one-tailed example.</strong></p>
+<ul>
+<li><strong>Two-tailed</strong> → $H_1$ uses &quot;$\neq$&quot; → we care about a difference in <strong>either</strong> direction (like our example: doctor just believes the mean is &quot;different&quot;).</li>
+<li><strong>One-tailed</strong> → $H_1$ uses &quot;$&gt;$&quot; or &quot;$&lt;$&quot; → we care about a difference in <strong>only one specific</strong> direction.</li>
+</ul>
+<p><strong>One-tailed example:</strong> A company claims its light bulbs last <strong>1000 hours</strong> on average. A new manufacturing process is believed to make bulbs last <strong>longer</strong> — not just &quot;different&quot;, specifically <em>more</em>.</p>
+<div class='formula'>H_0: \mu = 1000 \qquad H_1: \mu &gt; 1000 \quad \text{(right-tailed)}</div>
+
+<p>Here all of $\alpha$ (say 0.05) sits in <strong>one</strong> tail, so $z_{critical} = 1.645$, not $1.96$ — a smaller critical value because we're not &quot;spending&quot; any risk on the left tail we don't care about.</p>
+
+<h3>Two-Tailed vs One-Tailed — side by side</h3>
+<ul>
+<li><strong>Left:</strong> our height example — $H_1: \mu \neq 168$ — rejection region split into <strong>both</strong> tails ($\alpha/2$ each).</li>
+<li><strong>Right:</strong> the bulb example from the FAQ — $H_1: \mu &gt; 1000$ — rejection region entirely in the <strong>right</strong> tail ($\alpha$ in one tail, so the critical value is smaller: $1.645$ instead of $1.96$).</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">alpha = 0.05
+
+z_two = st.norm.ppf(1 - alpha / 2)   # 1.96 -&gt; split between both tails
+z_one = st.norm.ppf(1 - alpha)       # 1.645 -&gt; all alpha in one tail
+
+x = np.linspace(-4, 4, 500)
+y = st.norm.pdf(x)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4), sharey=True)
+
+# --- Two-tailed ---
+ax = axes[0]
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+x_l, x_r = np.linspace(-4, -z_two, 100), np.linspace(z_two, 4, 100)
+ax.fill_between(x_l, st.norm.pdf(x_l), color=&quot;crimson&quot;, alpha=0.35)
+ax.fill_between(x_r, st.norm.pdf(x_r), color=&quot;crimson&quot;, alpha=0.35)
+x_mid = np.linspace(-z_two, z_two, 200)
+ax.fill_between(x_mid, st.norm.pdf(x_mid), color=&quot;seagreen&quot;, alpha=0.25)
+ax.axvline(-z_two, color=&quot;crimson&quot;, linestyle=&quot;:&quot;)
+ax.axvline(z_two, color=&quot;crimson&quot;, linestyle=&quot;:&quot;)
+ax.set_title(f&quot;Two-Tailed\nH1: μ ≠ 168   (±{z_two:.2f})&quot;)
+
+# --- One-tailed (right) ---
+ax = axes[1]
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+x_r = np.linspace(z_one, 4, 100)
+ax.fill_between(x_r, st.norm.pdf(x_r), color=&quot;crimson&quot;, alpha=0.35)
+x_mid = np.linspace(-4, z_one, 200)
+ax.fill_between(x_mid, st.norm.pdf(x_mid), color=&quot;seagreen&quot;, alpha=0.25)
+ax.axvline(z_one, color=&quot;crimson&quot;, linestyle=&quot;:&quot;)
+ax.set_title(f&quot;One-Tailed (right)\nH1: μ &gt; 1000   ({z_one:.2f})&quot;)
+
+for ax in axes:
+    ax.axhline(0, color=&quot;black&quot;, linewidth=0.8)
+
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/11-hypothesis-testing-z-test-c13-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="foot"><a class="btn" href="../Concept/11_Hypothesis_Testing_Z-Test.ipynb">11_Hypothesis_Testing_Z-Test.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

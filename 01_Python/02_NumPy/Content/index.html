@@ -1,0 +1,2831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NumPy — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">01 Python › <b>NumPy</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#numpy">NumPy</a><a href="#files">Files</a><a href="#the-two-ideas-that-carry-everything">The two ideas that carry everything</a><a href="#the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</a><a href="#covered-so-far">Covered so far</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#numpy-arrays-example-01">NumPy Arrays — Example 01</a><a href="#1-start-with-a-plain-python-list">1. Start with a plain Python list</a><a href="#2-turn-a-list-into-a-numpy-array">2. Turn a list into a NumPy array</a><a href="#3-the-short-name-np">3. The short name np</a><a href="#4-dimensions-how-many-brackets-deep-is-the-data">4. Dimensions — how many brackets deep is the data?</a><a href="#5-data-types-one-type-for-the-whole-array">5. Data types — one type for the whole array</a><a href="#6-indexing-reading-one-value">6. Indexing — reading one value</a><a href="#7-slicing-reading-many-values">7. Slicing — reading many values</a><a href="#8-looping-through-an-array">8. Looping through an array</a><a href="#9-searching-with-np-where">9. Searching with np.where()</a><a href="#10-sorting">10. Sorting</a><a href="#11-insert-and-delete">11. Insert and delete</a><a href="#12-reversing-with-np-flip">12. Reversing with np.flip()</a><a href="#13-changing-an-array-in-place">13. Changing an array in place</a><a href="#14-appending">14. Appending</a><a href="#recap">Recap</a><a href="#numpy-example-02-operations-broadcasting-and-lin">NumPy — Example 02: Operations, Broadcasting, and Li</a><a href="#the-one-idea-behind-this-whole-notebook">The one idea behind this whole notebook</a><a href="#1-import">1. Import</a><a href="#2-creating-arrays-what-np-array-accepts">2. Creating arrays — what np.array accepts</a><a href="#3-ndim-how-many-dimensions">3. ndim — how many dimensions?</a><a href="#4-shape-and-reshape-the-same-data-a-different-gr">4. shape and reshape — the same data, a different gr</a><a href="#5-dtype-the-one-type-the-array-holds">5. dtype — the one type the array holds</a><a href="#6-arithmetic-one-operator-every-element">6. Arithmetic — one operator, every element</a><a href="#7-comparisons-the-boolean-mask">7. Comparisons — the boolean mask</a><a href="#8-broadcasting-when-shapes-do-not-match">8. Broadcasting — when shapes do not match</a><a href="#9-ready-made-arrays-build-without-data">9. Ready-made arrays — build without data</a><a href="#10-arange-and-linspace-building-sequences">10. arange and linspace — building sequences</a><a href="#11-random-numbers-four-different-generators">11. Random numbers — four different generators</a><a href="#12-statistics-describing-an-array">12. Statistics — describing an array</a><a href="#13-np-info-looking-at-how-the-array-is-stored">13. np.info — looking at how the array is stored</a><a href="#14-the-dot-product-the-most-important-operation-">14. The dot product — the most important operation i</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Python and the data toolkit</p>
+  <h1>NumPy</h1>
+  <p class="lede">Arrays that do arithmetic on a million numbers without a single loop.</p>
+  <div class="tags"><span class="tag">4 notebooks · 1 note</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Rahul had a million temperature readings to convert to Fahrenheit.</strong> He wrote the obvious loop.</p><p>It took eleven seconds. His colleague did the same job in 0.02 seconds with one line and no loop at all.</p><p><span class='beat'>A Python list holds a million separate objects, each checked one at a time.</span> The loop was not slow because of the maths — it was slow because of the bookkeeping.</p><p>A NumPy array stores those numbers as one solid block of one type. <code>c * 9/5 + 32</code> then runs as compiled code across the whole block at once. That is vectorisation, and everything else in the data stack is built on it.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>A NumPy array is one typed block of memory, so operations run in compiled code, not Python loops.</p></div>
+<div class="src-head">📝 <a href="../Concept/README.md">README.md</a></div>
+<h2 id="numpy">NumPy</h2>
+<p><strong>Curriculum module:</strong> M03 - Python for Data Science (NumPy and Pandas)
+<strong>Status:</strong> 🟡 Learning</p>
+<p>NumPy gives Python a real array type. A Python list holds pointers to boxed objects
+scattered across memory; a NumPy array holds <strong>one type, packed into one block</strong>. That
+layout is why arithmetic on a million values is one expression instead of a loop, and it
+is the foundation every other library here sits on — Pandas, Matplotlib, scikit-learn,
+and PyTorch all pass NumPy arrays around underneath.</p>
+<h2 id="files">Files</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>File</th>
+  <th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="../Concept/example_01.ipynb"><code>example_01.ipynb</code></a></td>
+  <td><strong>Making and reading arrays.</strong> Lists vs arrays, <code>ndim</code>, <code>dtype</code>, indexing, slicing, looping, <code>np.where</code>, sorting, insert/delete, <code>np.flip</code>, in-place edits, append.</td>
+</tr>
+<tr>
+  <td><a href="../Concept/example_02.ipynb"><code>example_02.ipynb</code></a></td>
+  <td><strong>Computing with arrays.</strong> <code>shape</code>/<code>reshape</code>, element-wise maths, boolean masks, broadcasting, array builders, <code>arange</code>/<code>linspace</code>, random generators, statistics, <code>np.info</code>, dot product, matrix multiplication, <code>argsort</code>/<code>searchsorted</code>, stack/split, and <code>np.linalg</code>.</td>
+</tr>
+<tr>
+  <td><a href="../Concept/project_01_api_health.ipynb"><code>project_01_api_health.ipynb</code></a></td>
+  <td>🧪 <strong>In progress — Parts 1-2 of 12.</strong> OrderHub API Health Monitor: pure NumPy analysis of a 6-service x 7-day latency and error matrix. Loading and inspection are done; data quality is done through median + MAD outlier detection. <strong>Not complete — do not treat it as finished evidence.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Explanation lives <strong>inside the notebooks</strong>, in the Markdown cells above each group of
+code cells. This README is the map, not the lesson.</p>
+<h2 id="the-two-ideas-that-carry-everything">The two ideas that carry everything</h2>
+<p><strong>1. Vectorization — the expression replaces the loop.</strong></p>
+<div class="code"><pre>   Python list                        NumPy array
+   -----------                        -----------
+   out = []
+   for i in range(len(a)):            out = a + b
+       out.append(a[i] + b[i])
+</pre></div>
+<p>The loop still runs, but in compiled C over packed memory instead of in the Python
+interpreter. Same reason one batch query beats 10,000 single-row fetches.</p>
+<p><strong>2. Shape is everything.</strong></p>
+<div class="code"><pre>   (m, k) @ (k, n)  -&gt;  (m, n)        the inner numbers must match
+   (3, 1) +  (2,)   -&gt;  (3, 2)        broadcasting stretches size-1 dimensions
+</pre></div>
+<p>Most NumPy bugs are shape bugs, not logic bugs. When something breaks, print <code>.shape</code>
+before you print the values.</p>
+<h2 id="the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Gotcha</th>
+  <th>The correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>a * b</code> looks like matrix multiplication</td>
+  <td>It is <strong>element-wise</strong>. The matrix product is <code>a @ b</code>.</td>
+</tr>
+<tr>
+  <td><code>np.arange(0.1, 0.4, 0.1)</code> should give 3 values</td>
+  <td>It gives <strong>4</strong>. Floating point. Use <code>linspace</code> when the count matters.</td>
+</tr>
+<tr>
+  <td>NumPy and Pandas report different standard deviations</td>
+  <td><code>np.std</code> is population (<code>ddof=0</code>); Pandas is sample (<code>ddof=1</code>).</td>
+</tr>
+<tr>
+  <td><code>np.where(...)</code> looks like an array</td>
+  <td>It is a <strong>tuple</strong> of arrays — take <code>[0]</code> for a 1-D input.</td>
+</tr>
+<tr>
+  <td><code>np.linalg.eig</code> eigenvectors read as rows</td>
+  <td>They are <strong>columns</strong>: <code>vecs[:, i]</code> pairs with <code>vals[i]</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="covered-so-far">Covered so far</h2>
+<p>Array creation from lists, tuples, and nested lists; <code>ndim</code>, <code>shape</code>, <code>size</code>, <code>dtype</code>,
+<code>itemsize</code>; <code>reshape</code> and views; indexing, slicing, and fancy indexing; boolean masks and
+filtering; element-wise arithmetic and comparison; broadcasting; <code>zeros</code>, <code>ones</code>, <code>full</code>,
+<code>eye</code>, <code>arange</code>, <code>linspace</code>; <code>randint</code>, <code>rand</code>, <code>randn</code>, <code>choice</code>, and seeding;
+<code>sum</code>/<code>min</code>/<code>max</code>/<code>mean</code>/<code>median</code>/<code>std</code>/<code>var</code>; <code>np.info</code> and memory layout; <code>dot</code>,
+<code>matmul</code>, and <code>@</code>; <code>sort</code>, <code>argsort</code>, <code>where</code>, <code>searchsorted</code>; <code>vstack</code>, <code>hstack</code>,
+<code>split</code>, <code>array_split</code>; <code>np.linalg.inv</code>, <code>det</code>, and <code>eig</code>. The project adds <code>np.isnan</code>,
+<code>nanmean</code>, copy-vs-view, z-score failure modes, and median + MAD outlier detection on a
+2-D dataset.</p>
+<p><strong>Not covered yet:</strong> <code>axis</code> applied consistently across 2-D arrays, <code>np.concatenate</code> and
+<code>np.stack</code>, <code>np.newaxis</code>, <code>np.unique</code>, <code>np.clip</code>, cumulative functions (<code>cumsum</code>,
+<code>cumprod</code>), structured arrays, and <code>np.save</code>/<code>np.load</code>. Parts 3-12 of the API health
+project cover several of these on real data.</p>
+<h2 id="version-note">Version note</h2>
+<p>Written and verified against <strong>numpy 2.4.6</strong> on Python 3.14 (<code>pizza_env</code>).</p>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> NumPy replaces loops with expressions over whole
+arrays, and the price of that power is that <strong>shape is everything</strong>. Learn to read
+<code>(m, k) @ (k, n) -&gt; (m, n)</code> and to reach for <code>.shape</code> the moment an error appears.</p>
+
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div>
+<h2 id="numpy-arrays-example-01">NumPy Arrays — Example 01</h2>
+<p>NumPy is the library that gives Python a real array type.</p>
+<p>A Python list can hold anything — a string next to a number next to a boolean.
+A NumPy array holds <strong>one type only</strong>, packed together in one block of memory.</p>
+<p>Backend analogy: a Python list is like <code>ArrayList&lt;Object&gt;</code>. A NumPy array is
+like <code>int[]</code>. The <code>int[]</code> is stricter, but it is much faster and it lets you do
+math on the whole array in one line.</p>
+<p>This notebook walks through:</p>
+<ol>
+<li>A plain Python list (the starting point)</li>
+<li>Making an array with <code>np.array()</code></li>
+<li>Dimensions — 0-D, 1-D, 2-D, 3-D, 4-D</li>
+<li>Data types inside an array</li>
+<li>Indexing (positive and negative)</li>
+<li>Slicing</li>
+<li>Looping and searching</li>
+<li>Sorting, inserting, deleting, flipping, appending</li>
+</ol>
+
+<h2 id="1-start-with-a-plain-python-list">1. Start with a plain Python list</h2>
+<p>Before NumPy, this is what we had. A list can mix types and it grows freely.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">arr1 = [&#x27;pune&#x27;, &quot;mumbai&quot;, &#x27;surat&#x27;, &quot;kolkata&quot;, &#x27;bihar&#x27;, &quot;jaipur&quot;, &#x27;chennai&#x27;]
+arr1</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&#x27;pune&#x27;, &#x27;mumbai&#x27;, &#x27;surat&#x27;, &#x27;kolkata&#x27;, &#x27;bihar&#x27;, &#x27;jaipur&#x27;, &#x27;chennai&#x27;]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">type(arr1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>list</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py"># lists are indexed from 0
+arr1[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>&#x27;pune&#x27;</pre></div>
+<p><code>type(arr1)</code> says <code>list</code>. Index <code>0</code> is the first item, not the second. That
+part is the same in NumPy.</p>
+
+<h2 id="2-turn-a-list-into-a-numpy-array">2. Turn a list into a NumPy array</h2>
+<p><code>numpy.array()</code> takes a list and gives back an <code>ndarray</code> — the NumPy array
+type. The name <code>ndarray</code> means &quot;n-dimensional array&quot;.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">import numpy
+
+arr2 = numpy.array([10, 20, 30, 40, 50])
+arr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">type(arr2)</pre></div>
+<div class="out"><div class="h">Output</div><pre>numpy.ndarray</pre></div>
+<p>The type is <code>numpy.ndarray</code>, not <code>list</code>. It looks like a list on screen but it
+is a different object with different powers.</p>
+<p>Now see the two ways of showing it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">print(arr2)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[10 20 30 40 50]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">arr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<p><code>print(arr2)</code> shows <code>[10 20 30 40 50]</code> — no commas, just spaces. That is the
+friendly view.</p>
+<p>Typing <code>arr2</code> alone shows <code>array([10, 20, 30, 40, 50])</code> — the exact code you
+would write to rebuild it. That is the developer view. Same array, two ways of
+printing.</p>
+
+<p>A tuple works too. NumPy only needs something it can walk through.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">arr3 = numpy.array((100, 200, 300, 400, 500))
+arr3</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([100, 200, 300, 400, 500])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">type(arr3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>numpy.ndarray</pre></div>
+<p>Still <code>numpy.ndarray</code>. The tuple was only the input container — once inside
+NumPy it is an array like any other.</p>
+
+<h2 id="3-the-short-name-np">3. The short name <code>np</code></h2>
+<p>Nobody types <code>numpy.</code> all day. Everyone imports it as <code>np</code>. Treat this as the
+standard — every tutorial, every codebase, every StackOverflow answer uses it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">import numpy as np</pre></div>
+<h2 id="4-dimensions-how-many-brackets-deep-is-the-data">4. Dimensions — how many brackets deep is the data?</h2>
+<p>Dimension = how many index numbers you need to reach one value.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Dimensions</th>
+  <th>Called</th>
+  <th>Real-world shape</th>
+  <th>Index needed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>0-D</td>
+  <td>scalar</td>
+  <td>a single number</td>
+  <td>none</td>
+</tr>
+<tr>
+  <td>1-D</td>
+  <td>vector</td>
+  <td>a row of numbers</td>
+  <td><code>a[i]</code></td>
+</tr>
+<tr>
+  <td>2-D</td>
+  <td>matrix</td>
+  <td>a table (rows × columns)</td>
+  <td><code>a[i, j]</code></td>
+</tr>
+<tr>
+  <td>3-D</td>
+  <td>tensor</td>
+  <td>a stack of tables</td>
+  <td><code>a[i, j, k]</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>.ndim</code> tells you the number of dimensions. <code>.shape</code> tells you how big each
+dimension is.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py"># 0-D array (scalar)
+a0 = np.array(5)
+a0</pre></div>
+<div class="out"><div class="h">Output</div><pre>array(5)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">a0.ndim, a0.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(0, ())</pre></div>
+<p><code>ndim</code> is <code>0</code> and <code>shape</code> is <code>()</code> — an empty tuple. There is no length to
+report because there is no axis at all. It is one lonely number wrapped in a
+NumPy box.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py"># 1-D array
+a1 = np.array([0, 1, 2, 3])
+a1</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0, 1, 2, 3])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">a1.ndim, a1.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(1, (4,))</pre></div>
+<p>One pair of brackets → <code>ndim</code> is <code>1</code>. Shape <code>(4,)</code> means one axis holding 4
+items. The trailing comma is just Python's way of writing a one-item tuple.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py"># 2-D array
+a2 = np.array([[1, 2, 3], [4, 5, 6]])
+a2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[1, 2, 3],
+       [4, 5, 6]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">a2.ndim, a2.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(2, (2, 3))</pre></div>
+<p>Brackets inside brackets → <code>ndim</code> is <code>2</code>. Shape <code>(2, 3)</code> reads as
+<strong>2 rows, 3 columns</strong>. Rows always come first.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py"># 3-D array
+a3 = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+a3</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[[1, 2],
+        [3, 4]],
+
+       [[5, 6],
+        [7, 8]]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">a3.ndim, a3.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(3, (2, 2, 2))</pre></div>
+<p>Three levels of brackets → <code>ndim</code> is <code>3</code>. Shape <code>(2, 2, 2)</code> reads as
+<strong>2 blocks, each 2 rows, each row 2 columns</strong>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py"># 4-D array -&gt; each extra pair of brackets adds one more dimension
+a4 = np.array([[[[4, 44, 444, 4444]]]])
+a4</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[[[   4,   44,  444, 4444]]]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">a4.ndim, a4.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(4, (1, 1, 1, 4))</pre></div>
+<p>Shape <code>(1, 1, 1, 4)</code> — three wrapper layers of size 1, then the 4 real values.
+The wrappers hold no extra data. They only add depth.</p>
+<p>There is a shortcut for this. <code>ndmin=</code> tells NumPy the minimum number of
+dimensions you want, and it adds the wrapper brackets for you.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">a4b = np.array([4, 44, 444, 4444], ndmin=4)
+a4b</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[[[   4,   44,  444, 4444]]]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">a4b.ndim, a4b.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(4, (1, 1, 1, 4))</pre></div>
+<p>Same result as writing <code>[[[[...]]]]</code> by hand — <code>ndim</code> 4, shape <code>(1, 1, 1, 4)</code>.
+Less typing and far fewer mismatched brackets.</p>
+
+<h2 id="5-data-types-one-type-for-the-whole-array">5. Data types — one type for the whole array</h2>
+<p>This is the biggest difference from a Python list. A list keeps each item's own
+type. An array must pick <strong>one type for everything</strong>.</p>
+<p>If you hand it mixed types, NumPy does not throw an error. It quietly promotes
+everything to the one type that can hold them all. This is called <strong>upcasting</strong>.</p>
+<p>The promotion ladder is: <code>bool</code> → <code>int</code> → <code>float</code> → <code>string</code>. The widest type
+in your data wins.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">amix1 = np.asarray([True, 5, 5.0, &quot;Kali&quot;])
+amix1</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([&#x27;True&#x27;, &#x27;5&#x27;, &#x27;5.0&#x27;, &#x27;Kali&#x27;], dtype=&#x27;&lt;U32&#x27;)</pre></div>
+<p>A string was in the list, so <strong>everything</strong> became a string. Look at the
+output: <code>'True'</code>, <code>'5'</code>, <code>'5.0'</code> are now text in quotes. The dtype <code>&lt;U21</code> means
+&quot;unicode string, up to 21 characters&quot;.</p>
+<p>Once this happens you cannot do maths on the array any more. This is a common
+silent bug — one stray text value in a CSV column turns the whole column into
+strings.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">amix1.dtype</pre></div>
+<div class="out"><div class="h">Output</div><pre>dtype(&#x27;&lt;U32&#x27;)</pre></div>
+<p>Now the same idea with only booleans and numbers.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">amix2 = np.array([True, 5])
+amix2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1, 5])</pre></div>
+<p><code>True</code> became <code>1</code>. Booleans sit at the bottom of the ladder, so integers win.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">amix3 = np.array([False, 10])
+amix3</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 0, 10])</pre></div>
+<p><code>False</code> became <code>0</code>. Same rule.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 47</span></div><pre class="py">amix4 = np.array([True, &#x27;shridhar&#x27;, 5, 5.0])
+amix4</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([&#x27;True&#x27;, &#x27;shridhar&#x27;, &#x27;5&#x27;, &#x27;5.0&#x27;], dtype=&#x27;&lt;U32&#x27;)</pre></div>
+<p>A string is present again, so all four values became text — <code>dtype='&lt;U32'</code>.</p>
+
+<h3>Choosing the type yourself</h3>
+<p>You do not have to accept NumPy's guess. Pass <code>dtype=</code> and it converts for you.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">amix5 = np.asarray([False, 10], dtype=np.int32)
+amix5</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 0, 10], dtype=int32)</pre></div>
+<p><code>int32</code> means each number uses 32 bits. NumPy's default on most machines is
+<code>int64</code>. Choosing <code>int32</code> halves the memory when you know the values are small
+— the same trade-off as picking <code>int</code> over <code>long</code> in Java.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 52</span></div><pre class="py">amix6 = np.array([1, 5.55, 2, 6.9], dtype=np.float64)
+amix6</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1.  , 5.55, 2.  , 6.9 ])</pre></div>
+<p><code>1</code> and <code>2</code> are shown as <code>1.</code> and <code>2.</code> — the trailing dot means they are now
+floats, not integers. The whole array is <code>float64</code>.</p>
+
+<h2 id="6-indexing-reading-one-value">6. Indexing — reading one value</h2>
+<p>Give one index number per dimension. A 2-D array needs two numbers, a 3-D array
+needs three, and so on. Order goes outside-in: block, then row, then column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 55</span></div><pre class="py"># indexing a 1-D array
+a1[0], a1[1], a1[-1]</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.int64(0), np.int64(1), np.int64(3))</pre></div>
+<p><code>a1[-1]</code> is the last item. Negative numbers count backwards from the end, so
+you never need <code>len(a1) - 1</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 57</span></div><pre class="py"># indexing a 2-D array -&gt; row first, then column
+a2[1]          # whole row at index 1</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([4, 5, 6])</pre></div>
+<p>One index on a 2-D array returns a whole <strong>row</strong>, not a single value. The row
+is itself a 1-D array.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 59</span></div><pre class="py">a2[1][2], a2[1, 2]   # same element, two ways to write it</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.int64(6), np.int64(6))</pre></div>
+<p>Both give <code>6</code>.</p>
+<p><code>a2[1][2]</code> does two steps: fetch row 1, then item 2 of that row.
+<code>a2[1, 2]</code> does it in one step. The comma form is the NumPy way — it is faster
+because it does not build the temporary row in between. Lists cannot do the
+comma form at all.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 61</span></div><pre class="py"># indexing a 3-D array -&gt; block first, then row, then column
+a3[1]          # whole 2x2 block at index 1</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[5, 6],
+       [7, 8]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 62</span></div><pre class="py">a3[1][0]       # row 0 inside block 1</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([5, 6])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 63</span></div><pre class="py">a3[1][0][1], a3[1, 0, 1]   # single element, two ways to write it</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.int64(6), np.int64(6))</pre></div>
+<p>Each index peels off one layer: block → row → value.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 65</span></div><pre class="py"># indexing a 4-D array -&gt; peel off one bracket layer at a time
+a4[0]          # drops to 3-D: shape (1, 1, 4)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[[   4,   44,  444, 4444]]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 66</span></div><pre class="py">a4[0][0][0], a4[0, 0, 0]      # drops to 1-D: array([4, 44, 444, 4444])</pre></div>
+<div class="out"><div class="h">Output</div><pre>(array([   4,   44,  444, 4444]), array([   4,   44,  444, 4444]))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 67</span></div><pre class="py">a4[0, 0, 0, 2]      # single element -&gt; 444</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(444)</pre></div>
+<p>Four dimensions need four indexes to reach a value. Three indexes still leave
+you holding an array.</p>
+
+<h3>Negative indexing</h3>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 70</span></div><pre class="py">arr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 71</span></div><pre class="py">arr2[-1]</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(50)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 72</span></div><pre class="py">arr2[-2]</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(40)</pre></div>
+<p><code>-1</code> is the last item, <code>-2</code> is the second from last. Handy when you do not know
+the length.</p>
+
+<h3>When the index does not exist</h3>
+<p>Ask for an index past the end and NumPy raises <code>IndexError</code>. It does not return
+<code>None</code> and it does not grow the array.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 75</span></div><pre class="py">a12 = np.array([1, 2, 3])
+a12</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1, 2, 3])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 76</span></div><pre class="py">a12[3]      # only 0, 1, 2 exist -&gt; IndexError</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[43], line 1
+----&gt; 1 a12[3]      # only 0, 1, 2 exist -&gt; IndexError
+
+IndexError: index 3 is out of bounds for axis 0 with size 3</pre></div>
+<p>Read the message carefully: <em>&quot;index 3 is out of bounds for axis 0 with size 3&quot;</em>.
+It tells you three things — the bad index, <strong>which axis</strong> it was on, and how big
+that axis actually is. On a multi-dimensional array the axis number tells you
+exactly which bracket position you got wrong.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 78</span></div><pre class="py">a4[0, 0, 1, 0]      # axis 2 has size 1, so index 1 is too big</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[44], line 1
+----&gt; 1 a4[0, 0, 1, 0]      # axis 2 has size 1, so index 1 is too big
+
+IndexError: index 1 is out of bounds for axis 2 with size 1</pre></div>
+<p>Here the first two indexes were fine. Axis 2 has size 1, so its only valid
+index is <code>0</code>.</p>
+
+<h2 id="7-slicing-reading-many-values">7. Slicing — reading many values</h2>
+<p>The pattern is <code>array[start : stop : step]</code>.</p>
+<ul>
+<li><code>start</code> is included</li>
+<li><code>stop</code> is <strong>excluded</strong></li>
+<li><code>step</code> is how far to jump each time</li>
+</ul>
+<p>Leave any of them out and NumPy fills in a sensible default: start <code>0</code>,
+stop <code>end</code>, step <code>1</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 81</span></div><pre class="py">arr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 82</span></div><pre class="py">arr2[1:]        # from index 1 to the end</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([20, 30, 40, 50])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 83</span></div><pre class="py">arr2[:3]        # from the start up to (not including) index 3</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30])</pre></div>
+<p><code>arr2[:3]</code> gives 3 items — indexes 0, 1, 2. Index 3 is left out. That
+&quot;stop is excluded&quot; rule is the one people trip on.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 85</span></div><pre class="py">arr2[:]         # everything</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 86</span></div><pre class="py">arr2[1:4:1]     # start 1, stop 4, step 1</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([20, 30, 40])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 87</span></div><pre class="py">arr2[1:4:2]     # same window, but skip every other item</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([20, 40])</pre></div>
+<p>Step <code>2</code> takes index 1, skips 2, takes 3. Result: <code>[20, 40]</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 89</span></div><pre class="py">arr2[:4:3]      # start 0, stop 4, step 3</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 40])</pre></div>
+<p>Takes index 0, jumps 3, takes index 3. Result: <code>[10, 40]</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 91</span></div><pre class="py">arr2[::4]       # whole array, step 4</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 50])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 92</span></div><pre class="py">arr2[::]        # same as arr2[:]</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<p><code>arr2[::4]</code> takes index 0 and index 4 → <code>[10, 50]</code>.</p>
+<p>One important difference from lists: <strong>a NumPy slice is a view, not a copy.</strong>
+Change the slice and you change the original array. A Python list slice gives
+you a fresh copy. Use <code>.copy()</code> when you really want a separate array.</p>
+
+<h2 id="8-looping-through-an-array">8. Looping through an array</h2>
+<p>A <code>for</code> loop works exactly like it does on a list.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 95</span></div><pre class="py">for i in arr2:
+    print(i)</pre></div>
+<div class="out"><div class="h">Output</div><pre>10
+20
+30
+40
+50</pre></div>
+<p>This is fine for printing. For maths, do <strong>not</strong> loop — write <code>arr2 * 2</code> and
+NumPy does the whole array in one shot, in C. That is called vectorisation and
+it is the main reason NumPy exists.</p>
+
+<h2 id="9-searching-with-np-where">9. Searching with <code>np.where()</code></h2>
+<p><code>np.where(condition)</code> returns the <strong>positions</strong> where the condition is true —
+not the values themselves.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 98</span></div><pre class="py">x = np.where(arr2 == 20)
+print(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(array([1]),)</pre></div>
+<p>The result is <code>(array([1]),)</code> — a tuple holding one array. The tuple has one
+entry per dimension, so a 1-D array gives a 1-element tuple. Read it as
+&quot;value 20 sits at index 1&quot;.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 100</span></div><pre class="py">x = np.where(arr2 == 50)
+print(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(array([4]),)</pre></div>
+<p>Now a case with the same value repeated many times.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 102</span></div><pre class="py">arrr = np.array([1, 2, 3, 1, 2, 3, 1, 2, 3])
+arrr</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1, 2, 3, 1, 2, 3, 1, 2, 3])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 103</span></div><pre class="py">x = np.where(arrr == 2)
+print(x)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(array([1, 4, 7]),)</pre></div>
+<p><code>(array([1, 4, 7]),)</code> — the value <code>2</code> appears at indexes 1, 4 and 7. Unlike
+<code>list.index()</code>, which stops at the first hit, <code>np.where</code> finds every match.</p>
+
+<h2 id="10-sorting">10. Sorting</h2>
+<p><code>np.sort()</code> returns a <strong>new sorted array</strong>. The original is untouched.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 106</span></div><pre class="py">arraysort = np.array([2, 1, 5, 3, 7, 5, 9, 8, 5, 7, 3])
+arraysort</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 5, 3, 7, 5, 9, 8, 5, 7, 3])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 107</span></div><pre class="py">np.sort(arraysort)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1, 2, 3, 3, 5, 5, 5, 7, 7, 8, 9])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 108</span></div><pre class="py">arraysort      # unchanged</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 5, 3, 7, 5, 9, 8, 5, 7, 3])</pre></div>
+<p>The sorted output came back, but <code>arraysort</code> is still in its original order.
+<code>np.sort</code> is a copy-out function. To keep the result, assign it to a name.</p>
+
+<h2 id="11-insert-and-delete">11. Insert and delete</h2>
+<p><code>np.insert(array, position, value)</code> puts a value at a position.</p>
+<p>Same rule as sorting: it returns a <strong>new array</strong>. NumPy arrays are fixed size,
+so &quot;inserting&quot; really means building a fresh, bigger array behind the scenes.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 111</span></div><pre class="py">np.insert(arr2, 5, 60)      # add 60 at the end position</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50, 60])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 112</span></div><pre class="py">arr2      # still 5 items</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<p>The original never changed. Assign the result if you want to keep it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 114</span></div><pre class="py">arrr1 = np.insert(arr2, 5, 60)
+arrr1</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50, 60])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 115</span></div><pre class="py">np.insert(arraysort, 0, 100)     # insert at the front</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([100,   2,   1,   5,   3,   7,   5,   9,   8,   5,   7,   3])</pre></div>
+<p>Position <code>0</code> pushes everything else one step to the right.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 117</span></div><pre class="py">np.delete(arraysort, 0)      # remove the item at index 0</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1, 5, 3, 7, 5, 9, 8, 5, 7, 3])</pre></div>
+<p><code>np.delete(array, position)</code> removes by <strong>position</strong>, not by value. To delete
+by value, find the position with <code>np.where</code> first.</p>
+<p>You can also delete several positions at once by passing a list.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 119</span></div><pre class="py">index = [0, 1, 2]
+arrr2 = np.delete(arr2, index)
+arrr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([40, 50])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 120</span></div><pre class="py">arr2      # again, untouched</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<p>Indexes 0, 1 and 2 were dropped, leaving <code>[40, 50]</code>.</p>
+
+<h2 id="12-reversing-with-np-flip">12. Reversing with <code>np.flip()</code></h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 123</span></div><pre class="py">np.flip(arr2)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([50, 40, 30, 20, 10])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 124</span></div><pre class="py">arr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
+<p>Reversed copy out, original unchanged — the same pattern yet again.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 126</span></div><pre class="py">arrflip = np.flip(arr2)
+arrflip</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([50, 40, 30, 20, 10])</pre></div>
+<h2 id="13-changing-an-array-in-place">13. Changing an array in place</h2>
+<p>Everything above returned a copy. These two actually modify the array.</p>
+<p>First, plain assignment to an index.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 128</span></div><pre class="py">arr2[0] = 100
+arr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([100,  20,  30,  40,  50])</pre></div>
+<p><code>arr2</code> really changed. Note the type rule still applies — assign <code>&quot;hello&quot;</code> into
+an integer array and you get an error, because the array's dtype is locked in.</p>
+
+<p>Second, the <code>.sort()</code> <strong>method</strong> (not the <code>np.sort()</code> function).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 131</span></div><pre class="py">arr2.sort()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 132</span></div><pre class="py">arr2</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 20,  30,  40,  50, 100])</pre></div>
+<p>Two things to notice:</p>
+<ol>
+<li><code>arr2.sort()</code> printed nothing — it returns <code>None</code>, like <code>list.sort()</code>.</li>
+<li><code>arr2</code> itself is now sorted.</li>
+</ol>
+<p>So: <code>np.sort(a)</code> gives a sorted copy, <code>a.sort()</code> sorts in place. Mixing them up
+(<code>a = a.sort()</code>) is a classic bug — it sets <code>a</code> to <code>None</code>.</p>
+
+<h2 id="14-appending">14. Appending</h2>
+<p><code>np.append()</code> looks like <code>list.append()</code> but behaves completely differently.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 135</span></div><pre class="py">np.append(arr2, 1000)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([  20,   30,   40,   50,  100, 1000])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 136</span></div><pre class="py">arr2      # not appended</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ 20,  30,  40,  50, 100])</pre></div>
+<p>The value was added in the returned array, but <code>arr2</code> is unchanged. Again — you
+must assign the result.</p>
+<p>And the method version simply does not exist.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 138</span></div><pre class="py">arr2.append(1000)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[77], line 1
+----&gt; 1 arr2.append(1000)
+
+AttributeError: &#x27;numpy.ndarray&#x27; object has no attribute &#x27;append&#x27;</pre></div>
+<p><code>AttributeError: 'numpy.ndarray' object has no attribute 'append'</code>.</p>
+<p>This is not an oversight. A list can append cheaply because it keeps spare
+room at the end. A NumPy array is one tight block of memory with no spare room,
+so every &quot;append&quot; has to allocate a whole new block and copy everything across.
+NumPy makes that cost visible by refusing to offer the method.</p>
+<p>If you need to build up data item by item, use a Python list and convert once
+at the end with <code>np.array(my_list)</code>.</p>
+
+<h2 id="recap">Recap</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>What I wanted</th>
+  <th>What I wrote</th>
+  <th>Changes the original?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Make an array</td>
+  <td><code>np.array([1, 2, 3])</code></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Count dimensions</td>
+  <td><code>a.ndim</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Size of each dimension</td>
+  <td><code>a.shape</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Force a type</td>
+  <td><code>np.array([...], dtype=np.int32)</code></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Force a depth</td>
+  <td><code>np.array([...], ndmin=4)</code></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Read one value</td>
+  <td><code>a[1, 2]</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Read the last value</td>
+  <td><code>a[-1]</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Read a range</td>
+  <td><code>a[start:stop:step]</code></td>
+  <td>no (but it is a view)</td>
+</tr>
+<tr>
+  <td>Find positions</td>
+  <td><code>np.where(a == 20)</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Sorted copy</td>
+  <td><code>np.sort(a)</code></td>
+  <td><strong>no</strong></td>
+</tr>
+<tr>
+  <td>Sort in place</td>
+  <td><code>a.sort()</code></td>
+  <td><strong>yes</strong></td>
+</tr>
+<tr>
+  <td>Insert</td>
+  <td><code>np.insert(a, pos, val)</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Delete</td>
+  <td><code>np.delete(a, pos)</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Reverse</td>
+  <td><code>np.flip(a)</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Add to the end</td>
+  <td><code>np.append(a, val)</code></td>
+  <td>no</td>
+</tr>
+<tr>
+  <td>Change one value</td>
+  <td><code>a[0] = 100</code></td>
+  <td><strong>yes</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The pattern worth memorising: <strong>almost every <code>np.something(array)</code> function
+returns a copy.</strong> If you forget to assign the result, your change disappears.
+The only in-place operations here are direct assignment (<code>a[0] = 100</code>) and the
+<code>.sort()</code> method.</p>
+<h3>Three mistakes to avoid</h3>
+<ol>
+<li>One string in the data turns the <strong>whole array</strong> into strings — check
+<code>.dtype</code> when maths silently stops working.</li>
+<li><code>stop</code> in a slice is excluded. <code>a[:3]</code> gives 3 items, not 4.</li>
+<li><code>arr.append(x)</code> does not exist. Use <code>np.append(arr, x)</code> and assign the
+result — or build a Python list first.</li>
+</ol>
+
+<div class="src-head">📓 <a href="../Concept/example_02.ipynb">example_02.ipynb</a></div>
+<h2 id="numpy-example-02-operations-broadcasting-and-lin">NumPy — Example 02: Operations, Broadcasting, and Linear Algebra</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M03, Python for Data Science (NumPy and Pandas)</p>
+</div>
+<p><strong>What this notebook is:</strong> the second NumPy pass. <a href="../Concept/example_01.ipynb"><code>example_01.ipynb</code></a>
+was about <em>making</em> arrays and <em>reading</em> them — indexing, slicing, sorting, appending.
+This notebook is about <em>computing with</em> them: maths on whole arrays, broadcasting,
+ready-made array builders, statistics, and linear algebra.</p>
+<p><strong>How to read it:</strong> each Markdown section explains every code cell that follows it, up
+to the next section. Most cells print four lines. The useful question at each line is
+<em>what changed from the line above?</em></p>
+<p>Versions used here: <strong>numpy 2.4.6</strong>, Python 3.14 in <code>pizza_env</code>.</p>
+<hr />
+<h2 id="the-one-idea-behind-this-whole-notebook">The one idea behind this whole notebook</h2>
+<p>You stop writing loops. You write one expression, and NumPy applies it to every element.</p>
+<div class="code"><pre>   Python list                        NumPy array
+   -----------                        -----------
+   out = []                           out = a + b
+   for i in range(len(a)):
+       out.append(a[i] + b[i])        one line, no loop
+</pre></div>
+<p>This is called <strong>vectorization</strong>. The loop still happens — but it happens inside
+compiled C code, over one packed block of memory, instead of inside the Python
+interpreter.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>You already know this trade-off. Fetching 10,000 rows one <code>findById</code> at a time is slow
+because of the per-call overhead, not the work. One batch query is fast. <code>a + b</code> is the
+batch query; the Python <code>for</code> loop is the N+1 problem.</p>
+</div>
+<p><strong>Sections 1-4 recap <code>example_01</code></strong> (creating arrays, <code>ndim</code>, <code>dtype</code>) and add <code>shape</code>
+and <code>reshape</code>. The genuinely new material starts at <strong>section 5, arithmetic</strong>.</p>
+
+<hr />
+<h2 id="1-import">1. Import</h2>
+<p><code>np</code> is the universal alias. Every NumPy tutorial, book, and error message on the
+internet assumes it, so never rename it.</p>
+<p>Everything in this notebook hangs off this one import.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np</pre></div>
+<hr />
+<h2 id="2-creating-arrays-what-np-array-accepts">2. Creating arrays — what <code>np.array</code> accepts</h2>
+<p><code>np.array()</code> takes a Python sequence and copies it into a packed, single-type block of
+memory.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell line</th>
+  <th>Input</th>
+  <th>Result</th>
+  <th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>arr1</code></td>
+  <td>list <code>[1,2,3]</code></td>
+  <td><code>[1 2 3]</code></td>
+  <td>the normal case</td>
+</tr>
+<tr>
+  <td><code>arr2</code></td>
+  <td>tuple <code>(4,5,6)</code></td>
+  <td><code>[4 5 6]</code></td>
+  <td>tuple works too — the array does not remember which you used</td>
+</tr>
+<tr>
+  <td><code>arr3</code></td>
+  <td>list of lists</td>
+  <td><code>[[1 2] [3 4]]</code></td>
+  <td>nesting becomes a second dimension</td>
+</tr>
+<tr>
+  <td><code>arr4</code></td>
+  <td>list of booleans</td>
+  <td><code>[True False True]</code></td>
+  <td><code>dtype</code> becomes <code>bool</code></td>
+</tr>
+</tbody>
+</table>
+<p>Two things to notice in the printed output:</p>
+<ol>
+<li><strong>No commas.</strong> <code>[1 2 3]</code> is a NumPy array. <code>[1, 2, 3]</code> is a Python list. That is the
+fastest way to tell them apart when you are reading someone else's output.</li>
+<li><strong>The nested list keeps its shape.</strong> The brackets you type are the dimensions you get.</li>
+</ol>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>A Python list is like <code>ArrayList&lt;Object&gt;</code> — every slot is a pointer to a boxed object
+living somewhere else in memory. A NumPy array is like <code>int[]</code> — the values sit side by
+side in one block. That layout is the whole reason NumPy is fast, and it is also why an
+array can hold only one type.</p>
+</div>
+<p><strong>Takeaway:</strong> <code>np.array</code> accepts any nested sequence, but the result is always one type
+in one block of memory.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">arr1 = np.array([1,2,3])
+arr2 = np.array((4,5,6))
+arr3 = np.array([[1,2],[3,4]])
+arr4 = np.array([True,False,True])
+print(arr1,arr2,arr3,arr4)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[1 2 3] [4 5 6] [[1 2]
+ [3 4]] [ True False  True]</pre></div>
+<hr />
+<h2 id="3-ndim-how-many-dimensions">3. <code>ndim</code> — how many dimensions?</h2>
+<p><code>ndim</code> counts the dimensions. The quick way to read it: <strong>count the opening brackets on
+the left before the first number.</strong></p>
+<div class="code"><pre>np.array([1,2,3])              -&gt;  [1        -&gt;  ndim 1   a vector
+np.array([[1,2],[3,4]])        -&gt;  [[1       -&gt;  ndim 2   a matrix / table
+np.array([[[1],[2]],...])      -&gt;  [[[1      -&gt;  ndim 3   a stack of tables
+np.array([[[[1]]]])            -&gt;  [[[[1     -&gt;  ndim 4   rarely typed by hand
+</pre></div>
+<p>Where each one shows up in real work:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>ndim</th>
+  <th>Name</th>
+  <th>Real example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>vector</td>
+  <td>one row of features, one time series, one column of prices</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>matrix</td>
+  <td>a dataset: <strong>rows are samples, columns are features</strong></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>3-D array</td>
+  <td>one colour image: height x width x colour channel</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>4-D array</td>
+  <td>a batch of images: batch x height x width x channel</td>
+</tr>
+</tbody>
+</table>
+<p><code>ndim</code> 4 looks pointless when you type it by hand. It is what every deep-learning batch
+actually is.</p>
+<p><strong>Takeaway:</strong> <code>ndim</code> is bracket depth. In real code it tells you what one element <em>means</em>
+— a value, a row, or a whole table.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">print(np.array([1,2,3]).ndim)
+print(np.array([[1,2],[3,4]]).ndim)
+print(np.array([[[1],[2]],[[3],[4]]]).ndim)
+print(np.array([[[[1]]]]).ndim)</pre></div>
+<div class="out"><div class="h">Output</div><pre>1
+2
+3
+4</pre></div>
+<hr />
+<h2 id="4-shape-and-reshape-the-same-data-a-different-gr">4. <code>shape</code> and <code>reshape</code> — the same data, a different grid</h2>
+<p><code>shape</code> is a <strong>tuple giving the length of each dimension</strong>. <code>a = np.arange(6)</code> gives
+6 values and <code>a.shape</code> is <code>(6,)</code>. The trailing comma is Python's way of writing a
+one-item tuple — it is not a typo, and it is not a second empty dimension.</p>
+<p><code>reshape</code> lays those same 6 values out on a different grid:</p>
+<div class="code"><pre>        a = [0 1 2 3 4 5]        shape (6,)      6 values
+
+        reshape(2,3)             reshape(3,2)            reshape(1,6)
+        [[0 1 2]                 [[0 1]                  [[0 1 2 3 4 5]]
+         [3 4 5]]                 [2 3]
+                                  [4 5]]
+        2 x 3 = 6  OK            3 x 2 = 6  OK           1 x 6 = 6  OK
+</pre></div>
+<h3>The one rule</h3>
+<p><strong>The product of the new shape must equal the number of elements.</strong> That is why the last
+line is commented out:</p>
+<div class="code"><pre class="py">a.reshape(1,4)
+# ValueError: cannot reshape array of size 6 into shape (1,4)
+</pre></div>
+<p><code>1 x 4 = 4</code>, but the array has 6 values. NumPy will not invent two values and will not
+drop two. The error saved under that cell is real — it came from running the line before
+it was commented out. Keep it; a remembered error message is worth more than a rule.</p>
+<h3>Two things worth knowing now</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Point</th>
+  <th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>reshape</code> does <strong>not</strong> change <code>a</code></td>
+  <td>It returns a new <em>view</em>. <code>a</code> is still <code>(6,)</code> after all three calls — which is why the second and third <code>reshape</code> calls still work.</td>
+</tr>
+<tr>
+  <td>A view <strong>shares memory</strong></td>
+  <td>Verified: <code>b = a.reshape(2,3)</code>, then <code>b[0,0] = 99</code>, and <code>a[0]</code> is now <code>99</code>. No copy was made. Use <code>.copy()</code> when you need independence.</td>
+</tr>
+<tr>
+  <td><code>-1</code> means &quot;you work it out&quot;</td>
+  <td><code>a.reshape(-1, 2)</code> gives the same 3x2 result. Useful when the row count depends on data you have not counted.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Takeaway:</strong> <code>shape</code> is the grid, <code>reshape</code> redraws the grid, and the number of values
+never changes. When a NumPy error confuses you, print <code>.shape</code> first — most NumPy bugs
+are shape bugs.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">a = np.arange(6)
+print(a.shape)
+print(a.reshape(2,3))
+print(a.reshape(3,2))
+print(a.reshape(1,6))
+# print(a.reshape(1,4)) Error here</pre></div>
+<div class="out"><div class="h">Output</div><pre>(6,)
+[[0 1 2]
+ [3 4 5]]
+[[0 1]
+ [2 3]
+ [4 5]]
+[[0 1 2 3 4 5]]
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[5], line 6
+      2 print(a.shape)
+      3 print(a.reshape(2,3))
+      4 print(a.reshape(3,2))
+      5 print(a.reshape(1,6))
+----&gt; 6 print(a.reshape(1,4))
+
+ValueError: cannot reshape array of size 6 into shape (1,4)</pre></div>
+<hr />
+<h2 id="5-dtype-the-one-type-the-array-holds">5. <code>dtype</code> — the one type the array holds</h2>
+<p>Every array has exactly one type, and NumPy picks it from the data unless you say
+otherwise.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell line</th>
+  <th>Input</th>
+  <th><code>dtype</code></th>
+  <th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><code>[1,2,3]</code></td>
+  <td><code>int64</code></td>
+  <td>whole numbers, 8 bytes each</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>[1.1,2.2]</code></td>
+  <td><code>float64</code></td>
+  <td>one decimal is enough to make the whole array float</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>[1,2,3], dtype=float</code></td>
+  <td><code>float64</code></td>
+  <td>you asked for it explicitly</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>['ABVFJDDH','BCJ']</code></td>
+  <td><code>&lt;U8</code></td>
+  <td>strings</td>
+</tr>
+</tbody>
+</table>
+<h3>Reading <code>&lt;U8</code></h3>
+<div class="code"><pre>   &lt;     U      8
+   |     |      |
+   |     |      +-- 8 characters: the length of the LONGEST string in the array
+   |     +--------- Unicode text
+   +--------------- little-endian byte order
+</pre></div>
+<p>This is the string trap. <code>'BCJ'</code> is 3 characters, but it is stored in an 8-character
+slot, because a packed block needs every slot the same size. Verified: <code>itemsize</code> is
+<strong>32 bytes</strong> per element — 4 bytes per character x 8.</p>
+<p>And the consequence people hit for real: assigning a longer string into a <code>&lt;U8</code> array
+<strong>silently truncates it</strong>. When you work with text, this is the moment to reach for
+Pandas instead.</p>
+<p><strong>Takeaway:</strong> <code>dtype</code> is decided once, from the data or from you. Mixed input gets
+promoted to the type that can hold everything — <code>int</code> loses to <code>float</code>, and everything
+loses to text.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">print(np.array([1,2,3]).dtype)
+print(np.array([1.1,2.2]).dtype)
+print(np.array([1,2,3],dtype=float).dtype)
+print(np.array([&#x27;ABVFJDDH&#x27;,&#x27;BCJ&#x27;]).dtype)</pre></div>
+<div class="out"><div class="h">Output</div><pre>int64
+float64
+float64
+&lt;U8</pre></div>
+<hr />
+<h2 id="6-arithmetic-one-operator-every-element">6. Arithmetic — one operator, every element</h2>
+<p>This is the payoff for the packed memory layout.</p>
+<div class="code"><pre class="py">a = np.array([1,2,3])
+b = np.array([4,5,6])
+a + b        -&gt;  [5 7 9]
+</pre></div>
+<p>Position by position: <code>1+4</code>, <code>2+5</code>, <code>3+6</code>. The same applies to <code>-</code>, <code>*</code>, and <code>/</code>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Operator</th>
+  <th>Result</th>
+  <th>Read it as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>a + b</code></td>
+  <td><code>[5 7 9]</code></td>
+  <td>element-wise sum</td>
+</tr>
+<tr>
+  <td><code>a - b</code></td>
+  <td><code>[-3 -3 -3]</code></td>
+  <td>element-wise difference</td>
+</tr>
+<tr>
+  <td><code>a * b</code></td>
+  <td><code>[4 10 18]</code></td>
+  <td>element-wise product — <strong>not</strong> matrix multiplication</td>
+</tr>
+<tr>
+  <td><code>a / b</code></td>
+  <td><code>[0.25 0.4 0.5]</code></td>
+  <td>element-wise division, always <code>float64</code></td>
+</tr>
+</tbody>
+</table>
+<h3>The two traps</h3>
+<p><strong>1. <code>*</code> is not matrix multiplication.</strong> <code>a * b</code> multiplies matching positions. The
+matrix product is <code>@</code> or <code>np.matmul</code>, in section 15. In maths notation both are written
+with a dot, so this catches almost everyone once.</p>
+<p><strong>2. <code>/</code> always returns floats.</strong> <code>int64 / int64</code> gives <code>float64</code>, even when the division
+is exact. NumPy chooses the result type by the operation, not by the values.</p>
+<p><strong>3. Shapes must match</strong> — or be broadcastable, which is the next section.</p>
+<p><strong>Takeaway:</strong> arithmetic on arrays is position-by-position, and it replaces the loop you
+would have written in plain Python.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">a=np.array([1,2,3])
+b=np.array([4,5,6])
+print(a+b)
+print(a-b)
+print(a*b)
+print(a/b)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[5 7 9]
+[-3 -3 -3]
+[ 4 10 18]
+[0.25 0.4  0.5 ]</pre></div>
+<hr />
+<h2 id="7-comparisons-the-boolean-mask">7. Comparisons — the boolean mask</h2>
+<p>A comparison is arithmetic too. It runs on every element and returns an array of <code>True</code>
+and <code>False</code>, the same shape as the input.</p>
+<div class="code"><pre>   a        =  [10   20    30  ]
+   a &gt; 15   -&gt;  [False True True]
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell line</th>
+  <th>Meaning</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>a &gt; 15</code></td>
+  <td>which values are above 15?</td>
+  <td><code>[False True True]</code></td>
+</tr>
+<tr>
+  <td><code>a == 20</code></td>
+  <td>which equal 20?</td>
+  <td><code>[False True False]</code></td>
+</tr>
+<tr>
+  <td><code>a != 20</code></td>
+  <td>which are not 20?</td>
+  <td><code>[True False True]</code></td>
+</tr>
+<tr>
+  <td><code>a &lt;= 20</code></td>
+  <td>which are 20 or less?</td>
+  <td><code>[True True False]</code></td>
+</tr>
+</tbody>
+</table>
+<p>That result array is called a <strong>mask</strong>, and it is the point of the whole exercise. A mask
+is not usually printed — it is fed straight back into the array:</p>
+<div class="code"><pre class="py">a[a &gt; 15]        # -&gt; [20 30]     keep the values that passed
+a[a &gt; 15] = 0    #                overwrite only those values
+(a &gt; 15).sum()   # -&gt; 2           True counts as 1, so sum = how many passed
+</pre></div>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p><code>a[a &gt; 15]</code> is a <code>WHERE</code> clause. You describe the condition and NumPy applies it to
+the whole column at once — no cursor, no row loop. Pandas' <code>df[df.age &gt; 30]</code> is exactly
+this same mechanism, one layer up.</p>
+</div>
+<h3>The one real trap</h3>
+<p>Use <code>&amp;</code>, <code>|</code>, <code>~</code> for combining conditions — <strong>not</strong> <code>and</code>, <code>or</code>, <code>not</code>:</p>
+<div class="code"><pre class="py">a[(a &gt; 15) &amp; (a &lt; 30)]     # correct
+a[a &gt; 15 and a &lt; 30]       # ValueError: truth value of an array is ambiguous
+</pre></div>
+<p>Python's <code>and</code> wants one true-or-false answer. An array of three booleans cannot give
+one. Also keep the brackets: <code>&amp;</code> binds tighter than <code>&gt;</code>.</p>
+<p><strong>Takeaway:</strong> a comparison gives you a mask, and a mask is how you filter, count, and
+update parts of an array without a loop.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">a=np.array([10,20,30])
+print(a&gt;15)
+print(a==20)
+print(a!=20)
+print(a&lt;=20)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[False  True  True]
+[False  True False]
+[ True False  True]
+[ True  True False]</pre></div>
+<hr />
+<h2 id="8-broadcasting-when-shapes-do-not-match">8. Broadcasting — when shapes do not match</h2>
+<p>Section 6 needed matching shapes. Broadcasting is the set of rules that lets NumPy work
+with mismatched shapes by <strong>stretching the smaller one</strong>, without copying it.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell line</th>
+  <th>Shapes</th>
+  <th>Result</th>
+  <th>What was stretched</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>a + 10</code></td>
+  <td><code>(3,)</code> + scalar</td>
+  <td><code>[11 12 13]</code></td>
+  <td><code>10</code> acts as <code>[10 10 10]</code></td>
+</tr>
+<tr>
+  <td><code>a * 5</code></td>
+  <td><code>(3,)</code> + scalar</td>
+  <td><code>[5 10 15]</code></td>
+  <td>same idea</td>
+</tr>
+<tr>
+  <td><code>a + [10,20,30]</code></td>
+  <td><code>(3,)</code> + <code>(3,)</code></td>
+  <td><code>[11 22 33]</code></td>
+  <td>nothing — the list is just converted to an array</td>
+</tr>
+<tr>
+  <td><code>[[1],[2],[3]] + [10,20]</code></td>
+  <td><code>(3,1)</code> + <code>(2,)</code></td>
+  <td>a <strong>3x2</strong> matrix</td>
+  <td>both were stretched</td>
+</tr>
+</tbody>
+</table>
+<h3>The last one, drawn out</h3>
+<p>This is the cell worth understanding. A column of 3 plus a row of 2 gives a 3x2 grid —
+every pairing.</p>
+<div class="code"><pre>   column (3,1)          row (2,)              result (3,2)
+                         [10  20]
+      [1]                                      [11  21]      1+10  1+20
+      [2]        +                    =        [12  22]      2+10  2+20
+      [3]                                      [13  23]      3+10  3+20
+
+   the column is copied across 2 columns
+   the row    is copied down   3 rows      (conceptually — no memory is actually copied)
+</pre></div>
+<h3>The rule</h3>
+<p>Line the shapes up <strong>from the right</strong>. Each pair of dimensions must be either equal, or
+one of them must be 1.</p>
+<div class="code"><pre>   (3,1)                (3,)
+   (  2)                (4,)
+   -----                -----
+   3 vs nothing -&gt; 3    3 vs 4 -&gt; neither equal nor 1
+   1 vs 2       -&gt; 2                 ValueError: operands could not be broadcast
+   = (3,2)  OK
+</pre></div>
+<h3>Where you will actually use this</h3>
+<p>Centring a dataset. <code>X</code> is <code>(1000, 5)</code> — 1000 samples, 5 features. <code>X.mean(axis=0)</code> is
+<code>(5,)</code> — one mean per feature.</p>
+<div class="code"><pre class="py">X_centered = X - X.mean(axis=0)      # (1000,5) - (5,) -&gt; (1000,5)
+</pre></div>
+<p>One row of 5 means is applied to all 1000 rows. That is feature scaling, and it is one
+line because of broadcasting.</p>
+<p><strong>Takeaway:</strong> broadcasting stretches size-1 (or missing) dimensions so shapes fit. It is
+what makes &quot;subtract the mean from every row&quot; a single expression — but it will also
+silently build a huge matrix if you mix up a row and a column, so check the result shape.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">a=np.array([1,2,3])
+print(a+10)
+print(a*5)
+print(a+[10,20,30])
+print(np.array([[1],[2],[3]])+np.array([10,20]))</pre></div>
+<div class="out"><div class="h">Output</div><pre>[11 12 13]
+[ 5 10 15]
+[11 22 33]
+[[11 21]
+ [12 22]
+ [13 23]]</pre></div>
+<hr />
+<h2 id="9-ready-made-arrays-build-without-data">9. Ready-made arrays — build without data</h2>
+<p>Often you need an array of the right <em>shape</em> before you have any values. These four
+builders take the shape as a tuple.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Result</th>
+  <th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.zeros((2,2))</code></td>
+  <td>all <code>0.</code></td>
+  <td>an empty accumulator you will fill in</td>
+</tr>
+<tr>
+  <td><code>np.ones((2,2))</code></td>
+  <td>all <code>1.</code></td>
+  <td>a starting weight, or a mask you multiply by</td>
+</tr>
+<tr>
+  <td><code>np.full((2,2), 9)</code></td>
+  <td>all <code>9</code></td>
+  <td>any other constant, including placeholders</td>
+</tr>
+<tr>
+  <td><code>np.eye(3)</code></td>
+  <td>1s on the diagonal</td>
+  <td>the <strong>identity matrix</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>Two details in the output</h3>
+<p><strong>The dots.</strong> <code>zeros</code> and <code>ones</code> print <code>0.</code> and <code>1.</code> — they default to <code>float64</code>. <code>full</code>
+printed <code>9</code> with no dot, because it took its type from the fill value you passed. If you
+need integer zeros, ask: <code>np.zeros((2,2), dtype=int)</code>.</p>
+<p><strong><code>np.eye(3)</code> takes one number, not a tuple.</strong> An identity matrix is always square, so
+one number is enough.</p>
+<h3>Why the identity matrix matters</h3>
+<p>It is the <code>1</code> of matrix multiplication: <code>A @ I == A</code>, for any <code>A</code>. That is what makes it
+the check for section 18 — if <code>inv(A)</code> is correct, then <code>A @ inv(A)</code> gives back the
+identity.</p>
+<p><strong>Takeaway:</strong> these four give you a correctly shaped array before you have values. Watch
+the dtype — the default is float.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">print(np.zeros((2,2)))
+print(np.ones((2,2)))
+print(np.full((2,2),9))
+print(np.eye(3))</pre></div>
+<div class="out"><div class="h">Output</div><pre>[[0. 0.]
+ [0. 0.]]
+[[1. 1.]
+ [1. 1.]]
+[[9 9]
+ [9 9]]
+[[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]</pre></div>
+<hr />
+<h2 id="10-arange-and-linspace-building-sequences">10. <code>arange</code> and <code>linspace</code> — building sequences</h2>
+<p>Both make evenly spaced numbers. They differ in <strong>which part you control</strong>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Result</th>
+  <th>You control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.arange(1,10)</code></td>
+  <td><code>[1 2 ... 9]</code></td>
+  <td>the <strong>step</strong> (default 1)</td>
+</tr>
+<tr>
+  <td><code>np.arange(1,10,2)</code></td>
+  <td><code>[1 3 5 7 9]</code></td>
+  <td>step of 2</td>
+</tr>
+<tr>
+  <td><code>np.linspace(0,1,5)</code></td>
+  <td><code>[0. 0.25 0.5 0.75 1.]</code></td>
+  <td>the <strong>count</strong> (5 values)</td>
+</tr>
+<tr>
+  <td><code>np.linspace(10,20,4)</code></td>
+  <td><code>[10. 13.33 16.67 20.]</code></td>
+  <td>4 values, spacing worked out for you</td>
+</tr>
+</tbody>
+</table>
+<h3>The endpoint rule — they disagree, and it matters</h3>
+<div class="code"><pre>   np.arange(1,10)      -&gt;  1 ... 9      stop is EXCLUDED   (like range())
+   np.linspace(0,1,5)   -&gt;  0.0 ... 1.0  stop is INCLUDED   (both ends kept)
+</pre></div>
+<p><code>arange</code> follows Python's <code>range</code>. <code>linspace</code> is built for plotting and sampling, where
+you want both ends of the interval.</p>
+<h3>Choosing between them</h3>
+<div class="code"><pre>   Do I care about the gap between values?   -&gt;  arange
+   Do I care how many values I get?          -&gt;  linspace
+</pre></div>
+<h3>The floating-point trap</h3>
+<p>Never use <code>arange</code> with a decimal step when the count matters:</p>
+<div class="code"><pre class="py">np.arange(0.1, 0.4, 0.1)     # -&gt; [0.1 0.2 0.3 0.4]   FOUR values, not three
+</pre></div>
+<p>Verified. <code>0.1</code> cannot be stored exactly in binary, the accumulated error lands just
+under <code>0.4</code>, and one extra value slips in. <code>np.linspace(0.1, 0.4, 4)</code> asks for a count
+and cannot do this. <strong>Integers: <code>arange</code>. Decimals: <code>linspace</code>.</strong></p>
+<p><strong>Takeaway:</strong> <code>arange</code> for a known step, <code>linspace</code> for a known count. <code>arange</code> excludes
+the stop; <code>linspace</code> includes it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">print(np.arange(1,10))
+print(np.arange(1,10,2))
+print(np.linspace(0,1,5))
+print(np.linspace(10,20,4))</pre></div>
+<div class="out"><div class="h">Output</div><pre>[1 2 3 4 5 6 7 8 9]
+[1 3 5 7 9]
+[0.   0.25 0.5  0.75 1.  ]
+[10.         13.33333333 16.66666667 20.        ]</pre></div>
+<hr />
+<h2 id="11-random-numbers-four-different-generators">11. Random numbers — four different generators</h2>
+<p>These four are not variations on one idea. Each draws from a different distribution.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>What it draws</th>
+  <th>Range</th>
+  <th>Shape given by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.random.randint(1,10,5)</code></td>
+  <td>whole numbers, all equally likely</td>
+  <td>1 to <strong>9</strong> — high is excluded</td>
+  <td>last argument <code>5</code></td>
+</tr>
+<tr>
+  <td><code>np.random.rand(3)</code></td>
+  <td>decimals, uniform (flat)</td>
+  <td>0.0 to 1.0</td>
+  <td><code>3</code></td>
+</tr>
+<tr>
+  <td><code>np.random.randn(3)</code></td>
+  <td>decimals, <strong>normal</strong> (bell curve)</td>
+  <td>mostly -3 to 3, mean 0</td>
+  <td><code>3</code></td>
+</tr>
+<tr>
+  <td><code>np.random.choice([10,20,30],5)</code></td>
+  <td>picks <em>from your list</em></td>
+  <td>your values</td>
+  <td><code>5</code></td>
+</tr>
+</tbody>
+</table>
+<p>Two details in the printed output:</p>
+<ul>
+<li><code>randn</code> produced a <strong>negative</strong> number. It is the only one of the four that can. If
+you need &quot;random data&quot; that looks like a real measurement — noise, heights, errors —
+this is the one.</li>
+<li><code>choice</code> repeated values. It samples <strong>with replacement</strong> by default. Pass
+<code>replace=False</code> for a sample without repeats.</li>
+</ul>
+<h3>The reproducibility problem</h3>
+<p>Run the cell twice and you get different numbers. That is correct behaviour, and it is a
+problem the moment you want to compare two runs, debug a result, or let someone else
+reproduce your notebook.</p>
+<div class="code"><pre class="py">np.random.seed(42)                 # fixes every np.random.* call afterwards
+</pre></div>
+<p>Every ML tutorial you read will do this before splitting data. It is why <code>random_state=42</code>
+appears everywhere in scikit-learn.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p><code>np.random.seed</code> sets <strong>one global generator</strong> — shared, hidden state, exactly the kind
+of thing you would refuse to ship in a Spring service. Modern NumPy gives you an object
+instead:</p>
+<div class="code"><pre class="py">rng = np.random.default_rng(42)
+rng.integers(1, 10, 5)      # note: integers(), not randint()
+rng.random(3)
+rng.normal(size=3)
+</pre></div>
+<p>Use <code>np.random.*</code> to follow along with the course and with tutorials. Use
+<code>default_rng</code> in anything you write for real.</p>
+</div>
+<p><strong>Takeaway:</strong> pick the generator by the distribution you need — uniform, normal, or a
+draw from your own values — and set a seed whenever the result has to be repeatable.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">print(np.random.randint(1,10,5))
+print(np.random.rand(3))
+print(np.random.randn(3))
+print(np.random.choice([10,20,30],5))</pre></div>
+<div class="out"><div class="h">Output</div><pre>[8 6 2 6 8]
+[0.71121896 0.45439005 0.08269947]
+[ 0.85181675  0.46243431 -1.0139461 ]
+[30 10 30 30 20]</pre></div>
+<hr />
+<h2 id="12-statistics-describing-an-array">12. Statistics — describing an array</h2>
+<p>Seven summaries of <code>[10, 20, 30, 40]</code>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Result</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.sum</code></td>
+  <td><code>100</code></td>
+  <td>total</td>
+</tr>
+<tr>
+  <td><code>np.min</code> / <code>np.max</code></td>
+  <td><code>10</code> / <code>40</code></td>
+  <td>the extremes</td>
+</tr>
+<tr>
+  <td><code>np.mean</code></td>
+  <td><code>25.0</code></td>
+  <td>the average</td>
+</tr>
+<tr>
+  <td><code>np.median</code></td>
+  <td><code>25.0</code></td>
+  <td>the middle value after sorting</td>
+</tr>
+<tr>
+  <td><code>np.std</code></td>
+  <td><code>11.1803...</code></td>
+  <td>typical distance from the mean</td>
+</tr>
+<tr>
+  <td><code>np.var</code></td>
+  <td><code>125.0</code></td>
+  <td>std squared</td>
+</tr>
+</tbody>
+</table>
+<p><code>mean</code> and <code>median</code> agree here because the data is evenly spread. When they disagree, the
+gap is telling you about <strong>skew or outliers</strong> — that is the first thing to check in real
+data. Change <code>40</code> to <code>4000</code> and the mean jumps to 1015 while the median moves to 25.
+Median is the robust one.</p>
+<p><code>std</code> and <code>var</code> are the same information: <code>std = sqrt(var)</code>, and <code>sqrt(125) = 11.18</code>.
+Variance is used inside maths; standard deviation is what you report, because it is in
+the same unit as the data.</p>
+<h3>The trap that will bite you later</h3>
+<p><strong><code>np.std</code> divides by <code>n</code>. Pandas divides by <code>n-1</code>.</strong> Same data, different answer:</p>
+<div class="code"><pre>   np.std([10,20,30,40])              -&gt;  11.1803...     ddof=0, population
+   pd.Series([10,20,30,40]).std()     -&gt;  12.9099...     ddof=1, sample
+</pre></div>
+<p>Both verified above. NumPy assumes your array <strong>is</strong> the whole population. Pandas assumes
+it is a <em>sample</em> of something bigger, and corrects for it. Neither is wrong; they answer
+different questions. When two tools report different standard deviations for the same
+column, this is why. Force it with <code>np.std(arr, ddof=1)</code>.</p>
+<h3><code>axis</code> — the argument you will need immediately</h3>
+<p>On a 2-D array, these functions collapse everything by default. <code>axis</code> says which
+direction to collapse:</p>
+<div class="code"><pre>   X = [[1 2]        X.sum()          -&gt; 10     everything
+        [3 4]]       X.sum(axis=0)    -&gt; [4 6]  down the rows  -&gt; one result per COLUMN
+                     X.sum(axis=1)    -&gt; [3 7]  across columns -&gt; one result per ROW
+</pre></div>
+<p>Read <code>axis=0</code> as &quot;the row axis disappears&quot;. With rows as samples and columns as features,
+<code>axis=0</code> is per-feature — which is what section 8's <code>X.mean(axis=0)</code> was doing.</p>
+<p><strong>Takeaway:</strong> these functions summarise a whole array in one call. Remember two things —
+<code>np.std</code> is population by default, and <code>axis</code> decides which dimension collapses.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">arr=np.array([10,20,30,40])
+print(np.sum(arr))
+print(np.min(arr))
+print(np.max(arr))
+print(np.mean(arr))
+print(np.median(arr))
+print(np.std(arr))
+print(np.var(arr))</pre></div>
+<div class="out"><div class="h">Output</div><pre>100
+10
+40
+25.0
+25.0
+11.180339887498949
+125.0</pre></div>
+<hr />
+<h2 id="13-np-info-looking-at-how-the-array-is-stored">13. <code>np.info</code> — looking at how the array is stored</h2>
+<p><code>np.info</code> prints the array's physical layout. Most of these functions describe values;
+this one describes <strong>memory</strong>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Field</th>
+  <th>Value here</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>class</code></td>
+  <td><code>ndarray</code></td>
+  <td>the NumPy array type</td>
+</tr>
+<tr>
+  <td><code>shape</code></td>
+  <td><code>(4,)</code></td>
+  <td>4 values in one dimension</td>
+</tr>
+<tr>
+  <td><code>strides</code></td>
+  <td><code>(8,)</code></td>
+  <td>move <strong>8 bytes</strong> to reach the next element</td>
+</tr>
+<tr>
+  <td><code>itemsize</code></td>
+  <td><code>8</code></td>
+  <td>each <code>int64</code> takes 8 bytes</td>
+</tr>
+<tr>
+  <td><code>contiguous</code></td>
+  <td><code>True</code></td>
+  <td>the values sit in one unbroken block</td>
+</tr>
+<tr>
+  <td><code>type</code></td>
+  <td><code>int64</code></td>
+  <td>the dtype</td>
+</tr>
+</tbody>
+</table>
+<p><code>strides</code> is the interesting one and it explains section 4. Reshaping does not move any
+data — NumPy just changes the shape and the stride numbers, and reads the <em>same</em> bytes in
+a different pattern. That is why <code>reshape</code> returns a view and why it is free.</p>
+<p><code>fortran: True</code> here only because a 1-D array is both row-major and column-major at once.
+On a 2-D array it would be <code>False</code>.</p>
+<h3>One small thing about the cell itself</h3>
+<div class="code"><pre class="py">print(np.info(arr))     # prints the report, then prints None
+np.info(arr)            # better
+</pre></div>
+<p><code>np.info</code> prints its report itself and returns <code>None</code>, so wrapping it in <code>print</code> adds a
+stray <code>None</code> at the end of the output — visible in this cell. It is a harmless bug, and
+worth recognising: <strong>a function that prints is not a function that returns.</strong></p>
+<p><strong>Takeaway:</strong> <code>np.info</code> shows the memory layout. Use it when you want to know whether an
+operation copied the data or just re-read it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">print(&quot;Information about array&quot;)
+print(np.info(arr))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Information about array
+class:  ndarray
+shape:  (4,)
+strides:  (8,)
+itemsize:  8
+aligned:  True
+contiguous:  True
+fortran:  True
+data pointer: 0x85d878580
+byteorder:  little
+byteswap:  False
+type: int64
+None</pre></div>
+<hr />
+<h2 id="14-the-dot-product-the-most-important-operation-">14. The dot product — the most important operation in ML</h2>
+<div class="code"><pre class="py">np.dot(a, b)    # -&gt; 32
+a @ b           # -&gt; 32   identical
+</pre></div>
+<p>Multiply matching positions, then add everything up. Two arrays go in, <strong>one number</strong>
+comes out:</p>
+<div class="code"><pre>   a = [1  2  3]
+   b = [4  5  6]
+        |  |  |
+        v  v  v
+        4 +10 +18   =  32
+</pre></div>
+<p><code>@</code> is the operator form, added to Python for exactly this. Prefer it — <code>a @ b</code> reads
+better than <code>np.dot(a, b)</code> once expressions get longer.</p>
+<h3>Why this one operation matters</h3>
+<p>A dot product is a <strong>weighted sum</strong>, and a weighted sum is what almost every model
+computes:</p>
+<div class="code"><pre class="py">features = np.array([1200, 3, 15])          # size, bedrooms, age
+weights  = np.array([  85, 12000, -400])    # learned from data
+
+price = features @ weights                  # 1200*85 + 3*12000 + 15*-400
+</pre></div>
+<p>That single expression is linear regression's prediction. It is also one neuron in a
+neural network. Change the numbers and the meaning changes; the operation does not.</p>
+<p>The other common use is <strong>similarity</strong>. The cosine similarity behind semantic search and
+RAG retrieval is a dot product of two normalised vectors.</p>
+<p><strong>Takeaway:</strong> the dot product turns two vectors into one number by multiplying and
+adding. Learn to read <code>@</code> as &quot;weighted sum&quot; and a lot of ML code becomes readable.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">a=np.array([1,2,3])
+b=np.array([4,5,6])
+print(np.dot(a,b))
+print(a@b)</pre></div>
+<div class="out"><div class="h">Output</div><pre>32
+32</pre></div>
+<hr />
+<h2 id="15-matrix-multiplication-many-dot-products-at-on">15. Matrix multiplication — many dot products at once</h2>
+<p>Same operator, two dimensions. <code>np.matmul(a, b)</code> and <code>a @ b</code> give the same result.</p>
+<div class="code"><pre>   a = [[1 2]        b = [[5 6]        a @ b = [[19 22]
+        [3 4]]             [7 8]]               [43 50]]
+</pre></div>
+<p>Every output cell is <strong>one dot product</strong>: row <code>i</code> of <code>a</code> with column <code>j</code> of <code>b</code>.</p>
+<div class="code"><pre>   result[0,0] = row0 . col0 = 1*5 + 2*7 = 19
+   result[0,1] = row0 . col1 = 1*6 + 2*8 = 22
+   result[1,0] = row1 . col0 = 3*5 + 4*7 = 43
+   result[1,1] = row1 . col1 = 3*6 + 4*8 = 50
+</pre></div>
+<h3>The shape rule</h3>
+<div class="code"><pre>   (m, k) @ (k, n)  -&gt;  (m, n)
+        ^     ^
+        the inner numbers must match, and they vanish
+</pre></div>
+<p><code>(2,3) @ (3,4)</code> gives <code>(2,4)</code>. <code>(2,3) @ (2,3)</code> is an error. When a matrix error appears,
+print both shapes and line them up — the inner pair is nearly always the problem.</p>
+<h3><code>dot</code> vs <code>matmul</code> vs <code>*</code></h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Expression</th>
+  <th>On 2-D arrays</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>a * b</code></td>
+  <td>element-wise — position by position, <strong>not</strong> a matrix product</td>
+</tr>
+<tr>
+  <td><code>np.dot(a,b)</code></td>
+  <td>matrix product</td>
+</tr>
+<tr>
+  <td><code>a @ b</code></td>
+  <td>matrix product</td>
+</tr>
+</tbody>
+</table>
+<p><code>np.dot</code> and <code>@</code> agree for 1-D and 2-D (verified). They differ beyond that: for 3-D+
+arrays <code>@</code> treats the leading dimensions as a <em>batch</em> of matrices, which is what you want
+for batched data, while <code>np.dot</code> does something else. <code>np.dot(3,4)</code> also happily returns
+<code>12</code>, while <code>3 @ 4</code> raises an error — <code>@</code> refuses scalars on purpose.</p>
+<p><strong>Use <code>@</code>.</strong> It is clearer and its stacked behaviour is the one that scales.</p>
+<h3>Where it shows up</h3>
+<p>One row of features <code>@</code> weights gives one prediction. A whole <strong>matrix</strong> of 1000 samples
+<code>@</code> the same weights gives 1000 predictions in one call — no loop over rows. That is a
+forward pass.</p>
+<p><strong>Takeaway:</strong> matrix multiplication is a grid of dot products. Watch the inner
+dimensions, and use <code>@</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">a=np.array([[1,2],[3,4]])
+b=np.array([[5,6],[7,8]])
+print(np.matmul(a,b))
+print(a@b)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[[19 22]
+ [43 50]]
+[[19 22]
+ [43 50]]</pre></div>
+<hr />
+<h2 id="16-sorting-and-searching">16. Sorting and searching</h2>
+<p>Four calls on <code>[40, 10, 30, 20]</code>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Result</th>
+  <th>What it gives back</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.sort(arr)</code></td>
+  <td><code>[10 20 30 40]</code></td>
+  <td>the <strong>values</strong>, sorted</td>
+</tr>
+<tr>
+  <td><code>np.argsort(arr)</code></td>
+  <td><code>[1 3 2 0]</code></td>
+  <td>the <strong>positions</strong> that would sort it</td>
+</tr>
+<tr>
+  <td><code>np.where(arr==30)</code></td>
+  <td><code>(array([2]),)</code></td>
+  <td>positions where the condition is <code>True</code></td>
+</tr>
+<tr>
+  <td><code>np.searchsorted(np.sort(arr),25)</code></td>
+  <td><code>2</code></td>
+  <td>where 25 <em>would</em> go to keep order</td>
+</tr>
+</tbody>
+</table>
+<h3><code>argsort</code> — read the answer carefully</h3>
+<p><code>[1 3 2 0]</code> is not data. It is instructions: <em>&quot;take index 1 first, then 3, then 2, then
+0.&quot;</em> Follow it: <code>arr[1]=10</code>, <code>arr[3]=20</code>, <code>arr[2]=30</code>, <code>arr[0]=40</code> — sorted.</p>
+<p>Why bother? Because it sorts <em>other</em> things by this array:</p>
+<div class="code"><pre class="py">order = np.argsort(scores)
+names[order]              # names, ordered by score
+names[np.argsort(scores)[::-1]][:3]      # top 3
+</pre></div>
+<p>Sorting one array by another array is the everyday use. Pandas' <code>sort_values</code> is this,
+underneath.</p>
+<h3><code>np.where</code> returns a tuple</h3>
+<p>Note the shape of the output: <code>(array([2]),)</code> — a <strong>tuple</strong> holding one array, not a bare
+array. There is one array per dimension, so a 2-D array gives you <code>(rows, cols)</code>. To get
+the plain indices from a 1-D array, take <code>[0]</code>:</p>
+<div class="code"><pre class="py">np.where(arr == 30)[0]     # -&gt; array([2])
+</pre></div>
+<p>Forgetting the <code>[0]</code> is a normal first mistake.</p>
+<h3><code>searchsorted</code> needs sorted input</h3>
+<p>It runs a binary search, so it is only correct on a sorted array — hence the
+<code>np.sort(arr)</code> inside the call. It answers &quot;at which index does 25 belong?&quot; Answer: <code>2</code>,
+between 20 and 30. This is how you bucket values into bins or ranges without a loop.</p>
+<p><strong>Takeaway:</strong> <code>sort</code> gives values, <code>argsort</code> gives positions. Reach for <code>argsort</code> when
+the array you are sorting by is not the array you want back.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">arr=np.array([40,10,30,20])
+print(np.sort(arr))
+print(np.argsort(arr))
+print(np.where(arr==30))
+print(np.searchsorted(np.sort(arr),25))</pre></div>
+<div class="out"><div class="h">Output</div><pre>[10 20 30 40]
+[1 3 2 0]
+(array([2]),)
+2</pre></div>
+<hr />
+<h2 id="17-joining-and-splitting-arrays">17. Joining and splitting arrays</h2>
+<div class="note"><div class="h">Note</div><p>⚠️ <strong>This cell has no saved output — run it.</strong> The behaviour below is verified in the
+same environment, but the notebook itself does not show it yet.</p>
+</div>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Result</th>
+  <th>Direction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.vstack((a,b))</code></td>
+  <td><code>[[1 2] [3 4]]</code></td>
+  <td><strong>v</strong>ertical — stacks as <strong>rows</strong>, 1-D becomes 2-D</td>
+</tr>
+<tr>
+  <td><code>np.hstack((a,b))</code></td>
+  <td><code>[1 2 3 4]</code></td>
+  <td><strong>h</strong>orizontal — joins end to end, stays 1-D</td>
+</tr>
+<tr>
+  <td><code>np.split(arr,3)</code></td>
+  <td><code>[array([1,2]), array([3,4]), array([5,6])]</code></td>
+  <td>cuts into 3 equal pieces</td>
+</tr>
+</tbody>
+</table>
+<div class="code"><pre>   a = [1 2]   b = [3 4]
+
+   vstack           hstack
+   [[1 2]           [1 2 3 4]
+    [3 4]]
+
+   grows a new dimension        stays flat, gets longer
+</pre></div>
+<h3>Two things to notice</h3>
+<p><strong>The double brackets.</strong> <code>np.vstack((a,b))</code> — the arrays go in as <strong>one tuple argument</strong>,
+not as two arguments. <code>np.vstack(a, b)</code> is an error. The same applies to <code>hstack</code> and
+<code>concatenate</code>.</p>
+<p><strong><code>split</code> returns a Python list</strong>, not an array — a list of arrays. So <code>np.split(arr,3)[0]</code>
+is the first piece.</p>
+<h3>The <code>split</code> rule</h3>
+<p><code>np.split</code> demands an <strong>equal</strong> division:</p>
+<div class="code"><pre class="py">np.split(np.array([1,2,3,4,5]), 3)
+# ValueError: array split does not result in an equal division
+</pre></div>
+<p>Use <code>np.array_split</code> when it might not divide evenly — verified, it gives
+<code>[array([1,2]), array([3,4]), array([5])]</code> and puts the remainder in the last pieces.</p>
+<p>This is exactly how a dataset gets cut into batches or folds, and it is why
+<code>array_split</code> is the safer default: real row counts are rarely divisible by your batch
+size.</p>
+<p><strong>Takeaway:</strong> <code>vstack</code> adds rows, <code>hstack</code> extends the row, and both take a single tuple.
+<code>split</code> needs an even division; <code>array_split</code> does not.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">a=np.array([1,2])
+b=np.array([3,4])
+print(np.vstack((a,b)))
+print(np.hstack((a,b)))
+arr=np.array([1,2,3,4,5,6])
+print(np.split(arr,3))</pre></div>
+<hr />
+<h2 id="18-linear-algebra-np-linalg">18. Linear algebra — <code>np.linalg</code></h2>
+<p>Three operations on <code>A = [[1,2],[3,4]]</code>. This is the module that connects NumPy to the
+maths behind ML.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Result</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.linalg.inv(A)</code></td>
+  <td><code>[[-2. 1.] [1.5 -0.5]]</code></td>
+  <td>the <strong>inverse</strong> — the matrix that undoes <code>A</code></td>
+</tr>
+<tr>
+  <td><code>np.linalg.det(A)</code></td>
+  <td><code>-2.0000000000000004</code></td>
+  <td>the <strong>determinant</strong> — a single number describing the matrix</td>
+</tr>
+<tr>
+  <td><code>np.linalg.eig(A)</code></td>
+  <td>values <code>[-0.372, 5.372]</code> + vectors</td>
+  <td>the <strong>eigen</strong>decomposition</td>
+</tr>
+</tbody>
+</table>
+<h3>The inverse</h3>
+<p><code>inv(A)</code> is the matrix version of <code>1/x</code>. The check is the identity matrix from section 9:</p>
+<div class="code"><pre class="py">A @ np.linalg.inv(A)     # -&gt; [[1. 0.] [0. 1.]]     verified
+</pre></div>
+<p>If a matrix multiplication is the operation, the inverse is the undo.</p>
+<h3>The determinant, and why it is <code>-2.0000000000000004</code></h3>
+<p>That trailing <code>...04</code> is not a NumPy bug — it is binary floating point. The true answer
+is <code>-2</code>, computed through divisions that cannot be represented exactly. <strong>Never compare
+floats with <code>==</code>;</strong> use <code>np.isclose(det, -2)</code>.</p>
+<p>The determinant also tells you whether the inverse exists at all:</p>
+<div class="code"><pre>   det != 0   -&gt;  invertible
+   det == 0   -&gt;  singular, no inverse
+</pre></div>
+<p>Verified: <code>np.linalg.inv([[1,2],[2,4]])</code> raises <code>LinAlgError: Singular matrix</code>. The second
+row there is just the first row doubled — it carries no new information. In data terms,
+that is a perfectly correlated feature, and it is the same reason multicollinearity breaks
+linear regression.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>To <em>solve</em> <code>Ax = b</code>, use <code>np.linalg.solve(A, b)</code> rather than <code>inv(A) @ b</code>. It is faster
+and numerically more stable. Computing an explicit inverse is usually a sign you are
+doing more work than the problem needs.</p>
+</div>
+<h3>Eigenvalues and eigenvectors</h3>
+<p>An eigenvector is a direction that <code>A</code> does not rotate — it only stretches it. The
+eigenvalue is the stretch factor.</p>
+<div class="code"><pre>   A @ v  =  lambda * v
+</pre></div>
+<p>Verified for the first pair: <code>A @ vecs[:,0]</code> and <code>vals[0] * vecs[:,0]</code> both give
+<code>[0.30697009, -0.21062466]</code>.</p>
+<p><strong>Read the eigenvectors as columns, not rows.</strong> <code>vecs[:, 0]</code> goes with <code>vals[0]</code>. Taking
+<code>vecs[0]</code> — the first <em>row</em> — is the standard mistake here and it silently gives you
+nonsense.</p>
+<p>This is the machinery under <strong>PCA</strong>: the eigenvector with the largest eigenvalue is the
+direction in which your data varies most, and that becomes the first principal component.</p>
+<p><strong>Takeaway:</strong> <code>np.linalg</code> is where the maths lives. <code>det == 0</code> means no inverse, floats
+never compare exactly, and eigenvectors are columns.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">a=np.array([[1,2],[3,4]])
+print(np.linalg.inv(a))
+print(np.linalg.det(a))
+vals,vecs=np.linalg.eig(a)
+print(vals)
+print(vecs)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[[-2.   1. ]
+ [ 1.5 -0.5]]
+-2.0000000000000004
+[-0.37228132  5.37228132]
+[[-0.82456484 -0.41597356]
+ [ 0.56576746 -0.90937671]]</pre></div>
+<hr />
+<h2 id="recap-what-this-notebook-added">Recap — what this notebook added</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Section</th>
+  <th>You can now</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>4</td>
+  <td>Read <code>shape</code> and reshape data without changing its values</td>
+</tr>
+<tr>
+  <td>6-7</td>
+  <td>Do maths and comparisons on whole arrays, and filter with a boolean mask</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Explain why <code>(3,1) + (2,)</code> gives a 3x2 result</td>
+</tr>
+<tr>
+  <td>9-10</td>
+  <td>Build arrays before you have data, and choose <code>arange</code> vs <code>linspace</code></td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>Pick the right random generator, and make a run reproducible</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>Summarise data, and remember <code>np.std</code> is population by default</td>
+</tr>
+<tr>
+  <td>14-15</td>
+  <td>Read <code>@</code> as a weighted sum, and check the inner dimensions</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td>Sort one array by another with <code>argsort</code></td>
+</tr>
+<tr>
+  <td>17-18</td>
+  <td>Join, split, invert, and decompose</td>
+</tr>
+</tbody>
+</table>
+<h3>The five gotchas worth memorising</h3>
+<ol>
+<li><code>*</code> is element-wise. <code>@</code> is the matrix product.</li>
+<li><code>arange</code> excludes the stop value; <code>linspace</code> includes it — and <code>arange</code> with a decimal
+step is unreliable.</li>
+<li><code>np.std</code> uses <code>ddof=0</code>; Pandas uses <code>ddof=1</code>.</li>
+<li><code>np.where</code> returns a <strong>tuple</strong> — take <code>[0]</code> for 1-D.</li>
+<li>Eigenvectors come back as <strong>columns</strong>: <code>vecs[:, i]</code> matches <code>vals[i]</code>.</li>
+</ol>
+<h3>Not covered yet</h3>
+<p><code>axis</code> used properly across 2-D arrays, <code>np.concatenate</code> and <code>np.stack</code>, <code>np.clip</code>,
+<code>np.unique</code>, <code>np.isnan</code> and missing values, <code>np.newaxis</code>, cumulative functions
+(<code>cumsum</code>, <code>cumprod</code>), and views vs copies in depth. Several of these appear in
+<a href="../Concept/project_01_api_health.ipynb"><code>project_01_api_health.ipynb</code></a>, which is where these
+operations get used on one realistic dataset.</p>
+<p><strong>If you remember only one thing:</strong> NumPy replaces loops with expressions on whole
+arrays — and the price of that power is that <strong>shape is everything</strong>. When something
+breaks, print <code>.shape</code> before you print the values.</p>
+
+<div class="src-head">📓 <a href="../Concept/pizza_numpy.ipynb">pizza_numpy.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+print(np.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>2.4.6</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Your pizza shop — 7 days of revenue
+revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# Try to add 10% tax to every value
+print(revenue * 1.1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[2], line 5
+      1 # Your pizza shop — 7 days of revenue
+      2 revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+      3 
+      4 # Try to add 10% tax to every value
+----&gt; 5 print(revenue * 1.1)
+
+TypeError: can&#x27;t multiply sequence by non-int of type &#x27;float&#x27;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+
+# Same numbers — but now as a NumPy array
+revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Now multiply the whole thing by 1.1
+print(revenue * 1.1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[1320. 1650.  990. 1980. 2310. 2640. 2145.]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py"># Python list — just a container
+python_list = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# NumPy array — a smart calculator
+numpy_array = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+print(type(python_list))   # what Python thinks it is
+print(type(numpy_array))   # what NumPy thinks it is</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;list&#x27;&gt;
+&lt;class &#x27;numpy.ndarray&#x27;&gt;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py"># Plain Python — no NumPy
+revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# Total
+total = 0
+for r in revenue:
+    total = total + r
+print(&quot;Total:&quot;, total)
+
+# Average
+average = total / len(revenue)
+print(&quot;Average:&quot;, average)
+
+# Best day
+best = revenue[0]
+for r in revenue:
+    if r &gt; best:
+        best = r
+print(&quot;Best day:&quot;, best)
+
+# Worst day
+worst = revenue[0]
+for r in revenue:
+    if r &lt; worst:
+        worst = r
+print(&quot;Worst day:&quot;, worst)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Total: 11850
+Average: 1692.857142857143
+Best day: 2400
+Worst day: 900</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+print(&quot;Total reveneue this week. &quot;, np.sum(revenue))
+print(&quot;Average Daily Revenue &quot;, np.mean(revenue))
+print(&quot;Best Day &quot;, np.max(revenue))
+print(&quot;Worst Day &quot;, np.max(revenue))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Total reveneue this week.  11850
+Average Daily Revenue  1692.857142857143
+Best Day  2400
+Worst Day  2400</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+print(&quot;Total reveneue this week. &quot;, revenue * 1.1)
+print(&quot;With discount:&quot;, revenue * 0.95)
+print(&quot;After Delivery Cost &quot;, revenue - 50)
+print(&quot;Doubled prices: &quot;, revenue * 2)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Total reveneue this week.  [1320. 1650.  990. 1980. 2310. 2640. 2145.]
+With discount: [1140.  1425.   855.  1710.  1995.  2280.  1852.5]
+After Delivery Cost  [1150 1450  850 1750 2050 2350 1900]
+Doubled prices:  [2400 3000 1800 3600 4200 4800 3900]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py"># Revenue from your two pizza branches this week
+branch_1 = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+branch_2 = np.array([800,  900, 750, 1200, 1800, 2000, 1600])
+
+# Total revenue both branches combined each day
+print(&quot;Combined daily:&quot;, branch_1 + branch_2)
+
+# Which branch made more each day?
+print(&quot;Branch 1 better?&quot;, branch_1 &gt; branch_2)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Combined daily: [2000 2400 1650 3000 3900 4400 3550]
+Branch 1 better? [ True  True  True  True  True  True  True]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py"># Plain Python — same tasks
+branch_1 = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+branch_2 = [800,  900, 750, 1200, 1800, 2000, 1600]
+
+# On how many days was branch 1 better?
+days_won = 0
+for i in range(len(branch_1)):
+    if branch_1[i] &gt; branch_2[i]:
+        days_won = days_won + 1
+print(&quot;Days branch 1 won:&quot;, days_won)
+
+# Branch 1 revenue ONLY on days it beat branch 2
+winning_days = []
+for i in range(len(branch_1)):
+    if branch_1[i] &gt; branch_2[i]:
+        winning_days.append(branch_1[i])
+print(&quot;Branch 1 revenue on winning days:&quot;, winning_days)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Days branch 1 won: 7
+Branch 1 revenue on winning days: [1200, 1500, 900, 1800, 2100, 2400, 1950]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">branch_1 = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+branch_2 = np.array([800,  900, 750, 1200, 1800, 2000, 1600])
+
+# On how many days was branch 1 better?
+print(&quot;Days branch 1 won:&quot;, np.sum(branch_1 &gt; branch_2))
+
+# What was branch 1 revenue ONLY on days it beat branch 2?
+print(&quot;Branch 1 revenue on winning days:&quot;, branch_1[branch_1 &gt; branch_2])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">branch_1 = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+branch_2 = np.array([800,  900, 750, 1200, 1800, 2000, 1600])
+
+# Step 1 — NumPy compares position by position first
+comparison = branch_1 &gt; branch_2
+print(&quot;Step 1 comparison:&quot;, comparison)
+print(&quot;Type:&quot;, type(comparison))
+
+# Step 2 — np.sum counts the Trues
+print(&quot;Step 2 sum:&quot;, np.sum(comparison))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Step 1 comparison: [ True  True  True  True  True  True  True]
+Type: &lt;class &#x27;numpy.ndarray&#x27;&gt;
+Step 2 sum: 7</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py"># Plain Python
+revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# Get Monday&#x27;s revenue (position 0)
+print(&quot;Monday:&quot;, revenue[0])
+
+# Get Friday&#x27;s revenue (position 4)
+print(&quot;Friday:&quot;, revenue[4])
+
+# Get first 3 days
+print(&quot;First 3 days:&quot;, revenue[0:3])
+
+# Get last 2 days
+print(&quot;Last 2 days:&quot;, revenue[5:7])
+
+# Get weekdays only (Mon to Fri = 0 to 4)
+print(&quot;Weekdays:&quot;, revenue[0:5])
+
+# Get weekend only (Sat, Sun = 5, 6)
+print(&quot;Weekend:&quot;, revenue[5:7])</pre></div>
+<div class="out"><div class="h">Output</div><pre>Monday: 1200
+Friday: 2100
+First 3 days: [1200, 1500, 900]
+Last 2 days: [2400, 1950]
+Weekdays: [1200, 1500, 900, 1800, 2100]
+Weekend: [2400, 1950]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py"># NumPy
+revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Get Monday&#x27;s revenue (position 0)
+print(&quot;Monday:&quot;, revenue[0])
+
+# Get Friday&#x27;s revenue (position 4)
+print(&quot;Friday:&quot;, revenue[4])
+
+# Get first 3 days
+print(&quot;First 3 days:&quot;, revenue[0:3])
+
+# Get last 2 days
+print(&quot;Last 2 days:&quot;, revenue[-2:])
+
+# Get weekdays only (Mon to Fri)
+print(&quot;Weekdays:&quot;, revenue[0:5])
+
+# Get weekend only
+print(&quot;Weekend:&quot;, revenue[5:])</pre></div>
+<div class="out"><div class="h">Output</div><pre>Monday: 1200
+Friday: 2100
+First 3 days: [1200 1500  900]
+Last 2 days: [2400 1950]
+Weekdays: [1200 1500  900 1800 2100]
+Weekend: [2400 1950]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Pick specific days — Monday, Wednesday, Saturday
+# Plain Python way
+plain = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+specific_plain = [plain[0], plain[2], plain[5]]
+print(&quot;Plain Python specific days:&quot;, specific_plain)
+
+# NumPy way — pass a list of positions directly
+specific_numpy = revenue[[0, 2, 5]]
+print(&quot;NumPy specific days:&quot;, specific_numpy)
+
+# Only days where revenue was above 1500
+print(&quot;Good days only:&quot;, revenue[revenue &gt; 1500])
+
+# Only days where revenue was between 1000 and 2000
+print(&quot;Medium days:&quot;, revenue[(revenue &gt; 1000) &amp; (revenue &lt; 2000)])</pre></div>
+<div class="out"><div class="h">Output</div><pre>Plain Python specific days: [1200, 900, 2400]
+NumPy specific days: [1200  900 2400]
+Good days only: [1800 2100 2400 1950]
+Medium days: [1200 1500 1800 1950]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# &amp; means AND — both conditions must be true
+print(&quot;Between 1000 and 2000:&quot;, revenue[(revenue &gt; 1000) &amp; (revenue &lt; 2000)])
+
+# | means OR — at least one condition must be true
+print(&quot;Below 1000 OR above 2000:&quot;, revenue[(revenue &lt; 1000) | (revenue &gt; 2000)])
+
+# ~ means NOT — flips True to False and False to True
+print(&quot;above 2000:&quot;, revenue[(revenue &gt; 2000)])
+
+print(&quot;not above 2000:&quot;, revenue[~(revenue &gt; 2000)])</pre></div>
+<div class="out"><div class="h">Output</div><pre>Between 1000 and 2000: [1200 1500 1800 1950]
+Below 1000 OR above 2000: [ 900 2100 2400]
+above 2000: [2100 2400]
+not above 2000: [1200 1500  900 1800 1950]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Challenge 1 — What was the total revenue on days above 1500 only?
+print(&quot;total revenue on days above 1500 only :: &quot;, np.sum(revenue[revenue &gt; 1500]))
+
+# Challenge 2 — Your costs are $500 every day. 
+#               Calculate profit for each day (revenue - cost)
+#               Then find the average profit
+
+print(&quot;Avergae Profit :: &quot;, np.mean(revenue-500))
+
+# Challenge 3 — What percentage of days had revenue above 1800?
+#               Hint: you already know True = 1, False = 0
+
+
+days_above = np.sum(revenue &gt; 1800)
+print(&quot;Days above 1800:&quot;, days_above)
+
+total_days = len(revenue)
+print(&quot;Total days:&quot;, total_days)
+
+percentage = (days_above / total_days) * 100
+print(&quot;Percentage of daya revenue above 1800:&quot;, percentage)
+
+print(&quot;Percentage:&quot;, (np.sum(revenue &gt; 1800) / len(revenue)) * 100)</pre></div>
+<div class="out"><div class="h">Output</div><pre>total revenue on days above 1500 only ::  8250
+Avergae Profit ::  1192.857142857143
+Days above 1800: 3
+Total days: 7
+Percentage of daya revenue above 1800: 42.857142857142854
+Percentage: 42.857142857142854</pre></div>
+<div class="src-head">📓 <a href="../Concept/project_01_api_health.ipynb">project_01_api_health.ipynb</a></div>
+<h2 id="numpy-project-01-orderhub-api-health-monitor">NumPy Project 01 — OrderHub API Health Monitor</h2>
+<p><strong>Track:</strong> AI_ML_Series / 01_numpy
+<strong>Rule for this project:</strong> pure NumPy. No pandas, no sklearn, no plotting library.
+Every answer comes out of arrays.</p>
+<hr />
+<h2 id="the-brief">The brief</h2>
+<p>You run the platform team at <strong>OrderHub</strong>, an e-commerce backend built from
+6 microservices.</p>
+<p>Every night a monitoring agent writes one report. For each service it records:</p>
+<ul>
+<li>the <strong>p95 latency</strong> in milliseconds (95% of requests were faster than this)</li>
+<li>the number of <strong>5xx errors</strong> the service returned</li>
+</ul>
+<p>Last week's report just landed. It is Monday morning. Your manager wants four
+answers before standup:</p>
+<ol>
+<li><strong>Which services broke their SLA last week, and on how many days?</strong></li>
+<li><strong>Friday looks terrible. What happened, and which service caused it?</strong></li>
+<li><strong>Which service is the biggest reliability risk going into next week?</strong></li>
+<li><strong>Can we scale the cluster down over the weekend?</strong></li>
+</ol>
+<p>No database. No dashboard. 84 numbers and NumPy.</p>
+<hr />
+<h2 id="why-this-dataset-and-not-a-random-one">Why this dataset and not a random one</h2>
+<p>Every step of this project is a NumPy concept wearing a work shirt:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>The work question</th>
+  <th>The NumPy concept underneath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>&quot;What is normal for each service?&quot;</td>
+  <td><code>axis=1</code> reduction</td>
+</tr>
+<tr>
+  <td>&quot;What is normal for each day?&quot;</td>
+  <td><code>axis=0</code> reduction</td>
+</tr>
+<tr>
+  <td>&quot;Did we breach our SLA?&quot;</td>
+  <td>broadcasting + boolean masks</td>
+</tr>
+<tr>
+  <td>&quot;Rank the worst offenders&quot;</td>
+  <td><code>argsort</code> + fancy indexing</td>
+</tr>
+<tr>
+  <td>&quot;The agent missed a reading on Wednesday&quot;</td>
+  <td><code>np.nan</code> handling</td>
+</tr>
+<tr>
+  <td>&quot;Put every service on the same scale&quot;</td>
+  <td>standardisation — what <code>StandardScaler</code> does</td>
+</tr>
+</tbody>
+</table>
+<p>If you can answer the manager's four questions, you know NumPy well enough for
+the ML track.</p>
+
+<h2 id="the-data">The data</h2>
+<p>Two 6x7 matrices. <strong>Rows are services, columns are days (Mon -&gt; Sun).</strong></p>
+<p>Keeping that sentence in your head is most of the battle — nearly every bug in
+this project will be a row/column mix-up.</p>
+<h3><code>latency_ms</code> — p95 latency in milliseconds</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>service</th>
+  <th>Mon</th>
+  <th>Tue</th>
+  <th>Wed</th>
+  <th>Thu</th>
+  <th>Fri</th>
+  <th>Sat</th>
+  <th>Sun</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>auth</td>
+  <td>42</td>
+  <td>45</td>
+  <td>44</td>
+  <td>46</td>
+  <td>51</td>
+  <td>38</td>
+  <td>36</td>
+</tr>
+<tr>
+  <td>catalog</td>
+  <td>58</td>
+  <td>61</td>
+  <td>59</td>
+  <td>63</td>
+  <td>72</td>
+  <td>50</td>
+  <td>47</td>
+</tr>
+<tr>
+  <td>cart</td>
+  <td>115</td>
+  <td>120</td>
+  <td>118</td>
+  <td>125</td>
+  <td>140</td>
+  <td>102</td>
+  <td>98</td>
+</tr>
+<tr>
+  <td>search</td>
+  <td>205</td>
+  <td>210</td>
+  <td>215</td>
+  <td>208</td>
+  <td><strong>980</strong></td>
+  <td>195</td>
+  <td>190</td>
+</tr>
+<tr>
+  <td>payment</td>
+  <td>148</td>
+  <td>152</td>
+  <td><strong>NaN</strong></td>
+  <td>150</td>
+  <td>165</td>
+  <td>140</td>
+  <td>135</td>
+</tr>
+<tr>
+  <td>order</td>
+  <td>175</td>
+  <td>180</td>
+  <td>178</td>
+  <td>185</td>
+  <td>240</td>
+  <td>165</td>
+  <td>160</td>
+</tr>
+</tbody>
+</table>
+<p>Two things in that table are deliberate, and they are the two data problems you
+meet in every real dataset:</p>
+<ul>
+<li><strong><code>search</code> Friday = 980ms</strong> — 4x its normal value. Is it a broken sensor or a
+real incident? Part 2 decides, and the decision is not &quot;delete it&quot;.</li>
+<li><strong><code>payment</code> Wednesday = NaN</strong> — the monitoring agent restarted during its
+collection window. The reading does not exist. It is not zero.</li>
+</ul>
+<h3><code>errors_5xx</code> — count of 5xx responses per day</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>service</th>
+  <th>Mon</th>
+  <th>Tue</th>
+  <th>Wed</th>
+  <th>Thu</th>
+  <th>Fri</th>
+  <th>Sat</th>
+  <th>Sun</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>auth</td>
+  <td>2</td>
+  <td>1</td>
+  <td>3</td>
+  <td>2</td>
+  <td>5</td>
+  <td>1</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>catalog</td>
+  <td>4</td>
+  <td>3</td>
+  <td>5</td>
+  <td>4</td>
+  <td>9</td>
+  <td>2</td>
+  <td>2</td>
+</tr>
+<tr>
+  <td>cart</td>
+  <td>8</td>
+  <td>7</td>
+  <td>9</td>
+  <td>10</td>
+  <td>22</td>
+  <td>5</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>search</td>
+  <td>6</td>
+  <td>5</td>
+  <td>7</td>
+  <td>6</td>
+  <td>85</td>
+  <td>4</td>
+  <td>3</td>
+</tr>
+<tr>
+  <td>payment</td>
+  <td>11</td>
+  <td>12</td>
+  <td>10</td>
+  <td>13</td>
+  <td>31</td>
+  <td>8</td>
+  <td>7</td>
+</tr>
+<tr>
+  <td>order</td>
+  <td>14</td>
+  <td>13</td>
+  <td>15</td>
+  <td>16</td>
+  <td>48</td>
+  <td>10</td>
+  <td>9</td>
+</tr>
+</tbody>
+</table>
+<h3><code>sla_ms</code> — the promise each service made (one per service)</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>auth</th>
+  <th>catalog</th>
+  <th>cart</th>
+  <th>search</th>
+  <th>payment</th>
+  <th>order</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>50</td>
+  <td>65</td>
+  <td>120</td>
+  <td>200</td>
+  <td>150</td>
+  <td>190</td>
+</tr>
+</tbody>
+</table>
+<p>Note these are <strong>different per service</strong>. A single number would not need
+broadcasting; six numbers against a 6x7 matrix do. That is the point.</p>
+<h3><code>traffic_k</code> — platform requests per day, in thousands (one per day)</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Mon</th>
+  <th>Tue</th>
+  <th>Wed</th>
+  <th>Thu</th>
+  <th>Fri</th>
+  <th>Sat</th>
+  <th>Sun</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>420</td>
+  <td>455</td>
+  <td>468</td>
+  <td>482</td>
+  <td>610</td>
+  <td>305</td>
+  <td>268</td>
+</tr>
+</tbody>
+</table>
+<p>Friday was a promo day. Hold that thought — it explains a lot.</p>
+
+<h2 id="the-flow-12-parts">The flow — 12 parts</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Part</th>
+  <th>The question it answers</th>
+  <th>NumPy you will use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Load &amp; inspect</td>
+  <td>What did we actually receive?</td>
+  <td><code>np.array</code>, <code>dtype</code>, <code>shape</code>, <code>ndim</code>, <code>size</code>, <code>nbytes</code></td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Data quality</td>
+  <td>One reading is missing, one looks insane</td>
+  <td><code>np.isnan</code>, <code>np.where</code>, <code>np.nanmean</code>, <code>np.median</code>, <code>.copy()</code> vs view</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Aggregation &amp; axis</td>
+  <td>What is normal per service? per day?</td>
+  <td><code>mean/min/max/std</code>, <code>axis=0</code> vs <code>axis=1</code>, <code>argmax</code>, <code>percentile</code></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Broadcasting vs SLA</td>
+  <td>Who broke their promise?</td>
+  <td><code>reshape(-1, 1)</code>, broadcasting rules, comparison operators</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Boolean masking</td>
+  <td>How many breaches, and exactly where?</td>
+  <td>boolean arrays, <code>sum</code> on bools, <code>count_nonzero</code>, <code>any</code>/<code>all</code>, <code>np.where(c, a, b)</code></td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Derived metrics</td>
+  <td>Errors per million, SLA headroom</td>
+  <td>element-wise math, row-vector broadcast, <code>np.round</code></td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>Ranking</td>
+  <td>Rank services worst -&gt; best</td>
+  <td><code>argsort</code>, fancy indexing, <code>[::-1]</code>, top-N</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>Weekday vs weekend</td>
+  <td>Can we scale down on Sat/Sun?</td>
+  <td>2-D slicing, column ranges</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>Normalisation</td>
+  <td>Put every service on one scale</td>
+  <td>min-max, z-score, <code>keepdims</code></td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>Reshape &amp; assemble</td>
+  <td>Build the report table</td>
+  <td><code>reshape</code>, <code>.T</code>, <code>ravel</code> vs <code>flatten</code>, <code>column_stack</code></td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>Relationships</td>
+  <td>Does traffic drive latency?</td>
+  <td><code>corrcoef</code>, <code>cov</code></td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>Persist &amp; report</td>
+  <td>Ship it</td>
+  <td><code>set_printoptions</code>, <code>np.save</code>/<code>load</code>, <code>savetxt</code></td>
+</tr>
+</tbody>
+</table>
+<p>Parts 1-2 are plumbing. Parts 3-5 answer question 1. Part 6-7 answer questions
+2 and 3. Part 8 answers question 4. Parts 9-12 are the bridge to the ML track.</p>
+
+<h2 id="how-we-work">How we work</h2>
+<ul>
+<li>I give you the code for one part at a time. <strong>You type it</strong> — do not paste.
+The typing is what makes it stick.</li>
+<li>Run each cell and check the output against what I said it should be.</li>
+<li>If a line looks strange, ask before moving on. Understanding beats finishing.</li>
+<li>We add the next part's cells to this notebook only when the current part runs.</li>
+</ul>
+<p>The empty cells below are Part 1. Parts 2-12 get added as we go.</p>
+<hr />
+
+<h2 id="part-1-load-amp-inspect">Part 1 — Load &amp; inspect</h2>
+<p><strong>Goal:</strong> get the four arrays into memory and prove they are the right shape
+before we trust a single calculation.</p>
+<p>Steps:</p>
+<ul>
+<li><code>1.1</code> import NumPy and set print options so output is readable</li>
+<li><code>1.2</code> the labels — service names and day names</li>
+<li><code>1.3</code> the latency matrix (the NaN goes in here)</li>
+<li><code>1.4</code> the errors matrix</li>
+<li><code>1.5</code> the SLA array and the traffic array</li>
+<li><code>1.6</code> sanity checks — shape, dtype, size, memory</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py"># 1.1  imports and print options
+import numpy as np
+
+# make float output readable: 1 decimal, no scientific notation
+np.set_printoptions(precision=1, suppress=True)
+np.__version__</pre></div>
+<div class="out"><div class="h">Output</div><pre>&#x27;2.4.6&#x27;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py"># 1.2  labels: services and days
+services = np.array([&#x27;auth&#x27;, &#x27;catalog&#x27;, &#x27;cart&#x27;, &#x27;search&#x27;, &#x27;payment&#x27;, &#x27;order&#x27;])
+days     = np.array([&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;])
+
+services.shape, days.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>((6,), (7,))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py"># 1.3  latency_ms  (6 services x 7 days)
+latency_ms = np.array([
+    [ 42,  45,  44,  46,  51,  38,  36],   # auth
+    [ 58,  61,  59,  63,  72,  50,  47],   # catalog
+    [115, 120, 118, 125, 140, 102,  98],   # cart
+    [205, 210, 215, 208, 980, 195, 190],   # search   &lt;- Friday spike
+    [148, 152, np.nan, 150, 165, 140, 135],  # payment &lt;- Wednesday missing
+    [175, 180, 178, 185, 240, 165, 160],   # order
+], dtype=float)
+
+latency_ms</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 42.,  45.,  44.,  46.,  51.,  38.,  36.],
+       [ 58.,  61.,  59.,  63.,  72.,  50.,  47.],
+       [115., 120., 118., 125., 140., 102.,  98.],
+       [205., 210., 215., 208., 980., 195., 190.],
+       [148., 152.,  nan, 150., 165., 140., 135.],
+       [175., 180., 178., 185., 240., 165., 160.]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py"># 1.4  errors_5xx  (6 services x 7 days)&#x27;
+errors_5xx = np.array([
+    [ 2,  1,  3,  2,  5,  1,  0],   # auth
+    [ 4,  3,  5,  4,  9,  2,  2],   # catalog
+    [ 8,  7,  9, 10, 22,  5,  4],   # cart
+    [ 6,  5,  7,  6, 85,  4,  3],   # search
+    [11, 12, 10, 13, 31,  8,  7],   # payment
+    [14, 13, 15, 16, 48, 10,  9],   # order
+])
+
+errors_5xx</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 2,  1,  3,  2,  5,  1,  0],
+       [ 4,  3,  5,  4,  9,  2,  2],
+       [ 8,  7,  9, 10, 22,  5,  4],
+       [ 6,  5,  7,  6, 85,  4,  3],
+       [11, 12, 10, 13, 31,  8,  7],
+       [14, 13, 15, 16, 48, 10,  9]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py"># 1.5  sla_ms (per service) and traffic_k (per day)
+# one SLA per service  -&gt; lines up with ROWS
+sla_ms = np.array([50, 65, 120, 200, 150, 190])
+
+# platform traffic in thousands, one per day -&gt; lines up with COLUMNS
+traffic_k = np.array([420, 455, 468, 482, 610, 305, 268])
+
+sla_ms.shape, traffic_k.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>((6,), (7,))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py"># 1.6  sanity checks
+print(&quot;latency  shape:&quot;, latency_ms.shape, &quot;dtype:&quot;, latency_ms.dtype)
+print(&quot;errors   shape:&quot;, errors_5xx.shape, &quot;dtype:&quot;, errors_5xx.dtype)
+print(&quot;ndim:&quot;, latency_ms.ndim, &quot;| size:&quot;, latency_ms.size, &quot;| bytes:&quot;, latency_ms.nbytes)
+
+# fail loudly now rather than get a wrong answer in Part 4
+assert latency_ms.shape == errors_5xx.shape == (len(services), len(days))
+assert sla_ms.shape[0] == len(services)
+assert traffic_k.shape[0] == len(days)
+print(&quot;\nall shape checks passed&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>latency  shape: (6, 7) dtype: float64
+errors   shape: (6, 7) dtype: int64
+ndim: 2 | size: 42 | bytes: 336
+
+all shape checks passed</pre></div>
+<h3>Part 1 checkpoint</h3>
+<p>Before moving on, you should be able to answer these without scrolling up:</p>
+<ol>
+<li>Why is <code>latency_ms.dtype</code> <code>float64</code> when almost every value is a whole number?</li>
+<li>What does <code>latency_ms.shape</code> return, and which number is services?</li>
+<li><code>sla_ms</code> has shape <code>(6,)</code> and <code>traffic_k</code> has shape <code>(7,)</code>. Why do those two
+sizes differ, and what does each one line up with?</li>
+</ol>
+<hr />
+<p><em>Parts 2-12 will be appended here as we build them.</em></p>
+
+<h2 id="part-2-data-quality-the-missing-reading-and-the-">Part 2 — Data quality: the missing reading and the 980</h2>
+<p><strong>Goal:</strong> get to a matrix we can trust, and make a defensible decision about
+each of the two problems.</p>
+<p>The two problems look similar — both are &quot;weird values&quot; — but they need
+opposite treatment:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th><code>payment</code> Wed = NaN</th>
+  <th><code>search</code> Fri = 980</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>What it is</td>
+  <td>data that does not exist</td>
+  <td>data that does exist</td>
+</tr>
+<tr>
+  <td>Cause</td>
+  <td>monitoring agent restarted</td>
+  <td>a real production incident</td>
+</tr>
+<tr>
+  <td>Right action</td>
+  <td><strong>replace it</strong> with an estimate</td>
+  <td><strong>keep it</strong>, and flag it</td>
+</tr>
+<tr>
+  <td>Wrong action</td>
+  <td>fill with <code>0</code></td>
+  <td>delete it</td>
+</tr>
+</tbody>
+</table>
+<p>Deleting the 980 would erase the exact event your manager is asking about in
+question 2. An outlier is not automatically an error.</p>
+<p>Steps:</p>
+<ul>
+<li><code>2.1</code> find the missing reading — and watch one NaN poison every calculation</li>
+<li><code>2.2</code> why filling with <code>0</code> is the wrong fix</li>
+<li><code>2.3</code> copy vs view — why we work on a copy</li>
+<li><code>2.4</code> impute the missing value from the service's own week</li>
+<li><code>2.5</code> hunt the outlier with the textbook z-score test — it <strong>fails</strong></li>
+<li><code>2.6</code> why it fails</li>
+<li><code>2.7</code> the median/MAD test — it catches it</li>
+<li><code>2.8</code> the decision: flag, do not delete</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py"># 2.1  find the missing reading
+print(&quot;mean of the whole matrix:&quot;, latency_ms.mean())
+print(&quot;missing readings:&quot;, np.isnan(latency_ms).sum())
+
+rows, cols = np.where(np.isnan(latency_ms))
+print(&quot;row(s):&quot;, rows, &quot; col(s):&quot;, cols)
+print(&quot;-&gt;&quot;, services[rows[0]], &quot;on&quot;, days[cols[0]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>mean of the whole matrix: nan
+missing readings: 1
+row(s): [4]  col(s): [2]
+-&gt; payment on Wed</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py"># 2.2  why filling with 0 is wrong
+payment = latency_ms[4]
+
+print(&quot;payment week       :&quot;, payment)
+print(&quot;nanmean (skip it)  :&quot;, round(np.nanmean(payment), 2))
+print(&quot;filled with 0      :&quot;, round(np.nan_to_num(payment).mean(), 2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>payment week       : [148. 152.  nan 150. 165. 140. 135.]
+nanmean (skip it)  : 148.33
+filled with 0      : 127.14</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py"># 2.3  copy vs view
+view = latency_ms[0]        # a slice is a VIEW, shared memory
+print(&quot;View&quot;, view[0])
+view[0] = 999
+print(&quot;View&quot;, view[0])
+print(&quot;original after touching the view:&quot;, latency_ms[0, 0])
+
+latency_ms[0, 0] = 42       # put it back
+clean = latency_ms.copy()   # .copy() = independent memory
+clean[0, 0] = 999
+print(&quot;copy:&quot;, clean[0, 0], &quot;| original safe:&quot;, latency_ms[0, 0])
+clean[0, 0] = 42</pre></div>
+<div class="out"><div class="h">Output</div><pre>View 42.0
+View 999.0
+original after touching the view: 999.0
+copy: 999.0 | original safe: 42.0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py"># 2.4  impute the missing value
+#
+# GOAL: payment has no Wednesday number. Estimate it from payment&#x27;s own week.
+# We fill on a COPY so the raw measurements stay provable.
+
+# .copy() = new memory. Without it we&#x27;d overwrite the raw data (see 2.3).
+clean = latency_ms.copy()
+
+# rows/cols came from 2.1 and are ARRAYS: rows=[4], cols=[2].
+# latency_ms[rows] -&gt; shape (1, 7), still 2-D, because we indexed with an array.
+# nanmean(axis=1)  -&gt; collapse the 7 days into 1 number per row, skipping NaN.
+#                     Divides by 6, not 7. Result: [148.33], shape (1,).
+# clean[rows, cols] pairs rows[0] with cols[0] -&gt; writes to cell (4,2) only.
+clean[rows, cols] = np.nanmean(latency_ms[rows], axis=1)
+
+print(&quot;imputed value        :&quot;, round(clean[4, 2], 1))   # 148.3
+print(&quot;any NaN left in clean:&quot;, np.isnan(clean).any())   # False
+print(&quot;original still NaN   :&quot;, np.isnan(latency_ms[4, 2]))  # True - raw is safe
+print(&quot;clean matrix mean    :&quot;, round(clean.mean(), 1))  # 144.2 (was nan)</pre></div>
+<div class="out"><div class="h">Output</div><pre>imputed value        : 148.3
+any NaN left in clean: False
+original still NaN   : True
+clean matrix mean    : 144.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py"># 2.5  outlier hunt, attempt 1: the z-score test
+search = clean[3]
+z = (search - search.mean()) / search.std()
+
+print(&quot;search week:&quot;, search)
+print(&quot;z-scores   :&quot;, np.round(z, 2))
+print(&quot;max z      :&quot;, round(z.max(), 2))
+print(&quot;flagged at the usual threshold of 3?&quot;, bool(z.max() &gt; 3))</pre></div>
+<div class="out"><div class="h">Output</div><pre>search week: [205. 210. 215. 208. 980. 195. 190.]
+z-scores   : [-0.4 -0.4 -0.4 -0.4  2.5 -0.4 -0.5]
+max z      : 2.45
+flagged at the usual threshold of 3? False</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py"># 2.6  why the z-score test failed
+print(&quot;mean:&quot;, round(search.mean(), 1), &quot; &lt;- dragged UP by the 980&quot;)
+print(&quot;std :&quot;, round(search.std(), 1), &quot; &lt;- inflated BY the 980&quot;)
+
+without_fri = np.delete(search, 4)
+print(&quot;\nwithout Friday -&gt; mean:&quot;, round(without_fri.mean(), 1),
+      &quot; std:&quot;, round(without_fri.std(), 1))
+print(&quot;z of 980 against THAT std:&quot;,
+      round((980 - without_fri.mean()) / without_fri.std(), 1))</pre></div>
+<div class="out"><div class="h">Output</div><pre>mean: 314.7  &lt;- dragged UP by the 980
+std : 271.7  &lt;- inflated BY the 980
+
+without Friday -&gt; mean: 203.8  std: 8.7
+z of 980 against THAT std: 89.5</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py"># 2.7  outlier hunt, attempt 2: median + MAD
+med = np.median(search)
+mad = np.median(np.abs(search - med))     # median absolute deviation
+modified_z = 0.6745 * (search - med) / mad
+
+print(&quot;median:&quot;, med, &quot; MAD:&quot;, mad)
+print(&quot;modified z:&quot;, np.round(modified_z, 1))
+print(&quot;max:&quot;, round(modified_z.max(), 1),
+      &quot;-&gt; flagged at threshold 3.5?&quot;, bool(modified_z.max() &gt; 3.5))</pre></div>
+<div class="out"><div class="h">Output</div><pre>median: 208.0  MAD: 7.0
+modified z: [-0.3  0.2  0.7  0.  74.4 -1.3 -1.7]
+max: 74.4 -&gt; flagged at threshold 3.5? True</pre></div>
+<div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/example_02.ipynb">example_02.ipynb ↗</a><a class="btn" href="../Concept/pizza_numpy.ipynb">pizza_numpy.ipynb ↗</a><a class="btn" href="../Concept/project_01_api_health.ipynb">project_01_api_health.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naive Bayes — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Naive Bayes</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#18-naive-bayes">18 - Naive Bayes</a><a href="#step-1-fourteen-students-one-column-of-marks">Step 1 - Fourteen students, one column of marks</a><a href="#step-2-gaussiannb-draw-one-bell-curve-per-class">Step 2 - GaussianNB: draw one bell curve per class</a><a href="#step-3-a-student-scored-74">Step 3 - A student scored 74</a><a href="#step-4-now-a-student-scored-99">Step 4 - Now a student scored 99</a><a href="#step-5-a-real-dataset-iris">Step 5 - A real dataset: iris</a><a href="#step-6-questions-and-answer">Step 6 - Questions and answer</a><a href="#step-7-hide-20-of-the-flowers">Step 7 - Hide 20% of the flowers</a><a href="#step-8-train">Step 8 - Train</a><a href="#step-9-read-the-report-card">Step 9 - Read the report card</a><a href="#step-10-the-first-failure-multinomialnb">Step 10 - The first failure: MultinomialNB</a><a href="#step-11-the-second-failure-bernoullinb">Step 11 - The second failure: BernoulliNB</a><a href="#step-12-change-the-data-not-the-model">Step 12 - Change the data, not the model</a><a href="#step-13-bernoulli-but-with-a-threshold-you-chose">Step 13 - Bernoulli, but with a threshold you chose</a><a href="#step-14-multinomialnb-refuses-to-start">Step 14 - MultinomialNB refuses to start</a><a href="#step-15-pre-processing-give-the-model-numbers-it">Step 15 - Pre-processing: give the model numbers it </a><a href="#step-16-split-again">Step 16 - Split again</a><a href="#step-17-the-same-model-now-it-runs">Step 17 - The same model, now it runs</a><a href="#which-naive-bayes-do-i-pick">Which Naive Bayes do I pick?</a><a href="#can-we-increase-the-model-s-accuracy">Can we increase the model&#x27;s accuracy?</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Naive Bayes</h1>
+  <p class="lede">Counting backwards from evidence to cause, and the shortcut in the name.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>You know what car owners do for a living.</strong> You counted it door to door: of the 3 car-owning houses, 1 has a job and 2 run a business.</p><p>A new family moves in. You know they have a business. You want their vehicle — the question pointing the <em>other</em> way.</p><p><span class='beat'>You have P(job | car). You need P(car | job).</span> They are not the same number, and swapping them by accident is one of the oldest mistakes in probability.</p><p>Bayes theorem is the exact rule for turning one into the other. "Naive" is the shortcut: assume the columns do not affect each other. It is usually false and works surprisingly well anyway.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Bayes flips a conditional you can count into the one you actually want.</p></div>
+<div class="src-head">📓 <a href="../Concept/18_Naive_Bayers.ipynb">18_Naive_Bayers.ipynb</a></div>
+<h2 id="18-naive-bayes">18 - Naive Bayes</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
+</div>
+<h3>The story</h3>
+<p>You knock on ten doors in your colony. At every door you note down two things:
+is there a <strong>job</strong> in this house, is there a <strong>business</strong> in this house - and
+what do they park outside, a <strong>car</strong> or a <strong>bike</strong>?</p>
+<div class="code"><pre>                     10 houses in the colony
+      ┌────────────────────────────────────────────────┐
+      │    3 own a CAR                7 own a BIKE     │
+      │   ┌───────────────┐        ┌────────────────┐  │
+      │   │  job       1  │        │  job        2  │  │
+      │   │  business  2  │        │  business   5  │  │
+      │   └───────────────┘        └────────────────┘  │
+      └────────────────────────────────────────────────┘
+</pre></div>
+<p>A new family moves in. You hear that they have a job and a business, but you
+have not seen their vehicle. <strong>Car or bike?</strong></p>
+<p>Notice what you own: you counted <em>the other way round</em>. You know what car
+owners do for a living. The new family gives you their work and asks for the
+vehicle. Bayes theorem is the tool that turns your counting around.</p>
+<h3>Bayes theorem</h3>
+<div class="code"><pre>                   P(B|A) · P(A)
+      P(A|B)  =  ──────────────────
+                       P(B)
+</pre></div>
+<p><code>P(A|B)</code> reads <em>&quot;the chance of A, given that B has already happened.&quot;</em></p>
+<p>In machine-learning letters, <code>x</code> is what you know and <code>y</code> is what you want:</p>
+<div class="code"><pre>                   P(x|y) · P(y)
+      P(y|x)  =  ──────────────────
+                       P(x)
+</pre></div>
+<h3>Why &quot;naive&quot;</h3>
+<p>Real rows have many columns, not one. Naive Bayes handles that in the
+laziest possible way - it takes each column on its own and multiplies:</p>
+<div class="code"><pre>                                P(x₁|y) · P(x₂|y) · … · P(xₙ|y) · P(y)
+      P(y | x₁, x₂, …, xₙ)  =  ───────────────────────────────────────
+                                    P(x₁) · P(x₂) · … · P(xₙ)
+</pre></div>
+<p>That multiplication assumes the columns do not affect each other. In real
+data they usually do. Pretending they do not is the <strong>naive</strong> part of the
+name, and it is the reason the model is so fast.</p>
+<h3>Back to the colony</h3>
+<div class="code"><pre>      P(car)  = 3/10          P(bike) = 7/10
+
+                                 1     2     3
+      P(car  | job, business) =  ─  ×  ─  ×  ──   =  0.066
+                                 3     3     10
+
+                                 2     5     7
+      P(bike | job, business) =  ─  ×  ─  ×  ──   =  0.142
+                                 7     7     10
+</pre></div>
+<p>Both answers sit on top of the same bottom line, <code>P(job) × P(business)</code>, so
+you can cross it out and compare only the tops.</p>
+<p><strong>0.142 beats 0.066 - the new family owns a bike.</strong> Naive Bayes never tries to
+be certain. It scores every class and hands you the winner.</p>
+<p>Everything below is that same idea, with numbers instead of doors.</p>
+
+<h2 id="step-1-fourteen-students-one-column-of-marks">Step 1 - Fourteen students, one column of marks</h2>
+<p>Now the same question shape, but on data you already know from
+<a href="../../26_Decision_Tree_Classification/Concept/16_Descison_Tree_Classfication.ipynb">16_Descison_Tree_Classfication.ipynb</a>.</p>
+<ul>
+<li><code>X</code> = the mark each student scored.</li>
+<li><code>Y</code> = the <code>5me</code> column: <strong>1 = watched the video lessons, 0 = did not.</strong></li>
+</ul>
+<div class="code"><pre>   Y = 1  (watched)     80  70  90  75  70  86  96  80  65        9 students
+   Y = 0  (did not)     70  90  91  95  85                        5 students
+</pre></div>
+<p>The question: <strong>a student scored 74. Did they watch the lessons?</strong></p>
+<p>One thing to notice before the model starts. The mark is a <em>continuous</em>
+number - 74, 74.5, 80.2, anything. You cannot count how many times &quot;74&quot;
+happened, because in real marks it may never happen twice. That single fact
+decides which Naive Bayes you are allowed to use, and Step 2 shows why.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+X = np.array([80,70,90,75,70,86,96,80,65,70,90,91,95,85])
+Y = np.array([1,1,1,1,1,1,1,1,1,0,0,0,0,0])</pre></div>
+<h2 id="step-2-gaussiannb-draw-one-bell-curve-per-class">Step 2 - GaussianNB: draw one bell curve per class</h2>
+<p><code>X.reshape(-1, 1)</code> turns the flat list of 14 marks into a table of 14 rows and
+1 column. sklearn always wants a table of rows, even when there is one column.
+<code>-1</code> means <em>&quot;work the row count out yourself.&quot;</em></p>
+<p>A continuous number cannot be counted, but it can be <strong>described</strong>. For each
+group you only need two numbers - where the marks sit, and how spread out they
+are:</p>
+<div class="code"><pre>   group                mean μ      standard deviation σ
+   ─────────────────────────────────────────────────────
+   Y = 1  (watched)      79.1              10.2
+   Y = 0  (did not)      86.2               9.7
+</pre></div>
+<p><code>fit()</code> computes exactly these four numbers and stops. That is the whole
+training. It then places a bell curve on each group using the Gaussian
+formula from your notes:</p>
+<div class="code"><pre>                     1                (x - μ)²
+      P(x)  =  ────────────  ·  e^ -  ─────────
+                √(2π σ²)                 2σ²
+</pre></div>
+<p>Feed the formula any mark and it returns <em>how normal that mark is for this
+group</em>. That is the <code>P(x|y)</code> piece of Bayes theorem, now available for numbers
+that were never in the training data.</p>
+<p>Small honest note: your notes use σ = 10.2 and 9.7 (dividing by n-1). sklearn
+divides by n and stores 9.6 and 8.7. Slightly different numbers, same
+conclusion everywhere below.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">x = X.reshape(-1,1)
+from sklearn.naive_bayes import GaussianNB
+classifier = GaussianNB()
+classifier.fit(x,Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>GaussianNB()</pre></div>
+<h2 id="step-3-a-student-scored-74">Step 3 - A student scored 74</h2>
+<p>Put 74 into both bell curves:</p>
+<div class="code"><pre>      P(74 | watched)      =  0.034        ← taller
+      P(74 | did not)      =  0.018
+</pre></div>
+<p>74 is close to the watchers' average of 79.1 and far below 86.2, so the first
+curve is higher. Bayes then multiplies each one by how common the group is:</p>
+<div class="code"><pre>      watched   :  0.034 × 9/14  =  0.023      ★ winner
+      did not   :  0.018 × 5/14  =  0.006
+</pre></div>
+<p><code>classifier.predict([[74]])</code> returns <code>array([1])</code> - <strong>watched the lessons</strong>.</p>
+<p>The double brackets are the same rule as <code>reshape</code>: predict expects a table of
+rows, so one student is still a table with one row.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">classifier.predict([[74]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([1])</pre></div>
+<h2 id="step-4-now-a-student-scored-99">Step 4 - Now a student scored 99</h2>
+<p>Nothing about the model changed. Only the mark moved.</p>
+<div class="code"><pre>      P(99 | watched)  × 9/14  =  0.003
+      P(99 | did not)  × 5/14  =  0.006      ★ winner
+</pre></div>
+<p><code>array([0])</code> - <strong>did not watch</strong>. 99 sits far to the right of both averages,
+but the non-watchers' curve is the one still alive out there.</p>
+<p>Same model, same maths, opposite answer. Somewhere between 74 and 99 the two
+curves cross, and that crossing point is the entire decision boundary. The
+next cell draws it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">classifier.predict([[99]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0])</pre></div>
+<h3>See it</h3>
+<p>The picture below is drawn from the model you just trained - <code>classifier.theta_</code>
+holds the two means, <code>classifier.var_</code> the two variances. The small ticks along
+the bottom are the 14 real students.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py"># the two bell curves GaussianNB learned from the 14 students
+mu = classifier.theta_.ravel()           # mean of each class
+sd = np.sqrt(classifier.var_.ravel())    # standard deviation of each class
+grid = np.linspace(50, 115, 400)
+
+plt.figure(figsize=(9, 4))
+for label, colour, name in [(1, &#x27;green&#x27;, &#x27;watched  (1)&#x27;), (0, &#x27;red&#x27;, &#x27;did not  (0)&#x27;)]:
+    i = list(classifier.classes_).index(label)
+    bell = 1 / np.sqrt(2 * np.pi * sd[i] ** 2) * np.exp(-(grid - mu[i]) ** 2 / (2 * sd[i] ** 2))
+    plt.plot(grid, bell, color=colour, label=f&quot;{name}   mean={mu[i]:.1f}   sd={sd[i]:.1f}&quot;)
+    plt.plot(X[Y == label], np.zeros((Y == label).sum()), &#x27;|&#x27;, color=colour, markersize=14)
+
+for mark in [74, 99]:
+    plt.axvline(mark, color=&#x27;gray&#x27;, linestyle=&#x27;--&#x27;)
+    plt.text(mark + 0.5, 0.045, f&quot;mark = {mark}&quot;, color=&#x27;gray&#x27;)
+
+plt.title(&quot;What GaussianNB learned: one bell curve per class&quot;)
+plt.xlabel(&quot;mark&quot;)
+plt.ylabel(&quot;probability density&quot;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/18-naive-bayers-c10-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-5-a-real-dataset-iris">Step 5 - A real dataset: iris</h2>
+<p>One column was the easy case. Iris gives you four:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>column</th>
+  <th>what it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>sepal length (cm)</td>
+  <td>a measurement</td>
+</tr>
+<tr>
+  <td>sepal width (cm)</td>
+  <td>a measurement</td>
+</tr>
+<tr>
+  <td>petal length (cm)</td>
+  <td>a measurement</td>
+</tr>
+<tr>
+  <td>petal width (cm)</td>
+  <td>a measurement</td>
+</tr>
+<tr>
+  <td>target</td>
+  <td>0, 1 or 2 - the flower species</td>
+</tr>
+</tbody>
+</table>
+<p>All four are continuous centimetres, and there are three classes instead of
+two. This is where the <strong>naive</strong> assumption starts working for its living:
+petal length and petal width clearly move together in a real flower, and the
+model is about to pretend they do not.</p>
+<p><code>load_iris()</code> returns a bunch object, not a table, so <code>pd.DataFrame(iris.data, columns=iris.feature_names)</code> builds the table and the next cell glues the
+answer column on.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">from sklearn.datasets import load_iris
+iris = load_iris()
+table = pd.DataFrame(iris.data,columns=iris.feature_names)
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+0                5.1               3.5                1.4               0.2
+1                4.9               3.0                1.4               0.2
+2                4.7               3.2                1.3               0.2
+3                4.6               3.1                1.5               0.2
+4                5.0               3.6                1.4               0.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">table[&#x27;target&#x27;] = iris.target
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+0                5.1               3.5                1.4               0.2   
+1                4.9               3.0                1.4               0.2   
+2                4.7               3.2                1.3               0.2   
+3                4.6               3.1                1.5               0.2   
+4                5.0               3.6                1.4               0.2   
+
+   target  
+0       0  
+1       0  
+2       0  
+3       0  
+4       0</pre></div>
+<h2 id="step-6-questions-and-answer">Step 6 - Questions and answer</h2>
+<div class="code"><pre>        x  (what you measure)                  y  (what you want)
+   ┌──────┬──────┬──────┬──────┐              ┌────────┐
+   │ s.len│ s.wid│ p.len│ p.wid│              │ target │
+   ├──────┼──────┼──────┼──────┤              ├────────┤
+   │  5.1 │  3.5 │  1.4 │  0.2 │              │   0    │
+   │  ... │  ... │  ... │  ... │              │  ...   │
+   └──────┴──────┴──────┴──────┘              └────────┘
+</pre></div>
+<p><code>table.drop(['target'], axis='columns')</code> gives back a copy without the answer
+column. <code>axis='columns'</code> is what tells drop to remove a column and not a row.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">x = table.drop([&#x27;target&#x27;], axis=&#x27;columns&#x27;)
+y = iris.target</pre></div>
+<h2 id="step-7-hide-20-of-the-flowers">Step 7 - Hide 20% of the flowers</h2>
+<p><code>train_test_split(x, y, test_size=0.20, random_state=0)</code> keeps 120 flowers for
+training and locks 30 away for the exam.</p>
+<p><code>random_state=0</code> fixes which 30 are hidden. Change that number and you get a
+different 30, and a slightly different score. Keep this in mind - it comes back
+at the end of the notebook.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div>
+<h2 id="step-8-train">Step 8 - Train</h2>
+<p>Same one-line <code>fit</code> as before, only bigger. GaussianNB now measures a mean and
+a standard deviation <strong>for every column inside every class</strong>:</p>
+<div class="code"><pre>                sepal len   sepal wid   petal len   petal wid
+   class 0       μ, σ        μ, σ        μ, σ        μ, σ
+   class 1       μ, σ        μ, σ        μ, σ        μ, σ
+   class 2       μ, σ        μ, σ        μ, σ        μ, σ
+</pre></div>
+<p>Twelve bell curves, plus three priors - how common each species was in the
+training rows. That is the whole model. No loops, no gradient descent, one
+pass over the data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.naive_bayes import GaussianNB
+classifier1 = GaussianNB()
+classifier1.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>GaussianNB()</pre></div>
+<h2 id="step-9-read-the-report-card">Step 9 - Read the report card</h2>
+<p>For one test flower the model runs all twelve curves, multiplies the four
+values inside each class by that class's prior, and keeps the biggest of the
+three totals.</p>
+<p>Put the two arrays side by side:</p>
+<div class="code"><pre>   y_pred  2 1 0 2 0 2 0 1 1 1 [1] 1 1 1 1 0 1 1 0 0 2 1 0 0 2 0 0 1 1 0
+   y_test  2 1 0 2 0 2 0 1 1 1 [2] 1 1 1 1 0 1 1 0 0 2 1 0 0 2 0 0 1 1 0
+                               ▲
+                        one flower wrong
+</pre></div>
+<p><strong>29 right out of 30 = 0.967.</strong> One borderline flower between species 1 and 2 -
+the pair that genuinely overlaps in iris.</p>
+<p>Remember this number. The next three cells feed the <em>same</em> data to the other
+two Naive Bayes models, and this is the score they have to beat.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">y_pred=classifier1.predict(X_test)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 2, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 2, 1,
+       0, 0, 2, 0, 0, 1, 1, 0])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">y_test</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 2, 0, 2, 0, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 1, 0, 0, 2, 1,
+       0, 0, 2, 0, 0, 1, 1, 0])</pre></div>
+<h2 id="step-10-the-first-failure-multinomialnb">Step 10 - The first failure: MultinomialNB</h2>
+<p>MultinomialNB was built for <strong>counts</strong>. Its natural home is text: this email
+contains &quot;free&quot; 3 times, &quot;offer&quot; 1 time, &quot;invoice&quot; 0 times. It asks
+<em>&quot;how many times did this thing happen?&quot;</em></p>
+<p>Iris does not answer that question. <code>5.1</code> is not &quot;sepal length happened 5.1
+times&quot; - it is a length. But nothing stops you from calling <code>fit</code>, so the model
+quietly reads your centimetres as counts and trains anyway.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">from sklearn.naive_bayes import MultinomialNB
+classifier2 = MultinomialNB()
+classifier2.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>MultinomialNB()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">classifier2.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.5666666666666667</pre></div>
+<p><strong>0.567.</strong> Seventeen flowers out of thirty.</p>
+<p>It is not random - random over three classes would be near 0.33. Big petals do
+produce big &quot;counts&quot;, so some signal survives. But everything Gaussian used -
+the average of each class, the spread around it - is thrown away. That is
+0.967 down to 0.567 with the same data, the same split and the same one line
+of code.</p>
+<p><strong>The model did not break. It was handed the wrong shape of number.</strong></p>
+
+<h2 id="step-11-the-second-failure-bernoullinb">Step 11 - The second failure: BernoulliNB</h2>
+<p>BernoulliNB expects <strong>yes/no</strong> columns - 1 or 0. Did the word appear at all?
+Did the customer click or not?</p>
+<p>To get there it first flattens every value with a threshold called <code>binarize</code>,
+and the default threshold is <code>0.0</code>: anything above 0 becomes 1, the rest 0.</p>
+<p>Now look at what that does to iris, where the smallest value in the whole
+table is 0.1:</p>
+<div class="code"><pre>      raw row                        after binarize=0.0
+      5.1  3.5  1.4  0.2      →       1   1   1   1
+      4.9  3.0  1.4  0.2      →       1   1   1   1
+      6.3  3.3  6.0  2.5      →       1   1   1   1
+</pre></div>
+<p>Every flower becomes the same row. The model has nothing left to tell them
+apart, so it falls back on the biggest group in the training data - class 2,
+44 rows of it - and answers <code>2</code> for all thirty test flowers.</p>
+<p>Six of those thirty really are class 2. <strong>6/30 = 0.2.</strong> The score is not a bug,
+it is arithmetic.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.naive_bayes import BernoulliNB
+classifier3 = BernoulliNB()
+classifier3.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>BernoulliNB()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">classifier3.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.2</pre></div>
+<h2 id="step-12-change-the-data-not-the-model">Step 12 - Change the data, not the model</h2>
+<p>Iris punished the wrong model. Now build data that punishes the <em>unprepared</em>
+data, using <code>make_classification</code> - 5000 rows, 2 columns, 2 classes.</p>
+<p>Two things about this data matter for the rest of the notebook:</p>
+<ul>
+<li>the values are spread around zero, so roughly <strong>half of them are negative</strong>;</li>
+<li>there is no <code>random_state</code>, so <strong>every run makes a fresh dataset</strong>. Your
+scores will move by a few points each time you run these cells. The story
+does not change.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">from matplotlib import pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">x,y = make_classification(n_samples=5000, n_features=2, n_redundant=0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11fbfd310&gt;</pre></div>
+<figure class="shot"><img src="assets/18-naive-bayers-c34-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The scatter shows the two classes as two overlapping clouds, coloured by <code>y</code>.
+Note the axes: both run from about -4 to +4. Remember that range.</p>
+
+<p>Same 80/20 split as before, this time on the 5000 generated rows.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div>
+<h2 id="step-13-bernoulli-but-with-a-threshold-you-chose">Step 13 - Bernoulli, but with a threshold you chose</h2>
+<p><code>BernoulliNB(binarize=0.5)</code> is the same model that scored 0.2 on iris. The only
+change is where the cut sits.</p>
+<p>Every value above 0.5 becomes 1, everything else 0. Two columns, two possible
+values each, so the whole cloud collapses into four corners:</p>
+<div class="code"><pre>              feature 2
+                  ▲
+        (0,1)     │     (1,1)
+                  │
+      ─────────── 0.5 ───────────▶  feature 1
+                  │
+        (0,0)     │     (1,0)
+                 0.5
+</pre></div>
+<p>Crude - but this time the corners actually line up with the two clouds, and the
+score says <strong>0.856</strong>.</p>
+<p>The threshold was doing all the work. <code>binarize=0.0</code> on iris gave 0.2;
+<code>binarize=0.5</code> here gives 0.856. Same model, one number changed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">classifier2 = MultinomialNB()
+classifier3 = BernoulliNB(binarize=0.5)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">classifier3.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>BernoulliNB(binarize=0.5)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">classifier3.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.817</pre></div>
+<h2 id="step-14-multinomialnb-refuses-to-start">Step 14 - MultinomialNB refuses to start</h2>
+<p>This time there is no quiet wrong answer. There is a wall:</p>
+<div class="code"><pre>ValueError: Negative values in data passed to MultinomialNB (input X).
+</pre></div>
+<p>Your handwritten note says it in six words: <em>if there are -ve values, then
+there is an error.</em></p>
+<p>And it is fair. MultinomialNB counts things. A count of <code>-1.2</code> does not exist -
+no word appears minus one point two times. Around half the values in this
+dataset are negative, so sklearn stops instead of pretending.</p>
+<p>This is the friendliest failure in the notebook. The 0.567 on iris was silent;
+this one tells you exactly what is wrong.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">classifier2.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[59], line 1
+----&gt; 1 classifier2.fit(X_train, y_train)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/base.py:1403, in _fit_context.&lt;locals&gt;.decorator.&lt;locals&gt;.wrapper(estimator, *args, **kwargs)
+   1393     estimator._validate_params()
+   1395 with (
+   1396     config_context(
+   1397         skip_parameter_validation=(
+   (...)   1401     callback_management_context(estimator),
+   1402 ):
+-&gt; 1403     return fit_method(estimator, *args, **kwargs)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/skle</pre></div>
+<h3>The crime scene</h3>
+<p>Everything in the red zone is a value MultinomialNB will not accept. The cell
+also keeps a copy of the raw data as <code>x_before</code>, so we can compare after the
+fix.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">x_before = x.copy()      # keep the raw data, Step 15 compares against it
+
+plt.figure(figsize=(6, 5))
+plt.axvspan(x[:, 0].min() - 0.5, 0, color=&#x27;red&#x27;, alpha=0.08)
+plt.axhspan(x[:, 1].min() - 0.5, 0, color=&#x27;red&#x27;, alpha=0.08)
+plt.scatter(x[:, 0], x[:, 1], c=y, s=6)
+plt.axvline(0, color=&#x27;red&#x27;)
+plt.axhline(0, color=&#x27;red&#x27;)
+plt.title(&quot;red zone = negative values, %.0f%% of the data\nMultinomialNB will not accept any of it&quot;
+          % (100 * (x &lt; 0).mean()))
+plt.xlabel(&quot;feature 1&quot;)
+plt.ylabel(&quot;feature 2&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/18-naive-bayers-c45-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-15-pre-processing-give-the-model-numbers-it">Step 15 - Pre-processing: give the model numbers it can accept</h2>
+<p><code>MinMaxScaler</code> squeezes every column into the range 0 to 1:</p>
+<div class="code"><pre>                     x  -  min
+      x_scaled  =  ─────────────
+                    max  -  min
+</pre></div>
+<p>The smallest value in a column becomes 0, the largest becomes 1, and everything
+else lands in between <strong>in the same order</strong>. No point overtakes another, no
+cloud changes shape - only the ruler changes.</p>
+<div class="code"><pre>      before      -4.0 ──────────── 0 ──────────── +4.0
+                    ▲ negatives ▲
+      after         0.0 ─────────────────────────── 1.0
+                    no negatives left
+</pre></div>
+<p><code>fit_transform</code> does two jobs: <code>fit</code> finds the min and max of each column,
+<code>transform</code> applies the formula. And that is the whole repair.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 47</span></div><pre class="py">from sklearn.preprocessing import MinMaxScaler</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 48</span></div><pre class="py">scalar = MinMaxScaler()
+x = scalar.fit_transform(x)</pre></div>
+<h3>Before and after</h3>
+<p>Same 5000 points, twice. Only the numbers on the axes moved.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">fig, ax = plt.subplots(1, 2, figsize=(11, 4.5))
+
+ax[0].scatter(x_before[:, 0], x_before[:, 1], c=y, s=6)
+ax[0].axvline(0, color=&#x27;red&#x27;)
+ax[0].axhline(0, color=&#x27;red&#x27;)
+ax[0].set_title(&quot;before:  %.2f to %.2f&quot; % (x_before.min(), x_before.max()))
+
+ax[1].scatter(x[:, 0], x[:, 1], c=y, s=6)
+ax[1].set_title(&quot;after MinMaxScaler:  %.2f to %.2f&quot; % (x.min(), x.max()))
+
+for a in ax:
+    a.set_xlabel(&quot;feature 1&quot;)
+    a.set_ylabel(&quot;feature 2&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/18-naive-bayers-c50-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-16-split-again">Step 16 - Split again</h2>
+<p>The split has to be redone, because <code>x</code> is a different array now. Splitting
+before scaling and then scaling both halves separately would leak information
+from the test set into training - the reason <a href="../../12_Preprocessing/Concept/03_preprocessing.ipynb">03_preprocessing.ipynb</a>
+keeps hammering on <code>Pipeline</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 52</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 53</span></div><pre class="py">classifier2 = MultinomialNB()</pre></div>
+<h2 id="step-17-the-same-model-now-it-runs">Step 17 - The same model, now it runs</h2>
+<p>No error. <code>MultinomialNB</code> fits, and scores <strong>0.752</strong>.</p>
+<p>That is the point of the whole notebook, in two cells:</p>
+<div class="code"><pre>      raw data          →   ValueError, no model at all
+      MinMaxScaler      →   0.752
+</pre></div>
+<p>Now read the number honestly. 0.752 is below the 0.856 that Bernoulli got on
+this same data. Pre-processing removed the <strong>crash</strong>, it did not make
+MultinomialNB the right model - these are still continuous measurements, not
+counts, and your own handwritten rule says continuous data belongs to
+GaussianNB.</p>
+<p><strong>Pre-processing gets your data through the door. Choosing the model is a
+separate job.</strong></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 55</span></div><pre class="py">classifier2.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[64], line 1
+----&gt; 1 classifier2.fit(X_train, y_train)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/base.py:1403, in _fit_context.&lt;locals&gt;.decorator.&lt;locals&gt;.wrapper(estimator, *args, **kwargs)
+   1393     estimator._validate_params()
+   1395 with (
+   1396     config_context(
+   1397         skip_parameter_validation=(
+   (...)   1401     callback_management_context(estimator),
+   1402 ):
+-&gt; 1403     return fit_method(estimator, *args, **kwargs)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/skle</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 56</span></div><pre class="py">classifier2.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[65], line 1
+----&gt; 1 classifier2.score(X_test, y_test)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/base.py:628, in ClassifierMixin.score(self, X, y, sample_weight)
+    603 &quot;&quot;&quot;
+    604 Return :ref:`accuracy &lt;accuracy_score&gt;` on provided data and labels.
+    605 
+   (...)    624     Mean accuracy of ``self.predict(X)`` w.r.t. `y`.
+    625 &quot;&quot;&quot;
+    626 from sklearn.metrics import accuracy_score
+--&gt; 628 return accuracy_score(y, self.predict(X), sample_weight=sample_weight)</pre></div>
+<h2 id="which-naive-bayes-do-i-pick">Which Naive Bayes do I pick?</h2>
+<p>Straight from your handwritten page:</p>
+<div class="code"><pre>                    is the feature a continuous number?
+                                   │
+                ┌────── yes ───────┴────── no ───────┐
+                ▼                                    ▼
+           GaussianNB                    is it a count or a frequency?
+      bell curve per class                          │
+      iris: 0.967                     ┌──── yes ────┴──── no (0/1) ────┐
+                                      ▼                                ▼
+                               MultinomialNB                     BernoulliNB
+                          no negative values allowed        cuts at `binarize=`
+                          scale them first                  default cut is 0.0
+</pre></div>
+<h2 id="can-we-increase-the-model-s-accuracy">Can we increase the model's accuracy?</h2>
+<p>Your notes list four levers. Every one of them already happened in this
+notebook:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Lever</th>
+  <th>What it did here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>Pre-processing</strong></td>
+  <td>MinMaxScaler turned a <code>ValueError</code> into 0.752</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>Random state / split</strong></td>
+  <td>no seed on <code>make_classification</code>, so the score moves every run</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong>Algorithm selection</strong></td>
+  <td>same iris data: 0.967, 0.567, 0.2</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong>Hyperparameter tuning</strong></td>
+  <td><code>binarize</code> 0.0 → 0.2, <code>binarize</code> 0.5 → 0.856</td>
+</tr>
+</tbody>
+</table>
+<p>And the line under lever 1 in your notes is the summary of the entire notebook:</p>
+<div class="code"><pre>      data          algorithm        result
+      ──────────────────────────────────────
+      wrong         wrong            wrong
+      wrong         correct          wrong
+      correct       correct          proper
+</pre></div>
+<p>Correct data alone is not enough. Correct algorithm alone is not enough. You
+need both, and this notebook failed once in each way before getting both right.</p>
+<p><strong>If you remember only one thing:</strong> Naive Bayes scores every class with
+<code>P(x|y) × P(y)</code> and returns the winner - the maths never fails. What fails is
+handing a model a shape of number it was not built for: centimetres to a
+counter, positives-only to negative data, a threshold in the wrong place.</p>
+
+<div class="foot"><a class="btn" href="../Concept/18_Naive_Bayers.ipynb">18_Naive_Bayers.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Evaluation — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Model Evaluation</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#15-model-evaluation">15 - Model Evaluation</a><a href="#step-1-load-the-data">Step 1 - Load the data</a><a href="#step-2-split-before-you-measure">Step 2 - Split before you measure</a><a href="#step-3-train-a-model">Step 3 - Train a model</a><a href="#step-4-the-first-number">Step 4 - The first number</a><a href="#step-5-predictions-and-accuracy-by-hand">Step 5 - Predictions and accuracy by hand</a><a href="#step-6-confusion-matrix">Step 6 - Confusion matrix</a><a href="#step-7-the-same-matrix-as-a-picture">Step 7 - The same matrix as a picture</a><a href="#step-8-precision-recall-f1">Step 8 - Precision, Recall, F1</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Model Evaluation</h1>
+  <p class="lede">Accuracy alone will let a useless model look excellent.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A cancer screening model reported 97% accuracy.</strong> The team celebrated.</p><p>Then someone checked the data: 97% of the scans were healthy. A model that answered "healthy" every single time — never detecting anything — would also score 97%.</p><p><span class='beat'>The model had learned nothing and the metric could not tell.</span></p><p>The confusion matrix splits the errors apart: missed cancers versus false alarms. Recall asks how many real cases you caught; precision asks how often your alarm was right. On imbalanced data those two numbers are the truth and accuracy is decoration.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>The confusion matrix separates the two kinds of mistake; precision and recall price them differently.</p></div>
+<div class="src-head">📓 <a href="../Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb</a></div>
+<h2 id="15-model-evaluation">15 - Model Evaluation</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
+</div>
+<p><strong>What it is:</strong> checking how good a trained model is, using data it has never seen.</p>
+<p><strong>Why we need it:</strong> a model always returns an answer. It never says <em>&quot;I am not sure&quot;</em>.
+Only evaluation tells you whether that answer can be trusted.</p>
+<p><strong>Why accuracy alone is not enough:</strong> two models can both score 93%.
+Model A's 8 mistakes send healthy people for an extra test.
+Model B's 8 mistakes tell cancer patients they are fine.
+Accuracy cannot tell those two apart. That is why the other metrics exist.</p>
+<p><strong>What you get at the end:</strong> not a better model - a decision, backed by numbers.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Question</th>
+  <th>Metric that answers it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>How often is it right?</td>
+  <td>accuracy</td>
+</tr>
+<tr>
+  <td><em>Which</em> mistake does it make?</td>
+  <td>confusion matrix</td>
+</tr>
+<tr>
+  <td>When it says &quot;cancer&quot;, is it right?</td>
+  <td>precision</td>
+</tr>
+<tr>
+  <td>Does it catch all the cancers?</td>
+  <td>recall</td>
+</tr>
+<tr>
+  <td>One number for both</td>
+  <td>F1</td>
+</tr>
+</tbody>
+</table>
+<p>Dataset: breast cancer, 569 tumours. Predict <strong>malignant (0)</strong> or <strong>benign (1)</strong>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import load_breast_cancer
+from sklearn import metrics</pre></div>
+<h2 id="step-1-load-the-data">Step 1 - Load the data</h2>
+<p><code>load_breast_cancer()</code> returns a <strong><code>Bunch</code></strong> (a dict-like object), not a DataFrame.
+That is why <code>data.info()</code> fails - <code>.info()</code> is a pandas method.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">data = load_breast_cancer()
+#data.info()  Can you check how can i porint the data details like columns and how many data you have</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py"># 1) straight from the Bunch
+print(&quot;rows, columns  :&quot;, data.data.shape)
+print(&quot;target names   :&quot;, data.target_names)      # [&#x27;malignant&#x27; &#x27;benign&#x27;] -&gt; 0, 1
+print(&quot;first 5 columns:&quot;, list(data.feature_names[:5]))
+
+# 2) or ask sklearn for a DataFrame and use pandas as usual
+df = load_breast_cancer(as_frame=True).frame
+df.info()
+df[&quot;target&quot;].value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>rows, columns  : (569, 30)
+target names   : [&#x27;malignant&#x27; &#x27;benign&#x27;]
+first 5 columns: [np.str_(&#x27;mean radius&#x27;), np.str_(&#x27;mean texture&#x27;), np.str_(&#x27;mean perimeter&#x27;), np.str_(&#x27;mean area&#x27;), np.str_(&#x27;mean smoothness&#x27;)]
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 569 entries, 0 to 568
+Data columns (total 31 columns):
+ #   Column                   Non-Null Count  Dtype  
+---  ------                   --------------  -----  
+ 0   mean radius              569 non-null    float64
+ 1   mean texture             569 non-null    float64
+ 2   mean perimeter           569 non-null    float64
+ 3   mean area                569 non-null    float64
+ 4   mean smoothness          569 non-null    float64
+ 5   mean compactness         569 non-null    float64
+ 6   mean concavity           569 non-null    float64
+ 7   mean concave points      569 non-null    float64
+ 8   mean symmetry            569 non-null    float64
+ 9   mean fractal dimension   569 non-null    float64
+ 10  radius error             569 non-null    float64
+ 11  texture error            569 non-null    float64
+ 12  perimeter error          569 non-null    float64
+ 13  area error               569 non-null    float64
+ 14  smoothness error         569 non-null    float64
+ 15  compactness error        569 non-null    float64
+ 16  concavity error          569 non-null    float64
+ 17  concave points error     569 non-null    float64
+ 18  symmetry error           569 non-null    float64
+ 19  fractal dimension error  569 non-null    float64
+ 20  worst radius             569 non-null    float64
+ 21  worst texture            569 non-null    float64
+ 22  worst perimeter          569 non-null    float64
+ 23  worst area               569 non-null    float64
+ 24  worst smoothness         569 non-null    float64
+ 25  worst compactness        569 non-null    float64
+ 26  worst concavity          569 non-null    float64
+ 27  worst concave points     569 non-null    float64
+ 28  worst symmetry           569 non-null    float64
+ 29  worst fractal dimension  569 non-null    float64
+ 30  target                   569 non-null    int64  
+dtypes: float64(30), int64(1)
+memory usage: 137.9 KB
+target
+1    357
+0    212
+Name: count, dtype: int64</pre></div>
+<p>Four facts to carry forward:</p>
+<ul>
+<li>569 rows, 30 columns.</li>
+<li><strong><code>0</code> = malignant (cancer), <code>1</code> = benign (safe).</strong></li>
+<li>357 benign vs 212 malignant. Always answering &quot;benign&quot; already scores <strong>63%</strong>, so that is the floor to beat.</li>
+<li>scikit-learn treats <strong>label <code>1</code> as positive</strong> by default. Here <code>1</code> is benign, so to measure cancer detection you must pass <code>pos_label=0</code>.</li>
+</ul>
+<h2 id="step-2-split-before-you-measure">Step 2 - Split before you measure</h2>
+<p>Keep 20% of rows aside. The model never sees them while training.
+Testing on training data is a memory test, not an ability test.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train , X_test,Y_train, Y_test = train_test_split(data.data, data.target, test_size=0.20, random_state=0)</pre></div>
+<h2 id="step-3-train-a-model">Step 3 - Train a model</h2>
+<p><code>GaussianNB</code> is Naive Bayes for continuous numbers - a fast baseline.
+The model is not the point of this notebook. The <strong>measuring</strong> is.</p>
+<h2 id="step-4-the-first-number">Step 4 - The first number</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.naive_bayes import GaussianNB
+classfier1 = GaussianNB()
+classfier1.fit(X_train,Y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>GaussianNB()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">classfier1.score(X_test,Y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9298245614035088</pre></div>
+<p><code>0.9298</code> = <strong>106 correct out of 114</strong>. Good.</p>
+<p>But it does not say <strong>which 8 were wrong</strong>, and that is the only thing that matters here:</p>
+<ul>
+<li>healthy people flagged as cancer → an extra biopsy (annoying, survivable), or</li>
+<li>cancer patients told they are fine → they go home untreated.</li>
+</ul>
+<p>Accuracy counts both as &quot;one mistake&quot;. Reality does not.</p>
+<h2 id="step-5-predictions-and-accuracy-by-hand">Step 5 - Predictions and accuracy by hand</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">Y_pred =classfier1.predict(X_test)
+Y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+       1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1,
+       0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1,
+       0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1,
+       0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0,
+       1, 0, 0, 1])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">metrics.accuracy_score(Y_pred,Y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9298245614035088</pre></div>
+<div class="note"><div class="h">Note</div><p>⚠️ <strong>Small fix:</strong> the signature is <code>accuracy_score(y_true, y_pred)</code>, so write
+<code>metrics.accuracy_score(Y_test, Y_pred)</code>.
+For accuracy the order does not matter (matching is symmetric), but for
+<code>precision_score</code> and <code>recall_score</code> <strong>swapping the arguments swaps the two
+metrics</strong> - no error, just a wrong number. Get the habit right: true first.</p>
+</div>
+<h2 id="step-6-confusion-matrix">Step 6 - Confusion matrix</h2>
+<p>The four-box table from your notes. <strong>Rows = truth, columns = guess.</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Predicted malignant (0)</th>
+  <th>Predicted benign (1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Actually malignant (0)</strong></td>
+  <td>✅ TP</td>
+  <td>❌ <strong>FN</strong> - missed cancer (Type II)</td>
+</tr>
+<tr>
+  <td><strong>Actually benign (1)</strong></td>
+  <td>❌ FP - false alarm (Type I)</td>
+  <td>✅ TN</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;Positive&quot; just means <em>the class you are hunting</em>. Here that is malignant (0).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">confusion_matrix = metrics.confusion_matrix(Y_test,Y_pred)
+confusion_matrix</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[43,  4],
+       [ 4, 63]])</pre></div>
+<p>Your result <code>[[43, 4], [4, 63]]</code> in words:</p>
+<ul>
+<li><strong>43</strong> cancers correctly caught (TP)</li>
+<li><strong>4</strong> cancers called benign (FN) → <strong>the dangerous box</strong></li>
+<li><strong>4</strong> healthy called cancer (FP) → false alarm</li>
+<li><strong>63</strong> healthy correctly cleared (TN)</li>
+</ul>
+<p>Accuracy treats both <code>4</code>s as equal. A hospital does not.</p>
+<h2 id="step-7-the-same-matrix-as-a-picture">Step 7 - The same matrix as a picture</h2>
+<p>Your code passes <code>classfier1.classes_</code>, which shows <code>0</code> and <code>1</code>.
+Tip: <code>display_labels=data.target_names</code> prints <code>malignant</code> / <code>benign</code> instead.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">cm = metrics.ConfusionMatrixDisplay(confusion_matrix= confusion_matrix, display_labels=classfier1.classes_)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">cm.plot()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/15-model-evaluation-c18-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-8-precision-recall-f1">Step 8 - Precision, Recall, F1</h2>
+<p>All three come from the same four boxes (malignant = positive):</p>
+<div class="code"><pre>Recall    = TP / (TP + FN)     &quot;of all real cancers, how many did I catch?&quot;
+Precision = TP / (TP + FP)     &quot;when I say cancer, how often am I right?&quot;
+F1        = 2PR / (P + R)      one number, high only when both are high
+</pre></div>
+<ul>
+<li><strong>Recall</strong> is hurt by misses (FN) → the metric a hospital cares about.</li>
+<li><strong>Precision</strong> is hurt by false alarms (FP) → the metric a spam filter cares about.</li>
+<li>They pull against each other. Flag everything as cancer and recall hits 1.0 while precision collapses.</li>
+</ul>
+<p><code>classification_report</code> prints all of it, one row per class:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">print(metrics.classification_report(Y_test, Y_pred, target_names=data.target_names, digits=3))</pre></div>
+<div class="out"><div class="h">Output</div><pre>              precision    recall  f1-score   support
+
+   malignant      0.915     0.915     0.915        47
+      benign      0.940     0.940     0.940        67
+
+    accuracy                          0.930       114
+   macro avg      0.928     0.928     0.928       114
+weighted avg      0.930     0.930     0.930       114</pre></div>
+<p>How to read it:</p>
+<ul>
+<li><strong>Read the <code>malignant</code> row first</strong> - recall <code>0.915</code> means we catch 91.5% of cancers and miss 8.5%.</li>
+<li><strong><code>support</code></strong> = how many real rows of that class were tested (47 and 67).</li>
+<li><strong><code>macro avg</code></strong> = plain mean of both rows. <strong><code>weighted avg</code></strong> = weighted by support, so it flatters you on imbalanced data (notice it equals the accuracy we started with).</li>
+</ul>
+<hr />
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li>Reporting accuracy on imbalanced data - here &quot;always benign&quot; scores 63% with no model.</li>
+<li>Swapping the arguments: <code>y_true</code> comes first.</li>
+<li>Forgetting sklearn's positive class is <code>1</code>. Here <code>1</code> is benign, so use <code>pos_label=0</code> for cancer.</li>
+<li>Trusting one split - see <a href="../../23_Cross_Validation/Concept/11_Corss_validation.ipynb">11_Corss_validation.ipynb</a>.</li>
+</ol>
+<h2 id="key-takeaway">Key takeaway</h2>
+<div class="note"><div class="h">Note</div><p><strong>If you remember only one thing...</strong>
+Accuracy tells you <em>how often</em> the model is wrong. The confusion matrix tells you
+<em>what it costs</em>. Only the second one lets you decide whether to use the model.</p>
+</div>
+<p>Next step: these metrics use a fixed 0.50 cut-off. The ROC curve checks
+<strong>every</strong> cut-off at once → <a href="../../25_ROC_And_AUC/Concept/14_roc.ipynb">14_roc.ipynb</a>.</p>
+
+<div class="foot"><a class="btn" href="../Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

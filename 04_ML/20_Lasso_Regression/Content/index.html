@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lasso Regression — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Lasso Regression</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#lasso-regression">Lasso Regression</a><a href="#1-lasso-the-default-alpha-1">1. Lasso() — the default alpha = 1</a><a href="#2-the-model-is-two-numbers">2. The model is two numbers</a><a href="#3-turning-alpha-up">3. Turning alpha up</a><a href="#4-alpha-9-5-the-slope-hits-exactly-0">4. alpha = 9.5 — the slope hits exactly 0</a><a href="#5-going-the-other-way">5. Going the other way</a><a href="#6-wrap-up">6. Wrap up</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Lasso Regression</h1>
+  <p class="lede">The penalty that can push a coefficient all the way to exactly zero.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ridge shrank all of Imran's coefficients, but none reached zero.</strong> He still had 60 columns, each with a tiny non-zero weight.</p><p>He wanted to know which columns actually mattered. Ridge would not tell him — everything was slightly important.</p><p><span class='beat'>Shrinking is not the same as removing.</span></p><p>Lasso penalises the absolute slope instead of the square. That subtracts a fixed amount every step, so a weak coefficient hits exactly 0 and stays there. Lasso does not just regularise — it selects features.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>L1 subtracts a flat amount from each slope, so weak columns reach 0 and drop out entirely.</p></div>
+<div class="src-head">📓 <a href="../Concept/08_Lasso.ipynb">08_Lasso.ipynb</a></div>
+<h2 id="lasso-regression">Lasso Regression</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning, scikit-learn module.</p>
+</div>
+<p>Linear regression has one job: make the error on the training rows small. Nothing stops
+it from using a big slope.</p>
+<p>Lasso has two jobs: make the error small <strong>and</strong> keep the slope small.</p>
+<div class="code"><pre>LinearRegression : error only
+Ridge            : error + alpha x (slope x slope)   slope gets small, never exactly 0
+Lasso            : error + alpha x |slope|           slope can become exactly 0
+</pre></div>
+<h3>The formula</h3>
+<div class="code"><pre>   cost  =  (1 / 2n) x sum( y - y_pred )^2   +   alpha x |slope|
+             \__________  __________/              \_____  _____/
+                        \/                                \/
+              how wrong the line is                price of the slope
+
+   n     = number of training rows
+   alpha = the price tag. You pick it, the data does not.
+</pre></div>
+<p><code>alpha</code> small → a big slope is cheap → keep it.
+<code>alpha</code> big → a big slope is expensive → cut it.</p>
+<p>The data below is one input column, one output number, 10,000 rows, with noise added.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
+x,y = make_regression(n_features=1, noise=3, n_samples=10000,random_state=0)
+import matplotlib.pyplot as plt
+plt.scatter(x,y,s=3)
+plt.xlabel(&#x27;x&#x27;)
+plt.ylabel(&#x27;y&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c01-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div>
+<h2 id="1-lasso-the-default-alpha-1">1. <code>Lasso()</code> — the default <code>alpha = 1</code></h2>
+<p>Same three steps as always: <code>fit</code>, <code>predict</code>, <code>score</code>. <code>Lasso()</code> with no argument means
+<code>alpha = 1.0</code>.</p>
+<p>R² on the 2,000 hidden rows is <strong><code>0.8928</code></strong>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.linear_model import Lasso
+reg = Lasso()
+reg.fit(X_train,y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Lasso()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">reg.predict(X_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([  9.16411693,   4.79860515,   5.84348151, ...,   1.69826474,
+        -6.30319338, -11.00609585], shape=(2000,))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">reg.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.8927723012288187</pre></div>
+<h2 id="2-the-model-is-two-numbers">2. The model is two numbers</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>value</th>
+  <th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>coef_</code></td>
+  <td><code>8.532180</code></td>
+  <td><code>y</code> moves 8.53 when <code>x</code> moves 1</td>
+</tr>
+<tr>
+  <td><code>intercept_</code></td>
+  <td><code>-0.047383</code></td>
+  <td>the height of the line at <code>x = 0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Plain <code>LinearRegression</code> on the same rows gives <strong><code>9.550322</code></strong>. So <code>alpha = 1</code> took about
+<code>1.02</code> off the slope.</p>
+<h3>The formula for one column</h3>
+<div class="code"><pre>   new slope  =  old slope  -  alpha x (n / S)      and it stops at 0
+
+   n  = training rows                        = 8000
+   S  = how spread out x is on those rows    = sum of (x - average x)^2 = 7857.45
+   n / S                                     = 1.0181
+</pre></div>
+<p>So every <code>+1</code> of <code>alpha</code> <strong>subtracts</strong> <code>1.0181</code> from the slope.</p>
+<p>That is the one difference from Ridge. Ridge <em>multiplies</em> the slope by a fraction, so it
+never reaches 0. Lasso <em>subtracts</em>, so it can land on 0.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">reg.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([8.53217994])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">reg.intercept_</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(-0.0473831581240432)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">y_pred = reg.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c11-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="3-turning-alpha-up">3. Turning <code>alpha</code> up</h2>
+<p>The next cells are the same code with a bigger <code>alpha</code>. Each step is plain subtraction:</p>
+<div class="code"><pre>   alpha = 1  -&gt;  9.5503 - 1 x 1.0181  =  8.5322
+   alpha = 2  -&gt;  9.5503 - 2 x 1.0181  =  7.5140
+   alpha = 5  -&gt;  9.5503 - 5 x 1.0181  =  4.4596
+   alpha = 7  -&gt;  9.5503 - 7 x 1.0181  =  2.4233
+   alpha = 9  -&gt;  9.5503 - 9 x 1.0181  =  0.3870
+</pre></div>
+<p>Those are the numbers the cells actually print. The line goes flatter each time and the
+score falls with it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">reg = Lasso(alpha=2)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.8626798290552528</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">reg.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([7.51403754])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">y_pred = reg.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c16-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">reg = Lasso(alpha=5)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.6476800374760114
+[4.45961036]</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c17-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">reg = Lasso(alpha=7)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.4004115305410644
+[2.42332557]</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c18-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">reg = Lasso(alpha=9)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.06999477356708794
+[0.38704078]</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c19-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="4-alpha-9-5-the-slope-hits-exactly-0">4. <code>alpha = 9.5</code> — the slope hits exactly 0</h2>
+<p>The formula would go negative here, so Lasso stops at 0:</p>
+<div class="code"><pre>   9.5503 - 9.5 x 1.0181  =  -0.12   -&gt;   0
+
+   the alpha that kills the slope  =  old slope x S / n
+                                   =  9.5503 x 7857.45 / 8000
+                                   =  9.3801
+</pre></div>
+<p>Any <code>alpha</code> above <code>9.3801</code> gives <code>coef_ = [0.]</code>.</p>
+<p>With no slope left, the line is flat and <code>intercept_</code> settles on the average of
+<code>y_train</code> (<code>-0.110415</code>). The model predicts the same number for every row, so R² is
+about 0 — that is exactly what R² = 0 means: no better than guessing the average.</p>
+<p><strong>This is what Ridge cannot do.</strong> Lasso removes a column completely.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">reg = Lasso(alpha=9.5)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>-0.0022122517482792148
+[0.]</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c21-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="5-going-the-other-way">5. Going the other way</h2>
+<p>A small <code>alpha</code> is a small price, so the slope stays where linear regression put it.</p>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right"><code>alpha</code></th>
+  <th style="text-align:right"><code>coef_</code></th>
+  <th style="text-align:right">test R²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right"><code>0.1</code></td>
+  <td style="text-align:right"><code>9.448508</code></td>
+  <td style="text-align:right"><code>0.902083</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.001</code></td>
+  <td style="text-align:right"><code>9.549304</code></td>
+  <td style="text-align:right"><code>0.902079</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.0001</code></td>
+  <td style="text-align:right"><code>9.550221</code></td>
+  <td style="text-align:right"><code>0.902078</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0</code></td>
+  <td style="text-align:right"><code>9.550322</code></td>
+  <td style="text-align:right"><code>0.902078</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>alpha = 0</code> <strong>is</strong> <code>LinearRegression</code>. Use that class for it — passing <code>alpha=0</code> to
+<code>Lasso</code> works but sklearn warns about it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">reg = Lasso(alpha=0.1)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9020825877391855
+[9.44850809]</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c23-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">reg = Lasso(alpha=0.001)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9020787886206871
+[9.54930419]</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c24-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">reg = Lasso(alpha=0.0001)
+reg.fit(X_train,y_train)
+print(reg.score(X_test, y_test))
+print(reg.coef_)
+y_pred = reg.predict(x)
+
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9020778196008511
+[9.55022052]</pre></div>
+<figure class="shot"><img src="assets/08-lasso-c25-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="6-wrap-up">6. Wrap up</h2>
+<h3>The whole notebook in one table</h3>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right"><code>alpha</code></th>
+  <th style="text-align:right"><code>coef_</code></th>
+  <th style="text-align:right"><code>intercept_</code></th>
+  <th style="text-align:right">test R²</th>
+  <th>what happened</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right"><code>0</code></td>
+  <td style="text-align:right"><code>9.550322</code></td>
+  <td style="text-align:right"><code>-0.039862</code></td>
+  <td style="text-align:right"><code>0.902078</code></td>
+  <td>plain <code>LinearRegression</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.0001</code></td>
+  <td style="text-align:right"><code>9.550221</code></td>
+  <td style="text-align:right"><code>-0.039862</code></td>
+  <td style="text-align:right"><code>0.902078</code></td>
+  <td>no visible effect</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>0.1</code></td>
+  <td style="text-align:right"><code>9.448508</code></td>
+  <td style="text-align:right"><code>-0.040614</code></td>
+  <td style="text-align:right"><code>0.902083</code></td>
+  <td>1% flatter, no cost</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>1</code></td>
+  <td style="text-align:right"><code>8.532180</code></td>
+  <td style="text-align:right"><code>-0.047383</code></td>
+  <td style="text-align:right"><code>0.892772</code></td>
+  <td>the default</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>2</code></td>
+  <td style="text-align:right"><code>7.514038</code></td>
+  <td style="text-align:right"><code>-0.054905</code></td>
+  <td style="text-align:right"><code>0.862680</code></td>
+  <td>a visible tilt</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>5</code></td>
+  <td style="text-align:right"><code>4.459610</code></td>
+  <td style="text-align:right"><code>-0.077469</code></td>
+  <td style="text-align:right"><code>0.647680</code></td>
+  <td>half gone</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>7</code></td>
+  <td style="text-align:right"><code>2.423326</code></td>
+  <td style="text-align:right"><code>-0.092512</code></td>
+  <td style="text-align:right"><code>0.400412</code></td>
+  <td>nearly flat</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>9</code></td>
+  <td style="text-align:right"><code>0.387041</code></td>
+  <td style="text-align:right"><code>-0.107555</code></td>
+  <td style="text-align:right"><code>0.069995</code></td>
+  <td>almost dead</td>
+</tr>
+<tr>
+  <td style="text-align:right"><strong><code>9.3801</code></strong></td>
+  <td style="text-align:right"><strong><code>0.000000</code></strong></td>
+  <td style="text-align:right"><code>-0.110415</code></td>
+  <td style="text-align:right"><code>-0.002212</code></td>
+  <td><strong>the slope is dropped</strong></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>9.5</code></td>
+  <td style="text-align:right"><code>0.000000</code></td>
+  <td style="text-align:right"><code>-0.110415</code></td>
+  <td style="text-align:right"><code>-0.002212</code></td>
+  <td>same, nothing left to cut</td>
+</tr>
+</tbody>
+</table>
+<p>The slope falls in a straight line, hits 0 at <code>9.3801</code>, and stays there.</p>
+<h3>Lasso in three lines</h3>
+<div class="code"><pre>   cost       =  error  +  alpha x |slope|
+   new slope  =  old slope  -  alpha x n/S       floored at 0
+   alpha &gt;= old slope x S/n   -&gt;   slope = 0, the column is dropped
+</pre></div>
+<h3>Common mistakes</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Mistake</th>
+  <th>What actually happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Copying an <code>alpha</code> from another project</td>
+  <td><code>alpha</code> only means something next to <code>n / S</code>, and both change with your data.</td>
+</tr>
+<tr>
+  <td>Expecting Lasso to improve this model</td>
+  <td>It only helps when the model is overfitting. One clean column and 10,000 rows means there is nothing to fix, so every increase of <code>alpha</code> only makes the score worse.</td>
+</tr>
+<tr>
+  <td>Forgetting to scale the columns</td>
+  <td>Lasso charges every slope the same price. A column measured in millions gets a tiny slope and is dropped first, no matter how useful it is. Scale before you fit.</td>
+</tr>
+<tr>
+  <td>Using <code>Lasso(alpha=0)</code></td>
+  <td>It is just <code>LinearRegression</code>, and sklearn warns. Use <code>LinearRegression</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3>Key takeaway</h3>
+<p><strong>If you remember only one thing:</strong> Ridge multiplies the slope down, Lasso subtracts it
+down. Subtraction reaches zero — so Lasso does not just shrink a useless column, it
+deletes it.</p>
+
+<div class="foot"><a class="btn" href="../Concept/08_Lasso.ipynb">08_Lasso.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K Nearest Neighbor — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>K Nearest Neighbor</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#k-nearest-neighbors-explained">K-Nearest Neighbors, Explained</a><a href="#the-story-so-far">The story so far</a><a href="#journey">Journey</a><a href="#how-to-run-this-notebook">How to run this notebook</a><a href="#setup-importing-tools">Setup: importing tools</a><a href="#the-story-drawn-before-the-algorithm">The story, drawn before the algorithm</a><a href="#1-make-a-small-classification-world">1. Make a small classification world</a><a href="#seeing-the-problem-before-naming-the-solution">Seeing the problem before naming the solution</a><a href="#2-split-the-examples-practice-data-versus-exam-d">2. Split the examples: practice data versus exam dat</a><a href="#3-create-and-train-a-knn-classifier">3. Create and train a KNN classifier</a><a href="#4-ask-who-the-neighbours-are">4. Ask who the neighbours are</a><a href="#checkpoint">Checkpoint</a><a href="#5-knn-regression-predict-a-number">5. KNN regression: predict a number</a><a href="#important-limitations">Important limitations</a><a href="#final-cheat-sheet">Final cheat sheet</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>K Nearest Neighbor</h1>
+  <p class="lede">No training at all — just ask the neighbours.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A new family moves into the street and you want to guess their income.</strong></p><p>You have no formula and no model. But you do know the five nearest houses.</p><p><span class='beat'>So you look at those five and take the average.</span> That is the entire algorithm.</p><p>KNN has no training step — it memorises the data and does all the work at prediction time. Two things decide everything: how many neighbours you ask (k), and what "near" means — which is why unscaled columns wreck it.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Store every row; to predict, find the k closest and take a vote.</p></div>
+<div class="src-head">📓 <a href="../Concept/25_K_Nearest_Neighbor_explained.ipynb">25_K_Nearest_Neighbor_explained.ipynb</a></div>
+<h2 id="k-nearest-neighbors-explained">K-Nearest Neighbors, Explained</h2>
+<h2 id="the-story-so-far">The story so far</h2>
+<p>Maya is deciding whether a new customer belongs to a known customer group. She does not want to write a long list of rules. Her idea is simple: find the most similar customers nearby and let their answers guide the new answer. That is the central idea of <strong>K-Nearest Neighbors</strong>, or <strong>KNN</strong>.</p>
+<p>We will use the same idea twice: first to choose a class, and then to estimate a number. The important question throughout is: <em>which old examples are closest to this new example?</em></p>
+
+<h2 id="journey">Journey</h2>
+<ol>
+<li>Build and look at labelled points.</li>
+<li>Split old examples into training and test data.</li>
+<li>Use nearby labels to classify a new point.</li>
+<li>Inspect the actual neighbours.</li>
+<li>Use nearby target numbers for regression.</li>
+<li>Understand the important assumptions and mistakes.</li>
+</ol>
+
+<h2 id="how-to-run-this-notebook">How to run this notebook</h2>
+<p>Run the cells from top to bottom using <strong>Run All</strong>. A markdown cell only explains the next step; a Python cell creates the data, model, or visual. If you run only one Python cell, earlier variables may not exist yet.</p>
+<p>The first picture is the cell titled <strong>The story, drawn before the algorithm</strong>. To run only that cell, run the setup cell immediately before it first; that setup creates the shared <code>plt</code> plotting name.</p>
+
+<h2 id="setup-importing-tools">Setup: importing tools</h2>
+<p><strong>What:</strong> import the KNN models, plotting tool, and data generator.</p>
+<p><strong>Why here:</strong> Python only knows a library function after we import it.</p>
+<p><strong>What breaks if skipped:</strong> Python raises <code>NameError</code>, meaning it cannot find the name we typed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.datasets import make_blobs, make_regression
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt</pre></div>
+<h2 id="the-story-drawn-before-the-algorithm">The story, drawn before the algorithm</h2>
+<p>Maya has one new customer. The two numbers describe that customer on a map: feature 1 is the horizontal position and feature 2 is the vertical position. The coloured customers are older cases whose group is already known.</p>
+<p>The five lines are the important part of the picture. They connect Maya's new customer to the five closest old customers. Three neighbours are blue and two are orange, so the majority vote is blue.</p>
+<p>This is KNN before we use any scikit-learn model: <strong>find nearby examples, look at their answers, and let the local majority decide.</strong></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">story_points = [
+    (1.0, 1.2, &#x27;blue&#x27;), (1.6, 1.8, &#x27;blue&#x27;), (2.2, 1.1, &#x27;blue&#x27;),
+    (2.8, 2.0, &#x27;orange&#x27;), (3.2, 1.3, &#x27;orange&#x27;),
+    (6.0, 5.5, &#x27;orange&#x27;), (6.6, 6.2, &#x27;orange&#x27;),
+    (7.0, 5.2, &#x27;blue&#x27;), (7.5, 6.5, &#x27;blue&#x27;)
+]
+new_customer = (2.0, 1.5)
+nearest_indexes = [0, 1, 2, 3, 4]
+
+plt.figure(figsize=(8, 5))
+for index, (feature_1, feature_2, group) in enumerate(story_points):
+    plt.scatter(feature_1, feature_2, c=group, s=90, edgecolor=&#x27;black&#x27;)
+    plt.text(feature_1 + 0.08, feature_2 + 0.08, f&#x27;customer {index + 1}&#x27;, fontsize=9)
+
+for index in nearest_indexes:
+    feature_1, feature_2, _ = story_points[index]
+    plt.plot(
+        [new_customer[0], feature_1],
+        [new_customer[1], feature_2],
+        color=&#x27;gray&#x27;, linestyle=&#x27;--&#x27;, linewidth=1
+    )
+
+plt.scatter(
+    *new_customer, c=&#x27;gold&#x27;, edgecolor=&#x27;black&#x27;, marker=&#x27;X&#x27;, s=220,
+    label=&#x27;Maya\&#x27;s new customer&#x27;
+)
+plt.annotate(
+    &#x27;5 closest neighbours:\n3 blue + 2 orange\n=&gt; predict blue&#x27;,
+    xy=new_customer, xytext=(3.8, 0.4),
+    arrowprops={&#x27;arrowstyle&#x27;: &#x27;-&gt;&#x27;, &#x27;color&#x27;: &#x27;black&#x27;},
+    bbox={&#x27;boxstyle&#x27;: &#x27;round,pad=0.4&#x27;, &#x27;facecolor&#x27;: &#x27;white&#x27;, &#x27;edgecolor&#x27;: &#x27;black&#x27;}
+)
+plt.xlabel(&#x27;feature 1: horizontal customer measurement&#x27;)
+plt.ylabel(&#x27;feature 2: vertical customer measurement&#x27;)
+plt.title(&#x27;Maya asks nearby customers for a majority vote&#x27;)
+plt.xlim(0, 8.5)
+plt.ylim(0, 7.2)
+plt.grid(alpha=0.2)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/25-k-nearest-neighbor-explai-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>What the story visual teaches</h3>
+<p>The yellow <code>X</code> is the customer we need to classify. The dashed lines show the five neighbours KNN selected; points that are far away in the upper-right are ignored for this decision. Because three selected neighbours are blue and only two are orange, the predicted class is blue.</p>
+<p>Later, <code>KNeighborsClassifier(n_neighbors=5)</code> performs this same process automatically. The hand-drawn picture comes first so that <code>n_neighbors=5</code>, distance, and majority vote have something concrete to refer to.</p>
+
+<h2 id="1-make-a-small-classification-world">1. Make a small classification world</h2>
+<p><code>make_blobs</code> creates groups of points for practice. Each row is one example. Each column is one feature. <code>y</code> is the answer attached to each row.</p>
+<p>Syntax: <code>make_blobs(n_features=2, n_samples=1000, cluster_std=2, centers=2, random_state=1)</code></p>
+<ul>
+<li><code>n_features=2</code>: every point has two measurements, so we can draw it on an x/y chart.</li>
+<li><code>n_samples=1000</code>: create 1,000 rows.</li>
+<li><code>cluster_std=2</code>: control how spread out each group is. Larger means more overlap.</li>
+<li><code>centers=2</code>: create two groups.</li>
+<li><code>random_state=1</code>: use the same random data every time.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">X, y = make_blobs(
+    n_features=2,
+    n_samples=1000,
+    cluster_std=2,
+    centers=2,
+    random_state=1
+)
+print(&#x27;X shape:&#x27;, X.shape)
+print(&#x27;y shape:&#x27;, y.shape)
+print(&#x27;first X row:&#x27;, X[0])
+print(&#x27;first y value:&#x27;, y[0])</pre></div>
+<div class="out"><div class="h">Output</div><pre>X shape: (1000, 2)
+y shape: (1000,)
+first X row: [-4.45718554  4.57002551]
+first y value: 0</pre></div>
+<h3>Reading the result</h3>
+<p><code>X</code> has shape <code>(number_of_rows, number_of_features)</code>. Therefore <code>X.shape</code> should be <code>(1000, 2)</code>. <code>y</code> has one answer per row, so its shape is <code>(1000,)</code>. The rows line up: <code>X[0]</code> and <code>y[0]</code> describe the same example.</p>
+
+<h2 id="seeing-the-problem-before-naming-the-solution">Seeing the problem before naming the solution</h2>
+<p><code>plt.scatter</code> draws one dot per row. <code>X[:, 0]</code> means: take every row and column 0. <code>X[:, 1]</code> means: take every row and column 1. The comma separates row selection from column selection. <code>c=y</code> colours dots by their known class.</p>
+<p>This visual is useful because KNN depends on physical closeness. If a new point is surrounded mostly by class 1 points, KNN will probably choose class 1.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">plt.scatter(X[:, 0], X[:, 1], alpha=0.6, c=y)
+plt.scatter(-5, 0, c=&#x27;red&#x27;, marker=&#x27;x&#x27;, s=100, label=&#x27;new point&#x27;)
+plt.xlabel(&#x27;feature 1&#x27;)
+plt.ylabel(&#x27;feature 2&#x27;)
+plt.title(&#x27;Customer examples and one new customer&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/25-k-nearest-neighbor-explai-c12-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>What to look at</h3>
+<p>The coloured dots form two groups. The red <code>x</code> is a new point with two feature values: <code>-5</code> and <code>0</code>. KNN does not invent a formula for this point. It asks which stored dots are closest to it.</p>
+<p>Analogy: this is like routing a support ticket to the team that handled the most similar tickets. The analogy breaks down when the features use incompatible units; distance can then be misleading.</p>
+
+<h2 id="2-split-the-examples-practice-data-versus-exam-d">2. Split the examples: practice data versus exam data</h2>
+<p>Before training, we hide some rows. The training set is the examples KNN may look at. The test set is an unseen exam.</p>
+<p>Syntax: <code>train_test_split(X, y, test_size=0.3, random_state=0)</code></p>
+<ul>
+<li><code>X, y</code>: split features and answers in the same way, so rows stay matched.</li>
+<li><code>test_size=0.3</code>: reserve 30% for testing; 70% remains for training.</li>
+<li><code>random_state=0</code>: make the split repeatable.</li>
+<li>The four outputs are features for training, features for testing, answers for training, and answers for testing.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=0
+)
+print(X_train.shape, X_test.shape)
+print(y_train.shape, y_test.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(700, 2) (300, 2)
+(700,) (300,)</pre></div>
+<h2 id="3-create-and-train-a-knn-classifier">3. Create and train a KNN classifier</h2>
+<p><code>KNeighborsClassifier</code> is the classification version of KNN. Classification means the answer is a label such as <code>spam</code>/<code>not spam</code> or <code>0</code>/<code>1</code>.</p>
+<p><code>KNeighborsClassifier(n_neighbors=5)</code> means: when deciding a new label, inspect the five closest training rows. The number 5 is called <code>k</code>.</p>
+<p><code>.fit(X_train, y_train)</code> gives the model its reference examples. KNN is often called a lazy learner: it does very little calculation during <code>fit</code>; it keeps the training data so it can compare distances later.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">classifier = KNeighborsClassifier(n_neighbors=5)
+classifier.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>KNeighborsClassifier()</pre></div>
+<h3>Measuring correctly</h3>
+<p><code>.score(X, y)</code> returns accuracy for this classifier: the fraction of rows predicted correctly. The important syntax detail is <em>which rows we pass</em>.</p>
+<p>The scratch notebook used <code>classifier.score(X, y)</code>. That tests rows the model has already seen. It is useful as a quick sanity check, but it is not a fair estimate of future performance. We will use <code>X_test, y_test</code> for the honest score.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">training_accuracy = classifier.score(X_train, y_train)
+test_accuracy = classifier.score(X_test, y_test)
+print(&#x27;training accuracy:&#x27;, training_accuracy)
+print(&#x27;test accuracy:&#x27;, test_accuracy)</pre></div>
+<div class="out"><div class="h">Output</div><pre>training accuracy: 0.9971428571428571
+test accuracy: 1.0</pre></div>
+<h2 id="4-ask-who-the-neighbours-are">4. Ask who the neighbours are</h2>
+<p><code>classifier.kneighbors([[-5, 0]])</code> finds neighbours for one new row. The outer list matters: scikit-learn expects a table with shape <code>(number_of_rows, number_of_features)</code>, so one row still needs two pairs of brackets.</p>
+<p>The result has two arrays: distances and positions. A small distance means a nearby row. A position is the row index inside the fitted training data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">distances, positions = classifier.kneighbors([[-5, 0]])
+print(&#x27;distances:&#x27;, distances)
+print(&#x27;training-row positions:&#x27;, positions)
+print(&#x27;neighbour labels:&#x27;, y_train.iloc[positions[0]] if hasattr(y_train, &#x27;iloc&#x27;) else y_train[positions[0]])
+print(&#x27;prediction:&#x27;, classifier.predict([[-5, 0]]))</pre></div>
+<div class="out"><div class="h">Output</div><pre>distances: [[0.67827132 0.90025909 1.1140586  1.19193246 1.50207321]]
+training-row positions: [[286 463 171 479 143]]
+neighbour labels: [1 0 0 1 0]
+prediction: [0]</pre></div>
+<h3>Why this prediction happens</h3>
+<p>KNN looks at the five labels returned for the five closest rows and chooses the majority label. <code>predict</code> returns the final label. <code>kneighbors</code> is for investigation: it lets us see the evidence behind the prediction.</p>
+<p>Changing <code>k</code> changes the story. A very small <code>k</code> listens to a tiny local group and can be noisy. A large <code>k</code> listens to a broad group and can ignore a small but meaningful local pattern.</p>
+
+<h2 id="checkpoint">Checkpoint</h2>
+<ol>
+<li>Why do we pass <code>X_test</code> to the final score instead of the full <code>X</code>?</li>
+<li>If <code>n_neighbors=1</code>, how many training labels vote?</li>
+<li>What does a very large distance tell us?</li>
+</ol>
+<p><strong>Answers:</strong> 1. Test rows simulate unseen future rows. 2. One row votes, so one noisy example can control the answer. 3. The new row is unlike the stored examples, so the prediction deserves caution.</p>
+
+<h2 id="5-knn-regression-predict-a-number">5. KNN regression: predict a number</h2>
+<p>Classification chooses a label. Regression estimates a continuous number, such as price, delivery time, or temperature.</p>
+<p><code>make_regression</code> creates numeric targets. Here <code>n_features=1</code> means each row has one input feature. <code>noise=20</code> adds realistic variation around the hidden relationship.</p>
+<p>The regression model uses the same neighbourhood idea, but averages the target values of nearby rows instead of taking a majority vote.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">X_reg, y_reg = make_regression(
+    n_features=1, noise=20, n_samples=10000, random_state=1
+)
+plt.scatter(X_reg, y_reg, s=3)
+plt.xlabel(&#x27;input feature&#x27;)
+plt.ylabel(&#x27;numeric target&#x27;)
+plt.title(&#x27;Examples for KNN regression&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/25-k-nearest-neighbor-explai-c25-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Create, train, and inspect the regressor</h3>
+<p><code>KNeighborsRegressor(n_neighbors=3)</code> uses the three nearest rows. <code>.fit(X_reg, y_reg)</code> stores the examples. <code>.predict([[1]])</code> asks for the estimated target at input value 1. Again, <code>[[1]]</code> is a one-row, one-column table.</p>
+<p>For a regressor, <code>.score()</code> is the coefficient of determination, called $R^2$, rather than classification accuracy. A score closer to 1 means the predictions explain more of the target variation; it can also be negative when the model is poor.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">regressor = KNeighborsRegressor(n_neighbors=3)
+regressor.fit(X_reg, y_reg)
+print(&#x27;training R^2:&#x27;, regressor.score(X_reg, y_reg))
+distances, positions = regressor.kneighbors([[1]])
+neighbour_targets = y_reg[positions[0]]
+prediction = regressor.predict([[1]])
+print(&#x27;neighbour targets:&#x27;, neighbour_targets)
+print(&#x27;manual average:&#x27;, neighbour_targets.mean())
+print(&#x27;KNN prediction:&#x27;, prediction)</pre></div>
+<div class="out"><div class="h">Output</div><pre>training R^2: 0.9657784708687274
+neighbour targets: [81.98019188 51.59353389 62.51252132]
+manual average: 65.36208236231441
+KNN prediction: [65.36208236]</pre></div>
+<h3>Read the regression result</h3>
+<p>The manual average and the model prediction should match because regression KNN predicts the mean of the selected neighbours by default. The classifier used a majority vote; the regressor uses an average.</p>
+<p>The scratch notebook manually added three target values and divided by 3. <code>neighbour_targets.mean()</code> expresses the same idea safely: it computes the average of however many neighbours the model actually selected.</p>
+
+<h2 id="important-limitations">Important limitations</h2>
+<ul>
+<li><strong>Scale matters:</strong> KNN uses distance. A feature measured in thousands can overpower a feature measured in decimals. Scale features before using KNN when units differ.</li>
+<li><strong>Choice of k matters:</strong> small <code>k</code> can overreact to noise; large <code>k</code> can smooth away useful local structure.</li>
+<li><strong>Prediction can be slow:</strong> KNN keeps many rows and searches them when a prediction arrives. This is different from a compact formula.</li>
+<li><strong>Sparse regions are risky:</strong> if a new row is far from every training row, its nearest neighbours may still be poor examples.</li>
+<li><strong>Do not trust training scores alone:</strong> always measure on held-out data, ideally with cross-validation when comparing settings.</li>
+</ul>
+
+<h2 id="final-cheat-sheet">Final cheat sheet</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax</th>
+  <th>Plain English</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>KNeighborsClassifier(n_neighbors=5)</code></td>
+  <td>make a classifier that listens to 5 nearby rows</td>
+</tr>
+<tr>
+  <td><code>KNeighborsRegressor(n_neighbors=3)</code></td>
+  <td>make a regressor that averages 3 nearby rows</td>
+</tr>
+<tr>
+  <td><code>.fit(X_train, y_train)</code></td>
+  <td>store examples and their answers</td>
+</tr>
+<tr>
+  <td><code>.predict(new_rows)</code></td>
+  <td>produce answers for new rows</td>
+</tr>
+<tr>
+  <td><code>.score(X_test, y_test)</code></td>
+  <td>compare predictions with known answers</td>
+</tr>
+<tr>
+  <td><code>.kneighbors(new_rows)</code></td>
+  <td>show distances and positions of nearby training rows</td>
+</tr>
+<tr>
+  <td><code>X[:, 0]</code></td>
+  <td>every row from column 0</td>
+</tr>
+<tr>
+  <td><code>[[1]]</code></td>
+  <td>one row containing one feature</td>
+</tr>
+<tr>
+  <td><code>random_state=1</code></td>
+  <td>make random generation repeatable</td>
+</tr>
+</tbody>
+</table>
+<p>If you remember only one thing: <strong>KNN predicts from nearby examples, so the meaning of near, the choice of k, and the quality of the stored examples control the answer.</strong></p>
+
+<div class="foot"><a class="btn" href="../Concept/25_K_Nearest_Neighbor_explained.ipynb">25_K_Nearest_Neighbor_explained.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

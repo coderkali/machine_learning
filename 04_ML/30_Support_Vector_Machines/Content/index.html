@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support Vector Machines — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Support Vector Machines</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#support-vector-classification">Support Vector Classification</a><a href="#ramesh-and-the-tea-stall">Ramesh and the tea stall</a><a href="#why-it-fails">Why it fails</a><a href="#the-fix">The fix</a><a href="#step-1-ramesh-s-fifteen-records">Step 1: Ramesh&#x27;s fifteen records</a><a href="#step-2-ramesh-asks-a-better-question">Step 2: Ramesh asks a better question</a><a href="#step-3-what-is-svc-actually-looking-for">Step 3: What is SVC actually looking for?</a><a href="#step-4-when-one-new-column-is-not-enough">Step 4: When one new column is not enough</a><a href="#step-5-hand-ramesh-s-data-to-svc">Step 5: Hand Ramesh&#x27;s data to SVC</a><a href="#what-ramesh-learned">What Ramesh learned</a><a href="#svc-classification-from-a-2d-boundary-to-a-more-">SVC Classification: From a 2D Boundary to a More Fle</a><a href="#1-the-situation-a-story">1. The Situation: A Story</a><a href="#2-what-problem-are-we-solving">2. What Problem Are We Solving?</a><a href="#3-the-initial-approach">3. The Initial Approach</a><a href="#4-what-is-the-problem-with-the-initial-approach">4. What Is the Problem with the Initial Approach?</a><a href="#5-solution-a-create-better-features-manually">5. Solution A: Create Better Features Manually</a><a href="#6-solution-b-use-a-polynomial-kernel">6. Solution B: Use a Polynomial Kernel</a><a href="#7-how-the-solutions-work-in-real-life">7. How the Solutions Work in Real Life</a><a href="#8-what-the-2d-and-3d-pictures-mean">8. What the 2D and 3D Pictures Mean</a><a href="#training-and-test-records">Training and Test Records</a><a href="#understanding-y-pred">Understanding y_pred</a><a href="#explanation-of-the-latest-linear-svc-prediction">Explanation of the Latest Linear SVC Prediction</a><a href="#comparing-manual-features-with-a-polynomial-kern">Comparing Manual Features with a Polynomial Kernel</a><a href="#understanding-2d-3d-and-feature-space">Understanding 2D, 3D, and Feature Space</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Support Vector Machines</h1>
+  <p class="lede">Not just a line that separates — the line with the widest possible gap.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ramesh could draw a hundred lines that separated his two groups.</strong> Every one of them was correct on the training data.</p><p>But some passed within a hair of a point. The first new customer who landed slightly to the left would be classified wrongly.</p><p><span class='beat'>Correct on today's data is not the same as safe on tomorrow's.</span></p><p>SVC picks the line with the widest empty corridor around it. And when the groups form a ring that no straight line can cut, the kernel trick lifts them into a higher dimension where a flat plane <em>can</em> separate them.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Maximise the margin. When no straight line works, add a dimension until one does.</p></div>
+<div class="src-head">📓 <a href="../Concept/22_svc_2D.ipynb">22_svc_2D.ipynb</a></div>
+<h2 id="support-vector-classification">Support Vector Classification</h2>
+<h2 id="ramesh-and-the-tea-stall">Ramesh and the tea stall</h2>
+<p>Ramesh runs a tea stall on a long straight highway.</p>
+<p>He wants to print leaflets, but only for the households that will actually walk
+over and buy tea. Printing for everyone costs too much. So he needs to predict,
+for a household he has not visited yet: <strong>will this one stop or not?</strong></p>
+<p>He has exactly one number for each household — where it sits on the highway,
+measured from his stall. West is negative, east is positive. <code>-7</code> means seven
+units west, <code>+7</code> means seven units east.</p>
+<p>He collects fifteen records and tries the simplest rule he can think of:</p>
+<div class="note"><div class="h">Note</div><p>&quot;Everyone from some point onward will stop.&quot;</p>
+</div>
+<p>It fails. Not slightly — whatever cut-off he picks, he gets at least four of the
+fifteen households wrong.</p>
+<h2 id="why-it-fails">Why it fails</h2>
+<p>Ramesh's data is not noisy. His two groups do not even touch: every household
+that stops is within 3 units of the stall, every household that does not is 4 or
+more away.</p>
+<p>The problem is the <strong>question</strong>. He asked <em>which side of me is this household on?</em>
+But the households that stop are the ones that live <strong>close</strong> — and close means
+close on <strong>both</strong> sides. His single cut-off has to hand one whole side to each
+answer, so it can never describe &quot;the middle&quot;.</p>
+<h2 id="the-fix">The fix</h2>
+<p>Not a bigger model. One better column: <strong>distance</strong> from the stall instead of
+<strong>side</strong>. Squaring his number does exactly that — it throws away east-versus-west
+and keeps only how far.</p>
+<div class="code"><pre>position (west -, east +)   -&gt;  no single cut-off works
+position squared = distance -&gt;  near and far separate cleanly
+SVC                         -&gt;  places the cut in the safest spot in the gap
+</pre></div>
+<p>This is a classification problem: the answer is a category (<code>0</code> = does not stop,
+<code>1</code> = stops), not a number.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">D1 = np.array([[-7,0],[-6,0],[-5,0],[-4,0],[4,0],[5,0],[6,0],[7,0]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">D2 = np.array([[-3,0],[-2,0],[-1,0],[0,0],[1,0],[2,0],[3,0]])</pre></div>
+<h2 id="step-1-ramesh-s-fifteen-records">Step 1: Ramesh's fifteen records</h2>
+<p><code>D1</code> and <code>D2</code> hold the two groups.</p>
+<ul>
+<li><code>D1</code> — households that did <strong>not</strong> stop: positions <code>-7</code> to <code>-4</code>, and <code>4</code> to <code>7</code>  -&gt;  class <code>0</code></li>
+<li><code>D2</code> — households that <strong>did</strong> stop: positions <code>-3</code> to <code>3</code>  -&gt;  class <code>1</code></li>
+</ul>
+<p>Both arrays carry a second column that is always <code>0</code>. That becomes <code>X2</code>. Ramesh
+only ever measured one thing, so this column holds no information and the data
+really lives on a single axis.</p>
+<p>Before running the next cell, be Ramesh for a moment: <strong>pick one cut-off on the
+highway, say everything below it stops and everything above it does not.</strong> Then
+count how many of the fifteen you got wrong.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py"># Ramesh&#x27;s highway, drawn as a number line.
+# Then: what is the BEST cut-off that exists? Not a guessed one - search
+# every possible cut-off and keep the one that gets the most right.
+x_all = np.concatenate([D1[:, 0], D2[:, 0]])
+y_all = np.concatenate([np.zeros(len(D1)), np.ones(len(D2))])
+
+best_cut, best_correct = None, -1
+for cut in np.arange(-8, 8.5, 0.5):
+    # try the rule both ways round, so we are not accidentally handicapping it
+    for pred in (np.where(x_all &lt; cut, 1, 0), np.where(x_all &lt; cut, 0, 1)):
+        correct = (pred == y_all).sum()
+        if correct &gt; best_correct:
+            best_correct, best_cut = correct, cut
+
+plt.figure(figsize=(11, 2.6))
+plt.scatter(D1[:, 0], np.zeros(len(D1)), s=90, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+plt.scatter(D2[:, 0], np.zeros(len(D2)), s=90, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+plt.axvline(best_cut, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1.5)
+plt.text(best_cut - 0.3, 0.22, f&#x27;best possible cut-off\n(position = {best_cut})&#x27;,
+         ha=&#x27;right&#x27;, fontsize=9)
+plt.annotate(&#x27;&#x27;, xy=(7.5, -0.22), xytext=(4, -0.22),
+             arrowprops=dict(arrowstyle=&#x27;&lt;-&gt;&#x27;, color=&#x27;tab:blue&#x27;))
+plt.text(5.75, -0.38, &#x27;more non-stoppers, over here&#x27;, ha=&#x27;center&#x27;,
+         fontsize=9, color=&#x27;tab:blue&#x27;)
+plt.yticks([])
+plt.ylim(-0.55, 0.62)
+plt.xlabel(&#x27;X1&#x27;)
+plt.title(&quot;Non-stoppers lie on BOTH sides, so one cut-off can never fit&quot;)
+plt.legend(loc=&#x27;upper right&#x27;, fontsize=9)
+plt.show()
+
+print(f&#x27;Best possible cut-off: {best_correct} of {len(y_all)} correct &#x27;
+      f&#x27;({best_correct / len(y_all):.0%})&#x27;)
+print(&#x27;The failure is structural, not a tuning problem.&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Best possible cut-off: 11 of 15 correct (73%)
+The failure is structural, not a tuning problem.</pre></div>
+<figure class="shot"><img src="assets/22-svc-2d-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">a,b=D1[:,0],D1[:,1]
+c,d=D2[:,0],D2[:,1]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">#dff1 =pd.DataFrame(np.hstack([a,b]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+dff1 =pd.DataFrame(np.vstack([a,b]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+dff1[&#x27;Y&#x27;]=0
+dff1</pre></div>
+<div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0  -7   0  0
+1  -6   0  0
+2  -5   0  0
+3  -4   0  0
+4   4   0  0
+5   5   0  0
+6   6   0  0
+7   7   0  0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">dff2 =pd.DataFrame(np.vstack([c,d]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+dff2[&#x27;Y&#x27;]=1
+dff2</pre></div>
+<div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0  -3   0  1
+1  -2   0  1
+2  -1   0  1
+3   0   0  1
+4   1   0  1
+5   2   0  1
+6   3   0  1</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">final = pd.concat([dff1, dff2], ignore_index=True)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">final</pre></div>
+<div class="out"><div class="h">Output</div><pre>    X1  X2  Y
+0   -7   0  0
+1   -6   0  0
+2   -5   0  0
+3   -4   0  0
+4    4   0  0
+5    5   0  0
+6    6   0  0
+7    7   0  0
+8   -3   0  1
+9   -2   0  1
+10  -1   0  1
+11   0   0  1
+12   1   0  1
+13   2   0  1
+14   3   0  1</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">final[&#x27;X1_Square&#x27;]= final[&#x27;X1&#x27;]**2
+final</pre></div>
+<div class="out"><div class="h">Output</div><pre>    X1  X2  Y  X1_Square
+0   -7   0  0         49
+1   -6   0  0         36
+2   -5   0  0         25
+3   -4   0  0         16
+4    4   0  0         16
+5    5   0  0         25
+6    6   0  0         36
+7    7   0  0         49
+8   -3   0  1          9
+9   -2   0  1          4
+10  -1   0  1          1
+11   0   0  1          0
+12   1   0  1          1
+13   2   0  1          4
+14   3   0  1          9</pre></div>
+<h2 id="step-2-ramesh-asks-a-better-question">Step 2: Ramesh asks a better question</h2>
+<p>His original column answers: <em>is this household west or east of me?</em></p>
+<p>Wrong question. Whether someone walks over depends on something else entirely:
+<em>how far away are they?</em></p>
+<p>Squaring answers that. It throws the direction away and keeps the distance:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>position</th>
+  <th>-7</th>
+  <th>-4</th>
+  <th>-3</th>
+  <th>0</th>
+  <th>3</th>
+  <th>4</th>
+  <th>7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>squared</td>
+  <td>49</td>
+  <td>16</td>
+  <td>9</td>
+  <td>0</td>
+  <td>9</td>
+  <td>16</td>
+  <td>49</td>
+</tr>
+</tbody>
+</table>
+<p>Now look at where each group lands in the new column:</p>
+<ul>
+<li>households that <strong>stop</strong> occupy <code>0, 1, 4, 9</code></li>
+<li>households that <strong>do not</strong> occupy <code>16, 25, 36, 49</code></li>
+</ul>
+<p>Nothing sits between <code>9</code> and <code>16</code>. That empty band of width <code>7</code> is what makes the
+problem solvable, and it is what SVC will aim at.</p>
+<p>Notice what did <strong>not</strong> change: the classifier. Ramesh changed the column he hands
+it. That is feature engineering.</p>
+
+<h2 id="step-3-what-is-svc-actually-looking-for">Step 3: What is SVC actually looking for?</h2>
+<p>Before handing Ramesh's data over, look at an easier case — one where a straight
+boundary already works — so you can see what the model is choosing.</p>
+<p>Lakshmi owns a fruit farm. For each field she has recorded two things, and whether
+<strong>apples</strong> or <strong>oranges</strong> grew better there. Her two groups sit apart cleanly, so
+many different straight lines would separate them.</p>
+<p>Which line should she use? A line squeezed right up against the apple fields is
+technically correct, but the first new field that lands slightly off gets
+misclassified. SVC picks the line with the <strong>most room on both sides</strong>.</p>
+<p>Three names for the three things in the picture below:</p>
+<ul>
+<li>the <strong>hyperplane</strong> is the boundary itself, $w^\top x + b = 0$ — the solid line;</li>
+<li>the two <strong>margin</strong> lines sit at $w^\top x + b = \pm 1$ — the dotted lines;</li>
+<li>the points touching those dotted lines are the <strong>support vectors</strong>.</li>
+</ul>
+<p>The last one is the surprising part. Only those few points hold the boundary in
+place. Every other field could move, or be deleted, and the line would not shift.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py"># Lakshmi&#x27;s farm: the easy case, where a straight boundary already works.
+# One hyperplane, two dotted margin lines, and the support vectors holding it.
+from sklearn.svm import SVC
+
+rng = np.random.default_rng(7)
+apples = rng.normal(loc=[3.0, 7.0], scale=0.85, size=(14, 2))
+oranges = rng.normal(loc=[7.0, 3.0], scale=0.85, size=(14, 2))
+
+fruit_X = np.vstack([apples, oranges])
+fruit_y = np.r_[np.zeros(len(apples)), np.ones(len(oranges))]
+
+fruit_svc = SVC(kernel=&#x27;linear&#x27;, C=1e6).fit(fruit_X, fruit_y)
+w, b = fruit_svc.coef_[0], fruit_svc.intercept_[0]
+
+line_x = np.linspace(0, 10, 100)
+boundary = -(w[0] * line_x + b) / w[1]          # w.x + b =  0
+margin_up = -(w[0] * line_x + b - 1) / w[1]     # w.x + b = +1
+margin_dn = -(w[0] * line_x + b + 1) / w[1]     # w.x + b = -1
+
+fig, ax = plt.subplots(figsize=(8.5, 6.5))
+ax.fill_between(line_x, margin_dn, margin_up, color=&#x27;gray&#x27;, alpha=0.12)
+ax.plot(line_x, boundary, color=&#x27;black&#x27;, linewidth=2,
+        label=&#x27;hyperplane / decision boundary&#x27;)
+ax.plot(line_x, margin_up, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1,
+        label=&#x27;dotted margin lines&#x27;)
+ax.plot(line_x, margin_dn, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1)
+
+ax.scatter(apples[:, 0], apples[:, 1], s=90, marker=&#x27;o&#x27;, color=&#x27;tab:green&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;apples&#x27;)
+ax.scatter(oranges[:, 0], oranges[:, 1], s=90, marker=&#x27;^&#x27;, color=&#x27;tab:orange&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;oranges&#x27;)
+ax.scatter(fruit_svc.support_vectors_[:, 0], fruit_svc.support_vectors_[:, 1],
+           s=300, facecolors=&#x27;none&#x27;, edgecolors=&#x27;crimson&#x27;, linewidths=2.5,
+           label=&#x27;support vectors&#x27;)
+
+ax.text(0.4, 9.0, &#x27;this area:\ngrow apples&#x27;, fontsize=11, color=&#x27;tab:green&#x27;)
+ax.text(7.4, 0.6, &#x27;this area:\ngrow oranges&#x27;, fontsize=11, color=&#x27;tab:orange&#x27;)
+
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 10)
+ax.set_xlabel(&#x27;rainfall&#x27;)
+ax.set_ylabel(&#x27;temperature&#x27;)
+ax.set_title(&#x27;SVC picks the boundary with the most room on both sides&#x27;)
+ax.legend(loc=&#x27;upper center&#x27;, bbox_to_anchor=(0.5, -0.09), ncol=3, fontsize=9)
+plt.show()
+
+print(f&#x27;margin width   : {2 / np.linalg.norm(w):.2f}&#x27;)
+print(f&#x27;support vectors: {len(fruit_svc.support_vectors_)} out of {len(fruit_X)} points&#x27;)
+print(&#x27;Every other point could be moved and the boundary would not shift.&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>margin width   : 3.69
+support vectors: 2 out of 28 points
+Every other point could be moved and the boundary would not shift.</pre></div>
+<figure class="shot"><img src="assets/22-svc-2d-c14-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-4-when-one-new-column-is-not-enough">Step 4: When one new column is not enough</h2>
+<p>Ramesh's problem needed exactly one new column, because he only ever measured one
+thing. Suppose he moves to a town and starts recording two numbers per household —
+how far east and how far north of the stall it is.</p>
+<p>Now the households that stop form a <strong>blob around the stall</strong>, and the ones that
+do not form a <strong>ring around them</strong>. On a flat map no straight line can separate a
+blob from the ring around it. Any line you draw cuts straight through both.</p>
+<p>The escape is the same trick, one size up:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Measurements</th>
+  <th>Add</th>
+  <th>Ends up</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1 (position)</td>
+  <td>$x_1^2$</td>
+  <td>2D — this notebook</td>
+</tr>
+<tr>
+  <td>2 (east, north)</td>
+  <td>$x_1^2 + x_2^2$</td>
+  <td>3D — the figure below</td>
+</tr>
+</tbody>
+</table>
+<p>The new column is still just distance. It lifts the ring high and leaves the blob
+on the floor, and a flat plane slides into the space between them.</p>
+<h3>Doing this without building the columns by hand</h3>
+<p>Two measurements are easy. But a full degree-2 expansion of two features already
+produces five new columns:</p>
+<div class='formula'>x_1^2,\quad x_1x_2,\quad x_2^2,\quad x_1,\quad x_2</div>
+
+<p>With ten features it is unmanageable. A <strong>kernel</strong> computes the answer <em>as if</em>
+those columns existed, without ever building them:</p>
+<div class='formula'>K(x, z) = (x^\top z + 1)^d</div>
+
+<p>At $d = 2$ that is exactly the five-column view above. <code>kernel='poly'</code> gives you
+polynomial columns, <code>kernel='rbf'</code> gives a more flexible curved view.</p>
+<p>Ramesh needs neither. With his second column stuck at zero, every term containing
+$x_2$ — that is $x_1x_2$ and $x_2^2$ — collapses to zero too. The only new feature
+that survives is $x_1^2$, and that is the one column we built by hand.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py"># Ramesh in town: two measurements per household instead of one.
+# The households that stop form a blob around the stall, the rest form a ring.
+# Same trick as before, one size up: add X1**2 + X2**2.
+rng = np.random.default_rng(3)
+
+inner_r, inner_t = rng.uniform(0.0, 1.6, 40), rng.uniform(0, 2 * np.pi, 40)
+inner = np.c_[inner_r * np.cos(inner_t), inner_r * np.sin(inner_t)]
+
+outer_r, outer_t = rng.uniform(3.0, 4.2, 40), rng.uniform(0, 2 * np.pi, 40)
+outer = np.c_[outer_r * np.cos(outer_t), outer_r * np.sin(outer_t)]
+
+inner_z = (inner ** 2).sum(axis=1)
+outer_z = (outer ** 2).sum(axis=1)
+
+fig = plt.figure(figsize=(13, 5.5))
+
+# Left: the 2D view. Try a few straight lines - every one of them fails.
+ax1 = fig.add_subplot(1, 2, 1)
+ax1.scatter(outer[:, 0], outer[:, 1], s=55, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+ax1.scatter(inner[:, 0], inner[:, 1], s=55, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+for slope, offset in [(0.0, 0.0), (1.4, 0.0), (-0.7, 1.5)]:
+    ax1.plot([-5, 5], [-5 * slope + offset, 5 * slope + offset],
+             color=&#x27;gray&#x27;, linestyle=&#x27;--&#x27;, linewidth=1)
+ax1.set_xlim(-5, 5)
+ax1.set_ylim(-5, 5)
+ax1.set_aspect(&#x27;equal&#x27;)
+ax1.set_xlabel(&#x27;X1&#x27;)
+ax1.set_ylabel(&#x27;X2&#x27;)
+ax1.set_title(&#x27;Flat map: every straight line cuts through the ring&#x27;)
+ax1.legend(loc=&#x27;upper right&#x27;, fontsize=8)
+
+# Right: add the third axis. Now a flat plane fits in the gap.
+ax2 = fig.add_subplot(1, 2, 2, projection=&#x27;3d&#x27;)
+ax2.scatter(outer[:, 0], outer[:, 1], outer_z, s=45, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0&#x27;)
+ax2.scatter(inner[:, 0], inner[:, 1], inner_z, s=45, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1&#x27;)
+
+plane_at = (inner_z.max() + outer_z.min()) / 2
+pg = np.linspace(-5, 5, 12)
+pgx, pgy = np.meshgrid(pg, pg)
+ax2.plot_surface(pgx, pgy, np.full_like(pgx, plane_at), alpha=0.25, color=&#x27;gray&#x27;)
+
+ax2.set_xlabel(&#x27;X1&#x27;)
+ax2.set_ylabel(&#x27;X2&#x27;)
+ax2.set_box_aspect(None, zoom=0.90)
+ax2.view_init(elev=14, azim=-72)   # look almost edge-on, so the lift is visible
+ax2.set_title(&#x27;3D: the new axis  X1**2 + X2**2  lifts the ring above a flat plane&#x27;)
+ax2.legend(loc=&#x27;upper left&#x27;, fontsize=8)
+
+fig.subplots_adjust(left=0.06, right=0.97, wspace=0.02)
+plt.show()
+
+flat_2d = SVC(kernel=&#x27;linear&#x27;).fit(np.vstack([outer, inner]),
+                                   np.r_[np.zeros(40), np.ones(40)])
+lifted = SVC(kernel=&#x27;linear&#x27;, C=1e6).fit(
+    np.c_[np.vstack([outer, inner]), np.r_[outer_z, inner_z]],
+    np.r_[np.zeros(40), np.ones(40)])
+print(f&#x27;best straight line in 2D : {flat_2d.score(np.vstack([outer, inner]), np.r_[np.zeros(40), np.ones(40)]):.0%} correct&#x27;)
+print(f&#x27;flat plane in 3D         : {lifted.score(np.c_[np.vstack([outer, inner]), np.r_[outer_z, inner_z]], np.r_[np.zeros(40), np.ones(40)]):.0%} correct&#x27;)
+print(f&#x27;the plane sits at X1**2 + X2**2 = {plane_at:.2f}, in the gap between &#x27;
+      f&#x27;{inner_z.max():.2f} and {outer_z.min():.2f}&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>best straight line in 2D : 74% correct
+flat plane in 3D         : 100% correct
+the plane sits at X1**2 + X2**2 = 5.78, in the gap between 2.43 and 9.14</pre></div>
+<figure class="shot"><img src="assets/22-svc-2d-c16-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py"># What squaring does to Ramesh&#x27;s highway: 1D -&gt; 2D.
+# Position alone is one axis. Adding position-squared gives a second axis,
+# and every household rises onto a parabola - near ones stay low, far ones go high.
+fig, ax = plt.subplots(figsize=(9, 6))
+
+curve_x = np.linspace(-7.5, 7.5, 200)
+ax.plot(curve_x, curve_x ** 2, color=&#x27;gray&#x27;, linewidth=1, alpha=0.6,
+        label=&#x27;the lift: X1_Square = X1**2&#x27;)
+
+class_0 = final[final[&#x27;Y&#x27;] == 0]
+class_1 = final[final[&#x27;Y&#x27;] == 1]
+
+# Show each point starting on the number line and rising to where it lands.
+for frame, colour in [(class_0, &#x27;tab:blue&#x27;), (class_1, &#x27;tab:orange&#x27;)]:
+    ax.vlines(frame[&#x27;X1&#x27;], 0, frame[&#x27;X1_Square&#x27;], colors=colour,
+              alpha=0.35, linewidth=1)
+    ax.scatter(frame[&#x27;X1&#x27;], np.zeros(len(frame)), s=40, color=colour, alpha=0.5)
+
+ax.scatter(class_0[&#x27;X1&#x27;], class_0[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:blue&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+ax.scatter(class_1[&#x27;X1&#x27;], class_1[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:orange&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+
+ax.axhline(12.5, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1.5)
+ax.text(-7.3, 13.8, &#x27;the empty band: nothing between 9 and 16&#x27;, fontsize=9)
+
+ax.set_xlabel(&#x27;X1   (position on the highway)&#x27;)
+ax.set_ylabel(&#x27;X1_Square   (distance from the stall)&#x27;)
+ax.set_ylim(-3, 55)
+ax.set_title(&#x27;1D to 2D: squaring lifts the far households clear of the near ones&#x27;)
+ax.legend(loc=&#x27;upper center&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/22-svc-2d-c17-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py"># How this plot is drawn, and why.
+#
+# It is tempting to put the class label on the Y axis. Do not. The two classes
+# then sit on separate rows automatically, so BOTH panels look separated even
+# when the feature is useless - you would be plotting the answer.
+#
+# Here the class is shown by colour only. Any separation you can see has to
+# come from the X axis alone, which is the thing being compared.
+class_0 = final[final[&#x27;Y&#x27;] == 0]
+class_1 = final[final[&#x27;Y&#x27;] == 1]
+
+fig, axes = plt.subplots(2, 1, figsize=(11, 4.0))
+
+panels = [
+    (axes[0], &#x27;X1&#x27;, &#x27;Before: non-stoppers (blue) appear on both sides of stoppers (orange)&#x27;),
+    (axes[1], &#x27;X1_Square&#x27;, &#x27;After: one cut at 12.5 separates them&#x27;),
+]
+for ax, column, title in panels:
+    ax.scatter(class_0[column], np.zeros(len(class_0)), s=90,
+               color=&#x27;tab:blue&#x27;, edgecolor=&#x27;black&#x27;)
+    ax.scatter(class_1[column], np.zeros(len(class_1)), s=90,
+               color=&#x27;tab:orange&#x27;, edgecolor=&#x27;black&#x27;)
+    ax.set_xlabel(column)
+    ax.set_title(title)
+    ax.set_yticks([])
+
+axes[1].axvline(12.5, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, label=&#x27;midpoint of the gap&#x27;)
+axes[1].legend(loc=&#x27;upper right&#x27;, fontsize=9)
+
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/22-svc-2d-c18-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-5-hand-ramesh-s-data-to-svc">Step 5: Hand Ramesh's data to SVC</h2>
+<p>Now we give SVC both columns, position and position-squared, and let it search.</p>
+<p><code>SVC(kernel='linear', C=1e6)</code> means: find a straight boundary, and use a very
+large <code>C</code> so the model is not allowed to trade mistakes for a wider margin. The
+groups are cleanly separated, so demanding zero mistakes is safe here.</p>
+<p>Two things to check in the output:</p>
+<ol>
+<li><strong>The weight on the original position column should come out at essentially
+zero.</strong> If it does, SVC worked out by itself that east-versus-west is useless,
+and the boundary is the flat line <code>X1_Square = 12.5</code> we predicted in Step 2.</li>
+<li><strong>There should be exactly four support vectors</strong>, at positions <code>-4, -3, 3, 4</code> —
+the households on either edge of the empty band. Every other household could
+move without shifting Ramesh's rule.</li>
+</ol>
+<h3>One caution about reading the picture</h3>
+<p>The margin is a <strong>geometric distance</strong>, but the two axes are not on the same
+scale: position spans about 16 units while position-squared spans about 54.
+Matplotlib stretches both to fill the same square box, so the dotted margin lines
+will look much narrower than they are. Trust the printed numbers.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">from sklearn.svm import SVC
+
+X = final[[&#x27;X1&#x27;, &#x27;X1_Square&#x27;]]
+y = final[&#x27;Y&#x27;]
+
+svc_linear = SVC(kernel=&#x27;linear&#x27;, C=1e6)
+svc_linear.fit(X, y)
+
+# Build a grid so we can see the regions learned by the classifier.
+x1_grid = np.linspace(-8, 8, 300)
+x1_square_grid = np.linspace(-2, 52, 300)
+grid_x1, grid_x1_square = np.meshgrid(x1_grid, x1_square_grid)
+grid = pd.DataFrame(
+    np.c_[grid_x1.ravel(), grid_x1_square.ravel()],
+    columns=X.columns
+)
+decision_values = svc_linear.decision_function(grid).reshape(grid_x1.shape)
+
+plt.figure(figsize=(9, 6))
+plt.contourf(
+    grid_x1,
+    grid_x1_square,
+    decision_values,
+    levels=[-np.inf, 0, np.inf],
+    alpha=0.18,
+    colors=[&#x27;tab:blue&#x27;, &#x27;tab:orange&#x27;]
+)
+plt.contour(
+    grid_x1,
+    grid_x1_square,
+    decision_values,
+    levels=[-1, 0, 1],
+    colors=&#x27;black&#x27;,
+    linestyles=[&#x27;--&#x27;, &#x27;-&#x27;, &#x27;--&#x27;],
+    linewidths=[1, 2, 1]
+)
+plt.scatter(class_0[&#x27;X1&#x27;], class_0[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+plt.scatter(class_1[&#x27;X1&#x27;], class_1[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+plt.scatter(
+    svc_linear.support_vectors_[:, 0],
+    svc_linear.support_vectors_[:, 1],
+    s=260,
+    facecolors=&#x27;none&#x27;,
+    edgecolors=&#x27;crimson&#x27;,
+    linewidths=2.5,
+    label=&#x27;Support vectors&#x27;
+)
+plt.xlabel(&#x27;X1&#x27;)
+plt.ylabel(&#x27;X1_Square&#x27;)
+plt.title(&#x27;Linear SVC after the transformation (axes are NOT to the same scale)&#x27;)
+plt.legend(loc=&#x27;upper center&#x27;, fontsize=9)
+plt.show()
+
+# Read the model instead of eyeballing the plot.
+w = svc_linear.coef_[0]
+b = svc_linear.intercept_[0]
+print(f&#x27;learned boundary : ({w[0]:+.3g}) * X1 + ({w[1]:+.3g}) * X1_Square + ({b:+.3g}) = 0&#x27;)
+print(f&#x27;weight on X1     : {w[0]:.2e}  -&gt; effectively zero, X1 is ignored&#x27;)
+print(f&#x27;so the boundary is the flat line  X1_Square = {-b / w[1]:.2f}&#x27;)
+print(f&#x27;margin half-width: {1 / np.linalg.norm(w):.2f} in X1_Square units &#x27;
+      f&#x27;(the band from 9 to 16)&#x27;)
+print(f&#x27;support vectors  : {len(svc_linear.support_vectors_)}&#x27;)
+print(svc_linear.support_vectors_)
+print(f&#x27;training accuracy: {svc_linear.score(X, y):.0%}&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>learned boundary : (-6.11e-17) * X1 + (-0.286) * X1_Square + (+3.57) = 0
+weight on X1     : -6.11e-17  -&gt; effectively zero, X1 is ignored
+so the boundary is the flat line  X1_Square = 12.50
+margin half-width: 3.50 in X1_Square units (the band from 9 to 16)
+support vectors  : 4
+[[-4. 16.]
+ [ 4. 16.]
+ [-3.  9.]
+ [ 3.  9.]]
+training accuracy: 100%</pre></div>
+<figure class="shot"><img src="assets/22-svc-2d-c20-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="what-ramesh-learned">What Ramesh learned</h2>
+<p>His data was never the problem. It was clean, and the two groups never overlapped.
+A straight rule still failed, because the households that stop sit on <strong>both sides</strong>
+of him, and one cut-off has to give a whole side to each answer.</p>
+<p>Changing the question from <em>&quot;which side?&quot;</em> to <em>&quot;how far?&quot;</em> opened a gap between
+<code>9</code> and <code>16</code>. SVC put its boundary in the middle of that gap and kept the four
+edge households as support vectors. It ignored his original column completely —
+you can read that straight off the fitted coefficient.</p>
+<h3>Terms used here</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Term</th>
+  <th>Meaning in Ramesh's problem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>SVC</code></td>
+  <td>Support Vector Classifier — predicts a category: stops / does not stop</td>
+</tr>
+<tr>
+  <td><code>SVR</code></td>
+  <td>Support Vector Regressor — predicts a number instead</td>
+</tr>
+<tr>
+  <td>Decision boundary</td>
+  <td>The rule itself: $w^\top x + b = 0$</td>
+</tr>
+<tr>
+  <td>Margin</td>
+  <td>The empty band around it, here <code>9</code> to <code>16</code></td>
+</tr>
+<tr>
+  <td>Support vector</td>
+  <td>A household on the edge of that band: positions <code>-4, -3, 3, 4</code></td>
+</tr>
+<tr>
+  <td><code>C</code></td>
+  <td>How hard the model tries to avoid mistakes on the records it was given</td>
+</tr>
+<tr>
+  <td>Kernel</td>
+  <td>A way to get transformed columns without building them by hand</td>
+</tr>
+</tbody>
+</table>
+<h3>If you remember only one thing</h3>
+<div class="note"><div class="h">Note</div><p>SVM does not look for <em>a</em> boundary that separates. It looks for the boundary
+with the widest empty band around it. And when no boundary can work, the fix is
+usually a better column, not a bigger model.</p>
+</div>
+<h3>Next experiment</h3>
+<p>Keep Ramesh's data fixed and change only the kernel: <code>linear</code>, <code>poly</code>, <code>rbf</code>. Give
+each one the raw position column alone, with no squared column, and see which
+kernels find the pattern on their own.</p>
+
+<div class="src-head">📓 <a href="../Concept/23_SVC_3D.ipynb">23_SVC_3D.ipynb</a></div>
+<h2 id="svc-classification-from-a-2d-boundary-to-a-more-">SVC Classification: From a 2D Boundary to a More Flexible Decision Surface</h2>
+<h2 id="1-the-situation-a-story">1. The Situation: A Story</h2>
+<p>Maya works on a quality-control system. Every item is measured using two values:</p>
+<ul>
+<li><code>X1</code>: the first measurement</li>
+<li><code>X2</code>: the second measurement</li>
+</ul>
+<p>Some items belong to group <code>0</code>, and some belong to group <code>1</code>. Maya receives a new item and wants the computer to answer:</p>
+<div class="code"><pre>Does this item belong to group 0 or group 1?
+</pre></div>
+<p>At first, Maya plots the measurements on a 2D chart. Each item becomes one point at <code>(X1, X2)</code>. The points have different labels, so Maya asks whether a line can separate the two groups.</p>
+<p>This notebook follows Maya's investigation from the first simple model to more flexible SVC approaches.</p>
+<h2 id="2-what-problem-are-we-solving">2. What Problem Are We Solving?</h2>
+<p>This is a <strong>binary classification</strong> problem.</p>
+<p>We have:</p>
+<div class="code"><pre>Input features: X1 and X2
+Target label:   Y
+Possible labels: 0 or 1
+</pre></div>
+<p>The goal is to learn this relationship:</p>
+<div class="code"><pre>(X1, X2) -&gt; predict Y
+</pre></div>
+<p>In the notebook, the labels are created as follows:</p>
+<div class="code"><pre class="py">df1[&quot;Y&quot;] = 0
+df2[&quot;Y&quot;] = 1
+</pre></div>
+<p>The combined table <code>dff</code> contains the measurements and their known answers. The model learns from the training records and is then tested on records that were kept aside.</p>
+<h2 id="3-the-initial-approach">3. The Initial Approach</h2>
+<p>The first approach uses the original two features directly:</p>
+<div class="code"><pre class="py">x = dff[[&quot;X1&quot;, &quot;X2&quot;]]
+y = dff[&quot;Y&quot;]
+</pre></div>
+<p>Then the data is split into training and test parts:</p>
+<div class="code"><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    x,
+    y,
+    test_size=0.1,
+    random_state=0
+)
+</pre></div>
+<p>The SVC learns from:</p>
+<div class="code"><pre class="py">clff.fit(X_train, y_train)
+</pre></div>
+<p>and predicts labels for:</p>
+<div class="code"><pre class="py">clff.predict(X_test)
+</pre></div>
+<h3>First visualization</h3>
+<p>In a 2D chart, <code>X1</code> and <code>X2</code> are the two axes. The color shows the known class label <code>Y</code>. The model tries to find a boundary between the colored groups.</p>
+<h2 id="4-what-is-the-problem-with-the-initial-approach">4. What Is the Problem with the Initial Approach?</h2>
+<p>The initial model uses a linear boundary:</p>
+<div class="code"><pre class="py">SVC(kernel=&quot;linear&quot;)
+</pre></div>
+<p>A linear boundary is useful when one straight line can separate the groups. But real data is often mixed, curved, or arranged in a pattern that cannot be separated well by one straight line.</p>
+<p>The problem is not that SVC failed to run. The problem is that the chosen boundary may be too simple for the shape of the data.</p>
+<p>There is another important issue in a small experiment like this: the dataset has only 13 records. With <code>test_size=0.1</code>, only 2 records are used for testing. Therefore, one correct or incorrect prediction changes the accuracy by 50 percentage points. The score helps us understand the process, but it is not a reliable real-world performance estimate.</p>
+<h2 id="5-solution-a-create-better-features-manually">5. Solution A: Create Better Features Manually</h2>
+<p>Maya can give the linear SVC additional information by creating polynomial features:</p>
+<div class="code"><pre class="py">dff[&quot;X1_S&quot;] = dff[&quot;X1&quot;] ** 2
+dff[&quot;X2_S&quot;] = dff[&quot;X2&quot;] ** 2
+dff[&quot;X1X2&quot;] = dff[&quot;X1&quot;] * dff[&quot;X2&quot;]
+</pre></div>
+<p>The model input becomes:</p>
+<div class="code"><pre>X1, X2, X1_S, X2_S, X1X2
+</pre></div>
+<p>The SVC still uses a linear kernel, but it now finds a linear boundary in this expanded feature space:</p>
+<div class="code"><pre>(X1, X2, X1_S, X2_S, X1X2) -&gt; predict Y
+</pre></div>
+<p>This is why a linear model can sometimes represent a more complicated boundary after feature engineering. The transformation is performed explicitly by us.</p>
+<h2 id="6-solution-b-use-a-polynomial-kernel">6. Solution B: Use a Polynomial Kernel</h2>
+<p>Instead of creating the polynomial columns ourselves, Maya can give SVC the original features and ask it to calculate polynomial relationships internally:</p>
+<div class="code"><pre class="py">svc_poly = SVC(kernel=&quot;poly&quot;, degree=2)
+svc_poly.fit(X_train_raw, y_train_raw)
+</pre></div>
+<p>Here:</p>
+<div class="code"><pre>Input given by us: X1 and X2
+Polynomial relationships: calculated internally by SVC
+</pre></div>
+<p>This is related to manual feature engineering, but the two approaches are not automatically identical. The polynomial kernel also depends on parameters such as <code>degree</code>, <code>gamma</code>, <code>coef0</code>, and <code>C</code>.</p>
+<h2 id="7-how-the-solutions-work-in-real-life">7. How the Solutions Work in Real Life</h2>
+<p>Imagine a bank deciding whether a transaction is normal or suspicious.</p>
+<p>The raw features might be:</p>
+<div class="code"><pre>transaction amount
+number of transactions in one hour
+</pre></div>
+<p>A simple linear model may struggle because suspicious behavior may depend on combinations such as:</p>
+<div class="code"><pre>amount squared
+transaction count squared
+amount multiplied by transaction count
+</pre></div>
+<p>An engineer can either:</p>
+<ol>
+<li>Create those derived features explicitly and train a linear model, or</li>
+<li>Use a polynomial kernel so the SVC calculates polynomial relationships internally.</li>
+</ol>
+<p>In a production system, the team would also use many more records, a carefully chosen validation strategy, feature scaling, monitoring, and a test set large enough to support a trustworthy accuracy estimate.</p>
+<h2 id="8-what-the-2d-and-3d-pictures-mean">8. What the 2D and 3D Pictures Mean</h2>
+<p>A 2D plot shows two input features:</p>
+<div class="code"><pre>(X1, X2)
+</pre></div>
+<p>The existing 3D label plot shows:</p>
+<div class="code"><pre>(X1, X2, Y)
+</pre></div>
+<p>That is useful for visualization, but <code>Y</code> is the target, not an input feature.</p>
+<p>A genuine 3D feature plot can show:</p>
+<div class="code"><pre>(X1, X2, X1_S)
+</pre></div>
+<p>The manual model actually uses five feature dimensions, so no ordinary 2D or 3D picture can show its complete feature space at once.</p>
+<p>The central distinction is:</p>
+<div class="code"><pre>Visualization dimensions = how we look at the data
+Feature dimensions      = what the model uses to predict
+</pre></div>
+<p>The cells below now implement this story step by step: create the groups, assign labels, combine the data, split training and test records, train SVC models, compare predictions, and visualize the data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+X1 = np.array([[1,5], [2,3],[3,7],[4,1],[5,7],[6,2],[7,6],[8,4]])</pre></div>
+<h3>Why these imports and arrays come first</h3>
+<div class="code"><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+</pre></div>
+<ul>
+<li><code>numpy</code> creates and manipulates numeric arrays.</li>
+<li><code>pandas</code> stores the measurements in labelled tables.</li>
+<li><code>matplotlib.pyplot</code> draws the first static plots.</li>
+</ul>
+<p>The array <code>X1</code> contains eight observations. Each inner list is one observation with two values:</p>
+<div class="code"><pre>[ X1_value, X2_value ]
+</pre></div>
+<p>So <code>X1</code> has shape <code>(8, 2)</code>: 8 rows and 2 measurements per row. At this point there are no labels yet; we only have raw observations for the first group.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">plt.scatter(X1[:,0],X1[:,1])
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/23-svc-3d-c03-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Visualizing the first group</h3>
+<div class="code"><pre class="py">X1[:, 0]
+X1[:, 1]
+</pre></div>
+<p>The colon means &quot;take every row&quot;. The number after the comma selects a column: column <code>0</code> is the first measurement and column <code>1</code> is the second. A scatter plot places each row at <code>(X1[:, 0], X1[:, 1])</code>, so one dot represents one observation from group 0.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">X2 = np.array([[3,3], [4,4],[5,5],[3,4],[4,5]])</pre></div>
+<h3>Creating the second group</h3>
+<p><code>X2</code> has five more observations with the same two measurements. Keeping the two groups in separate arrays initially makes the teaching problem visible: we can plot each group independently before assigning the labels that a classifier needs.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">plt.scatter(X2[:,0],X2[:,1])
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/23-svc-3d-c07-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Visualizing the second group</h3>
+<p>The second scatter plot uses the same coordinate logic, but for <code>X2</code>. Comparing the two plots lets us ask the key modeling question: do the two groups occupy visibly different regions, or are their points mixed together?</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(X1[:,0],X1[:,1])
+plt.scatter(X2[:,0],X2[:,1])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x115c9cb90&gt;</pre></div>
+<figure class="shot"><img src="assets/23-svc-3d-c09-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Overlaying the groups</h3>
+<p>Putting both scatters on one axes gives the first useful visual comparison. At this stage the dots have no class column attached yet; the code knows that they came from different arrays, but a machine-learning estimator needs one explicit target vector such as <code>Y = 0</code> or <code>Y = 1</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">x,y=X1[:,0],X1[:,1]</pre></div>
+<h3>Naming the coordinates</h3>
+<div class="code"><pre class="py">x, y = X1[:, 0], X1[:, 1]
+</pre></div>
+<p>This unpacks the two columns of <code>X1</code> into separate one-dimensional arrays. The lowercase names are temporary coordinate arrays; they are not yet the machine-learning target <code>y</code> used later. The next cells turn these coordinates into named DataFrame columns so the meaning of each value is explicit.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">u,v=X2[:,0],X2[:,1]</pre></div>
+<p>The same unpacking is performed for <code>X2</code>. <code>u</code> and <code>v</code> are simply the first and second measurements of the second group. The different variable names prevent us from accidentally mixing group 1 coordinates with group 2 coordinates before the tables are built.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">df1 =pd.DataFrame(np.vstack([x,y]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+df1[&#x27;Y&#x27;]=0
+df1</pre></div>
+<div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0   1   5  0
+1   2   3  0
+2   3   7  0
+3   4   1  0
+4   5   7  0
+5   6   2  0
+6   7   6  0
+7   8   4  0</pre></div>
+<h3>Turning group 0 into a labelled table</h3>
+<div class="code"><pre class="py">df1 = pd.DataFrame(np.vstack([x, y]).T, columns=[&quot;X1&quot;, &quot;X2&quot;])
+</pre></div>
+<ul>
+<li><code>np.vstack([x, y])</code> stacks the two coordinate arrays vertically.</li>
+<li><code>.T</code> transposes the result so each observation becomes one row.</li>
+<li><code>columns=[&quot;X1&quot;, &quot;X2&quot;]</code> gives the measurements meaningful names.</li>
+</ul>
+<p>Then:</p>
+<div class="code"><pre class="py">df1[&quot;Y&quot;] = 0
+</pre></div>
+<p>adds the target column. Every row came from the first group, so every row receives label <code>0</code>. This is not a prediction; it is the known training truth that we are giving the model.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">df2 =pd.DataFrame(np.vstack([u,v]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+df2[&#x27;Y&#x27;]=1
+df2</pre></div>
+<div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0   3   3  1
+1   4   4  1
+2   5   5  1
+3   3   4  1
+4   4   5  1</pre></div>
+<h3>Turning group 1 into a labelled table</h3>
+<p>The second table uses the same construction, but its target assignment is <code>1</code>. The identical column names are intentional: both tables must have the same schema before they can be combined row by row.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">dff = pd.concat([df1, df2], ignore_index=True)</pre></div>
+<h3>Combining the labelled groups</h3>
+<div class="code"><pre class="py">dff = pd.concat([df1, df2], ignore_index=True)
+</pre></div>
+<p><code>pd.concat</code> performs a row-wise union of the two tables. <code>ignore_index=True</code> creates a fresh index from <code>0</code> to <code>12</code>; it prevents the original group-specific indexes from being mistaken for meaningful identifiers. The result is now one supervised-learning dataset with feature columns <code>X1</code>, <code>X2</code>, and target column <code>Y</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">dff</pre></div>
+<div class="out"><div class="h">Output</div><pre>    X1  X2  Y
+0    1   5  0
+1    2   3  0
+2    3   7  0
+3    4   1  0
+4    5   7  0
+5    6   2  0
+6    7   6  0
+7    8   4  0
+8    3   3  1
+9    4   4  1
+10   5   5  1
+11   3   4  1
+12   4   5  1</pre></div>
+<p>Displaying <code>dff</code> at this point is a checkpoint. We should verify that the table has 13 rows, two measurement columns, and one target column before training. In a real project, this kind of inspection catches missing values, wrong labels, and unexpected column types before they reach the estimator.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">x = dff[[&#x27;X1&#x27;,&#x27;X2&#x27;]]
+y = dff[&#x27;Y&#x27;]</pre></div>
+<h3>Separating inputs from the answer</h3>
+<div class="code"><pre class="py">x = dff[[&quot;X1&quot;, &quot;X2&quot;]]
+y = dff[&quot;Y&quot;]
+</pre></div>
+<p>The double brackets select a DataFrame containing the input columns. The single brackets select one Series containing the target. This distinction is fundamental:</p>
+<div class="code"><pre>X / x = evidence available before prediction
+y / Y = answer used during training and evaluation
+</pre></div>
+<p>The target must not be included in <code>x</code>; doing so would let the model see the answer while trying to learn it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.1, random_state=0)</pre></div>
+<h3>Holding out unseen records</h3>
+<div class="code"><pre class="py">train_test_split(x, y, test_size=0.1, random_state=0)
+</pre></div>
+<p>This function shuffles the matching rows of <code>x</code> and <code>y</code> together, then returns four aligned objects:</p>
+<ul>
+<li><code>X_train</code>, <code>y_train</code>: records and labels used to learn the boundary</li>
+<li><code>X_test</code>, <code>y_test</code>: records and labels reserved for checking the learned boundary</li>
+</ul>
+<p><code>test_size=0.1</code> asks for 10% of the 13 records, which becomes 2 test records. <code>random_state=0</code> makes the shuffle repeatable, so the same rows are selected each time we rerun the notebook.</p>
+
+<h2 id="training-and-test-records">Training and Test Records</h2>
+<p>The complete dataset contains <strong>13 records</strong>:</p>
+<ul>
+<li><code>X1</code> contributes 8 records, labelled <code>0</code>.</li>
+<li><code>X2</code> contributes 5 records, labelled <code>1</code>.</li>
+</ul>
+<p>The data is split using:</p>
+<div class="code"><pre class="py">train_test_split(x, y, test_size=0.1, random_state=0)
+</pre></div>
+<p>Because <code>test_size=0.1</code>, the model receives:</p>
+<ul>
+<li><strong>11 training records</strong> through <code>X_train</code> and <code>y_train</code></li>
+<li><strong>2 test records</strong> through <code>X_test</code> and <code>y_test</code></li>
+</ul>
+<p>The model is trained only with <code>X_train</code> and <code>y_train</code>. The test records in <code>X_test</code> are passed later to <code>predict()</code> so that we can evaluate the model on data it did not use during training.</p>
+<p>To inspect the test records before prediction, run:</p>
+<div class="code"><pre class="py">print(&quot;Number of test records:&quot;, len(X_test))
+print(pd.concat([X_test, y_test.rename(&quot;actual_label&quot;)], axis=1))
+</pre></div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.svm import SVC
+clff = SVC(kernel=&quot;linear&quot;)
+clff.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>SVC(kernel=&#x27;linear&#x27;)</pre></div>
+<h3>Training a linear SVC</h3>
+<div class="code"><pre class="py">clff = SVC(kernel=&quot;linear&quot;)
+clff.fit(X_train, y_train)
+</pre></div>
+<p><code>SVC(...)</code> creates the estimator and <code>kernel=&quot;linear&quot;</code> asks it to search for a flat separating boundary. The <code>fit</code> method is the learning step: it uses the training features and their known labels to choose the boundary. The test records are deliberately absent from <code>fit</code>, otherwise evaluation would no longer measure performance on unseen data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">y_pred = clff.predict(X_test)
+
+print(y_pred)
+print(clff.score(X_test, y_test))</pre></div>
+<div class="out"><div class="h">Output</div><pre>[1 1]
+0.5</pre></div>
+<h3>Predicting and scoring</h3>
+<div class="code"><pre class="py">y_pred = clff.predict(X_test)
+</pre></div>
+<p><code>predict</code> applies the learned boundary to feature rows it has never seen. It returns one class label per test row. The labels are not probabilities: <code>0</code> and <code>1</code> are the class decisions.</p>
+<div class="code"><pre class="py">clff.score(X_test, y_test)
+</pre></div>
+<p>For an <code>SVC</code> classifier, <code>score</code> returns mean accuracy:</p>
+<div class="code"><pre>number of correct predictions / number of test records
+</pre></div>
+<p>With only two test records, one correct prediction gives <code>0.5</code>, or 50%.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">test_results = X_test.copy()
+test_results[&quot;actual_label&quot;] = y_test.to_numpy()
+test_results[&quot;predicted_label&quot;] = y_pred
+test_results</pre></div>
+<div class="out"><div class="h">Output</div><pre>    X1  X2  X1_S  X2_S  X1X2  actual_label  predicted_label
+6    7   6    49    36    42             0                1
+11   3   4     9    16    12             1                1</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+prediction_details = X_test.copy()
+prediction_details[&quot;actual_label&quot;] = y_test.to_numpy()
+prediction_details[&quot;predicted_label&quot;] = y_pred
+prediction_details[&quot;correct&quot;] = prediction_details[&quot;actual_label&quot;] == prediction_details[&quot;predicted_label&quot;]
+prediction_details[&quot;decision_score&quot;] = clff.decision_function(X_test)
+
+print(&quot;Number of test records:&quot;, len(X_test))
+print(&quot;Correct predictions:&quot;, prediction_details[&quot;correct&quot;].sum())
+print(&quot;Incorrect predictions:&quot;, (~prediction_details[&quot;correct&quot;]).sum())
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;\nPrediction details:&quot;)
+display(prediction_details)
+
+print(&quot;\nConfusion matrix (rows = actual, columns = predicted):&quot;)
+print(confusion_matrix(y_test, y_pred, labels=[0, 1]))
+
+print(&quot;\nClassification report:&quot;)
+print(classification_report(y_test, y_pred, labels=[0, 1], zero_division=0))</pre></div>
+<div class="out"><div class="h">Output</div><pre>Number of test records: 2
+Correct predictions: 1
+Incorrect predictions: 1
+Accuracy: 0.5
+
+Prediction details:
+    X1  X2  X1_S  X2_S  X1X2  actual_label  predicted_label  correct  \
+6    7   6    49    36    42             0                1    False   
+11   3   4     9    16    12             1                1     True   
+
+    decision_score  
+6         4.543249  
+11        0.141618
+
+Confusion matrix (rows = actual, columns = predicted):
+[[0 1]
+ [0 1]]
+
+Classification report:
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00         1
+           1       0.50      1.00      0.67         1
+
+    accuracy                           0.50         2
+   macro avg       0.25      0.50      0.33         2
+weighted avg       0.25      0.50      0.33         2</pre></div>
+<h3>Reading the evaluation table</h3>
+<p>The evaluation code builds a copy of <code>X_test</code>, then appends the actual label, predicted label, a Boolean correctness flag, and the SVC decision score. Keeping the features beside the result answers an important practical question: <strong>which exact input row was classified correctly or incorrectly?</strong></p>
+<p>The confusion matrix counts actual-versus-predicted combinations. The classification report summarizes precision, recall, and F1-score, but with only two test rows those statistics are highly sensitive to a single record. Treat them as an explanation of the metrics, not as a production-quality model assessment.</p>
+
+<h3>Current Test-Set Result</h3>
+<p>The current split produces these two test records:</p>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right">Index</th>
+  <th style="text-align:right"><code>X1</code></th>
+  <th style="text-align:right"><code>X2</code></th>
+  <th style="text-align:right">Actual label</th>
+  <th style="text-align:right">Predicted label</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right">6</td>
+  <td style="text-align:right">7</td>
+  <td style="text-align:right">6</td>
+  <td style="text-align:right">0</td>
+  <td style="text-align:right">0</td>
+</tr>
+<tr>
+  <td style="text-align:right">11</td>
+  <td style="text-align:right">3</td>
+  <td style="text-align:right">4</td>
+  <td style="text-align:right">1</td>
+  <td style="text-align:right">0</td>
+</tr>
+</tbody>
+</table>
+<p>The model classified the first record correctly. It predicted class <code>0</code> for the second record, but the actual class is <code>1</code>, so that record was misclassified. The current test accuracy is therefore <strong>50%</strong> (<code>1 correct out of 2 test records</code>).</p>
+
+<h2 id="understanding-y-pred">Understanding <code>y_pred</code></h2>
+<p><code>y_pred</code> contains the class labels predicted by the SVC model for the rows in <code>X_test</code>.</p>
+<p>In this notebook, the labels were created as follows:</p>
+<ul>
+<li><code>0</code> represents the data points originally stored in <code>X1</code>.</li>
+<li><code>1</code> represents the data points originally stored in <code>X2</code>.</li>
+</ul>
+<p>Therefore, if the output is:</p>
+<div class="code"><pre class="py">[0 0]
+</pre></div>
+<p>The model predicted class <code>0</code> for both test records:</p>
+<div class="code"><pre>First test record  -&gt; class 0
+Second test record -&gt; class 0
+</pre></div>
+<p>Compare the predictions with the actual labels using:</p>
+<div class="code"><pre class="py">print(&quot;Predicted:&quot;, y_pred)
+print(&quot;Actual:   &quot;, y_test.to_numpy())
+print(&quot;Accuracy: &quot;, clff.score(X_test, y_test))
+</pre></div>
+<p>The model is trained with <code>X_train</code> and <code>y_train</code>, then makes predictions from <code>X_test</code>. The actual labels in <code>y_test</code> are used to measure how accurate those predictions are.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">dff[&#x27;X1_S&#x27;]= dff[&#x27;X1&#x27;]**2
+dff[&#x27;X2_S&#x27;]= dff[&#x27;X2&#x27;]**2
+dff[&#x27;X1X2&#x27;] = dff[&#x27;X1&#x27;]*dff[&#x27;X2&#x27;]</pre></div>
+<h3>Building polynomial features explicitly</h3>
+<div class="code"><pre class="py">dff[&quot;X1_S&quot;] = dff[&quot;X1&quot;] ** 2
+dff[&quot;X2_S&quot;] = dff[&quot;X2&quot;] ** 2
+dff[&quot;X1X2&quot;] = dff[&quot;X1&quot;] * dff[&quot;X2&quot;]
+</pre></div>
+<p><code>** 2</code> squares each value and <code>*</code> multiplies corresponding values row by row. These columns do not create new observations; they create new descriptions of the same observations. We add them because relationships such as &quot;large <code>X1</code> and large <code>X2</code> together&quot; may be useful to the classifier.</p>
+<p>After this transformation, the model can use five columns. The target <code>Y</code> remains separate and must never be used as an input feature.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">dff</pre></div>
+<div class="out"><div class="h">Output</div><pre>    X1  X2  Y  X1_S  X2_S  X1X2
+0    1   5  0     1    25     5
+1    2   3  0     4     9     6
+2    3   7  0     9    49    21
+3    4   1  0    16     1     4
+4    5   7  0    25    49    35
+5    6   2  0    36     4    12
+6    7   6  0    49    36    42
+7    8   4  0    64    16    32
+8    3   3  1     9     9     9
+9    4   4  1    16    16    16
+10   5   5  1    25    25    25
+11   3   4  1     9    16    12
+12   4   5  1    16    25    20</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">x = dff[[&#x27;X1&#x27;,&#x27;X2&#x27;,&#x27;X1_S&#x27;,&#x27;X2_S&#x27;,&#x27;X1X2&#x27;]]
+y = dff[&#x27;Y&#x27;]</pre></div>
+<h3>Selecting the expanded input matrix</h3>
+<p>This selection is the point where the engineered columns actually become model inputs:</p>
+<div class="code"><pre class="py">x = dff[[&quot;X1&quot;, &quot;X2&quot;, &quot;X1_S&quot;, &quot;X2_S&quot;, &quot;X1X2&quot;]]
+y = dff[&quot;Y&quot;]
+</pre></div>
+<p>Creating columns and selecting columns are different operations. The first changes the table; the second decides what the estimator is allowed to see. We must split this five-feature matrix before fitting, just as we did with the original two-feature matrix.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.1, random_state=0)</pre></div>
+<p>This second split repeats the train/test discipline for the five-feature experiment. Reusing the same <code>random_state</code> makes the comparison easier to interpret because the held-out row identities are selected consistently, while the feature representation changes.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 44</span></div><pre class="py">from sklearn.svm import SVC
+clff = SVC(kernel=&quot;linear&quot;)
+clff.fit(X_train, y_train)
+clff.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.5</pre></div>
+<h3>Training the expanded-feature model</h3>
+<p>This is still a linear SVC:</p>
+<div class="code"><pre class="py">clff = SVC(kernel=&quot;linear&quot;)
+clff.fit(X_train, y_train)
+</pre></div>
+<p>The word &quot;linear&quot; now applies to the five transformed inputs. In the original <code>(X1, X2)</code> view, the resulting boundary can appear curved or more complicated because the model is using squared and interaction information indirectly through the expanded coordinates. The final <code>score</code> is calculated only on <code>X_test</code> and <code>y_test</code>, which keeps the evaluation honest.</p>
+
+<h2 id="explanation-of-the-latest-linear-svc-prediction">Explanation of the Latest Linear SVC Prediction</h2>
+<p>The latest model was created with:</p>
+<div class="code"><pre class="py">clff = SVC(kernel=&quot;linear&quot;)
+clff.fit(X_train, y_train)
+clff.score(X_test, y_test)
+</pre></div>
+<p>The model uses all five selected features:</p>
+<div class="code"><pre>X1, X2, X1_S, X2_S, X1X2
+</pre></div>
+<p>Here, <code>kernel=&quot;linear&quot;</code> means that SVC searches for a linear decision boundary. Because the input has five features, that boundary is a hyperplane in five-dimensional feature space. The model does not draw a curved boundary by itself; the additional squared and interaction features provide extra dimensions that may help separate the classes.</p>
+<h3>Latest Prediction</h3>
+<p>The test set contains two records. The model produced:</p>
+<div class="code"><pre>Actual labels:    [0 1]
+Predicted labels: [1 1]
+</pre></div>
+<p>This means:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Test record</th>
+  <th style="text-align:right">Actual class</th>
+  <th style="text-align:right">Predicted class</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>First record</td>
+  <td style="text-align:right">0</td>
+  <td style="text-align:right">1</td>
+  <td>Incorrect</td>
+</tr>
+<tr>
+  <td>Second record</td>
+  <td style="text-align:right">1</td>
+  <td style="text-align:right">1</td>
+  <td>Correct</td>
+</tr>
+</tbody>
+</table>
+<p>Therefore, the model made <strong>1 correct prediction out of 2</strong>:</p>
+<div class="code"><pre>Accuracy = 1 / 2 = 0.50 = 50%
+</pre></div>
+<p>The prediction <code>[1 1]</code> does not mean that both records are truly class <code>1</code>. It means the model assigned both records to class <code>1</code>. We determine whether those predictions are correct by comparing them with <code>y_test</code>, the actual labels that were kept aside during training.</p>
+<p>Because the test set has only two records, one changed prediction changes the accuracy by 50 percentage points. This score is useful for understanding the workflow, but a larger dataset and a larger test set are needed for a reliable performance conclusion.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 47</span></div><pre class="py">from sklearn.svm import SVC
+clffp = SVC(kernel=&quot;poly&quot;)
+clffp.fit(x, y)
+clffp.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>1.0</pre></div>
+<h3>Polynomial kernel without manual columns</h3>
+<div class="code"><pre class="py">clffp = SVC(kernel=&quot;poly&quot;)
+</pre></div>
+<p>This asks SVC to compare observations through a polynomial relationship rather than a straight-line relationship in the original input space. The raw-feature comparison below uses an explicit <code>degree=2</code> and trains on <code>X_train_raw</code>, not on the complete dataset. That distinction prevents the test records from leaking into training.</p>
+
+<h2 id="comparing-manual-features-with-a-polynomial-kern">Comparing Manual Features with a Polynomial Kernel</h2>
+<p>There are two different approaches here.</p>
+<h3>Approach 1: Manual feature expansion plus a linear SVC</h3>
+<p>Earlier, we manually created:</p>
+<div class="code"><pre>X1_S  = X1 squared
+X2_S  = X2 squared
+X1X2  = X1 multiplied by X2
+</pre></div>
+<p>Then we trained a linear SVC using five input columns:</p>
+<div class="code"><pre>X1, X2, X1_S, X2_S, X1X2
+</pre></div>
+<p>The SVC still uses <code>kernel=&quot;linear&quot;</code>, but it can create a more flexible boundary because the input already contains polynomial features.</p>
+<h3>Approach 2: Raw features plus <code>kernel=&quot;poly&quot;</code></h3>
+<p>With <code>kernel=&quot;poly&quot;</code>, SVC calculates polynomial relationships internally. We can pass only the original two features and do not need to create <code>X1_S</code>, <code>X2_S</code>, or <code>X1X2</code> ourselves.</p>
+<p>The two approaches are related, but they are not automatically identical. The polynomial kernel also depends on settings such as <code>degree</code>, <code>gamma</code>, <code>coef0</code>, and <code>C</code>.</p>
+<p>The following experiment uses the original two features and keeps the test records separate from training:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">X_raw = dff[[&quot;X1&quot;, &quot;X2&quot;]]
+y_raw = dff[&quot;Y&quot;]
+
+X_train_raw, X_test_raw, y_train_raw, y_test_raw = train_test_split(
+    X_raw,
+    y_raw,
+    test_size=0.1,
+    random_state=0
+)
+
+svc_poly = SVC(kernel=&quot;poly&quot;, degree=2)
+svc_poly.fit(X_train_raw, y_train_raw)
+
+poly_predictions = svc_poly.predict(X_test_raw)
+poly_accuracy = svc_poly.score(X_test_raw, y_test_raw)
+
+print(&quot;Number of training records:&quot;, len(X_train_raw))
+print(&quot;Number of test records:&quot;, len(X_test_raw))
+print(&quot;Actual labels:&quot;, y_test_raw.to_numpy())
+print(&quot;Predicted labels:&quot;, poly_predictions)
+print(&quot;Accuracy:&quot;, poly_accuracy)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Number of training records: 11
+Number of test records: 2
+Actual labels: [0 1]
+Predicted labels: [1 1]
+Accuracy: 0.5</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 51</span></div><pre class="py">import plotly.express as px
+fig = px.scatter_3d(dff, x=&#x27;X1&#x27;, y=&#x27;X2&#x27;, z=&#x27;Y&#x27;,
+              color=&#x27;Y&#x27;)
+fig.show()</pre></div>
+<h2 id="understanding-2d-3d-and-feature-space">Understanding 2D, 3D, and Feature Space</h2>
+<p>It is important to separate <strong>what we visualize</strong> from <strong>what the model receives as input</strong>.</p>
+<h3>2D view</h3>
+<p>A 2D plot uses two coordinates:</p>
+<div class="code"><pre>horizontal axis: X1
+vertical axis:   X2
+</pre></div>
+<p>Each record is one point <code>(X1, X2)</code>. The color shows whether the record belongs to class <code>0</code> or class <code>1</code>.</p>
+<div class="code"><pre>Record -&gt; (X1, X2) -&gt; class label Y
+</pre></div>
+<p>The class label is not an input feature. It is the answer that the model is learning to predict.</p>
+<h3>The current Plotly 3D view</h3>
+<p>The current chart uses:</p>
+<div class="code"><pre class="py">px.scatter_3d(dff, x=&quot;X1&quot;, y=&quot;X2&quot;, z=&quot;Y&quot;, color=&quot;Y&quot;)
+</pre></div>
+<p>This creates a 3D-looking chart with:</p>
+<div class="code"><pre>x-axis: X1
+ y-axis: X2
+ z-axis: Y (the class label)
+</pre></div>
+<p>This is useful for seeing the two groups at different label heights, but <code>Y</code> is the target, not a third feature. Therefore, this chart is a <strong>3D visualization of two features plus the label</strong>.</p>
+<h3>Manual five-feature model</h3>
+<p>The linear SVC model currently receives five input features:</p>
+<div class="code"><pre>X1, X2, X1_S, X2_S, X1X2
+</pre></div>
+<p>Its input is therefore five-dimensional:</p>
+<div class="code"><pre>(X1, X2, X1_S, X2_S, X1X2) -&gt; predict Y
+</pre></div>
+<p>Although the notebook is named <code>SVC_3D</code>, the final manual-feature model is mathematically working in <strong>5D feature space</strong>, not 3D. We cannot display all five dimensions directly in a normal 2D or 3D chart.</p>
+<h3>Polynomial-kernel model</h3>
+<p>For the polynomial-kernel experiment, the model receives only:</p>
+<div class="code"><pre>X1, X2
+</pre></div>
+<p>Then <code>kernel=&quot;poly&quot;</code> calculates polynomial relationships internally. The model still starts with two input features, but it uses a polynomial similarity calculation to create a more flexible decision boundary.</p>
+<h3>Final comparison</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Experiment</th>
+  <th>Model input</th>
+  <th>Kernel</th>
+  <th>What is expanded?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Basic SVC</td>
+  <td><code>X1</code>, <code>X2</code></td>
+  <td><code>linear</code></td>
+  <td>Nothing</td>
+</tr>
+<tr>
+  <td>Manual feature SVC</td>
+  <td><code>X1</code>, <code>X2</code>, <code>X1_S</code>, <code>X2_S</code>, <code>X1X2</code></td>
+  <td><code>linear</code></td>
+  <td>We create features ourselves</td>
+</tr>
+<tr>
+  <td>Polynomial-kernel SVC</td>
+  <td><code>X1</code>, <code>X2</code></td>
+  <td><code>poly</code></td>
+  <td>SVC calculates polynomial relationships internally</td>
+</tr>
+</tbody>
+</table>
+<p>The key idea is:</p>
+<div class="code"><pre>2D or 3D plot = how we look at the data
+Feature space = what the model uses to make a prediction
+</pre></div>
+
+<h3>Visualization 1: Original Data in 2D</h3>
+<p>This plot shows the two original input features, <code>X1</code> and <code>X2</code>. Each point is one record, and the color represents its class label <code>Y</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 54</span></div><pre class="py">fig_2d = px.scatter(
+    dff,
+    x=&quot;X1&quot;,
+    y=&quot;X2&quot;,
+    color=&quot;Y&quot;,
+    title=&quot;2D View: X1 and X2 Colored by Class&quot;
+)
+fig_2d.show()</pre></div>
+<h3>Why this 2D Plotly code is useful</h3>
+<p><code>px.scatter</code> maps each DataFrame column to a visual role: <code>x</code> and <code>y</code> become coordinates, while <code>color=&quot;Y&quot;</code> makes the known classes visually distinct. This chart is the closest picture of the raw model input: it shows the two dimensions the basic SVC receives and uses color to reveal the answer we want it to learn.</p>
+
+<h3>Visualization 2: Two Features Plus the Class Label in 3D</h3>
+<p>This view places the target label <code>Y</code> on the z-axis. It is helpful for seeing class separation, but <code>Y</code> is not a feature passed into the model.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 57</span></div><pre class="py">fig_label_3d = px.scatter_3d(
+    dff,
+    x=&quot;X1&quot;,
+    y=&quot;X2&quot;,
+    z=&quot;Y&quot;,
+    color=&quot;Y&quot;,
+    title=&quot;3D View: X1, X2, and Target Label Y&quot;
+)
+fig_label_3d.show()</pre></div>
+<h3>Why the label-based 3D plot is informative but limited</h3>
+<p><code>px.scatter_3d</code> adds a <code>z</code> coordinate, so each point is shown at height <code>Y=0</code> or <code>Y=1</code>. This makes the classes look separated vertically, but that separation uses the answer itself. It is therefore a teaching visualization, not a fair picture of the information available to the model before prediction.</p>
+
+<h3>Visualization 3: Three Actual Input Features</h3>
+<p>This view uses <code>X1</code>, <code>X2</code>, and <code>X1_S</code> as the three plotted axes. All three are input features or engineered features. The label <code>Y</code> is used only for color, so it remains the target rather than an input axis.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 60</span></div><pre class="py">fig_features_3d = px.scatter_3d(
+    dff,
+    x=&quot;X1&quot;,
+    y=&quot;X2&quot;,
+    z=&quot;X1_S&quot;,
+    color=&quot;Y&quot;,
+    hover_data=[&quot;X2_S&quot;, &quot;X1X2&quot;],
+    title=&quot;3D Feature View: X1, X2, and X1_S&quot;
+)
+fig_features_3d.show()</pre></div>
+<h3>Why the engineered-feature 3D plot matters</h3>
+<p>This chart puts a real model input on the z-axis: <code>X1_S</code>. The <code>hover_data</code> argument keeps the other engineered values visible when a point is inspected, while <code>color=&quot;Y&quot;</code> still shows the known class. This gives an honest three-dimensional slice of the expanded feature space, even though the full manual model uses five dimensions.</p>
+
+<div class="foot"><a class="btn" href="../Concept/22_svc_2D.ipynb">22_svc_2D.ipynb ↗</a><a class="btn" href="../Concept/23_SVC_3D.ipynb">23_SVC_3D.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

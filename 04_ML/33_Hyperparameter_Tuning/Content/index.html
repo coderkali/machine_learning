@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyperparameter Tuning — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Hyperparameter Tuning</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#19-hyperparameter-tuning">19 - Hyperparameter Tuning</a><a href="#step-1-the-three-settings-you-will-change">Step 1 - The three settings you will change</a><a href="#step-2-first-way-pick-four-by-hand">Step 2 - First way: pick four by hand</a><a href="#step-3-second-way-let-the-computer-try-all-of-th">Step 3 - Second way: let the computer try all of the</a><a href="#step-4-what-that-one-fit-really-does">Step 4 - What that one fit() really does</a><a href="#step-5-reading-the-result-book">Step 5 - Reading the result book</a><a href="#step-6-third-way-try-only-a-few-picked-at-random">Step 6 - Third way: try only a few, picked at random</a><a href="#the-syntax-in-one-place">The syntax, in one place</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Hyperparameter Tuning</h1>
+  <p class="lede">The settings the model cannot learn for itself.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Nisha had three settings to choose and tried them by hand.</strong> Change one, refit, note the score. Change another, refit.</p><p>Three settings with four values each is 64 combinations. By combination nine she had lost track of which numbers she had already tried.</p><p><span class='beat'>And each score came from a single split — so half the differences she was chasing were luck.</span></p><p>GridSearchCV does the whole sweep, cross-validated, in one <code>fit()</code>. RandomizedSearchCV samples a handful instead — usually finding almost as good a setting in a fraction of the time.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Grid search tries every combination with cross-validation; random search samples a few and usually gets close.</p></div>
+<div class="src-head">📓 <a href="../Concept/19_Hyperparameter_Tuning.ipynb">19_Hyperparameter_Tuning.ipynb</a></div>
+<h2 id="19-hyperparameter-tuning">19 - Hyperparameter Tuning</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
+</div>
+<h3>The story</h3>
+<p>Think about making tea.</p>
+<p>Before you start, <strong>you</strong> choose a few things:</p>
+<ul>
+<li>how much sugar</li>
+<li>how long to boil it</li>
+<li>how high the flame is</li>
+</ul>
+<p>Then the tea makes itself. You only chose the settings.</p>
+<p>A model works the same way.</p>
+<div class="code"><pre>   YOU choose these before training   -&gt;  hyperparameters
+        max_depth = 4
+        criterion = &#x27;gini&#x27;
+
+   The MODEL learns these while       -&gt;  parameters
+   training
+        the question inside each box
+        the number it splits on
+        the answer in each leaf
+</pre></div>
+<p>You already do this in Java. In <code>application.yml</code> you set the thread pool size
+and the timeout. You do not write the objects the app creates at runtime.
+Same wall here.</p>
+<p>Now the important part:</p>
+<p><strong><code>fit()</code> cannot choose <code>max_depth</code> for you.</strong></p>
+<p>Why not? Because you only find out if depth 4 was a good idea <em>after</em> the tree
+is built and tested. By then <code>fit()</code> is already finished.</p>
+<p>So someone has to build many trees and compare them. This notebook does that in
+three ways:</p>
+<ol>
+<li>by hand - Step 2</li>
+<li>try every option - Step 3</li>
+<li>try a few random options - Step 6</li>
+</ol>
+<p>Cells 1 to 4 are the same iris setup as notebook 18. A table, then <code>x</code> and <code>y</code>,
+then 120 rows to learn from and 30 rows kept aside for the final test.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+from sklearn.datasets import load_iris
+iris = load_iris()
+table = pd.DataFrame(iris.data,columns=iris.feature_names)
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+0                5.1               3.5                1.4               0.2
+1                4.9               3.0                1.4               0.2
+2                4.7               3.2                1.3               0.2
+3                4.6               3.1                1.5               0.2
+4                5.0               3.6                1.4               0.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">table[&#x27;target&#x27;] = iris.target
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+0                5.1               3.5                1.4               0.2   
+1                4.9               3.0                1.4               0.2   
+2                4.7               3.2                1.3               0.2   
+3                4.6               3.1                1.5               0.2   
+4                5.0               3.6                1.4               0.2   
+
+   target  
+0       0  
+1       0  
+2       0  
+3       0  
+4       0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">x = table.drop([&#x27;target&#x27;], axis=&#x27;columns&#x27;)
+y = iris.target</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div>
+<h2 id="step-1-the-three-settings-you-will-change">Step 1 - The three settings you will change</h2>
+<p>A decision tree has many settings. Your notebook uses three.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>setting</th>
+  <th>values you try</th>
+  <th>what it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>criterion</code></td>
+  <td><code>'gini'</code>, <code>'entropy'</code></td>
+  <td>how it measures <em>&quot;how mixed is this box?&quot;</em></td>
+</tr>
+<tr>
+  <td><code>splitter</code></td>
+  <td><code>'best'</code>, <code>'random'</code></td>
+  <td>how hard it looks for a good cut point</td>
+</tr>
+<tr>
+  <td><code>max_depth</code></td>
+  <td><code>1</code> to <code>6</code></td>
+  <td>how many questions the tree may ask</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>criterion</code></strong></p>
+<p>Both words mean the same thing: <em>how mixed is this group?</em></p>
+<ul>
+<li><code>entropy</code> is the formula you did by hand in notebook 16.</li>
+<li><code>gini</code> is a shorter formula: <code>1 - sum of (p × p)</code>.</li>
+</ul>
+<p>Both give 0 for a clean box. Both give a big number for a mixed box. Gini has
+no log in it, so it is faster. That is why it is the default. Most of the time
+the two build the same tree.</p>
+<p><strong><code>splitter</code></strong></p>
+<p>The tree has to pick a cut point, like <em>&quot;petal length &lt;= 2.5&quot;</em>.</p>
+<ul>
+<li><code>'best'</code> checks every possible cut and keeps the best one. Slow and careful.</li>
+<li><code>'random'</code> picks one random cut per column, then keeps the best of those few.
+Fast and lucky.</li>
+</ul>
+<p><strong><code>max_depth</code></strong></p>
+<p>This is how many questions the tree may ask before it must give an answer.</p>
+<div class="code"><pre>   max_depth = 1            max_depth = 3
+        ?                        ?
+       / \                      / \
+      A   B                    ?   ?
+                              / \ / \
+                             ?  ? ?  ?
+
+   only 2 answers            up to 8 answers
+   too few to name           enough room to memorise
+   3 flower types            single flowers
+</pre></div>
+<p>Too small, and the tree learns almost nothing.
+Too big, and the tree just remembers the training rows.</p>
+<p>There is no formula for the right value. You have to try. That is why this
+notebook exists.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.tree import DecisionTreeClassifier</pre></div>
+<h2 id="step-2-first-way-pick-four-by-hand">Step 2 - First way: pick four by hand</h2>
+<p>Here <strong>you</strong> are the search. You choose four sets of settings yourself.</p>
+<div class="code"><pre>         criterion   splitter   max_depth
+   dt1    gini        best         2
+   dt2    entropy     best         5
+   dt3    gini        random       4
+   dt4    entropy     random       6
+</pre></div>
+<p>Four trees. Same data. Only the settings are different.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">dt1 = DecisionTreeClassifier(criterion= &#x27;gini&#x27;, splitter= &#x27;best&#x27;, max_depth=2)
+dt2 = DecisionTreeClassifier(criterion= &#x27;entropy&#x27;, splitter= &#x27;best&#x27;, max_depth=5)
+dt3 = DecisionTreeClassifier(criterion= &#x27;gini&#x27;, splitter= &#x27;random&#x27;, max_depth= 4)
+dt4 = DecisionTreeClassifier(criterion= &#x27;entropy&#x27;, splitter= &#x27;random&#x27;, max_depth= 6)</pre></div>
+<p>All four trees are trained here.</p>
+<p>A Jupyter cell only prints its last line, so you only see <code>dt4</code> in the output.
+The other three are trained too.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">dt1.fit(X_train, y_train)
+dt2.fit(X_train, y_train)
+dt3.fit(X_train, y_train)
+dt4.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(criterion=&#x27;entropy&#x27;, max_depth=6, splitter=&#x27;random&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">print(&#x27;dt1 -&gt; &#x27;,dt1.score(X_test, y_test))
+print(&#x27;dt2 -&gt; &#x27;,dt2.score(X_test, y_test))
+print(&#x27;dt3 -&gt; &#x27;,dt3.score(X_test, y_test))
+print(&#x27;dt4 -&gt; &#x27;,dt4.score(X_test, y_test))</pre></div>
+<div class="out"><div class="h">Output</div><pre>dt1 -&gt;  0.9666666666666667
+dt2 -&gt;  1.0
+dt3 -&gt;  0.9
+dt4 -&gt;  1.0</pre></div>
+<p>Put the settings and the scores side by side:</p>
+<div class="code"><pre>   dt1   gini    / best   / depth 2   -&gt;  0.967
+   dt2   entropy / best   / depth 5   -&gt;  1.000
+   dt3   gini    / random / depth 4   -&gt;  0.900   &lt;- worst
+   dt4   entropy / random / depth 6   -&gt;  1.000
+</pre></div>
+<p>This looks fine. It is not. There are three problems.</p>
+<p><strong>Problem 1. Two models are tied at 1.000.</strong>
+Which one do you ship? You cannot say.</p>
+<p><strong>Problem 2. 1.000 only means 30 out of 30.</strong>
+The test set has 30 rows. So one flower is worth 3.3%. With so few rows, 1.000
+and 0.967 are almost the same thing.</p>
+<p><strong>Problem 3. This is the big one.</strong>
+You looked at the test set four times, then picked a winner from it. The test
+set was your final exam paper. You were not supposed to open it early. Now it
+has helped you choose, so it can no longer tell you the truth.</p>
+<p>Two more things:</p>
+<ul>
+<li>You tried only 4 of the 24 possible sets.</li>
+<li><code>splitter='random'</code> uses luck, and nothing here fixes the luck. Run the cell
+again and these four numbers move. The numbers above are from the saved run.</li>
+</ul>
+<p>Remember <code>dt3</code>, the worst one. It comes back in Step 5.</p>
+
+<h2 id="step-3-second-way-let-the-computer-try-all-of-th">Step 3 - Second way: let the computer try all of them</h2>
+<p>First count how many sets there are:</p>
+<div class="code"><pre>   2 criterion  x  2 splitter  x  6 depths  =  24 sets of settings
+</pre></div>
+<p><code>GridSearchCV</code> builds all 24 for you. <em>Grid</em> means the full table of options.
+<em>CV</em> means cross validation, and that is Step 4.</p>
+<p>Two lines set it up.</p>
+<p><strong><code>dt = DecisionTreeClassifier()</code></strong></p>
+<p>This is an empty tree. Think of it as a blank form. <code>GridSearchCV</code> takes 24
+copies of this form and fills each copy with one set of settings. Your <code>dt</code>
+itself is never trained.</p>
+<p><strong><code>options = {...}</code></strong></p>
+<p>A dictionary. The key is the name of the setting. The value is the list of
+things to try.</p>
+<div class="code"><pre class="py">{&#x27;criterion&#x27;: (&#x27;gini&#x27;,&#x27;entropy&#x27;),      # try these 2
+ &#x27;splitter&#x27; : (&#x27;best&#x27;,&#x27;random&#x27;),       # try these 2
+ &#x27;max_depth&#x27;: list(range(1,7))}        # try 1, 2, 3, 4, 5, 6
+</pre></div>
+<p>Two rules for this dictionary:</p>
+<ul>
+<li>The key must be spelled exactly like the real setting. <code>'criteria'</code> gives an
+error, not a warning.</li>
+<li>The values can be a tuple, a list or a range. It does not matter which.</li>
+</ul>
+<p><code>list(range(1,7))</code> gives <code>[1,2,3,4,5,6]</code>. <code>range</code> stops before the last number,
+so you write 7 when you want 6.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">dt = DecisionTreeClassifier()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">from sklearn.model_selection import GridSearchCV</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">options = {&#x27;criterion&#x27;: (&#x27;gini&#x27;,&#x27;entropy&#x27;),&#x27;splitter&#x27;: (&#x27;best&#x27;,&#x27;random&#x27;),&#x27;max_depth&#x27; : list(range(1,7)) }</pre></div>
+<h2 id="step-4-what-that-one-fit-really-does">Step 4 - What that one <code>fit()</code> really does</h2>
+<p>This is the part that was not explained in class. It is the whole point.</p>
+<p><code>gs.fit(X_train, y_train)</code> <strong>never sees <code>X_test</code>.</strong> You did not give the test
+set to it, so it cannot cheat.</p>
+<p>Then how does it mark 24 models without a test set?</p>
+<p>It makes its own small test sets, out of the training data.</p>
+<p>It cuts the 120 training rows into 5 equal parts. Each part has 24 rows. Then
+it trains 5 times. Each time, a different part is kept back for marking.</p>
+<div class="code"><pre>        120 training rows, cut into 5 parts of 24
+
+        part   1     2     3     4     5
+             +-----+-----+-----+-----+-----+
+   round 1   | MARK|train|train|train|train|  -&gt; score
+   round 2   |train| MARK|train|train|train|  -&gt; score
+   round 3   |train|train| MARK|train|train|  -&gt; score
+   round 4   |train|train|train| MARK|train|  -&gt; score
+   round 5   |train|train|train|train| MARK|  -&gt; score
+             +-----+-----+-----+-----+-----+
+
+              average of those 5 = mean_test_score
+</pre></div>
+<p>So every set of settings is marked on rows it did not learn from. Five times.
+Then the five marks are averaged.</p>
+<p>One average of 5 marks is much safer than one mark on 30 rows.</p>
+<p>Now count the work:</p>
+<div class="code"><pre>   24 sets  x  5 rounds  =  120 trees, from that one fit() call
+</pre></div>
+<p>That is why the cell takes a moment to finish.</p>
+<p>(Cross validation on its own is notebook 11.)</p>
+<h3>The settings of GridSearchCV</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>setting</th>
+  <th>you wrote</th>
+  <th>default</th>
+  <th>what it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>estimator</code></td>
+  <td><code>dt</code></td>
+  <td>-</td>
+  <td>the blank model to copy</td>
+</tr>
+<tr>
+  <td><code>param_grid</code></td>
+  <td><code>options</code></td>
+  <td>-</td>
+  <td>the dictionary of settings to try</td>
+</tr>
+<tr>
+  <td><code>cv</code></td>
+  <td>nothing</td>
+  <td><code>5</code></td>
+  <td>how many parts to cut the training rows into</td>
+</tr>
+<tr>
+  <td><code>scoring</code></td>
+  <td>nothing</td>
+  <td>the model's own score, so accuracy</td>
+  <td>what <em>better</em> means</td>
+</tr>
+<tr>
+  <td><code>n_jobs</code></td>
+  <td>nothing</td>
+  <td><code>1</code></td>
+  <td>put <code>-1</code> to use all your CPU cores</td>
+</tr>
+<tr>
+  <td><code>refit</code></td>
+  <td>nothing</td>
+  <td><code>True</code></td>
+  <td>after the search, train the winner again on all 120 rows</td>
+</tr>
+<tr>
+  <td><code>verbose</code></td>
+  <td>nothing</td>
+  <td><code>0</code></td>
+  <td><code>1</code> to <code>3</code> prints progress while it works</td>
+</tr>
+</tbody>
+</table>
+<p><code>refit=True</code> is why <code>gs.best_estimator_</code> exists, and why <code>gs.predict(X_test)</code>
+works straight away. The winner is already trained and ready.</p>
+<p>The text printed under the cell is only sklearn repeating your settings back to
+you.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">gs = GridSearchCV(dt,options)
+gs.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>GridSearchCV(estimator=DecisionTreeClassifier(),
+             param_grid={&#x27;criterion&#x27;: (&#x27;gini&#x27;, &#x27;entropy&#x27;),
+                         &#x27;max_depth&#x27;: [1, 2, 3, 4, 5, 6],
+                         &#x27;splitter&#x27;: (&#x27;best&#x27;, &#x27;random&#x27;)})</pre></div>
+<h2 id="step-5-reading-the-result-book">Step 5 - Reading the result book</h2>
+<p><code>cv_results_</code> is a dictionary. Every list inside it has 24 items. Item number 3
+in one list belongs with item number 3 in all the others.</p>
+<p><code>cv_results_['params']</code> is the list of the 24 sets it tried.</p>
+<div class="code"><pre>   criterion   max_depth   splitter      index
+     gini    -&gt;    1    -&gt;  best           0
+     gini    -&gt;    1    -&gt;  random         1
+     gini    -&gt;    2    -&gt;  best           2
+     gini    -&gt;    2    -&gt;  random         3
+      ...                                 ...
+   entropy   -&gt;    6    -&gt;  random        23
+</pre></div>
+<p>The order is not random. sklearn sorts your keys A to Z - <code>criterion</code>,
+<code>max_depth</code>, <code>splitter</code> - and then changes the <strong>last one fastest</strong>.</p>
+<p>It works like a clock. Seconds move fastest, hours move slowest.</p>
+<ul>
+<li><code>splitter</code> changes on every row</li>
+<li><code>max_depth</code> changes every 2 rows</li>
+<li><code>criterion</code> changes once, in the middle</li>
+</ul>
+<p>Other useful keys in the same dictionary:</p>
+<ul>
+<li><code>mean_test_score</code> - the average mark of each set</li>
+<li><code>rank_test_score</code> - 1 for the best, 2 for second, and so on</li>
+<li><code>split0_test_score</code> … <code>split4_test_score</code> - the 5 single marks behind each average</li>
+<li><code>mean_fit_time</code> - how long each one took</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">gs.cv_results_[&#x27;params&#x27;]</pre></div>
+<div class="out"><div class="h">Output</div><pre>[{&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 6, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 6, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 6, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 6, &#x27;splitter&#x27;: &#x27;random&#x27;}]</pre></div>
+<p><code>best_params_</code> gives you the winner as a ready dictionary:</p>
+<div class="code"><pre>   {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;random&#x27;}
+</pre></div>
+<p>Now look back at Step 2 and find <code>dt3</code>.</p>
+<p><strong>gini, random, depth 4. It is the same tree.</strong></p>
+<p>In Step 2 it scored 0.900 and came last of your four. Here it comes first.</p>
+<p>Nothing about the tree changed. Only the way of marking changed. One small
+test of 30 rows called it the worst. Five fair rounds called it the best.</p>
+<p>This is the best reason in the notebook to stop picking settings by hand.</p>
+<p>Two more things you can ask for:</p>
+<ul>
+<li><code>gs.best_score_</code> - the winner's average mark</li>
+<li><code>gs.best_estimator_</code> - the winner, already trained on all 120 rows</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">gs.best_params_</pre></div>
+<div class="out"><div class="h">Output</div><pre>{&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;random&#x27;}</pre></div>
+<p><code>mean_test_score</code> is one number for each set of settings. It is the average of
+that set's 5 marks. It is in the same order as <code>params</code>.</p>
+<p>⚠️ Be careful with the word <strong>test</strong> here.</p>
+<p>It does <strong>not</strong> mean <code>X_test</code>. It means the part that was kept back inside the
+training data. Your real test set is still unopened.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">scores=gs.cv_results_[&#x27;mean_test_score&#x27;]
+scores</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0.69166667, 0.69166667, 0.95      , 0.76666667, 0.93333333,
+       0.95833333, 0.925     , 0.975     , 0.93333333, 0.95      ,
+       0.925     , 0.925     , 0.69166667, 0.68333333, 0.93333333,
+       0.9       , 0.93333333, 0.90833333, 0.93333333, 0.86666667,
+       0.93333333, 0.925     , 0.925     , 0.925     ])</pre></div>
+<p><code>np.argmax(scores)</code> gives you the <strong>place</strong> of the biggest number. Not the
+number itself.</p>
+<div class="code"><pre>   small example
+   scores    = [0.60, 0.90, 0.70]
+   argmax    -&gt;  1        the place
+   scores[1] -&gt;  0.90     the number
+</pre></div>
+<p>Your run gives <code>7</code>. And <code>params[7]</code> is gini / depth 4 / random.</p>
+<p>That is exactly what <code>best_params_</code> already said. So you just found the winner
+by hand. Good - it shows there is nothing magic inside.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">import numpy as np
+np.argmax(scores)</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(7)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">scores[2]</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.95)</pre></div>
+<p>One small mistake to fix here.</p>
+<p><code>scores[2]</code> is set number 2 (gini / depth 2 / <code>'best'</code>), which is 0.95. That is
+not the winner. <code>argmax</code> said <strong>7</strong>.</p>
+<div class="code"><pre class="py">scores[np.argmax(scores)]   # 0.975  &lt;- the best score
+gs.best_score_              # the same number, ready made
+</pre></div>
+
+<h3>See all 24 in one picture</h3>
+<p>The search fills a table of options, so let us draw that table.</p>
+<p>Dark green is a good score. Pale is a bad score.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py"># every combination GridSearchCV tried, drawn as the grid it really is
+import numpy as np
+import matplotlib.pyplot as plt
+
+params = gs.cv_results_[&#x27;params&#x27;]
+scores = gs.cv_results_[&#x27;mean_test_score&#x27;]
+
+depths = sorted({p[&#x27;max_depth&#x27;] for p in params})
+rows = [(c, s) for c in (&#x27;gini&#x27;, &#x27;entropy&#x27;) for s in (&#x27;best&#x27;, &#x27;random&#x27;)]
+grid = np.full((len(rows), len(depths)), np.nan)
+for p, sc in zip(params, scores):
+    grid[rows.index((p[&#x27;criterion&#x27;], p[&#x27;splitter&#x27;])), depths.index(p[&#x27;max_depth&#x27;])] = sc
+
+fig, ax = plt.subplots(figsize=(8, 3.4))
+im = ax.imshow(grid, cmap=&#x27;YlGn&#x27;)
+ax.set_xticks(range(len(depths)), [f&quot;depth {d}&quot; for d in depths])
+ax.set_yticks(range(len(rows)), [f&quot;{c} / {s}&quot; for c, s in rows])
+for r in range(grid.shape[0]):
+    for c in range(grid.shape[1]):
+        ax.text(c, r, f&quot;{grid[r, c]:.3f}&quot;, ha=&#x27;center&#x27;, va=&#x27;center&#x27;, fontsize=9)
+
+best = np.unravel_index(np.nanargmax(grid), grid.shape)
+ax.add_patch(plt.Rectangle((best[1] - .5, best[0] - .5), 1, 1, fill=False, edgecolor=&#x27;red&#x27;, lw=2.5))
+ax.set_title(&quot;mean_test_score of all 24 combinations  (red box = best_params_)&quot;)
+plt.colorbar(im, label=&#x27;mean CV accuracy&#x27;)
+plt.show()</pre></div>
+<p>Three things the picture shows that the plain numbers hide.</p>
+<p><strong>1. The <code>depth 1</code> column is pale.</strong>
+One question gives only two answers. But iris has three flower types. So a
+depth 1 tree can never get the third one right. It is stuck near 2 out of 3.
+That column is not a bad choice. It is an impossible one.</p>
+<p><strong>2. From depth 2, the picture is flat.</strong>
+Once the tree can ask two questions, the job is nearly done. The rest of the
+table is small ups and downs around the same value.</p>
+<p><strong>3. The red box is only just ahead.</strong>
+Each part holds 24 flowers, so one flower moves an average by about 0.008.
+First place and third place are often one or two flowers apart. So read
+<code>best_params_</code> as <em>&quot;a good setting&quot;</em>, not <em>&quot;the only setting&quot;</em>.</p>
+
+<h2 id="step-6-third-way-try-only-a-few-picked-at-random">Step 6 - Third way: try only a few, picked at random</h2>
+<p>Grid search has one problem: multiplication.</p>
+<div class="code"><pre>   3 settings, small lists         -&gt;     24 sets     (this notebook)
+   6 settings with 5 values each   -&gt;   3000 sets
+   3000 sets x 5 rounds            -&gt;  15000 trees for one fit()
+</pre></div>
+<p>You cannot sit and wait for that.</p>
+<p><code>RandomizedSearchCV</code> says: do not try all of them. Pick a few at random and try
+only those.</p>
+<p>Two things change in the syntax. Everybody gets caught by these.</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>GridSearchCV</th>
+  <th>RandomizedSearchCV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>the dictionary argument is called</td>
+  <td><code>param_grid</code></td>
+  <td><strong><code>param_distributions</code></strong></td>
+</tr>
+<tr>
+  <td>the values can be</td>
+  <td>lists only</td>
+  <td>lists <strong>or</strong> a range like <code>randint(1, 20)</code></td>
+</tr>
+<tr>
+  <td>how many it runs</td>
+  <td>all of them</td>
+  <td><code>n_iter</code> of them</td>
+</tr>
+</tbody>
+</table>
+<p>The second row is the real reason this class exists. A grid can only try the
+values you typed. A range can reach <code>max_depth = 17</code> without you typing 17.</p>
+<p>Your two lines:</p>
+<div class="code"><pre class="py">samples = 5
+rs = RandomizedSearchCV(dt, param_distributions=options, n_iter=samples)
+</pre></div>
+<p><code>n_iter=5</code> means: pick 5 of the 24 and try only those.</p>
+<div class="code"><pre>   5 sets x 5 rounds = 25 trees        (grid search did 120)
+</pre></div>
+<p>Cells 19 and 20 build <code>dt</code> and <code>options</code> again with the same values. Nothing
+new. <code>dt</code> from Step 3 was never trained, so this is only a clean start.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">from sklearn.model_selection import RandomizedSearchCV</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">dt = DecisionTreeClassifier()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">options = {&#x27;criterion&#x27;: (&#x27;gini&#x27;,&#x27;entropy&#x27;),&#x27;splitter&#x27;: (&#x27;best&#x27;,&#x27;random&#x27;),&#x27;max_depth&#x27; : list(range(1,7)) }</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">samples = 5  
+rs = RandomizedSearchCV(dt, param_distributions=options, n_iter=samples)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">rs.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>RandomizedSearchCV(estimator=DecisionTreeClassifier(), n_iter=5,
+                   param_distributions={&#x27;criterion&#x27;: (&#x27;gini&#x27;, &#x27;entropy&#x27;),
+                                        &#x27;max_depth&#x27;: [1, 2, 3, 4, 5, 6],
+                                        &#x27;splitter&#x27;: (&#x27;best&#x27;, &#x27;random&#x27;)})</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">rs.cv_results_[&#x27;params&#x27;]</pre></div>
+<div class="out"><div class="h">Output</div><pre>[{&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 2, &#x27;criterion&#x27;: &#x27;gini&#x27;},
+ {&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 5, &#x27;criterion&#x27;: &#x27;gini&#x27;},
+ {&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 5, &#x27;criterion&#x27;: &#x27;entropy&#x27;},
+ {&#x27;splitter&#x27;: &#x27;random&#x27;, &#x27;max_depth&#x27;: 1, &#x27;criterion&#x27;: &#x27;entropy&#x27;},
+ {&#x27;splitter&#x27;: &#x27;random&#x27;, &#x27;max_depth&#x27;: 4, &#x27;criterion&#x27;: &#x27;gini&#x27;}]</pre></div>
+<p>Five sets of settings, picked at random out of the 24:</p>
+<div class="code"><pre>   splitter / depth / criterion        mean_test_score
+   best   /  2  / gini                     0.950   &lt;- best of the five
+   best   /  5  / gini                     0.925
+   best   /  5  / entropy                  0.925
+   random /  1  / entropy                  0.667   &lt;- the depth 1 problem again
+   random /  4  / gini                     0.917
+</pre></div>
+<p><code>np.argmax</code> gives 0, and <code>best_params_</code> gives the first one. They agree.</p>
+<p>The keys print in a different order than in grid search. That means nothing.
+Random search does not sort them.</p>
+<h3>The trade</h3>
+<div class="code"><pre>   GridSearchCV        120 trees   -&gt;   0.975
+   RandomizedSearchCV   25 trees   -&gt;   0.950
+</pre></div>
+<p>You did 79% less work, and lost 2.5 points.</p>
+<p>For 24 sets that is a bad deal. Just run the grid.
+For 3000 sets it is the only deal you have.</p>
+<p>The normal habit: random search first, to find the good area. Then a small grid
+inside that area.</p>
+<p>If you raise <code>n_iter</code>, random search slowly turns into grid search. At
+<code>n_iter=24</code> they are the same thing, only slower.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">rs.best_params_</pre></div>
+<div class="out"><div class="h">Output</div><pre>{&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 2, &#x27;criterion&#x27;: &#x27;gini&#x27;}</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">scores = rs.cv_results_[&#x27;mean_test_score&#x27;]
+scores</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0.95      , 0.925     , 0.925     , 0.66666667, 0.91666667])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">import numpy as np
+np.argmax(scores)</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
+<h2 id="the-syntax-in-one-place">The syntax, in one place</h2>
+<p>The two searches are really the same object. Everything below works for both.</p>
+<div class="code"><pre class="py">search.fit(X_train, y_train)   # runs sets x rounds trees. never sees X_test
+search.best_params_            # the winning settings, as a dictionary
+search.best_score_             # the winner&#x27;s average mark
+search.best_estimator_         # the winner, already trained on all training rows
+search.cv_results_             # the full result book
+search.predict(X_test)         # works, because refit=True by default
+</pre></div>
+<p>Only three things are different:</p>
+<div class="code"><pre>                      GridSearchCV      RandomizedSearchCV
+   class name         GridSearchCV      RandomizedSearchCV
+   dictionary arg     param_grid        param_distributions
+   how many           all of them       n_iter of them
+</pre></div>
+<h3>One warning about every number in this notebook</h3>
+<p>Nothing here sets <code>random_state</code>.</p>
+<p>But <code>splitter='random'</code> uses luck, and <code>RandomizedSearchCV</code> picks its 5 sets by
+luck. So <strong>run it again and the winner changes.</strong></p>
+<p>When you want two runs to match, fix the luck in both places:</p>
+<div class="code"><pre class="py">dt = DecisionTreeClassifier(random_state=0)
+rs = RandomizedSearchCV(dt, options, n_iter=5, random_state=0)
+</pre></div>
+<p><strong>If you remember only one thing:</strong> you choose the settings, <code>fit()</code> learns the
+rest, and a search is only a loop that tries your settings in a fair way. It
+marks each one on parts kept back from the training rows, so the real test set
+stays closed until the end.</p>
+
+<div class="foot"><a class="btn" href="../Concept/19_Hyperparameter_Tuning.ipynb">19_Hyperparameter_Tuning.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,2863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pandas — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">01 Python › <b>Pandas</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#pandas">Pandas</a><a href="#files">Files</a><a href="#the-two-ideas-that-carry-everything">The two ideas that carry everything</a><a href="#the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</a><a href="#covered-so-far">Covered so far</a><a href="#known-issues-in-example-02">Known issues in example_02</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#pandas-basics-example-01">Pandas Basics — Example 01</a><a href="#1-series-one-column-with-an-index">1. Series — one column with an index</a><a href="#2-dataframe-many-series-side-by-side">2. DataFrame — many Series side by side</a><a href="#3-read-a-real-file">3. Read a real file</a><a href="#4-rename-columns-and-the-inplace-trap">4. Rename columns — and the inplace trap</a><a href="#5-pick-columns-and-rows">5. Pick columns and rows</a><a href="#6-filter-rows-with-a-condition">6. Filter rows with a condition</a><a href="#7-missing-values-find-them-and-fill-them">7. Missing values — find them and fill them</a><a href="#8-drop-a-column">8. Drop a column</a><a href="#9-stack-frames-concat-replaces-append">9. Stack frames — concat replaces append</a><a href="#10-merge-a-sql-join">10. Merge — a SQL join</a><a href="#recap">Recap</a><a href="#pandas-example-02-the-working-toolkit">Pandas — Example 02: The Working Toolkit</a><a href="#where-this-fits">Where this fits</a><a href="#1-import">1. Import</a><a href="#2-series-one-column-with-a-label-for-every-value">2. Series — one column with a label for every value</a><a href="#3-dataframe-and-your-question-why-df-columns-but">3. DataFrame — and your question: why df.columns but</a><a href="#4-reading-files-and-the-error-in-this-cell">4. Reading files — and the error in this cell</a><a href="#5-writing-files-the-cell-half-succeeded">5. Writing files — the cell half-succeeded</a><a href="#6-first-look-at-a-frame-info-shape-describe">6. First look at a frame — info, shape, describe</a><a href="#7-loc-vs-iloc-label-or-position">7. loc vs iloc — label or position</a><a href="#8-changing-the-index-the-experiment-that-proves-">8. Changing the index — the experiment that proves t</a><a href="#9-filtering-with-a-boolean-mask">9. Filtering with a boolean mask</a><a href="#10-query-the-same-filter-written-as-a-sentence">10. query — the same filter, written as a sentence</a><a href="#11-missing-values">11. Missing values</a><a href="#12-duplicates">12. Duplicates</a><a href="#13-rename-changing-a-column-name">13. rename — changing a column name</a><a href="#14-astype-changing-a-column-s-type">14. astype — changing a column&#x27;s type</a><a href="#15-replace-swapping-values">15. replace — swapping values</a><a href="#16-get-dummies-text-into-numbers">16. get_dummies — text into numbers</a><a href="#17-sort-values-and-rank">17. sort_values and rank</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Python and the data toolkit</p>
+  <h1>Pandas</h1>
+  <p class="lede">A spreadsheet you can program: labelled columns, grouping, joining and reshaping.</p>
+  <div class="tags"><span class="tag">3 notebooks · 1 note</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Shalini had sales data in a NumPy array and needed revenue per city.</strong></p><p>She could do the maths, but she had to remember that column 3 was city and column 7 was revenue. One inserted column and every line of her code silently pointed at the wrong thing.</p><p><span class='beat'>Position is a fragile way to refer to meaning.</span></p><p>Pandas puts names on it. <code>df.groupby('city')['revenue'].sum()</code> says what it does, survives a reordered file, and replaces about thirty lines of index-juggling.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>A DataFrame is NumPy with names on the rows and columns — so you select by meaning, not position.</p></div>
+<div class="src-head">📝 <a href="../Concept/README.md">README.md</a></div>
+<h2 id="pandas">Pandas</h2>
+<p><strong>Curriculum module:</strong> M03 - Python for Data Science (NumPy and Pandas)
+<strong>Status:</strong> 🟡 Learning</p>
+<p>Pandas puts <strong>labels</strong> on NumPy. A NumPy array is one typed block addressed by position;
+a DataFrame is a set of named columns, each with its own dtype, addressed by label <em>or</em>
+position. That is the whole difference, and almost every Pandas surprise traces back to
+it.</p>
+<p>If you know SQL, you already know most of this library: <code>df[df.Age &gt; 25]</code> is <code>WHERE</code>,
+<code>groupby</code> is <code>GROUP BY</code>, <code>merge</code> is <code>JOIN</code>, and the index is a primary key.</p>
+<h2 id="files">Files</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>File</th>
+  <th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="../Concept/example_01.ipynb"><code>example_01.ipynb</code></a></td>
+  <td><strong>The shapes and first operations.</strong> Series, DataFrame, reading a real file, <code>rename</code> and the <code>inplace</code> trap, selecting columns and rows, filtering, missing values, dropping columns, <code>concat</code>, and <code>merge</code>.</td>
+</tr>
+<tr>
+  <td><a href="../Concept/example_02.ipynb"><code>example_02.ipynb</code></a></td>
+  <td><strong>The working toolkit.</strong> Attribute vs method, file I/O in all three formats, <code>info</code>/<code>describe</code>, <code>loc</code> vs <code>iloc</code> with a changed index, <code>query</code>, duplicates, <code>astype</code>, <code>replace</code>, <code>get_dummies</code>, <code>sort_values</code>/<code>rank</code>, <code>groupby</code>, <code>pivot_table</code>, <code>.dt</code>, and <code>.str</code>.</td>
+</tr>
+<tr>
+  <td><a href="../Data"><code>DataSet/</code></a></td>
+  <td>13 small CSVs used by the notebooks and available for practice — salary, income, exam, encoding, PCA, and others.</td>
+</tr>
+<tr>
+  <td><code>data.csv</code></td>
+  <td>Generated output, written by <code>example_02</code>'s <code>to_csv</code> cell. Not source data.</td>
+</tr>
+</tbody>
+</table>
+<p>Explanation lives <strong>inside the notebooks</strong>, in the Markdown cells above each group of
+code cells. This README is the map, not the lesson.</p>
+<h2 id="the-two-ideas-that-carry-everything">The two ideas that carry everything</h2>
+<p><strong>1. A DataFrame is a dictionary of columns, not a grid of cells.</strong></p>
+<p>Each column is a Series with its own dtype. That is why <code>df['Age']</code> is the natural move,
+why one column can be <code>int64</code> next to a text column, and why a single <em>row</em> comes back
+with <code>dtype: object</code> — a row mixes types, a column does not.</p>
+<p><strong>2. The index is labels, not row numbers.</strong></p>
+<div class="code"><pre>   position:   0     1     2       &lt;- iloc uses these, always 0,1,2...
+   label:    101   102   103       &lt;- loc uses these, and they are yours to change
+</pre></div>
+<p>They start identical, so nothing goes wrong until you filter, sort, or set an index —
+and then <code>df.loc[0]</code> raises <code>KeyError: 1</code>-style errors that look like missing rows but
+mean &quot;no such label&quot;. <code>example_02</code> section 8 demonstrates this deliberately.</p>
+<h2 id="the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Gotcha</th>
+  <th>The correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>df.shape</code> vs <code>df.head()</code></td>
+  <td>No parentheses = a <strong>fact</strong> about the frame. Parentheses = an <strong>action</strong>. <code>&lt;bound method ...&gt;</code> in your output means you forgot the <code>()</code>.</td>
+</tr>
+<tr>
+  <td><code>df.fillna(0)</code> did nothing</td>
+  <td>Almost every method returns a <strong>copy</strong>. <code>fillna</code>, <code>rename</code>, <code>sort_values</code>, <code>drop_duplicates</code>, <code>replace</code> — assign the result back.</td>
+</tr>
+<tr>
+  <td><code>KeyError: 1</code> after filtering</td>
+  <td><code>loc</code> is labels, <code>iloc</code> is positions. Filtering keeps the original labels; use <code>reset_index(drop=True)</code> for fresh numbering.</td>
+</tr>
+<tr>
+  <td>An int column printed as <code>1.0</code></td>
+  <td>One missing value promotes the whole column to <code>float64</code>, because <code>NaN</code> is a float.</td>
+</tr>
+<tr>
+  <td>A junk <code>Unnamed: 0</code> column</td>
+  <td><code>to_csv</code> writes the index by default. Pass <code>index=False</code> unless the index is real data.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="covered-so-far">Covered so far</h2>
+<p>Series and DataFrame construction; attributes vs methods; <code>read_csv</code>/<code>read_excel</code>/
+<code>read_json</code> and their <code>to_*</code> counterparts; <code>info</code>, <code>shape</code>, <code>describe</code>, <code>dtypes</code>;
+<code>loc</code>, <code>iloc</code>, and index reassignment; boolean masks and <code>query</code>; <code>isnull</code>, <code>notnull</code>,
+<code>fillna</code>, <code>dropna</code>; <code>duplicated</code> and <code>drop_duplicates</code>; <code>rename</code>, <code>astype</code>, <code>replace</code>;
+<code>get_dummies</code>; <code>sort_values</code> and <code>rank</code>; <code>groupby</code> with <code>sum</code>/<code>mean</code>; <code>pivot_table</code>;
+<code>to_datetime</code> with the <code>.dt</code> accessor; and the <code>.str</code> accessor. <code>example_01</code> adds
+<code>concat</code> and <code>merge</code>.</p>
+<p><strong>Not covered yet:</strong> <code>apply</code> and <code>map</code>, <code>value_counts</code> and <code>nunique</code>, multi-column
+<code>groupby</code>, <code>agg</code> with several functions, <code>MultiIndex</code>, <code>resample</code> and time-series
+indexing, <code>crosstab</code>, <code>cut</code> for binning, <code>pipe</code>, chained-assignment warnings, and reading
+from a database. Most of these want a real dataset — <a href="../Data"><code>DataSet/</code></a> has 13.</p>
+<h2 id="known-issues-in-example-02">Known issues in <code>example_02</code></h2>
+<p>Two cells do not run, both left in place on purpose because the errors are worth more
+explained than deleted:</p>
+<ol>
+<li>The <code>read_csv</code> cell runs <strong>before</strong> the <code>to_csv</code> cell that creates the file, so it
+raises <code>FileNotFoundError</code>. Move it below, or create the file first.</li>
+<li><code>to_excel</code> needs <code>openpyxl</code> (<code>pip install openpyxl</code>, then restart the kernel). The cell
+raises before <code>to_json</code> on the next line, so that file is never written — but
+<code>data.csv</code> on the line above <strong>was</strong> already written. A failed cell does not undo its
+side effects.</li>
+</ol>
+<p>Tracked in <a href="../../../15_Docs/review-queue.md"><code>docs/review-queue.md</code></a>.</p>
+<h2 id="version-note">Version note</h2>
+<p>Written and verified against <strong>pandas 3.0.3</strong> and numpy 2.4.6 on Python 3.14
+(<code>pizza_env</code>). Pandas 3.0 introduced a real string dtype, so <code>info()</code> shows <strong><code>str</code></strong>
+where older tutorials show <strong><code>object</code></strong>. Both are correct; the library moved.</p>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> a DataFrame is <strong>labelled columns</strong>, and nearly every
+method hands you a <strong>copy</strong>. Assign the result back, and never assume the index is still
+<code>0, 1, 2</code>.</p>
+
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div>
+<h2 id="pandas-basics-example-01">Pandas Basics — Example 01</h2>
+<p>NumPy gave us a fast array. Pandas builds two things on top of it:</p>
+<ul>
+<li><strong>Series</strong> — one column of data with a label on every row</li>
+<li><strong>DataFrame</strong> — many Series side by side, i.e. a table</li>
+</ul>
+<p>Backend analogy: a <code>DataFrame</code> is a <code>List&lt;Row&gt;</code> that already knows its column
+names and column types, plus it has SQL built in — select, filter, join, group
+by. A <code>Series</code> is one column of that table.</p>
+<p>This notebook walks through:</p>
+<ol>
+<li>Series — one labelled column</li>
+<li>DataFrame — a table</li>
+<li>Reading a real CSV file</li>
+<li>Renaming columns, and the <code>inplace</code> trap</li>
+<li>Picking columns and rows</li>
+<li>Filtering rows with a condition</li>
+<li>Missing values — find them and fill them</li>
+<li>Dropping a column</li>
+<li>Stacking frames — <code>concat</code> (the old <code>append</code> is gone)</li>
+<li>Merging frames — a SQL join</li>
+</ol>
+
+<p>The two imports at the top of almost every pandas file. <code>pd</code> and <code>np</code> are the
+standard short names — everybody uses them.</p>
+<p><code>np.random.seed(42)</code> fixes the random numbers. Without it every re-run of this
+notebook prints different values and the notes below stop matching the output.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd
+import numpy as np
+
+np.random.seed(42)</pre></div>
+<h2 id="1-series-one-column-with-an-index">1. Series — one column with an index</h2>
+<p>A Series is a single column. Two parts go with it:</p>
+<ul>
+<li>the <strong>values</strong> — the actual data</li>
+<li>the <strong>index</strong> — a label for each row</li>
+</ul>
+<p>If you do not give an index, pandas makes one for you: 0, 1, 2, 3, ...</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">s1 = pd.Series(data=[10,20,30,40,50])
+s1</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    10
+1    20
+2    30
+3    40
+4    50
+dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">s2 = pd.Series(data=[100,200,300,400,500])
+s2</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    100
+1    200
+2    300
+3    400
+4    500
+dtype: int64</pre></div>
+<p>Look at the print-out. The left column is the index (0 to 4), the right column
+is the data. At the bottom <code>dtype: int64</code> says every value is a 64-bit integer.</p>
+<p>One dtype for the whole Series — same rule as a NumPy array.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">s3 = pd.Series(data=[1000,2000,3000,4000,5000],index=list(&#x27;vwxyz&#x27;))
+s3</pre></div>
+<div class="out"><div class="h">Output</div><pre>v    1000
+w    2000
+x    3000
+y    4000
+z    5000
+dtype: int64</pre></div>
+<p>Here the index is our own: <code>v w x y z</code>. <code>list('vwxyz')</code> is a quick trick to
+turn a string into a list of single characters.</p>
+<p>The index is not just decoration. It is the key pandas uses when it lines up
+two objects — see the very next cell.</p>
+
+<h2 id="2-dataframe-many-series-side-by-side">2. DataFrame — many Series side by side</h2>
+<p>A DataFrame is a table. Give it a dictionary and each key becomes a column
+name, each value becomes that column's data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">df = pd.DataFrame({&#x27;C1&#x27;:s1,&quot;C2&quot;:s2})
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>   C1   C2
+0  10  100
+1  20  200
+2  30  300
+3  40  400
+4  50  500</pre></div>
+<p><code>s1</code> and <code>s2</code> both had the index 0–4, so the rows lined up perfectly.</p>
+<p>This matching is by <strong>index label</strong>, not by position. If <code>s1</code> had the index
+<code>v w x y z</code> instead, pandas would not find those labels in <code>s2</code> and the result
+would be full of <code>NaN</code> (missing). Alignment is automatic and it is the number
+one surprise for people coming from plain arrays.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">df = pd.DataFrame(data=np.random.randint(1,100,size=(1000,5)),columns=list(&#x27;abcde&#x27;))
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>      a   b   c   d   e
+0    52  93  15  72  61
+1    21  83  87  75  75
+2    88  24   3  22  53
+3     2  88  30  38   2
+4    64  60  21  33  76
+..   ..  ..  ..  ..  ..
+995  13  32  46  23  45
+996  17  85  66   6  18
+997  94  22  33  30  81
+998  32  42  78  10  36
+999  34  73  28  11  78
+
+[1000 rows x 5 columns]</pre></div>
+<p>A DataFrame can also be built straight from a NumPy array.</p>
+<ul>
+<li><code>np.random.randint(1,100,size=(1000,5))</code> → 1000 rows, 5 columns of random
+integers from 1 to 99</li>
+<li><code>columns=list('abcde')</code> → names those five columns <code>a b c d e</code></li>
+</ul>
+<p>Notice pandas does not print all 1000 rows. It shows the first 5, then <code>..</code>,
+then the last 5, and tells you the real size at the bottom:
+<code>[1000 rows x 5 columns]</code>.</p>
+
+<h2 id="3-read-a-real-file">3. Read a real file</h2>
+<p><code>pd.read_csv()</code> is the door into pandas. It reads the file, guesses the column
+names from the header row, and guesses each column's dtype.</p>
+<p>This dataset is small: age, income, and whether the person bought a car.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">dataset = pd.read_csv(&#x27;../Data/Car.csv&#x27;)
+dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Car
+0    28   37000    0
+1    27   88000    0
+2    28   59000    0
+3    32   86000    0
+4    33  149000    1
+..  ...     ...  ...
+95   28   89000    0
+96   34   43000    0
+97   30   79000    0
+98   20   36000    0
+99   26   80000    0
+
+[100 rows x 3 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">dataset.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 100 entries, 0 to 99
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype
+---  ------  --------------  -----
+ 0   Age     100 non-null    int64
+ 1   Income  100 non-null    int64
+ 2   Car     100 non-null    int64
+dtypes: int64(3)
+memory usage: 2.5 KB</pre></div>
+<p><code>.info()</code> is the first command to run on any new dataset. It answers three
+questions at once:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>What it shows</th>
+  <th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>RangeIndex: 100 entries</code></td>
+  <td>how many rows you have</td>
+</tr>
+<tr>
+  <td><code>Non-Null Count</code></td>
+  <td>how many values are <strong>missing</strong> in each column</td>
+</tr>
+<tr>
+  <td><code>Dtype</code></td>
+  <td>is the column a number or text?</td>
+</tr>
+</tbody>
+</table>
+<p>Here all three columns say <code>100 non-null</code> out of 100 rows — nothing is
+missing. And all three are <code>int64</code>, so all three are numbers.</p>
+<p>That &quot;non-null&quot; line is the fastest missing-value check there is.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age  Income  Car
+0   28   37000    0
+1   27   88000    0
+2   28   59000    0
+3   32   86000    0
+4   33  149000    1</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">dataset.tail()</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Car
+95   28   89000    0
+96   34   43000    0
+97   30   79000    0
+98   20   36000    0
+99   26   80000    0</pre></div>
+<p><code>.head()</code> shows the first 5 rows, <code>.tail()</code> shows the last 5. Pass a number
+for more — <code>dataset.head(20)</code>.</p>
+<p>Use them to eyeball the data. A quick look at the top and the bottom catches
+things like a stray total row at the end of a spreadsheet export.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">dataset.Car.value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Car
+0    93
+1     7
+Name: count, dtype: int64</pre></div>
+<p><code>.value_counts()</code> counts how many times each distinct value appears. On the
+<code>Car</code> column it acts like <code>GROUP BY Car, COUNT(*)</code>.</p>
+<p>Result: 93 people did not buy, 7 did.</p>
+<p>That is worth stopping on. This is an <strong>imbalanced</strong> target — one class is 13
+times bigger than the other. A model that always guesses &quot;0&quot; would be 93%
+accurate and completely useless. Remember this when we reach classification.</p>
+<p>Small note on style: <code>dataset.Car</code> and <code>dataset['Car']</code> do the same thing. The
+dot form only works when the column name has no space and does not clash with
+a real method name, so <code>dataset['Car']</code> is the safer habit.</p>
+
+<h2 id="4-rename-columns-and-the-inplace-trap">4. Rename columns — and the <code>inplace</code> trap</h2>
+<p>This is the single most common beginner confusion in pandas, so go slowly.</p>
+<p>Most pandas methods <strong>do not change the original</strong>. They build a changed copy
+and hand it back. If you do not catch that copy in a variable, the work is
+thrown away.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">dataset.rename(columns={&#x27;Car&#x27;:&#x27;Target&#x27;})</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+0    28   37000       0
+1    27   88000       0
+2    28   59000       0
+3    32   86000       0
+4    33  149000       1
+..  ...     ...     ...
+95   28   89000       0
+96   34   43000       0
+97   30   79000       0
+98   20   36000       0
+99   26   80000       0
+
+[100 rows x 3 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Car
+0    28   37000    0
+1    27   88000    0
+2    28   59000    0
+3    32   86000    0
+4    33  149000    1
+..  ...     ...  ...
+95   28   89000    0
+96   34   43000    0
+97   30   79000    0
+98   20   36000    0
+99   26   80000    0
+
+[100 rows x 3 columns]</pre></div>
+<p>Read those two outputs together.</p>
+<p>The first cell printed a table with a <code>Target</code> column — so the rename did
+happen. The second cell printed <code>dataset</code> and the column is still called
+<code>Car</code>.</p>
+<p>Nothing was saved. <code>rename()</code> returned a <strong>new</strong> DataFrame, the notebook
+displayed it, and then it was dropped.</p>
+<p>Two ways to actually keep the change:</p>
+<ul>
+<li><code>dataset = dataset.rename(columns=...)</code> — reassign (preferred today)</li>
+<li><code>dataset.rename(columns=..., inplace=True)</code> — edit in place</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">dataset.rename(columns={&#x27;Car&#x27;:&#x27;Target&#x27;},inplace=True)
+dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+0    28   37000       0
+1    27   88000       0
+2    28   59000       0
+3    32   86000       0
+4    33  149000       1
+..  ...     ...     ...
+95   28   89000       0
+96   34   43000       0
+97   30   79000       0
+98   20   36000       0
+99   26   80000       0
+
+[100 rows x 3 columns]</pre></div>
+<p>Now it stuck. <code>inplace=True</code> means &quot;change this object, return nothing&quot;.</p>
+<p>A word of warning: <code>inplace=True</code> is on its way out of pandas. It saves no
+memory, it does not work in a method chain, and the pandas team discourages it.
+Prefer the reassign form <code>df = df.rename(...)</code> in real code.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">dataset.columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;Age&#x27;, &#x27;Income&#x27;, &#x27;Target&#x27;], dtype=&#x27;str&#x27;)</pre></div>
+<p><code>.columns</code> gives back the column names as an <code>Index</code> object. Handy for a quick
+check after a rename, or for looping over columns.</p>
+
+<h2 id="5-pick-columns-and-rows">5. Pick columns and rows</h2>
+<p>Square brackets pick columns. The number of brackets decides what you get
+back.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">dataset[[&#x27;Age&#x27;,&#x27;Target&#x27;]]</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Target
+0    28       0
+1    27       0
+2    28       0
+3    32       0
+4    33       1
+..  ...     ...
+95   28       0
+96   34       0
+97   30       0
+98   20       0
+99   26       0
+
+[100 rows x 2 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">dataset[&#x27;Target&#x27;]</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     0
+1     0
+2     0
+3     0
+4     1
+     ..
+95    0
+96    0
+97    0
+98    0
+99    0
+Name: Target, Length: 100, dtype: int64</pre></div>
+<p>Compare the two outputs carefully:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Code</th>
+  <th>Result</th>
+  <th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>dataset[['Age','Target']]</code></td>
+  <td>a <strong>DataFrame</strong></td>
+  <td>the inner <code>[...]</code> is a <em>list</em> of columns</td>
+</tr>
+<tr>
+  <td><code>dataset['Target']</code></td>
+  <td>a <strong>Series</strong></td>
+  <td>one name, so one column</td>
+</tr>
+</tbody>
+</table>
+<p>The double bracket is not special syntax. It is a list inside the normal
+bracket. Ask for a list of columns, get a table back; ask for one name, get a
+single column back.</p>
+<p>This matters later: scikit-learn wants <code>X</code> as a 2-D table and <code>y</code> as a 1-D
+column, which is exactly this difference.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">dataset.loc[50]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Age          20
+Income    74000
+Target        0
+Name: 50, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">dataset.loc[50:60]</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+50   20   74000       0
+51   26   15000       0
+52   41   45000       0
+53   31   76000       0
+54   36   50000       0
+55   40   47000       0
+56   31   15000       0
+57   46   59000       0
+58   29   75000       0
+59   26   30000       0
+60   32  135000       1</pre></div>
+<p><code>.loc[]</code> selects <strong>rows by label</strong>.</p>
+<p><code>dataset.loc[50]</code> gives one row back as a Series — the column names become the
+index of that Series.</p>
+<p><code>dataset.loc[50:60]</code> gives rows 50 to 60. Count them: that is <strong>11 rows, 60
+included</strong>. This is the one place pandas breaks the Python rule. A normal
+Python slice <code>[50:60]</code> stops before 60, but <code>.loc</code> slices by label and includes
+the end label.</p>
+<p>Related: <code>.iloc[]</code> selects by <strong>position</strong> instead of label, and <code>.iloc[50:60]</code>
+does stop before 60. With this default 0,1,2... index the two look identical,
+which is exactly why the difference bites people later, once the index is dates
+or IDs.</p>
+
+<h2 id="6-filter-rows-with-a-condition">6. Filter rows with a condition</h2>
+<p>A comparison on a column does not return one True/False. It returns a whole
+column of True/False, one per row — a <strong>boolean mask</strong>. Feed that mask back
+into the brackets and pandas keeps only the <code>True</code> rows.</p>
+<p>Think of it as the <code>WHERE</code> clause of SQL.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">(dataset[&#x27;Income&#x27;] &gt; 100000).head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    False
+1    False
+2    False
+3    False
+4     True
+Name: Income, dtype: bool</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">dataset[(dataset[&#x27;Income&#x27;]&gt;10000)]</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+0    28   37000       0
+1    27   88000       0
+2    28   59000       0
+3    32   86000       0
+4    33  149000       1
+..  ...     ...     ...
+95   28   89000       0
+96   34   43000       0
+97   30   79000       0
+98   20   36000       0
+99   26   80000       0
+
+[100 rows x 3 columns]</pre></div>
+<p>The first cell shows the mask itself — plain True/False values.</p>
+<p>The second cell uses a mask as a filter, but look at the row count:
+<code>[100 rows x 3 columns]</code>. Nothing was filtered out, because every income in
+this file is above 10,000. The code is right; the threshold was just too low to
+remove anything. Always check the row count after a filter.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">dataset[dataset[&#x27;Income&#x27;] &gt; 100000]</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+4    33  149000       1
+38   30  107000       1
+60   32  135000       1
+69   29  148000       1
+72   34  115000       0
+73   26  118000       0
+83   32  117000       1</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">dataset[(dataset[&#x27;Income&#x27;] &gt; 100000) &amp; (dataset[&#x27;Age&#x27;] &lt; 32)]</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+38   30  107000       1
+69   29  148000       1
+73   26  118000       0</pre></div>
+<p>A useful threshold this time — 7 high earners instead of all 100 rows. Adding
+the second condition (<code>Age &lt; 32</code>) narrows it further, down to 3 rows.</p>
+<p>For two conditions use <code>&amp;</code> (and) and <code>|</code> (or), <strong>not</strong> the Python words <code>and</code> /
+<code>or</code>. And each condition needs its own brackets, because <code>&amp;</code> binds tighter than
+<code>&gt;</code> in Python. Missing brackets here is a classic error message.</p>
+
+<h2 id="7-missing-values-find-them-and-fill-them">7. Missing values — find them and fill them</h2>
+<p>Real files have holes. Pandas shows a hole as <code>NaN</code> (&quot;not a number&quot;).</p>
+<p>One thing to know up front: a column with even one <code>NaN</code> in it becomes a
+<code>float</code> column, because <code>NaN</code> is a float value. That is why prices below print
+as <code>70.0</code> and not <code>70</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 46</span></div><pre class="py">example = pd.read_csv(&#x27;../Data/abc.csv&#x27;)
+example</pre></div>
+<div class="out"><div class="h">Output</div><pre>  iteams  price
+0      A   70.0
+1      B    NaN
+2      C   50.0
+3      D    NaN
+4      E   40.0
+5      F   32.0
+6      G   45.0
+7      H   69.0
+8      I    NaN
+9      J    NaN</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 47</span></div><pre class="py">example[&#x27;price&#x27;].notnull()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     True
+1    False
+2     True
+3    False
+4     True
+5     True
+6     True
+7     True
+8    False
+9    False
+Name: price, dtype: bool</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 48</span></div><pre class="py">example[example[&#x27;price&#x27;].isnull()]</pre></div>
+<div class="out"><div class="h">Output</div><pre>  iteams  price
+1      B    NaN
+3      D    NaN
+8      I    NaN
+9      J    NaN</pre></div>
+<p>Two mirror-image checks:</p>
+<ul>
+<li><code>.isnull()</code> → <code>True</code> where the value <strong>is</strong> missing</li>
+<li><code>.notnull()</code> → <code>True</code> where the value <strong>is present</strong></li>
+</ul>
+<p>On their own they just print True/False. Put one inside brackets, as in the
+last cell, and you get the actual rows that are missing — rows B, D, I and J.</p>
+<p>For a fast count instead of a list, use <code>example.isnull().sum()</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].max())</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    70.0
+1    70.0
+2    50.0
+3    70.0
+4    40.0
+5    32.0
+6    45.0
+7    69.0
+8    70.0
+9    70.0
+Name: price, dtype: float64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 51</span></div><pre class="py">example</pre></div>
+<div class="out"><div class="h">Output</div><pre>  iteams  price
+0      A   70.0
+1      B    NaN
+2      C   50.0
+3      D    NaN
+4      E   40.0
+5      F   32.0
+6      G   45.0
+7      H   69.0
+8      I    NaN
+9      J    NaN</pre></div>
+<p><code>fillna()</code> replaces every <code>NaN</code> with the value you give it — here the maximum
+price, 70.</p>
+<p>But look at the second cell: <code>example</code> still has its <code>NaN</code> values. Same trap as
+<code>rename()</code> in section 4. <code>fillna()</code> returned a filled <strong>copy</strong>, and we never
+stored it.</p>
+<p>To keep the result, assign it back.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 53</span></div><pre class="py">example[&#x27;price&#x27;] = example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].std())
+example</pre></div>
+<div class="out"><div class="h">Output</div><pre>  iteams      price
+0      A  70.000000
+1      B  15.517732
+2      C  50.000000
+3      D  15.517732
+4      E  40.000000
+5      F  32.000000
+6      G  45.000000
+7      H  69.000000
+8      I  15.517732
+9      J  15.517732</pre></div>
+<p>This one was assigned back with <code>example['price'] = ...</code>, so the change is
+permanent. The four holes are now 15.517732 — the standard deviation of the six
+prices that were present.</p>
+<p><strong>Careful here.</strong> <code>example</code> now has zero <code>NaN</code> values left. Any <code>fillna()</code> you
+run after this line has nothing to fill and will look like it did nothing. That
+is why the two cells below re-read the CSV first — each fill strategy needs a
+fresh copy of the data with the holes back in it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 55</span></div><pre class="py">example = pd.read_csv(&#x27;../Data/abc.csv&#x27;)
+example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].min())</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    70.0
+1    32.0
+2    50.0
+3    32.0
+4    40.0
+5    32.0
+6    45.0
+7    69.0
+8    32.0
+9    32.0
+Name: price, dtype: float64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 56</span></div><pre class="py">example = pd.read_csv(&#x27;../Data/abc.csv&#x27;)
+example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].max())</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    70.0
+1    70.0
+2    50.0
+3    70.0
+4    40.0
+5    32.0
+6    45.0
+7    69.0
+8    70.0
+9    70.0
+Name: price, dtype: float64</pre></div>
+<p>Now the difference is visible: the first fills the holes with 32.0 (the
+smallest price), the second with 70.0 (the largest).</p>
+<p>Which value should you actually use? A quick guide:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Fill with</th>
+  <th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>mean</strong></td>
+  <td>numbers, roughly symmetric, no big outliers</td>
+</tr>
+<tr>
+  <td><strong>median</strong></td>
+  <td>numbers with outliers — the safe default</td>
+</tr>
+<tr>
+  <td><strong>mode</strong></td>
+  <td>text / category columns</td>
+</tr>
+<tr>
+  <td>a fixed value like 0 or <code>&quot;Unknown&quot;</code></td>
+  <td>when &quot;missing&quot; is itself meaningful</td>
+</tr>
+<tr>
+  <td>drop the rows (<code>dropna()</code>)</td>
+  <td>very few rows affected</td>
+</tr>
+</tbody>
+</table>
+<p><code>std</code> — used above — is not a real strategy. It is the <em>spread</em> of the data,
+not a typical value, so it drops a meaningless number into the column. It is
+fine as syntax practice, but do not carry it into a real project.</p>
+<p>Bigger point: whatever you choose, the fill value must be learned from the
+<strong>training data only</strong> and then applied to the test data. Computing it over the
+whole file leaks information about the test set into training. That is what
+scikit-learn's <code>SimpleImputer</code> is for, and it is coming later.</p>
+
+<h2 id="8-drop-a-column">8. Drop a column</h2>
+<p><code>axis='columns'</code> (or <code>axis=1</code>) means &quot;drop by column name&quot;. <code>axis='index'</code>
+(or <code>axis=0</code>, the default) means &quot;drop by row label&quot;.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 59</span></div><pre class="py">df.drop([&#x27;b&#x27;],axis=&#x27;columns&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>      a   c   d   e
+0    52  15  72  61
+1    21  87  75  75
+2    88   3  22  53
+3     2  30  38   2
+4    64  21  33  76
+..   ..  ..  ..  ..
+995  13  46  23  45
+996  17  66   6  18
+997  94  33  30  81
+998  32  78  10  36
+999  34  28  11  78
+
+[1000 rows x 4 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 60</span></div><pre class="py">df</pre></div>
+<div class="out"><div class="h">Output</div><pre>      a   b   c   d   e
+0    52  93  15  72  61
+1    21  83  87  75  75
+2    88  24   3  22  53
+3     2  88  30  38   2
+4    64  60  21  33  76
+..   ..  ..  ..  ..  ..
+995  13  32  46  23  45
+996  17  85  66   6  18
+997  94  22  33  30  81
+998  32  42  78  10  36
+999  34  73  28  11  78
+
+[1000 rows x 5 columns]</pre></div>
+<p>Third time seeing this pattern, so it should feel familiar now: the drop
+printed a table without column <code>b</code>, but <code>df</code> itself still has <code>b</code>. A copy was
+returned and thrown away.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 62</span></div><pre class="py">df.drop([&#x27;b&#x27;],axis=&#x27;columns&#x27;,inplace=True)
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>      a   c   d   e
+0    52  15  72  61
+1    21  87  75  75
+2    88   3  22  53
+3     2  30  38   2
+4    64  21  33  76
+..   ..  ..  ..  ..
+995  13  46  23  45
+996  17  66   6  18
+997  94  33  30  81
+998  32  78  10  36
+999  34  28  11  78
+
+[1000 rows x 4 columns]</pre></div>
+<p>With <code>inplace=True</code> the column is really gone from <code>df</code>.</p>
+<p><strong>The rule for the whole library:</strong> unless you pass <code>inplace=True</code> or assign
+the result back, a pandas method leaves your data untouched. When something
+&quot;did not work&quot;, check this first — it is the cause more often than not.</p>
+
+<h2 id="9-stack-frames-concat-replaces-append">9. Stack frames — <code>concat</code> replaces <code>append</code></h2>
+<p>Two frames, different column names.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 65</span></div><pre class="py">data1 = pd.DataFrame(data=np.random.randint(1,100,size=(100,4)),columns=list(&#x27;abcd&#x27;))
+data2 = pd.DataFrame(data=np.random.randint(1,100,size=(100,3)),columns=list(&#x27;xyz&#x27;))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 66</span></div><pre class="py">data1,data2</pre></div>
+<div class="out"><div class="h">Output</div><pre>(     a   b   c   d
+ 0   39  47  19  15
+ 1   28  24  72   9
+ 2   47  33  62  97
+ 3   19  67  74  40
+ 4   47  65  29  50
+ ..  ..  ..  ..  ..
+ 95  33  59  43  79
+ 96  12  40  20  94
+ 97  38   3  28  56
+ 98  90  94  13  77
+ 99  66  37  49  66
+ 
+ [100 rows x 4 columns],
+      x   y   z
+ 0   36  54  26
+ 1   75  72  40
+ 2   43  22  20
+ 3    8  29  40
+ 4   90  30  81
+ ..  ..  ..  ..
+ 95  52   9  54
+ 96   1  44  99
+ 97  75  98  80
+ 98   9  32  15
+ 99  12  97  78
+ 
+ [100 rows x 3 columns])</pre></div>
+<h3><code>data1.append(data2)</code> does not exist any more</h3>
+<p>That was the error in the earlier version of this notebook:</p>
+<div class="code"><pre>AttributeError: &#x27;DataFrame&#x27; object has no attribute &#x27;append&#x27;
+</pre></div>
+<p>Nothing was wrong with the idea. <code>DataFrame.append()</code> was deprecated in pandas
+1.4 and <strong>removed in pandas 2.0</strong>. This environment runs pandas 3.0, so the
+method is simply gone. Tutorials written before 2022 still use it.</p>
+<p>The replacement is <code>pd.concat()</code>, which is a top-level function, not a method:
+you pass it a <strong>list</strong> of frames.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 68</span></div><pre class="py">pd.concat([data1,data2])</pre></div>
+<div class="out"><div class="h">Output</div><pre>       a     b     c     d     x     y     z
+0   39.0  47.0  19.0  15.0   NaN   NaN   NaN
+1   28.0  24.0  72.0   9.0   NaN   NaN   NaN
+2   47.0  33.0  62.0  97.0   NaN   NaN   NaN
+3   19.0  67.0  74.0  40.0   NaN   NaN   NaN
+4   47.0  65.0  29.0  50.0   NaN   NaN   NaN
+..   ...   ...   ...   ...   ...   ...   ...
+95   NaN   NaN   NaN   NaN  52.0   9.0  54.0
+96   NaN   NaN   NaN   NaN   1.0  44.0  99.0
+97   NaN   NaN   NaN   NaN  75.0  98.0  80.0
+98   NaN   NaN   NaN   NaN   9.0  32.0  15.0
+99   NaN   NaN   NaN   NaN  12.0  97.0  78.0
+
+[200 rows x 7 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 69</span></div><pre class="py">pd.concat([data1,data2]).shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(200, 7)</pre></div>
+<p>Read the shape: <strong>200 rows, 7 columns</strong>.</p>
+<p><code>concat</code> stacks rows on top of each other by default (<code>axis='index'</code>). These
+two frames share no column names, so pandas keeps all seven columns and fills
+the gaps with <code>NaN</code> — <code>data1</code>'s rows have nothing to put under <code>x y z</code>, and
+<code>data2</code>'s rows have nothing to put under <code>a b c d</code>.</p>
+<p>Also look at the index down the left: it runs 0–99 and then 0–99 again. Each
+frame kept its own labels, so the labels are now duplicated.</p>
+<p><code>ignore_index=True</code> throws the old labels away and numbers the result 0–199.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 71</span></div><pre class="py">pd.concat([data1,data2],ignore_index=True).tail()</pre></div>
+<div class="out"><div class="h">Output</div><pre>      a   b   c   d     x     y     z
+195 NaN NaN NaN NaN  52.0   9.0  54.0
+196 NaN NaN NaN NaN   1.0  44.0  99.0
+197 NaN NaN NaN NaN  75.0  98.0  80.0
+198 NaN NaN NaN NaN   9.0  32.0  15.0
+199 NaN NaN NaN NaN  12.0  97.0  78.0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 72</span></div><pre class="py">pd.concat([data1,data2],axis=&#x27;columns&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>     a   b   c   d   x   y   z
+0   39  47  19  15  36  54  26
+1   28  24  72   9  75  72  40
+2   47  33  62  97  43  22  20
+3   19  67  74  40   8  29  40
+4   47  65  29  50  90  30  81
+..  ..  ..  ..  ..  ..  ..  ..
+95  33  59  43  79  52   9  54
+96  12  40  20  94   1  44  99
+97  38   3  28  56  75  98  80
+98  90  94  13  77   9  32  15
+99  66  37  49  66  12  97  78
+
+[100 rows x 7 columns]</pre></div>
+<p>Switching to <code>axis='columns'</code> glues the frames <strong>side by side</strong> instead: 100
+rows, 7 columns, no <code>NaN</code> at all. That is what we actually wanted for two
+frames with different columns.</p>
+<p>The short version:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Goal</th>
+  <th>Call</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>more rows, same columns</td>
+  <td><code>pd.concat([a, b])</code></td>
+</tr>
+<tr>
+  <td>more columns, same rows</td>
+  <td><code>pd.concat([a, b], axis='columns')</code></td>
+</tr>
+<tr>
+  <td>renumber the index afterwards</td>
+  <td>add <code>ignore_index=True</code></td>
+</tr>
+</tbody>
+</table>
+<p>Side-by-side concat matches on the index. It does not look at any key column —
+that job belongs to <code>merge</code>, next.</p>
+
+<h2 id="10-merge-a-sql-join">10. Merge — a SQL join</h2>
+<h3>Why <code>data3.merge(data4, on='a')</code> failed</h3>
+<p>That was the second error:</p>
+<div class="code"><pre>KeyError: &#x27;a&#x27;
+</pre></div>
+<p><code>on='a'</code> tells pandas &quot;join these two frames using column <code>a</code>, which exists in
+both&quot;. But <code>data4</code> had been built with the columns <code>x y z</code> — there was no <code>a</code>
+in it to join on, so pandas raised <code>KeyError</code> on the missing key.</p>
+<p>A merge needs a <strong>shared key column</strong>. So build the frames with one.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 75</span></div><pre class="py">data3 = pd.DataFrame({
+    &#x27;id&#x27;:   [1, 2, 3, 4, 5],
+    &#x27;name&#x27;: [&#x27;Asha&#x27;, &#x27;Ravi&#x27;, &#x27;Meera&#x27;, &#x27;Kiran&#x27;, &#x27;Dev&#x27;],
+})
+
+data4 = pd.DataFrame({
+    &#x27;id&#x27;:   [2, 3, 5, 6],
+    &#x27;city&#x27;: [&#x27;Pune&#x27;, &#x27;Mumbai&#x27;, &#x27;Surat&#x27;, &#x27;Delhi&#x27;],
+})
+
+data3, data4</pre></div>
+<div class="out"><div class="h">Output</div><pre>(   id   name
+ 0   1   Asha
+ 1   2   Ravi
+ 2   3  Meera
+ 3   4  Kiran
+ 4   5    Dev,
+    id    city
+ 0   2    Pune
+ 1   3  Mumbai
+ 2   5   Surat
+ 3   6   Delhi)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 76</span></div><pre class="py">data3.merge(data4,on=&#x27;id&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   id   name    city
+0   2   Ravi    Pune
+1   3  Meera  Mumbai
+2   5    Dev   Surat</pre></div>
+<p>Now <code>on='id'</code> works, because both frames have an <code>id</code> column.</p>
+<p>Only ids 2, 3 and 5 are in <strong>both</strong> frames, so only those three rows come back.
+Id 1 and 4 (no city) and id 6 (no name) are dropped.</p>
+<p>That is an <strong>inner join</strong> — <code>how='inner'</code> is the default, exactly like SQL.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 78</span></div><pre class="py">data3.merge(data4,on=&#x27;id&#x27;,how=&#x27;left&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   id   name    city
+0   1   Asha     NaN
+1   2   Ravi    Pune
+2   3  Meera  Mumbai
+3   4  Kiran     NaN
+4   5    Dev   Surat</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 79</span></div><pre class="py">data3.merge(data4,on=&#x27;id&#x27;,how=&#x27;outer&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   id   name    city
+0   1   Asha     NaN
+1   2   Ravi    Pune
+2   3  Meera  Mumbai
+3   4  Kiran     NaN
+4   5    Dev   Surat
+5   6    NaN   Delhi</pre></div>
+<p>Same two frames, different <code>how</code>:</p>
+<table class="tbl"><thead>
+<tr>
+  <th><code>how</code></th>
+  <th>Keeps</th>
+  <th>Result above</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>'inner'</code> (default)</td>
+  <td>only ids in both</td>
+  <td>3 rows</td>
+</tr>
+<tr>
+  <td><code>'left'</code></td>
+  <td>all of <code>data3</code></td>
+  <td>5 rows — ids 1 and 4 get <code>NaN</code> city</td>
+</tr>
+<tr>
+  <td><code>'right'</code></td>
+  <td>all of <code>data4</code></td>
+  <td>4 rows</td>
+</tr>
+<tr>
+  <td><code>'outer'</code></td>
+  <td>everything from both</td>
+  <td>6 rows — ids 1, 4, 6 partly <code>NaN</code></td>
+</tr>
+</tbody>
+</table>
+<p>These are the same four joins you already know from SQL, with the same
+meanings.</p>
+<p>Two practical notes:</p>
+<ul>
+<li>If the key has a different name in each frame, use
+<code>left_on='id', right_on='customer_id'</code> instead of <code>on=</code>.</li>
+<li>If the key is not unique, rows multiply — 3 matching rows on the left and 2
+on the right give 6 rows out. Check <code>.shape</code> after every merge. This is what
+made the original random-integer version of this cell a bad example even
+before the <code>KeyError</code>: random values from 1–99 across 100 rows repeat a lot,
+so the join would have exploded into thousands of meaningless rows.</li>
+</ul>
+
+<h2 id="recap">Recap</h2>
+<p>| Task | Call |
+|---|---|
+| one labelled column | <code>pd.Series(data, index=...)</code> |
+| a table | <code>pd.DataFrame({...})</code> |
+| load a file | <code>pd.read_csv(path)</code> |
+| first look | <code>.info()</code>, <code>.head()</code>, <code>.tail()</code> |
+| count categories | <code>.value_counts()</code> |
+| rename a column | <code>df = df.rename(columns={'old':'new'})</code> |
+| one column (Series) | <code>df['col']</code> |
+| several columns (DataFrame) | <code>df[['a','b']]</code> |
+| rows by label / position | <code>.loc[]</code> / <code>.iloc[]</code> |
+| filter rows | <code>df[df['col'] &gt; x]</code>, join with <code>&amp;</code> and <code>|</code> |
+| find holes | <code>.isnull()</code>, <code>.notnull()</code>, <code>.isnull().sum()</code> |
+| fill holes | <code>df['c'] = df['c'].fillna(value)</code> |
+| remove a column | <code>df.drop(['b'], axis='columns')</code> |
+| stack frames | <code>pd.concat([a, b])</code> — <code>append</code> is gone |
+| join on a key | <code>a.merge(b, on='id', how='left')</code> |</p>
+<p><strong>The one habit to keep:</strong> pandas methods return a copy. Assign the result back
+or the change never happened.</p>
+
+<div class="src-head">📓 <a href="../Concept/example_02.ipynb">example_02.ipynb</a></div>
+<h2 id="pandas-example-02-the-working-toolkit">Pandas — Example 02: The Working Toolkit</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M03, Python for Data Science (NumPy and Pandas)</p>
+</div>
+<p><strong>What this notebook is:</strong> the second Pandas pass. <a href="../Concept/example_01.ipynb"><code>example_01.ipynb</code></a>
+covered the shapes — Series, DataFrame, reading a file, selecting, filtering, missing
+values, <code>concat</code>, and <code>merge</code>. This notebook is the working toolkit you reach for on
+every real dataset: <strong>inspect → select → clean → transform → aggregate</strong>.</p>
+<p><strong>How to read it:</strong> each Markdown section explains every code cell that follows it, up to
+the next section. Two cells here end in errors. They are kept on purpose — both are
+errors you will hit again, and the explanation is more useful than a clean cell.</p>
+<p>Versions used here: <strong>pandas 3.0.3</strong>, <strong>numpy 2.4.6</strong>, Python 3.14 in <code>pizza_env</code>.</p>
+<hr />
+<h2 id="where-this-fits">Where this fits</h2>
+<p>NumPy gave you one typed block of numbers. Pandas puts <strong>labels</strong> on it.</p>
+<div class="code"><pre>   NumPy array                    Pandas DataFrame
+   -----------                    ----------------
+   [[  &#x27;A&#x27;, 20],                    Name  Age      &lt;- column labels
+    [  &#x27;B&#x27;, 25]]                0      A   20      &lt;- row labels (the index)
+                                1      B   25
+
+   position only                  labels + position, and one dtype PER COLUMN
+</pre></div>
+<p>Two consequences run through this whole notebook:</p>
+<ol>
+<li><strong>A DataFrame is a dictionary of columns</strong>, not a grid of cells. Each column is a
+Series with its own dtype. That is why <code>df['Age']</code> is the natural move and why one
+column can be <code>int64</code> while its neighbour is text.</li>
+<li><strong>The index is not row numbers.</strong> It is a set of labels that happen to start as
+<code>0, 1, 2</code>. Section 8 changes them, and everything that assumed &quot;row numbers&quot; breaks.</li>
+</ol>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>A DataFrame is close to a <code>ResultSet</code> you can keep, re-query, and mutate in memory. The
+mapping is almost one to one: <code>df[df.Age &gt; 25]</code> is <code>WHERE</code>, <code>groupby</code> is <code>GROUP BY</code>,
+<code>merge</code> is <code>JOIN</code>, and the index is a primary key. Most of this notebook is SQL you
+already know, written in Python.</p>
+</div>
+<h3>A note on pandas 3.0 output</h3>
+<p>Your <code>info()</code> and <code>dtypes</code> output shows dtype <strong><code>str</code></strong>. Nearly every tutorial online
+shows <strong><code>object</code></strong> for text columns. Both are correct — pandas 3.0 introduced a real
+string dtype. Nothing about your code is wrong; the library moved.</p>
+
+<hr />
+<h2 id="1-import">1. Import</h2>
+<p><code>pd</code> is the universal alias, exactly like <code>np</code>. Never rename it.</p>
+<p>Pandas is built on NumPy — every numeric column is a NumPy array underneath, which is why
+everything you learned in the NumPy notebooks still applies here.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd</pre></div>
+<hr />
+<h2 id="2-series-one-column-with-a-label-for-every-value">2. Series — one column with a label for every value</h2>
+<p>A Series is <strong>one column</strong>: an array of values plus an index of labels.</p>
+<div class="code"><pre>   index   values
+     0       10
+     1       20
+     2       30       dtype: int64      one type for the whole Series
+</pre></div>
+<p>Printing it shows both. The <code>dtype: int64</code> line at the bottom is part of the Series, not
+decoration — a Series always knows its one type.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell line</th>
+  <th>Result</th>
+  <th>What happened</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>print(s)</code></td>
+  <td>the whole Series</td>
+  <td>index and values, plus the dtype</td>
+</tr>
+<tr>
+  <td><code>print(s[0])</code></td>
+  <td><code>10</code></td>
+  <td>looked up the <strong>label</strong> <code>0</code></td>
+</tr>
+<tr>
+  <td><code>print(s[1:])</code></td>
+  <td>rows 1 and 2</td>
+  <td>sliced by <strong>position</strong></td>
+</tr>
+<tr>
+  <td><code>print(&quot;Mean&quot;, s.mean())</code></td>
+  <td><code>20.0</code></td>
+  <td>a whole-column statistic</td>
+</tr>
+</tbody>
+</table>
+<h3>The trap hiding in this cell</h3>
+<p><code>s[0]</code> and <code>s[1:]</code> look like the same kind of access. They are not.</p>
+<div class="code"><pre>   s[0]     -&gt;  LABEL lookup      &quot;give me the value labelled 0&quot;
+   s[1:]    -&gt;  POSITION slice    &quot;give me everything from row 1 onward&quot;
+</pre></div>
+<p>You cannot see the difference here, because the default index <em>is</em> <code>0, 1, 2</code> — label and
+position happen to be the same number. Change the index and it splits apart:</p>
+<div class="code"><pre class="py">s2 = pd.Series([10,20,30], index=[10,11,12])
+s2[0]     # KeyError: 0        &lt;- verified. There is no label 0.
+s2.iloc[0]  # 10               &lt;- position 0
+</pre></div>
+<p><strong>Say what you mean:</strong> <code>s.iloc[0]</code> for position, <code>s.loc[0]</code> for label. Section 7 covers
+this properly, and section 8 shows it breaking on a real DataFrame.</p>
+<p><strong>Takeaway:</strong> a Series is values plus labels. Plain <code>s[...]</code> guesses which one you meant;
+<code>.loc</code> and <code>.iloc</code> do not have to guess.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">s=pd.Series([10,20,30])
+print(s)
+print(&quot;---------------&quot;)
+print(s[0])
+print(&quot;---------------&quot;)
+print(s[1:])
+print(&quot;---------------&quot;)
+print(&quot;Mean&quot;,s.mean())</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    10
+1    20
+2    30
+dtype: int64
+---------------
+10
+---------------
+1    20
+2    30
+dtype: int64
+---------------
+Mean 20.0</pre></div>
+<hr />
+<h2 id="3-dataframe-and-your-question-why-df-columns-but">3. DataFrame — and your question: why <code>df.columns</code> but <code>df.head()</code>?</h2>
+<p>You asked this in the cell's comments, so this section answers it properly.</p>
+<div class="code"><pre class="py">df = pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;], &#x27;Age&#x27;: [20,25]})
+</pre></div>
+<p>A dictionary becomes a DataFrame: <strong>each key is a column name, each list is that
+column's values</strong>. The index <code>0, 1</code> was created for you.</p>
+<h3>The answer: attribute vs method</h3>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Attribute</th>
+  <th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Written</td>
+  <td><code>df.columns</code> — <strong>no</strong> parentheses</td>
+  <td><code>df.head()</code> — <strong>with</strong> parentheses</td>
+</tr>
+<tr>
+  <td>It is</td>
+  <td>a fact the object already knows</td>
+  <td>an action you ask it to perform</td>
+</tr>
+<tr>
+  <td>Can take options?</td>
+  <td>no</td>
+  <td>yes — <code>df.head(3)</code>, <code>df.sort_values('Age')</code></td>
+</tr>
+<tr>
+  <td>Think of it as</td>
+  <td>a property of the data</td>
+  <td>a function that does work</td>
+</tr>
+</tbody>
+</table>
+<p>The rule that decides it:</p>
+<div class="code"><pre>   Does the answer depend on anything you choose?
+        no   -&gt;  attribute      shape, columns, dtypes, index
+        yes  -&gt;  method         head(n), describe(), sort_values(by), fillna(value)
+</pre></div>
+<p><code>df.shape</code> cannot mean anything except <code>(2, 2)</code>. <code>df.head()</code> has to be told how many rows
+— it just defaults to 5. That is the whole distinction.</p>
+<h3>What it looks like when you get it wrong</h3>
+<div class="code"><pre class="py">df.head          # &lt;bound method NDFrame.head of   Name  Age ...&gt;    verified
+df.shape()       # TypeError: &#x27;tuple&#x27; object is not callable
+</pre></div>
+<p>Forgetting the parentheses does not raise an error — it prints the <strong>method object</strong>. If
+your output ever starts with <code>&lt;bound method</code>, you forgot <code>()</code>.</p>
+<h3>&quot;How many of this type exist?&quot; — the ones you will actually use</h3>
+<p><strong>Attributes (no parentheses):</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Attribute</th>
+  <th>Gives you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>df.shape</code></td>
+  <td><code>(rows, columns)</code> — a plain tuple</td>
+</tr>
+<tr>
+  <td><code>df.columns</code></td>
+  <td>the column names — an <code>Index</code> object</td>
+</tr>
+<tr>
+  <td><code>df.index</code></td>
+  <td>the row labels</td>
+</tr>
+<tr>
+  <td><code>df.dtypes</code></td>
+  <td>the type of each column</td>
+</tr>
+<tr>
+  <td><code>df.size</code></td>
+  <td>total number of cells</td>
+</tr>
+<tr>
+  <td><code>df.ndim</code></td>
+  <td>1 for a Series, 2 for a DataFrame</td>
+</tr>
+<tr>
+  <td><code>df.empty</code></td>
+  <td><code>True</code> if there are no rows</td>
+</tr>
+<tr>
+  <td><code>df.T</code></td>
+  <td>the frame, transposed</td>
+</tr>
+<tr>
+  <td><code>df.values</code></td>
+  <td>the underlying NumPy array</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods (parentheses required):</strong></p>
+<p><code>head()</code>, <code>tail()</code>, <code>info()</code>, <code>describe()</code>, <code>sample()</code>, <code>sum()</code>, <code>mean()</code>, <code>count()</code>,
+<code>sort_values()</code>, <code>groupby()</code>, <code>merge()</code>, <code>dropna()</code>, <code>fillna()</code>, <code>astype()</code>, <code>rename()</code>,
+<code>query()</code>, <code>apply()</code>, <code>to_csv()</code> — and nearly everything else in this notebook.</p>
+<p>Methods vastly outnumber attributes. A short list of attributes describes the frame; the
+long list of methods changes it.</p>
+<p><strong>Check any name yourself:</strong></p>
+<div class="code"><pre class="py">callable(df.head)        # True  -&gt; it is a method, use ()
+callable(df.shape)       # False -&gt; it is an attribute
+</pre></div>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p><code>df.shape</code> is not a stored field. It is a Python <strong>property</strong> — a getter that runs on
+access with the parentheses hidden. In Java you would write <code>df.getShape()</code>; Python lets
+the class present the same thing as <code>df.shape</code>. So &quot;attribute&quot; here means <em>looks like a
+field, may be computed</em>, and that is why it never takes arguments.</p>
+</div>
+<p>Two details in this cell's output worth noticing:</p>
+<ul>
+<li><code>df.columns</code> prints <code>Index(['Name','Age'], dtype='str')</code> — column names are themselves
+an indexed pandas object, not a plain list. <code>list(df.columns)</code> when you want a list.</li>
+<li><code>df.head()</code> returned both rows. <code>head</code> shows the <strong>first 5</strong> and there are only 2, so
+nothing was cut. On a real file, <code>head()</code> is how you look without printing a million
+rows.</li>
+</ul>
+<p><strong>Takeaway:</strong> no parentheses means &quot;tell me a fact about this frame&quot;. Parentheses mean
+&quot;do something&quot;. If you see <code>&lt;bound method</code>, add the <code>()</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">df = pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;], &#x27;Age&#x27;: [20,25]})
+print(df)
+print(&quot;---------------&quot;)
+print(df.columns) # Why this hape is anot function 
+print(&quot;---------------&quot;)
+print(df.shape)
+print(&quot;---------------&quot;)
+print(df.head()) # where as head is a function 
+print(&quot;---------------&quot;)
+# explain me what is the difference between them and how many this type odf data exist</pre></div>
+<div class="out"><div class="h">Output</div><pre>  Name  Age
+0    A   20
+1    B   25
+---------------
+Index([&#x27;Name&#x27;, &#x27;Age&#x27;], dtype=&#x27;str&#x27;)
+---------------
+(2, 2)
+---------------
+  Name  Age
+0    A   20
+1    B   25
+---------------</pre></div>
+<hr />
+<h2 id="4-reading-files-and-the-error-in-this-cell">4. Reading files — and the error in this cell</h2>
+<div class="code"><pre class="py">df1 = pd.read_csv(&#x27;../Data/data.csv&#x27;)
+# FileNotFoundError: [Errno 2] No such file or directory: &#x27;../Data/data.csv&#x27;
+</pre></div>
+<p>This error is correct and it is worth keeping. <strong>The read cell runs before the write cell
+that creates the file.</strong> At the moment you ran it, <code>../Data/data.csv</code> did not exist yet.</p>
+<h3>Two things to take from it</h3>
+<p><strong>1. A relative path is relative to the working directory,</strong> not to the notebook file.
+Usually they are the same folder, but not always — a kernel started elsewhere will look
+elsewhere. Settle it in one line when a path surprises you:</p>
+<div class="code"><pre class="py">from pathlib import Path
+Path.cwd()                    # where pandas is actually looking
+list(Path.cwd().glob(&#x27;*.csv&#x27;))  # what is actually there
+</pre></div>
+<p><strong>2. The cell stops at the first error.</strong> <code>read_excel</code> and <code>read_json</code> on the next two
+lines never ran. Everything after a raised exception in the same cell is skipped — worth
+remembering when a cell has side effects, which is exactly what happens in section 5.</p>
+<h3>The readers</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Reads</th>
+  <th>Needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>pd.read_csv</code></td>
+  <td>text, comma-separated</td>
+  <td>nothing extra</td>
+</tr>
+<tr>
+  <td><code>pd.read_excel</code></td>
+  <td><code>.xlsx</code></td>
+  <td>the <strong><code>openpyxl</code></strong> package</td>
+</tr>
+<tr>
+  <td><code>pd.read_json</code></td>
+  <td>JSON</td>
+  <td>nothing extra</td>
+</tr>
+</tbody>
+</table>
+<p>They all return a DataFrame, so whatever the source, the rest of your code is the same.
+That is the real point of this cell: <strong>pandas is a single interface over many formats.</strong></p>
+<p>To make this cell run, either move it below the write cell, or create the file first.
+<code>pd.read_csv('../Data/data.csv')</code> works now, because section 5 created it.</p>
+<p><strong>Takeaway:</strong> <code>read_*</code> turns a file into a DataFrame. When it cannot find the file, check
+the working directory before you doubt the code.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">df1 = pd.read_csv(&#x27;../Data/data.csv&#x27;)
+df2 = pd.read_excel(&#x27;data.xlsx&#x27;)
+df3 = pd.read_json(&#x27;data.json&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+Cell In[7], line 1
+----&gt; 1 df1 = pd.read_csv(&#x27;../Data/data.csv&#x27;)
+      2 df2 = pd.read_excel(&#x27;data.xlsx&#x27;)
+      3 df3 = pd.read_json(&#x27;data.json&#x27;)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/io/parsers/readers.py:873, in read_csv(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, skip_blank_lines, parse_dates, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, low_memory, memory_map, float_precision, storage_options, dtype_backend)
+    861 kwds_defaults = _refine_defaults_read(
+    862     dialect,</pre></div>
+<hr />
+<h2 id="5-writing-files-the-cell-half-succeeded">5. Writing files — the cell half-succeeded</h2>
+<div class="code"><pre class="py">df.to_csv(&#x27;../Data/data.csv&#x27;)      # worked
+df.to_excel(&#x27;data.xlsx&#x27;)   # ModuleNotFoundError: No module named &#x27;openpyxl&#x27;
+df.to_json(&#x27;data.json&#x27;)    # never ran
+</pre></div>
+<p>This is the side-effect case from section 4, live. The cell raised on line 2, so line 3
+was skipped — but <strong>line 1 had already written a file to disk</strong>. A failed cell does not
+undo what it already did. <code>../Data/data.csv</code> exists in this folder because of that cell.</p>
+<p>Excel is the only format here that needs an extra package:</p>
+<div class="code"><pre>pip install openpyxl        then restart the kernel
+</pre></div>
+<h3>The <code>index=False</code> trap — check your <code>../Data/data.csv</code></h3>
+<p>Look at what was actually written:</p>
+<div class="code"><pre>   ,Name,Age            &lt;- the first column has no name
+   0,A,20
+   1,B,25
+</pre></div>
+<p><code>to_csv</code> writes the index as an unnamed first column by default. Read that file back and
+you get a junk column:</p>
+<div class="code"><pre class="py">pd.read_csv(&#x27;../Data/data.csv&#x27;).columns
+# [&#x27;Unnamed: 0&#x27;, &#x27;Name&#x27;, &#x27;Age&#x27;]       verified — your file does this today
+</pre></div>
+<p>Do it a few times and you collect <code>Unnamed: 0</code>, <code>Unnamed: 0.1</code>, and so on. The fix is one
+argument:</p>
+<div class="code"><pre class="py">df.to_csv(&#x27;../Data/data.csv&#x27;, index=False)     # unless the index is real data
+</pre></div>
+<p>Keep the index only when it means something — a date, an ID. A <code>RangeIndex</code> of <code>0,1,2</code>
+means nothing and should not be saved.</p>
+<p><strong>Takeaway:</strong> <code>to_*</code> mirrors <code>read_*</code>. Write CSV with <code>index=False</code>, and remember that a
+cell that failed halfway may still have changed things on disk.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">df.to_csv(&#x27;../Data/data.csv&#x27;)
+df.to_excel(&#x27;data.xlsx&#x27;)
+df.to_json(&#x27;data.json&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+ModuleNotFoundError                       Traceback (most recent call last)
+Cell In[8], line 2
+      1 df.to_csv(&#x27;../Data/data.csv&#x27;)
+----&gt; 2 df.to_excel(&#x27;data.xlsx&#x27;)
+      3 df.to_json(&#x27;data.json&#x27;)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/core/generic.py:2312, in NDFrame.to_excel(self, excel_writer, sheet_name, na_rep, float_format, columns, header, index, index_label, startrow, startcol, engine, merge_cells, inf_rep, freeze_panes, storage_options, engine_kwargs, autofilter)
+   2308             merge_cells=merge_cells,
+   2309             inf_rep=inf_rep,
+   2310             autofilter=autofilter,
+   2311         )
+-&gt; 2312         formatter.write(
+   2313             excel_writer,
+   2314             sheet_name=sheet_name,
+   2315             startrow=startrow,
+
+File ~/Documents/MACHINE_LEARNING/pi</pre></div>
+<hr />
+<h2 id="6-first-look-at-a-frame-info-shape-describe">6. First look at a frame — <code>info</code>, <code>shape</code>, <code>describe</code></h2>
+<p>These three are what you run on any dataset you have not seen before, in this order.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>df.info()</code></td>
+  <td>What columns exist, what type are they, <strong>how many values are missing</strong>?</td>
+</tr>
+<tr>
+  <td><code>df.shape</code></td>
+  <td>How big is it?</td>
+</tr>
+<tr>
+  <td><code>df.describe()</code></td>
+  <td>What do the numbers look like?</td>
+</tr>
+</tbody>
+</table>
+<h3>Reading <code>info()</code></h3>
+<div class="code"><pre>   RangeIndex: 2 entries, 0 to 1          how many rows, and the index type
+   #   Column  Non-Null Count  Dtype
+   0   Name    2 non-null      str        &lt;- pandas 3.0 string dtype
+   1   Age     2 non-null      int64
+   memory usage: 166.0 bytes
+</pre></div>
+<p><strong><code>Non-Null Count</code> is the column you actually read.</strong> Compare it with the row count: if a
+column says <code>1850 non-null</code> and there are 2000 rows, you have 150 missing values and
+section 11 is your next stop. This one line is the fastest data-quality check in pandas.</p>
+<h3>Reading <code>describe()</code></h3>
+<p>It returned <strong>only <code>Age</code></strong>. Verified: <code>describe()</code> skips text columns by default, because
+a mean of <code>'A'</code> and <code>'B'</code> means nothing. Use <code>df.describe(include='all')</code> when you want
+counts and top values for text too.</p>
+<p>The eight rows it gives you:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Row</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>count</code></td>
+  <td>non-missing values — compare against <code>shape[0]</code></td>
+</tr>
+<tr>
+  <td><code>mean</code>, <code>std</code></td>
+  <td>average and spread</td>
+</tr>
+<tr>
+  <td><code>min</code>, <code>max</code></td>
+  <td>the extremes — the fastest way to spot an impossible value</td>
+</tr>
+<tr>
+  <td><code>25%</code>, <code>50%</code>, <code>75%</code></td>
+  <td>quartiles; <code>50%</code> is the median</td>
+</tr>
+</tbody>
+</table>
+<p><code>std</code> here is <code>3.535534</code>, and this is the NumPy notebook's <code>ddof</code> trap in the flesh:
+<strong>pandas uses <code>ddof=1</code> (sample), NumPy uses <code>ddof=0</code> (population).</strong> The same two numbers
+give a different answer in each library. Neither is broken; they answer different
+questions.</p>
+<p><strong>Takeaway:</strong> <code>info()</code> for structure and missing values, <code>describe()</code> for the numbers.
+Run both before you write any analysis.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">df=pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;],&#x27;Age&#x27;:[20,25]})
+df.info()
+print(&quot;---------------&quot;)
+print(df.shape)
+print(&quot;---------------&quot;)
+print(df.describe())</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 2 entries, 0 to 1
+Data columns (total 2 columns):
+ #   Column  Non-Null Count  Dtype
+---  ------  --------------  -----
+ 0   Name    2 non-null      str  
+ 1   Age     2 non-null      int64
+dtypes: int64(1), str(1)
+memory usage: 166.0 bytes
+---------------
+(2, 2)
+---------------
+             Age
+count   2.000000
+mean   22.500000
+std     3.535534
+min    20.000000
+25%    21.250000
+50%    22.500000
+75%    23.750000
+max    25.000000</pre></div>
+<hr />
+<h2 id="7-loc-vs-iloc-label-or-position">7. <code>loc</code> vs <code>iloc</code> — label or position</h2>
+<p>This is the selection pair you will use for the rest of your Pandas life.</p>
+<div class="code"><pre>   df.loc[...]   -&gt;  by LABEL      the index value, the column name
+   df.iloc[...]  -&gt;  by POSITION   0, 1, 2 ... counted from the top
+</pre></div>
+<p>Memory hook: <strong>i</strong> in <code>iloc</code> is for <strong>integer position</strong>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell line</th>
+  <th>Result</th>
+  <th>Read it as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>df.loc[0]</code></td>
+  <td>the row labelled <code>0</code>, as a Series</td>
+  <td>one row, turned on its side</td>
+</tr>
+<tr>
+  <td><code>df.loc[:, ['Name']]</code></td>
+  <td>a <strong>DataFrame</strong> of one column</td>
+  <td>all rows, the <code>Name</code> column</td>
+</tr>
+<tr>
+  <td><code>df.iloc[1]</code></td>
+  <td>the row in <strong>position 1</strong></td>
+  <td>the second row</td>
+</tr>
+<tr>
+  <td><code>df.iloc[:2]</code></td>
+  <td>rows 0 and 1</td>
+  <td>the first two rows</td>
+</tr>
+</tbody>
+</table>
+<h3>Three details in the output</h3>
+<p><strong>1. A single row comes back as a Series</strong> — printed vertically, with the column names
+becoming its index. <code>dtype: object</code> because that row mixes text and a number, and a
+Series holds one type. Rows mix types; columns do not. This is why pandas is
+column-first.</p>
+<p><strong>2. Brackets change the shape.</strong> Verified:</p>
+<div class="code"><pre class="py">df.loc[:, &#x27;Name&#x27;]       # Series     one column, no frame around it
+df.loc[:, [&#x27;Name&#x27;]]     # DataFrame  a list of columns -&gt; still a frame
+</pre></div>
+<p>A list means &quot;these columns&quot;, even when the list has one item. Use <code>[['A','B']]</code> when you
+want a frame back, plain <code>['A']</code> when you want the Series.</p>
+<p><strong>3. The comma is <code>[rows, columns]</code>.</strong> <code>df.loc[:, ['Name']]</code> reads &quot;every row, the Name
+column&quot;. The <code>:</code> is the same slice syntax as plain Python.</p>
+<h3>The one difference that will catch you</h3>
+<div class="code"><pre>   df.iloc[:2]   -&gt;  positions 0, 1        stop EXCLUDED, like Python
+   df.loc[:2]    -&gt;  labels   0, 1, 2      stop INCLUDED
+</pre></div>
+<p><code>loc</code> includes the end label. It has to — with labels like <code>'Jan'</code> to <code>'Mar'</code>, &quot;up to but
+not including Mar&quot; would be unusable. It is a deliberate difference, not an inconsistency.</p>
+<p><strong>Takeaway:</strong> <code>loc</code> is labels and includes the end; <code>iloc</code> is positions and excludes it.
+Prefer them over plain <code>df[...]</code> — they say which one you meant.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">df=pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;],&#x27;Age&#x27;:[20,25,30]})
+print(df.loc[0])
+print(&quot;---------------&quot;)
+print(df.loc[:,[&#x27;Name&#x27;]])
+print(&quot;---------------&quot;)
+print(df.iloc[1])
+print(&quot;---------------&quot;)
+print(df.iloc[:2])
+print(&quot;---------------&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Name     A
+Age     20
+Name: 0, dtype: object
+---------------
+  Name
+0    A
+1    B
+2    C
+---------------
+Name     B
+Age     25
+Name: 1, dtype: object
+---------------
+  Name  Age
+0    A   20
+1    B   25
+---------------</pre></div>
+<hr />
+<h2 id="8-changing-the-index-the-experiment-that-proves-">8. Changing the index — the experiment that proves the point</h2>
+<p>These four cells are one experiment, and it is the most useful thing in the notebook.
+Section 7's labels and positions matched, so nothing could go wrong. Here they are pulled
+apart:</p>
+<div class="code"><pre class="py">df.index = [101, 102, 103]
+</pre></div>
+<div class="code"><pre>   position:   0     1     2         &lt;- iloc uses these, always 0,1,2...
+   label:    101   102   103         &lt;- loc uses these, they are now yours
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>Result</th>
+  <th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>df.index = [101,102,103]</code></td>
+  <td>rows now labelled 101-103</td>
+  <td>you replaced the labels; the data never moved</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>df.loc[102]</code></td>
+  <td>row B ✅</td>
+  <td><code>102</code> <strong>is</strong> a label</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td><code>df.loc[1]</code></td>
+  <td><strong><code>KeyError: 1</code></strong> ❌</td>
+  <td>there is no label <code>1</code> any more</td>
+</tr>
+<tr>
+  <td>D</td>
+  <td><code>df.iloc[1]</code></td>
+  <td>row B ✅</td>
+  <td>position 1 still exists — positions cannot be renamed</td>
+</tr>
+</tbody>
+</table>
+<p>Cell C is the valuable one. <code>KeyError: 1</code> does not mean &quot;row 1 is missing&quot; — it means
+<strong>&quot;there is no label 1&quot;</strong>. Once you read <code>KeyError</code> as &quot;that label does not exist&quot;, this
+whole family of errors becomes obvious.</p>
+<p>Notice cell D's output: it prints <code>Name: 102</code>. <code>iloc</code> found it by position and then
+reported its <strong>label</strong>. Position gets you there; the label is what it is called.</p>
+<h3>Where this bites in real work</h3>
+<p>Every one of these leaves you with an index that is no longer <code>0,1,2</code>:</p>
+<div class="code"><pre class="py">df_filtered = df[df.Age &gt; 25]      # keeps the ORIGINAL labels — gaps appear
+df_sorted   = df.sort_values(&#x27;Age&#x27;)  # labels travel with their rows
+df.set_index(&#x27;customer_id&#x27;)        # you chose a meaningful key
+</pre></div>
+<p>Filter a frame, then ask for <code>.loc[0]</code>, and you get a <code>KeyError</code> if row 0 was filtered
+out. That is the single most common Pandas confusion, and this cell is it in miniature.</p>
+<p>The fix when you genuinely want fresh numbering:</p>
+<div class="code"><pre class="py">df_filtered = df[df.Age &gt; 25].reset_index(drop=True)
+</pre></div>
+<p><code>drop=True</code> throws the old labels away instead of keeping them as a new column.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>Treat the index as a <strong>primary key</strong>, not a row number. <code>df.set_index('order_id')</code> makes
+lookups by ID direct, and <code>merge</code> can join on it. The moment you think of the index as
+&quot;which row is this&quot;, you are one filter away from a <code>KeyError</code>.</p>
+</div>
+<p><strong>Takeaway:</strong> positions are always <code>0,1,2...</code>; labels are whatever the index says. After
+any filter or sort, the two have parted ways.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">df.index = [101,102,103]
+print(df)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Name  Age
+101    A   20
+102    B   25
+103    C   30</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">df.loc[102]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Name     B
+Age     25
+Name: 102, dtype: object</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">df.loc[1]</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+KeyError                                  Traceback (most recent call last)
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/core/indexes/base.py:3641, in Index.get_loc(self, key)
+   3640 try:
+-&gt; 3641     return self._engine.get_loc(casted_key)
+   3642 except KeyError as err:
+
+File pandas/_libs/index.pyx:168, in pandas._libs.index.IndexEngine.get_loc()
+--&gt; 168 &#x27;Could not get source, probably due dynamically evaluated source code.&#x27;
+
+File pandas/_libs/index.pyx:197, in pandas._libs.index.IndexEngine.get_loc()
+--&gt; 197 &#x27;Could not get source, probably due dynamically evaluated source code.&#x27;
+
+File panda</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">df.iloc[1]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Name     B
+Age     25
+Name: 102, dtype: object</pre></div>
+<hr />
+<h2 id="9-filtering-with-a-boolean-mask">9. Filtering with a boolean mask</h2>
+<p>The NumPy mask from <code>example_02.ipynb</code>, now with column names.</p>
+<div class="code"><pre class="py">df[df[&#x27;Age&#x27;] &gt; 25]
+</pre></div>
+<p>It runs in two steps, and it helps to see them separately:</p>
+<div class="code"><pre>   step 1   df[&#x27;Age&#x27;] &gt; 25   -&gt;   0  False        a Series of True/False,
+                                  1  False        one per row
+                                  2   True
+                                  3   True
+
+   step 2   df[ that mask ]  -&gt;   keep only the rows where it says True
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell line</th>
+  <th>Result</th>
+  <th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>df[df['Age']&gt;25]</code></td>
+  <td>rows 2 and 3</td>
+  <td><strong>the index kept its original labels — 2 and 3, not 0 and 1</strong></td>
+</tr>
+<tr>
+  <td><code>df[df['Age']==30]</code></td>
+  <td>row 2</td>
+  <td><code>==</code> for equality, not <code>=</code></td>
+</tr>
+</tbody>
+</table>
+<p>That first note is section 8's lesson arriving on schedule. Filtering does not renumber
+anything. <code>df[df['Age']&gt;25].loc[0]</code> is a <code>KeyError</code> waiting to happen.</p>
+<h3>Combining conditions</h3>
+<p>Same rule as NumPy — <code>&amp;</code>, <code>|</code>, <code>~</code>, and keep the brackets:</p>
+<div class="code"><pre class="py">df[(df[&#x27;Age&#x27;] &gt; 25) &amp; (df[&#x27;Age&#x27;] &lt; 35)]     # correct
+df[df[&#x27;Age&#x27;] &gt; 25 and df[&#x27;Age&#x27;] &lt; 35]       # ValueError: truth value is ambiguous
+</pre></div>
+<p><code>and</code> wants one true-or-false answer; a column of four booleans cannot give one.</p>
+<p><strong>Takeaway:</strong> a condition on a column gives a mask; the mask picks rows. The surviving
+rows keep their original labels.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[20,25,30,35]})
+print(df[df[&#x27;Age&#x27;]&gt;25])
+print(df[df[&#x27;Age&#x27;]==30])</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age
+2   30
+3   35
+   Age
+2   30</pre></div>
+<hr />
+<h2 id="10-query-the-same-filter-written-as-a-sentence">10. <code>query</code> — the same filter, written as a sentence</h2>
+<div class="code"><pre class="py">df.query(&#x27;Age&gt;25&#x27;)          # identical result to df[df[&#x27;Age&#x27;]&gt;25]
+</pre></div>
+<p>Both cells print the same rows. <code>query</code> takes the condition as a <strong>string</strong> and lets you
+name columns bare — no <code>df[...]</code> repeated on every term.</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Mask</th>
+  <th><code>query</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Reads</td>
+  <td><code>df[(df.Age&gt;25) &amp; (df.City=='Pune')]</code></td>
+  <td><code>df.query(&quot;Age&gt;25 and City=='Pune'&quot;)</code></td>
+</tr>
+<tr>
+  <td><code>and</code> / <code>or</code></td>
+  <td>not allowed — use <code>&amp;</code>, <code>\|</code></td>
+  <td><strong>allowed</strong>, plain English</td>
+</tr>
+<tr>
+  <td>Column names with spaces</td>
+  <td>fine</td>
+  <td>need backticks: <code>`Total Sales`</code></td>
+</tr>
+<tr>
+  <td>Checked when?</td>
+  <td>at parse time, by Python</td>
+  <td>at run time, inside the string</td>
+</tr>
+<tr>
+  <td>Use a Python variable</td>
+  <td>directly</td>
+  <td>prefix with <code>@</code>: <code>query('Age &gt; @cutoff')</code></td>
+</tr>
+</tbody>
+</table>
+<p>The trade: <code>query</code> reads better as conditions pile up, but a typo inside the string is
+only found when the line runs, and your editor cannot help you. Masks are safer for code
+that has to hold up; <code>query</code> is pleasant for exploring.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>This is the same trade-off as a string SQL query versus a typed criteria builder.
+Readable versus checkable. Same call, same reasons.</p>
+</div>
+<p><strong>Takeaway:</strong> <code>query</code> and the mask do the same job. Use whichever makes the line easier to
+read, and remember <code>and</code>/<code>or</code> only work inside <code>query</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[20,25,30,35]})
+print(df.query(&#x27;Age&gt;25&#x27;))
+print(df.query(&#x27;Age==30&#x27;))</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age
+2   30
+3   35
+   Age
+2   30</pre></div>
+<hr />
+<h2 id="11-missing-values">11. Missing values</h2>
+<p>Real data has holes. Pandas marks them <code>NaN</code> and gives you four tools.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Returns</th>
+  <th>Use it to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>df.isnull()</code></td>
+  <td>a True/False frame — <strong>True where missing</strong></td>
+  <td>find and count holes</td>
+</tr>
+<tr>
+  <td><code>df.notnull()</code></td>
+  <td>the exact opposite</td>
+  <td>keep what is present</td>
+</tr>
+<tr>
+  <td><code>df.fillna(0)</code></td>
+  <td>a copy with holes filled</td>
+  <td>replace</td>
+</tr>
+<tr>
+  <td><code>df.dropna()</code></td>
+  <td>a copy with those rows removed</td>
+  <td>delete</td>
+</tr>
+</tbody>
+</table>
+<h3>The detail everyone misses in this output</h3>
+<div class="code"><pre>   input    {&#x27;A&#x27;:[1, None, 3]}          integers, with one gap
+   output   0    1.0
+            2    3.0                    &lt;- 1.0 and 3.0, not 1 and 3
+</pre></div>
+<p><strong>The column became <code>float64</code>.</strong> <code>NaN</code> is a floating-point value, and NumPy's <code>int64</code> has
+no way to represent &quot;missing&quot;. So the moment one value goes missing, the whole column is
+promoted to float. If a column of counts or IDs suddenly prints with <code>.0</code>, you have
+missing data upstream.</p>
+<p>Also note <code>dropna()</code> returned labels <code>0</code> and <code>2</code> — the gap at 1 stays gone. Section 8
+again.</p>
+<h3>Counting them — the line you will actually use</h3>
+<div class="code"><pre class="py">df.isnull().sum()        # missing values per column
+</pre></div>
+<p><code>isnull()</code> gives True/False, <code>True</code> counts as 1, so the sum is the count per column. Run
+this on every new dataset, right after <code>info()</code>.</p>
+<h3><code>fillna(0)</code> is a decision, not a default</h3>
+<p>Filling with <code>0</code> says &quot;the value was zero&quot;. Often it was not — it was unknown. For a
+salary column, <code>0</code> drags the mean down and quietly corrupts every statistic after it.
+Common alternatives:</p>
+<div class="code"><pre class="py">df.fillna(df.mean())        # numeric, roughly symmetric
+df.fillna(df.median())      # numeric with outliers — safer
+df.ffill()                  # time series: carry the last known value forward
+</pre></div>
+<p>Choosing the fill <strong>is</strong> the analysis. It is called imputation, and it comes back in the
+ML phase.</p>
+<h3>None of these change <code>df</code></h3>
+<p><code>fillna</code> and <code>dropna</code> return <strong>copies</strong>. <code>df</code> still holds the <code>NaN</code> after both cells.
+Reassign when you mean it:</p>
+<div class="code"><pre class="py">df = df.fillna(0)
+</pre></div>
+<p><strong>Takeaway:</strong> find holes with <code>isnull().sum()</code>, then decide — fill or drop. The decision
+matters more than the syntax, and one missing value turns an int column into floats.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">df=pd.DataFrame({&#x27;A&#x27;:[1,None,3]})
+print(df.isnull())
+print(df.notnull())
+print(df.fillna(0))
+print(df.dropna())</pre></div>
+<div class="out"><div class="h">Output</div><pre>       A
+0  False
+1   True
+2  False
+       A
+0   True
+1  False
+2   True
+     A
+0  1.0
+1  0.0
+2  3.0
+     A
+0  1.0
+2  3.0</pre></div>
+<hr />
+<h2 id="12-duplicates">12. Duplicates</h2>
+<div class="code"><pre>   A = [1, 1, 2, 2]
+
+   df.duplicated()        -&gt;  [False, True, False, True]
+   df.drop_duplicates()   -&gt;  rows 0 and 2
+</pre></div>
+<p><code>duplicated()</code> marks a row <code>True</code> when <strong>an identical row appeared earlier</strong>. The first
+time a value shows up it is <code>False</code> — it is not a duplicate of anything yet. That is why
+the answer alternates here rather than marking all four.</p>
+<p><code>drop_duplicates()</code> keeps the first of each group and returns a copy.</p>
+<h3>The two arguments worth knowing now</h3>
+<div class="code"><pre class="py">df.drop_duplicates(subset=[&#x27;customer_id&#x27;])   # duplicate = same ID, other columns ignored
+df.drop_duplicates(keep=&#x27;last&#x27;)              # keep the newest row instead of the oldest
+</pre></div>
+<p>By default a row must match on <strong>every column</strong> to count as a duplicate. In real data
+that is rarely what you mean — one different timestamp makes two rows for the same
+customer look unique. <code>subset</code> is how you say what &quot;the same&quot; means.</p>
+<p><code>keep='last'</code> is the one you want when later rows are more recent.</p>
+<p><strong>Takeaway:</strong> <code>duplicated()</code> flags repeats after the first. Decide what &quot;duplicate&quot; means
+with <code>subset</code> before you drop anything.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">df=pd.DataFrame({&#x27;A&#x27;:[1,1,2,2]})
+print(df.duplicated())
+print(df.drop_duplicates())</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    False
+1     True
+2    False
+3     True
+dtype: bool
+   A
+0  1
+2  2</pre></div>
+<hr />
+<h2 id="13-rename-changing-a-column-name">13. <code>rename</code> — changing a column name</h2>
+<div class="code"><pre class="py">df.rename(columns={&#x27;Age&#x27;:&#x27;Student_Age&#x27;})
+</pre></div>
+<p>The dictionary reads <code>{old: new}</code>. Only the keys you list change; everything else is left
+alone, which is why <code>rename</code> is safer than assigning to <code>df.columns</code> — that requires the
+full list in the right order.</p>
+<p><strong>This returns a copy.</strong> <code>df</code> still has <code>Age</code> after the cell. Keep the result:</p>
+<div class="code"><pre class="py">df = df.rename(columns={&#x27;Age&#x27;:&#x27;Student_Age&#x27;})
+</pre></div>
+<p><code>inplace=True</code> also exists and is covered in <code>example_01</code>. Prefer reassignment: it is
+explicit, it chains, and <code>inplace</code> is on its way out of pandas.</p>
+<p>Renaming rows works the same way with <code>index=</code> instead of <code>columns=</code>.</p>
+<p><strong>Takeaway:</strong> <code>rename(columns={old: new})</code> touches only the names you list, and hands back
+a copy.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[20,25]})
+print(df.rename(columns={&#x27;Age&#x27;:&#x27;Student_Age&#x27;}))</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Student_Age
+0           20
+1           25</pre></div>
+<hr />
+<h2 id="14-astype-changing-a-column-s-type">14. <code>astype</code> — changing a column's type</h2>
+<div class="code"><pre class="py">df[&#x27;Age&#x27;] = df[&#x27;Age&#x27;].astype(int)
+</pre></div>
+<p>The output is the whole lesson:</p>
+<div class="code"><pre>   before   Age    str        &lt;- &#x27;20&#x27; and &#x27;25&#x27; are TEXT
+   after    Age    int64
+</pre></div>
+<p>They looked like numbers when printed. They were not. Text sorts as <code>'100' &lt; '20'</code>, and
+<code>df['Age'].mean()</code> on text fails or concatenates. This is why <code>info()</code> in section 6 comes
+before any analysis: <strong>check the dtype, do not trust the printed value.</strong></p>
+<p>Numbers arriving as text is the normal case, not the exception. CSV has no types, so
+<code>'20 '</code> with a trailing space, <code>'1,200'</code> with a comma, or one <code>'unknown'</code> in ten thousand
+rows will hold the whole column at <code>str</code>.</p>
+<h3>The assignment is doing real work</h3>
+<div class="code"><pre class="py">df[&#x27;Age&#x27;] = df[&#x27;Age&#x27;].astype(int)
+</pre></div>
+<p><code>astype</code> returns a <strong>new Series</strong>. Without <code>df['Age'] =</code>, nothing changes. Writing to
+<code>df['Age']</code> replaces the column in place — and the same syntax creates a column when the
+name is new, which is exactly how section 17 adds <code>Rank</code>.</p>
+<h3>When <code>astype</code> refuses</h3>
+<div class="code"><pre class="py">pd.Series([&#x27;20&#x27;,&#x27;abc&#x27;]).astype(int)     # ValueError
+pd.to_numeric(df[&#x27;Age&#x27;], errors=&#x27;coerce&#x27;)   # &#x27;abc&#x27; becomes NaN instead of crashing
+</pre></div>
+<p><code>to_numeric</code> with <code>errors='coerce'</code> is the practical tool on messy files: bad values
+become <code>NaN</code>, and section 11 handles them from there.</p>
+<p><strong>Takeaway:</strong> <code>astype</code> converts a column and returns a new one — assign it back. Check
+dtypes early, because text that looks numeric breaks everything downstream.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[&#x27;20&#x27;,&#x27;25&#x27;]})
+print(df.dtypes)
+df[&#x27;Age&#x27;]=df[&#x27;Age&#x27;].astype(int)
+print(df.dtypes)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Age    str
+dtype: object
+Age    int64
+dtype: object</pre></div>
+<hr />
+<h2 id="15-replace-swapping-values">15. <code>replace</code> — swapping values</h2>
+<div class="code"><pre class="py">df.replace(&#x27;Pune&#x27;,&#x27;Nashik&#x27;)       # both Pune rows become Nashik
+</pre></div>
+<p><code>rename</code> changed a <strong>column name</strong>; <code>replace</code> changes <strong>values inside the data</strong>. Easy to
+mix up, completely different jobs.</p>
+<p>Applied to the whole frame it searches every column. Aim it at one column when you can:</p>
+<div class="code"><pre class="py">df[&#x27;City&#x27;] = df[&#x27;City&#x27;].replace(&#x27;Pune&#x27;,&#x27;Nashik&#x27;)       # safer
+df[&#x27;City&#x27;] = df[&#x27;City&#x27;].replace({&#x27;Pune&#x27;:&#x27;Nashik&#x27;, &#x27;Mumbai&#x27;:&#x27;Thane&#x27;})   # many at once
+</pre></div>
+<p>Both <code>Pune</code> rows changed from one call — <code>replace</code> is not &quot;replace the first match&quot;, it
+is every match.</p>
+<p>This is the everyday tool for cleaning inconsistent categories: <code>'pune'</code>, <code>'PUNE'</code>, and
+<code>'Pune '</code> are three different values to pandas, and they will produce three separate
+groups in section 18 unless you normalise them first.</p>
+<p><strong>Returns a copy.</strong> Same rule as the last two sections.</p>
+<p><strong>Takeaway:</strong> <code>replace</code> edits values, <code>rename</code> edits labels. Normalise your categories
+before you group by them.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Mumbai&#x27;,&#x27;Pune&#x27;]})
+print(df.replace(&#x27;Pune&#x27;,&#x27;Nashik&#x27;))</pre></div>
+<div class="out"><div class="h">Output</div><pre>     City
+0  Nashik
+1  Mumbai
+2  Nashik</pre></div>
+<hr />
+<h2 id="16-get-dummies-text-into-numbers">16. <code>get_dummies</code> — text into numbers</h2>
+<div class="code"><pre class="py">pd.get_dummies(df[&#x27;City&#x27;])
+</pre></div>
+<div class="code"><pre>   City          Delhi  Mumbai   Pune
+   Pune          False   False   True         one column per distinct value,
+   Mumbai        False    True  False         exactly one True per row
+   Delhi          True   False  False
+</pre></div>
+<p>This is <strong>one-hot encoding</strong>, and it exists because models do maths. A model cannot
+multiply <code>'Pune'</code> by a weight. Three text values become three true/false columns it can.</p>
+<h3>Why not just number them?</h3>
+<p><code>Pune=1, Mumbai=2, Delhi=3</code> would compile and be wrong. It tells the model
+<code>Delhi &gt; Mumbai &gt; Pune</code> and that <code>Mumbai</code> is the average of the other two. None of that is
+true — city names have no order. One-hot avoids inventing an order that is not there.</p>
+<p>For values that <strong>do</strong> have an order — <code>small &lt; medium &lt; large</code> — numbering is correct,
+and that is called ordinal encoding.</p>
+<h3>Two details</h3>
+<p><strong>The output is <code>bool</code>,</strong> not <code>1</code> and <code>0</code>. Verified. Modern pandas returns booleans;
+older tutorials show integers. Models accept both, since <code>True</code> is <code>1</code>. Force it with
+<code>dtype=int</code> if you prefer seeing numbers.</p>
+<p><strong><code>drop_first=True</code></strong> is the argument you will meet in the ML phase:</p>
+<div class="code"><pre class="py">pd.get_dummies(df[&#x27;City&#x27;], drop_first=True)     # Delhi column dropped
+</pre></div>
+<p>With <code>Mumbai=False</code> and <code>Pune=False</code>, the row must be Delhi — the third column carries no
+new information. Keeping all three makes the columns perfectly correlated, which is the
+singular-matrix problem from the NumPy notebook's <code>np.linalg</code> section, arriving in real
+data. Linear models care; trees do not.</p>
+<p><strong>Takeaway:</strong> <code>get_dummies</code> turns categories into true/false columns so a model can use
+them, without inventing an order.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Mumbai&#x27;,&#x27;Delhi&#x27;]})
+print(pd.get_dummies(df[&#x27;City&#x27;]))</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Delhi  Mumbai   Pune
+0  False   False   True
+1  False    True  False
+2   True   False  False</pre></div>
+<hr />
+<h2 id="17-sort-values-and-rank">17. <code>sort_values</code> and <code>rank</code></h2>
+<div class="code"><pre class="py">df.sort_values(&#x27;Marks&#x27;)          # 50, 70, 80
+df[&#x27;Rank&#x27;] = df[&#x27;Marks&#x27;].rank(ascending=False)
+</pre></div>
+<h3>Read the two outputs together</h3>
+<div class="code"><pre>   sort_values(&#x27;Marks&#x27;)          then the frame with Rank
+      Marks                        Marks  Rank
+   0     50                     0     50   3.0
+   2     70                     1     80   1.0
+   1     80                     2     70   2.0
+</pre></div>
+<p>The first print is sorted. The second is back in the <strong>original order</strong> — because
+<code>sort_values</code> returned a copy that was printed and thrown away. <code>df</code> was never sorted.
+Reassign if you want it kept.</p>
+<p>Notice the sorted output's labels: <code>0, 2, 1</code>. Labels travel with their rows. Section 8,
+one more time.</p>
+<h3>What <code>rank</code> gives you</h3>
+<p><code>rank</code> does not reorder anything. It adds <strong>the position each row would have</strong>, in place.
+That is why it works as a new column: 80 is 1st, 70 is 2nd, 50 is 3rd, each number
+staying on its own row.</p>
+<p><code>ascending=False</code> makes the highest mark rank 1 — which is what &quot;rank&quot; means for scores.
+The default is ascending, where the smallest value gets rank 1.</p>
+<h3>Ties are averaged</h3>
+<p>The results are floats — <code>3.0</code>, not <code>3</code> — because of ties. Verified with a tie added:</p>
+<div class="code"><pre class="py">pd.Series([50,80,80,70]).rank(ascending=False)   # -&gt; [4.0, 1.5, 1.5, 3.0]
+</pre></div>
+<p>Two rows share 1st and 2nd, so both get <code>1.5</code>. That is <code>method='average'</code>, the default.
+<code>method='min'</code> gives both <code>1.0</code> (the sports convention) and <code>method='dense'</code> avoids the
+gap. Choose deliberately when ties matter.</p>
+<p><strong>Sorting by several columns:</strong></p>
+<div class="code"><pre class="py">df.sort_values([&#x27;City&#x27;,&#x27;Marks&#x27;], ascending=[True, False])
+</pre></div>
+<p><strong>Takeaway:</strong> <code>sort_values</code> reorders and returns a copy; <code>rank</code> labels each row in place.
+Ties get the average rank unless you say otherwise.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">df=pd.DataFrame({&#x27;Marks&#x27;:[50,80,70]})
+print(df.sort_values(&#x27;Marks&#x27;))
+df[&#x27;Rank&#x27;]=df[&#x27;Marks&#x27;].rank(ascending=False)
+print(df)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Marks
+0     50
+2     70
+1     80
+   Marks  Rank
+0     50   3.0
+1     80   1.0
+2     70   2.0</pre></div>
+<hr />
+<h2 id="18-groupby-split-apply-combine">18. <code>groupby</code> — split, apply, combine</h2>
+<div class="code"><pre class="py">df.groupby(&#x27;City&#x27;)[&#x27;Sales&#x27;].sum()
+</pre></div>
+<p>Three steps, always:</p>
+<div class="code"><pre>   split                     apply             combine
+   -----                     -----             -------
+   Pune   -&gt; [100, 200]      sum -&gt; 300        City
+   Mumbai -&gt; [300]           sum -&gt; 300        Mumbai    300
+                                               Pune      300
+</pre></div>
+<p>Read the call left to right: <strong>group by <code>City</code>, take the <code>Sales</code> column, sum it.</strong></p>
+<h3><code>sum</code> and <code>mean</code> tell different stories here</h3>
+<div class="code"><pre>   sum                       mean
+   Mumbai    300             Mumbai    300.0
+   Pune      300             Pune      150.0
+</pre></div>
+<p>Identical totals, very different businesses. Pune made 300 across <strong>two</strong> sales; Mumbai
+made 300 in <strong>one</strong>. Always check <code>count()</code> alongside a total — a large sum built from one
+row is a different fact from the same sum built from fifty.</p>
+<div class="code"><pre class="py">df.groupby(&#x27;City&#x27;)[&#x27;Sales&#x27;].agg([&#x27;sum&#x27;,&#x27;mean&#x27;,&#x27;count&#x27;])     # all three at once
+</pre></div>
+<h3>Two details in the output</h3>
+<p><strong>The result is a Series, and <code>City</code> became its index.</strong> The group key always becomes the
+index. <code>.reset_index()</code> turns it back into a normal column when you need a plain frame.</p>
+<p><strong>Mumbai printed first.</strong> The input had Pune first — <code>groupby</code> <strong>sorts the keys</strong> by
+default. Verified: <code>sort=False</code> preserves first-appearance order, and is faster on large
+frames.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<div class="code"><pre>SELECT City, SUM(Sales) FROM df GROUP BY City;
+</pre></div>
+<p>Line for line, that is this cell. The mental model transfers completely: <code>groupby</code> is
+<code>GROUP BY</code>, <code>.agg</code> is the aggregate list, and filtering before the groupby is <code>WHERE</code>
+while filtering after it is <code>HAVING</code>.</p>
+</div>
+<p><strong>Takeaway:</strong> <code>groupby</code> splits rows by a key, runs a function on each group, and combines
+the answers. The key becomes the index, and you should almost always look at <code>count</code> next
+to your total.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Pune&#x27;,&#x27;Mumbai&#x27;],&#x27;Sales&#x27;:[100,200,300]})
+print(df.groupby(&#x27;City&#x27;)[&#x27;Sales&#x27;].sum())
+print(df.groupby(&#x27;City&#x27;)[&#x27;Sales&#x27;].mean())</pre></div>
+<div class="out"><div class="h">Output</div><pre>City
+Mumbai    300
+Pune      300
+Name: Sales, dtype: int64
+City
+Mumbai    300.0
+Pune      150.0
+Name: Sales, dtype: float64</pre></div>
+<hr />
+<h2 id="19-pivot-table-groupby-laid-out-as-a-grid">19. <code>pivot_table</code> — groupby laid out as a grid</h2>
+<div class="code"><pre class="py">pd.pivot_table(df, values=&#x27;Sales&#x27;, index=&#x27;City&#x27;, aggfunc=&#x27;sum&#x27;)
+</pre></div>
+<p>The numbers are identical to section 18 — same split, same sum. Two differences:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th><code>groupby</code></th>
+  <th><code>pivot_table</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Returns here</td>
+  <td>a <strong>Series</strong></td>
+  <td>a <strong>DataFrame</strong> (note <code>Sales</code> as a column header)</td>
+</tr>
+<tr>
+  <td>Built for</td>
+  <td>one key, any function</td>
+  <td><strong>two</strong> keys — one down, one across</td>
+</tr>
+</tbody>
+</table>
+<p>The reason <code>pivot_table</code> exists is the second row of that table:</p>
+<div class="code"><pre class="py">pd.pivot_table(df, values=&#x27;Sales&#x27;, index=&#x27;City&#x27;, columns=&#x27;Month&#x27;, aggfunc=&#x27;sum&#x27;)
+</pre></div>
+<div class="code"><pre>              Jan    Feb    Mar          index=  rows
+   Mumbai     300    250    400          columns= the grid across the top
+   Pune       150    180    210          values=  what fills the cells
+</pre></div>
+<p>That is a cross-tab — the Excel pivot table, same idea and nearly the same words. Doing it
+with <code>groupby</code> needs a <code>.unstack()</code> afterwards.</p>
+<p>Two useful arguments: <code>aggfunc</code> accepts a list (<code>['sum','mean']</code>), and <code>fill_value=0</code>
+replaces the <code>NaN</code> that appears wherever a combination has no rows.</p>
+<p><strong>Takeaway:</strong> one grouping key — <code>groupby</code>. Two keys, laid out as a grid — <code>pivot_table</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Pune&#x27;,&#x27;Mumbai&#x27;],&#x27;Sales&#x27;:[100,200,300]})
+print(pd.pivot_table(df,values=&#x27;Sales&#x27;,index=&#x27;City&#x27;,aggfunc=&#x27;sum&#x27;))</pre></div>
+<div class="out"><div class="h">Output</div><pre>        Sales
+City         
+Mumbai    300
+Pune      300</pre></div>
+<hr />
+<h2 id="20-dates-to-datetime-and-the-dt-accessor">20. Dates — <code>to_datetime</code> and the <code>.dt</code> accessor</h2>
+<div class="code"><pre class="py">dates[&#x27;Date&#x27;] = pd.to_datetime(dates[&#x27;Date&#x27;])
+dates[&#x27;Date&#x27;].dt.year        # 2025, 2025
+dates[&#x27;Date&#x27;].dt.month       # 1, 2
+</pre></div>
+<p>The frame starts with <code>'2025-01-01'</code> — <strong>text that looks like a date</strong>. Pandas cannot sort
+it as time, subtract it, or resample it until you convert. <code>to_datetime</code> parses the string
+into a real <code>datetime64</code> value.</p>
+<h3>What <code>.dt</code> is</h3>
+<p>Once the column is a datetime, <code>.dt</code> unlocks its parts:</p>
+<div class="code"><pre class="py">.dt.year   .dt.month   .dt.day   .dt.hour
+.dt.dayofweek          # Monday = 0
+.dt.day_name()         # &#x27;Wednesday&#x27;
+.dt.quarter
+</pre></div>
+<p><code>.dt</code> only exists on datetime columns. Calling it on text raises
+<code>AttributeError: Can only use .dt accessor with datetimelike values</code> — which is the
+reminder that you skipped <code>to_datetime</code>.</p>
+<p>Note the output dtype: <code>int32</code>. <code>.dt.year</code> returns numbers you can group by, filter on,
+and plot — which is the point. <code>df.groupby(df['Date'].dt.month)['Sales'].sum()</code> is
+monthly sales in one line.</p>
+<h3>One argument worth knowing now</h3>
+<div class="code"><pre class="py">pd.to_datetime(col, format=&#x27;%d/%m/%Y&#x27;)     # be explicit
+</pre></div>
+<p><code>01/02/2025</code> is 1 February in India and 2 January in the US. Pandas guesses when you do
+not say, and a wrong guess corrupts the data silently — no error, just wrong months. Pass
+<code>format</code> whenever the source is not ISO <code>YYYY-MM-DD</code>.</p>
+<p><strong>Takeaway:</strong> convert once with <code>to_datetime</code>, then use <code>.dt</code> to pull out the parts you
+want to group or filter by.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">dates=pd.DataFrame({&#x27;Date&#x27;:[&#x27;2025-01-01&#x27;,&#x27;2025-02-01&#x27;]})
+dates[&#x27;Date&#x27;]=pd.to_datetime(dates[&#x27;Date&#x27;])
+print(dates[&#x27;Date&#x27;].dt.year)
+print(dates[&#x27;Date&#x27;].dt.month)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    2025
+1    2025
+Name: Date, dtype: int32
+0    1
+1    2
+Name: Date, dtype: int32</pre></div>
+<hr />
+<h2 id="21-text-the-str-accessor">21. Text — the <code>.str</code> accessor</h2>
+<div class="code"><pre class="py">s.str.upper()
+s.str.contains(&#x27;a&#x27;, case=False)
+s.str.len()
+</pre></div>
+<p>Same idea as <code>.dt</code>, for text. <code>.str</code> applies a Python string operation to <strong>every value in
+the column</strong>, with no loop.</p>
+<div class="code"><pre>   s.str.upper()                ALICE, BOB, CHARLIE
+   s.str.contains(&#x27;a&#x27;, case=False)   True, False, True
+   s.str.len()                  5, 3, 7
+</pre></div>
+<h3>Why <code>case=False</code> matters here</h3>
+<p>Without it, <code>contains('a')</code> would miss <code>'Alice'</code> — the <code>A</code> is capital. Real text data is
+full of this: <code>'Pune'</code>, <code>'pune'</code>, and <code>'PUNE'</code> are three separate values to pandas, and
+they become three separate groups in a <code>groupby</code>. The standard first move on any text
+column:</p>
+<div class="code"><pre class="py">df[&#x27;City&#x27;] = df[&#x27;City&#x27;].str.strip().str.lower()
+</pre></div>
+<p><code>strip()</code> removes stray spaces, <code>lower()</code> removes case differences. Chaining <code>.str</code> twice
+is normal — each call returns a Series, so the next <code>.str</code> applies to that.</p>
+<h3>The <code>.str</code> calls you will use most</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>.str.strip()</code></td>
+  <td>trim whitespace — fixes invisible bugs</td>
+</tr>
+<tr>
+  <td><code>.str.lower()</code> / <code>.str.upper()</code></td>
+  <td>normalise case</td>
+</tr>
+<tr>
+  <td><code>.str.contains(p)</code></td>
+  <td>True/False mask — pairs with section 9</td>
+</tr>
+<tr>
+  <td><code>.str.replace(a, b)</code></td>
+  <td>substring replacement</td>
+</tr>
+<tr>
+  <td><code>.str.split(',')</code></td>
+  <td>split into lists</td>
+</tr>
+<tr>
+  <td><code>.str.startswith(p)</code></td>
+  <td>prefix test</td>
+</tr>
+</tbody>
+</table>
+<p><code>.str.contains</code> is the one that connects back: it returns a mask, so
+<code>df[df['City'].str.contains('pun', case=False)]</code> filters rows by text.</p>
+<h3>The accessor pattern</h3>
+<p>You have now seen three: <code>.str</code> for text, <code>.dt</code> for dates, and <code>.cat</code> for categories.
+Pandas groups type-specific operations behind an accessor so <code>df.something</code> does not have
+a thousand methods on it. When you want a text operation, the answer starts with <code>.str</code>.</p>
+<p><strong>Missing values note:</strong> <code>.str</code> returns <code>NaN</code> for missing entries rather than raising —
+handy, but it means a <code>contains</code> mask can hold <code>NaN</code> instead of <code>False</code>. Add
+<code>na=False</code> when you feed it straight into a filter.</p>
+<p><strong>Takeaway:</strong> <code>.str</code> runs string operations over a whole column. Strip and lower your text
+columns before grouping, or you will count the same category twice.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">s=pd.Series([&#x27;Alice&#x27;,&#x27;Bob&#x27;,&#x27;Charlie&#x27;])
+print(s.str.upper())
+print(s.str.lower())
+print(s.str.contains(&#x27;a&#x27;,case=False))
+print(s.str.len())</pre></div>
+<div class="out"><div class="h">Output</div><pre>0      ALICE
+1        BOB
+2    CHARLIE
+dtype: str
+0      alice
+1        bob
+2    charlie
+dtype: str
+0     True
+1    False
+2     True
+dtype: bool
+0    5
+1    3
+2    7
+dtype: int64</pre></div>
+<hr />
+<h2 id="recap-what-this-notebook-added">Recap — what this notebook added</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Section</th>
+  <th>You can now</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2-3</td>
+  <td>Explain why <code>df.shape</code> has no parentheses and <code>df.head()</code> does</td>
+</tr>
+<tr>
+  <td>4-5</td>
+  <td>Read and write CSV/Excel/JSON, and write CSV without a junk index column</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Open an unknown dataset with <code>info()</code>, <code>shape</code>, and <code>describe()</code></td>
+</tr>
+<tr>
+  <td>7-8</td>
+  <td>Choose <code>loc</code> or <code>iloc</code> deliberately, and explain a <code>KeyError</code></td>
+</tr>
+<tr>
+  <td>9-10</td>
+  <td>Filter rows with a mask or with <code>query</code></td>
+</tr>
+<tr>
+  <td>11-12</td>
+  <td>Find and handle missing values and duplicates</td>
+</tr>
+<tr>
+  <td>13-17</td>
+  <td>Rename, convert types, replace values, one-hot encode, sort, and rank</td>
+</tr>
+<tr>
+  <td>18-19</td>
+  <td>Aggregate with <code>groupby</code>, and cross-tabulate with <code>pivot_table</code></td>
+</tr>
+<tr>
+  <td>20-21</td>
+  <td>Work with dates through <code>.dt</code> and text through <code>.str</code></td>
+</tr>
+</tbody>
+</table>
+<h3>The five gotchas worth memorising</h3>
+<ol>
+<li><strong>No parentheses = a fact</strong> (<code>df.shape</code>). <strong>Parentheses = an action</strong> (<code>df.head()</code>).
+<code>&lt;bound method ...&gt;</code> in your output means you forgot the <code>()</code>.</li>
+<li><strong>Almost every method returns a copy.</strong> <code>fillna</code>, <code>rename</code>, <code>sort_values</code>,
+<code>drop_duplicates</code>, <code>replace</code> — none of them change <code>df</code>. Assign the result back.</li>
+<li><strong><code>loc</code> is labels, <code>iloc</code> is positions</strong>, and after a filter or sort they no longer
+match. <code>KeyError: 1</code> means &quot;no label 1&quot;, not &quot;no row 1&quot;.</li>
+<li><strong>One missing value turns an int column into floats</strong>, because <code>NaN</code> is a float.</li>
+<li><strong><code>to_csv</code> writes the index by default</strong> — pass <code>index=False</code> unless the index is real
+data.</li>
+</ol>
+<h3>Two cells to fix when you revisit</h3>
+<ul>
+<li>The read cell runs <strong>before</strong> the write cell that creates the file, so it raises
+<code>FileNotFoundError</code>. Move it below, or create the file first.</li>
+<li><code>to_excel</code> needs <code>openpyxl</code> (<code>pip install openpyxl</code>, then restart the kernel). Until
+then <code>to_json</code> on the line after it never runs.</li>
+</ul>
+<p>Both errors are left in place on purpose — they are worth more explained than deleted.</p>
+<h3>Not covered yet</h3>
+<p><code>merge</code> and <code>concat</code> (they are in <a href="../Concept/example_01.ipynb"><code>example_01.ipynb</code></a>), <code>apply</code> and
+<code>map</code>, <code>value_counts</code>, <code>nunique</code>, multi-column <code>groupby</code>, <code>agg</code> with several functions,
+<code>MultiIndex</code>, <code>resample</code> for time series, <code>crosstab</code>, <code>cut</code> for binning, and
+<code>pd.options.display</code> settings. The <a href="./DataSet/"><code>DataSet/</code></a> folder holds real CSVs to try
+these on.</p>
+<p><strong>If you remember only one thing:</strong> a DataFrame is <strong>labelled columns</strong>, and nearly every
+method hands you a <strong>copy</strong>. Get those two into your fingers — assign the result back, and
+never assume the index is still <code>0, 1, 2</code> — and most Pandas confusion disappears.</p>
+
+<div class="src-head">📓 <a href="../Concept/pizza_panda.ipynb">pizza_panda.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
+import numpy as np
+
+# Creating our pizza shop data
+data = {
+    &#x27;date&#x27;:     [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;],
+    &#x27;pizza&#x27;:    [&#x27;Margherita&#x27;, &#x27;Pepperoni&#x27;, &#x27;Margherita&#x27;, &#x27;BBQ Chicken&#x27;, &#x27;Pepperoni&#x27;, &#x27;BBQ Chicken&#x27;, &#x27;Margherita&#x27;],
+    &#x27;price&#x27;:    [12, 15, 12, 18, 15, 18, 12],
+    &#x27;quantity&#x27;: [10, 8,  6,  12, 15, 20, 18],
+    &#x27;area&#x27;:     [&#x27;Downtown&#x27;, &#x27;Suburbs&#x27;, &#x27;Downtown&#x27;, &#x27;Suburbs&#x27;, &#x27;Downtown&#x27;, &#x27;Suburbs&#x27;, &#x27;Downtown&#x27;]
+}
+
+df = pd.DataFrame(data)
+print(df)
+# How many rows and columns?
+print(df.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+1  Tue    Pepperoni     15         8   Suburbs
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown
+(7, 5)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># Peek at first 5 rows
+df.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+1  Tue    Pepperoni     15         8   Suburbs
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py"># Peek at last 5 rows
+df.tail()</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">df.tail(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py"># What data types are in each column?
+df.dtypes</pre></div>
+<div class="out"><div class="h">Output</div><pre>date          str
+pizza         str
+price       int64
+quantity    int64
+area          str
+dtype: object</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py"># Full summary of your dataset in one shot
+df.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 7 entries, 0 to 6
+Data columns (total 5 columns):
+ #   Column    Non-Null Count  Dtype
+---  ------    --------------  -----
+ 0   date      7 non-null      str  
+ 1   pizza     7 non-null      str  
+ 2   price     7 non-null      int64
+ 3   quantity  7 non-null      int64
+ 4   area      7 non-null      str  
+dtypes: int64(2), str(3)
+memory usage: 412.0 bytes</pre></div>
+<p>Lesson 2 — Selecting columns and rows</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py"># Get just the pizza column
+print(df[&#x27;pizza&#x27;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     Margherita
+1      Pepperoni
+2     Margherita
+3    BBQ Chicken
+4      Pepperoni
+5    BBQ Chicken
+6     Margherita
+Name: pizza, dtype: str</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py"># One column — uses single brackets
+print(type(df[&#x27;pizza&#x27;]))
+
+# The full dataframe
+print(type(df))</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.Series&#x27;&gt;
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">print(df[&#x27;pizza&#x27;])
+# Multiple columns — double brackets
+print(df[[&#x27;pizza&#x27;, &#x27;price&#x27;, &#x27;quantity&#x27;]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     Margherita
+1      Pepperoni
+2     Margherita
+3    BBQ Chicken
+4      Pepperoni
+5    BBQ Chicken
+6     Margherita
+Name: pizza, dtype: str
+         pizza  price  quantity
+0   Margherita     12        10
+1    Pepperoni     15         8
+2   Margherita     12         6
+3  BBQ Chicken     18        12
+4    Pepperoni     15        15
+5  BBQ Chicken     18        20
+6   Margherita     12        18</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py"># This is exactly the same thing
+columns_i_want = [&#x27;pizza&#x27;, &#x27;price&#x27;, &#x27;quantity&#x27;]
+print(df[columns_i_want])</pre></div>
+<div class="out"><div class="h">Output</div><pre>         pizza  price  quantity
+0   Margherita     12        10
+1    Pepperoni     15         8
+2   Margherita     12         6
+3  BBQ Chicken     18        12
+4    Pepperoni     15        15
+5  BBQ Chicken     18        20
+6   Margherita     12        18</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">print(df[[&#x27;pizza&#x27;]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>         pizza
+0   Margherita
+1    Pepperoni
+2   Margherita
+3  BBQ Chicken
+4    Pepperoni
+5  BBQ Chicken
+6   Margherita</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">print(df[&#x27;price&#x27;].mean())   # ✅ average of one column
+print(df[[&#x27;price&#x27;]].mean())  # ✅ also works but returns a DataFrame
+#df[&#x27;pizza&#x27;].mean()    # ❌ crashes — can&#x27;t average text</pre></div>
+<div class="out"><div class="h">Output</div><pre>14.571428571428571
+price    14.571429
+dtype: float64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py"># Using the result in a calculation — Series way is cleaner
+avg = df[&#x27;price&#x27;].mean()
+print(&quot;Prices above average:&quot;, df[df[&#x27;price&#x27;] &gt; avg][&#x27;price&#x27;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>Prices above average: 1    15
+3    18
+4    15
+5    18
+Name: price, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">print(df[df[&quot;pizza&quot;] == &#x27;BBQ Chicken&#x27;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity     area
+3  Thu  BBQ Chicken     18        12  Suburbs
+5  Sat  BBQ Chicken     18        20  Suburbs</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py"># Plain Python way — filtering Pepperoni orders
+pepperoni_orders = []
+for i in range(len(data[&#x27;pizza&#x27;])):
+    if data[&#x27;pizza&#x27;][i] == &#x27;Pepperoni&#x27;:
+        pepperoni_orders.append({
+            &#x27;date&#x27;: data[&#x27;date&#x27;][i],
+            &#x27;pizza&#x27;: data[&#x27;pizza&#x27;][i],
+            &#x27;price&#x27;: data[&#x27;price&#x27;][i],
+            &#x27;quantity&#x27;: data[&#x27;quantity&#x27;][i],
+            &#x27;area&#x27;: data[&#x27;area&#x27;][i]
+        })
+
+for order in pepperoni_orders:
+    print(order)</pre></div>
+<div class="out"><div class="h">Output</div><pre>{&#x27;date&#x27;: &#x27;Tue&#x27;, &#x27;pizza&#x27;: &#x27;Pepperoni&#x27;, &#x27;price&#x27;: 15, &#x27;quantity&#x27;: 8, &#x27;area&#x27;: &#x27;Suburbs&#x27;}
+{&#x27;date&#x27;: &#x27;Fri&#x27;, &#x27;pizza&#x27;: &#x27;Pepperoni&#x27;, &#x27;price&#x27;: 15, &#x27;quantity&#x27;: 15, &#x27;area&#x27;: &#x27;Downtown&#x27;}</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py"># Orders from Downtown only
+print(df[df[&#x27;area&#x27;] == &#x27;Downtown&#x27;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date       pizza  price  quantity      area
+0  Mon  Margherita     12        10  Downtown
+2  Wed  Margherita     12         6  Downtown
+4  Fri   Pepperoni     15        15  Downtown
+6  Sun  Margherita     12        18  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py"># Orders where quantity is more than 10
+print(df[df[&#x27;quantity&#x27;] &gt; 10])</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py"># Orders where price is 18 AND area is Suburbs
+print(df[(df[&#x27;price&#x27;] == 18) &amp; (df[&#x27;area&#x27;] == &#x27;Suburbs&#x27;)])</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity     area
+3  Thu  BBQ Chicken     18        12  Suburbs
+5  Sat  BBQ Chicken     18        20  Suburbs</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">df[&#x27;pizza&#x27;] == &#x27;Pepperoni&#x27;</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    False
+1     True
+2    False
+3    False
+4     True
+5    False
+6    False
+Name: pizza, dtype: bool</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py"># Step 1 — see the True/False list
+mask = df[&#x27;pizza&#x27;] == &#x27;Pepperoni&#x27;
+print(mask)
+print(&quot;---&quot;)
+
+# Step 2 — use it to filter
+print(df[mask])
+print(df[~mask])</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    False
+1     True
+2    False
+3    False
+4     True
+5    False
+6    False
+Name: pizza, dtype: bool
+---
+  date      pizza  price  quantity      area
+1  Tue  Pepperoni     15         8   Suburbs
+4  Fri  Pepperoni     15        15  Downtown
+  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py"># Pepperoni orders from Downtown only
+print(df[(df[&#x27;pizza&#x27;] == &#x27;Pepperoni&#x27;) &amp; (df[&#x27;area&#x27;] == &#x27;Downtown&#x27;)])</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date      pizza  price  quantity      area
+4  Fri  Pepperoni     15        15  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py"># Challenge 1 — Show orders where quantity is more than 10 AND price is 12
+print(df[(df[&#x27;quantity&#x27;] &gt; 10 ) &amp; (df[&#x27;price&#x27;] == 12)])
+
+# Challenge 2 — Show orders that are either Margherita OR BBQ Chicken
+print(df[(df[&#x27;pizza&#x27;] == &#x27;Margherita&#x27;) | (df[&#x27;pizza&#x27;] == &#x27;BBQ Chicken&#x27;)])
+
+# Challenge 3 — Show all orders that are NOT from Suburbs
+print(df[(df[&#x27;area&#x27;] != &#x27;Suburbs&#x27;)])</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date       pizza  price  quantity      area
+6  Sun  Margherita     12        18  Downtown
+  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown
+  date       pizza  price  quantity      area
+0  Mon  Margherita     12        10  Downtown
+2  Wed  Margherita     12         6  Downtown
+4  Fri   Pepperoni     15        15  Downtown
+6  Sun  Margherita     12        18  Downtown</pre></div>
+<p>&quot;Which pizza type made the most money last week?&quot;</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">#First — plain Python way so you feel the pain:
+
+# Plain Python — total quantity per pizza type
+pizzas = [&#x27;Margherita&#x27;, &#x27;Pepperoni&#x27;, &#x27;BBQ Chicken&#x27;]
+
+for pizza in pizzas:
+    total = 0
+    for i in range(len(data[&#x27;pizza&#x27;])):
+        if data[&#x27;pizza&#x27;][i] == pizza:
+            total += data[&#x27;quantity&#x27;][i]
+    print(pizza, &quot;:&quot;, total)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Margherita : 34
+Pepperoni : 23
+BBQ Chicken : 32</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">print(df.groupby(&quot;pizza&quot;)[&quot;quantity&quot;].sum())</pre></div>
+<div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    32
+Margherita     34
+Pepperoni      23
+Name: quantity, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">print(&quot;Total Quantity :: &quot;,df.groupby(&#x27;pizza&#x27;)[&#x27;quantity&#x27;].sum())
+print(&quot;\naverage quantity ::&quot; ,df.groupby(&#x27;pizza&#x27;)[&#x27;quantity&#x27;].mean()) 
+print(&quot;\nhighest price :: &quot;,df.groupby(&#x27;pizza&#x27;)[&#x27;price&#x27;].max())     
+print(&quot;\nhow many orders ::&quot;,df.groupby(&#x27;pizza&#x27;)[&#x27;quantity&#x27;].count())</pre></div>
+<div class="out"><div class="h">Output</div><pre>Total Quantity ::  pizza
+BBQ Chicken    32
+Margherita     34
+Pepperoni      23
+Name: quantity, dtype: int64
+
+average quantity :: pizza
+BBQ Chicken    16.000000
+Margherita     11.333333
+Pepperoni      11.500000
+Name: quantity, dtype: float64
+
+highest price ::  pizza
+BBQ Chicken    18
+Margherita     12
+Pepperoni      15
+Name: price, dtype: int64
+
+how many orders :: pizza
+BBQ Chicken    2
+Margherita     3
+Pepperoni      2
+Name: quantity, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py"># Which area — Downtown or Suburbs — generates more total revenue?
+
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+print(df)</pre></div>
+<div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area  revenue
+0  Mon   Margherita     12        10  Downtown      120
+1  Tue    Pepperoni     15         8   Suburbs      120
+2  Wed   Margherita     12         6  Downtown       72
+3  Thu  BBQ Chicken     18        12   Suburbs      216
+4  Fri    Pepperoni     15        15  Downtown      225
+5  Sat  BBQ Chicken     18        20   Suburbs      360
+6  Sun   Margherita     12        18  Downtown      216</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py"># Which area generates more total revenue?
+print(&quot;\nGenerates more total revenue ::&quot; ,df.groupby(&#x27;area&#x27;)[&#x27;revenue&#x27;].sum())</pre></div>
+<div class="out"><div class="h">Output</div><pre>
+Generates more total revenue :: area
+Downtown    633
+Suburbs     696
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py"># What is the total revenue AND average quantity per pizza type?
+print(df.groupby(&#x27;pizza&#x27;).agg({
+    &#x27;revenue&#x27;: &#x27;sum&#x27;,
+    &#x27;quantity&#x27;: &#x27;mean&#x27;
+}))</pre></div>
+<div class="out"><div class="h">Output</div><pre>             revenue   quantity
+pizza                          
+BBQ Chicken      576  16.000000
+Margherita       408  11.333333
+Pepperoni        345  11.500000</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">df.groupby(&#x27;pizza&#x27;).agg({
+    &#x27;revenue&#x27;: &#x27;sum&#x27;,
+    &#x27;quantity&#x27;: &#x27;mean&#x27;,
+    &#x27;price&#x27;: &#x27;max&#x27;,
+    &#x27;date&#x27;: &#x27;count&#x27;
+})</pre></div>
+<div class="out"><div class="h">Output</div><pre>             revenue   quantity  price  date
+pizza                                       
+BBQ Chicken      576  16.000000     18     2
+Margherita       408  11.333333     12     3
+Pepperoni        345  11.500000     15     2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py"># Which day of the week had the highest total revenue?
+
+df.groupby(&#x27;date&#x27;)[&quot;revenue&quot;].sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>date
+Fri    225
+Mon    120
+Sat    360
+Sun    216
+Thu    216
+Tue    120
+Wed     72
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">print(df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=False))</pre></div>
+<div class="out"><div class="h">Output</div><pre>date
+Sat    360
+Fri    225
+Sun    216
+Thu    216
+Mon    120
+Tue    120
+Wed     72
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=True)          # sort highest to lowest</pre></div>
+<div class="out"><div class="h">Output</div><pre>date
+Wed     72
+Mon    120
+Tue    120
+Sun    216
+Thu    216
+Fri    225
+Sat    360
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py"># Read the csv 
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+print(df)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   date        pizza  price  quantity      area
+0   Mon   Margherita     12        10  Downtown
+1   Tue    Pepperoni     15         8   Suburbs
+2   Wed   Margherita     12         6  Downtown
+3   Thu  BBQ Chicken     18        12   Suburbs
+4   Fri    Pepperoni     15        15  Downtown
+5   Sat  BBQ Chicken     18        20   Suburbs
+6   Sun   Margherita     12        18  Downtown
+7   Mon    Pepperoni     15         9  Downtown
+8   Tue  BBQ Chicken     18        14   Suburbs
+9   Wed   Margherita     12         7  Downtown
+10  Thu    Pepperoni     15        11   Suburbs
+11  Fri  BBQ Chicken     18        16  Downtown</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">print(df.shape,&quot;\n&quot;)
+print(df.head(),&quot;\n&quot;)
+print(df.tail(),&quot;\n&quot;)
+print(df.dtypes,&quot;\n&quot;)
+df.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>(12, 5) 
+
+  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+1  Tue    Pepperoni     15         8   Suburbs
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown 
+
+   date        pizza  price  quantity      area
+7   Mon    Pepperoni     15         9  Downtown
+8   Tue  BBQ Chicken     18        14   Suburbs
+9   Wed   Margherita     12         7  Downtown
+10  Thu    Pepperoni     15        11   Suburbs
+11  Fri  BBQ Chicken     18        16  Downtown 
+
+date          str
+pizza         str
+price       int64
+quantity    int64
+area          str
+dtype: object 
+
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 12 entries, 0 to 11
+Data columns (total 5 columns):
+ #   Column    Non-Null Count  Dtype
+---  ------    --------------  -----
+ 0   date      12 non-null     str  
+ 1   pizza     12 non-null     str  
+ 2   price     12 non-null     int64
+ 3   quantity  12 non-null     int64
+ 4   area      12 non-null     str  
+dtypes: int64(2), str(3)
+memory usage: 612.0 bytes</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py"># Step 3 — clean and analyze
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    1116
+Margherita      492
+Pepperoni       645
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py"># Question 1 — Which pizza type has highest total revenue?
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+print(df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=False))    
+
+# Question 2 — Which area orders more on average (quantity)?
+print(&quot;\n&quot;,df.groupby(&#x27;area&#x27;)[&#x27;quantity&#x27;].mean().sort_values(ascending=True))   
+
+# Question 3 — What is the total revenue per day sorted highest to lowest?
+print(&quot;\n&quot;,df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=False))</pre></div>
+<div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    1116
+Pepperoni       645
+Margherita      492
+Name: revenue, dtype: int64
+
+ area
+Downtown    11.571429
+Suburbs     13.000000
+Name: quantity, dtype: float64
+
+ date
+Fri    513
+Thu    381
+Tue    372
+Sat    360
+Mon    255
+Sun    216
+Wed    156
+Name: revenue, dtype: int64</pre></div>
+<div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/example_02.ipynb">example_02.ipynb ↗</a><a class="btn" href="../Concept/pizza_panda.ipynb">pizza_panda.ipynb ↗</a><a class="btn" href="../Concept/README.md">README.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variables And Data Types — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">01 Python › <b>Variables And Data Types</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#session-01-variables-data-types-numbers-and-stri">Session 01 — Variables, Data Types, Numbers, and Str</a><a href="#what-this-session-covers">What this session covers</a><a href="#before-reading-the-cells">Before reading the cells</a><a href="#1-variables-cells-2-17">1. Variables — cells 2–17</a><a href="#2-data-types-cells-19-20">2. Data types — cells 19–20</a><a href="#3-numbers-cells-22-31">3. Numbers — cells 22–31</a><a href="#4-strings-cells-33-41">4. Strings — cells 33–41</a><a href="#5-cell-42-student-fee-report">5. Cell 42 — Student-fee report</a><a href="#6-cell-43-empty-cell">6. Cell 43 — Empty cell</a><a href="#quick-syntax-reference">Quick syntax reference</a><a href="#common-mistakes-to-remember">Common mistakes to remember</a><a href="#session-checkpoint">Session checkpoint</a><a href="#variables">Variables</a><a href="#datatypes">Datatypes</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Python and the data toolkit</p>
+  <h1>Variables And Data Types</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">1 notebook · 1 note</span></div>
+</div>
+<div class="src-head">📝 <a href="../Concept/README.md">README.md</a></div>
+<h2 id="session-01-variables-data-types-numbers-and-stri">Session 01 — Variables, Data Types, Numbers, and Strings</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum — M01 Python</strong></p>
+</div>
+<p><strong>Status:</strong> 🟡 Learning
+<strong>Notebook:</strong> <a href="../Concept/variables_data_types_numbers_strings.ipynb">Open the Session 01 notebook</a></p>
+<p>This guide explains every code cell in the notebook. The original code and its
+saved outputs are preserved without modification.</p>
+<h2 id="what-this-session-covers">What this session covers</h2>
+<div class="code"><pre>Values
+  ↓
+Variables and data types
+  ↓
+Type conversion
+  ↓
+Numbers and strings
+  ↓
+User input
+  ↓
+Student-fee report
+</pre></div>
+<ul>
+<li>creating and naming variables;</li>
+<li>inspecting and converting data types;</li>
+<li>integers, floats, complex numbers, and scientific notation;</li>
+<li>multiline strings, indexing, length, and string methods;</li>
+<li>user input, f-strings, and a small fee-calculation exercise.</li>
+</ul>
+<h2 id="before-reading-the-cells">Before reading the cells</h2>
+<ul>
+<li><code>=</code> assigns a value to a variable. It does not mean mathematical equality.</li>
+<li>Python is case-sensitive: <code>p</code> and <code>P</code> are different variables.</li>
+<li>In Jupyter, only the final bare expression in a cell is displayed
+automatically. Use <code>print()</code> when you want to display several values.</li>
+<li>Cells 12, 14–17, and 29 intentionally produce errors. They demonstrate rules
+that Python enforces.</li>
+</ul>
+<h2 id="1-variables-cells-2-17">1. Variables — cells 2–17</h2>
+<h3>Cell 2 — Assignment and notebook display</h3>
+<div class="code"><pre class="py">a = 5
+a
+</pre></div>
+<ul>
+<li><code>a</code> is the variable name.</li>
+<li><code>=</code> is the assignment operator.</li>
+<li><code>5</code> is an integer literal.</li>
+<li>The final <code>a</code> asks Jupyter to display the stored value, so the output is <code>5</code>.</li>
+</ul>
+<p>Think of a variable as a named reference to a value, similar to a local variable
+in Java, but without declaring a static type first.</p>
+<h3>Cell 3 — Only the final expression is displayed</h3>
+<div class="code"><pre class="py">b = &#x27;Shridhar&#x27;
+b
+a
+</pre></div>
+<p><code>b</code> stores a string. Both <code>b</code> and <code>a</code> are bare expressions, but Jupyter displays
+only the final one, so the saved output is <code>5</code>. To display both values, use:</p>
+<div class="code"><pre class="py">print(b)
+print(a)
+</pre></div>
+<h3>Cell 4 — Single and double quotes</h3>
+<div class="code"><pre class="py">c = &quot;Shridhar&quot;
+c
+</pre></div>
+<p>Both <code>'Shridhar'</code> and <code>&quot;Shridhar&quot;</code> create a value of type <code>str</code>. Choose the quote
+style that makes the text easiest to read.</p>
+<h3>Cell 5 — Explicit output with <code>print()</code></h3>
+<div class="code"><pre class="py">print(a)
+print(b)
+</pre></div>
+<p><code>print(value)</code> writes a readable representation to standard output. Unlike a
+bare expression, every <code>print()</code> call produces output.</p>
+<h3>Cell 6 — Explicit type conversion</h3>
+<div class="code"><pre class="py">x = str(5)
+y = int(5)
+z = float(5)
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax</th>
+  <th>Meaning</th>
+  <th>Stored value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>str(5)</code></td>
+  <td>Convert <code>5</code> to text</td>
+  <td><code>'5'</code></td>
+</tr>
+<tr>
+  <td><code>int(5)</code></td>
+  <td>Convert <code>5</code> to an integer</td>
+  <td><code>5</code></td>
+</tr>
+<tr>
+  <td><code>float(5)</code></td>
+  <td>Convert <code>5</code> to a decimal number</td>
+  <td><code>5.0</code></td>
+</tr>
+</tbody>
+</table>
+<p>The printed values for <code>x</code> and <code>y</code> both look like <code>5</code>, but their types and
+allowed operations are different.</p>
+<h3>Cell 7 — Inspecting runtime types</h3>
+<div class="code"><pre class="py">print(type(x))
+print(type(y))
+print(type(z))
+</pre></div>
+<p><code>type(object)</code> returns the object's class. The outputs confirm <code>str</code>, <code>int</code>, and
+<code>float</code> respectively.</p>
+<h3>Cells 8–9 — Case-sensitive names</h3>
+<div class="code"><pre class="py">p = &#x27;Shridhar&#x27;
+P = &#x27;Mankar&#x27;
+</pre></div>
+<p>Lowercase <code>p</code> and uppercase <code>P</code> are separate identifiers. Cell 9 prints both
+values and proves that one did not replace the other.</p>
+<p>Prefer descriptive lowercase names such as <code>first_name</code> and <code>last_name</code> in
+normal Python code.</p>
+<h3>Cell 10 — String concatenation</h3>
+<div class="code"><pre class="py">print(p + &#x27; &#x27; + P)
+</pre></div>
+<p>When both operands are strings, <code>+</code> joins them. The middle string <code>' '</code> adds one
+space, producing <code>Shridhar Mankar</code>.</p>
+<h3>Cell 11 — Numeric addition</h3>
+<div class="code"><pre class="py">print(a + y)
+</pre></div>
+<p>Both <code>a</code> and <code>y</code> contain integers with value <code>5</code>, so <code>+</code> performs numeric
+addition and returns <code>10</code>.</p>
+<h3>Cell 12 — Intentional <code>TypeError</code></h3>
+<div class="code"><pre class="py">print(a + b)
+</pre></div>
+<p>This cell mixes an <code>int</code> and a <code>str</code>. Python does not guess whether you want
+addition or text concatenation, so it raises:</p>
+<div class="code"><pre>TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
+</pre></div>
+<p>Choose a conversion based on the intended result:</p>
+<div class="code"><pre class="py">str(a) + b       # text concatenation
+a + int(&quot;5&quot;)     # numeric addition when the text contains a valid number
+</pre></div>
+<h3>Cell 13 — Valid variable names</h3>
+<div class="code"><pre class="py">variable = 5
+vari_able = 5
+_variable = 5
+Variable = 5
+VARIABLE = 5
+variable5 = 5
+</pre></div>
+<p>A Python identifier may contain letters, digits, and underscores, but it cannot
+begin with a digit. Different capitalization creates different names.</p>
+<p>Naming convention:</p>
+<ul>
+<li>use <code>snake_case</code> for normal variables, such as <code>course_fees</code>;</li>
+<li>a leading underscore usually communicates internal use;</li>
+<li>uppercase names usually represent constants by convention.</li>
+</ul>
+<h3>Cells 14–17 — Invalid variable names</h3>
+<p>These cells intentionally demonstrate invalid syntax.</p>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right">Cell</th>
+  <th>Code</th>
+  <th>Why Python rejects it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right">14</td>
+  <td><code>5variable = 5</code></td>
+  <td>A name cannot start with a digit.</td>
+</tr>
+<tr>
+  <td style="text-align:right">15</td>
+  <td><code>vari-able = 5</code></td>
+  <td><code>-</code> is the subtraction operator.</td>
+</tr>
+<tr>
+  <td style="text-align:right">16</td>
+  <td><code>var$able = 5</code></td>
+  <td><code>$</code> is not allowed in a Python identifier.</td>
+</tr>
+<tr>
+  <td style="text-align:right">17</td>
+  <td><code>vari able = 5</code></td>
+  <td>A variable name cannot contain spaces.</td>
+</tr>
+</tbody>
+</table>
+<p>Because these are syntax errors, Python cannot parse the statements into valid
+instructions.</p>
+<h2 id="2-data-types-cells-19-20">2. Data types — cells 19–20</h2>
+<h3>Cell 19 — Common built-in values</h3>
+<div class="code"><pre class="py">x1 = 5
+x2 = &#x27;shridhar&#x27;
+x3 = 5.0
+x4 = True
+x5 = 5j
+x6 = [1, 2, 3]
+x7 = {1, 2, 3}
+x8 = (1, 2, 3)
+x9 = {&#x27;naam&#x27;: &#x27;shridhar&#x27;, &#x27;kaam&#x27;: &#x27;Students ki help karna&#x27;}
+x10 = None
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Variable</th>
+  <th>Type</th>
+  <th>Literal syntax</th>
+  <th>Simple meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>x1</code></td>
+  <td><code>int</code></td>
+  <td><code>5</code></td>
+  <td>Whole number</td>
+</tr>
+<tr>
+  <td><code>x2</code></td>
+  <td><code>str</code></td>
+  <td><code>'text'</code></td>
+  <td>Text</td>
+</tr>
+<tr>
+  <td><code>x3</code></td>
+  <td><code>float</code></td>
+  <td><code>5.0</code></td>
+  <td>Decimal number</td>
+</tr>
+<tr>
+  <td><code>x4</code></td>
+  <td><code>bool</code></td>
+  <td><code>True</code></td>
+  <td>Logical true/false value</td>
+</tr>
+<tr>
+  <td><code>x5</code></td>
+  <td><code>complex</code></td>
+  <td><code>5j</code></td>
+  <td>Number with an imaginary component</td>
+</tr>
+<tr>
+  <td><code>x6</code></td>
+  <td><code>list</code></td>
+  <td><code>[1, 2, 3]</code></td>
+  <td>Ordered, mutable collection</td>
+</tr>
+<tr>
+  <td><code>x7</code></td>
+  <td><code>set</code></td>
+  <td><code>{1, 2, 3}</code></td>
+  <td>Collection of unique values</td>
+</tr>
+<tr>
+  <td><code>x8</code></td>
+  <td><code>tuple</code></td>
+  <td><code>(1, 2, 3)</code></td>
+  <td>Ordered, immutable collection</td>
+</tr>
+<tr>
+  <td><code>x9</code></td>
+  <td><code>dict</code></td>
+  <td><code>{'key': 'value'}</code></td>
+  <td>Key-value mapping</td>
+</tr>
+<tr>
+  <td><code>x10</code></td>
+  <td><code>NoneType</code></td>
+  <td><code>None</code></td>
+  <td>Intentional absence of a value</td>
+</tr>
+</tbody>
+</table>
+<p>The colon in a dictionary separates a key from its value. Commas separate
+collection elements.</p>
+<h3>Cell 20 — Confirming each type</h3>
+<p>Cell 20 calls <code>type()</code> for <code>x1</code> through <code>x10</code>. This verifies that Python chose
+the expected type from each literal's syntax.</p>
+<h2 id="3-numbers-cells-22-31">3. Numbers — cells 22–31</h2>
+<h3>Cell 22 — Integers of different sizes</h3>
+<div class="code"><pre class="py">num1 = 5
+num2 = -5
+num3 = 5555555555555555555555555
+num4 = 5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
+</pre></div>
+<p>All four values are <code>int</code>. Python integers can grow beyond 32-bit or 64-bit
+limits as long as enough memory is available. The leading <code>-</code> is the unary
+negation operator.</p>
+<h3>Cell 23 — Importing a module and checking object size</h3>
+<div class="code"><pre class="py">import sys
+print(sys.getsizeof(num4))
+</pre></div>
+<ul>
+<li><code>import sys</code> makes Python's <code>sys</code> module available.</li>
+<li><code>sys.getsizeof(value)</code> returns the shallow memory allocated for that Python
+object, measured in bytes.</li>
+<li><code>module.function(...)</code> uses dot syntax to access a function from a module.</li>
+</ul>
+<p>The saved sizes are <code>76</code>, <code>36</code>, and <code>28</code> bytes. These exact numbers can differ
+between Python versions, implementations, and platforms; the important lesson
+is that larger integers require more memory.</p>
+<h3>Cell 24 — Large values remain integers</h3>
+<p>Cell 24 calls <code>type()</code> on the positive, negative, and large values. Every result
+is <code>int</code>; the number of digits does not create a new numeric type.</p>
+<h3>Cell 25 — Floats and scientific notation</h3>
+<div class="code"><pre class="py">float1 = 5.0
+float2 = -5.5
+float3 = 123e4
+</pre></div>
+<p><code>123e4</code> means <code>123 × 10⁴</code>, which is <code>1,230,000.0</code>. The presence of <code>.</code> or
+scientific notation creates a <code>float</code>.</p>
+<h3>Cell 26 — Confirming float types</h3>
+<p>Cell 26 checks the three values with <code>type()</code>. Each result is <code>float</code>, including
+the scientific-notation value.</p>
+<h3>Cell 27 — Complex-number literals</h3>
+<div class="code"><pre class="py">com1 = 0 + 1j
+com2 = 5j
+com3 = 1 + 2j
+com4 = -5j
+</pre></div>
+<p>Python uses <code>j</code> for the imaginary part of a complex number. In <code>1 + 2j</code>, <code>1</code> is
+the real component and <code>2j</code> is the imaginary component.</p>
+<h3>Cell 28 — Confirming complex types</h3>
+<p>Cell 28 applies <code>type()</code> to all four values. Each result is <code>complex</code>, even when
+the real component is zero.</p>
+<h3>Cell 29 — Partial execution and intentional <code>TypeError</code></h3>
+<div class="code"><pre class="py">int1 = int(float1)
+int2 = int(com1)
+</pre></div>
+<p>Python executes a cell from top to bottom:</p>
+<ol>
+<li><code>int(float1)</code> succeeds and stores <code>5</code> in <code>int1</code>.</li>
+<li><code>int(com1)</code> fails because Python does not directly convert a complex number
+to an integer.</li>
+</ol>
+<p>The second line raises <code>TypeError</code>, but the successful assignment on the first
+line remains in the notebook session.</p>
+<h3>Cells 30–31 — Converting an integer to complex</h3>
+<div class="code"><pre class="py">complex1 = complex(num1)
+complex1
+</pre></div>
+<p><code>complex(5)</code> creates <code>(5+0j)</code>. Cell 30 performs the assignment; cell 31 uses a
+bare expression to display the result.</p>
+<h2 id="4-strings-cells-33-41">4. Strings — cells 33–41</h2>
+<h3>Cell 33 — Triple-single-quoted multiline string</h3>
+<div class="code"><pre class="py">X = &#x27;&#x27;&#x27;Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai&#x27;&#x27;&#x27;
+print(X)
+</pre></div>
+<p>Triple quotes allow one string literal to span several lines. Newline characters
+are stored inside the string and appear when it is printed.</p>
+<h3>Cell 34 — Multiline text is still a string</h3>
+<p><code>type(X)</code> returns <code>str</code>. Line breaks change the content, not the data type.</p>
+<h3>Cell 35 — Triple-double-quoted multiline string</h3>
+<p><code>&quot;&quot;&quot;...&quot;&quot;&quot;</code> has the same multiline behavior as <code>'''...'''</code>. Both styles create
+a <code>str</code>.</p>
+<h3>Cell 36 — Zero-based string indexing</h3>
+<div class="code"><pre class="py">Z = &#x27;shridhar&#x27;
+print(Z[0])
+...
+print(Z[7])
+</pre></div>
+<p>Square brackets select a character by position. Python begins counting at zero:</p>
+<div class="code"><pre>Character: s h r i d h a r
+Index:     0 1 2 3 4 5 6 7
+Negative: -8 -7 -6 -5 -4 -3 -2 -1
+</pre></div>
+<p><code>Z[8]</code> would raise <code>IndexError</code> because the string contains only eight
+characters.</p>
+<h3>Cells 37–38 — Length with <code>len()</code></h3>
+<div class="code"><pre class="py">len(Z)  # 8
+len(X)  # 92
+</pre></div>
+<p><code>len()</code> counts the items in an object. For strings it counts characters,
+including spaces, punctuation, and stored newline characters.</p>
+<h3>Cell 39 — String methods</h3>
+<div class="code"><pre class="py">print(Z.upper())
+print(Z.title())
+print(Z.replace(&quot;shridhar&quot;, &quot;shreedhar&quot;))
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Method</th>
+  <th>Result</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Z.upper()</code></td>
+  <td><code>SHRIDHAR</code></td>
+  <td>Return an uppercase version</td>
+</tr>
+<tr>
+  <td><code>Z.title()</code></td>
+  <td><code>Shridhar</code></td>
+  <td>Capitalize words like a title</td>
+</tr>
+<tr>
+  <td><code>Z.replace(old, new)</code></td>
+  <td><code>shreedhar</code></td>
+  <td>Return text with matches replaced</td>
+</tr>
+</tbody>
+</table>
+<p>Strings are immutable. These methods return new strings; they do not modify the
+original <code>Z</code> unless the result is assigned back to a variable.</p>
+<h3>Cell 40 — Reading user input</h3>
+<div class="code"><pre class="py">name = input(&quot;Enter name: &quot;)
+print(name)
+</pre></div>
+<p><code>input(prompt)</code> displays the prompt, waits for the user, and always returns a
+string. The saved input is <code>shridhar</code>, which is then printed.</p>
+<h3>Cell 41 — f-string interpolation</h3>
+<div class="code"><pre class="py">name = &quot;Shridhar&quot;
+score = 95
+print(f&quot;{name} scored {score}&quot;)
+</pre></div>
+<p>The <code>f</code> before the opening quote creates a formatted string. Expressions inside
+<code>{...}</code> are evaluated and inserted into the text.</p>
+<h2 id="5-cell-42-student-fee-report">5. Cell 42 — Student-fee report</h2>
+<p>This cell combines the session's concepts into a small command-line program.</p>
+<h3>Step 1 — Read and convert inputs</h3>
+<div class="code"><pre class="py">name = input(&quot;Enter your full name: &quot;)
+age = int(input(&quot;Enter your age: &quot;))
+course = input(&quot;Enter your course name: &quot;)
+fees = float(input(&quot;Enter course fees: &quot;))
+</pre></div>
+<p>Function calls are evaluated from the inside out. For example:</p>
+<div class="code"><pre>input(&quot;Enter your age: &quot;) → text such as &quot;28&quot;
+int(&quot;28&quot;)                → integer 28
+</pre></div>
+<p>The final types are <code>str</code>, <code>int</code>, <code>str</code>, and <code>float</code>.</p>
+<h3>Step 2 — Select characters</h3>
+<div class="code"><pre class="py">first_letter = name[0]
+last_letter = name[-1]
+</pre></div>
+<p>Index <code>0</code> selects the first character. Index <code>-1</code> selects the last character
+without needing to calculate the string's length.</p>
+<h3>Step 3 — Calculate the discount</h3>
+<div class="code"><pre class="py">discount = fees * 0.10
+final_fees = fees - discount
+</pre></div>
+<p><code>0.10</code> represents 10%. The program first calculates the discount amount and
+then subtracts it from the original fees. With <code>8000</code>, the results are <code>800</code>
+and <code>7200</code>.</p>
+<h3>Step 4 — Format the report</h3>
+<div class="code"><pre class="py">print(&quot;\n----- STUDENT REPORT -----&quot;)
+print(f&quot;Name : {name.title()}&quot;)
+print(f&quot;Course : {course.upper()}&quot;)
+</pre></div>
+<ul>
+<li><code>\n</code> is an escape sequence that starts a new line.</li>
+<li>f-strings insert variables and method results.</li>
+<li><code>.title()</code> formats the name.</li>
+<li><code>.upper()</code> formats the course name.</li>
+<li>the <code>₹</code> character is ordinary Unicode text inside the string.</li>
+</ul>
+<h3>Step 5 — Verify the types</h3>
+<div class="code"><pre class="py">print(type(name))
+print(type(age))
+print(type(fees))
+</pre></div>
+<p>These calls confirm that input conversion worked: <code>name</code> is <code>str</code>, <code>age</code> is
+<code>int</code>, and <code>fees</code> is <code>float</code>.</p>
+<h3>Program flow</h3>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    A[Read student input] --&gt; B[Convert age and fees]
+    B --&gt; C[Select first and last letters]
+    C --&gt; D[Calculate 10 percent discount]
+    D --&gt; E[Format student report]
+    E --&gt; F[Display values and data types]
+</pre></div>
+<h3>Important edge cases</h3>
+<ul>
+<li>An empty <code>name</code> would make <code>name[0]</code> and <code>name[-1]</code> raise <code>IndexError</code>.</li>
+<li>Non-numeric age or fees text would make <code>int()</code> or <code>float()</code> raise
+<code>ValueError</code>.</li>
+<li>Currency is normally displayed with two decimal places, for example
+<code>f&quot;₹{fees:.2f}&quot;</code>.</li>
+</ul>
+<p>These are future improvements. The notebook correctly demonstrates the Session
+01 concepts in its current form.</p>
+<h2 id="6-cell-43-empty-cell">6. Cell 43 — Empty cell</h2>
+<p>The final code cell has no source or output. It does not affect the notebook and
+can be used for the next exercise.</p>
+<h2 id="quick-syntax-reference">Quick syntax reference</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax</th>
+  <th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>name = value</code></td>
+  <td>Assign a value to a variable</td>
+</tr>
+<tr>
+  <td><code>print(value)</code></td>
+  <td>Display a value explicitly</td>
+</tr>
+<tr>
+  <td><code>type(value)</code></td>
+  <td>Inspect the runtime type</td>
+</tr>
+<tr>
+  <td><code>int(value)</code></td>
+  <td>Convert a compatible value to integer</td>
+</tr>
+<tr>
+  <td><code>float(value)</code></td>
+  <td>Convert a compatible value to float</td>
+</tr>
+<tr>
+  <td><code>str(value)</code></td>
+  <td>Convert a value to text</td>
+</tr>
+<tr>
+  <td><code>complex(value)</code></td>
+  <td>Convert a compatible value to complex</td>
+</tr>
+<tr>
+  <td><code>text[index]</code></td>
+  <td>Select one character by position</td>
+</tr>
+<tr>
+  <td><code>len(text)</code></td>
+  <td>Count characters</td>
+</tr>
+<tr>
+  <td><code>text.upper()</code></td>
+  <td>Return uppercase text</td>
+</tr>
+<tr>
+  <td><code>text.title()</code></td>
+  <td>Return title-cased text</td>
+</tr>
+<tr>
+  <td><code>text.replace(old, new)</code></td>
+  <td>Return text with replacements</td>
+</tr>
+<tr>
+  <td><code>input(prompt)</code></td>
+  <td>Read text from the user</td>
+</tr>
+<tr>
+  <td><code>f&quot;{expression}&quot;</code></td>
+  <td>Insert an evaluated expression into text</td>
+</tr>
+<tr>
+  <td><code>\n</code></td>
+  <td>Start a new line inside a string</td>
+</tr>
+<tr>
+  <td><code>import module</code></td>
+  <td>Make a module available</td>
+</tr>
+<tr>
+  <td><code>module.member</code></td>
+  <td>Access a function or value from a module</td>
+</tr>
+</tbody>
+</table>
+<h2 id="common-mistakes-to-remember">Common mistakes to remember</h2>
+<ol>
+<li>Do not combine incompatible types with <code>+</code> without intentional conversion.</li>
+<li>Variable names cannot start with a digit or contain spaces, <code>-</code>, or <code>$</code>.</li>
+<li><code>input()</code> returns text even when the user types a number.</li>
+<li>String indexes start at <code>0</code>; an invalid index raises <code>IndexError</code>.</li>
+<li>String methods return new strings because strings are immutable.</li>
+</ol>
+<h2 id="session-checkpoint">Session checkpoint</h2>
+<p>After this session, you should be able to:</p>
+<ul>
+<li>create valid variables and explain Python's naming rules;</li>
+<li>recognize the common built-in data types;</li>
+<li>convert compatible values between <code>str</code>, <code>int</code>, <code>float</code>, and <code>complex</code>;</li>
+<li>index and transform strings;</li>
+<li>read user input and format output with f-strings;</li>
+<li>explain why each intentional error in the notebook occurs.</li>
+</ul>
+<div class="note"><div class="h">Note</div><p><strong>If you remember only one thing:</strong> a Python value has a type, and that type
+determines which operations are valid. Inspect the type and convert values
+intentionally instead of asking Python to guess.</p>
+</div>
+<p><a href="../../../15_Docs/phase_01_python.md">Back to Phase 01</a> · <a href="../../../15_Docs/ROADMAP.html">Open the visual roadmap</a></p>
+
+<div class="src-head">📓 <a href="../Concept/variables_data_types_numbers_strings.ipynb">variables_data_types_numbers_strings.ipynb</a></div>
+<h2 id="variables">Variables</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">a = 5
+a</pre></div>
+<div class="out"><div class="h">Output</div><pre>5</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">b = &#x27;Shridhar&#x27;
+b
+a</pre></div>
+<div class="out"><div class="h">Output</div><pre>5</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">c = &quot;Shridhar&quot;
+c</pre></div>
+<div class="out"><div class="h">Output</div><pre>&#x27;Shridhar&#x27;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">print(a)
+print(b)</pre></div>
+<div class="out"><div class="h">Output</div><pre>5
+Shridhar</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">x = str(5)    
+y = int(5)    
+z = float(5)
+
+print(x)
+print(y)
+print(z)</pre></div>
+<div class="out"><div class="h">Output</div><pre>5
+5
+5.0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">print(type(x))
+print(type(y))
+print(type(z))</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;str&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">p = &#x27;Shridhar&#x27;
+P = &#x27;Mankar&#x27;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">print(p)
+print(P)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Shridhar
+Mankar</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">print(p + &#x27; &#x27; + P)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Shridhar Mankar</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">print(a+y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>10</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">print(a+b)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/1083478837.py in &lt;module&gt;
+----&gt; 1 print(a+b)
+
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">variable = 5
+vari_able = 5
+_variable = 5
+Variable = 5
+VARIABLE = 5
+variable5 = 5</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">5variable = 5</pre></div>
+<div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/3299328541.py&quot;, line 1
+    5variable = 5
+     ^
+SyntaxError: invalid syntax</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">vari-able = 5</pre></div>
+<div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/225172146.py&quot;, line 1
+    vari-able = 5
+    ^
+SyntaxError: cannot assign to operator</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">var$able = 5</pre></div>
+<div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/3601564415.py&quot;, line 1
+    var$able = 5
+       ^
+SyntaxError: invalid syntax</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">vari able =5</pre></div>
+<div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/1683983009.py&quot;, line 1
+    vari able =5
+         ^
+SyntaxError: invalid syntax</pre></div>
+<h2 id="datatypes">Datatypes</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">x1 = 5
+x2 = &#x27;shridhar&#x27;
+x3 = 5.0
+x4 = True
+x5 = 5j
+x6 = [1,2,3]
+x7 = {1,2,3}
+x8 = (1,2,3)
+x9 = {&#x27;naam&#x27; : &#x27;shridhar&#x27;, &#x27;kaam&#x27; : &#x27;Students ki help karna&#x27;}
+x10 = None</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">print(type(x1))
+print(type(x2))
+print(type(x3))
+print(type(x4))
+print(type(x5))
+print(type(x6))
+print(type(x7))
+print(type(x8))
+print(type(x9))
+print(type(x10))</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;str&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;
+&lt;class &#x27;bool&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;list&#x27;&gt;
+&lt;class &#x27;set&#x27;&gt;
+&lt;class &#x27;tuple&#x27;&gt;
+&lt;class &#x27;dict&#x27;&gt;
+&lt;class &#x27;NoneType&#x27;&gt;</pre></div>
+<p>Numbers</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">num1 = 5
+num2 = -5
+num3 = 5555555555555555555555555
+num4 = 5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">import sys
+print(sys.getsizeof(num4))
+print(sys.getsizeof(num3))
+print(sys.getsizeof(num1))</pre></div>
+<div class="out"><div class="h">Output</div><pre>76
+36
+28</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">print(type(num1))
+print(type(num2))
+print(type(num3))</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">float1 = 5.0
+float2 = -5.5
+float3 = 123e4</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">print(type(float1))
+print(type(float2))
+print(type(float3))</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;float&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">com1 = 0+1j
+com2 = 5j
+com3 = 1+2j
+com4 = -5j</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">print(type(com1))
+print(type(com2))
+print(type(com3))
+print(type(com4))</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">int1 = int(float1)
+int2 = int(com1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/1682505834.py in &lt;module&gt;
+      1 int1 = int(float1)
+----&gt; 2 int2 = int(com1)
+
+TypeError: can&#x27;t convert complex to int</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">complex1 = complex(num1)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">complex1</pre></div>
+<div class="out"><div class="h">Output</div><pre>(5+0j)</pre></div>
+<p>Strings</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">X = &#x27;&#x27;&#x27;Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai&#x27;&#x27;&#x27;
+print(X)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">type(X)</pre></div>
+<div class="out"><div class="h">Output</div><pre>str</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">Y = &quot;&quot;&quot;Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai&quot;&quot;&quot;
+print(Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">Z = &#x27;shridhar&#x27;
+print(Z[0])
+print(Z[1])
+print(Z[2])
+print(Z[3])
+print(Z[4])
+print(Z[5])
+print(Z[6])
+print(Z[7])</pre></div>
+<div class="out"><div class="h">Output</div><pre>s
+h
+r
+i
+d
+h
+a
+r</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">print(len(Z))</pre></div>
+<div class="out"><div class="h">Output</div><pre>8</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">print(len(X))</pre></div>
+<div class="out"><div class="h">Output</div><pre>92</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">print(Z.upper())
+print(Z.title())
+print(Z.replace(&quot;shridhar&quot;, &quot;shreedhar&quot;))</pre></div>
+<div class="out"><div class="h">Output</div><pre>SHRIDHAR
+Shridhar
+shreedhar</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">name = input(&quot;Enter name: &quot;)
+
+print(name)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Enter name: shridhar
+shridhar</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">name = &quot;Shridhar&quot;
+score = 95
+
+print(f&quot;{name} scored {score}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Shridhar scored 95</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">name = input(&quot;Enter your full name: &quot;)
+age = int(input(&quot;Enter your age: &quot;))
+course = input(&quot;Enter your course name: &quot;)
+fees = float(input(&quot;Enter course fees: &quot;))
+
+first_letter = name[0]
+last_letter = name[-1]
+
+discount = fees * 0.10
+final_fees = fees - discount
+
+print(&quot;\n----- STUDENT REPORT -----&quot;)
+
+print(f&quot;Name : {name.title()}&quot;)
+print(f&quot;Age : {age}&quot;)
+print(f&quot;Course : {course.upper()}&quot;)
+
+print(f&quot;\nFirst Letter : {first_letter}&quot;)
+print(f&quot;Last Letter : {last_letter}&quot;)
+
+print(f&quot;\nOriginal Fees : ₹{fees}&quot;)
+print(f&quot;Discount : ₹{discount}&quot;)
+print(f&quot;Final Fees : ₹{final_fees}&quot;)
+
+print(&quot;\n----- DATA TYPES -----&quot;)
+print(type(name))
+print(type(age))
+print(type(fees))
+
+print(f&quot;\nWelcome {name.title()}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Enter your full name: Shridhar Mankar
+Enter your age: 28
+Enter your course name: Ultimate AI Mastery BootCamp
+Enter course fees: 8000
+
+----- STUDENT REPORT -----
+Name : Shridhar Mankar
+Age : 28
+Course : ULTIMATE AI MASTERY BOOTCAMP
+
+First Letter : S
+Last Letter : r
+
+Original Fees : ₹8000.0
+Discount : ₹800.0
+Final Fees : ₹7200.0
+
+----- DATA TYPES -----
+&lt;class &#x27;str&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;
+
+Welcome Shridhar Mankar</pre></div>
+<div class="foot"><a class="btn" href="../Concept/variables_data_types_numbers_strings.ipynb">variables_data_types_numbers_strings.ipynb ↗</a><a class="btn" href="../Concept/README.md">README.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

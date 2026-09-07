@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missing Values — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Missing Values</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#machine-learning-06-dropping-missing-values">Machine Learning — 06. Dropping Missing Values</a><a href="#the-two-methods-in-order">The Two Methods, In Order</a><a href="#method-1-drop-the-column-50-missing">Method 1: Drop the Column (≥ 50% missing)</a><a href="#method-2-drop-the-row">Method 2: Drop the Row</a><a href="#the-real-numbers-from-loans-csv">The Real Numbers, From loans.csv</a><a href="#a-note-on-axis-the-same-word-three-different-mea">A Note on axis — the Same Word, Three Different Mean</a><a href="#when-to-use-which">When to Use Which</a><a href="#where-this-fits">Where This Fits</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a><a href="#machine-learning-07-filling-imputing-missing-val">Machine Learning — 07. Filling (Imputing) Missing Va</a><a href="#info-the-other-way-to-see-what-s-missing">.info() — the other way to see what&#x27;s missing</a><a href="#the-decision-type-and-pattern-not-just-type">The Decision: Type and Pattern, Not Just Type</a><a href="#method-a-statistic-fill-mean-median-mode">Method A: Statistic Fill — mean / median / mode</a><a href="#method-b-forward-fill-backward-fill">Method B: Forward Fill / Backward Fill</a><a href="#the-axis-parameter-which-direction-is-quot-fill-">The axis Parameter — which direction is &amp;quot;fill&amp;q</a><a href="#filling-categorical-columns-your-screenshot-s-co">Filling Categorical Columns — Your Screenshot&#x27;s Code</a><a href="#filling-numerical-columns">Filling Numerical Columns</a><a href="#where-this-fits">Where This Fits</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a><a href="#06-dropping-missing-values-hands-on">06 - Dropping Missing Values (Hands-On)</a><a href="#method-1-drop-the-column-gt-50-missing">Method 1: Drop the Column (&amp;gt;= 50% missing)</a><a href="#method-2-drop-the-row">Method 2: Drop the Row</a><a href="#the-real-numbers-proving-the-161-row-drop">The Real Numbers - proving the 161-row drop</a><a href="#recap">Recap</a><a href="#dropping-missing-values-when-method-1-actually-f">Dropping Missing Values - When Method 1 Actually Fir</a><a href="#method-1-does-it-fire-this-time">Method 1 - does it fire this time?</a><a href="#why-column-first-matters-now-with-real-numbers">Why column-first matters - now with real numbers</a><a href="#before-dropping-it-outright-the-missing-indicato">Before dropping it outright - the missing-indicator </a><a href="#recap">Recap</a><a href="#07-filling-missing-values-hands-on">07 - Filling Missing Values (Hands-On)</a><a href="#recap-which-columns-need-filling">Recap: which columns need filling</a><a href="#the-screenshot-s-code-tested-live">The screenshot&#x27;s code, tested live</a><a href="#the-other-gotcha-select-dtypes-include-quot-obje">The other gotcha - select_dtypes(include=&amp;quot;objec</a><a href="#filling-the-rest-of-the-categorical-columns">Filling the rest of the categorical columns</a><a href="#numerical-columns-median-except-credit-history">Numerical columns - median, except Credit_History</a><a href="#recap">Recap</a><a href="#07b-forward-backward-fill-and-axis-1-hands-on">07b - Forward/Backward Fill and axis=1 (Hands-On)</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Missing Values</h1>
+  <p class="lede">Blanks are not zero. What you put in their place changes the answer.</p>
+  <div class="tags"><span class="tag">5 notebooks · 2 notes</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Sunita had 614 loan applications and 50 blanks in the income column.</strong> Her first instinct: delete those rows. Simple and honest.</p><p>But the blanks were not random. Self-employed applicants were the ones leaving income empty — so deleting them deleted almost every self-employed person from the data.</p><p><span class='beat'>The model that came out was excellent at judging salaried applicants and blind to everyone else.</span> The bias came from the cleaning step, not the algorithm.</p><p>So the real question is <em>why</em> is it missing? Missing at random can be filled with a mean or median. Missing for a reason must be kept, flagged, and modelled.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Deleting rows loses information; filling them invents it. The skill is choosing which cost to pay.</p></div>
+<div class="src-head">📝 <a href="../Concept/06_Dropping_Missing_Values.MD">06_Dropping_Missing_Values.MD</a></div>
+<h2 id="machine-learning-06-dropping-missing-values">Machine Learning — 06. Dropping Missing Values</h2>
+<p>The &quot;delete it&quot; branch of Handling Missing Data (sub-skill #1 in
+<code>04_Data_Cleaning.MD</code>) — the alternative to imputation. Two methods,
+applied <strong>in this order</strong>, not interchangeably.</p>
+<p>Every code block below is walked <strong>line by line, syntax piece by syntax
+piece</strong>, with the real value it produces when actually run against this
+repo's <code>loans.csv</code> — not a guess, every number here was executed and
+checked before being written down.</p>
+<hr />
+<h2 id="the-two-methods-in-order">The Two Methods, In Order</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    A[&quot;Missing values found&lt;br/&gt;dataset.isnull().sum()&quot;] --&gt; B{&quot;Is this COLUMN&lt;br/&gt;&amp;ge; 50% missing?&quot;}
+    B --&gt;|&quot;Yes&quot;| C[&quot;Method 1 - Drop the column&lt;br/&gt;too little real signal to impute&quot;]
+    B --&gt;|&quot;No&quot;| D{&quot;Is this ROW&lt;br/&gt;missing a value?&quot;}
+    D --&gt;|&quot;Yes, few rows affected&quot;| E[&quot;Method 2 - Drop the row&quot;]
+    D --&gt;|&quot;No&quot;| F[&quot;Keep it, impute later&quot;]
+
+    style C fill:#b33a3a,stroke:#7a2626,color:#fff
+    style E fill:#b33a3a,stroke:#7a2626,color:#fff
+    style F fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+</pre></div>
+<p><strong>Why column-first:</strong> a single mostly-empty column can make <em>many rows</em>
+look incomplete even though the rows themselves are fine. Removing that
+one bad column first can rescue a lot of rows that a blind row-level pass
+would otherwise throw away (proven with real numbers in the last section).</p>
+<hr />
+<h2 id="method-1-drop-the-column-50-missing">Method 1: Drop the Column (≥ 50% missing)</h2>
+<p>If more than half a column is missing, imputing it means inventing more
+values than you actually observed — past that point, dropping the column
+is more honest than filling it.</p>
+<div class="code"><pre class="py">missing_pct = (dataset.isnull().sum() / dataset.shape[0]) * 100
+cols_to_drop = missing_pct[missing_pct &gt;= 50].index
+dataset_cleaned = dataset.drop(columns=cols_to_drop)
+</pre></div>
+<h3>Line 1, piece by piece — <code>missing_pct = (dataset.isnull().sum() / dataset.shape[0]) * 100</code></h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+  <th>What it actually is here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>dataset.isnull()</code></td>
+  <td>Every one of the 618×13 cells becomes <code>True</code> (missing) or <code>False</code> (present)</td>
+  <td>a grid the same shape as <code>dataset</code>, full of booleans</td>
+</tr>
+<tr>
+  <td><code>.sum()</code></td>
+  <td>Adds up the <code>True</code>s <strong>down each column</strong> (<code>axis=0</code> is the default — one total per column)</td>
+  <td>a Series of 13 numbers</td>
+</tr>
+<tr>
+  <td><code>dataset.shape</code></td>
+  <td>The DataFrame's <code>(rows, columns)</code> as a tuple</td>
+  <td><code>(618, 13)</code></td>
+</tr>
+<tr>
+  <td><code>dataset.shape[0]</code></td>
+  <td>Index <code>0</code> into that tuple = the row count</td>
+  <td><code>618</code></td>
+</tr>
+<tr>
+  <td><code>... / dataset.shape[0]</code></td>
+  <td>Each column's missing <em>count</em> ÷ total rows = a <em>fraction</em></td>
+  <td>e.g. <code>Gender</code>: <code>13 / 618 = 0.02104</code></td>
+</tr>
+<tr>
+  <td><code>* 100</code></td>
+  <td>Fraction → percentage</td>
+  <td>e.g. <code>Gender</code>: <code>2.10</code></td>
+</tr>
+</tbody>
+</table>
+<p>The real <code>missing_pct</code> this produces:</p>
+<div class="code"><pre>Loan_ID              0.00
+Gender               2.10
+Married              0.97
+Dependents           2.43
+Education            1.46
+Self_Employed        5.18
+ApplicantIncome      0.32
+CoapplicantIncome    0.00
+LoanAmount           3.56
+Loan_Amount_Term     3.40
+Credit_History       8.09   &lt;- worst column
+Property_Area        1.46
+Loan_Status          0.00
+</pre></div>
+<h3>Line 2, piece by piece — <code>cols_to_drop = missing_pct[missing_pct &gt;= 50].index</code></h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+  <th>What it actually is here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>missing_pct &gt;= 50</code></td>
+  <td>Compares <strong>every value</strong> in the Series to <code>50</code>, producing a same-shaped Series of <code>True</code>/<code>False</code></td>
+  <td><code>False</code> for <strong>all 13 columns</strong> — even <code>Credit_History</code> at 8.09 is nowhere close to 50</td>
+</tr>
+<tr>
+  <td><code>missing_pct[ ... ]</code></td>
+  <td><strong>Boolean indexing</strong>: put a <code>True</code>/<code>False</code> Series in brackets and pandas keeps only the entries where it's <code>True</code></td>
+  <td>an <strong>empty</strong> Series — nothing scored <code>True</code></td>
+</tr>
+<tr>
+  <td><code>.index</code></td>
+  <td>Pulls out just the <em>labels</em> (column names) from whatever's left, discarding the numeric values</td>
+  <td><code>Index([], dtype='str')</code> — an empty list of column names</td>
+</tr>
+</tbody>
+</table>
+<p>So <code>cols_to_drop</code> is an empty list. That's not a mistake in the code — it's
+the correct, honest answer: <strong>no column in <code>loans.csv</code> is anywhere near
+50% missing.</strong></p>
+<h3>Line 3, piece by piece — <code>dataset_cleaned = dataset.drop(columns=cols_to_drop)</code></h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+  <th>What it actually is here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>.drop(columns=cols_to_drop)</code></td>
+  <td>Removes every column named in the list</td>
+  <td>the list is empty, so <strong>nothing is removed</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Final result:</strong> <code>dataset_cleaned.shape</code> → <code>(618, 13)</code> — identical to
+<code>dataset</code>. The code is correct <em>and</em> the outcome is &quot;do nothing,&quot; which is
+the point: this method should only act when there's actually something to
+act on.</p>
+<h3>The two &quot;idiomatic one-liner&quot; alternatives</h3>
+<p>Same outcome, written the way you'll actually see it in other people's
+code:</p>
+<div class="code"><pre class="py">dataset.dropna(axis=1, thresh=int(0.5 * len(dataset)))
+dataset.loc[:, dataset.isnull().mean() &lt; 0.5]
+</pre></div>
+<p><strong><code>dataset.dropna(axis=1, thresh=int(0.5 * len(dataset)))</code>:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+  <th>Value here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>len(dataset)</code></td>
+  <td>For a DataFrame, <code>len()</code> returns the row count — same number as <code>.shape[0]</code></td>
+  <td><code>618</code></td>
+</tr>
+<tr>
+  <td><code>0.5 * len(dataset)</code></td>
+  <td>Half the rows</td>
+  <td><code>309.0</code></td>
+</tr>
+<tr>
+  <td><code>int(...)</code></td>
+  <td><code>thresh</code> must be a whole number, not <code>309.0</code></td>
+  <td><code>309</code></td>
+</tr>
+<tr>
+  <td><code>axis=1</code></td>
+  <td>Tells <code>dropna</code> to evaluate and drop <strong>columns</strong> as the unit (not rows) — this is a <em>different</em> meaning of <code>axis=1</code> than the fill-direction one in <code>07_Filling_Missing_Values.MD</code>, see the callout below</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td><code>thresh=309</code></td>
+  <td>Keep a column only if it has <strong>at least 309 non-null values</strong> out of 618</td>
+  <td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Real result: <code>(618, 13)</code> — every column's worst case (<code>Credit_History</code>)
+still has <code>618 - 50 = 568</code> non-null values, comfortably over 309.</p>
+<p><strong><code>dataset.loc[:, dataset.isnull().mean() &lt; 0.5]</code>:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+  <th>Value here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>dataset.isnull().mean()</code></td>
+  <td>Same idea as <code>.sum() / dataset.shape[0]</code> from Line 1, done in one call — mean of <code>True</code>/<code>False</code> <em>is</em> the proportion of <code>True</code></td>
+  <td><code>Gender: 0.0210</code>, ..., <code>Credit_History: 0.0809</code></td>
+</tr>
+<tr>
+  <td><code>... &lt; 0.5</code></td>
+  <td>Boolean Series, one entry per column</td>
+  <td><code>True</code> for all 13 columns</td>
+</tr>
+<tr>
+  <td><code>dataset.loc[row_selector, column_selector]</code></td>
+  <td><code>.loc</code> takes <strong>two</strong> selectors separated by a comma</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td><code>:</code> (the row selector)</td>
+  <td>&quot;every row, no filtering&quot;</td>
+  <td>all 618 rows</td>
+</tr>
+<tr>
+  <td>the boolean Series (the column selector)</td>
+  <td>keep only columns where it's <code>True</code></td>
+  <td>all 13 columns</td>
+</tr>
+</tbody>
+</table>
+<p>Real result: <code>(618, 13)</code> — same answer as every version above, because
+they're three different sentences for the exact same idea.</p>
+<p><strong>Caveat worth knowing:</strong> a column can be both high-missing <em>and</em> highly
+predictive — <code>Credit_History</code> is the textbook example for this dataset. In
+that case, dropping it outright throws away real signal. The more careful
+move is often a <strong>missing-indicator flag</strong> (a new <code>Credit_History_was_missing</code>
+column of 0/1) kept <em>alongside</em> an imputed value, rather than deleting the
+column — the fact that it was missing can itself be informative.</p>
+<hr />
+<h2 id="method-2-drop-the-row">Method 2: Drop the Row</h2>
+<p>For scattered, low-volume missingness once the worst columns are gone —
+remove the affected rows instead.</p>
+<div class="code"><pre class="py">dataset.dropna()
+dataset.dropna(subset=[&quot;Loan_Status&quot;])
+dataset.dropna(thresh=12)
+</pre></div>
+<h3><code>dataset.dropna()</code> — the default</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>Default value</th>
+  <th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>axis</code></td>
+  <td><code>0</code></td>
+  <td>operate on <strong>rows</strong></td>
+</tr>
+<tr>
+  <td><code>how</code></td>
+  <td><code>&quot;any&quot;</code></td>
+  <td>drop the row if <strong>any</strong> of its 13 columns is missing</td>
+</tr>
+</tbody>
+</table>
+<p>Real result:</p>
+<div class="code"><pre>&gt;&gt;&gt; dataset.dropna().shape
+(457, 13)
+</pre></div>
+<p><code>618 - 457 = 161</code> rows removed — over a quarter of the dataset, from
+columns that individually looked almost fine (worst was 8.09%). Full
+explanation of why, with the exact mechanism, in the next section.</p>
+<h3><code>dataset.dropna(subset=[&quot;Loan_Status&quot;])</code></h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>subset=[&quot;Loan_Status&quot;]</code></td>
+  <td>Instead of checking <em>all</em> 13 columns, only check the column(s) named here — ignore missingness everywhere else</td>
+</tr>
+</tbody>
+</table>
+<p>Real result: <code>Loan_Status</code> has <strong>0</strong> missing values in <code>loans.csv</code>, so
+<code>dataset.dropna(subset=[&quot;Loan_Status&quot;]).shape</code> → <code>(618, 13)</code> — <strong>0 rows
+dropped.</strong> <code>subset=</code> is what makes <code>dropna</code> selective instead of
+all-or-nothing.</p>
+<h3><code>dataset.dropna(thresh=12)</code></h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>thresh=12</code></td>
+  <td>Keep a row only if it has <strong>at least 12 non-null values</strong> out of 13 — i.e., drop it only if <strong>2 or more</strong> columns are missing</td>
+</tr>
+</tbody>
+</table>
+<p>To see exactly why this drops what it drops, here's how many non-null
+values each row actually has, counted directly from <code>loans.csv</code>
+(<code>dataset.notnull().sum(axis=1)</code>):</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Non-null values in the row</th>
+  <th>Missing in that row</th>
+  <th># of such rows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>10</td>
+  <td>3</td>
+  <td>1</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td>2</td>
+  <td>16</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>1</td>
+  <td>144</td>
+</tr>
+<tr>
+  <td>13 (complete)</td>
+  <td>0</td>
+  <td>457</td>
+</tr>
+</tbody>
+</table>
+<p><code>thresh=12</code> keeps rows with <strong>12 or 13</strong> non-null values (<code>144 + 457 = 601</code>) and drops the rest (<code>1 + 16 = 17</code>):</p>
+<div class="code"><pre>&gt;&gt;&gt; dataset.dropna(thresh=12).shape
+(601, 13)
+</pre></div>
+<p><code>618 - 601 = 17</code> rows dropped, matching the table exactly. (If you instead
+ran <code>thresh=10</code>, notice from the table that
+<em>every</em> row already has at least 10 non-null values, so it would drop
+<strong>0</strong> rows — a threshold only starts removing rows once it's set higher
+than the worst row actually present.)</p>
+<p><code>dropna(subset=...)</code> is usually the safer default in practice — it only
+drops rows over missingness in columns you've decided actually matter,
+instead of penalizing a row for a gap in some unrelated, low-priority
+column.</p>
+<hr />
+<h2 id="the-real-numbers-from-loans-csv">The Real Numbers, From <code>loans.csv</code></h2>
+<p>Every column here is well under the 50% line — Method 1 removes nothing
+(exactly what <code>05_Data_Cleaning_Practice.ipynb</code> Section 7 found). Now the
+surprise: plain <code>dataset.dropna()</code> still removes <strong>161 rows (26.05%)</strong>.
+Here's the exact mechanism, traced line by line.</p>
+<div class="code"><pre class="py">dataset.isnull().any(axis=1).sum()
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Syntax piece</th>
+  <th>What it does</th>
+  <th>Value here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>dataset.isnull()</code></td>
+  <td>The same True/False grid from Method 1</td>
+  <td>618×13 booleans</td>
+</tr>
+<tr>
+  <td><code>.any(axis=1)</code></td>
+  <td>For <strong>each row</strong>, collapse across its 13 columns: <code>True</code> if <em>at least one</em> is <code>True</code></td>
+  <td>a Series of 618 booleans, one per row</td>
+</tr>
+<tr>
+  <td><code>.sum()</code></td>
+  <td>Count how many rows came back <code>True</code></td>
+  <td><code>161</code></td>
+</tr>
+</tbody>
+</table>
+<p>First 10 rows of that intermediate <code>.any(axis=1)</code> Series, so &quot;one per row&quot;
+isn't just an abstract claim:</p>
+<div class="code"><pre>0    False
+1    False
+2    False
+3    False
+4    False
+5     True   &lt;- this row is missing at least one value
+6    False
+7     True
+8    False
+9    False
+</pre></div>
+<p><strong>Why 161 rows, when no single column is worse than 8.09%:</strong> with 13
+largely independent columns, the <em>chance a given row is missing in at
+least one of them</em> compounds well past any single column's individual
+rate — it's a union across 13 events, not any one event's probability.
+This is exactly why blind, whole-dataset <code>dropna()</code> is risky, and why
+<code>dropna(subset=...)</code> — targeted at the columns you actually care about —
+is usually the better default once Method 1 is done.</p>
+<hr />
+<h2 id="a-note-on-axis-the-same-word-three-different-mea">A Note on <code>axis</code> — the Same Word, Three Different Meanings</h2>
+<p><code>axis=1</code> has now shown up three times across this file and
+<code>07_Filling_Missing_Values.MD</code>, meaning something <strong>slightly different</strong>
+each time — this is the single most common source of confusion in pandas
+code, worth collecting in one place:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th><code>axis=1</code> means...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>df.fillna(method=&quot;ffill&quot;, axis=1)</code> (see <code>07_Filling_Missing_Values.MD</code>)</td>
+  <td>Fill <strong>direction</strong>: across a row, left to right</td>
+</tr>
+<tr>
+  <td><code>df.dropna(axis=1)</code></td>
+  <td>What's being evaluated-and-dropped: <strong>columns</strong>, not rows</td>
+</tr>
+<tr>
+  <td><code>df.isnull().any(axis=1)</code> / <code>.sum(axis=1)</code></td>
+  <td>Direction of the <strong>reduction</strong>: collapse across each row's columns, producing one result <em>per row</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule of thumb:</strong> <code>axis=0</code> (&quot;down the rows,&quot; per column) is the default
+almost everywhere and almost always what you want for tabular data.
+<code>axis=1</code> (&quot;across the columns,&quot; per row) is the deliberate exception — and
+because it means something slightly different per method, the safest habit
+is to test it on a small example rather than assume, the same way every
+value in this file was verified against <code>loans.csv</code> before being written
+down.</p>
+<hr />
+<h2 id="when-to-use-which">When to Use Which</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Signal</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>One column, mostly empty (≥ 50%)</td>
+  <td><strong>Method 1</strong> — drop the column</td>
+</tr>
+<tr>
+  <td>A handful of rows, missing in many columns at once (&quot;bad records&quot;)</td>
+  <td><strong>Method 2</strong> — drop those rows</td>
+</tr>
+<tr>
+  <td>Many rows, each missing just one value, in <em>different</em> columns</td>
+  <td>Don't blindly drop rows — impute instead</td>
+</tr>
+<tr>
+  <td>A column that's high-missing but highly predictive</td>
+  <td>Missing-indicator flag instead of a straight drop</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="where-this-fits">Where This Fits</h2>
+<ul>
+<li><code>04_Data_Cleaning.MD</code> — this is the &quot;delete&quot; half of sub-skill #1
+(Handling Missing Data); <code>07_Filling_Missing_Values.MD</code> is the other half.</li>
+<li><code>05_Data_Cleaning_Practice.ipynb</code> Section 7 already implements Method 1
+(<code>flag_high_missing_columns</code>) against the real <code>loans.csv</code> data — every
+number in this file was computed the same way, straight from that
+dataset.</li>
+</ul>
+<hr />
+<h2 id="faq-common-mix-ups">FAQ — Common Mix-Ups</h2>
+<ol>
+<li><strong>&quot;Why 50% specifically?&quot;</strong> No universal law — it's a common default
+because past the halfway point you're imputing more values than you
+actually observed. Some teams use 30–40% for less critical columns, or
+keep a column at any missingness level if it's important enough to
+justify a missing-indicator flag instead of deletion.</li>
+<li><strong>&quot;Dropping rows is always safer than dropping columns, since I lose
+less information overall.&quot;</strong> Not necessarily — see the <code>loans.csv</code>
+example above: 26% of rows gone from columns that individually looked
+fine. Column-first, then targeted row deletion, is the safer order.</li>
+<li><strong>&quot;<code>dropna()</code> and <code>dropna(subset=...)</code> do basically the same thing.&quot;</strong>
+No — plain <code>dropna()</code> penalizes a row for <em>any</em> missing column, even
+ones you don't care about for this analysis; <code>subset=</code> limits the check
+to columns that actually matter, which is almost always what you want.</li>
+<li><strong>&quot;<code>axis=1</code> means the same thing everywhere in pandas.&quot;</strong> No — see the
+dedicated callout above. Always check which operation you're calling
+before assuming what <code>axis=1</code> does to it.</li>
+</ol>
+<hr />
+<h2 id="interview-style-q-amp-a">Interview-Style Q&amp;A</h2>
+<p><strong>Q: Why check for high-missing columns before checking rows?</strong>
+A: A single mostly-empty column can make many otherwise-complete rows look
+incomplete. Removing that column first can save a large number of rows
+that a blind row-level pass would have discarded.</p>
+<p><strong>Q: In the <code>loans.csv</code> example, why does <code>dropna()</code> remove 26% of rows
+when no single column is more than ~8% missing?</strong>
+A: <code>dropna()</code> drops a row if <em>any</em> of its columns is missing. With 13
+largely independent columns, the probability that a row hits a gap
+<em>somewhere</em> compounds well past any single column's individual rate —
+the union across columns is bigger than any one column's share.</p>
+<p><strong>Q: When would you use <code>dropna(subset=[...])</code> instead of plain
+<code>dropna()</code>?</strong>
+A: When you only care about missingness in specific columns — e.g. the
+target column, or a handful of must-have features — and don't want
+unrelated gaps in low-priority columns to cost you rows unnecessarily.</p>
+<p><strong>Q: What does <code>thresh=12</code> actually do in <code>dropna(thresh=12)</code>?</strong>
+A: Keeps a row only if it has at least 12 non-null values (out of however
+many columns exist) — equivalently, drops a row once 2 or more of its
+values are missing. It's a tolerance level, not a specific column check.</p>
+
+<div class="src-head">📝 <a href="../Concept/07_Filling_Missing_Values.MD">07_Filling_Missing_Values.MD</a></div>
+<h2 id="machine-learning-07-filling-imputing-missing-val">Machine Learning — 07. Filling (Imputing) Missing Values</h2>
+<p>The other branch of Handling Missing Data (sub-skill #1 in
+<code>04_Data_Cleaning.MD</code>) — <code>06_Dropping_Missing_Values.MD</code> was about
+<em>removing</em> the gap; this file is about <em>what goes in it</em>, and how to pick
+that correctly instead of guessing.</p>
+<hr />
+<h2 id="info-the-other-way-to-see-what-s-missing"><code>.info()</code> — the other way to see what's missing</h2>
+<p>Your screenshot's <code>dataset.info()</code> tells the same story as
+<code>isnull().sum()</code> from <code>05_Data_Cleaning_Practice.ipynb</code>, just shaped
+differently — <strong>Non-Null Count</strong> instead of missing count, sitting right
+next to <strong>Dtype</strong>:</p>
+<div class="code"><pre>#   Column           Non-Null Count  Dtype
+0   Loan_ID          618 non-null    object
+1   Gender           605 non-null    object   →  618 - 605 = 13 missing
+2   Married          612 non-null    object   →  6 missing
+...
+6   ApplicantIncome  616 non-null    float64  →  2 missing
+</pre></div>
+<p>That Dtype column is the whole point of running <code>.info()</code> before you fill
+anything — it's exactly what tells you whether a column needs a <strong>number</strong>
+(mean/median) or a <strong>category</strong> (mode).</p>
+<hr />
+<h2 id="the-decision-type-and-pattern-not-just-type">The Decision: Type <em>and</em> Pattern, Not Just Type</h2>
+<p>Two separate questions decide the right fill method, not one:</p>
+<ol>
+<li><strong>What TYPE is this column?</strong> — numerical or categorical
+(<code>03_Types_Of_Variables.MD</code>)</li>
+<li><strong>What PATTERN does this dataset have?</strong> — are rows independent,
+unrelated records, or a real sequence where order carries meaning?</li>
+</ol>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    A[&quot;Column has missing values&quot;] --&gt; B{&quot;Do rows have a&lt;br/&gt;real order?&lt;br/&gt;time series, sorted log&quot;}
+    B --&gt;|&quot;Yes&quot;| C[&quot;Method B - Forward/Backward Fill&lt;br/&gt;ffill / bfill&quot;]
+    B --&gt;|&quot;No - independent rows&lt;br/&gt;e.g. loans.csv&quot;| D{&quot;Numerical or&lt;br/&gt;Categorical?&quot;}
+    D --&gt;|&quot;Numerical, no outliers&quot;| E[&quot;Fill with mean&quot;]
+    D --&gt;|&quot;Numerical, skewed/outliers&quot;| F[&quot;Fill with median&quot;]
+    D --&gt;|&quot;Categorical - or a number acting as one&quot;| G[&quot;Fill with mode&quot;]
+
+    style C fill:#7a3f66,stroke:#552b47,color:#fff
+    style E fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style F fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style G fill:#b3781f,stroke:#8a5c16,color:#fff
+</pre></div>
+<p><code>loans.csv</code> is the right-hand branch: every row is a <strong>different, unrelated
+loan applicant</strong> — row 5's <code>Gender</code> has no relationship to row 6's
+<code>Gender</code>. That single fact rules out Method B for this dataset entirely,
+no matter how tempting <code>ffill()</code> looks as a one-liner.</p>
+<hr />
+<h2 id="method-a-statistic-fill-mean-median-mode">Method A: Statistic Fill — mean / median / mode</h2>
+<p>For independent, unordered rows (this is what <code>loans.csv</code> needs):</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column shape</th>
+  <th>Fill with</th>
+  <th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Numerical, roughly symmetric</td>
+  <td><strong>Mean</strong></td>
+  <td>Uses all the information, fine when there's no skew</td>
+</tr>
+<tr>
+  <td>Numerical, skewed / has outliers</td>
+  <td><strong>Median</strong></td>
+  <td>Robust to extreme values — same reasoning as Priya's outlier income in <code>phase_3_classical_ml/02_data_cleaning/</code></td>
+</tr>
+<tr>
+  <td>Categorical (object/text)</td>
+  <td><strong>Mode</strong></td>
+  <td>The most frequent category is the best single guess</td>
+</tr>
+<tr>
+  <td>A <em>number</em> that's really a category (e.g. a 0/1 flag)</td>
+  <td><strong>Mode</strong>, not mean/median</td>
+  <td>Averaging a flag gives you a meaningless value like 0.84</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="method-b-forward-fill-backward-fill">Method B: Forward Fill / Backward Fill</h2>
+<ul>
+<li><strong><code>ffill</code></strong> — carries the <strong>last valid value forward</strong> into the gap.</li>
+<li><strong><code>bfill</code></strong> — carries the <strong>next valid value backward</strong> into the gap.</li>
+</ul>
+<p>These only make sense when <strong>row order carries real information</strong> — a
+temperature sensor logged every hour, a stock price logged every minute, a
+status log sorted by timestamp:</p>
+<div class="code"><pre class="py"># Ordered data — this is a legitimate use of ffill/bfill
+readings = pd.Series([21.5, None, None, 22.1, 22.4, None])
+readings.ffill()   # [21.5, 21.5, 21.5, 22.1, 22.4, 22.4]  — &quot;last known reading&quot;
+readings.bfill()   # [21.5, 22.1, 22.1, 22.1, 22.4, None]  — &quot;next known reading&quot;
+</pre></div>
+<p><strong>Why this is the wrong tool for <code>loans.csv</code>:</strong> the code below <em>runs
+without error</em> — that's exactly the trap:</p>
+<div class="code"><pre class="py">dataset[&quot;Gender&quot;].ffill()   # fills applicant #8&#x27;s missing Gender with applicant #7&#x27;s Gender
+</pre></div>
+<p>Applicant #7 and applicant #8 are two unrelated people who happen to sit
+next to each other in the file. There's no real-world reason #8's gender
+should resemble #7's — a working line of code is not the same thing as a
+correct one.</p>
+<hr />
+<h2 id="the-axis-parameter-which-direction-is-quot-fill-">The <code>axis</code> Parameter — which direction is &quot;fill&quot;?</h2>
+<ul>
+<li><strong><code>axis=0</code></strong> (default) — fill <strong>down a column</strong>, using other rows in the
+<em>same column</em>. This is what you want almost every time for tabular data.</li>
+<li><strong><code>axis=1</code></strong> — fill <strong>across a row</strong>, using other columns in the <em>same
+row</em>. Only meaningful when neighboring <em>columns</em> are comparable,
+related measurements — e.g. <code>Day1_Sales</code>, <code>Day2_Sales</code>, <code>Day3_Sales</code>
+columns for the same store.</li>
+</ul>
+<p>The mode-filling loop from your screenshot —
+<code>for i in dataset.select_dtypes(include=&quot;object&quot;).columns:</code> — is
+fundamentally a <strong>per-column, <code>axis=0</code>-style</strong> operation: each column
+computes and fills with <strong>its own</strong> mode. A true <code>axis=1</code> mode fill would
+be <code>dataset.mode(axis=1)</code> — the most frequent value <em>across</em> each row —
+which would mean asking &quot;what's the most common value among this one
+applicant's <code>Gender</code>, <code>Married</code>, <code>Property_Area</code>...&quot; That's not a
+meaningful question for <code>loans.csv</code>, since those columns aren't comparable
+quantities. <strong><code>axis=1</code> and mode-filling don't combine here</strong> — the
+screenshot's per-column loop is the correct approach, and it's already
+<code>axis=0</code> in spirit even though the code never says so explicitly.</p>
+<hr />
+<h2 id="filling-categorical-columns-your-screenshot-s-co">Filling Categorical Columns — Your Screenshot's Code, Corrected</h2>
+<p>Your screenshot's code:</p>
+<div class="code"><pre class="py">for i in dataset.select_dtypes(include=&quot;object&quot;).columns:
+    dataset[i].fillna(dataset[i].mode()[0], inplace=True)
+</pre></div>
+<p>I ran this exact line against your <code>loans.csv</code> in this repo's environment
+(pandas 3.0.3) to check it before writing this note — <strong>it doesn't
+actually work here</strong>, for two environment-specific reasons:</p>
+<ol>
+<li><strong><code>inplace=True</code> silently fails.</strong> Pandas 3.0 made Copy-on-Write the
+default. <code>dataset[i]</code> returns a copy under the hood, so
+<code>.fillna(..., inplace=True)</code> modifies that throwaway copy, not
+<code>dataset</code> itself. Tested: after running the line above, <code>Gender</code> still
+had all 13 of its original missing values — no error, no effect.
+<strong>Fix: reassign instead of using <code>inplace</code>.</strong></li>
+<li><strong><code>include=&quot;object&quot;</code> is deprecated.</strong> Pandas 3.0 gave text columns
+their own dedicated <code>str</code> dtype instead of the old generic <code>object</code>.
+<code>include=&quot;object&quot;</code> still works today for backward compatibility (with a
+deprecation warning), but <code>include=&quot;str&quot;</code> is the version that won't
+break later.</li>
+</ol>
+<div class="code"><pre class="py">categorical_cols = dataset.select_dtypes(include=&quot;str&quot;).columns
+
+for col in categorical_cols:
+    dataset[col] = dataset[col].fillna(dataset[col].mode()[0])
+</pre></div>
+<p>Verified this version against <code>loans.csv</code> — <code>Gender</code>'s missing count goes
+from 13 to 0.</p>
+<hr />
+<h2 id="filling-numerical-columns">Filling Numerical Columns</h2>
+<div class="code"><pre class="py">numerical_cols = dataset.select_dtypes(include=[&quot;int64&quot;, &quot;float64&quot;]).columns
+
+for col in numerical_cols:
+    if col == &quot;Credit_History&quot;:
+        dataset[col] = dataset[col].fillna(dataset[col].mode()[0])  # 0/1 flag, not a real number
+    else:
+        dataset[col] = dataset[col].fillna(dataset[col].median())
+</pre></div>
+<p><strong>Why <code>Credit_History</code> gets special-cased:</strong> it's stored as <code>float64</code> (0.0
+or 1.0) because a <code>NaN</code> anywhere in an integer column forces the whole
+column to <code>float</code>, but it's conceptually a <strong>category acting as a number</strong>
+— the same &quot;looks numeric, isn't meaningfully numerical&quot; idea from
+<code>03_Types_Of_Variables.MD</code>'s <code>Emp_id</code> example, except here the column <em>is</em>
+worth keeping, just handled as categorical (mode), not continuous
+(mean/median).</p>
+<hr />
+<h2 id="where-this-fits">Where This Fits</h2>
+<ul>
+<li><code>04_Data_Cleaning.MD</code> — the &quot;fill&quot; half of sub-skill #1, completing the
+pair with <code>06_Dropping_Missing_Values.MD</code>'s &quot;delete&quot; half.</li>
+<li><code>05_Data_Cleaning_Practice.ipynb</code> Section 8 runs this for real against
+<code>loans.csv</code>, with a before/after chart showing every column drop to zero
+missing.</li>
+</ul>
+<hr />
+<h2 id="faq-common-mix-ups">FAQ — Common Mix-Ups</h2>
+<ol>
+<li><strong>&quot;Why not always use the mean for numbers — it's simpler?&quot;</strong> Mean is
+pulled toward outliers; median isn't. If a column is skewed (like
+<code>ApplicantIncome</code> tends to be — a few very high earners), the mean can
+end up higher than most real values, making it a worse &quot;typical&quot; guess
+than the median.</li>
+<li><strong>&quot;<code>ffill()</code> ran without an error on <code>loans.csv</code>, so it must be fine?&quot;</strong>
+Running without an error and being conceptually correct are different
+things. <code>ffill</code>/<code>bfill</code> assume neighboring rows are related — true for
+a time series, false for a table of unrelated loan applicants.</li>
+<li><strong>&quot;Why did the screenshot's exact <code>inplace=True</code> code fail in my
+notebook?&quot;</strong> Pandas 3.0's Copy-on-Write default — <code>inplace=True</code> on a
+column obtained via <code>dataset[col]</code> modifies a temporary copy, not the
+original. Reassign (<code>dataset[col] = dataset[col].fillna(...)</code>) instead.</li>
+<li><strong>&quot;<code>Credit_History</code> is a <code>float64</code> column — why fill it like a
+category?&quot;</strong> Dtype (how it's <em>stored</em>) and variable type (what it
+<em>means</em>) aren't the same thing — a 0/1 flag is categorical no matter
+what dtype pandas gives it.</li>
+</ol>
+<hr />
+<h2 id="interview-style-q-amp-a">Interview-Style Q&amp;A</h2>
+<p><strong>Q: When would you choose median over mean for imputing a numerical
+column?</strong>
+A: When the column is skewed or has outliers — the mean gets pulled toward
+extreme values, while the median stays representative of the typical
+value regardless of a few very large or very small entries.</p>
+<p><strong>Q: Why is forward/backward fill inappropriate for a dataset like
+<code>loans.csv</code>, even though the code runs successfully?</strong>
+A: <code>ffill</code>/<code>bfill</code> assume adjacent rows are related — true for ordered,
+sequential data like a time series, false for a table of independent,
+unrelated loan applicants. A row's neighbor in the file has no real-world
+connection to it, so borrowing its value is arbitrary, not principled.</p>
+<p><strong>Q: What's wrong with <code>df[col].fillna(value, inplace=True)</code> in a modern
+pandas version?</strong>
+A: Under Copy-on-Write (default since pandas 3.0), <code>df[col]</code> can return a
+copy rather than a view into the original DataFrame, so the in-place
+modification happens on that copy and never reaches <code>df</code> — the call
+appears to succeed but silently does nothing. Reassigning
+(<code>df[col] = df[col].fillna(value)</code>) is the version that's guaranteed to
+work.</p>
+
+<div class="src-head">📓 <a href="../Concept/06_Dropping_Missing_Values.ipynb">06_Dropping_Missing_Values.ipynb</a></div>
+<h2 id="06-dropping-missing-values-hands-on">06 - Dropping Missing Values (Hands-On)</h2>
+<p>Every line from <code>06_Dropping_Missing_Values.MD</code>, run for real, broken into small enough pieces that each one's own output is visible - no step is left as &quot;trust me.&quot;</p>
+<p>Dataset: <code>../../_shared_data/loans.csv</code>, same one used in <code>05_Data_Cleaning_Practice.ipynb</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<h2 id="method-1-drop-the-column-gt-50-missing">Method 1: Drop the Column (&gt;= 50% missing)</h2>
+<p>Building <code>missing_pct = (dataset.isnull().sum() / dataset.shape[0]) * 100</code> one piece at a time.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">dataset.isnull().head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Loan_ID  Gender  Married  Dependents  Education  Self_Employed  \
+0    False   False    False       False      False          False   
+1    False   False    False       False      False          False   
+2    False   False    False       False      False          False   
+3    False   False    False       False      False          False   
+4    False   False    False       False      False          False   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0            False              False       False             False   
+1            False              False       False             False   
+2            False              False       False             False   
+3            False              False       False             False   
+4            False              False       False             False   
+
+   Credit_History  Property_Area  Loan_Status  
+0           False          False        False  
+1           False          False        False  
+2           False          False        False  
+3           False          False        False  
+4           False          False        False</pre></div>
+<p><code>.isnull()</code> turns every cell into <code>True</code>/<code>False</code>. <code>.head()</code> just previews the first 5 rows instead of all 618.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<p><code>.sum()</code> adds up the <code>True</code>s <strong>down each column</strong> (default <code>axis=0</code>) - one count per column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset.shape[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>618</pre></div>
+<p><code>.shape</code> is <code>(rows, columns)</code>; <code>[0]</code> picks out just the row count.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">dataset.isnull().sum() / dataset.shape[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID              0.000000
+Gender               0.021036
+Married              0.009709
+Dependents           0.024272
+Education            0.014563
+Self_Employed        0.051780
+ApplicantIncome      0.003236
+CoapplicantIncome    0.000000
+LoanAmount           0.035599
+Loan_Amount_Term     0.033981
+Credit_History       0.080906
+Property_Area        0.014563
+Loan_Status          0.000000
+dtype: float64</pre></div>
+<p>Each column's missing count divided by total rows = the fraction missing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">missing_pct = (dataset.isnull().sum() / dataset.shape[0]) * 100
+missing_pct</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID              0.000000
+Gender               2.103560
+Married              0.970874
+Dependents           2.427184
+Education            1.456311
+Self_Employed        5.177994
+ApplicantIncome      0.323625
+CoapplicantIncome    0.000000
+LoanAmount           3.559871
+Loan_Amount_Term     3.398058
+Credit_History       8.090615
+Property_Area        1.456311
+Loan_Status          0.000000
+dtype: float64</pre></div>
+<p><code>* 100</code> turns the fraction into a percentage - this is the full Line 1 from the <code>.MD</code> file, now built from its pieces.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">missing_pct &gt;= 50</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID              False
+Gender               False
+Married              False
+Dependents           False
+Education            False
+Self_Employed        False
+ApplicantIncome      False
+CoapplicantIncome    False
+LoanAmount           False
+Loan_Amount_Term     False
+Credit_History       False
+Property_Area        False
+Loan_Status          False
+dtype: bool</pre></div>
+<p>Comparing every value to <code>50</code> produces a same-shaped Series of <code>True</code>/<code>False</code>. All <code>False</code> here - no column is close.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">missing_pct[missing_pct &gt;= 50]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Series([], dtype: float64)</pre></div>
+<p><strong>Boolean indexing</strong>: keep only the entries where the mask is <code>True</code>. Empty, because nothing qualifies.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">cols_to_drop = missing_pct[missing_pct &gt;= 50].index
+cols_to_drop</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([], dtype=&#x27;str&#x27;)</pre></div>
+<p><code>.index</code> pulls out just the column <em>names</em> from what's left - an empty list of names.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">dataset_cleaned = dataset.drop(columns=cols_to_drop)
+dataset_cleaned.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p>Dropping an empty list of columns removes nothing - shape is unchanged. That's the correct answer, not a bug.</p>
+
+<h3>The two idiomatic one-liners</h3>
+<p>Same outcome, written the way you'll see it in other people's code.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">len(dataset)</pre></div>
+<div class="out"><div class="h">Output</div><pre>618</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">0.5 * len(dataset)</pre></div>
+<div class="out"><div class="h">Output</div><pre>309.0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">int(0.5 * len(dataset))</pre></div>
+<div class="out"><div class="h">Output</div><pre>309</pre></div>
+<p><code>len()</code> on a DataFrame gives the row count. <code>thresh</code> needs a whole number, hence <code>int(...)</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">dataset.dropna(axis=1, thresh=int(0.5 * len(dataset))).shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p><code>axis=1</code> here means &quot;evaluate <strong>columns</strong>&quot; (not the fill-direction meaning from <code>07_Filling_Missing_Values.MD</code>). <code>thresh=309</code> keeps a column only if it has at least 309 non-null values. Same <code>(618, 13)</code> result.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">dataset.isnull().mean()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID              0.000000
+Gender               0.021036
+Married              0.009709
+Dependents           0.024272
+Education            0.014563
+Self_Employed        0.051780
+ApplicantIncome      0.003236
+CoapplicantIncome    0.000000
+LoanAmount           0.035599
+Loan_Amount_Term     0.033981
+Credit_History       0.080906
+Property_Area        0.014563
+Loan_Status          0.000000
+dtype: float64</pre></div>
+<p><code>.mean()</code> of <code>True</code>/<code>False</code> <em>is</em> the proportion <code>True</code> - same numbers as <code>missing_pct</code>, just as fractions instead of percentages.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">dataset.isnull().mean() &lt; 0.5</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID              True
+Gender               True
+Married              True
+Dependents           True
+Education            True
+Self_Employed        True
+ApplicantIncome      True
+CoapplicantIncome    True
+LoanAmount           True
+Loan_Amount_Term     True
+Credit_History       True
+Property_Area        True
+Loan_Status          True
+dtype: bool</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">dataset.loc[:, dataset.isnull().mean() &lt; 0.5].shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p><code>.loc[:, mask]</code> - <code>:</code> means <em>every row</em>, the boolean Series picks which <em>columns</em> survive. A third way to write the exact same idea.</p>
+
+<h2 id="method-2-drop-the-row">Method 2: Drop the Row</h2>
+<p>For scattered, low-volume missingness once the worst columns are already ruled out.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">dataset.dropna().shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(457, 13)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">dataset.shape[0] - dataset.dropna().shape[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>161</pre></div>
+<p>Default <code>dropna()</code> drops a row if <strong>any</strong> of its 13 columns is missing - <strong>161 rows gone</strong>, even though no single column was worse than ~8%.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">dataset.dropna(subset=[&quot;Loan_Status&quot;]).shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p><code>subset=</code> only checks the named column(s). <code>Loan_Status</code> has 0 missing, so <strong>0 rows dropped</strong>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">dataset.notnull().sum(axis=1).head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    13
+1    13
+2    13
+3    13
+4    13
+5    12
+6    13
+7    12
+8    13
+9    13
+dtype: int64</pre></div>
+<p><code>.sum(axis=1)</code> counts non-null values <strong>per row</strong> this time - one number per row instead of per column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">dataset.notnull().sum(axis=1).value_counts().sort_index()</pre></div>
+<div class="out"><div class="h">Output</div><pre>10      1
+11     16
+12    144
+13    457
+Name: count, dtype: int64</pre></div>
+<p>The full distribution: 1 row has only 10 non-null values (3 missing), 16 rows have 11 (2 missing), 144 have 12 (1 missing), and 457 rows are fully complete.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">dataset.dropna(thresh=12).shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(601, 13)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 46</span></div><pre class="py">dataset.shape[0] - dataset.dropna(thresh=12).shape[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>17</pre></div>
+<p><code>thresh=12</code> keeps rows with 12 or 13 non-null values (<code>144 + 457 = 601</code>) and drops the rest (<code>1 + 16 = 17</code>) - matches the distribution above exactly.</p>
+
+<h2 id="the-real-numbers-proving-the-161-row-drop">The Real Numbers - proving the 161-row drop</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 49</span></div><pre class="py">dataset.isnull().any(axis=1).head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0    False
+1    False
+2    False
+3    False
+4    False
+5     True
+6    False
+7     True
+8    False
+9    False
+dtype: bool</pre></div>
+<p><code>.any(axis=1)</code> - for <strong>each row</strong>, <code>True</code> if at least one of its columns is missing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 51</span></div><pre class="py">dataset.isnull().any(axis=1).sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(161)</pre></div>
+<p>Summed up: <strong>161 rows</strong> have a gap <em>somewhere</em>, even though every individual column's own miss-rate is under 9%. That's a union across 13 columns, not any single column's rate - the actual mechanism behind Method 2 removing more rows than intuition suggests.</p>
+
+<h2 id="recap">Recap</h2>
+<ul>
+<li><strong>Method 1</strong> (column drop, &gt;= 50%) removes <strong>0 columns</strong> from <code>../../_shared_data/loans.csv</code> - nothing here is bad enough to qualify.</li>
+<li><strong>Method 2</strong> (row drop) removes <strong>161 rows</strong> with a blind <code>dropna()</code>, <strong>0 rows</strong> with a targeted <code>subset=[&quot;Loan_Status&quot;]</code>, and <strong>17 rows</strong> with a <code>thresh=12</code> tolerance.</li>
+<li>Full prose explanation of <em>why</em> each of these numbers comes out this way: <code>06_Dropping_Missing_Values.MD</code>.</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/06_High_Missing_Column_Practice.ipynb">06_High_Missing_Column_Practice.ipynb</a></div>
+<h2 id="dropping-missing-values-when-method-1-actually-f">Dropping Missing Values - When Method 1 Actually Fires</h2>
+<p><code>../../_shared_data/loans.csv</code> never had a column over 50% missing, so Method 1 from <code>06_Dropping_Missing_Values.MD</code> never removed anything. This notebook uses a new dataset, <code>../../_shared_data/loans_guarantor.csv</code>, built specifically to trigger it.</p>
+<p><strong>What's different:</strong> same 618 applicants and the same 13 original columns as <code>../../_shared_data/loans.csv</code>, plus one new column - <code>Guarantor_Income</code> - which is only filled in when an applicant actually has a guarantor. Most don't, so it's genuinely, realistically missing most of the time.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans_guarantor.csv&quot;)
+dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 14)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+
+   Credit_History Property_Area Loan_Status  Guarantor_Income  
+0             1.0     Semiurban           Y               NaN  
+1             1.0         Urban           Y            1935.0  
+2             1.0         Urban           Y             965.0  
+3             1.0     Semiurban           Y               NaN  
+4             0.0         Urban           N               NaN</pre></div>
+<p>14 columns now instead of 13 - <code>Guarantor_Income</code> is the new one, <code>NaN</code> for every applicant without a guarantor.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID                0
+Gender                13
+Married                6
+Dependents            15
+Education              9
+Self_Employed         32
+ApplicantIncome        2
+CoapplicantIncome      0
+LoanAmount            22
+Loan_Amount_Term      21
+Credit_History        50
+Property_Area          9
+Loan_Status            0
+Guarantor_Income     382
+dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">missing_pct = (dataset.isnull().sum() / dataset.shape[0]) * 100
+missing_pct.round(2)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0.00
+Gender                2.10
+Married               0.97
+Dependents            2.43
+Education             1.46
+Self_Employed         5.18
+ApplicantIncome       0.32
+CoapplicantIncome     0.00
+LoanAmount            3.56
+Loan_Amount_Term      3.40
+Credit_History        8.09
+Property_Area         1.46
+Loan_Status           0.00
+Guarantor_Income     61.81
+dtype: float64</pre></div>
+<p><code>Guarantor_Income</code> sits at roughly <strong>62% missing</strong> - well past the 50% line. First time in this repo's practice that Method 1 has something real to do.</p>
+
+<h2 id="method-1-does-it-fire-this-time">Method 1 - does it fire this time?</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">missing_pct &gt;= 50</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID              False
+Gender               False
+Married              False
+Dependents           False
+Education            False
+Self_Employed        False
+ApplicantIncome      False
+CoapplicantIncome    False
+LoanAmount           False
+Loan_Amount_Term     False
+Credit_History       False
+Property_Area        False
+Loan_Status          False
+Guarantor_Income      True
+dtype: bool</pre></div>
+<p>This time the mask isn't all <code>False</code> - <code>Guarantor_Income</code> is <code>True</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">missing_pct[missing_pct &gt;= 50]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Guarantor_Income    61.812298
+dtype: float64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">cols_to_drop = missing_pct[missing_pct &gt;= 50].index
+cols_to_drop</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;Guarantor_Income&#x27;], dtype=&#x27;str&#x27;)</pre></div>
+<p>Not an empty <code>Index</code> this time - it actually contains <code>&quot;Guarantor_Income&quot;</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">dataset_cleaned = dataset.drop(columns=cols_to_drop)
+dataset_cleaned.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<p>14 columns -&gt; 13. <code>Guarantor_Income</code> is gone, everything else untouched.</p>
+
+<h2 id="why-column-first-matters-now-with-real-numbers">Why column-first matters - now with real numbers</h2>
+<p><code>06_Dropping_Missing_Values.MD</code> argued that skipping Method 1 and going straight to row-dropping is risky. <code>../../_shared_data/loans.csv</code> couldn't prove that, since nothing there crossed 50%. This dataset can.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">dataset.dropna().shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(184, 14)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">dataset.shape[0] - dataset.dropna().shape[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>434</pre></div>
+<p>Blind <code>dropna()</code> on the <strong>raw, 14-column</strong> dataset - before removing the bad column - loses this many rows. <code>Guarantor_Income</code> alone drags down hundreds of otherwise-fine applicants.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">dataset_cleaned.dropna().shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(457, 13)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">dataset_cleaned.shape[0] - dataset_cleaned.dropna().shape[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>161</pre></div>
+<p><strong>Two very different answers depending on order:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Order</th>
+  <th>Rows lost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>dropna()</code> on the raw 14 columns (no Method 1 first)</td>
+  <td>~434 rows (~70%)</td>
+</tr>
+<tr>
+  <td>Method 1 first (drop <code>Guarantor_Income</code>), <em>then</em> <code>dropna()</code></td>
+  <td>161 rows (~26%)</td>
+</tr>
+</tbody>
+</table>
+<p>One bad column, left in, nearly triples the damage. This is the concrete version of <code>06_Dropping_Missing_Values.MD</code>'s &quot;why column-first&quot; argument.</p>
+
+<h2 id="before-dropping-it-outright-the-missing-indicato">Before dropping it outright - the missing-indicator alternative</h2>
+<p><code>06_Dropping_Missing_Values.MD</code>'s caveat about <code>Credit_History</code> applies here too: <em>not having a guarantor</em> might itself be predictive of loan risk, even though the exact income figure is unknown. Dropping the column entirely throws that signal away. A middle path: keep a flag for &quot;was this ever filled in,&quot; drop only the raw (mostly-empty) number.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">dataset[&quot;Had_Guarantor&quot;] = dataset[&quot;Guarantor_Income&quot;].notnull().astype(int)
+dataset[&quot;Had_Guarantor&quot;].value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Had_Guarantor
+0    382
+1    236
+Name: count, dtype: int64</pre></div>
+<p><code>.notnull()</code> flips the missingness around - <code>True</code> where a value <em>exists</em>. <code>.astype(int)</code> turns that into a clean <code>1</code>/<code>0</code> column instead of <code>True</code>/<code>False</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">dataset_with_flag = dataset.drop(columns=[&quot;Guarantor_Income&quot;])
+dataset_with_flag.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 14)</pre></div>
+<p>Same column <em>count</em> as <code>dataset_cleaned</code>, but not the same columns - this version keeps <code>Had_Guarantor</code> (the signal) and only drops the noisy raw income figure, instead of losing the guarantor information completely.</p>
+
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>../../_shared_data/loans_guarantor.csv</code> = <code>../../_shared_data/loans.csv</code> + one new column, <code>Guarantor_Income</code>, at ~62% missing - deliberately built to cross the 50% line.</li>
+<li><strong>Method 1 fires for real here</strong>: <code>cols_to_drop</code> actually contains a column, and <code>dataset_cleaned</code> drops from 14 to 13 columns.</li>
+<li><strong>Order matters, concretely</strong>: skipping Method 1 costs ~434 rows (70%); doing Method 1 first costs only 161 rows (26%) - the same 161 <code>../../_shared_data/loans.csv</code> already showed in <code>06_Dropping_Missing_Values.ipynb</code>, since the other 12 columns are identical.</li>
+<li><strong><code>dataset_with_flag</code></strong> is the more careful alternative from the <code>.MD</code> file's caveat - keep the <em>fact</em> that it was missing as its own feature, instead of deleting that information along with the column.</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/07_Filling_Missing_Values.ipynb">07_Filling_Missing_Values.ipynb</a></div>
+<h2 id="07-filling-missing-values-hands-on">07 - Filling Missing Values (Hands-On)</h2>
+<p>Every line from <code>07_Filling_Missing_Values.MD</code>'s Method A (statistic fill), run for real against <code>../../_shared_data/loans.csv</code>, broken into small enough pieces that each step's own output is visible.</p>
+<p>Companion notebook <code>07b_Ordered_And_Wide_Fill_Practice.ipynb</code> covers Method B (forward/backward fill) and the <code>axis=1</code> case, using two different datasets built specifically for those - <code>../../_shared_data/loans.csv</code> can't demonstrate either one correctly.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
+<h2 id="recap-which-columns-need-filling">Recap: which columns need filling</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<h2 id="the-screenshot-s-code-tested-live">The screenshot's code, tested live</h2>
+<p>Running the exact line from the course slide against <code>Gender</code> first, before touching anything else.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">dataset[&quot;Gender&quot;].fillna(dataset[&quot;Gender&quot;].mode()[0], inplace=True)</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_60747/1350428233.py:1: ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+Such inplace method never works to update the original DataFrame or Series, because the intermediate object on which we are setting values always behaves as a copy (due to Copy-on-Write).
+
+For example, when doing &#x27;df[col].method(value, inplace=True)&#x27;, try using &#x27;df.method({col: value}, inplace=True)&#x27; instead, to perform the operation inplace on the original object, or try to avoid an inplace operation using &#x27;df[col] = df[col].method(value)&#x27;.
+
+See the documentation for a more detailed explanation: https://pandas.pydata.org/pandas-docs/stable/user_guide/copy_on_write.html
+  dataset[&quot;Gender&quot;].fillna(dataset[&quot;Gender&quot;].mode()[0], inplace=True)
+0        Male
+1        Male
+2      Female
+3        Male
+4        Male
+        ...  
+613    Female
+614      Male
+615      Male
+616      Male
+617      Male
+Name: Gender, Length: 618, dtype: str</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset[&quot;Gender&quot;].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(13)</pre></div>
+<p>Still <strong>13</strong> - unchanged. The warning above (<code>ChainedAssignmentError</code>) is pandas 3.0 telling you exactly this: <code>inplace=True</code> edited a temporary copy under Copy-on-Write, not <code>dataset</code> itself.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset[&quot;Gender&quot;] = dataset[&quot;Gender&quot;].fillna(dataset[&quot;Gender&quot;].mode()[0])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">dataset[&quot;Gender&quot;].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(13)</pre></div>
+<p><strong>0</strong> now - reassigning instead of using <code>inplace</code> is the version that actually works.</p>
+
+<h2 id="the-other-gotcha-select-dtypes-include-quot-obje">The other gotcha - <code>select_dtypes(include=&quot;object&quot;)</code></h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">dataset.select_dtypes(include=&quot;object&quot;).columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_60359/638993211.py:1: Pandas4Warning: For backward compatibility, &#x27;str&#x27; dtypes are included by select_dtypes when &#x27;object&#x27; dtype is specified. This behavior is deprecated and will be removed in a future version. Explicitly pass &#x27;str&#x27; to `include` to select them, or to `exclude` to remove them and silence this warning.
+See https://pandas.pydata.org/docs/user_guide/migration-3-strings.html#string-migration-select-dtypes for details on how to write code that works with pandas 2 and 3.
+  dataset.select_dtypes(include=&quot;object&quot;).columns
+Index([&#x27;Loan_ID&#x27;, &#x27;Gender&#x27;, &#x27;Married&#x27;, &#x27;Dependents&#x27;, &#x27;Education&#x27;,
+       &#x27;Self_Employed&#x27;, &#x27;Property_Area&#x27;, &#x27;Loan_Status&#x27;],
+      dtype=&#x27;str&#x27;)</pre></div>
+<p>Works, but with a deprecation warning - pandas 3.0 gave text columns their own <code>str</code> dtype.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">dataset.select_dtypes(include=&quot;str&quot;).columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;Loan_ID&#x27;, &#x27;Gender&#x27;, &#x27;Married&#x27;, &#x27;Dependents&#x27;, &#x27;Education&#x27;,
+       &#x27;Self_Employed&#x27;, &#x27;Property_Area&#x27;, &#x27;Loan_Status&#x27;],
+      dtype=&#x27;str&#x27;)</pre></div>
+<p>Same columns, no warning. This is the version to actually use going forward.</p>
+
+<h2 id="filling-the-rest-of-the-categorical-columns">Filling the rest of the categorical columns</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">categorical_cols = dataset.select_dtypes(include=&quot;str&quot;).columns
+categorical_cols</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;Loan_ID&#x27;, &#x27;Gender&#x27;, &#x27;Married&#x27;, &#x27;Dependents&#x27;, &#x27;Education&#x27;,
+       &#x27;Self_Employed&#x27;, &#x27;Property_Area&#x27;, &#x27;Loan_Status&#x27;],
+      dtype=&#x27;str&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">for col in categorical_cols:
+    dataset[col] = dataset[col].fillna(dataset[col].mode()[0])
+
+dataset[categorical_cols].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID          0
+Gender           0
+Married          0
+Dependents       0
+Education        0
+Self_Employed    0
+Property_Area    0
+Loan_Status      0
+dtype: int64</pre></div>
+<p><code>Gender</code> was already filled above, so it's a no-op for that one column; every other categorical column drops to 0 here.</p>
+
+<h2 id="numerical-columns-median-except-credit-history">Numerical columns - median, except <code>Credit_History</code></h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">numerical_cols = dataset.select_dtypes(include=[&quot;int64&quot;, &quot;float64&quot;]).columns
+numerical_cols</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;ApplicantIncome&#x27;, &#x27;CoapplicantIncome&#x27;, &#x27;LoanAmount&#x27;,
+       &#x27;Loan_Amount_Term&#x27;, &#x27;Credit_History&#x27;],
+      dtype=&#x27;str&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">dataset[&quot;Credit_History&quot;].value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Credit_History
+1.0    475
+0.0     93
+Name: count, dtype: int64</pre></div>
+<p>Only two values, <code>0.0</code> and <code>1.0</code> - a flag, not a real continuous number.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">dataset[&quot;Credit_History&quot;].mode()[0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(1.0)</pre></div>
+<p>The more common of the two - this is what fills <code>Credit_History</code>'s gaps, not an average of them.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">dataset[&quot;ApplicantIncome&quot;].mean(), dataset[&quot;ApplicantIncome&quot;].median()</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(4730.256493506494), np.float64(4325.0))</pre></div>
+<p>Mean and median aren't the same number - a sign of skew (a few very high earners pulling the mean up). That gap is exactly why median is the safer default for filling this column, not mean.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">numerical_cols = dataset.select_dtypes(include=[&quot;int64&quot;, &quot;float64&quot;]).columns
+
+for col in numerical_cols:
+    if col == &quot;Credit_History&quot;:
+        dataset[col] = dataset[col].fillna(dataset[col].mode()[0])
+    else:
+        dataset[col] = dataset[col].fillna(dataset[col].median())
+
+dataset[numerical_cols].isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>ApplicantIncome      0
+CoapplicantIncome    0
+LoanAmount           0
+Loan_Amount_Term     0
+Credit_History       0
+dtype: int64</pre></div>
+<p>Every numerical column at 0 - <code>Credit_History</code> filled with its mode, everything else with its median.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">dataset.isnull().sum().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>Reassignment (<code>dataset[col] = dataset[col].fillna(...)</code>), not <code>inplace=True</code> - verified live, not just claimed.</li>
+<li><code>select_dtypes(include=&quot;str&quot;)</code>, not <code>&quot;object&quot;</code> - same result, no deprecation warning.</li>
+<li>Categorical columns -&gt; mode. Numerical columns -&gt; median, except a number-that's-really-a-flag (<code>Credit_History</code>) -&gt; mode too.</li>
+<li><code>0</code> total missing values left in <code>dataset</code> - fully filled, 618 rows x 13 columns.</li>
+</ul>
+<p>Next: <code>07b_Ordered_And_Wide_Fill_Practice.ipynb</code> for <code>ffill</code>/<code>bfill</code> and <code>axis=1</code>, the two techniques <code>../../_shared_data/loans.csv</code> can't correctly demonstrate.</p>
+
+<div class="src-head">📓 <a href="../Concept/07b_Ordered_And_Wide_Fill_Practice.ipynb">07b_Ordered_And_Wide_Fill_Practice.ipynb</a></div>
+<h2 id="07b-forward-backward-fill-and-axis-1-hands-on">07b - Forward/Backward Fill and axis=1 (Hands-On)</h2>
+<p><code>../../_shared_data/loans.csv</code> can't correctly demonstrate either technique from <code>07_Filling_Missing_Values.MD</code>'s Method B - its rows are independent, unrelated applicants, so there's no real order to fill along, and its columns aren't comparable measurements. This notebook uses two small datasets built specifically for the job:</p>
+<ul>
+<li><code>../../_shared_data/daily_temperature.csv</code> - a genuine ordered time series, for <code>ffill</code>/<code>bfill</code></li>
+<li><code>../../_shared_data/store_sales_wide.csv</code> - genuinely comparable columns (Mon-Fri sales), for a real <code>axis=1</code> case</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
+<h2 id="ffill-carry-the-last-known-reading-forward">ffill - carry the last known reading forward</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">temps = pd.read_csv(&quot;../../_shared_data/daily_temperature.csv&quot;)
+temps</pre></div>
+<div class="out"><div class="h">Output</div><pre>          Date  Temperature_C
+0   2026-01-01           24.0
+1   2026-01-02            NaN
+2   2026-01-03           25.6
+3   2026-01-04           25.3
+4   2026-01-05           25.1
+5   2026-01-06           24.8
+6   2026-01-07           25.1
+7   2026-01-08           25.1
+8   2026-01-09            NaN
+9   2026-01-10           24.4
+10  2026-01-11           25.4
+11  2026-01-12           25.3
+12  2026-01-13            NaN
+13  2026-01-14           25.6
+14  2026-01-15           25.4
+15  2026-01-16           25.7
+16  2026-01-17           26.2
+17  2026-01-18           26.0
+18  2026-01-19            NaN
+19  2026-01-20            NaN
+20  2026-01-21           25.8
+21  2026-01-22           24.9
+22  2026-01-23           25.2
+23  2026-01-24           24.8
+24  2026-01-25           23.6
+25  2026-01-26           23.1
+26  2026-01-27           22.9
+27  2026-01-28           22.1
+28  2026-01-29           21.2
+29  2026-01-30           21.3</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">temps.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Date             0
+Temperature_C    5
+dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">temps[&quot;Temperature_C&quot;].ffill()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     24.0
+1     24.0
+2     25.6
+3     25.3
+4     25.1
+5     24.8
+6     25.1
+7     25.1
+8     25.1
+9     24.4
+10    25.4
+11    25.3
+12    25.3
+13    25.6
+14    25.4
+15    25.7
+16    26.2
+17    26.0
+18    26.0
+19    26.0
+20    25.8
+21    24.9
+22    25.2
+23    24.8
+24    23.6
+25    23.1
+26    22.9
+27    22.1
+28    21.2
+29    21.3
+Name: Temperature_C, dtype: float64</pre></div>
+<p>Look at <strong>Jan 19 and Jan 20</strong> - two missing days back to back. Both get filled with the same number, Jan 18's <code>26.0</code>. <code>ffill</code> doesn't guess a trend, it just repeats the last thing it actually saw - worth knowing before trusting it across a multi-day gap.</p>
+
+<h2 id="bfill-carry-the-next-known-reading-backward">bfill - carry the next known reading backward</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">temps[&quot;Temperature_C&quot;].bfill()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0     24.0
+1     25.6
+2     25.6
+3     25.3
+4     25.1
+5     24.8
+6     25.1
+7     25.1
+8     24.4
+9     24.4
+10    25.4
+11    25.3
+12    25.6
+13    25.6
+14    25.4
+15    25.7
+16    26.2
+17    26.0
+18    25.8
+19    25.8
+20    25.8
+21    24.9
+22    25.2
+23    24.8
+24    23.6
+25    23.1
+26    22.9
+27    22.1
+28    21.2
+29    21.3
+Name: Temperature_C, dtype: float64</pre></div>
+<p>Same two missing days now both become Jan 21's <code>25.8</code> instead of Jan 18's <code>26.0</code> - a different guess than <code>ffill</code> gave. Neither is &quot;the truth&quot;; they're two different assumptions about which direction to borrow from.</p>
+
+<h2 id="now-the-wrong-tool-case-running-ffill-on-shared-">Now the wrong-tool case - running ffill on ../../_shared_data/loans.csv anyway</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">loans = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+loans[&quot;Gender&quot;].head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0      Male
+1      Male
+2    Female
+3      Male
+4      Male
+5    Female
+6      Male
+7       NaN
+8      Male
+9      Male
+Name: Gender, dtype: str</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">loans[&quot;Gender&quot;].ffill().head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0      Male
+1      Male
+2    Female
+3      Male
+4      Male
+5    Female
+6      Male
+7      Male
+8      Male
+9      Male
+Name: Gender, dtype: str</pre></div>
+<p>Compare row 7 in both outputs - its missing <code>Gender</code> silently becomes whatever row 6 happened to be. The code runs, the gap gets filled, the output <em>looks</em> reasonable. But row 6 and row 7 are two unrelated loan applicants - there's no real-world reason #7's gender should match #6's. This is <code>07_Filling_Missing_Values.MD</code>'s warning, now shown rather than just argued: a working line of code is not the same thing as a correct one.</p>
+
+<h2 id="a-genuine-axis-1-case-filling-across-related-col">A genuine axis=1 case - filling across related columns</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">sales = pd.read_csv(&quot;../../_shared_data/store_sales_wide.csv&quot;).set_index(&quot;Store_ID&quot;)
+sales</pre></div>
+<div class="out"><div class="h">Output</div><pre>          Mon_Sales  Tue_Sales  Wed_Sales  Thu_Sales  Fri_Sales
+Store_ID                                                       
+Store_1      7643.0     7623.0     8217.0     7670.0     7913.0
+Store_2     13102.0    13203.0        NaN    12921.0    12086.0
+Store_3     11210.0    11376.0    10456.0    10688.0    10593.0
+Store_4     13055.0    12443.0    12417.0    12783.0    12736.0
+Store_5      9742.0        NaN        NaN     9170.0     9509.0
+Store_6      8422.0        NaN     8582.0     9099.0     8967.0
+Store_7     11763.0    12612.0    11468.0    11512.0    12958.0
+Store_8      8343.0        NaN     8617.0     9183.0     9357.0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">sales.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Mon_Sales    0
+Tue_Sales    3
+Wed_Sales    2
+Thu_Sales    0
+Fri_Sales    0
+dtype: int64</pre></div>
+<p>Five weekday sales columns for the same 8 stores - unlike <code>Gender</code>/<code>Married</code>/<code>Property_Area</code> in <code>../../_shared_data/loans.csv</code>, these columns really are comparable, same-unit measurements of the same thing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">sales.ffill(axis=1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>          Mon_Sales  Tue_Sales  Wed_Sales  Thu_Sales  Fri_Sales
+Store_ID                                                       
+Store_1      7643.0     7623.0     8217.0     7670.0     7913.0
+Store_2     13102.0    13203.0    13203.0    12921.0    12086.0
+Store_3     11210.0    11376.0    10456.0    10688.0    10593.0
+Store_4     13055.0    12443.0    12417.0    12783.0    12736.0
+Store_5      9742.0     9742.0     9742.0     9170.0     9509.0
+Store_6      8422.0     8422.0     8582.0     9099.0     8967.0
+Store_7     11763.0    12612.0    11468.0    11512.0    12958.0
+Store_8      8343.0     8343.0     8617.0     9183.0     9357.0</pre></div>
+<p><code>axis=1</code> here means &quot;fill left-to-right, using this <strong>same row's</strong> other columns,&quot; not &quot;use other rows in the same column&quot; (that's <code>axis=0</code>, the default everywhere else in this repo's notes). <code>Store_5</code> is missing both Tuesday and Wednesday - both get filled with Monday's figure, a defensible placeholder (&quot;we don't have this week's number yet, use last known&quot;) for a live sales dashboard, in a way that would never make sense for <code>../../_shared_data/loans.csv</code>'s unrelated columns.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">sales.mean(axis=1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Store_ID
+Store_1     7813.200000
+Store_2    12828.000000
+Store_3    10864.600000
+Store_4    12686.800000
+Store_5     9473.666667
+Store_6     8767.500000
+Store_7    12062.600000
+Store_8     8875.000000
+dtype: float64</pre></div>
+<p>A second, genuinely meaningful <code>axis=1</code> operation: each store's <strong>average daily sales</strong> across the (now-filled) week - a row-wise reduction that only makes sense because the five columns are truly the same kind of quantity.</p>
+
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>ffill</code>/<code>bfill</code> are only correct when row order carries real meaning - the ordered <code>../../_shared_data/daily_temperature.csv</code> is where they belong; <code>../../_shared_data/loans.csv</code> is where they merely <em>run</em>.</li>
+<li><code>axis=1</code> means &quot;across this row's other columns&quot; - only meaningful when those columns are genuinely comparable, like <code>../../_shared_data/store_sales_wide.csv</code>'s Mon-Fri figures, never <code>../../_shared_data/loans.csv</code>'s unrelated <code>Gender</code>/<code>Married</code>/<code>Property_Area</code>.</li>
+<li>Full explanation in <code>07_Filling_Missing_Values.MD</code>; the statistic-fill (mean/median/mode) walkthrough for <code>../../_shared_data/loans.csv</code> lives in <code>07_Filling_Missing_Values.ipynb</code>.</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/08_Finding_Missing_Values_Scikit_Learning.ipynb">08_Finding_Missing_Values_Scikit_Learning.ipynb</a></div>
+<h2 id="08-filling-missing-values-with-scikit-learn">08 - Filling Missing Values with Scikit-Learn</h2>
+<p>Same goal as <code>07_Filling_Missing_Values.ipynb</code> - fill the gaps in <code>../../_shared_data/loans.csv</code> - but this time using scikit-learn's <code>SimpleImputer</code> instead of pandas' <code>.fillna()</code>. Same underlying ideas (mean/median/mode), different tool - and <code>SimpleImputer</code> is the one you'll actually reach for once real models get built in <code>phase_3_classical_ml/</code>, since it plugs directly into scikit-learn pipelines.</p>
+<p>What this notebook covers, in order: loading and auditing the data, meeting <code>SimpleImputer</code>, filling <code>LoanAmount</code> and friends with <code>strategy=&quot;mean&quot;</code>, a real before/after picture of what that actually did to the data, a cautionary example of where mean is the <em>wrong</em> choice, and a full side-by-side comparison of every <code>SimpleImputer</code> strategy.</p>
+<p>Start with the usual trio below.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt</pre></div>
+<p>Load <code>../../_shared_data/loans.csv</code> - the same dataset every notebook in this folder has used since <code>05_Data_Cleaning_Practice.ipynb</code> - and preview the first 3 rows.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div>
+<p>Missing-value audit - same first move as every cleaning notebook so far: which columns actually need filling.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div>
+<p>A second view of the same gaps via <code>.info()</code> - its <strong>Dtype</strong> column matters here specifically, because <code>SimpleImputer</code>'s numeric strategies (<code>mean</code>/<code>median</code>) only make sense for numeric columns.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset.info()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 618 entries, 0 to 617
+Data columns (total 13 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Loan_ID            618 non-null    str    
+ 1   Gender             605 non-null    str    
+ 2   Married            612 non-null    str    
+ 3   Dependents         603 non-null    str    
+ 4   Education          609 non-null    str    
+ 5   Self_Employed      586 non-null    str    
+ 6   ApplicantIncome    616 non-null    float64
+ 7   CoapplicantIncome  618 non-null    int64  
+ 8   LoanAmount         596 non-null    float64
+ 9   Loan_Amount_Term   597 non-null    float64
+ 10  Credit_History     568 non-null    float64
+ 11  Property_Area      609 non-null    str    
+ 12  Loan_Status        618 non-null    str    
+dtypes: float64(4), int64(1), str(8)
+memory usage: 62.9 KB</pre></div>
+<p>Which columns are actually <code>float64</code>? These are the ones about to get filled with <code>strategy=&quot;mean&quot;</code>.</p>
+<p><strong>Worth knowing:</strong> this only grabs <code>float64</code> - <code>CoapplicantIncome</code> is <code>int64</code> and would slip straight through this filter even if it had missing values (it doesn't here, so it's harmless in this specific run, but it's a narrow net in general). <code>dataset.select_dtypes(include=[&quot;int64&quot;, &quot;float64&quot;])</code> is the safer, more complete version - same pattern as the <code>numerical_cols</code> line in <code>07_Filling_Missing_Values.ipynb</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset.select_dtypes(include=&quot;float64&quot;).columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;ApplicantIncome&#x27;, &#x27;LoanAmount&#x27;, &#x27;Loan_Amount_Term&#x27;, &#x27;Credit_History&#x27;], dtype=&#x27;str&#x27;)</pre></div>
+<h2 id="meet-simpleimputer">Meet <code>SimpleImputer</code></h2>
+<p>Scikit-learn's dedicated imputation tool - the <code>scikit-learn</code> entry from <code>02_ML_Roadmap.MD</code>'s toolbox table, put to use for real for the first time in this repo.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.impute import SimpleImputer</pre></div>
+<p><code>SimpleImputer(strategy=&quot;mean&quot;)</code> configures <em>what</em> to fill with, but doesn't touch any data yet. <code>.fit_transform(...)</code> does two jobs in one call: <strong><code>fit</code></strong> learns each of the 4 selected columns' own mean from the data, <strong><code>transform</code></strong> immediately applies it, filling every gap.</p>
+<p>One thing to know before the next cell: the result, <code>ar</code>, is a plain NumPy array - scikit-learn strips the column names and index off, which is exactly why the next step has to manually put them back.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">si = SimpleImputer(strategy=&quot;mean&quot;)
+ar = si.fit_transform(dataset[[&#x27;ApplicantIncome&#x27;, &#x27;LoanAmount&#x27;, &#x27;Loan_Amount_Term&#x27;, &#x27;Credit_History&#x27;]])
+ar</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[1.686e+03, 8.000e+01, 3.600e+02, 1.000e+00],
+       [2.437e+03, 1.220e+02, 3.600e+02, 1.000e+00],
+       [8.313e+03, 3.190e+02, 3.600e+02, 1.000e+00],
+       ...,
+       [3.916e+03, 2.500e+02, 3.600e+02, 0.000e+00],
+       [2.366e+03, 1.010e+02, 3.600e+02, 1.000e+00],
+       [3.757e+03, 1.240e+02, 3.600e+02, 1.000e+00]], shape=(618, 4))</pre></div>
+<p>Rebuilding a proper DataFrame from the bare array - same column order used to select them originally, so the names line back up correctly.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">new_dataset = pd.DataFrame(ar,columns=dataset.select_dtypes(include=&quot;float64&quot;).columns)</pre></div>
+<p>The filled result. Every <code>LoanAmount</code> / <code>Loan_Amount_Term</code> / <code>Credit_History</code> / <code>ApplicantIncome</code> cell that was <code>NaN</code> now holds that column's mean.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">new_dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>     ApplicantIncome  LoanAmount  Loan_Amount_Term  Credit_History
+0             1686.0        80.0             360.0             1.0
+1             2437.0       122.0             360.0             1.0
+2             8313.0       319.0             360.0             1.0
+3             5069.0       218.0             360.0             1.0
+4             3002.0       194.0             360.0             0.0
+..               ...         ...               ...             ...
+613           3153.0       114.0             360.0             0.0
+614           3995.0       215.0             360.0             1.0
+615           3916.0       250.0             360.0             0.0
+616           2366.0       101.0             360.0             1.0
+617           3757.0       124.0             360.0             1.0
+
+[618 rows x 4 columns]</pre></div>
+<p>Verify: every column here should read <code>0</code> now.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">new_dataset.isnull().sum()</pre></div>
+<div class="out"><div class="h">Output</div><pre>ApplicantIncome     0
+LoanAmount          0
+Loan_Amount_Term    0
+Credit_History      0
+dtype: int64</pre></div>
+<p>Sanity check - does <code>new_dataset</code>'s filled <code>LoanAmount</code> actually match this original mean? If <code>SimpleImputer</code> worked correctly, every previously-missing <code>LoanAmount</code> cell should now hold exactly this number.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">dataset[&quot;LoanAmount&quot;].mean()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(223.03187919463087)</pre></div>
+<h2 id="seeing-the-impact-before-vs-after">Seeing the Impact - Before vs. After</h2>
+<p>The numbers already proved <code>new_dataset</code> has zero missing values. This section shows <em>what filling actually did</em> to the shape of the data - not just that the gaps closed, but what got put in them.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+ax.hist(dataset[&quot;LoanAmount&quot;].dropna(), bins=30, alpha=0.55, label=&quot;Before (596 real values)&quot;, color=&quot;#2f6fed&quot;)
+ax.hist(new_dataset[&quot;LoanAmount&quot;], bins=30, alpha=0.55, label=&quot;After (618 values, 22 filled)&quot;, color=&quot;#b33a3a&quot;)
+ax.axvline(dataset[&quot;LoanAmount&quot;].mean(), color=&quot;#7a2626&quot;, linestyle=&quot;--&quot;, linewidth=1.5,
+           label=f&#x27;Mean = {dataset[&quot;LoanAmount&quot;].mean():.1f}&#x27;)
+ax.set_xlabel(&quot;LoanAmount&quot;)
+ax.set_ylabel(&quot;Count&quot;)
+ax.set_title(&quot;LoanAmount: Before vs. After Mean Imputation&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/08-finding-missing-values-sc-c23-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Look at the bin sitting right on the dashed mean line - the &quot;after&quot; bars pile up noticeably taller there than the &quot;before&quot; bars do, while every other bin mostly overlaps. That's not a coincidence: <strong>all 22 previously-missing values landed in the exact same spot</strong>, creating an artificial spike that never existed in the real, observed data. With only 22 out of 618 values affected (3.6%) it's a small effect here - but the same mechanism becomes a bigger problem the higher the missing percentage climbs.</p>
+
+<h2 id="why-not-always-mean-a-cautionary-example">Why Not Always Mean? A Cautionary Example</h2>
+<p><code>Credit_History</code> is a 0/1 flag, not a real continuous number - same lesson as <code>07_Filling_Missing_Values.MD</code>. Here's what mean-filling it anyway actually produces, made visible instead of just described.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">si_credit = SimpleImputer(strategy=&quot;mean&quot;)
+credit_filled = si_credit.fit_transform(dataset[[&quot;Credit_History&quot;]])
+credit_series = pd.Series(credit_filled.ravel())
+credit_series.value_counts().sort_index()</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.000000     93
+0.836268     50
+1.000000    475
+Name: count, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">counts = credit_series.value_counts().sort_index()
+colors = [&quot;#2f6fed&quot; if round(v, 2) in (0.0, 1.0) else &quot;#b33a3a&quot; for v in counts.index]
+
+plt.figure(figsize=(6.5, 5))
+bars = plt.bar([f&quot;{v:.3f}&quot; for v in counts.index], counts.values, color=colors)
+plt.bar_label(bars)
+plt.title(&quot;Credit_History After Mean-Filling&quot;)
+plt.ylabel(&quot;Count&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/08-finding-missing-values-sc-c27-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>A third value - <code>0.836</code> - shows up <strong>50 times</strong>, exactly matching <code>Credit_History</code>'s original missing count. It's not a real credit history status; nobody's credit history is <code>0.836</code>. It's the column's mean, standing in for &quot;unknown,&quot; and any model reading this column would have no way to tell that fabricated value apart from a genuine measurement.</p>
+
+<h2 id="all-four-simpleimputer-strategies-compared">All Four SimpleImputer Strategies, Compared</h2>
+<p><code>SimpleImputer</code> supports four <code>strategy</code> values. Applying every one of them to the exact same column - <code>LoanAmount</code>'s 22 missing cells - makes the differences concrete instead of abstract.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">strategies_to_compare = [&quot;mean&quot;, &quot;median&quot;, &quot;most_frequent&quot;]
+fill_values = {}
+
+for strat in strategies_to_compare:
+    si_compare = SimpleImputer(strategy=strat)
+    si_compare.fit(dataset[[&quot;LoanAmount&quot;]])
+    fill_values[strat] = si_compare.statistics_[0]
+
+si_constant = SimpleImputer(strategy=&quot;constant&quot;, fill_value=150)
+si_constant.fit(dataset[[&quot;LoanAmount&quot;]])
+fill_values[&quot;constant (150)&quot;] = 150
+
+fill_values</pre></div>
+<div class="out"><div class="h">Output</div><pre>{&#x27;mean&#x27;: np.float64(223.03187919463087),
+ &#x27;median&#x27;: np.float64(208.5),
+ &#x27;most_frequent&#x27;: np.float64(480.0),
+ &#x27;constant (150)&#x27;: 150}</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">plt.figure(figsize=(7, 5))
+colors = [&quot;#2f6fed&quot;, &quot;#2f9e6f&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;]
+bars = plt.bar(fill_values.keys(), fill_values.values(), color=colors)
+plt.bar_label(bars, fmt=&quot;%.1f&quot;)
+plt.ylabel(&quot;Fill value used for LoanAmount&quot;)
+plt.title(&quot;Same Missing Value, Four Different Fill Strategies&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/08-finding-missing-values-sc-c31-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>When to use which</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Strategy</th>
+  <th>Fills with</th>
+  <th>Best for</th>
+  <th>What just happened to <code>LoanAmount</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>mean</code></td>
+  <td>Average of the column</td>
+  <td>Numeric, roughly symmetric</td>
+  <td><code>223.0</code></td>
+</tr>
+<tr>
+  <td><code>median</code></td>
+  <td>Middle value of the column</td>
+  <td>Numeric, skewed / has outliers</td>
+  <td><code>208.5</code> - noticeably lower than the mean, a sign <code>LoanAmount</code> itself is a bit skewed</td>
+</tr>
+<tr>
+  <td><code>most_frequent</code></td>
+  <td>The single most common value</td>
+  <td>Categorical columns, or a number acting as a flag (like <code>Credit_History</code>)</td>
+  <td><strong><code>480.0</code></strong> - the most common <em>exact</em> loan amount, which sits near the high end of the range, not anywhere near &quot;typical&quot;</td>
+</tr>
+<tr>
+  <td><code>constant</code></td>
+  <td>A fixed value you choose</td>
+  <td>A clearly-flagged placeholder (e.g. <code>-1</code> or <code>0</code>) rather than a statistically &quot;reasonable&quot; guess</td>
+  <td><code>150</code> - whatever <code>fill_value=</code> was set to</td>
+</tr>
+</tbody>
+</table>
+<p><code>most_frequent</code>'s result is the tell: for a continuous column like <code>LoanAmount</code>, values rarely repeat, so &quot;most common&quot; just means &quot;whichever value happened to tie for the most duplicates&quot; - here that's <code>480</code>, a large loan, nowhere near central. <code>most_frequent</code> is the right tool for <code>Gender</code> / <code>Married</code> / <code>Credit_History</code>, not for <code>LoanAmount</code>.</p>
+
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>SimpleImputer(strategy=&quot;mean&quot;)</code> filled <code>LoanAmount</code>'s 22 gaps with <code>223.0</code> - visibly piling up right at the mean in the before/after chart, a real (if usually minor) side effect of mean imputation worth knowing about.</li>
+<li>Mean-filling a column that's actually a category in disguise (<code>Credit_History</code>) invents a value - <code>0.836</code> - that never existed in the real data, appearing 50 times where only <code>0</code> or <code>1</code> should ever appear.</li>
+<li>Four strategies, four different answers for the exact same missing <code>LoanAmount</code> cells: <code>mean</code> (223.0), <code>median</code> (208.5), <code>most_frequent</code> (480.0, and clearly the wrong tool here), <code>constant</code> (150, whatever you choose).</li>
+<li>Same decision framework as <code>07_Filling_Missing_Values.MD</code>, now backed by <code>scikit-learn</code> instead of pandas' <code>.fillna()</code> - and with the receipts to prove why the choice actually matters, not just in theory.</li>
+</ul>
+
+<div class="foot"><a class="btn" href="../Concept/06_Dropping_Missing_Values.ipynb">06_Dropping_Missing_Values.ipynb ↗</a><a class="btn" href="../Concept/06_High_Missing_Column_Practice.ipynb">06_High_Missing_Column_Practice.ipynb ↗</a><a class="btn" href="../Concept/07_Filling_Missing_Values.ipynb">07_Filling_Missing_Values.ipynb ↗</a><a class="btn" href="../Concept/07b_Ordered_And_Wide_Fill_Practice.ipynb">07b_Ordered_And_Wide_Fill_Practice.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

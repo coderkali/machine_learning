@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Datasets — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Synthetic Datasets</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#scikit-learn-synthetic-datasets-make">scikit-learn — synthetic datasets (make_*)</a><a href="#what-is-a-synthetic-dataset">What is a synthetic dataset?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#the-family">The family</a><a href="#1-make-regression-a-straight-line-with-noise-on-">1 — make_regression: a straight line with noise on t</a><a href="#2-look-at-the-data">2 — Look at the data</a><a href="#3-make-classification-groups-instead-of-numbers">3 — make_classification: groups instead of numbers</a><a href="#4-make-blobs-round-groups-for-clustering">4 — make_blobs: round groups, for clustering</a><a href="#5-make-circles-when-a-straight-line-cannot-work">5 — make_circles: when a straight line cannot work</a><a href="#6-make-moons-two-interlocking-crescents">6 — make_moons: two interlocking crescents</a><a href="#7-your-own-experiment-plotting-column-0-against-">7 — Your own experiment: plotting column 0 against e</a><a href="#8-the-last-cell-read-the-error-before-you-run-it">8 — The last cell: read the error before you run it</a><a href="#which-generator-do-i-reach-for">Which generator do I reach for?</a><a href="#common-mistakes">Common mistakes</a><a href="#where-this-shows-up-in-real-work">Where this shows up in real work</a><a href="#interview-view">Interview view</a><a href="#what-is-not-covered-here">What is not covered here</a><a href="#key-takeaway">Key takeaway</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Synthetic Datasets</h1>
+  <p class="lede">Data you build yourself, where you already know the right answer.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Latha's model gave a coefficient of 4.7.</strong> Was that right? She had no way to tell — nobody knows the true coefficient of real house prices.</p><p>So she could not separate "my code is wrong" from "the data is just like that".</p><p><span class='beat'>Learning needs a case where the answer is known in advance.</span></p><p><code>make_regression</code> builds data from a coefficient <em>you</em> choose. Fit a model, and if it recovers your number, your code is right. The <code>make_*</code> family also builds blobs, circles and moons — shapes designed to break specific algorithms so you can see them fail.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>When you generate the data, you know the truth — so you can check whether the model found it.</p></div>
+<div class="src-head">📓 <a href="../Concept/02_make_*_dataset.ipynb">02_make_*_dataset.ipynb</a></div>
+<h2 id="scikit-learn-synthetic-datasets-make">scikit-learn — synthetic datasets (<code>make_*</code>)</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning</p>
+</div>
+<p><strong>Status:</strong> 🟡 Learning. This notebook <strong>generates</strong> data. No model is trained yet.</p>
+<h2 id="what-is-a-synthetic-dataset">What is a synthetic dataset?</h2>
+<p>A synthetic dataset is data that scikit-learn <strong>invents</strong> for you.</p>
+<p>You describe the shape you want — how many rows, how many columns, how much
+noise — and the library builds a table that matches. Nothing is downloaded.
+Nothing is read from disk. The numbers come from a formula plus a random
+number generator.</p>
+<h2 id="why-do-we-need-it">Why do we need it?</h2>
+<p>You are learning algorithms, not data cleaning. A real CSV fights back: missing
+values, text columns, wrong types, an unclear target. All of that hides the one
+question you are actually asking — <em>does this algorithm work, and when does it
+fail?</em></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Reason</th>
+  <th>What it buys you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>You already know the answer</strong></td>
+  <td>You chose the slope, the number of clusters, the noise. So you can check whether the model found it.</td>
+</tr>
+<tr>
+  <td><strong>You control the difficulty</strong></td>
+  <td>Turn one knob and the problem gets harder. That is how you learn what breaks a model.</td>
+</tr>
+<tr>
+  <td><strong>It is reproducible</strong></td>
+  <td><code>random_state=0</code> gives every reader the same rows, forever.</td>
+</tr>
+<tr>
+  <td><strong>It is instant</strong></td>
+  <td>No download, no licence, no privacy review, no NDA.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Engineering view.</strong> This is a <strong>test fixture generator</strong>. It is the same idea
+as a <code>TestDataBuilder</code> or a Faker factory in a Spring Boot test suite. You are
+not testing the data. You are testing the code that consumes the data — and a
+fixture you built yourself is the only one whose expected result you know.</p>
+<h2 id="the-family">The family</h2>
+<p>Every generator returns the same two things: <code>X</code> (the inputs) and <code>y</code> (the
+answer). Only the <em>shape</em> of the answer changes.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Generator</th>
+  <th><code>y</code> is</th>
+  <th>The picture it makes</th>
+  <th>Built to test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>make_regression</code></td>
+  <td>a number</td>
+  <td>a noisy straight line</td>
+  <td>linear regression, MSE, R²</td>
+</tr>
+<tr>
+  <td><code>make_classification</code></td>
+  <td>a label</td>
+  <td>blobs at the corners of a cube</td>
+  <td>logistic regression, trees, feature selection</td>
+</tr>
+<tr>
+  <td><code>make_blobs</code></td>
+  <td>a cluster id</td>
+  <td>round, separated groups</td>
+  <td>KMeans, DBSCAN</td>
+</tr>
+<tr>
+  <td><code>make_circles</code></td>
+  <td>a label</td>
+  <td>a ring inside a ring</td>
+  <td>anything <strong>non-linear</strong></td>
+</tr>
+<tr>
+  <td><code>make_moons</code></td>
+  <td>a label</td>
+  <td>two interlocking crescents</td>
+  <td>anything <strong>non-linear</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="code"><pre>                       what kind of answer do I want?
+                                    │
+             ┌──────────────────────┼──────────────────────┐
+             │                      │                      │
+        a number               a category            no answer at all
+             │                      │                      │
+     make_regression       make_classification         make_blobs
+                                    │              (y is just a group id)
+                          is a straight line
+                            allowed to work?
+                             │           │
+                            yes          no
+                             │           │
+                    make_classification  make_circles / make_moons
+</pre></div>
+<p>Read the notebook in that order. Each section shows the call, every parameter,
+and one chart of what the parameter actually changes.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import (make_regression, make_classification,
+                              make_blobs, make_circles, make_moons)
+
+# One colour per class label, reused by every chart in this notebook.
+CLASS_COLOURS = [&quot;#2563eb&quot;, &quot;#f59e0b&quot;, &quot;#16a34a&quot;, &quot;#db2777&quot;]
+
+
+def scatter_classes(ax, X, y, cols=(0, 1), title=&quot;&quot;, size=18):
+    &quot;&quot;&quot;Scatter two columns of X, coloured by the label in y.&quot;&quot;&quot;
+    for label in np.unique(y):
+        points = X[y == label]
+        ax.scatter(points[:, cols[0]], points[:, cols[1]], s=size, alpha=0.85,
+                   color=CLASS_COLOURS[label % len(CLASS_COLOURS)],
+                   edgecolor=&quot;white&quot;, linewidth=0.4, label=f&quot;class {label}&quot;)
+    ax.set_title(title, fontsize=10)
+
+
+# The whole family, side by side.
+fig, axes = plt.subplots(1, 5, figsize=(16, 3.2))
+
+gx, gy = make_regression(n_samples=250, n_features=1, noise=8, random_state=0)
+axes[0].scatter(gx, gy, s=10, color=&quot;#2563eb&quot;, alpha=0.7)
+axes[0].set_title(&quot;make_regression\ny = a number&quot;, fontsize=10)
+
+cx, cy = make_classification(n_samples=250, n_features=2, n_informative=2,
+                             n_redundant=0, n_clusters_per_class=1, random_state=4)
+scatter_classes(axes[1], cx, cy, title=&quot;make_classification\ny = a label&quot;)
+
+bx, by = make_blobs(n_samples=250, centers=3, n_features=2, random_state=0)
+scatter_classes(axes[2], bx, by, title=&quot;make_blobs\ny = a cluster id&quot;)
+
+rx, ry = make_circles(n_samples=250, noise=0.03, factor=0.4, random_state=1)
+scatter_classes(axes[3], rx, ry, title=&quot;make_circles\nno straight line works&quot;)
+
+mx, my = make_moons(n_samples=250, noise=0.08, random_state=10)
+scatter_classes(axes[4], mx, my, title=&quot;make_moons\nno straight line works&quot;)
+
+for ax in axes:
+    ax.set_xticks([]); ax.set_yticks([])
+
+fig.suptitle(&quot;The five generators in this notebook&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c01-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
+from sklearn.datasets import make_regression</pre></div>
+<h2 id="1-make-regression-a-straight-line-with-noise-on-">1 — <code>make_regression</code>: a straight line with noise on top</h2>
+<p><strong>Regression</strong> means the answer is a <strong>number</strong> — a price, a temperature, a
+salary. Not a category.</p>
+<p><code>make_regression</code> builds that kind of data from one formula:</p>
+<div class="code"><pre>   y   =   X · coef   +   bias   +   noise
+   │       │      │       │           └── random wobble, size set by you
+   │       │      │       └── a constant shift (default 0)
+   │       │      └── the slope(s) sklearn invents and keeps secret
+   │       └── the input columns, drawn from a normal distribution
+   └── the answer
+</pre></div>
+<p>Your call:</p>
+<div class="code"><pre class="py">x, y = make_regression(n_features=1, noise=5, n_samples=10000, random_state=0)
+</pre></div>
+<p>In plain English: <em>&quot;Give me 10,000 rows and 1 input column. Add noise of size 5.
+Do it the same way every time.&quot;</em></p>
+<h3>Every parameter</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Parameter</th>
+  <th>Default</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_samples</code></td>
+  <td><code>100</code></td>
+  <td>how many rows</td>
+</tr>
+<tr>
+  <td><code>n_features</code></td>
+  <td><code>100</code></td>
+  <td>how many input columns in total</td>
+</tr>
+<tr>
+  <td><code>n_informative</code></td>
+  <td><code>10</code></td>
+  <td>how many of those columns actually move <code>y</code>. The rest are decoration</td>
+</tr>
+<tr>
+  <td><code>n_targets</code></td>
+  <td><code>1</code></td>
+  <td>how many answer columns. Above 1, <code>y</code> becomes 2-D</td>
+</tr>
+<tr>
+  <td><code>bias</code></td>
+  <td><code>0.0</code></td>
+  <td>the intercept — the value of <code>y</code> when every input is 0</td>
+</tr>
+<tr>
+  <td><code>noise</code></td>
+  <td><code>0.0</code></td>
+  <td>standard deviation of the wobble added to <code>y</code>. <code>0</code> gives a perfect line</td>
+</tr>
+<tr>
+  <td><code>coef</code></td>
+  <td><code>False</code></td>
+  <td><code>True</code> also returns the true slopes, so you can grade a model</td>
+</tr>
+<tr>
+  <td><code>shuffle</code></td>
+  <td><code>True</code></td>
+  <td>shuffles both the rows and the column order</td>
+</tr>
+<tr>
+  <td><code>effective_rank</code></td>
+  <td><code>None</code></td>
+  <td>makes columns correlated with each other, the way real data is</td>
+</tr>
+<tr>
+  <td><code>tail_strength</code></td>
+  <td><code>0.5</code></td>
+  <td>only used together with <code>effective_rank</code></td>
+</tr>
+<tr>
+  <td><code>random_state</code></td>
+  <td><code>None</code></td>
+  <td>the seed. Fix it, or the data changes on every run</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>The default is 100 columns, not 1.</strong> <code>n_features=100</code> with
+<code>n_informative=10</code> means 90 useless columns if you forget to say otherwise. You
+asked for <code>n_features=1</code>, so here <code>n_informative</code> is 1 as well.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">x,y = make_regression(n_features=1, noise=5, n_samples=10000,random_state=0)</pre></div>
+<h3>What came back</h3>
+<p>The function returns a <strong>tuple of two arrays</strong>, and this line unpacks it:</p>
+<div class="code"><pre>   x , y   =   make_regression(...)
+   │   │
+   │   └── the answer:  1-D, one number per row
+   └── the inputs:      2-D, rows × columns
+</pre></div>
+<p>Both are plain <strong>NumPy arrays</strong>, not DataFrames. There are no column names and
+no index. That is normal — scikit-learn works on numbers, and Pandas is only
+the door you walk in through.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">x</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 0.58262411],
+       [-1.31093021],
+       [-0.76251627],
+       ...,
+       [-0.22425893],
+       [ 0.17581895],
+       [-0.93942432]], shape=(10000, 1))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">y</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([  7.01315442, -17.41605545,   1.1459828 , ..., -14.37795447,
+        -4.81283115, -12.89225575], shape=(10000,))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">print(&quot;x shape:&quot;, x.shape, &quot;-&gt; 10000 rows, 1 column  (2-D: a table)&quot;)
+print(&quot;y shape:&quot;, y.shape, &quot;     -&gt; 10000 answers     (1-D: a list)&quot;)
+print(&quot;dtypes  :&quot;, x.dtype, &quot;/&quot;, y.dtype)
+print()
+print(&quot;first 3 rows of x:&quot;, x[:3].ravel().round(3))
+print(&quot;first 3 rows of y:&quot;, y[:3].round(3))
+print()
+print(&quot;x[0]    -&gt;&quot;, x[0].round(3), &quot;  one ROW (still an array, because a row can have many columns)&quot;)
+print(&quot;x[:, 0] -&gt;&quot;, x[:5, 0].round(3), &quot;...  one COLUMN, first 5 values&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>x shape: (10000, 1) -&gt; 10000 rows, 1 column  (2-D: a table)
+y shape: (10000,)      -&gt; 10000 answers     (1-D: a list)
+dtypes  : float64 / float64
+
+first 3 rows of x: [ 0.583 -1.311 -0.763]
+first 3 rows of y: [  7.013 -17.416   1.146]
+
+x[0]    -&gt; [0.583]   one ROW (still an array, because a row can have many columns)
+x[:, 0] -&gt; [ 0.583 -1.311 -0.763  0.177 -1.307] ...  one COLUMN, first 5 values</pre></div>
+<p><strong>Why the shapes are different, and why the names are <code>X</code> and <code>y</code>.</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Name</th>
+  <th>Shape</th>
+  <th>Meaning</th>
+  <th>Why the capital letter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>X</code></td>
+  <td>2-D <code>(rows, columns)</code></td>
+  <td>what the model is allowed to see</td>
+  <td>capital, because it is a <strong>matrix</strong></td>
+</tr>
+<tr>
+  <td><code>y</code></td>
+  <td>1-D <code>(rows,)</code></td>
+  <td>what the model must predict</td>
+  <td>lowercase, because it is a <strong>vector</strong></td>
+</tr>
+</tbody>
+</table>
+<p>This is a maths convention that scikit-learn adopted, and the whole library
+expects it. <code>model.fit(X, y)</code> will reject a 1-D <code>X</code> and tell you to reshape.
+<code>make_regression</code> already hands you a 2-D <code>X</code>, so nothing to fix here.</p>
+<p><strong>Reading the array.</strong> <code>x[0]</code> is a row. <code>x[:, 0]</code> is a column. The comma
+separates the two axes: <code>x[rows, columns]</code>. That second form is the one your
+scatter plots use further down, and it is where the last cell of this notebook
+goes wrong.</p>
+
+<h2 id="2-look-at-the-data">2 — Look at the data</h2>
+<p><code>matplotlib</code> was already imported in the first cell, so this import does
+nothing new. Re-importing is harmless in Python — the module is cached after
+the first time — so leave it. It costs nothing and it makes the cell below
+runnable on its own.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">plt.scatter(x,y)
+plt.xlabel(&#x27;x&#x27;)
+plt.ylabel(&#x27;y&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c12-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>What you should see: a thick diagonal band.</strong></p>
+<p>The band goes up to the right, so the invented slope was positive. The band has
+<em>width</em> — that width is the <code>noise=5</code> you asked for. With <code>noise=0</code> it would be
+a perfectly thin line.</p>
+<p>One practical point. You are drawing <strong>10,000 points</strong> at the default marker
+size. They pile on top of each other, so the middle is a solid blob and you
+cannot tell where the data is dense. Two fixes: shrink the marker (<code>s</code>) and
+make each point see-through (<code>alpha</code>).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">plt.figure(figsize=(6.5, 4))
+plt.scatter(x, y, s=6, alpha=0.15, color=&quot;#2563eb&quot;)
+plt.xlabel(&quot;x  (the single input column)&quot;)
+plt.ylabel(&quot;y  (the answer)&quot;)
+plt.title(&quot;Same 10,000 points, with small markers and transparency&quot;)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c14-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>The <code>noise</code> knob, drawn</h3>
+<p><code>noise</code> is the standard deviation of the random number added to every <code>y</code>.
+It is the only thing standing between your data and a perfect straight line.</p>
+<p>Turn it up and the relationship gets harder to see — which is exactly how you
+test whether a model is finding a real pattern or fooling itself.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=True)
+
+for ax, level in zip(axes, [0, 5, 30]):
+    nx, ny = make_regression(n_samples=400, n_features=1, noise=level, random_state=0)
+    ax.scatter(nx, ny, s=12, alpha=0.6, color=&quot;#2563eb&quot;)
+    ax.set_title(f&quot;noise={level}&quot;, fontsize=11)
+    ax.set_xlabel(&quot;x&quot;)
+
+axes[0].set_ylabel(&quot;y&quot;)
+axes[0].text(0.05, 0.9, &quot;a perfect line:\nthe formula, exactly&quot;, transform=axes[0].transAxes,
+             fontsize=9, va=&quot;top&quot;, color=&quot;#15803d&quot;)
+axes[2].text(0.05, 0.9, &quot;same line underneath,\nburied in randomness&quot;, transform=axes[2].transAxes,
+             fontsize=9, va=&quot;top&quot;, color=&quot;#b45309&quot;)
+fig.suptitle(&quot;noise is the difficulty dial&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c16-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3><code>coef=True</code> — the answer key</h3>
+<p>This is the reason synthetic data exists. Ask for the coefficient and
+scikit-learn tells you the <strong>true slope</strong> it used. Later, when you fit a
+<code>LinearRegression</code>, you can compare <code>model.coef_</code> against this number and see
+how close the model got.</p>
+<p><code>bias</code> is the intercept — where the line crosses <code>x = 0</code>. Below it is set to
+<code>50</code>, so the whole cloud lifts by 50.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">cx, cy, true_slope = make_regression(n_samples=300, n_features=1, noise=5,
+                                     bias=50, coef=True, random_state=0)
+
+slope = float(np.ravel(true_slope)[0])
+print(f&quot;true slope (coef) : {slope:.4f}&quot;)
+print(f&quot;true intercept    : 50   (this is the `bias` argument)&quot;)
+print(f&quot;so the hidden formula is:  y = {slope:.2f} * x + 50 + noise(sd=5)&quot;)
+
+line_x = np.linspace(cx.min(), cx.max(), 2)
+plt.figure(figsize=(6.5, 4))
+plt.scatter(cx, cy, s=14, alpha=0.5, color=&quot;#2563eb&quot;, label=&quot;generated points&quot;)
+plt.plot(line_x, slope * line_x + 50, color=&quot;#dc2626&quot;, linewidth=2.5,
+         label=f&quot;the true line: y = {slope:.1f}x + 50&quot;)
+plt.xlabel(&quot;x&quot;); plt.ylabel(&quot;y&quot;)
+plt.title(&quot;The line a model would be trying to recover&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>true slope (coef) : 62.8898
+true intercept    : 50   (this is the `bias` argument)
+so the hidden formula is:  y = 62.89 * x + 50 + noise(sd=5)</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c18-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>More than one column: where the scatter plot stops working</h3>
+<p>Your call used <code>n_features=1</code>, so one scatter plot showed everything. That is
+rare. Real data has many columns, and a 2-D chart can only ever show one of
+them against <code>y</code> at a time.</p>
+<p><code>n_informative</code> decides how many columns matter. Below: <strong>3 columns, only 1 of
+them informative</strong>. Two of the three panels are pure noise — and because
+<code>shuffle=True</code> is the default, you do not get to know in advance which panel
+that will be.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">mx, my = make_regression(n_samples=300, n_features=3, n_informative=1,
+                         noise=5, random_state=0)
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=True)
+for j, ax in enumerate(axes):
+    correlation = np.corrcoef(mx[:, j], my)[0, 1]
+    ax.scatter(mx[:, j], my, s=12, alpha=0.6, color=&quot;#2563eb&quot;)
+    ax.set_title(f&quot;column {j}   (corr with y = {correlation:+.2f})&quot;, fontsize=10)
+    ax.set_xlabel(f&quot;x[:, {j}]&quot;)
+
+axes[0].set_ylabel(&quot;y&quot;)
+fig.suptitle(&quot;3 columns, 1 informative — the other two are decoration&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()
+
+print(&quot;Only one column has a strong correlation. That is the informative one.&quot;)
+print(&quot;The other two exist so that feature-selection code has something to throw away.&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Only one column has a strong correlation. That is the informative one.
+The other two exist so that feature-selection code has something to throw away.</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c20-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="3-make-classification-groups-instead-of-numbers">3 — <code>make_classification</code>: groups instead of numbers</h2>
+<p><strong>Classification</strong> means the answer is a <strong>label</strong>: fraud / not fraud,
+spam / not spam, <code>0</code> / <code>1</code>. Not a quantity.</p>
+<h3>How the data is actually built</h3>
+<p>This generator is more elaborate than the others, and knowing the recipe
+explains every strange chart you will see below.</p>
+<div class="code"><pre> 1. place one corner per cluster on the corners of a cube        &lt;- n_clusters_per_class, class_sep
+ 2. sprinkle normal points around each corner                    &lt;- n_samples
+ 3. those coordinates become the INFORMATIVE columns             &lt;- n_informative
+ 4. add columns that are random mixes of the informative ones    &lt;- n_redundant
+ 5. add exact copies of some columns                             &lt;- n_repeated
+ 6. fill any remaining columns with pure noise                   &lt;- the leftovers: &quot;useless&quot;
+ 7. flip a few labels at random, on purpose                      &lt;- flip_y
+ 8. shuffle the rows AND the column order                        &lt;- shuffle
+</pre></div>
+<p>So a column can be one of four things:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column type</th>
+  <th>What it holds</th>
+  <th>Should a model use it?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>informative</strong></td>
+  <td>a real coordinate of the cluster</td>
+  <td>yes — this is the signal</td>
+</tr>
+<tr>
+  <td><strong>redundant</strong></td>
+  <td>a linear mix of the informative ones</td>
+  <td>it adds no new information</td>
+</tr>
+<tr>
+  <td><strong>repeated</strong></td>
+  <td>an exact copy of another column</td>
+  <td>no</td>
+</tr>
+<tr>
+  <td><strong>useless</strong></td>
+  <td>pure noise, unrelated to <code>y</code></td>
+  <td>no — and a weak model will still try</td>
+</tr>
+</tbody>
+</table>
+<p>That last group is the point. Real datasets are full of columns that look
+important and are not. This generator lets you create that situation on demand
+and check whether your feature selection throws the right ones away.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div>
+<h3>Every parameter</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Parameter</th>
+  <th>Default</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_samples</code></td>
+  <td><code>100</code></td>
+  <td>how many rows</td>
+</tr>
+<tr>
+  <td><code>n_features</code></td>
+  <td><code>20</code></td>
+  <td>how many columns in total</td>
+</tr>
+<tr>
+  <td><code>n_informative</code></td>
+  <td><code>2</code></td>
+  <td>how many carry real signal</td>
+</tr>
+<tr>
+  <td><code>n_redundant</code></td>
+  <td><code>2</code></td>
+  <td>how many are linear mixes of the informative ones</td>
+</tr>
+<tr>
+  <td><code>n_repeated</code></td>
+  <td><code>0</code></td>
+  <td>how many are exact copies</td>
+</tr>
+<tr>
+  <td><code>n_classes</code></td>
+  <td><code>2</code></td>
+  <td>how many labels</td>
+</tr>
+<tr>
+  <td><code>n_clusters_per_class</code></td>
+  <td><code>2</code></td>
+  <td>how many separate blobs each class is split into</td>
+</tr>
+<tr>
+  <td><code>weights</code></td>
+  <td><code>None</code></td>
+  <td>class balance, e.g. <code>[0.9, 0.1]</code> for an imbalanced problem</td>
+</tr>
+<tr>
+  <td><code>flip_y</code></td>
+  <td><code>0.01</code></td>
+  <td>fraction of labels flipped at random — deliberate mislabelling</td>
+</tr>
+<tr>
+  <td><code>class_sep</code></td>
+  <td><code>1.0</code></td>
+  <td>how far apart the classes sit. Bigger = easier</td>
+</tr>
+<tr>
+  <td><code>hypercube</code></td>
+  <td><code>True</code></td>
+  <td>put the cluster centres on cube corners rather than a random shape</td>
+</tr>
+<tr>
+  <td><code>shift</code> / <code>scale</code></td>
+  <td><code>0.0</code> / <code>1.0</code></td>
+  <td>move and stretch the columns afterwards</td>
+</tr>
+<tr>
+  <td><code>shuffle</code></td>
+  <td><code>True</code></td>
+  <td>shuffle the rows <strong>and the column order</strong></td>
+</tr>
+<tr>
+  <td><code>random_state</code></td>
+  <td><code>None</code></td>
+  <td>the seed</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The rule that catches people:</strong>
+<code>n_informative + n_redundant + n_repeated ≤ n_features</code>.</p>
+<p>Your call sets <code>n_features=5</code> and leaves the rest at their defaults, so:</p>
+<div class="code"><pre>   5 columns = 2 informative + 2 redundant + 0 repeated + 1 useless
+</pre></div>
+<p>Two observations about your call, neither of them a bug:</p>
+<ol>
+<li><strong>No <code>random_state</code>.</strong> Every re-run of this cell produces a completely
+different dataset and a different picture. Fine while exploring; add a seed
+the moment you want to compare two runs.</li>
+<li><strong><code>flip_y=0.01</code> is still on.</strong> About 1% of the labels are wrong on purpose.
+That is why you should not expect — or trust — a perfect separation.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">x,y = make_classification(n_classes=2,n_features=5,n_samples=500)
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11aa08050&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c24-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Two things in that output.</strong></p>
+<p><code>plt.scatter(...)</code> returns the artist it drew, and Jupyter prints the last
+expression of a cell. That is the <code>&lt;matplotlib.collections.PathCollection ...&gt;</code>
+line above the chart. Add a semicolon (<code>plt.scatter(...);</code>) or call
+<code>plt.show()</code> to hide it.</p>
+<p>More importantly: <strong>you plotted columns 0 and 1, but you do not know what
+columns 0 and 1 are.</strong> <code>shuffle=True</code> shuffled the column order, so the two
+informative columns landed somewhere random among the five. If this chart looks
+like a mess, that is the most likely reason — not a broken generator.</p>
+<p>The section after next takes the shuffle off, so the roles become known.</p>
+
+<h3>The two arrays for a classification problem</h3>
+<p><code>x</code> is the same kind of table as before: 500 rows × 5 columns of floats.
+<code>y</code> is different — it holds <strong>only <code>0</code> and <code>1</code></strong>, one label per row.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">x</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 0.52964955, -1.52158144, -1.00449325, -1.04583869,  0.03813919],
+       [ 0.2552979 ,  3.12979344,  0.28657108, -0.25320077, -0.06708268],
+       [ 0.15671694, -0.27410954, -0.89920602, -1.15883029,  0.01145847],
+       ...,
+       [ 1.57971092, -0.56393124, -0.80536408, -0.97274023,  0.01690147],
+       [-0.60155913, -0.91530415,  0.66398355,  1.08438733,  0.01484177],
+       [ 1.59016142,  1.94048849, -0.28352238, -0.78010965, -0.03864574]],
+      shape=(500, 5))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">y</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1,
+       1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1,
+       0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1,
+       0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+       0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1,
+       1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0,
+       1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1,
+       1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0,
+       1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,
+       1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1,
+       0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0,
+       0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0,
+       1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1,
+       1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+       0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+       1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1,
+       0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1,
+       0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1,
+       0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1,
+       0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1,
+       0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0,
+       0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1,
+       0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">print(&quot;y contains only:&quot;, np.unique(y), &quot;  counts:&quot;, np.bincount(y))
+print(&quot;x shape:&quot;, x.shape, &quot;  y shape:&quot;, y.shape)
+print()
+
+# Why random_state matters: two calls with no seed, then two with a seed.
+a, _ = make_classification(n_classes=2, n_features=5, n_samples=5)
+b, _ = make_classification(n_classes=2, n_features=5, n_samples=5)
+print(&quot;no seed  , run 1, first row:&quot;, a[0].round(2))
+print(&quot;no seed  , run 2, first row:&quot;, b[0].round(2), &quot; &lt;- different data&quot;)
+
+c, _ = make_classification(n_classes=2, n_features=5, n_samples=5, random_state=7)
+d, _ = make_classification(n_classes=2, n_features=5, n_samples=5, random_state=7)
+print(&quot;seed = 7 , run 1, first row:&quot;, c[0].round(2))
+print(&quot;seed = 7 , run 2, first row:&quot;, d[0].round(2), &quot; &lt;- identical, every time&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>y contains only: [0 1]   counts: [249 251]
+x shape: (500, 5)   y shape: (500,)
+
+no seed  , run 1, first row: [ 1.8  -0.61 -0.31 -2.84 -1.21]
+no seed  , run 2, first row: [-0.89 -0.09 -1.04 -1.27 -1.55]  &lt;- different data
+seed = 7 , run 1, first row: [-0.55  1.05 -0.82  0.02  1.07]
+seed = 7 , run 2, first row: [-0.55  1.05 -0.82  0.02  1.07]  &lt;- identical, every time</pre></div>
+<h3>The column anatomy, made visible</h3>
+<p>Set <code>shuffle=False</code> and the column order becomes <strong>fixed and documented</strong>:</p>
+<div class="code"><pre>   [ informative | redundant | repeated | useless ]
+        0    1        2   3       —          4
+</pre></div>
+<p>Now the roles are known, so the same four scatter plots you drew by hand later
+in this notebook can be read properly. <code>n_clusters_per_class=1</code> is used here so
+each class is a single blob and the picture stays clean.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">demo_x, demo_y = make_classification(n_samples=500, n_features=5, n_classes=2,
+                                     n_informative=2, n_redundant=2, n_repeated=0,
+                                     n_clusters_per_class=1,
+                                     shuffle=False, random_state=1)
+
+roles = [&quot;informative&quot;, &quot;informative&quot;, &quot;redundant&quot;, &quot;redundant&quot;, &quot;useless&quot;]
+
+# 5 columns, but how many independent directions are really in there?
+print(&quot;columns in the table            :&quot;, demo_x.shape[1])
+print(&quot;independent directions (rank)   :&quot;, np.linalg.matrix_rank(demo_x))
+print(&quot;-&gt; the 2 redundant columns are mixes of the informative ones. They add nothing.&quot;)
+print()
+for j, role in enumerate(roles):
+    gap = demo_x[demo_y == 1, j].mean() - demo_x[demo_y == 0, j].mean()
+    print(f&quot;column {j}  {role:&lt;12}  distance between class means = {gap:+.2f}&quot;)
+
+fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+for ax, other in zip(axes, [1, 2, 3, 4]):
+    scatter_classes(ax, demo_x, demo_y, cols=(0, other),
+                    title=f&quot;col 0 ({roles[0]})  vs  col {other} ({roles[other]})&quot;)
+    ax.set_xlabel(&quot;x[:, 0]&quot;); ax.set_ylabel(f&quot;x[:, {other}]&quot;)
+
+axes[0].legend(fontsize=8, loc=&quot;best&quot;)
+fig.suptitle(&quot;shuffle=False, so we know what each column is&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>columns in the table            : 5
+independent directions (rank)   : 3
+-&gt; the 2 redundant columns are mixes of the informative ones. They add nothing.
+
+column 0  informative   distance between class means = +0.04
+column 1  informative   distance between class means = -2.00
+column 2  redundant     distance between class means = +1.05
+column 3  redundant     distance between class means = -0.49
+column 4  useless       distance between class means = +0.09</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c31-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>How to read those four panels.</strong></p>
+<ul>
+<li><strong>col 0 vs col 1</strong> — informative against informative. Two clear groups, and
+almost all of the separation is <strong>vertical</strong>. The printed table says why: the
+class centres are <code>2.00</code> apart on column 1 and only <code>0.04</code> apart on column 0.</li>
+<li><strong>So &quot;informative&quot; does not mean &quot;separates on its own.&quot;</strong> It means the column
+was used to build the space. Column 0 looks useless in a single scatter and is
+still part of the real structure. This is why you look at <em>pairs</em>, and why a
+model looks at all the columns at once instead of filtering them one by one.</li>
+<li><strong>col 0 vs col 2</strong> and <strong>col 0 vs col 3</strong> — informative against redundant.
+These separate too, and the points sit in a <strong>tilted band</strong>. That band is the
+visual signature of a linear dependency: the redundant column is a mix of
+columns 0 and 1, so it inherits their separation while adding nothing new.</li>
+<li><strong>col 0 vs col 4</strong> — informative against useless. One round, mixed cloud. No
+straight line at any angle helps, because neither axis carries class signal
+by itself.</li>
+</ul>
+<p><strong>Engineering view.</strong> A redundant column is a derived field — like storing
+<code>total_price</code> next to <code>unit_price</code> and <code>quantity</code>. It is not wrong, but it is
+not new information, and models that assume independent inputs (naive Bayes,
+plain linear regression) get unstable when you feed them several of these.</p>
+<h3>The difficulty knobs</h3>
+<p>Four parameters change how hard the problem is. Each panel below changes
+exactly one of them, so you can see what it costs.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">settings = [
+    (&quot;class_sep=0.5\n(classes overlap)&quot;,      dict(class_sep=0.5)),
+    (&quot;class_sep=1.0\n(the default)&quot;,          dict(class_sep=1.0)),
+    (&quot;class_sep=3.0\n(easy, almost a gift)&quot;,  dict(class_sep=3.0)),
+    (&quot;flip_y=0.30\n(30% wrong labels)&quot;,       dict(flip_y=0.30)),
+    (&quot;weights=[0.9, 0.1]\n(imbalanced)&quot;,      dict(weights=[0.9, 0.1])),
+    (&quot;n_clusters_per_class=2\n(split classes)&quot;, dict(n_clusters_per_class=2)),
+]
+
+fig, axes = plt.subplots(2, 3, figsize=(13, 7))
+for ax, (title, extra) in zip(axes.ravel(), settings):
+    options = dict(n_samples=400, n_features=2, n_informative=2, n_redundant=0,
+                   n_clusters_per_class=1, random_state=3)
+    options.update(extra)
+    kx, ky = make_classification(**options)
+    scatter_classes(ax, kx, ky, title=title)
+    ax.set_xticks([]); ax.set_yticks([])
+    ax.text(0.03, 0.03, f&quot;class counts: {np.bincount(ky)}&quot;, transform=ax.transAxes,
+            fontsize=8, color=&quot;#6b7280&quot;)
+
+axes[0, 0].legend(fontsize=8, loc=&quot;upper right&quot;)
+fig.suptitle(&quot;One knob changed per panel&quot;, fontsize=13)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c33-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>What each knob is for.</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Knob</th>
+  <th>Real situation it imitates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>class_sep</code></td>
+  <td>how distinguishable the two groups genuinely are. Low values are the honest case — fraud looks a lot like normal spending</td>
+</tr>
+<tr>
+  <td><code>flip_y</code></td>
+  <td>labelling errors. Someone ticked the wrong box in the source system</td>
+</tr>
+<tr>
+  <td><code>weights</code></td>
+  <td>class imbalance. 1 fraud in 1,000 transactions. Accuracy becomes a useless metric here — that is the lesson this knob exists to teach</td>
+</tr>
+<tr>
+  <td><code>n_clusters_per_class</code></td>
+  <td>one label, several different causes. &quot;Churn&quot; from price and &quot;churn&quot; from bad support are two separate blobs wearing the same label</td>
+</tr>
+</tbody>
+</table>
+<p>The last one explains your own charts earlier: the default is <strong>2</strong>, so each
+class is two separate patches. A model that assumes one blob per class will
+struggle, and the picture looks messier than a beginner expects.</p>
+
+<h2 id="4-make-blobs-round-groups-for-clustering">4 — <code>make_blobs</code>: round groups, for clustering</h2>
+<p><code>make_blobs</code> drops a few centre points into space and scatters normal noise
+around each one. That is the entire algorithm.</p>
+<p>The difference from <code>make_classification</code> is what <code>y</code> <strong>means</strong>:</p>
+<div class="code"><pre>   make_classification   y = the true label      (supervised: you are given it)
+   make_blobs            y = which blob it came from
+                             (unsupervised: you normally THROW IT AWAY and
+                              ask the algorithm to rediscover the groups)
+</pre></div>
+<p>So <code>make_blobs</code> is the test rig for <strong>KMeans</strong>, <strong>DBSCAN</strong>, and hierarchical
+clustering. You keep <code>y</code> only to check the algorithm's answer afterwards.</p>
+<h3>Every parameter</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Parameter</th>
+  <th>Default</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_samples</code></td>
+  <td><code>100</code></td>
+  <td>total rows — or a <strong>list</strong>, one count per centre, e.g. <code>[300, 100, 50]</code></td>
+</tr>
+<tr>
+  <td><code>n_features</code></td>
+  <td><code>2</code></td>
+  <td>how many columns. <code>2</code> because you want to draw it</td>
+</tr>
+<tr>
+  <td><code>centers</code></td>
+  <td><code>None</code></td>
+  <td>a number of blobs, <strong>or</strong> an array of exact coordinates</td>
+</tr>
+<tr>
+  <td><code>cluster_std</code></td>
+  <td><code>1.0</code></td>
+  <td>how spread out each blob is. One number, or one per blob</td>
+</tr>
+<tr>
+  <td><code>center_box</code></td>
+  <td><code>(-10, 10)</code></td>
+  <td>the square the random centres are drawn from</td>
+</tr>
+<tr>
+  <td><code>shuffle</code></td>
+  <td><code>True</code></td>
+  <td>shuffle the rows</td>
+</tr>
+<tr>
+  <td><code>random_state</code></td>
+  <td><code>None</code></td>
+  <td>the seed</td>
+</tr>
+<tr>
+  <td><code>return_centers</code></td>
+  <td><code>False</code></td>
+  <td><code>True</code> also returns the true centre coordinates</td>
+</tr>
+</tbody>
+</table>
+<p>There is no <code>n_informative</code>, no <code>n_redundant</code>, no <code>flip_y</code>. Every column of
+<code>make_blobs</code> is real. That is deliberate: clustering is hard enough without
+decoy columns.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">from sklearn.datasets import make_blobs</pre></div>
+<p>Your call:</p>
+<div class="code"><pre class="py">x, y = make_blobs(n_samples=500, centers=3, n_features=2, random_state=0)
+</pre></div>
+<p><em>&quot;500 rows, 3 groups, 2 columns so I can plot it, and the same result every
+time.&quot;</em> The centres themselves are chosen at random inside <code>center_box</code>, which
+is why the seed matters here too.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">x, y = make_blobs(n_samples=500, centers=3, n_features=2,random_state=0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11db07250&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c39-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Three clean, round clouds.</strong> They are round because the noise added around
+each centre is the same in every direction (<code>cluster_std</code> is one number).</p>
+<p>Two parameters change everything about this picture: <code>cluster_std</code> decides
+whether the groups stay apart, and <code>centers</code> lets you place them by hand
+instead of letting the seed choose.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(13, 3.8), sharex=True, sharey=True)
+
+for ax, spread in zip(axes, [0.5, 1.5, 3.0]):
+    bx, by, centres = make_blobs(n_samples=400, centers=3, n_features=2,
+                                 cluster_std=spread, random_state=0,
+                                 return_centers=True)
+    scatter_classes(ax, bx, by, title=f&quot;cluster_std={spread}&quot;)
+    ax.scatter(centres[:, 0], centres[:, 1], marker=&quot;X&quot;, s=180, c=&quot;#111827&quot;,
+               edgecolor=&quot;white&quot;, linewidth=1.5, zorder=5)
+
+axes[0].text(0.03, 0.03, &quot;tight: any algorithm finds these&quot;, transform=axes[0].transAxes,
+             fontsize=8, color=&quot;#15803d&quot;)
+axes[2].text(0.03, 0.03, &quot;merged: &#x27;how many groups?&#x27; has no clean answer&quot;,
+             transform=axes[2].transAxes, fontsize=8, color=&quot;#b45309&quot;)
+fig.suptitle(&quot;cluster_std decides whether clustering is even possible  (X = true centre)&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c41-11.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Placing the centres yourself</h3>
+<p><code>centers=3</code> lets the seed pick the locations. Passing coordinates instead makes
+the dataset exactly reproducible <strong>and</strong> lets you build the awkward cases on
+purpose — two blobs close together and one far away, or blobs of very different
+sizes and densities. That is how you find out where KMeans goes wrong, since it
+assumes round clusters of similar size.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">chosen_centres = np.array([[0.0, 0.0],
+                           [1.5, 1.5],     # deliberately close to the first
+                           [8.0, 1.0]])    # far away
+
+hx, hy = make_blobs(n_samples=[300, 300, 60],       # different size per blob
+                    centers=chosen_centres,
+                    cluster_std=[0.6, 0.6, 1.8],    # different spread per blob
+                    random_state=0)
+
+print(&quot;rows per blob:&quot;, np.bincount(hy))
+
+fig, ax = plt.subplots(figsize=(7, 4))
+scatter_classes(ax, hx, hy, title=&quot;Centres, sizes and spreads chosen by hand&quot;)
+ax.scatter(chosen_centres[:, 0], chosen_centres[:, 1], marker=&quot;X&quot;, s=200,
+           c=&quot;#111827&quot;, edgecolor=&quot;white&quot;, linewidth=1.5, zorder=5)
+ax.legend(fontsize=8)
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>rows per blob: [300 300  60]</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c43-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="5-make-circles-when-a-straight-line-cannot-work">5 — <code>make_circles</code>: when a straight line cannot work</h2>
+<p>Everything so far could be separated, more or less, by drawing a straight line
+across the picture. <code>make_circles</code> exists to break that.</p>
+<p>One class is a ring. The other class is a smaller ring <strong>inside</strong> it. No
+straight line can put one class on one side and the other class on the other —
+you would need a circle, or a model that can bend.</p>
+<h3>Every parameter</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Parameter</th>
+  <th>Default</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_samples</code></td>
+  <td><code>100</code></td>
+  <td>total rows, split evenly between the two rings — or <code>(outer, inner)</code></td>
+</tr>
+<tr>
+  <td><code>factor</code></td>
+  <td><code>0.8</code></td>
+  <td>inner radius ÷ outer radius. Must be <code>0 ≤ factor &lt; 1</code>. Small = a big gap</td>
+</tr>
+<tr>
+  <td><code>noise</code></td>
+  <td><code>None</code></td>
+  <td>standard deviation of Gaussian noise added to the <strong>point positions</strong></td>
+</tr>
+<tr>
+  <td><code>shuffle</code></td>
+  <td><code>True</code></td>
+  <td>shuffle the rows</td>
+</tr>
+<tr>
+  <td><code>random_state</code></td>
+  <td><code>None</code></td>
+  <td>the seed</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <code>noise</code> means something different here than in <code>make_regression</code>. There it
+wobbled the answer <code>y</code>. Here it wobbles the <strong>coordinates</strong>, thickening each
+ring into a fuzzy band.</p>
+<p>Your call uses <code>noise=0.03</code>, which is a light dusting — the rings stay clearly
+separate. The default <code>factor=0.8</code> puts the inner ring quite close to the outer
+one.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">from sklearn.datasets import make_circles
+x, y = make_circles(n_samples=500,random_state=1,noise=0.03)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 46</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11de11310&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c46-13.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>A bullseye.</strong> Two well-formed rings, one inside the other.</p>
+<p>Now watch what <code>factor</code> and <code>noise</code> do. <code>factor</code> moves the inner ring outwards
+until the two touch; <code>noise</code> blurs both until the gap disappears.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 48</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.8))
+
+variants = [
+    (&quot;factor=0.2, noise=0.03&quot;, dict(factor=0.2, noise=0.03)),
+    (&quot;factor=0.5, noise=0.03&quot;, dict(factor=0.5, noise=0.03)),
+    (&quot;factor=0.8, noise=0.03\n(your call: the default)&quot;, dict(factor=0.8, noise=0.03)),
+    (&quot;factor=0.8, noise=0.15&quot;, dict(factor=0.8, noise=0.15)),
+]
+
+for ax, (title, extra) in zip(axes, variants):
+    rx, ry = make_circles(n_samples=400, random_state=1, **extra)
+    scatter_classes(ax, rx, ry, title=title, size=12)
+    ax.set_xticks([]); ax.set_yticks([])
+    ax.set_aspect(&quot;equal&quot;)
+
+axes[0].legend(fontsize=8, loc=&quot;upper right&quot;)
+fig.suptitle(&quot;factor sets the gap between the rings; noise blurs them&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c48-14.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="6-make-moons-two-interlocking-crescents">6 — <code>make_moons</code>: two interlocking crescents</h2>
+<p>Same purpose as <code>make_circles</code>, different shape. Two half-circles hooked into
+each other. Again, no straight line separates them.</p>
+<p>Moons are the picture you see in almost every tutorial on decision boundaries,
+because the correct boundary is an obvious S-curve that a human can draw by eye
+and a linear model cannot produce.</p>
+<h3>Every parameter</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Parameter</th>
+  <th>Default</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>n_samples</code></td>
+  <td><code>100</code></td>
+  <td>total rows — or <code>(upper, lower)</code> for an uneven split</td>
+</tr>
+<tr>
+  <td><code>noise</code></td>
+  <td><code>None</code></td>
+  <td>Gaussian noise added to the point positions</td>
+</tr>
+<tr>
+  <td><code>shuffle</code></td>
+  <td><code>True</code></td>
+  <td>shuffle the rows</td>
+</tr>
+<tr>
+  <td><code>random_state</code></td>
+  <td><code>None</code></td>
+  <td>the seed</td>
+</tr>
+</tbody>
+</table>
+<p>That is the whole list. There is no shape control — the crescents are always
+the same crescents. Only <code>noise</code> changes the difficulty.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.datasets import make_moons
+x, y = make_moons(n_samples=500,random_state=10,noise=0.1)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 51</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11df74f50&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c51-15.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Two crescents, slightly fuzzy.</strong> <code>noise=0.1</code> is the usual choice: enough
+blur to be realistic, not enough to destroy the shape.</p>
+<p>Below, the noise is swept — and then the claim <em>&quot;no straight line works&quot;</em> is
+actually tested rather than asserted.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 53</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+
+for ax, level in zip(axes, [0.0, 0.1, 0.25, 0.45]):
+    sx, sy = make_moons(n_samples=400, noise=level, random_state=10)
+    scatter_classes(ax, sx, sy, title=f&quot;noise={level}&quot;, size=12)
+    ax.set_xticks([]); ax.set_yticks([])
+
+axes[0].text(0.03, 0.03, &quot;the pure shape&quot;, transform=axes[0].transAxes,
+             fontsize=8, color=&quot;#15803d&quot;)
+axes[3].text(0.03, 0.03, &quot;the shape is gone&quot;, transform=axes[3].transAxes,
+             fontsize=8, color=&quot;#b45309&quot;)
+axes[0].legend(fontsize=8, loc=&quot;upper right&quot;)
+fig.suptitle(&quot;make_moons: noise is the only difficulty dial&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c53-16.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Testing the claim: how good can a straight line be?</h3>
+<p>No model is fitted here — that comes later in the course. Instead this is brute
+force: try <strong>every</strong> angle of straight line and <strong>every</strong> cut position, and
+keep the best score. That is the ceiling any straight-line model could reach.</p>
+<p>Compare the ceiling across three datasets and the point makes itself.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 55</span></div><pre class="py">def best_straight_line_score(X, labels, angles=180, cuts=99):
+    &quot;&quot;&quot;Brute-force the best accuracy any straight boundary could reach.&quot;&quot;&quot;
+    best = 0.0
+    for theta in np.linspace(0, np.pi, angles, endpoint=False):
+        projected = X @ np.array([np.cos(theta), np.sin(theta)])
+        for cut in np.quantile(projected, np.linspace(0.01, 0.99, cuts)):
+            side = (projected &gt; cut).astype(int)
+            best = max(best, (side == labels).mean(), (1 - side == labels).mean())
+    return best
+
+
+tests = {
+    &quot;make_blobs (2 blobs)&quot;: make_blobs(n_samples=400, centers=2, n_features=2, random_state=0),
+    &quot;make_moons  (noise=0.1)&quot;: make_moons(n_samples=400, noise=0.1, random_state=10),
+    &quot;make_circles (factor=0.5)&quot;: make_circles(n_samples=400, noise=0.03, factor=0.5, random_state=1),
+}
+
+names, scores = [], []
+for name, (tx, ty) in tests.items():
+    score = best_straight_line_score(tx, ty)
+    names.append(name); scores.append(score)
+    print(f&quot;{name:&lt;26} best possible straight line: {score:.1%}&quot;)
+
+fig, ax = plt.subplots(figsize=(7.5, 3))
+bars = ax.barh(names, scores, color=[&quot;#16a34a&quot;, &quot;#f59e0b&quot;, &quot;#dc2626&quot;])
+ax.axvline(0.5, color=&quot;#6b7280&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0.505, 2.35, &quot;coin flip&quot;, fontsize=8, color=&quot;#6b7280&quot;)
+ax.set_xlim(0, 1); ax.set_xlabel(&quot;best accuracy a straight boundary can reach&quot;)
+for bar, score in zip(bars, scores):
+    ax.text(score - 0.03, bar.get_y() + bar.get_height() / 2, f&quot;{score:.0%}&quot;,
+            va=&quot;center&quot;, ha=&quot;right&quot;, color=&quot;white&quot;, fontsize=10)
+ax.invert_yaxis()
+ax.set_title(&quot;This is why make_circles and make_moons exist&quot;)
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>make_blobs (2 blobs)       best possible straight line: 98.0%
+make_moons  (noise=0.1)    best possible straight line: 89.0%
+make_circles (factor=0.5)  best possible straight line: 66.5%</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c55-17.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Read the bars.</strong></p>
+<ul>
+<li><strong>blobs — 98%.</strong> A straight line gets essentially everything right. A linear
+model is the correct tool here, and anything fancier is wasted effort.</li>
+<li><strong>moons — 89%.</strong> The best possible line still misses about one point in nine,
+and it can never do better. The crescents overlap along every direction you
+could cut.</li>
+<li><strong>circles — 66%.</strong> Half of that is free: guessing one class already gets 50%.
+The inner ring is completely surrounded, so every straight cut leaves both
+classes on both sides. A linear model here is close to useless.</li>
+</ul>
+<p>To solve the bottom two you need a model that can bend a boundary: KNN, a
+decision tree, an SVM with an RBF kernel, or a small neural network. That is
+the whole reason these two generators are in the library.</p>
+
+<h2 id="7-your-own-experiment-plotting-column-0-against-">7 — Your own experiment: plotting column 0 against every other column</h2>
+<p>The next four cells are the most interesting thing in this notebook, because
+you found a real problem by hand.</p>
+<div class="code"><pre class="py">x, y = make_classification(n_classes=2, n_features=5, n_samples=10, random_state=1)
+plt.scatter(x[:, 0], x[:, 1], c=y)   # then 2, then 3, then 4
+</pre></div>
+<p>Two changes from your earlier call, both good ones:</p>
+<ul>
+<li><code>random_state=1</code> — the dataset is now fixed, so the charts are comparable.</li>
+<li><code>n_samples=10</code> — only 10 points, so you can see individual rows.</li>
+</ul>
+<p>What you are doing is a <strong>manual pair plot</strong>: hold one column fixed and swap the
+other, looking for the pair where the colours separate. This is exactly what
+<code>seaborn.pairplot</code> automates, and it is a normal first move in EDA.</p>
+<p>Watch how different the four charts look, and hold the question: <em>why does the
+same column 0 look useful in one chart and useless in the next?</em></p>
+<p>⚠️ With only 10 points, do not over-read any of them. Ten points can look
+separated by pure chance.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 58</span></div><pre class="py">from sklearn.datasets import make_classification
+x,y = make_classification(n_classes=2,n_features=5,n_samples=10,random_state=1)
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e163390&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c58-18.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 59</span></div><pre class="py">plt.scatter(x[:,0],x[:,2],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e1f51d0&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c59-19.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 60</span></div><pre class="py">plt.scatter(x[:,0],x[:,3],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e24afd0&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c60-20.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 61</span></div><pre class="py">plt.scatter(x[:,0],x[:,4],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e2ec690&gt;</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c61-21.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>Why the four charts disagree</h3>
+<p><code>shuffle=True</code> is the default, so the column order was scrambled when the data
+was made. Column 0 is not &quot;the first feature&quot; — it is whichever feature landed
+in slot 0.</p>
+<p>The roles can be recovered exactly. Generate the same seed twice, once with
+<code>shuffle=False</code> (where the order is known: informative, redundant, useless) and
+once as you called it. Shuffling reorders columns but does not change the
+<strong>values inside</strong> a column, so sorting each column and matching gives the map.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 63</span></div><pre class="py">def column_roles(**call):
+    # Work out what each column of a make_classification call really is.
+    # Trick: generate the same seed twice - once with shuffle=False, where the
+    # column order is documented, and once as called. Shuffling moves columns
+    # around but never changes the values inside one, so sorting each column
+    # and matching the two sets recovers the mapping exactly.
+    shuffled, _ = make_classification(**call)
+    ordered, _ = make_classification(**call, shuffle=False)
+    # documented order for 5 columns with the default 2 informative + 2 redundant:
+    known = [&quot;informative&quot;, &quot;informative&quot;, &quot;redundant&quot;, &quot;redundant&quot;, &quot;useless&quot;]
+    roles = {}
+    for j in range(shuffled.shape[1]):
+        for k in range(ordered.shape[1]):
+            if np.allclose(np.sort(shuffled[:, j]), np.sort(ordered[:, k])):
+                roles[j] = known[k]
+                break
+    return roles
+
+
+call = dict(n_classes=2, n_features=5, n_samples=10, random_state=1)
+learner_x, learner_y = make_classification(**call)      # exactly your cell
+column_role = column_roles(**call)
+
+for j in range(5):
+    print(f&quot;your x[:, {j}]  is  {column_role[j]}&quot;)
+
+print()
+print(&quot;so the four charts you drew were really:&quot;)
+for other in [1, 2, 3, 4]:
+    print(f&quot;  x[:, 0] vs x[:, {other}]   -&gt;   {column_role[0]}  vs  {column_role[other]}&quot;)
+
+fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+for ax, other in zip(axes, [1, 2, 3, 4]):
+    scatter_classes(ax, learner_x, learner_y, cols=(0, other), size=90,
+                    title=f&quot;x[:,0] vs x[:,{other}]\n{column_role[0]} vs {column_role[other]}&quot;)
+    ax.set_xlabel(&quot;x[:, 0]&quot;); ax.set_ylabel(f&quot;x[:, {other}]&quot;)
+
+axes[0].legend(fontsize=8)
+fig.suptitle(&quot;Your four charts, with each column&#x27;s real job printed on top&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>your x[:, 0]  is  useless
+your x[:, 1]  is  redundant
+your x[:, 2]  is  redundant
+your x[:, 3]  is  informative
+your x[:, 4]  is  informative
+
+so the four charts you drew were really:
+  x[:, 0] vs x[:, 1]   -&gt;   useless  vs  redundant
+  x[:, 0] vs x[:, 2]   -&gt;   useless  vs  redundant
+  x[:, 0] vs x[:, 3]   -&gt;   useless  vs  informative
+  x[:, 0] vs x[:, 4]   -&gt;   useless  vs  informative</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c63-22.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>The result for this seed:</strong></p>
+<div class="code"><pre>   x[:, 0]  -&gt;  useless      (pure noise, nothing to do with y)
+   x[:, 1]  -&gt;  redundant
+   x[:, 2]  -&gt;  redundant
+   x[:, 3]  -&gt;  informative
+   x[:, 4]  -&gt;  informative
+</pre></div>
+<p>So every chart you drew had a <strong>pure noise column on the horizontal axis</strong>.</p>
+<p>Now look at those four panels again, carefully. In <strong>all four</strong> the blue points
+sit on the left and the orange points on the right — a split along column 0,
+the column we just proved is noise.</p>
+<p><strong>That split is a coincidence, and it is the most valuable thing in this
+notebook.</strong> With <code>n_samples=10</code> there are five points per class. Five random
+values landing to the left of five other random values is not a rare event. Ten
+points can be made to look like almost any pattern.</p>
+<p>The cell below repeats the identical call with 500 rows instead of 10. The
+useless column's fake separation disappears, and the two informative columns
+show the structure that was there all along.</p>
+<p><strong>The general lesson, and it is not a synthetic-data lesson.</strong> Column position
+tells you nothing about a column's value, and a small sample tells you nothing
+about whether a pattern is real. You find both out by testing, not by looking.</p>
+<p>The two printed percentages make the same point without any eyeballing: a pair
+containing the useless column tops out near a coin flip, while the pair of
+informative columns is separable by a straight line about nine times out of ten.</p>
+<p><strong>Engineering view.</strong> It is the same reason you do not index into a result set
+by column number. <code>row.get(3)</code> compiles and runs; <code>row.get(&quot;customer_id&quot;)</code>
+tells the truth. NumPy has no column names, which is precisely why people load
+data through Pandas, keep the names as long as possible, and only drop to raw
+arrays at the last moment.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 65</span></div><pre class="py">big_call = dict(n_classes=2, n_features=5, n_samples=500, random_state=1)
+big_x, big_y = make_classification(**big_call)
+big_role = column_roles(**big_call)
+print(&quot;with 500 rows the roles land as:&quot;, big_role)
+
+useless_col      = next(j for j, r in big_role.items() if r == &quot;useless&quot;)
+informative_cols = [j for j, r in big_role.items() if r == &quot;informative&quot;]
+
+fig, axes = plt.subplots(1, 3, figsize=(14, 4))
+
+scatter_classes(axes[0], learner_x, learner_y, cols=(0, 3), size=90,
+                title=&quot;10 rows\nuseless column on x - looks split&quot;)
+axes[0].set_xlabel(&quot;the useless column&quot;)
+axes[0].set_ylabel(&quot;an informative column&quot;)
+
+scatter_classes(axes[1], big_x, big_y, cols=(useless_col, informative_cols[0]), size=12,
+                title=&quot;500 rows\nsame kind of pair - the split is gone&quot;)
+axes[1].set_xlabel(f&quot;the useless column, x[:, {useless_col}]&quot;)
+
+scatter_classes(axes[2], big_x, big_y, cols=tuple(informative_cols), size=12,
+                title=&quot;500 rows\nboth informative columns - the real structure&quot;)
+axes[2].set_xlabel(f&quot;x[:, {informative_cols[0]}]&quot;)
+axes[2].set_ylabel(f&quot;x[:, {informative_cols[1]}]&quot;)
+
+axes[0].legend(fontsize=8)
+fig.suptitle(&quot;Ten points can look like anything. Five hundred cannot.&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()
+
+# the same brute-force straight line as before, now as a number
+pair_useless = big_x[:, [useless_col, informative_cols[0]]]
+pair_real    = big_x[:, informative_cols]
+print(f&quot;useless + informative  -&gt;  best straight line: {best_straight_line_score(pair_useless, big_y):.1%}&quot;)
+print(f&quot;both informative       -&gt;  best straight line: {best_straight_line_score(pair_real, big_y):.1%}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>with 500 rows the roles land as: {0: &#x27;informative&#x27;, 1: &#x27;redundant&#x27;, 2: &#x27;redundant&#x27;, 3: &#x27;useless&#x27;, 4: &#x27;informative&#x27;}
+useless + informative  -&gt;  best straight line: 57.2%
+both informative       -&gt;  best straight line: 94.0%</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c65-23.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="8-the-last-cell-read-the-error-before-you-run-it">8 — The last cell: read the error before you run it</h2>
+<div class="code"><pre class="py">plt.scatter(x[:, 0], x[:, 5], c=y)
+</pre></div>
+<p>Before running: <code>x</code> has <strong>5 columns</strong>. Python counts from <strong>0</strong>. So the valid
+column numbers are <code>0, 1, 2, 3, 4</code>. There is no <code>5</code>.</p>
+<div class="code"><pre>     column number:    0     1     2     3     4
+                    ┌─────┬─────┬─────┬─────┬─────┐
+     x  =           │     │     │     │     │     │      x.shape -&gt; (10, 5)
+                    └─────┴─────┴─────┴─────┴─────┘
+                                                   ↑
+                                                  x[:, 5] points here — off the end
+</pre></div>
+<p>The cell below is <strong>kept on purpose</strong>. A failure you understand is worth more
+than a cell you deleted.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 67</span></div><pre class="py">plt.scatter(x[:,0],x[:,5],c=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[38], line 1
+----&gt; 1 plt.scatter(x[:,0],x[:,5],c=y)
+
+IndexError: index 5 is out of bounds for axis 1 with size 5</pre></div>
+<h3>Reading the traceback</h3>
+<div class="code"><pre>IndexError: index 5 is out of bounds for axis 1 with size 5
+             │                                │         │
+             │                                │         └── that axis has 5 slots
+             │                                └── axis 1 = columns (axis 0 = rows)
+             └── the number you asked for
+</pre></div>
+<p><code>size 5</code> and <code>index 5</code> in the same sentence is the classic off-by-one. Size 5
+means the <strong>last valid index is 4</strong>.</p>
+<p><strong>Two habits that prevent it.</strong></p>
+<ol>
+<li>Check the shape before indexing: <code>x.shape</code> → <code>(10, 5)</code>.</li>
+<li>Never hardcode a column count. Loop over <code>range(x.shape[1])</code> and the code
+adapts when you change <code>n_features</code>.</li>
+</ol>
+<p>Here is your experiment written that way. It draws every column against
+column 0 automatically, and it cannot run off the end.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 69</span></div><pre class="py">rows, columns = learner_x.shape
+print(f&quot;the array has {rows} rows and {columns} columns&quot;)
+print(f&quot;valid column indexes: 0 .. {columns - 1}&quot;)
+
+others = [j for j in range(columns) if j != 0]
+
+fig, axes = plt.subplots(1, len(others), figsize=(3.7 * len(others), 3.6))
+for ax, other in zip(axes, others):
+    scatter_classes(ax, learner_x, learner_y, cols=(0, other), size=90,
+                    title=f&quot;x[:, 0]  vs  x[:, {other}]&quot;)
+    ax.set_xlabel(&quot;x[:, 0]&quot;); ax.set_ylabel(f&quot;x[:, {other}]&quot;)
+
+axes[0].legend(fontsize=8)
+fig.suptitle(&quot;range(x.shape[1]) — same experiment, no IndexError possible&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()
+
+# The safe way to ask for a column that may not exist:
+wanted = 5
+if wanted &lt; columns:
+    print(learner_x[:, wanted])
+else:
+    print(f&quot;column {wanted} does not exist — there are only {columns} columns (0..{columns - 1})&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>the array has 10 rows and 5 columns
+valid column indexes: 0 .. 4
+column 5 does not exist — there are only 5 columns (0..4)</pre></div>
+<figure class="shot"><img src="assets/02-make-dataset-c69-24.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="which-generator-do-i-reach-for">Which generator do I reach for?</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>I want to practise…</th>
+  <th>Use</th>
+  <th>Because</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>linear regression, MSE, R², gradient descent</td>
+  <td><code>make_regression</code></td>
+  <td>the true slope is available with <code>coef=True</code>, so you can grade the model</td>
+</tr>
+<tr>
+  <td>logistic regression, trees, forests</td>
+  <td><code>make_classification</code></td>
+  <td>real labels, plus decoy columns and label noise</td>
+</tr>
+<tr>
+  <td>feature selection, PCA, multicollinearity</td>
+  <td><code>make_classification</code></td>
+  <td><code>n_redundant</code> and the useless columns are the whole exercise</td>
+</tr>
+<tr>
+  <td>imbalanced-data metrics (precision, recall, ROC)</td>
+  <td><code>make_classification</code></td>
+  <td><code>weights=[0.99, 0.01]</code> builds the problem in one line</td>
+</tr>
+<tr>
+  <td>KMeans, DBSCAN, the elbow method</td>
+  <td><code>make_blobs</code></td>
+  <td>round, separated groups with a known correct count</td>
+</tr>
+<tr>
+  <td>KNN, SVM kernels, neural networks, decision boundaries</td>
+  <td><code>make_circles</code>, <code>make_moons</code></td>
+  <td>linear models provably fail, so the improvement is visible</td>
+</tr>
+</tbody>
+</table>
+<h2 id="common-mistakes">Common mistakes</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Mistake</th>
+  <th>What goes wrong</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Leaving out <code>random_state</code></td>
+  <td>Every run is a different dataset. You cannot tell whether your change helped or the data moved. Your first <code>make_classification</code> call has this.</td>
+</tr>
+<tr>
+  <td>Assuming column 0 is meaningful</td>
+  <td><code>shuffle=True</code> scatters the informative columns. Verified above: your <code>x[:, 0]</code> was the useless one.</td>
+</tr>
+<tr>
+  <td>Forgetting the defaults</td>
+  <td><code>make_regression</code> defaults to <strong>100</strong> columns, <code>make_classification</code> to <strong>20</strong>. Always set <code>n_features</code>.</td>
+</tr>
+<tr>
+  <td><code>x[:, 5]</code> on a 5-column array</td>
+  <td>Indexes stop at 4. Use <code>range(x.shape[1])</code>.</td>
+</tr>
+<tr>
+  <td>Trusting a synthetic score</td>
+  <td>These datasets are clean, balanced and well behaved. A model scoring 0.99 here proves the code runs, not that the model is good.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="where-this-shows-up-in-real-work">Where this shows up in real work</h2>
+<ul>
+<li><strong>Unit tests for an ML pipeline.</strong> <code>make_classification(random_state=0)</code> in a
+test gives a deterministic dataset that fits in memory. The test asserts the
+pipeline runs, the shapes come out right, and the score does not fall below a
+floor. No dataset file in the repository.</li>
+<li><strong>Reproducing a bug.</strong> &quot;The model fails on imbalanced data&quot; becomes a
+four-line reproduction with <code>weights=[0.99, 0.01]</code>, which you can attach to a
+ticket.</li>
+<li><strong>Load and latency testing a model service.</strong> You need 100,000 rows of the
+right shape to hit an endpoint. You do not need real customer records — and
+using them would need a privacy review you can skip entirely.</li>
+<li><strong>Teaching and interviews.</strong> Every decision-boundary picture you have seen
+was drawn on moons or circles.</li>
+</ul>
+<h2 id="interview-view">Interview view</h2>
+<ol>
+<li><strong>Why use synthetic data at all?</strong> Because you know the ground truth. It is
+the only way to check whether a model recovered the pattern, rather than
+just scoring well.</li>
+<li><strong><code>make_blobs</code> vs <code>make_classification</code>?</strong> Blobs are plain isotropic
+Gaussians and <code>y</code> is a cluster id — built for unsupervised work.
+<code>make_classification</code> adds redundant, repeated and useless columns, label
+noise (<code>flip_y</code>) and class imbalance (<code>weights</code>) — built for supervised work.</li>
+<li><strong>Why do <code>make_circles</code> and <code>make_moons</code> exist?</strong> To create data no linear
+boundary can separate, so kernel methods and non-linear models have
+something to prove themselves on.</li>
+<li><strong>What does <code>n_redundant</code> simulate?</strong> Multicollinearity — derived columns
+that carry no new information but destabilise linear models and inflate
+feature-importance scores.</li>
+<li><strong>What does <code>noise</code> mean?</strong> In <code>make_regression</code>, the spread added to the
+answer <code>y</code>. In <code>make_circles</code> and <code>make_moons</code>, the spread added to the
+point coordinates. Same word, different target.</li>
+</ol>
+<h2 id="what-is-not-covered-here">What is not covered here</h2>
+<p>No model has been fitted in this notebook. The natural next steps are to take
+<code>make_regression</code> data into <code>LinearRegression</code> and compare <code>model.coef_</code> with
+the <code>coef=True</code> answer key, and to take <code>make_moons</code> into both
+<code>LogisticRegression</code> and <code>KNeighborsClassifier</code> to see the straight-line
+ceiling from the bar chart above turn into two real scores.</p>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> <code>make_*</code> gives you data whose answer you
+already know — so always set <code>random_state</code>, always set <code>n_features</code>, and never
+assume a column's position tells you what that column is for.</p>
+
+<div class="foot"><a class="btn" href="../Concept/02_make_*_dataset.ipynb">02_make_*_dataset.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polynomial Regression — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Polynomial Regression</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#machine-learning-polynomial-regression">Machine Learning — Polynomial Regression</a><a href="#topic-introduction">📘 Topic Introduction</a><a href="#polynomial-regression-intuition">🧠 Polynomial Regression Intuition</a><a href="#what-i-learned">📝 What I Learned</a><a href="#interview-notes">🎯 Interview Notes</a><a href="#28-polynomial-regression-hands-on-with-scikit-le">28. Polynomial Regression — Hands-On with scikit-lea</a><a href="#step-1-load-the-dataset">Step 1 — Load the dataset</a><a href="#step-2-look-at-the-data">Step 2 — Look at the data</a><a href="#step-3-check-the-shape">Step 3 — Check the shape</a><a href="#step-4-check-for-missing-values">Step 4 — Check for missing values</a><a href="#step-5-visualize-the-raw-relationship">Step 5 — Visualize the raw relationship</a><a href="#step-6-split-into-x-input-and-y-target">Step 6 — Split into x (input) and y (target)</a><a href="#step-7-a-quick-straight-line-baseline">Step 7 — A quick straight-line baseline</a><a href="#step-8-turn-one-column-into-many-polynomialfeatu">Step 8 — Turn one column into many (PolynomialFeatur</a><a href="#step-9-split-into-train-and-test-sets">Step 9 — Split into train and test sets</a><a href="#step-10-train-the-polynomial-model">Step 10 — Train the polynomial model</a><a href="#step-11-score-the-model-on-unseen-data">Step 11 — Score the model on unseen data</a><a href="#step-12-simple-linear-model-vs-polynomial-model-">Step 12 — Simple Linear Model vs Polynomial Model, s</a><a href="#step-13-compare-multiple-degrees-at-once">Step 13 — Compare multiple degrees at once</a><a href="#step-14-predict-an-in-between-level-both-ways">Step 14 — Predict an in-between level, both ways</a><a href="#step-15-see-that-prediction-on-the-chart">Step 15 — See that prediction on the chart</a><a href="#key-takeaways">Key Takeaways</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Polynomial Regression</h1>
+  <p class="lede">When a straight line is too simple and a wiggly curve is too eager.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Meena's data curved and her straight line missed it everywhere.</strong> So she let the model bend — degree 2, then 3, then 15.</p><p>By degree 15 the curve passed through <em>every single training point</em>. Perfect training score.</p><p><span class='beat'>On the test rows it was a disaster.</span> The curve had stopped following the trend and started following the noise, whipping wildly between points.</p><p>That is the whole overfitting story in one picture: too simple and you miss the pattern, too flexible and you memorise the accidents. Degree is the dial between them.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Raising the degree lets the curve bend. Raise it too far and it memorises the noise.</p></div>
+<div class="src-head">📓 <a href="../Concept/10_Polynomial Regression.ipynb">10_Polynomial Regression.ipynb</a></div>
+<h2 id="machine-learning-polynomial-regression">Machine Learning — Polynomial Regression</h2>
+<h2 id="topic-introduction">📘 Topic Introduction</h2>
+<p>This notebook explores a small polynomial regression example using a synthetic dataset. The goal is to understand how a linear model can be extended to capture curved relationships between input and target variables.</p>
+<h3>Learning flow</h3>
+<ul>
+<li>Understand the dataset and pattern</li>
+<li>Split data into train and test sets</li>
+<li>Fit a simple linear model baseline</li>
+<li>Extend the model with polynomial features</li>
+<li>Compare how shape changes affect learning</li>
+</ul>
+<h3>Workflow progress</h3>
+<ul>
+<li>✅ Dataset loading</li>
+<li>✅ Dataset understanding</li>
+<li>✅ Initial visualization</li>
+<li>✅ Train/test split</li>
+<li>✅ Linear regression baseline</li>
+<li>✅ Polynomial feature expansion</li>
+<li>🔜 Interpretation and interview notes</li>
+</ul>
+<div class="note"><div class="h">Note</div><p>This notebook is meant to be both executable and educational: the code stays close to the learner's original work, while the markdown explains the ML concept behind each step.</p>
+</div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+
+X = np.array([2, 3, 4, 5, 6, 7, 8, 9])
+Y = np.array([4, 6, 8, 6, 5, 4, 7, 8])
+
+plt.scatter(X, Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x7fd5ba5b8ee0&gt;</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c01-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>📊 What Does This Chart Show?</h3>
+<p>This scatter plot shows the raw relationship between the input value <code>X</code> and the target value <code>Y</code>. The data points are not perfectly aligned on a straight line, which suggests the relationship may be curved rather than purely linear.</p>
+<h3>X-Axis</h3>
+<p>The x-axis is the feature value, which is the independent variable in this tiny dataset.</p>
+<h3>Y-Axis</h3>
+<p>The y-axis is the target value, the quantity we are trying to predict.</p>
+<h3>👀 What Should I Look For?</h3>
+<p>Look for a pattern: does the data rise and fall in a smooth curve, or does it look like a straight line would work?</p>
+<h3>💡 Interpretation</h3>
+<p>The shape suggests a non-linear trend. A simple linear regression model may be too rigid to capture the pattern well.</p>
+<h3>⚠️ Important Observation</h3>
+<p>The plotted relationship is noisy and small in size, so we should be careful not to overfit a model just because it matches the training points very closely.</p>
+<div class="code"><pre class="py">print(&quot;X shape:&quot;, X.shape)
+print(&quot;Y shape:&quot;, Y.shape)
+</pre></div>
+
+<h3>🎯 What Are We Doing?</h3>
+<p>This first code cell creates the raw dataset and plots the points on a 2D graph. The goal is to answer one important question: does this relationship look linear, curved, or noisy?</p>
+<h3>🧠 Concept</h3>
+<p>A scatter plot helps us see the pattern between input values and target values before training a model. If the points bend upward or downward, a simple straight line may not be enough.</p>
+<h3>❓ Why Do We Need This?</h3>
+<p>Before choosing a model, we need to inspect the data visually. Machine learning is not just about fitting equations; it is about understanding the shape of the problem.</p>
+<h3>🔤 Important Syntax</h3>
+<ul>
+<li><code>np.array(...)</code> creates a NumPy array.</li>
+<li><code>plt.scatter(x, y)</code> draws a scatter plot.</li>
+<li><code>X</code> is the input feature and <code>Y</code> is the target value.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.3, random_state=0)</pre></div>
+<h3>📊 What Does This Split Mean?</h3>
+<p>This split creates the training and testing sets for a supervised learning workflow.</p>
+<h3>X-Axis / Y-Axis</h3>
+<p>Not applicable here; this step is about data partitioning rather than plotting.</p>
+<h3>👀 What Should I Look For?</h3>
+<p>Check the sizes of each subset and confirm the distribution is representative.</p>
+<h3>💡 Interpretation</h3>
+<p>The model learns from the training set and is measured on the test set. This is the standard way to reduce over-optimistic evaluation.</p>
+<h3>⚠️ Important Observation</h3>
+<p>Using a random_state makes the split reproducible, which is important for comparing models consistently.</p>
+<div class="code"><pre class="py">print(&quot;X_train shape:&quot;, X_train.shape)
+print(&quot;X_test shape:&quot;, X_test.shape)
+print(&quot;y_train shape:&quot;, y_train.shape)
+print(&quot;y_test shape:&quot;, y_test.shape)
+</pre></div>
+
+<h3>🎯 What Are We Doing?</h3>
+<p>The next step splits the dataset into training and testing portions. This lets us train the model on one subset and evaluate it on unseen data.</p>
+<h3>🧠 Concept</h3>
+<p>A machine learning model should be judged on new, unseen examples. If you evaluate on the same data used to train it, you get an overly optimistic result.</p>
+<h3>❓ Why Do We Need This?</h3>
+<p>The train/test split estimates how well the model will generalize to real data outside the training set.</p>
+<h3>🔤 Important Syntax</h3>
+<ul>
+<li><code>train_test_split(...)</code> divides data into train and test subsets.</li>
+<li><code>test_size=0.3</code> means 30% of the data is reserved for testing.</li>
+<li><code>random_state=0</code> makes the split reproducible.</li>
+</ul>
+<h3>📐 Data Shapes</h3>
+<ul>
+<li><code>X</code> is a 1D array of input values.</li>
+<li><code>Y</code> is a 1D array of target values.</li>
+<li>After splitting, we get <code>X_train</code>, <code>X_test</code>, <code>y_train</code>, and <code>y_test</code>.</li>
+</ul>
+<p>The split is done so the model learns from the training data and is checked on the test data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">X_train=X_train.reshape(-1, 1)
+X_train</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[9],
+       [5],
+       [2],
+       [7],
+       [6]])</pre></div>
+<h3>🎯 What Are We Doing?</h3>
+<p>This cell reshapes the training data to match the scikit-learn expectation for a model that learns from a feature matrix: each sample must have one feature column.</p>
+<h3>🧠 Concept</h3>
+<p>A 1D array of shape <code>(n,)</code> is not always enough for a machine learning estimator, especially for a model expecting a 2D matrix of shape <code>(n, 1)</code>. Reshaping preserves the same values while giving the model a proper feature matrix.</p>
+<h3>❓ Why Do We Need This?</h3>
+<p>The model learns from rows of features. Here, each training example has exactly one feature: the input value <code>x</code>.</p>
+<h3>🔤 Important Syntax</h3>
+<ul>
+<li><code>reshape(-1, 1)</code> means: keep one column and infer the number of rows automatically.</li>
+<li>This converts <code>(n,)</code> to <code>(n, 1)</code>.</li>
+</ul>
+<p>For example, 8 values become a matrix with 8 rows and 1 column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">X_test=X_test.reshape(-1, 1)
+X_test</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[8],
+       [4],
+       [3]])</pre></div>
+<h3>📌 What Happened?</h3>
+<p>The testing feature array was reshaped in the same way as the training data, so both sides of the model fit and evaluation use consistent matrix shapes.</p>
+<h3>🔍 Why This Matters</h3>
+<p>Scikit-learn models expect a 2D array for features. Without reshaping, the model would receive a 1D vector and may error or behave incorrectly.</p>
+<h3>📐 Shape check</h3>
+<ul>
+<li>Before: <code>X_test</code> was 1D, shape roughly <code>(n,)</code></li>
+<li>After: <code>X_test</code> becomes <code>(n, 1)</code></li>
+</ul>
+<p>This keeps the model input format consistent across the training and test pipeline.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+model = LinearRegression()</pre></div>
+<h3>🎯 What Are We Doing?</h3>
+<p>This cell creates the baseline linear regression model. It will learn a straight-line relationship from the feature values to the target values.</p>
+<h3>🧠 Concept</h3>
+<p>A simple linear model assumes the relationship can be approximated with the form:</p>
+<div class='formula'>y = mx + b</div>
+
+<p>where:</p>
+<ul>
+<li><code>x</code> is the input feature</li>
+<li><code>y</code> is the predicted value</li>
+<li><code>m</code> is the slope or coefficient</li>
+<li><code>b</code> is the intercept</li>
+</ul>
+<h3>❓ Why Do We Need This?</h3>
+<p>Before trying a more flexible polynomial model, we should establish a baseline. If the straight line is already good enough, the polynomial may be unnecessary.</p>
+<h3>🔤 Important Syntax</h3>
+<ul>
+<li><code>LinearRegression()</code> creates a linear model object.</li>
+<li><code>model</code> stores the learned parameters after fitting.</li>
+</ul>
+<p>The model has not learned anything yet; it has only been initialized.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">model.fit(X_train,y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<h3>📊 What Does This Model Fit Tell Us?</h3>
+<p>The linear regression model learns the best straight line for the training data by minimizing the difference between predicted values and actual values.</p>
+<h3>X-Axis</h3>
+<p>The x-axis is the feature value, the input variable used to predict the target.</p>
+<h3>Y-Axis</h3>
+<p>The y-axis is the target value, or the value we are trying to estimate.</p>
+<h3>👀 What Should I Look For?</h3>
+<p>A good fit should capture the overall trend without overreacting to noise.</p>
+<h3>💡 Interpretation</h3>
+<p>This is our baseline: if a straight line cannot explain the relationship well, the data likely needs a polynomial term.</p>
+<h3>⚠️ Important Observation</h3>
+<p>A model can look good on the training set and still be weak on unseen data. That is why we evaluate on the test split.</p>
+<div class="code"><pre class="py">print(&quot;Coefficient:&quot;, model.coef_)
+print(&quot;Intercept:&quot;, model.intercept_)
+</pre></div>
+
+<h3>🎯 What Are We Doing?</h3>
+<p>This code trains the linear regression model on the training data. The model learns the coefficient and intercept that best fit the training points.</p>
+<h3>🧠 Concept</h3>
+<p>The <code>fit()</code> method is where the learning happens. The model receives input features and target values and internally solves for the best straight line.</p>
+<h3>❓ Why Do We Need This?</h3>
+<p>Without fitting, the model is just an empty object. Training is how it absorbs the relationship in the data.</p>
+<h3>🔤 Important Syntax</h3>
+<ul>
+<li><code>model.fit(X_train, y_train)</code></li>
+<li><code>X_train</code> are the features</li>
+<li><code>y_train</code> are the actual target values to learn from</li>
+</ul>
+<p>The learned model can then be used for prediction on new values.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">model.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.6690401934888458</pre></div>
+<h3>📌 What Happened?</h3>
+<p>The model was evaluated on the unseen test set. The result is a single score describing how well the prediction aligns with the true target values.</p>
+<h3>🧠 Concept</h3>
+<p>For regression, <code>R²</code> is commonly used. It tells us how much of the variation in the target is explained by the model.</p>
+<h3>❓ Why Do We Need This?</h3>
+<p>A model that fits the training set perfectly may still fail on new data. The test score helps estimate generalization.</p>
+<h3>⚠️ Important Observation</h3>
+<p>With a small dataset and a weak linear assumption, the score may tell us the relationship is not well modeled by a straight line. This motivates polynomial features.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">y_pred = model.predict(X_test)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([6.3358209 , 4.63432836, 4.20895522])</pre></div>
+<h3>🎯 What Are We Doing?</h3>
+<p>This cell uses the trained model to generate predictions for the test values. We then compare predicted values against actual test targets.</p>
+<h3>🧠 Concept</h3>
+<p>Prediction is the application phase: once the model has learned relationships from training data, it can estimate outputs for new examples.</p>
+<h3>❓ Why Do We Need This?</h3>
+<p>Predictions give us a concrete signal of model quality. If predictions are far from true values, the model may be too simple or poorly fit.</p>
+<h3>🔤 Important Syntax</h3>
+<ul>
+<li><code>model.predict(X_test)</code> uses the learned model to estimate output values.</li>
+<li><code>y_pred</code> stores the predicted target values.</li>
+</ul>
+<p>This step connects the training phase to evaluation and visualization.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">plt.scatter(X_test,y_test,label=&#x27;Actual&#x27;)
+plt.plot(X_test,y_pred,label=&#x27;Predicted&#x27;)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c20-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>📊 What Does This Chart Show?</h3>
+<p>This visualization compares the actual test values with the straight-line predictions from the linear model.</p>
+<h3>X-Axis</h3>
+<p>The x-axis shows the feature values in the test set.</p>
+<h3>Y-Axis</h3>
+<p>The y-axis shows either the actual target value or the predicted target value.</p>
+<h3>👀 What Should I Look For?</h3>
+<p>Look for how closely the red predicted line follows the actual points. Large gaps indicate poor fit.</p>
+<h3>💡 Interpretation</h3>
+<p>If the model is too simple, its predictions will remain too rigid and fail to follow the curved relationship. This motivates polynomial regression.</p>
+<h3>⚠️ Important Observation</h3>
+<p>This plot is useful for qualitative understanding, but numerical metrics are still needed to judge the model properly.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">x=X.reshape(-1, 1)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">model = LinearRegression()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">model.fit(x,Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">y_pred = model.predict(x)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([5.16666667, 5.4047619 , 5.64285714, 5.88095238, 6.11904762,
+       6.35714286, 6.5952381 , 6.83333333])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">model.score(x,Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.1322751322751322</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,Y,label=&#x27;Actual&#x27;)
+plt.plot(x,y_pred,label=&#x27;Predicted&#x27;,c=&quot;red&quot;)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c27-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.preprocessing import PolynomialFeatures</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">poly = PolynomialFeatures(degree=2) 
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)
+poly_x</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 1.,  2.,  4.],
+       [ 1.,  3.,  9.],
+       [ 1.,  4., 16.],
+       [ 1.,  5., 25.],
+       [ 1.,  6., 36.],
+       [ 1.,  7., 49.],
+       [ 1.,  8., 64.],
+       [ 1.,  9., 81.]])</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c30-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>🎯 What Are We Doing?</h3>
+<p>This section transforms the original feature into polynomial features, then fits a linear model on those transformed features. Even though the underlying regression is still linear, the feature space is now curved.</p>
+<h3>🧠 Concept</h3>
+<p>Polynomial regression is a way to model curved relationships without abandoning linear regression itself. We create new features such as $x^2$, $x^3$, and so on, then apply linear regression in this expanded feature space.</p>
+<h3>❓ Why Do We Need This?</h3>
+<p>A straight line cannot represent a curved pattern well. By adding powers of the input feature, we allow the model to learn a curve while still using a familiar linear estimator.</p>
+<h3>🔤 Important Syntax</h3>
+<ul>
+<li><code>PolynomialFeatures(degree=2)</code> creates new input features like <code>x</code>, <code>x^2</code>, and interaction terms.</li>
+<li><code>fit_transform(...)</code> builds the transformed feature matrix.</li>
+<li><code>LinearRegression()</code> still fits a linear model, but on the expanded inputs.</li>
+</ul>
+<h3>📐 Data Flow</h3>
+<p>Raw feature: <code>x</code><br />
+↓<br />
+Polynomial expansion: <code>[x, x^2]</code><br />
+↓<br />
+Linear regression fit<br />
+↓<br />
+Curved prediction line</p>
+<div class="code"><pre class="py">print(&quot;Polynomial feature matrix shape:&quot;, poly_x.shape)
+print(&quot;First transformed row:&quot;, poly_x[0])
+</pre></div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">model1.score(poly_x, Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.14417989417989396</pre></div>
+<h3>📊 What Does This Score Mean?</h3>
+<p>This is the model score for the degree-2 polynomial fit on the same data used to train it.</p>
+<h3>X-Axis</h3>
+<p>Not used directly here; this is a scalar performance metric.</p>
+<h3>Y-Axis</h3>
+<p>Not used directly here; this is a scalar performance metric.</p>
+<h3>👀 What Should I Look For?</h3>
+<p>The score tells us how well the transformed model explains the target values. The closer to 1.0, the better the fit.</p>
+<h3>💡 Interpretation</h3>
+<p>A higher score than the basic linear model indicates that the curved relationship is being captured better.</p>
+<h3>⚠️ Important Observation</h3>
+<p>A strong training score does not guarantee good generalization. This is why test-set evaluation remains important in real ML practice.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">poly = PolynomialFeatures(degree=3)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">poly_x = poly.fit_transform(X.reshape(-1, 1))
+poly_x</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[  1.,   2.,   4.,   8.],
+       [  1.,   3.,   9.,  27.],
+       [  1.,   4.,  16.,  64.],
+       [  1.,   5.,  25., 125.],
+       [  1.,   6.,  36., 216.],
+       [  1.,   7.,  49., 343.],
+       [  1.,   8.,  64., 512.],
+       [  1.,   9.,  81., 729.]])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+model1 = LinearRegression()
+model1.fit(poly_x, Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">model1.score(poly_x, Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.7578162578162556</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90e8111a90&gt;]</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c39-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h3>📊 What Does This Chart Show?</h3>
+<p>This curve visualization shows how a degree-3 polynomial can better follow the nonlinear pattern in the data.</p>
+<h3>X-Axis</h3>
+<p>The x-axis is the original feature values.</p>
+<h3>Y-Axis</h3>
+<p>The y-axis shows the predicted target values produced by the polynomial model.</p>
+<h3>👀 What Should I Look For?</h3>
+<p>Compare the red fitted curve to the original scatter points. A better curve should stay close to the data while not being wildly wavy.</p>
+<h3>💡 Interpretation</h3>
+<p>As the polynomial degree increases, the model can produce more flexible shapes. That helps with curved datasets but also raises overfitting risk.</p>
+<h3>⚠️ Important Observation</h3>
+<p>Higher-degree polynomials should be used carefully. A curve that perfectly follows every point may capture noise rather than true signal.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">poly = PolynomialFeatures(degree=4)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f912b09d7c0&gt;]</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c41-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">poly = PolynomialFeatures(degree=5)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90f86152e0&gt;]</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c42-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">poly = PolynomialFeatures(degree=6)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a33c160&gt;]</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c43-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 44</span></div><pre class="py">poly = PolynomialFeatures(degree=7)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a28d520&gt;]</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c44-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">poly = PolynomialFeatures(degree=9)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f91182f5760&gt;]</pre></div>
+<figure class="shot"><img src="assets/10-polynomial-regression-c45-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 46</span></div><pre class="py">model1.score(poly_x, Y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>1.0</pre></div>
+<h2 id="polynomial-regression-intuition">🧠 Polynomial Regression Intuition</h2>
+<p>Polynomial regression is a way to keep the model linear while allowing the learned curve to bend.</p>
+<p>The basic idea is:</p>
+<div class='formula'>y = b + w_1x + w_2x^2 + w_3x^3 + \dots</div>
+
+<p>This means the model can learn a curved function by using powers of the original feature. The regression remains linear in the coefficients, even though the feature map is nonlinear.</p>
+<h3>Why this matters</h3>
+<ul>
+<li>A straight line cannot fit many real-world patterns well.</li>
+<li>Adding polynomial terms gives the model more flexibility.</li>
+<li>But too high a degree can lead to overfitting.</li>
+</ul>
+<h3>Interview perspective</h3>
+<p><strong>Common Question</strong></p>
+<div class="note"><div class="h">Note</div><p>Why do we use polynomial regression instead of just fitting a line?</p>
+</div>
+<p><strong>Short Answer</strong>
+A line assumes a constant slope, but many real relationships curve. Polynomial regression adds nonlinear terms so the model can represent those curves while still using linear regression machinery.</p>
+<h2 id="what-i-learned">📝 What I Learned</h2>
+<ul>
+<li><code>X</code> is the feature and <code>Y</code> is the target.</li>
+<li>A linear model learns a straight line.</li>
+<li>A polynomial model creates transformed features like <code>x^2</code>, <code>x^3</code>, etc.</li>
+<li>Higher-degree polynomials can better fit curved data but may overfit.</li>
+<li>The train/test split helps estimate real-world generalization.</li>
+</ul>
+<h2 id="interview-notes">🎯 Interview Notes</h2>
+<ul>
+<li>A linear model is a baseline, not necessarily the final answer.</li>
+<li>Polynomial features are still common in ML when the relationship is nonlinear but manageable.</li>
+<li>Model complexity must be balanced against validation performance.</li>
+<li>The goal is to learn the pattern, not just memorize the training data.</li>
+</ul>
+
+<div class="src-head">📓 <a href="../Concept/28_Polynomial_Regression.ipynb">28_Polynomial_Regression.ipynb</a></div>
+<h2 id="28-polynomial-regression-hands-on-with-scikit-le">28. Polynomial Regression — Hands-On with scikit-learn</h2>
+<p>Every regression topic so far — <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_Simple_Linear_Regression.ipynb</code></a>, <a href="../../17_Multiple_Linear_Regression/Concept/27_Multiple_Linear_Regression.ipynb"><code>27_Multiple_Linear_Regression.ipynb</code></a> — fit a <strong>straight line</strong> (or flat plane) through the data. Polynomial Regression is for when the real relationship <strong>curves</strong>: it models <code>y</code> as an <em>n</em>th-degree polynomial of <code>x</code>:</p>
+<p><code>y = b0 + b1·x + b2·x² + b3·x³ + ... + bn·xⁿ</code></p>
+<p>It's still called <em>linear</em> regression under the hood — &quot;linear&quot; refers to the coefficients (<code>b0, b1, b2, ...</code>) being combined in a straight-forward sum, not to the shape of the curve itself. In practice, this means: build new columns (<code>x</code>, <code>x²</code>, <code>x³</code>, ...) out of the one original column, then hand those to the exact same <code>LinearRegression</code> used in the last two notebooks. No new algorithm — just new features.</p>
+<p><code>../../_shared_data/polynomial_dataset.csv</code> is the classic teaching example for this: 16 job levels (<code>Level</code>) and the salary that comes with each (<code>Salary</code>). Salary doesn't grow by a fixed amount per level — it accelerates, curving upward. A straight line can't hug that curve; a polynomial can.</p>
+<p>This notebook: load and look at the data, fit an ordinary straight-line model first (and watch it fail to hug the curve — the same &quot;Simple linear model vs Polynomial model&quot; comparison from the course slide), then build polynomial features and train the real model with the same <code>train_test_split</code> habit used in <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_</code></a> and <a href="../../17_Multiple_Linear_Regression/Concept/27_Multiple_Linear_Regression.ipynb"><code>27_</code></a>, compare degrees, and finish by predicting an in-between level to see how differently a line and a curve handle it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                      # pandas: load the CSV and work with it as a table (DataFrame)
+import numpy as np                                       # numpy: build the smooth grid of x-values used to draw curves
+import matplotlib.pyplot as plt                          # matplotlib: plotting
+from sklearn.linear_model import LinearRegression         # fits a straight line — used both alone and after polynomial transforms
+from sklearn.preprocessing import PolynomialFeatures      # turns one column (Level) into Level, Level², Level³, ... columns
+from sklearn.model_selection import train_test_split      # splits data into a training pool and a held-back testing pool</pre></div>
+<h2 id="step-1-load-the-dataset">Step 1 — Load the dataset</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/polynomial_dataset.csv&quot;)  # read the CSV file from disk into a pandas DataFrame called &quot;dataset&quot;</pre></div>
+<h2 id="step-2-look-at-the-data">Step 2 — Look at the data</h2>
+<p>Only 16 rows this time, so we can look at the whole thing at once instead of just a <code>head()</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset  # small dataset — display every row</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Level  Salary
+0       1    1798
+1       2    3981
+2       3    7874
+3       4   12812
+4       5   17433
+5       6   23933
+6       7   32340
+7       8   40434
+8       9   49315
+9      10   60321
+10     11   71318
+11     12   83817
+12     13   97671
+13     14  111093
+14     15  126688
+15     16  143769</pre></div>
+<h2 id="step-3-check-the-shape">Step 3 — Check the shape</h2>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset.shape  # (rows, columns) — 16 job levels, 2 columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>(16, 2)</pre></div>
+<h2 id="step-4-check-for-missing-values">Step 4 — Check for missing values</h2>
+<p>Same habit as every earlier <code>ML/</code> topic: confirm there are no gaps before training anything.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset.isnull().sum()  # count missing values per column — should be 0</pre></div>
+<div class="out"><div class="h">Output</div><pre>Level     0
+Salary    0
+dtype: int64</pre></div>
+<h2 id="step-5-visualize-the-raw-relationship">Step 5 — Visualize the raw relationship</h2>
+<p>Before fitting anything, look at the shape of the data. <code>Level</code> climbs by a fixed step (1, 2, 3, ...), but <code>Salary</code> doesn't rise by a fixed amount each time — the gap between consecutive salaries keeps growing. That accelerating, curved shape is the whole reason this topic exists: a straight line is built to add a <em>constant</em> amount of <code>y</code> per unit of <code>x</code>, which is exactly the one thing this data isn't doing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">plt.figure(figsize=(6, 4))
+plt.scatter(dataset[&quot;Level&quot;], dataset[&quot;Salary&quot;], color=&quot;#0b0b0b&quot;)   # actual data — dark dots, no fit line yet
+plt.xlabel(&quot;Level&quot;)
+plt.ylabel(&quot;Salary&quot;)
+plt.title(&quot;Salary by Level (raw data)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/28-polynomial-regression-c11-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-6-split-into-x-input-and-y-target">Step 6 — Split into <code>x</code> (input) and <code>y</code> (target)</h2>
+<p><code>x</code> is built with double square brackets (<code>dataset[[&quot;Level&quot;]]</code>) so it comes out as a 2-D DataFrame — the shape <code>scikit-learn</code> expects — rather than a 1-D Series, avoiding the manual reshape that a single-bracket <code>x</code> needed back in <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_</code></a>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">x = dataset[[&quot;Level&quot;]]   # double brackets -&gt; 2-D DataFrame (1 column), the shape scikit-learn expects
+y = dataset[&quot;Salary&quot;]    # single bracket -&gt; 1-D Series, the target
+x.ndim, y.ndim           # confirm: 2 for x, 1 for y</pre></div>
+<div class="out"><div class="h">Output</div><pre>(2, 1)</pre></div>
+<h2 id="step-7-a-quick-straight-line-baseline">Step 7 — A quick straight-line baseline</h2>
+<p>Before reaching for anything fancier, fit the simplest possible model straight onto the raw <code>x</code> and <code>y</code> — an ordinary <code>LinearRegression</code>, no transformation. This one is deliberately quick and rough: it's fit on the <em>whole</em> dataset with no train/test split, purely to see <em>how</em> a straight line fails before building the real, properly-evaluated polynomial model in the next steps.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">lin_reg = LinearRegression()   # a plain straight-line model, same class used in every regression notebook so far
+lin_reg.fit(x, y)              # fit it directly on Level -&gt; Salary, no transformation, no split — just a quick visual baseline</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<h2 id="step-8-turn-one-column-into-many-polynomialfeatu">Step 8 — Turn one column into many (<code>PolynomialFeatures</code>)</h2>
+<p><code>PolynomialFeatures(degree=2)</code> takes the single <code>Level</code> column and builds a new table with <code>Level</code> and <code>Level²</code> as extra columns (plus a constant <code>1</code> column by default — <code>include_bias=True</code>). That's the entire trick behind polynomial regression: it's a feature-engineering step, not a different algorithm — the same <code>LinearRegression</code> fits a straight-line-style equation on top of these curved features, which is what lets the <em>combined</em> result curve.</p>
+<p>The result is kept as a separate <code>x_poly</code>, rather than overwriting <code>x</code>, so the original single <code>Level</code> column stays available below for the baseline comparison chart. Because <code>PolynomialFeatures</code> only ever looks at <em>one row at a time</em> — <code>Level²</code> for a row never depends on any other row's <code>Level</code> — there's no &quot;peeking at the test set&quot; risk in transforming before splitting, unlike a transformer such as <code>StandardScaler</code> (see <a href="../../08_Feature_Scaling/Concept/15_Feature_Scaling.ipynb"><code>15_Feature_Scaling.ipynb</code></a>) that computes a mean/std <em>across</em> rows and genuinely would leak test-set information if fit before the split.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">pf = PolynomialFeatures(degree=2)   # will build: [1, Level, Level^2] — 3 columns (bias column included by default)
+pf.fit(x)                            # learn how many/which power columns to build, from x&#x27;s shape
+x_poly = pf.transform(x)             # apply that transform — x_poly now has 3 columns instead of x&#x27;s 1
+x_poly.shape                         # confirm shape: (16, 3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(16, 3)</pre></div>
+<h2 id="step-9-split-into-train-and-test-sets">Step 9 — Split into train and test sets</h2>
+<p>Same habit as <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_</code></a> and <a href="../../17_Multiple_Linear_Regression/Concept/27_Multiple_Linear_Regression.ipynb"><code>27_</code></a>: hold back 20% as a test set the model never trains on, so its score means something. <code>random_state=42</code> keeps the split reproducible. Worth being honest about the one real tradeoff here: 20% of only 16 rows is <strong>4 test rows</strong> — far too few to be a statistically solid estimate on its own. The split is still applied, both because it's the same evaluation habit used everywhere else in this series and because it's what the underlying course teaches — just don't over-trust a single R² computed from 4 points the way you might trust one computed from hundreds.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">x_train, x_test, y_train, y_test, idx_train, idx_test = train_test_split(
+    x_poly, y, dataset.index, test_size=0.2, random_state=42
+)   # split the polynomial-expanded columns; idx_train/idx_test carry along which original rows landed in each split
+len(x_train), len(x_test)   # 12 rows to train on, 4 held back to test on</pre></div>
+<div class="out"><div class="h">Output</div><pre>(12, 4)</pre></div>
+<h2 id="step-10-train-the-polynomial-model">Step 10 — Train the polynomial model</h2>
+<p>Same model class, same <code>.fit()</code> call as Step 7 — the only differences are that it's looking at the 3 polynomial columns instead of 1, and only at the <em>training</em> rows.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">poly_reg = LinearRegression()      # another plain LinearRegression — the curve comes entirely from the input columns, not the model
+poly_reg.fit(x_train, y_train)     # train only on the 12 training rows</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<h2 id="step-11-score-the-model-on-unseen-data">Step 11 — Score the model on unseen data</h2>
+<p><code>.score()</code> returns R² on the 4 held-out test rows — the model never saw these during training. This is the number that should actually be trusted as &quot;how good is this model,&quot; as opposed to the Step 7 baseline, which was never evaluated this rigorously.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">print(f&quot;Test R²  (degree 2, held-out 4 rows): {poly_reg.score(x_test, y_test):.4f}&quot;)
+print(f&quot;Train R² (degree 2, seen 12 rows):        {poly_reg.score(x_train, y_train):.4f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Test R²  (degree 2, held-out 4 rows): 0.9999
+Train R² (degree 2, seen 12 rows):        0.9999</pre></div>
+<h2 id="step-12-simple-linear-model-vs-polynomial-model-">Step 12 — Simple Linear Model vs Polynomial Model, side by side</h2>
+<p>This is the exact comparison from the course slide: a straight line forced through curved data on the left, the polynomial model on the right. Training rows are plotted as filled dark dots, the 4 held-out test rows are outlined in the same accent color as their fit line, so it's visible which points the polynomial model never saw during training. Since <code>Level</code> only takes whole-number steps (1–16), a smooth-looking curve needs a <em>finer</em> grid of x-values than the data itself provides — <code>np.linspace</code> builds 200 evenly spaced points between 1 and 16, each pushed through the same <code>pf.transform()</code> used in training, so the model predicts a salary for each; plotting straight lines between those close-together points reads as one smooth curve.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">level_grid = pd.DataFrame({&quot;Level&quot;: np.linspace(x[&quot;Level&quot;].min(), x[&quot;Level&quot;].max(), 200)})   # 200 evenly spaced Level values, as a 1-column DataFrame
+salary_curve = poly_reg.predict(pf.transform(level_grid))                                          # predicted salary at every one of those 200 points
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+axes[0].scatter(x, y, color=&quot;#0b0b0b&quot;)
+axes[0].plot(x, lin_reg.predict(x), color=&quot;#e34948&quot;, linewidth=2)
+axes[0].set_title(f&quot;Simple Linear Model (R²={lin_reg.score(x, y):.3f}, whole dataset)&quot;)
+axes[0].set_xlabel(&quot;Level&quot;)
+axes[0].set_ylabel(&quot;Salary&quot;)
+
+axes[1].scatter(dataset.loc[idx_train, &quot;Level&quot;], dataset.loc[idx_train, &quot;Salary&quot;], color=&quot;#0b0b0b&quot;, label=&quot;Train rows&quot;)
+axes[1].scatter(dataset.loc[idx_test, &quot;Level&quot;], dataset.loc[idx_test, &quot;Salary&quot;], facecolors=&quot;none&quot;, edgecolors=&quot;#e34948&quot;, s=90, linewidth=2, label=&quot;Test rows (held out)&quot;)
+axes[1].plot(level_grid, salary_curve, color=&quot;#e34948&quot;, linewidth=2)
+axes[1].set_title(f&quot;Polynomial Model, degree 2 (test R²={poly_reg.score(x_test, y_test):.3f})&quot;)
+axes[1].set_xlabel(&quot;Level&quot;)
+axes[1].set_ylabel(&quot;Salary&quot;)
+axes[1].legend()
+
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/28-polynomial-regression-c25-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-13-compare-multiple-degrees-at-once">Step 13 — Compare multiple degrees at once</h2>
+<p>Why degree 2, and not 3 or 4? This chart repeats the same fit-on-train, score-on-test workflow for degrees 1, 2, 3, and 4, and draws every resulting curve on the same axes. Degree 1 (the plain line) tests clearly worse than everything else — but degrees 2, 3, and 4 all land in the same tight neighborhood on test R², since this dataset's true shape is close to a simple curve (a parabola) that degree 2 already captures. Degrees 3 and 4 aren't &quot;more correct&quot; here, they're just not needed — the honest lesson is that more degrees isn't automatically a better fit, only useful up to however many bends the real relationship actually has. Past that point, extra degrees mostly add flexibility to fit noise instead of signal (overfitting), which is easiest to catch precisely by scoring on held-out rows like this rather than on the same rows the model trained on.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">degrees = [1, 2, 3, 4]
+colors = [&quot;#2a78d6&quot;, &quot;#eb6834&quot;, &quot;#1baf7a&quot;, &quot;#eda100&quot;]   # one fixed color per degree, in order
+
+plt.figure(figsize=(8, 6))
+plt.scatter(x, y, color=&quot;#0b0b0b&quot;, label=&quot;Actual data&quot;, zorder=5)
+
+for degree, color in zip(degrees, colors):
+    pf_d = PolynomialFeatures(degree=degree)                                        # this degree&#x27;s own transformer
+    x_deg = pf_d.fit_transform(x)
+    x_deg_train, x_deg_test, y_deg_train, y_deg_test = train_test_split(x_deg, y, test_size=0.2, random_state=42)   # same split every time (same random_state)
+    model = LinearRegression()
+    model.fit(x_deg_train, y_deg_train)                                             # fit on this degree&#x27;s training rows
+    grid_pred = model.predict(pf_d.transform(level_grid))                           # predict across the same smooth grid from Step 12
+    test_r2 = model.score(x_deg_test, y_deg_test)
+    plt.plot(level_grid, grid_pred, color=color, linewidth=2, label=f&quot;degree {degree} (test R²={test_r2:.3f})&quot;)
+
+plt.xlabel(&quot;Level&quot;)
+plt.ylabel(&quot;Salary&quot;)
+plt.title(&quot;Polynomial Fit by Degree (scored on held-out rows)&quot;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/28-polynomial-regression-c27-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-14-predict-an-in-between-level-both-ways">Step 14 — Predict an in-between level, both ways</h2>
+<p>Imagine a candidate describes their previous role as &quot;a bit above level 6&quot; — there's no exact row for that in the data. <code>Level = 6.5</code> doesn't exist in <code>dataset</code>, so this is a genuine prediction, not a lookup. Comparing what the quick straight-line baseline says against what the properly-trained degree-2 model says shows exactly why the choice of model matters in practice: they don't just differ slightly, they can disagree by a large margin, and only one of them is actually tracking the visible curve.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">new_level = pd.DataFrame({&quot;Level&quot;: [6.5]})                       # a level that isn&#x27;t in the original data
+
+linear_prediction = lin_reg.predict(new_level)[0]
+poly_prediction = poly_reg.predict(pf.transform(new_level))[0]
+
+print(f&quot;Simple Linear Model predicts:      ₹{linear_prediction:,.0f}&quot;)
+print(f&quot;Polynomial Model (deg 2) predicts: ₹{poly_prediction:,.0f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Simple Linear Model predicts:      ₹36,410
+Polynomial Model (deg 2) predicts: ₹27,973</pre></div>
+<h2 id="step-15-see-that-prediction-on-the-chart">Step 15 — See that prediction on the chart</h2>
+<p>Marking both predicted points for <code>Level = 6.5</code> on top of the degree-2 curve and the actual neighboring data (<code>Level 6</code> = ₹23,933, <code>Level 7</code> = ₹32,340) makes the gap concrete: one prediction sits right on the curve between its neighbors, the other doesn't.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">plt.figure(figsize=(7, 5))
+plt.scatter(x, y, color=&quot;#0b0b0b&quot;, label=&quot;Actual data&quot;)
+plt.plot(level_grid, salary_curve, color=&quot;#eb6834&quot;, linewidth=2, label=&quot;Polynomial fit (degree 2)&quot;)
+plt.plot(x, lin_reg.predict(x), color=&quot;#2a78d6&quot;, linewidth=2, linestyle=&quot;--&quot;, label=&quot;Simple linear fit&quot;)
+plt.scatter([6.5], [poly_prediction], color=&quot;#eb6834&quot;, edgecolor=&quot;#0b0b0b&quot;, s=100, zorder=5, label=&quot;Polynomial prediction @ Level 6.5&quot;)
+plt.scatter([6.5], [linear_prediction], color=&quot;#2a78d6&quot;, edgecolor=&quot;#0b0b0b&quot;, s=100, zorder=5, label=&quot;Linear prediction @ Level 6.5&quot;)
+plt.xlabel(&quot;Level&quot;)
+plt.ylabel(&quot;Salary&quot;)
+plt.title(&quot;Predicting an In-Between Level (6.5)&quot;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/28-polynomial-regression-c31-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="key-takeaways">Key Takeaways</h2>
+<ul>
+<li>Polynomial Regression isn't a new algorithm — it's <code>PolynomialFeatures</code> turning one column into several curved ones (<code>x, x², ...</code>), then the same <code>LinearRegression</code> from every earlier topic fits a straight-line-style equation on top of them.</li>
+<li>It's still called <em>linear</em> regression because it's linear in the coefficients (<code>b0, b1, b2, ...</code>), not because the resulting curve is straight.</li>
+<li><code>PolynomialFeatures</code> is safe to <code>fit_transform</code> on the whole <code>x</code> before splitting, since each row's new columns only depend on that row's own value — no cross-row statistic gets learned, unlike a transformer such as <code>StandardScaler</code> that would leak test-set information if fit before the split.</li>
+<li>The same <code>train_test_split</code> habit from <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_</code></a>/<a href="../../17_Multiple_Linear_Regression/Concept/27_Multiple_Linear_Regression.ipynb"><code>27_</code></a> still applies here, even on a 16-row dataset — just be honest that scoring on 4 held-out rows is a small, noisier sample than scoring on hundreds.</li>
+<li>Raising the polynomial degree lets the curve bend more, but past however many bends the real relationship actually has, extra degrees mostly add flexibility to fit noise instead of signal (overfitting) — visible more reliably in <em>test</em> R² than in R² measured on the same rows the model trained on.</li>
+<li>Predicting at a point that isn't in the training data (<code>Level = 6.5</code>) is where a straight line and a well-fit curve can disagree the most — and it's exactly the kind of real prediction a model gets used for.</li>
+</ul>
+
+<div class="foot"><a class="btn" href="../Concept/10_Polynomial Regression.ipynb">10_Polynomial Regression.ipynb ↗</a><a class="btn" href="../Concept/28_Polynomial_Regression.ipynb">28_Polynomial_Regression.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

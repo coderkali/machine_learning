@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Algebra — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">03 Math › <b>Linear Algebra</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#doubts-amp-clarifications-linear-algebra">Doubts &amp;amp; Clarifications — Linear Algebra</a><a href="#q-where-do-the-quot-weight-quot-values-come-from">Q: Where do the &amp;quot;weight&amp;quot; values come from </a><a href="#linear-algebra-faq">Linear Algebra — FAQ</a><a href="#linear-algebra-notes">Linear Algebra Notes</a><a href="#topic-1-scalar">Topic 1 — Scalar</a><a href="#topic-2-vector">Topic 2 — Vector</a><a href="#topic-3-matrix">Topic 3 — Matrix</a><a href="#topic-4-matrix-shape-amp-dimensions">Topic 4 — Matrix Shape &amp;amp; Dimensions</a><a href="#topic-5-dot-product">Topic 5 — Dot Product</a><a href="#topic-6-matrix-multiplication">Topic 6 — Matrix Multiplication</a><a href="#topic-6-matrix-multiplication">Topic 6 — Matrix Multiplication</a><a href="#topic-7-transpose">Topic 7 — Transpose</a><a href="#practical-example-iris-dataset-all-7-topics-toge">Practical Example — Iris Dataset (All 7 Topics Toget</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Mathematics for ML</p>
+  <h1>Linear Algebra</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">4 notes</span></div>
+</div>
+<div class="src-head">📝 <a href="../Concept/doubts_and_clarifications.md">doubts_and_clarifications.md</a></div>
+<h2 id="doubts-amp-clarifications-linear-algebra">Doubts &amp; Clarifications — Linear Algebra</h2>
+<hr />
+<h2 id="q-where-do-the-quot-weight-quot-values-come-from">Q: Where do the &quot;weight&quot; values come from in a vector?</h2>
+<p>In the chai stall example, the human (stall owner) decides
+the importance values themselves, based on judgment.
+Example: profit = 5, temperature = 0.5 — these are just opinions,
+no fixed scale (could be 1-10, 1-100, decimals, anything).</p>
+<p>In ML, weights are NOT decided by a human.
+The model starts with random values and LEARNS the correct
+weights automatically by looking at thousands of examples and
+adjusting itself over time (this process is called training).</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Chai stall story</th>
+  <th>ML world</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Who decides weights?</td>
+  <td>Human, by guessing</td>
+  <td>Model, automatically</td>
+</tr>
+<tr>
+  <td>How?</td>
+  <td>Opinion/judgment</td>
+  <td>Gradient Descent (Phase 4)</td>
+</tr>
+<tr>
+  <td>Fixed?</td>
+  <td>Yes, set once</td>
+  <td>No, keeps updating during training</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key separation to remember:</strong></p>
+<ul>
+<li>HOW to combine data + weights → dot product / matrix multiplication (learning now)</li>
+<li>HOW weights get their correct values → Gradient Descent (Phase 4, later)</li>
+</ul>
+<hr />
+
+<div class="src-head">📝 <a href="../Concept/faq.md">faq.md</a></div>
+<h2 id="linear-algebra-faq">Linear Algebra — FAQ</h2>
+<hr />
+<h3>Q: What is the difference between a vector and a matrix?</h3>
+<p>A vector is one row of numbers (one flower's data).
+A matrix is many vectors stacked together (the whole dataset).</p>
+<hr />
+<h3>Q: What does shape (150, 4) mean?</h3>
+<p>150 rows (samples/flowers), 4 columns (features/measurements).
+First number = rows, second number = columns.</p>
+<hr />
+<h3>Q: What does (4,) mean — why the comma?</h3>
+<p>It means a plain list of 4 numbers, no rows/columns structure.
+The comma is just notation saying &quot;this is 1-dimensional.&quot;</p>
+<hr />
+<h3>Q: When can a matrix and vector be multiplied?</h3>
+<p>Matrix COLUMNS must equal vector SIZE.
+(150, 4) and (4,) -&gt; works, because 4 = 4
+(150, 4) and (150,) -&gt; does NOT work, because 4 != 150</p>
+<hr />
+<h3>Q: What is a dot product, in one line?</h3>
+<p>Multiply matching elements from two vectors, then add up all results
+to get ONE number.</p>
+<hr />
+<h3>Q: What is matrix multiplication, in one line?</h3>
+<p>The dot product, done once for every row of a matrix.
+Result = one number per row.</p>
+<hr />
+<h3>Q: Why do we need transpose?</h3>
+<p>To flip a matrix's rows and columns when the shape doesn't match
+what's needed for multiplication. Same data, different arrangement.
+(150, 4) transposed becomes (4, 150).</p>
+<hr />
+<h3>Q: Where do the &quot;weight&quot; numbers come from in real ML?</h3>
+<p>NOT from a human deciding them. The model starts with random
+weights and adjusts them automatically during training
+(Gradient Descent - Phase 4) until predictions become accurate.</p>
+<hr />
+<h3>Q: What's the one-sentence summary connecting everything?</h3>
+<p>Your dataset is a matrix. The model has a weights vector.
+Dot product (repeated for every row = matrix multiplication)
+combines them into predictions. Transpose just fixes shapes
+when needed.</p>
+<hr />
+
+<div class="src-head">📝 <a href="../Concept/linear_algebra_notes.md">linear_algebra_notes.md</a></div>
+<h2 id="linear-algebra-notes">Linear Algebra Notes</h2>
+<hr />
+<h2 id="topic-1-scalar">Topic 1 — Scalar</h2>
+<h3>What is it?</h3>
+<p>A single number. Nothing more.</p>
+<h3>Examples</h3>
+<ul>
+<li>7, 3.14, -50, your age, temperature today</li>
+</ul>
+<h3>In ML</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>ML concept</th>
+  <th>The scalar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Learning rate</td>
+  <td>0.01</td>
+</tr>
+<tr>
+  <td>Loss value</td>
+  <td>245.7</td>
+</tr>
+<tr>
+  <td>Model accuracy</td>
+  <td>0.94</td>
+</tr>
+<tr>
+  <td>One prediction</td>
+  <td>1 or 0</td>
+</tr>
+</tbody>
+</table>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="topic-2-vector">Topic 2 — Vector</h2>
+<h3>What is it?</h3>
+<p>An ordered list of numbers. Order matters.</p>
+<h3>Example</h3>
+<p>Chai stall one day: [80, 200, 35, 5]</p>
+<ul>
+<li>80 = cups sold</li>
+<li>200 = profit</li>
+<li>35 = temperature</li>
+<li>5 = customers per hour</li>
+</ul>
+<h3>Dimension</h3>
+<p>The size of a vector is called its dimension.
+[80, 200, 35, 5] → 4-dimensional vector</p>
+<h3>In ML</h3>
+<p>One row of your dataset = one vector.
+One Iris flower = [5.1, 3.5, 1.4, 0.2] → 4-dimensional vector</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="topic-3-matrix">Topic 3 — Matrix</h2>
+<h3>What is it?</h3>
+<p>Many vectors stacked together. A table of numbers — rows and columns.</p>
+<h3>Example</h3>
+<p>Chai stall chain (5 stalls, 4 metrics each):</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Stall</th>
+  <th>Cups</th>
+  <th>Profit</th>
+  <th>Temp</th>
+  <th>Customers/hr</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Stall 1</td>
+  <td>80</td>
+  <td>200</td>
+  <td>35</td>
+  <td>5</td>
+</tr>
+<tr>
+  <td>Stall 2</td>
+  <td>60</td>
+  <td>100</td>
+  <td>32</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>Stall 3</td>
+  <td>100</td>
+  <td>300</td>
+  <td>38</td>
+  <td>6</td>
+</tr>
+<tr>
+  <td>Stall 4</td>
+  <td>45</td>
+  <td>25</td>
+  <td>30</td>
+  <td>3</td>
+</tr>
+<tr>
+  <td>Stall 5</td>
+  <td>90</td>
+  <td>250</td>
+  <td>36</td>
+  <td>5</td>
+</tr>
+</tbody>
+</table>
+<p>Shape = (5, 4) → 5 rows, 4 columns</p>
+<h3>In ML</h3>
+<p>The Iris dataset (150 rows, 4 columns) is a matrix.
+df.shape returning (150, 4) = matrix shape.</p>
+<h3>Key relationship</h3>
+<p>Scalar → single number
+Vector → list of numbers (one row)
+Matrix → many vectors stacked (many rows)</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="topic-4-matrix-shape-amp-dimensions">Topic 4 — Matrix Shape &amp; Dimensions</h2>
+<h3>What is shape?</h3>
+<p>Shape = (rows, columns) for a table/matrix
+Shape = (n,) for a plain list/vector — just n numbers in a line, no rows/columns</p>
+<h3>The pairing rule</h3>
+<p>To pair a matrix with a vector:
+The matrix's COLUMNS must match the vector's SIZE.
+Rows do not matter for this check.</p>
+<h3>Example</h3>
+<p>Matrix (5, 4)  — 5 stalls, 4 metrics each
+Vector (4,)    — 4 importance values, one per metric
+4 columns = 4 elements → compatible ✓</p>
+<h3>In ML</h3>
+<p>Iris dataset matrix = (150, 4) — 150 flowers, 4 measurements
+Weight vector = (4,) — one weight per measurement
+4 = 4 → compatible ✓</p>
+<p>This is why shape mismatch errors happen — when columns ≠ vector size.</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="topic-5-dot-product">Topic 5 — Dot Product</h2>
+<h3>What is it?</h3>
+<p>Multiply each pair of numbers from two vectors, then add up all results.</p>
+<h3>Formula</h3>
+<p>a · b = a1<em>b1 + a2</em>b2 + a3<em>b3 + ... + an</em>bn</p>
+<h3>Example — Chai stall score</h3>
+<p>Data:    [80, 200, 35, 5]
+Weights: [2, 5, 0.5, 3]</p>
+<p>(80<em>2) + (200</em>5) + (35<em>0.5) + (5</em>3)
+= 160 + 1000 + 17.5 + 15
+= 1192.5</p>
+<h3>Small example</h3>
+<p>a = [3, 4], b = [2, 5]
+a.b = 3<em>2 + 4</em>5 = 6 + 20 = 26</p>
+<h3>In ML</h3>
+<p>This is the core operation inside every neuron.
+y = w1<em>x1 + w2</em>x2 + w3<em>x3 + w4</em>x4 + b
+The bracketed part is a dot product.</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<p>---## Topic 5 — Dot Product</p>
+<h3>What is it?</h3>
+<p>Multiply each pair of numbers from two vectors, then add up all results.</p>
+<h3>Formula</h3>
+<p>a · b = a1<em>b1 + a2</em>b2 + a3<em>b3 + ... + an</em>bn</p>
+<h3>Example — Chai stall score</h3>
+<p>Data:    [80, 200, 35, 5]
+Weights: [2, 5, 0.5, 3]</p>
+<p>(80<em>2) + (200</em>5) + (35<em>0.5) + (5</em>3)
+= 160 + 1000 + 17.5 + 15
+= 1192.5</p>
+<h3>Small example</h3>
+<p>a = [3, 4], b = [2, 5]
+a.b = 3<em>2 + 4</em>5 = 6 + 20 = 26</p>
+<h3>In ML</h3>
+<p>This is the core operation inside every neuron.
+y = w1<em>x1 + w2</em>x2 + w3<em>x3 + w4</em>x4 + b
+The bracketed part is a dot product.</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="topic-6-matrix-multiplication">Topic 6 — Matrix Multiplication</h2>
+<h3>What is it?</h3>
+<p>Doing dot product once for every row of a matrix, against the same vector.</p>
+<h3>Example — Chai stall scores (all 5 stalls)</h3>
+<p>Matrix (5,4) x Vector (4,) = Result (5,)</p>
+<p>Stall 1: (80<em>2)+(200</em>5)+(35<em>0.5)+(5</em>3)  = 1192.5
+Stall 2: (60<em>2)+(100</em>5)+(32<em>0.5)+(4</em>3)  = 648
+Stall 3: ...
+Stall 4: ...
+Stall 5: ...</p>
+<h3>Shape rule</h3>
+<p>(rows, cols) x (cols,) = (rows,)
+Matrix columns must match vector size.
+Result size = matrix rows.</p>
+<h3>In ML</h3>
+<p>Iris dataset (150, 4) x weights (4,) = predictions (150,)
+All 150 predictions calculated in ONE operation instead of a loop.
+This is why ML libraries are fast.</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="topic-6-matrix-multiplication">Topic 6 — Matrix Multiplication</h2>
+<h3>What is it?</h3>
+<p>Doing dot product once for every row of a matrix, against the same weights vector.</p>
+<h3>Chai stall example</h3>
+<p>Matrix (5,4) — 5 stalls, 4 metrics each
+Weights (4,) — 4 importance values</p>
+<p>Stall 1: (80<em>2)+(200</em>5)+(35<em>0.5)+(5</em>3)  = 1192.5
+Stall 2: (60<em>2)+(100</em>5)+(32<em>0.5)+(4</em>3)  = 648
+... (same for stalls 3, 4, 5)</p>
+<p>Result shape (5,) — one score per stall</p>
+<h3>Shape rule</h3>
+<p>(rows, cols) x (cols,) = (rows,)
+Matrix columns must match vector size.
+Result size = matrix rows.</p>
+<h3>ML version — Iris dataset</h3>
+<p>Matrix (150, 4) — 150 flowers, 4 measurements each
+Weights (4,) — one weight per measurement</p>
+<p>For each flower: dot product of its 4 measurements with the 4 weights = 1 prediction
+Doing this for all 150 flowers at once = matrix multiplication
+Result shape (150,) — one prediction per flower</p>
+<h3>Key idea</h3>
+<p>Same operation as dot product, just repeated for every row.
+This is why ML libraries are fast — no loops, one operation for everything.</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+<h2 id="topic-7-transpose">Topic 7 — Transpose</h2>
+<h3>What is it?</h3>
+<p>Flipping a matrix — rows become columns, columns become rows.
+(rows, cols) becomes (cols, rows)</p>
+<h3>Why it's needed</h3>
+<p>Sometimes data is written &quot;sideways&quot; and doesn't match the shape
+needed for multiplication. Transpose fixes the shape without
+changing the data.</p>
+<h3>Example</h3>
+<p>Before transpose: (4, 5) — metrics as rows, stalls as columns
+Weights vector: (4,)
+Columns (5) != vector size (4) -&gt; multiplication NOT possible</p>
+<p>After transpose: (5, 4) — stalls as rows, metrics as columns
+Columns (4) == vector size (4) -&gt; multiplication possible</p>
+<h3>Shape rule</h3>
+<p>(rows, cols) --transpose--&gt; (cols, rows)
+Example: (150, 4) --transpose--&gt; (4, 150)</p>
+<h3>In ML</h3>
+<p>X.T appears everywhere in ML code/formulas.
+It exists purely to make shapes match for multiplication.</p>
+<h3>Memory hook</h3>
+<p>(Write your own one sentence here)</p>
+<hr />
+
+<div class="src-head">📝 <a href="../Concept/practical_example.md">practical_example.md</a></div>
+<hr />
+<h2 id="practical-example-iris-dataset-all-7-topics-toge">Practical Example — Iris Dataset (All 7 Topics Together)</h2>
+<h3>The setup</h3>
+<p>Iris dataset = 150 flowers, 4 measurements each
+(sepal_length, sepal_width, petal_length, petal_width)</p>
+<h3>Topic 1 — Scalar</h3>
+<p>A single measurement: 5.1 (sepal_length of flower 1) -&gt; this is a scalar</p>
+<h3>Topic 2 — Vector</h3>
+<p>One flower's full data: [5.1, 3.5, 1.4, 0.2] -&gt; this is a vector (4,)</p>
+<h3>Topic 3 — Matrix</h3>
+<p>All 150 flowers stacked together -&gt; this is a matrix (150, 4)</p>
+<h3>Topic 4 — Shape</h3>
+<p>Matrix shape = (150, 4) -&gt; 150 rows, 4 columns
+To multiply with a weights vector, vector must have shape (4,)</p>
+<h3>Topic 5 — Dot Product</h3>
+<p>Imagine weights = [0.5, -0.3, 2.0, 1.5] (model decides these during training)</p>
+<p>For flower 1 [5.1, 3.5, 1.4, 0.2]:
+(5.1<em>0.5) + (3.5</em>-0.3) + (1.4<em>2.0) + (0.2</em>1.5)
+= 2.55 + (-1.05) + 2.8 + 0.3
+= 4.6</p>
+<p>This single number (4.6) is the model's RAW SCORE for flower 1
+(before deciding which species it is)</p>
+<h3>Topic 6 — Matrix Multiplication</h3>
+<p>Doing the above dot product for ALL 150 flowers at once:
+Matrix (150, 4) x Weights (4,) = Scores (150,)</p>
+<p>One operation -&gt; 150 raw scores, one per flower</p>
+<h3>Topic 7 — Transpose</h3>
+<p>If the data was stored as (4, 150) — measurements as rows,
+flowers as columns — transpose flips it to (150, 4) so it
+matches the weights vector (4,) and multiplication becomes possible</p>
+<h3>Full Picture</h3>
+<p>Scalar (1 number)
+-&gt; Vector (1 flower = 4 numbers)
+-&gt; Matrix (150 flowers = 150 vectors stacked)
+-&gt; Shape check (150,4) needs (4,) to multiply
+-&gt; Dot product (1 flower's score)
+-&gt; Matrix multiplication (all 150 scores at once)
+-&gt; Transpose (fix shape if data is sideways)</p>
+<p>This entire chain is what happens INSIDE every Scikit-learn
+.predict() call — just done in compiled, optimized code instead
+of by hand.</p>
+<hr />
+
+<div class="foot"><a class="btn" href="../Concept/doubts_and_clarifications.md">doubts_and_clarifications.md ↗</a><a class="btn" href="../Concept/faq.md">faq.md ↗</a><a class="btn" href="../Concept/linear_algebra_notes.md">linear_algebra_notes.md ↗</a><a class="btn" href="../Concept/practical_example.md">practical_example.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

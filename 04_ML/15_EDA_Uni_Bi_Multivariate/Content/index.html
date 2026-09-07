@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EDA Uni Bi Multivariate — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>EDA Uni Bi Multivariate</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#univariate-bivariate-and-multivariate-analysis">Univariate, Bivariate, and Multivariate Analysis</a><a href="#what-is-it">What is it?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#the-flow-of-this-notebook">The flow of this notebook</a><a href="#loading-iris">Loading Iris</a><a href="#where-do-the-numbers-0-1-and-2-come-from">Where do the numbers 0, 1, and 2 come from?</a><a href="#splitting-the-table-per-class">Splitting the table per class</a><a href="#plotting">Plotting</a><a href="#1-univariate-analysis-one-column-at-a-time">1. Univariate analysis — one column at a time</a><a href="#2-bivariate-analysis-two-columns-at-a-time">2. Bivariate analysis — two columns at a time</a><a href="#3-multivariate-analysis-every-pair-at-once">3. Multivariate analysis — every pair at once</a><a href="#what-the-three-steps-concluded">What the three steps concluded</a><a href="#common-mistakes">Common mistakes</a><a href="#interview-view">Interview view</a><a href="#key-takeaway">Key takeaway</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>EDA Uni Bi Multivariate</h1>
+  <p class="lede">Look at one column, then two, then all of them — before fitting anything.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Rekha fitted a model on all four Iris columns and got a good score.</strong> Then someone asked which measurement actually mattered.</p><p>She had no answer. She had never looked at the data — only at the score.</p><p><span class='beat'>A score tells you <em>whether</em> it worked, never <em>why</em>.</span></p><p>So she plotted: one column at a time to see its shape, two at a time to see whether classes separate, then all of them at once with a pairplot. In ten minutes she could see that petal length and petal width did nearly all the work.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Univariate shows shape, bivariate shows relationship, multivariate shows which columns carry the signal.</p></div>
+<div class="src-head">📓 <a href="../Concept/04_uni_boi_multi_variate_analaysis.ipynb">04_uni_boi_multi_variate_analaysis.ipynb</a></div>
+<h2 id="univariate-bivariate-and-multivariate-analysis">Univariate, Bivariate, and Multivariate Analysis</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning, scikit-learn module.</p>
+</div>
+<h2 id="what-is-it">What is it?</h2>
+<p>Before fitting any model, you look at the data. This notebook does that on the
+classic <strong>Iris</strong> dataset. The three words in the title only count <strong>how many columns
+you look at in one picture</strong>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Name</th>
+  <th>Columns per picture</th>
+  <th>Question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Univariate</strong></td>
+  <td>1</td>
+  <td>How is this one column spread out?</td>
+</tr>
+<tr>
+  <td><strong>Bivariate</strong></td>
+  <td>2</td>
+  <td>Do these two columns move together?</td>
+</tr>
+<tr>
+  <td><strong>Multivariate</strong></td>
+  <td>3 or more</td>
+  <td>Out of all the pairs, which one separates the classes best?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-do-we-need-it">Why do we need it?</h2>
+<p>A model cannot tell you whether a problem is easy or impossible. A plot can.</p>
+<p>If two classes already sit in separate corners of a scatter plot, a simple model will
+work. If every class sits on top of the others, no amount of tuning will save you.
+Ten minutes of plotting can save a day of tuning.</p>
+<p>Backend analogy: this is <strong>reading the payload before writing the parser</strong>. You would
+not write a mapper for a Kafka topic without first inspecting a few real messages.
+Same idea here, with pictures instead of log lines.</p>
+<h2 id="the-flow-of-this-notebook">The flow of this notebook</h2>
+<div class="code"><pre> load_iris()  →  DataFrame  →  add target  →  split per class
+                                                    │
+                    ┌───────────────────────────────┼──────────────────────────┐
+                    │                               │                          │
+             1 column at a time            2 columns at a time         all columns at once
+                 plt.plot                      plt.scatter                sns.pairplot
+                (univariate)                   (bivariate)               (multivariate)
+</pre></div>
+<p>Each step answers the question the step before it could not.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+from sklearn.datasets import load_iris</pre></div>
+<h2 id="loading-iris">Loading Iris</h2>
+<p><code>load_iris()</code> does <strong>not</strong> return a DataFrame. It returns a <code>Bunch</code> — a dictionary
+that also allows dot access. The parts that matter here:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Attribute</th>
+  <th>Shape</th>
+  <th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>iris.data</code></td>
+  <td><code>(150, 4)</code></td>
+  <td>the four measurements, as floats</td>
+</tr>
+<tr>
+  <td><code>iris.target</code></td>
+  <td><code>(150,)</code></td>
+  <td>the answer, as integers <code>0</code>, <code>1</code>, <code>2</code></td>
+</tr>
+<tr>
+  <td><code>iris.feature_names</code></td>
+  <td>4 strings</td>
+  <td><code>'sepal length (cm)'</code>, <code>'sepal width (cm)'</code>, ...</td>
+</tr>
+<tr>
+  <td><code>iris.target_names</code></td>
+  <td>3 strings</td>
+  <td><code>'setosa'</code>, <code>'versicolor'</code>, <code>'virginica'</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>iris.data</code> and <code>iris.feature_names</code> are two halves of the same thing, so
+<code>pd.DataFrame(iris.data, columns=iris.feature_names)</code> glues them back together.</p>
+<p>After this cell the table is <strong>4 columns wide</strong>. The answer column is still missing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">iris = load_iris()
+table = pd.DataFrame(iris.data,columns=iris.feature_names)
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+0                5.1               3.5                1.4               0.2
+1                4.9               3.0                1.4               0.2
+2                4.7               3.2                1.3               0.2
+3                4.6               3.1                1.5               0.2
+4                5.0               3.6                1.4               0.2</pre></div>
+<h2 id="where-do-the-numbers-0-1-and-2-come-from">Where do the numbers 0, 1, and 2 come from?</h2>
+<p>This is the question the whole notebook turns on, so here is the full answer.</p>
+<h3>Short answer</h3>
+<p><strong>Nothing computed them. They were already sitting in the file.</strong></p>
+<p><code>load_iris()</code> reads a CSV that ships inside scikit-learn itself. In that file the
+species column is <em>already</em> stored as <code>0</code>, <code>1</code>, <code>2</code>. No encoder ever runs.</p>
+<h3>The proof</h3>
+<p>The file lives at <code>sklearn/datasets/data/iris.csv</code>. Its first line is not data — it is
+a small header that records the metadata:</p>
+<div class="code"><pre>150,4,setosa,versicolor,virginica    ← line 1: 150 rows, 4 features, then the 3 label names
+5.1,3.5,1.4,0.2,0                    ← line 2:   four measurements, then the label 0
+...
+7.0,3.2,4.7,1.4,1                    ← line 51:  the first 1 appears here
+...
+6.3,3.3,6.0,2.5,2                    ← line 101: the first 2 appears here
+</pre></div>
+<p><code>load_iris()</code> then does two mechanical things:</p>
+<ol>
+<li>the last value of every row becomes <code>iris.target</code> → <code>0,0,0,…,1,1,1,…,2,2,2</code></li>
+<li>the three names on line 1 become <code>iris.target_names</code> → <code>['setosa', 'versicolor', 'virginica']</code></li>
+</ol>
+<p>The rows are stored grouped and in order, which is why row 0 is setosa, row 50 is the
+first versicolor, and row 100 is the first virginica.</p>
+<h3>The rule that connects the two</h3>
+<div class="note"><div class="h">Note</div><p><strong>A label's number is its position in <code>target_names</code>.</strong></p>
+</div>
+<p><code>target_names</code> is a plain array, so index <code>0</code> is the first name, index <code>1</code> the second,
+index <code>2</code> the third. That is the entire mapping. It is a lookup, not a calculation:</p>
+<div class="code"><pre>   iris.target_names  =  [ &#x27;setosa&#x27; , &#x27;versicolor&#x27; , &#x27;virginica&#x27; ]
+                            index 0      index 1        index 2
+                               ▲            ▲              ▲
+                               │            │              │
+   iris.target = [ 0,0,0,…,   1,1,1,…,     2,2,2 ]         │
+                   └─ 50 rows ┴─ 50 rows ──┴─ 50 rows ─────┘
+</pre></div>
+<p>So <code>iris.target_names[iris.target[0]]</code> reads as <code>target_names[0]</code> → <code>'setosa'</code>.
+That expression is the decoder. Use it instead of remembering the order.</p>
+<h3>Why <em>this</em> order and not some other?</h3>
+<p>The names happen to be alphabetical: <strong>s</strong>etosa, <strong>ve</strong>rsicolor, <strong>vi</strong>rginica.
+That is a convention of this dataset, not a law. It matches what <code>LabelEncoder</code> would
+produce if you encoded the raw strings yourself, because <code>LabelEncoder</code> sorts too:</p>
+<div class="code"><pre class="py">LabelEncoder().fit([&#x27;virginica&#x27;, &#x27;setosa&#x27;, &#x27;versicolor&#x27;]).classes_
+# array([&#x27;setosa&#x27;, &#x27;versicolor&#x27;, &#x27;virginica&#x27;])   →   0, 1, 2
+</pre></div>
+<p>Lean on alphabetical order for Iris if you like, but <strong>never</strong> assume it for a dataset
+someone else built. Always read <code>target_names</code>.</p>
+<h3>⚠️ The mistake in the cells below</h3>
+<p>The next few cells split the table using these names:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Variable in this notebook</th>
+  <th>Filter</th>
+  <th>What it actually holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>setosa</code></td>
+  <td><code>target == 0</code></td>
+  <td>✅ setosa</td>
+</tr>
+<tr>
+  <td><code>virginica</code></td>
+  <td><code>target == 1</code></td>
+  <td>❌ <strong>versicolor</strong></td>
+</tr>
+<tr>
+  <td><code>versicolor</code></td>
+  <td><code>target == 2</code></td>
+  <td>❌ <strong>virginica</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The last two names are <strong>swapped</strong>. The code runs fine and every plot still draws,
+which is exactly what makes this class of bug dangerous. Nothing throws.</p>
+<p>The data itself gives it away. Petal length grows steadily across the three species,
+so the group with the <em>largest</em> petals has to be virginica:</p>
+<table class="tbl"><thead>
+<tr>
+  <th><code>target</code></th>
+  <th>rows</th>
+  <th>mean petal length</th>
+  <th>true species</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>0</code></td>
+  <td>0–49</td>
+  <td>1.46 cm</td>
+  <td>setosa</td>
+</tr>
+<tr>
+  <td><code>1</code></td>
+  <td>50–99</td>
+  <td>4.26 cm</td>
+  <td>versicolor</td>
+</tr>
+<tr>
+  <td><code>2</code></td>
+  <td>100–149</td>
+  <td>5.55 cm</td>
+  <td>virginica</td>
+</tr>
+</tbody>
+</table>
+<p>The variable named <code>versicolor</code> in this notebook holds the 5.55 cm group — that group
+is virginica.</p>
+<p><strong>Smallest fix:</strong> swap the two variable names, or stop typing species names by hand
+and let <code>target_names</code> supply them. The cell after the split does exactly that.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">table[&#x27;target&#x27;] = iris.target
+table.head(60)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+0                 5.1               3.5                1.4               0.2   
+1                 4.9               3.0                1.4               0.2   
+2                 4.7               3.2                1.3               0.2   
+3                 4.6               3.1                1.5               0.2   
+4                 5.0               3.6                1.4               0.2   
+5                 5.4               3.9                1.7               0.4   
+6                 4.6               3.4                1.4               0.3   
+7                 5.0               3.4                1.5               0.2   
+8                 4.4               2.9                1.4               0.2   
+9                 4.9               3.1                1.5               0.1   
+10                5.4               3.7                1.5               0.2   
+11                4.8               3.4                1.6               0.2   
+12                4.8               3.0                1.4               0.1   
+13                4.3               3.0                1.1               0.1   
+14                5.8               4.0                1.2               0.2   
+15                5.7               4.4                1.5               0.4   
+16                5.4               3.9                1.3               0.4   
+17                5.1               3.5                1.4               0.3   
+18                5.7               3.8                1.7               0.3   
+19                5.1               3.8                1.5               0.3   
+20                5.4               3.4                1.7               0.2   
+21                5.1               3.7                1.5               0.4   
+22                4.6               3.6                1.0               0.2   
+23                5.1               3.3                1.7               0.5   
+24                4.8               3.4                1.9               0.2   
+25                5.0               3.0                1.6               0.2   
+26                5.0               3.4                1.6               0.4   
+27                5.2               3.5                1.5               0.2   
+28                5.2               3.4                1.4               0.2   
+29                4.7               3.2                1.6               0.2   
+30                4.8               3.1                1.6               0.2   
+31                5.4               3.4 </pre></div>
+<p>Adding <code>iris.target</code> makes the table <strong>5 columns wide</strong>: 4 inputs and 1 answer, living
+in one frame. <code>(150, 5)</code> confirms it.</p>
+<p>That is fine for <em>exploring</em>, which is all this notebook does. It is not fine for
+<em>training</em>. A model handed the answer column as an input scores 100% and has learned
+nothing, so <code>X</code> and <code>y</code> must be separated before any <code>fit</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">table.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(150, 5)</pre></div>
+<h2 id="splitting-the-table-per-class">Splitting the table per class</h2>
+<p><code>table.loc[table['target'] == 0]</code> is a <strong>boolean mask</strong>. The inner expression builds a
+Series of 150 <code>True</code>/<code>False</code> values, and <code>.loc</code> keeps only the rows where it is <code>True</code>.
+It is the Pandas version of <code>stream().filter(row -&gt; row.getTarget() == 0)</code>.</p>
+<p>Each filter returns exactly <strong>50 rows</strong>, because Iris is perfectly balanced —
+50 flowers per species.</p>
+<p>We split now because the univariate plot below needs one <code>plt.plot</code> call per species
+in order to get one colour per species.</p>
+<p>Read the ⚠️ above before trusting the names on the next two cells.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">table[&#x27;target&#x27;]==0</pre></div>
+<div class="out"><div class="h">Output</div><pre>0       True
+1       True
+2       True
+3       True
+4       True
+       ...  
+145    False
+146    False
+147    False
+148    False
+149    False
+Name: target, Length: 150, dtype: bool</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">setosa = table.loc[table[&#x27;target&#x27;]==0]
+setosa</pre></div>
+<div class="out"><div class="h">Output</div><pre>    sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+0                 5.1               3.5                1.4               0.2   
+1                 4.9               3.0                1.4               0.2   
+2                 4.7               3.2                1.3               0.2   
+3                 4.6               3.1                1.5               0.2   
+4                 5.0               3.6                1.4               0.2   
+5                 5.4               3.9                1.7               0.4   
+6                 4.6               3.4                1.4               0.3   
+7                 5.0               3.4                1.5               0.2   
+8                 4.4               2.9                1.4               0.2   
+9                 4.9               3.1                1.5               0.1   
+10                5.4               3.7                1.5               0.2   
+11                4.8               3.4                1.6               0.2   
+12                4.8               3.0                1.4               0.1   
+13                4.3               3.0                1.1               0.1   
+14                5.8               4.0                1.2               0.2   
+15                5.7               4.4                1.5               0.4   
+16                5.4               3.9                1.3               0.4   
+17                5.1               3.5                1.4               0.3   
+18                5.7               3.8                1.7               0.3   
+19                5.1               3.8                1.5               0.3   
+20                5.4               3.4                1.7               0.2   
+21                5.1               3.7                1.5               0.4   
+22                4.6               3.6                1.0               0.2   
+23                5.1               3.3                1.7               0.5   
+24                4.8               3.4                1.9               0.2   
+25                5.0               3.0                1.6               0.2   
+26                5.0               3.4                1.6               0.4   
+27                5.2               3.5                1.5               0.2   
+28                5.2               3.4                1.4               0.2   
+29                4.7               3.2                1.6               0.2   
+30                4.8               3.1                1.6               0.2   
+31                5.4               3.4 </pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">virginica=table.loc[table[&#x27;target&#x27;]==1]
+virginica</pre></div>
+<div class="out"><div class="h">Output</div><pre>    sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+50                7.0               3.2                4.7               1.4   
+51                6.4               3.2                4.5               1.5   
+52                6.9               3.1                4.9               1.5   
+53                5.5               2.3                4.0               1.3   
+54                6.5               2.8                4.6               1.5   
+55                5.7               2.8                4.5               1.3   
+56                6.3               3.3                4.7               1.6   
+57                4.9               2.4                3.3               1.0   
+58                6.6               2.9                4.6               1.3   
+59                5.2               2.7                3.9               1.4   
+60                5.0               2.0                3.5               1.0   
+61                5.9               3.0                4.2               1.5   
+62                6.0               2.2                4.0               1.0   
+63                6.1               2.9                4.7               1.4   
+64                5.6               2.9                3.6               1.3   
+65                6.7               3.1                4.4               1.4   
+66                5.6               3.0                4.5               1.5   
+67                5.8               2.7                4.1               1.0   
+68                6.2               2.2                4.5               1.5   
+69                5.6               2.5                3.9               1.1   
+70                5.9               3.2                4.8               1.8   
+71                6.1               2.8                4.0               1.3   
+72                6.3               2.5                4.9               1.5   
+73                6.1               2.8                4.7               1.2   
+74                6.4               2.9                4.3               1.3   
+75                6.6               3.0                4.4               1.4   
+76                6.8               2.8                4.8               1.4   
+77                6.7               3.0                5.0               1.7   
+78                6.0               2.9                4.5               1.5   
+79                5.7               2.6                3.5               1.0   
+80                5.5               2.4                3.8               1.1   
+81                5.5               2.4 </pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">versicolor=table.loc[table[&#x27;target&#x27;]==2]
+versicolor</pre></div>
+<div class="out"><div class="h">Output</div><pre>     sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+100                6.3               3.3                6.0               2.5   
+101                5.8               2.7                5.1               1.9   
+102                7.1               3.0                5.9               2.1   
+103                6.3               2.9                5.6               1.8   
+104                6.5               3.0                5.8               2.2   
+105                7.6               3.0                6.6               2.1   
+106                4.9               2.5                4.5               1.7   
+107                7.3               2.9                6.3               1.8   
+108                6.7               2.5                5.8               1.8   
+109                7.2               3.6                6.1               2.5   
+110                6.5               3.2                5.1               2.0   
+111                6.4               2.7                5.3               1.9   
+112                6.8               3.0                5.5               2.1   
+113                5.7               2.5                5.0               2.0   
+114                5.8               2.8                5.1               2.4   
+115                6.4               3.2                5.3               2.3   
+116                6.5               3.0                5.5               1.8   
+117                7.7               3.8                6.7               2.2   
+118                7.7               2.6                6.9               2.3   
+119                6.0               2.2                5.0               1.5   
+120                6.9               3.2                5.7               2.3   
+121                5.6               2.8                4.9               2.0   
+122                7.7               2.8                6.7               2.0   
+123                6.3               2.7                4.9               1.8   
+124                6.7               3.3                5.7               2.1   
+125                7.2               3.2                6.0               1.8   
+126                6.2               2.8                4.8               1.8   
+127                6.1               3.0                4.9               1.8   
+128                6.4               2.8                5.6               2.1   
+129                7.2               3.0                5.8               1.6   
+130                7.4               2.8                6.1               1.9   
+131     </pre></div>
+<h3>💡 Engineering Extension — decode, do not memorise</h3>
+<p><em>Recommended Extension - Not part of instructor curriculum</em></p>
+<p>Typing species names by hand is what caused the swap above. <code>target_names</code> already
+knows the answer, so let it do the labelling.</p>
+<p><code>dict(enumerate(iris.target_names))</code> turns the array into
+<code>{0: 'setosa', 1: 'versicolor', 2: 'virginica'}</code>, and <code>.map()</code> applies that dictionary
+to every value in the <code>target</code> column. The printed petal-length means then confirm
+the ordering from the data rather than from memory.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py"># The decoder ring: a label&#x27;s POSITION in target_names is its number
+for code, name in enumerate(iris.target_names):
+    print(code, &quot;-&gt;&quot;, name)
+
+# Add a readable column, so no plot has to be labelled from memory
+table[&quot;species&quot;] = table[&quot;target&quot;].map(dict(enumerate(iris.target_names)))
+
+print()
+print(table.groupby(&quot;species&quot;)[&quot;petal length (cm)&quot;].mean().round(2))</pre></div>
+<div class="out"><div class="h">Output</div><pre>0 -&gt; setosa
+1 -&gt; versicolor
+2 -&gt; virginica
+
+species
+setosa        1.46
+versicolor    4.26
+virginica     5.55
+Name: petal length (cm), dtype: float64</pre></div>
+<h2 id="plotting">Plotting</h2>
+<p>Three libraries, three jobs:</p>
+<ul>
+<li><code>matplotlib.pyplot</code> — the drawing engine.</li>
+<li><code>seaborn</code> — statistical charts built on top of matplotlib. <code>pairplot</code> lives here.</li>
+<li><code>numpy</code> — supplies the fake y-values the first plot needs.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np</pre></div>
+<h2 id="1-univariate-analysis-one-column-at-a-time">1. Univariate analysis — one column at a time</h2>
+<p><strong>Goal:</strong> look at <code>sepal length</code> on its own, and ask whether that single number can
+tell the three species apart.</p>
+<p>A single column is 1-dimensional, but a plot needs both an x and a y. The trick here
+is to give every point a y of <strong>zero</strong>, so all the points collapse onto one horizontal
+line. <code>np.zeros_like(...)</code> builds that array of 50 zeros.</p>
+<div class="code"><pre>  y
+  │
+0 ┼──■■■■■■──────────■■■■■■■■■■──■■■■■■■■■──
+  └──────────────────────────────────────────  x = sepal length (cm)
+      setosa          versicolor    virginica
+</pre></div>
+<p><code>'s'</code> is the marker style — a <strong>s</strong>quare. Three separate <code>plt.plot</code> calls means
+matplotlib picks a new colour for each one automatically.</p>
+<p><strong>What to read from it:</strong> the setosa squares sit clearly to the left of everything
+else. The other two species overlap heavily. So sepal length <strong>alone</strong> separates
+setosa and fails on the rest.</p>
+<p>That is the honest conclusion, and it is the reason we add a second column next.
+Univariate analysis is not a weak technique — it is just answering a narrower question.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">plt.plot(setosa[&#x27;sepal length (cm)&#x27;],np.zeros_like(setosa[&#x27;sepal length (cm)&#x27;]),&#x27;s&#x27;)
+plt.plot(virginica[&#x27;sepal length (cm)&#x27;],np.zeros_like(virginica[&#x27;sepal length (cm)&#x27;]),&#x27;s&#x27;)
+plt.plot(versicolor[&#x27;sepal length (cm)&#x27;],np.zeros_like(versicolor[&#x27;sepal length (cm)&#x27;]),&#x27;s&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x120c3e270&gt;]</pre></div>
+<figure class="shot"><img src="assets/04-uni-boi-multi-variate-ana-c18-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>These two cells simply print what <code>np.zeros_like</code> returned, to confirm the trick.</p>
+<p><code>zeros_like</code> copies the <strong>shape and dtype</strong> of whatever you pass it, then fills the
+result with zeros — here, 50 floats, all <code>0.</code>. The actual measurements in the column
+are ignored; only its shape is used.</p>
+<p><code>np.zeros(50)</code> would produce the same thing. <code>zeros_like</code> is preferred because it
+stays correct when the group size changes.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">np.zeros_like(setosa[&#x27;sepal length (cm)&#x27;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">np.zeros_like(virginica[&#x27;sepal length (cm)&#x27;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])</pre></div>
+<h2 id="2-bivariate-analysis-two-columns-at-a-time">2. Bivariate analysis — two columns at a time</h2>
+<p><strong>Goal:</strong> put <code>sepal length</code> on x and <code>petal length</code> on y, then colour each point by
+its species.</p>
+<p><code>c=table['target']</code> does the colouring. Because <code>target</code> holds numbers, matplotlib
+runs them through a colormap, so <code>0</code>, <code>1</code>, and <code>2</code> become three different colours.
+This is one practical reason a <strong>numeric</strong> target is convenient — passing the string
+<code>'setosa'</code> to <code>c=</code> would raise an error.</p>
+<p>Note this cell uses the <strong>whole table</strong>, not the three split frames. One call, one
+colour per target value, no manual filtering.</p>
+<p><strong>What to read from it:</strong> setosa is now a completely separate island, far from
+everything else. Versicolor and virginica form two clouds that touch along one edge
+but mostly sit apart. Two columns achieved what one column could not.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">plt.scatter(table[&#x27;sepal length (cm)&#x27;],table[&#x27;petal length (cm)&#x27;],c= table[&#x27;target&#x27;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120cfecf0&gt;</pre></div>
+<figure class="shot"><img src="assets/04-uni-boi-multi-variate-ana-c23-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="3-multivariate-analysis-every-pair-at-once">3. Multivariate analysis — every pair at once</h2>
+<p><strong>Goal:</strong> stop guessing which two columns to plot, and plot <strong>all</strong> of them.</p>
+<p><code>sns.pairplot</code> builds a 4×4 grid, because the table has 4 feature columns. (<code>target</code>
+is used as the hue, so seaborn leaves it out of the grid itself.)</p>
+<div class="code"><pre>               sep len   sep wid   pet len   pet wid
+             ┌─────────┬─────────┬─────────┬─────────┐
+     sep len │   KDE   │ scatter │ scatter │ scatter │
+             ├─────────┼─────────┼─────────┼─────────┤
+     sep wid │ scatter │   KDE   │ scatter │ scatter │
+             ├─────────┼─────────┼─────────┼─────────┤
+     pet len │ scatter │ scatter │   KDE   │ scatter │
+             ├─────────┼─────────┼─────────┼─────────┤
+     pet wid │ scatter │ scatter │ scatter │   KDE   │
+             └─────────┴─────────┴─────────┴─────────┘
+                  ▲         ▲
+                  │         └── off-diagonal = bivariate, one pair of columns
+                  └── diagonal = univariate, the column against itself
+</pre></div>
+<p>A column plotted against itself would just be a straight line, so seaborn substitutes
+a <strong>density curve</strong> for that single column instead. This means one chart gives you
+every univariate view <em>and</em> every bivariate view at the same time — steps 1 and 2 of
+this notebook, done exhaustively.</p>
+<h3>The two arguments</h3>
+<ul>
+<li><strong><code>hue=&quot;target&quot;</code></strong> — colour by species and add a legend. This one argument replaces
+the whole manual three-way split from earlier.</li>
+<li><strong><code>markers=[&quot;o&quot;, &quot;s&quot;, &quot;D&quot;]</code></strong> — one marker shape per hue level, in hue order:
+<strong>o</strong>=circle for <code>0</code>, <strong>s</strong>=square for <code>1</code>, <strong>D</strong>=diamond for <code>2</code>. The list length
+must equal the number of hue levels, or seaborn raises an error.</li>
+</ul>
+<p>Shapes matter more than they look. Colour alone fails for a colour-blind reader, and
+fails again the moment the chart is printed in greyscale. Shape survives both.</p>
+<p><strong>What to read from it:</strong> scan for the panel where the three colours sit furthest
+apart. Here it is <code>petal length</code> vs <code>petal width</code> — three clean groups, barely
+touching. The sepal panels are noticeably muddier.</p>
+<p>Conclusion: <strong>the petal measurements carry most of the signal.</strong> That is a
+feature-selection decision made from a picture, before any model existed.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">sns.pairplot(table,hue=&quot;target&quot;, markers=[&quot;o&quot;, &quot;s&quot;, &quot;D&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.PairGrid at 0x120e2f230&gt;</pre></div>
+<figure class="shot"><img src="assets/04-uni-boi-multi-variate-ana-c25-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="what-the-three-steps-concluded">What the three steps concluded</h2>
+<div class="code"><pre>   univariate  (sepal length)      →  separates setosa only
+   bivariate   (sepal + petal len) →  separates setosa cleanly, the other two mostly
+   multivariate (all 4 columns)    →  petal length + petal width separate all three
+</pre></div>
+<p>Each step answered the question the previous one could not, and the last one told us
+which columns to keep. That ordering — narrow to wide — is the whole method.</p>
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li><strong>Assuming the label order.</strong> <code>1</code> is versicolor, not virginica. Read
+<code>iris.target_names</code> instead of trusting memory. This notebook got it wrong above,
+and nothing crashed.</li>
+<li><strong>Leaving <code>target</code> inside <code>X</code>.</strong> The table is 5 columns wide now. A model trained
+on all 5 has been handed the answer sheet.</li>
+<li><strong>Trusting a univariate plot to prove separability.</strong> Overlap on one axis says
+nothing about a <em>pair</em> of axes. Virginica and versicolor overlapped on sepal length
+and separated fine on petal width.</li>
+<li><strong>Reading the <code>pairplot</code> diagonal as a scatter.</strong> It is a density curve for one
+column, not a relationship between two.</li>
+<li><strong>Using colour as the only encoding.</strong> Add <code>markers</code> whenever a chart might be
+printed or read by a colour-blind reader.</li>
+</ol>
+<h2 id="interview-view">Interview view</h2>
+<ul>
+<li><em>&quot;How do you approach a new classification dataset?&quot;</em> — Univariate first to see each
+column's spread, bivariate for pairs, <code>pairplot</code> to find the strongest pair, and only
+then pick a model.</li>
+<li><em>&quot;What is on the pairplot diagonal?&quot;</em> — The univariate distribution of that one
+column, drawn per hue group.</li>
+<li><em>&quot;Where do the Iris target values come from?&quot;</em> — They ship inside scikit-learn's own
+<code>iris.csv</code>, already stored as <code>0</code>/<code>1</code>/<code>2</code>. The number is the index into
+<code>target_names</code>. No encoder runs.</li>
+<li><em>&quot;Which Iris features matter most?&quot;</em> — Petal length and petal width. The pairplot
+shows all three species cleanly split on that pair.</li>
+</ul>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> a target number is <strong>a position, not a meaning</strong>.
+<code>iris.target_names[k]</code> is the only trustworthy way to turn <code>0</code>, <code>1</code>, <code>2</code> back into a
+species name.</p>
+<p>And the fastest way to find which columns matter is to let <code>sns.pairplot</code> draw every
+pair, then look for the panel where the colours stop touching.</p>
+
+<div class="foot"><a class="btn" href="../Concept/04_uni_boi_multi_variate_analaysis.ipynb">04_uni_boi_multi_variate_analaysis.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

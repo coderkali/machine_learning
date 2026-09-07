@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seaborn — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">01 Python › <b>Seaborn</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#seaborn">Seaborn</a><a href="#files">Files</a><a href="#the-one-pattern">The one pattern</a><a href="#covered-so-far">Covered so far</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#seaborn-statistical-charts-on-top-of-matplotlib">Seaborn — Statistical Charts on Top of Matplotlib</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#1-setup-the-import-cells">1. Setup — the import cells</a><a href="#2-your-first-plots-arrays-vs-dataframe">2. Your first plots — arrays vs DataFrame</a><a href="#3-built-in-datasets-sns-load-dataset">3. Built-in datasets — sns.load_dataset</a><a href="#4-relational-plots-and-the-three-semantic-channe">4. Relational plots and the three semantic channels</a><a href="#5-distributions-histplot-and-kdeplot">5. Distributions — histplot and kdeplot</a><a href="#6-pairplot-every-numeric-pair-at-once">6. pairplot — every numeric pair at once</a><a href="#7-violinplot-distribution-per-category">7. violinplot — distribution per category</a><a href="#8-countplot-bars-of-quot-how-many-rows-quot">8. countplot — bars of &amp;quot;how many rows&amp;quot;</a><a href="#9-barplot-and-the-statistics-hiding-inside-it">9. barplot — and the statistics hiding inside it</a><a href="#10-boxplot-the-five-number-summary">10. boxplot — the five-number summary</a><a href="#11-countplot-variants-orientation-and-real-group">11. countplot variants — orientation and real groupi</a><a href="#12-facetgrid-small-multiples">12. FacetGrid — small multiples</a><a href="#13-stripplot-every-single-row-as-a-dot">13. stripplot — every single row as a dot</a><a href="#14-swarmplot-jitter-done-deliberately">14. swarmplot — jitter done deliberately</a><a href="#15-regplot-scatter-plus-a-fitted-line">15. regplot — scatter plus a fitted line</a><a href="#16-themes-set-theme-style">16. Themes — set_theme(style=...)</a><a href="#17-palettes-width-and-the-dodge-trap">17. Palettes, width, and the dodge trap</a><a href="#closing-what-this-notebook-establishes">Closing — what this notebook establishes</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Python and the data toolkit</p>
+  <h1>Seaborn</h1>
+  <p class="lede">Statistical charts in one line, with the defaults already sensible.</p>
+  <div class="tags"><span class="tag">2 notebooks · 1 note</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Arjun wanted to compare the distribution of tips across four days.</strong></p><p>In Matplotlib that meant filtering the data four times, drawing four histograms, aligning the axes and building the legend by hand — about twenty-five lines.</p><p><span class='beat'>Most of that code was bookkeeping, not thinking.</span></p><p>Seaborn does it in one: <code>sns.boxplot(data=tips, x='day', y='tip')</code>. It understands DataFrames, so grouping, colouring and the legend come for free.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Seaborn takes a whole DataFrame and a column name, and does the grouping and styling for you.</p></div>
+<div class="src-head">📝 <a href="../Concept/README.md">README.md</a></div>
+<h2 id="seaborn">Seaborn</h2>
+<p><strong>Curriculum module:</strong> M02 - Data Visualization with Python<br />
+<strong>Status:</strong> 🟡 Learning</p>
+<p>Seaborn is a statistical plotting layer built on top of Matplotlib. You hand it a
+Pandas DataFrame and the <em>names</em> of columns; it does the grouping, runs the
+statistics, picks the colours, builds the legend, and returns a Matplotlib
+<code>Axes</code>. Matplotlib draws exactly the numbers you pass it — seaborn computes
+first, then draws.</p>
+<h2 id="files">Files</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>File</th>
+  <th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="../Concept/example_01.ipynb"><code>example_01.ipynb</code></a></td>
+  <td>The full tour: relational, distribution, categorical, regression, grid, and styling plots. <strong>All explanation lives in this notebook</strong>, in the Markdown cells above each group of code cells.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-one-pattern">The one pattern</h2>
+<div class="code"><pre>sns.&lt;plot&gt;(x=&lt;column&gt;, y=&lt;column&gt;, hue=&lt;column&gt;, data=&lt;DataFrame&gt;)
+</pre></div>
+<p>You name columns, not numbers. <code>hue</code> is a <code>GROUP BY</code> whose output channel is
+colour. Learn that shape once and the plot name becomes the only thing that
+changes.</p>
+<h2 id="covered-so-far">Covered so far</h2>
+<p><code>lineplot</code>, <code>scatterplot</code>, the <code>hue</code> / <code>size</code> / <code>style</code> semantic channels,
+<code>histplot</code> and <code>kdeplot</code>, <code>pairplot</code>, <code>violinplot</code>, <code>countplot</code>, <code>barplot</code>,
+<code>boxplot</code>, <code>stripplot</code>, <code>swarmplot</code>, <code>regplot</code>, <code>FacetGrid</code> with <code>.map</code>,
+<code>set_theme</code> styles, and <code>set_palette</code>. Also the seaborn 0.13 rules that changed:
+<code>palette</code> now requires <code>hue</code>, and <code>dodge=False</code> is needed when <code>hue</code> merely
+repeats <code>x</code>.</p>
+<p><strong>Not covered yet:</strong> the figure-level wrappers (<code>relplot</code>, <code>displot</code>, <code>catplot</code>,
+<code>lmplot</code>), <code>heatmap</code> and correlation matrices, <code>jointplot</code>, building custom
+palettes with <code>color_palette</code>, and saving figures to file. The instructor module
+also includes Plotly, now started in <a href="../../06_Plotly/Concept"><code>06_plotly/</code></a>.</p>
+<h2 id="version-note">Version note</h2>
+<p>Written against <strong>seaborn 0.13.2</strong>. Two behaviours changed in 0.13 and older
+tutorials will mislead you:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Rule</th>
+  <th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>palette=</code> is ignored without <code>hue=</code></td>
+  <td>a palette with no <code>hue</code> gives <strong>one</strong> colour, not many</td>
+</tr>
+<tr>
+  <td><code>dodge=&quot;auto&quot;</code> still splits when <code>hue</code> repeats <code>x</code></td>
+  <td>bars land off-centre at a fraction of <code>width</code> unless you pass <code>dodge=False</code></td>
+</tr>
+</tbody>
+</table>
+<p>Both are demonstrated with measured numbers in the notebook.</p>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> seaborn plots <em>columns</em>, not numbers — and it
+runs statistics on them before drawing. A bar is a mean, a shaded band is a
+confidence interval, and <code>lineplot</code> aggregates rows that share an <code>x</code>. Know what
+has been computed before you trust the picture.</p>
+
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div>
+<h2 id="seaborn-statistical-charts-on-top-of-matplotlib">Seaborn — Statistical Charts on Top of Matplotlib</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M02, Data Visualization with Python</p>
+</div>
+<p><strong>What this notebook is:</strong> a hands-on tour of <code>seaborn</code>, covering relational plots
+(<code>lineplot</code>, <code>scatterplot</code>), distribution plots (<code>histplot</code>, <code>kdeplot</code>), categorical
+plots (<code>barplot</code>, <code>boxplot</code>, <code>violinplot</code>, <code>countplot</code>, <code>stripplot</code>, <code>swarmplot</code>),
+regression (<code>regplot</code>), grids (<code>pairplot</code>, <code>FacetGrid</code>), and global styling
+(<code>set_theme</code>, <code>set_palette</code>).</p>
+<p><strong>How to read it:</strong> like the Matplotlib notebook, this is a <strong>ladder</strong>. Most cells repeat
+the cell above and change exactly one argument. The useful question at each step is
+<em>what is different from the cell before?</em> Each Markdown section explains every code cell
+that follows it, up to the next section.</p>
+<p>Versions used here: <strong>seaborn 0.13.2</strong>, <strong>matplotlib 3.10.9</strong>.</p>
+<hr />
+<h2 id="the-mental-model-read-this-first">The mental model — read this first</h2>
+<p>Seaborn does <strong>not</strong> replace matplotlib. It sits on top of it and writes matplotlib code
+for you:</p>
+<div class="code"><pre>   your call            seaborn&#x27;s job                    matplotlib&#x27;s job
+   ---------            -------------                    ----------------
+   sns.barplot(         1. group the rows                draw rectangles
+     x=&quot;day&quot;,           2. run statistics (mean)         draw error bars
+     y=&quot;total_bill&quot;,    3. pick colors from a palette    draw ticks, labels
+     data=tips)        4. build the legend               return an Axes
+                              |
+                              v
+                        matplotlib Axes  &lt;-- you can still style this by hand
+</pre></div>
+<p>That layering explains three things you will see all over this notebook:</p>
+<ol>
+<li>Every plot returns a matplotlib <code>Axes</code>, so <code>plt.show()</code>, <code>plt.title()</code> and friends
+still work.</li>
+<li>Seaborn arguments are about <strong>data</strong> (<code>x=&quot;day&quot;</code>, <code>hue=&quot;sex&quot;</code>), not about pixels.</li>
+<li>When seaborn cannot do something, you drop down to matplotlib — that is normal, not
+a workaround.</li>
+</ol>
+<h3>The one contract seaborn expects: long-form data</h3>
+<div class="code"><pre>WIDE form (what a spreadsheet looks like)     LONG form (what seaborn wants)
++--------+--------+                           +---------+--------------+
+| setosa | virgin |                           | species | sepal_length |
++--------+--------+                           +---------+--------------+
+|  5.1   |  6.3   |                           | setosa  |     5.1      |
+|  4.9   |  5.8   |                           | setosa  |     4.9      |
++--------+--------+                           | virgin  |     6.3      |
+                                              | virgin  |     5.8      |
+                                              +---------+--------------+
+                                                   ^            ^
+                                              a grouping    a measurement
+                                               column         column
+</pre></div>
+<p>In long form, <strong>every column is a variable and every row is one observation</strong>. That is
+why almost every call in this notebook looks the same shape:</p>
+<div class="code"><pre>sns.&lt;plot&gt;(x=&lt;column&gt;, y=&lt;column&gt;, hue=&lt;column&gt;, data=&lt;DataFrame&gt;)
+</pre></div>
+<p>You are naming columns, not passing numbers.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>Long form is the same idea as a <strong>normalized table</strong> versus a pivoted report. Seaborn
+is the reporting layer: give it normalized rows and tell it which column plays which
+role, and it does the <code>GROUP BY</code> and the aggregation itself. <code>hue=&quot;species&quot;</code> is
+literally a <code>GROUP BY species</code> whose output channel happens to be colour instead of a
+result set.</p>
+</div>
+<h3>Figure-level vs axes-level — the split that confuses everyone</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Kind</th>
+  <th>Examples in this notebook</th>
+  <th>Draws into</th>
+  <th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Axes-level</strong></td>
+  <td><code>lineplot</code>, <code>scatterplot</code>, <code>histplot</code>, <code>kdeplot</code>, <code>barplot</code>, <code>boxplot</code>, <code>violinplot</code>, <code>countplot</code>, <code>stripplot</code>, <code>swarmplot</code>, <code>regplot</code></td>
+  <td>one existing Axes</td>
+  <td><code>Axes</code></td>
+</tr>
+<tr>
+  <td><strong>Figure-level</strong></td>
+  <td><code>pairplot</code>, <code>FacetGrid</code></td>
+  <td>creates its <strong>own</strong> whole Figure</td>
+  <td><code>PairGrid</code> / <code>FacetGrid</code></td>
+</tr>
+</tbody>
+</table>
+<p>Practical consequence: a figure-level call <strong>ignores</strong> a figure you made earlier and
+cannot be placed inside a subplot. That is why <code>pairplot</code> in this notebook always lands
+on its own canvas.</p>
+<hr />
+<h2 id="1-setup-the-import-cells">1. Setup — the import cells</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Why it exists</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>import seaborn as sns</code></td>
+  <td>The whole plotting API lives at the top level — unlike matplotlib, there is no second submodule import. The alias <code>sns</code> is universal convention.</td>
+</tr>
+<tr>
+  <td><code>import numpy as np</code></td>
+  <td>The first two plots feed seaborn raw NumPy arrays.</td>
+</tr>
+<tr>
+  <td><code>import pandas as pd</code></td>
+  <td>Seaborn is built around the pandas <code>DataFrame</code>. Every dataset below is one.</td>
+</tr>
+<tr>
+  <td><code>print(sns.__version__)</code></td>
+  <td>Prints <code>0.13.2</code>. Checking this first is not ceremony — <strong>0.13 changed real behaviour</strong>, most notably that <code>palette=</code> now requires <code>hue=</code>. Snippets written for 0.11 or 0.12 will warn or fail here.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Takeaway:</strong> <code>import seaborn as sns</code> is the entire import. But seaborn without pandas is
+half a tool — the DataFrame is the interface.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import seaborn as sns
+import numpy as np
+import pandas as pd</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">print(sns.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.13.2</pre></div>
+<hr />
+<h2 id="2-your-first-plots-arrays-vs-dataframe">2. Your first plots — arrays vs DataFrame</h2>
+<p>The next three cells build the same straight line twice, through two different doors.</p>
+<div class="code"><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+</pre></div>
+<p><code>y</code> is exactly <code>2 * x</code>. Deliberately boring data: when the numbers are predictable, every
+visual change you see comes from the <strong>argument</strong>, not the data. Same experiment design
+as the Matplotlib notebook.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>What it teaches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Setup</td>
+  <td>the two <code>np.array</code> lines</td>
+  <td>Plain arrays, no DataFrame yet.</td>
+</tr>
+<tr>
+  <td>A</td>
+  <td><code>sns.lineplot(x=x, y=y)</code></td>
+  <td>Seaborn accepts <strong>raw arrays</strong> positionally by keyword. No <code>data=</code> needed.</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.lineplot(x='x', y='y', data=df)</code></td>
+  <td>The normal seaborn style: <code>x</code> and <code>y</code> are now <strong>strings naming columns</strong>, and <code>data=</code> supplies the frame.</td>
+</tr>
+</tbody>
+</table>
+<p>Look at the two charts — they are identical. So why prefer B?</p>
+<div class="code"><pre>A:  x=&lt;array&gt;   -&gt;  seaborn gets numbers.  Axis label: none (it has no name)
+B:  x=&#x27;x&#x27;       -&gt;  seaborn gets a NAME.   Axis label: &quot;x&quot;  (taken from the column)
+</pre></div>
+<p>That is the real difference and it scales: with <code>data=</code>, seaborn can auto-label axes,
+build legends, and group by other columns, because it knows what the numbers are
+<em>called</em>. With bare arrays it only has numbers.</p>
+<p><strong>Common mistake:</strong> writing <code>sns.lineplot(x, y)</code> positionally. In seaborn 0.13 the first
+positional parameter is <code>data</code>, so this raises an error. Always use keywords.</p>
+<p><strong>Takeaway:</strong> raw arrays work for a throwaway plot. Pass <code>data=</code> plus column names for
+everything else — the extra features all depend on seaborn knowing the column names.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+sns.lineplot(x=x,y=y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">df = pd.DataFrame({
+ &#x27;x&#x27;: x,
+ &#x27;y&#x27;: y
+})
+sns.lineplot(x=&#x27;x&#x27;, y=&#x27;y&#x27;, data=df)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;x&#x27;, ylabel=&#x27;y&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c06-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="3-built-in-datasets-sns-load-dataset">3. Built-in datasets — <code>sns.load_dataset</code></h2>
+<p><code>sns.load_dataset(&quot;iris&quot;)</code> downloads a small, well-known CSV from the seaborn-data
+repository and returns it as a DataFrame. Three datasets are used in this notebook:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Dataset</th>
+  <th>Shape (verified)</th>
+  <th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>iris</code></td>
+  <td>150 rows × 5 cols (4 numeric + <code>species</code>)</td>
+  <td>relational and distribution plots</td>
+</tr>
+<tr>
+  <td><code>titanic</code></td>
+  <td>891 rows × 15 cols</td>
+  <td><code>barplot</code></td>
+</tr>
+<tr>
+  <td><code>tips</code></td>
+  <td>244 rows × 7 cols</td>
+  <td>categorical plots, facets, regression</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>iris</code> frame is perfectly balanced — <strong>50 rows per species</strong> (<code>setosa</code>, <code>versicolor</code>,
+<code>virginica</code>). That matters later: <code>countplot</code> on <code>species</code> will show three bars of
+exactly equal height, which is a check that the plot is doing what you think.</p>
+<p><code>print(data)</code> truncates the middle rows and shows <code>[150 rows x 5 columns]</code> at the bottom.
+That row/column count is the fastest sanity check you have before plotting anything.</p>
+<div class="note"><div class="h">Note</div><p>⚠️ These datasets need <strong>network access</strong> on first use. They are convenience data for
+learning. Real work reads local files with a relative path.</p>
+</div>
+<p><strong>Takeaway:</strong> <code>load_dataset</code> gives you a clean long-form DataFrame instantly, so you can
+practise the plotting API without spending the lesson on data cleaning.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">data = sns.load_dataset(&quot;iris&quot;)
+print(data)</pre></div>
+<div class="out"><div class="h">Output</div><pre>     sepal_length  sepal_width  petal_length  petal_width    species
+0             5.1          3.5           1.4          0.2     setosa
+1             4.9          3.0           1.4          0.2     setosa
+2             4.7          3.2           1.3          0.2     setosa
+3             4.6          3.1           1.5          0.2     setosa
+4             5.0          3.6           1.4          0.2     setosa
+..            ...          ...           ...          ...        ...
+145           6.7          3.0           5.2          2.3  virginica
+146           6.3          2.5           5.0          1.9  virginica
+147           6.5          3.0           5.2          2.0  virginica
+148           6.2          3.4           5.4          2.3  virginica
+149           5.9          3.0           5.1          1.8  virginica
+
+[150 rows x 5 columns]</pre></div>
+<hr />
+<h2 id="4-relational-plots-and-the-three-semantic-channe">4. Relational plots and the three semantic channels</h2>
+<p>This is the core idea of seaborn. You <strong>map a column onto a visual property</strong>:</p>
+<div class="code"><pre>       DATA COLUMN                VISUAL CHANNEL
+       -----------                --------------
+       species        --hue--&gt;    colour
+       species        --size--&gt;   marker size
+       species        --style--&gt;  marker shape / line dash
+</pre></div>
+<p>Seaborn calls these <strong>semantics</strong>. Each one splits the data into groups, draws each group
+separately, and builds a legend automatically.</p>
+<h3>The four cells</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>The one new thing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>sns.scatterplot(x=&quot;sepal_length&quot;, y=&quot;petal_length&quot;, data=data)</code></td>
+  <td>Baseline. One colour, 150 dots, no grouping. Two clusters are already visible.</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.lineplot(..., hue=&quot;species&quot;)</code></td>
+  <td><code>hue</code> splits into 3 groups → 3 coloured lines + legend.</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td><code>sns.lineplot(..., hue=&quot;species&quot;, style=&quot;species&quot;, markers=True)</code></td>
+  <td><code>style</code> adds a <strong>second</strong> channel on the same column: each group now differs by colour <em>and</em> dash/marker.</td>
+</tr>
+<tr>
+  <td>D</td>
+  <td><code>sns.scatterplot(..., hue=&quot;species&quot;, size=&quot;species&quot;, sizes=(20,100))</code></td>
+  <td><code>size</code> maps the column to marker area; <code>sizes=(20,100)</code> sets the smallest and largest area in points².</td>
+</tr>
+</tbody>
+</table>
+<h3>Why the lineplots look strange — and what they prove</h3>
+<p><code>lineplot</code> is designed for data with a <strong>natural order</strong>, usually time. Here <code>x</code> is
+<code>sepal_length</code>, which is a measurement with many repeated values. So seaborn does two
+things you did not ask for, and both are visible in the output:</p>
+<div class="code"><pre>50 setosa rows
+      |
+      +-- sort by sepal_length
+      +-- GROUP rows that share the same x
+      +-- estimator=&quot;mean&quot;  -&gt; one y per unique x        -&gt; the line
+      +-- errorbar=(&quot;ci&quot;,95) -&gt; bootstrap 1000 resamples -&gt; the shaded band
+</pre></div>
+<p>Verified on this data: the 50 <code>setosa</code> rows collapse to <strong>15 plotted points</strong>, because
+<code>sepal_length</code> only has 15 distinct values within that species (35 distinct values across
+all 150 rows). The shaded band around each line is a <strong>95% confidence interval</strong>, not a
+data range.</p>
+<p>So the jagged lines and shaded bands are not noise — they are seaborn silently doing
+statistics. This is the single biggest difference from matplotlib, where <code>plt.plot</code> draws
+exactly the points you hand it and nothing else.</p>
+<p><strong>Correct tool for this data:</strong> <code>scatterplot</code> (cell A) — which is why the scatter version
+reads so much more clearly.</p>
+<h3><code>size=</code> on a categorical column</h3>
+<p><code>size=&quot;species&quot;</code> works, but species is a <strong>category</strong>, not a quantity. A bigger dot
+implies &quot;more&quot;, and there is no &quot;more&quot; here — <code>virginica</code> is not larger than <code>setosa</code> in
+any meaningful sense. It is a good demonstration of the channel and a poor chart. Use
+<code>size</code> for genuine quantities (population, revenue, count).</p>
+<p><code>data.info()</code> in that cell prints the dtypes: 4 <code>float64</code> columns and 1 <code>object</code>
+(<code>species</code>). Checking dtypes before plotting is a real habit — seaborn treats numeric and
+categorical columns differently.</p>
+<h3>Common mistakes</h3>
+<ol>
+<li><code>hue=&quot;orange&quot;</code> — <code>hue</code> takes a <strong>column name</strong>, never a colour. Use <code>color=</code> for a colour.</li>
+<li>Using <code>lineplot</code> on unordered data, as above. Ask &quot;does connecting point 1 to point 2 mean anything?&quot; If no, use <code>scatterplot</code>.</li>
+<li>Expecting <code>lineplot</code> to draw every row. It aggregates by default.</li>
+<li>Mapping <code>size</code> to a category, as in cell D.</li>
+</ol>
+<p><strong>Takeaway:</strong> <code>hue</code>, <code>size</code> and <code>style</code> are <code>GROUP BY</code> for charts. Pick the channel that
+matches the data type — colour for categories, size for quantities.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">sns.scatterplot(x=&quot;sepal_length&quot;,y = &quot;petal_length&quot;,data= data)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c10-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">data = sns.load_dataset(&#x27;iris&#x27;)
+sns.lineplot(x = &quot;sepal_length&quot;, y = &quot;petal_length&quot;, data = data, hue=&quot;species&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c11-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">data = sns.load_dataset(&#x27;iris&#x27;)
+sns.lineplot(x=&quot;sepal_length&quot;, y=&quot;petal_length&quot;, data=data,hue=&quot;species&quot;,style=&quot;species&quot;, markers=True)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c12-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">data = sns.load_dataset(&quot;iris&quot;)
+data.info()
+sns.scatterplot(x=&quot;sepal_length&quot;,y = &quot;petal_length&quot;, hue=&quot;species&quot;, size=&quot;species&quot;,data=data,sizes=(20, 100))</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 150 entries, 0 to 149
+Data columns (total 5 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   sepal_length  150 non-null    float64
+ 1   sepal_width   150 non-null    float64
+ 2   petal_length  150 non-null    float64
+ 3   petal_width   150 non-null    float64
+ 4   species       150 non-null    str    
+dtypes: float64(4), str(1)
+memory usage: 6.0 KB
+&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c13-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="5-distributions-histplot-and-kdeplot">5. Distributions — <code>histplot</code> and <code>kdeplot</code></h2>
+<p>The plots above compare <strong>two</strong> variables. These four cells describe <strong>one</strong> variable:
+where are the values concentrated?</p>
+<div class="code"><pre>raw values                histplot                    kdeplot
+-----------               --------                    -------
+5.1 4.9 4.7 ...    -&gt;     chop the range into bins    -&gt;  smooth curve
+                          count rows per bin              (estimated density)
+                          draw a rectangle
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>The one new thing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>sns.histplot(x=&quot;sepal_length&quot;, data=data)</code></td>
+  <td>Baseline histogram. Bin count is chosen automatically — <strong>9 bars</strong> for this column.</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.histplot(..., kde=True, color=&quot;purple&quot;)</code></td>
+  <td><code>kde=True</code> overlays the smooth curve on the bars. <code>color=</code> sets <strong>one</strong> colour for the whole plot.</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td><code>sns.kdeplot(data=data, x=&quot;sepal_length&quot;)</code></td>
+  <td>The curve on its own, no bars.</td>
+</tr>
+<tr>
+  <td>D</td>
+  <td><code>sns.kdeplot(..., hue=&quot;species&quot;, fill=True, alpha=0.4)</code></td>
+  <td><code>hue</code> gives <strong>one curve per species</strong>; <code>fill=True</code> shades under each; <code>alpha=0.4</code> makes the overlaps readable.</td>
+</tr>
+</tbody>
+</table>
+<h3>Why cell D is the payoff</h3>
+<p>Cells A–C show a single lumpy hill and hide the truth. Cell D splits it and the structure
+appears: <code>setosa</code> sits clearly to the left, <code>versicolor</code> and <code>virginica</code> overlap heavily.
+That is the same grouping insight the scatterplot gave, seen from the distribution side.</p>
+<p><code>alpha=0.4</code> is doing real work. Without transparency the third curve hides the first two.</p>
+<h3>Histogram vs KDE — the honest trade-off</h3>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th><code>histplot</code></th>
+  <th><code>kdeplot</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Shows</td>
+  <td>actual counts</td>
+  <td>estimated density</td>
+</tr>
+<tr>
+  <td>Y axis</td>
+  <td>rows per bin</td>
+  <td>density (area sums to 1)</td>
+</tr>
+<tr>
+  <td>Risk</td>
+  <td>bin width changes the story</td>
+  <td>smoothing can invent a shape that is not in the data</td>
+</tr>
+<tr>
+  <td>Best for</td>
+  <td>reporting real counts</td>
+  <td>comparing several groups</td>
+</tr>
+</tbody>
+</table>
+<p>Neither is &quot;better&quot;. <code>kde=True</code> in cell B gives you both at once, which is usually the
+right answer for exploration.</p>
+<h3>Common mistakes</h3>
+<ol>
+<li>Trusting a KDE on very few rows — smoothing will produce a confident-looking curve from almost nothing.</li>
+<li>Reading the KDE y-axis as a count. It is a density.</li>
+<li>Overlaying groups without <code>alpha</code>, so later groups hide earlier ones.</li>
+</ol>
+<p><strong>Takeaway:</strong> a single distribution usually hides the interesting part. Add
+<code>hue=&lt;group column&gt;</code> and the structure appears.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">sns.histplot(x=&quot;sepal_length&quot;, data=data)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Count&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c15-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">sns.histplot(data=data, x=&quot;sepal_length&quot;, kde=True, color=&quot;purple&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Count&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c16-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">sns.kdeplot(data=data, x=&quot;sepal_length&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Density&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c17-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">sns.kdeplot(data= data, x = &quot;sepal_length&quot;, hue= &quot;species&quot;, fill = True, alpha=0.4)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Density&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c18-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="6-pairplot-every-numeric-pair-at-once">6. <code>pairplot</code> — every numeric pair at once</h2>
+<div class="code"><pre class="py">sns.pairplot(data, hue=&quot;species&quot;, markers=[&quot;o&quot;, &quot;s&quot;, &quot;D&quot;])
+</pre></div>
+<p>One line, and seaborn draws a <strong>4 × 4 grid</strong> — verified — because <code>iris</code> has 4 numeric
+columns. It is the highest information-per-keystroke call in the whole library.</p>
+<div class="code"><pre>              sepal_l   sepal_w   petal_l   petal_w
+            +---------+---------+---------+---------+
+  sepal_l   |  DIST   | scatter | scatter | scatter |   diagonal = distribution
+            +---------+---------+---------+---------+   of that one column
+  sepal_w   | scatter |  DIST   | scatter | scatter |
+            +---------+---------+---------+---------+   off-diagonal = scatter
+  petal_l   | scatter | scatter |  DIST   | scatter |   of the pair
+            +---------+---------+---------+---------+
+  petal_w   | scatter | scatter | scatter |  DIST   |   mirror across the diagonal
+            +---------+---------+---------+---------+
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Argument</th>
+  <th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>data</code></td>
+  <td>passed <strong>positionally</strong> here — the first parameter of <code>pairplot</code> really is the DataFrame</td>
+</tr>
+<tr>
+  <td><code>hue=&quot;species&quot;</code></td>
+  <td>colours every panel by species and adds one shared legend</td>
+</tr>
+<tr>
+  <td><code>markers=[&quot;o&quot;,&quot;s&quot;,&quot;D&quot;]</code></td>
+  <td>one marker per hue level: circle, square, diamond. <strong>The list length must equal the number of hue levels</strong> — 3 species, 3 markers</td>
+</tr>
+</tbody>
+</table>
+<p>The markers argument is an accessibility habit worth keeping: the groups stay
+distinguishable when the chart is printed in greyscale or read by someone with colour
+blindness. Colour alone is a single point of failure.</p>
+<h3>What to read off it</h3>
+<p>Look along the <code>petal_length</code> and <code>petal_width</code> rows: <code>setosa</code> separates completely from
+the other two. Those two columns alone would classify it. That is genuine feature
+selection done by eye, in one line of code — and it is why <code>pairplot</code> is usually the
+first thing to run on a new numeric dataset.</p>
+<p>⚠️ <strong>Cost:</strong> it draws n² panels. Four columns is fine. Twenty columns is 400 panels and a
+long wait. Slice the frame first: <code>sns.pairplot(df[[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;target&quot;]], hue=&quot;target&quot;)</code>.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p><code>pairplot</code> is <strong>figure-level</strong>: it builds its own Figure and returns a <code>PairGrid</code>, so it
+cannot be dropped into an existing subplot. Think of it as a component that renders its
+own container rather than one you mount into a layout.</p>
+</div>
+<p><strong>Takeaway:</strong> run <code>pairplot</code> first on a new numeric dataset. Correlations and separable
+classes appear immediately, before you write any model code.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">sns.pairplot(data, hue=&quot;species&quot;, markers=[&quot;o&quot;, &quot;s&quot;, &quot;D&quot;])</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.PairGrid at 0x1185f06e0&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c20-11.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="7-violinplot-distribution-per-category">7. <code>violinplot</code> — distribution per category</h2>
+<div class="code"><pre class="py">sns.violinplot(x=&quot;species&quot;, y=&quot;sepal_length&quot;, data=data,
+               hue=&quot;species&quot;, palette=[&quot;orange&quot;, &quot;skyblue&quot;, &quot;lightgreen&quot;],
+               legend=False)
+</pre></div>
+<p>A violin is <strong>a KDE curve mirrored around its own axis</strong>, drawn once per category. It
+answers &quot;what does the distribution look like <em>inside</em> each group?&quot;</p>
+<div class="code"><pre>  a kdeplot rotated,          one violin per category
+  mirrored, and repeated:
+                                setosa   versicolor  virginica
+       (|)                        (|)       ( | )      (  |  )
+        |     &lt;- wide = many      /|\       /  \       /     \
+       (|)       rows near        \|/       \  /       \     /
+                 this value        (|)       (|)         (|)
+</pre></div>
+<h3>The colour arguments — and the 0.13 rule behind them</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Argument</th>
+  <th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>hue=&quot;species&quot;</code></td>
+  <td><strong>what to split by</strong> — the mapping</td>
+</tr>
+<tr>
+  <td><code>palette=[...]</code></td>
+  <td><strong>which colours</strong> to use for those groups</td>
+</tr>
+<tr>
+  <td><code>legend=False</code></td>
+  <td>hides the legend, which repeats the x-axis labels here</td>
+</tr>
+</tbody>
+</table>
+<p>This is the rule that trips up every 0.13 upgrade:</p>
+<div class="code"><pre>color=&quot;orange&quot;        -&gt;  ONE colour for the whole plot
+palette=[...]         -&gt;  IGNORED unless something is mapped to it
+hue=&quot;species&quot; + palette -&gt; three colours, one per species   &lt;-- correct
+</pre></div>
+<p><code>palette</code> without <code>hue</code> is deprecated in 0.13 and warns. Because <code>hue</code> repeats the <code>x</code>
+column here, the legend adds nothing, hence <code>legend=False</code>.</p>
+<p><strong>Palette alternatives:</strong></p>
+<div class="code"><pre class="py">palette=&quot;Set2&quot;    # named palette, sizes itself to the category count
+palette={&quot;setosa&quot;: &quot;orange&quot;, &quot;versicolor&quot;: &quot;skyblue&quot;, &quot;virginica&quot;: &quot;lightgreen&quot;}
+</pre></div>
+<p>The dict form is safest for reports — a colour stays bound to its category even if the
+plot order changes. A <strong>list</strong> palette must match the category count exactly or seaborn
+raises an error.</p>
+<h3>Violin vs box — what each one hides</h3>
+<p>A box plot cannot show a <strong>two-humped</strong> distribution; it draws the same box either way. A
+violin shows the two humps. That is the whole reason to prefer it. The cost is that the
+curve is smoothed, so it implies more precision than small data supports.</p>
+<p><strong>Takeaway:</strong> violin = box plot plus shape. Use it when the <em>shape</em> of the distribution
+matters, not just its middle and spread.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">sns.violinplot(
+    x=&quot;species&quot;,
+    y=&quot;sepal_length&quot;,
+    data=data,
+    hue=&quot;species&quot;,
+    palette=[&quot;orange&quot;, &quot;skyblue&quot;, &quot;lightgreen&quot;],
+    legend=False,
+)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;species&#x27;, ylabel=&#x27;sepal_length&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c22-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="8-countplot-bars-of-quot-how-many-rows-quot">8. <code>countplot</code> — bars of &quot;how many rows&quot;</h2>
+<div class="code"><pre class="py">sns.countplot(x=&#x27;species&#x27;, hue=&quot;species&quot;, data=data)
+</pre></div>
+<p><code>countplot</code> is the only categorical plot with <strong>no <code>y</code></strong>. You give it one column and it
+counts rows per value. It is <code>df['species'].value_counts()</code> drawn as bars.</p>
+<div class="code"><pre>   countplot(x=&quot;species&quot;)           value_counts()
+   -------------------------        --------------
+   setosa      ##########   50      setosa        50
+   versicolor  ##########   50      versicolor    50
+   virginica   ##########   50      virginica     50
+</pre></div>
+<p>Three bars of exactly equal height, because <code>iris</code> is perfectly balanced at 50 rows per
+species. If they were <em>not</em> equal, that would be your first sign of class imbalance —
+which changes how you split data and which metrics you trust later in the ML phases.</p>
+<p>Here <code>hue=&quot;species&quot;</code> duplicates <code>x</code> and exists only to colour the bars. See section 17
+for the side effect that has.</p>
+<p><strong>Takeaway:</strong> <code>countplot</code> counts <strong>rows</strong>; <code>barplot</code> averages a <strong>value</strong>. Choosing the
+wrong one silently answers a different question.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">sns.countplot(x =&#x27;species&#x27;,hue=&quot;species&quot;, data = data)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;species&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c24-13.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="9-barplot-and-the-statistics-hiding-inside-it">9. <code>barplot</code> — and the statistics hiding inside it</h2>
+<p>Now the <code>titanic</code> dataset: 891 rows × 15 columns.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>The one new thing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>titanic = sns.load_dataset(&quot;titanic&quot;)</code></td>
+  <td>Load. <code>print</code> shows 891 rows and columns like <code>survived</code>, <code>pclass</code>, <code>sex</code>, <code>age</code>, <code>fare</code>, <code>class</code>.</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.barplot(x=&quot;class&quot;, y=&quot;fare&quot;, data=titanic)</code></td>
+  <td>One bar per class, height = <strong>mean fare</strong>, with a vertical error bar.</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td><code>sns.barplot(..., hue=&quot;sex&quot;)</code></td>
+  <td>Each class splits into two side-by-side bars, male and female.</td>
+</tr>
+</tbody>
+</table>
+<h3>A bar is not a total — it is a mean</h3>
+<p>This is the most misread chart in the library. Verified defaults from the 0.13.2
+signature:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Parameter</th>
+  <th>Default</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>estimator</code></td>
+  <td><code>&quot;mean&quot;</code></td>
+  <td>bar height is the <strong>average</strong>, not the sum</td>
+</tr>
+<tr>
+  <td><code>errorbar</code></td>
+  <td><code>(&quot;ci&quot;, 95)</code></td>
+  <td>the black line is a <strong>95% confidence interval</strong></td>
+</tr>
+<tr>
+  <td><code>n_boot</code></td>
+  <td><code>1000</code></td>
+  <td>that interval is bootstrapped from 1000 resamples</td>
+</tr>
+<tr>
+  <td><code>width</code></td>
+  <td><code>0.8</code></td>
+  <td>bar width as a fraction of the category slot</td>
+</tr>
+<tr>
+  <td><code>dodge</code></td>
+  <td><code>&quot;auto&quot;</code></td>
+  <td>whether <code>hue</code> groups sit side by side</td>
+</tr>
+</tbody>
+</table>
+<p>Verified against pandas on the <code>tips</code> data — the bars really are the mean:</p>
+<div class="code"><pre>seaborn bar heights : 17.683  17.152  20.441  21.410
+pandas groupby mean : 17.683  17.152  20.441  21.410   &lt;- identical
+</pre></div>
+<p>For titanic, mean fare by class is First <strong>84.15</strong>, Second <strong>20.66</strong>, Third <strong>13.68</strong>.
+First-class passengers paid roughly six times Third. If you wanted <em>total</em> revenue per
+class instead, you must say so:</p>
+<div class="code"><pre class="py">sns.barplot(x=&quot;class&quot;, y=&quot;fare&quot;, data=titanic, estimator=&quot;sum&quot;, errorbar=None)
+</pre></div>
+<h3>Reading the error bar</h3>
+<p>A long error bar means the mean is unstable — few rows, or values spread widely. A short
+one means it is well supported. First class shows a visibly longer bar than Third:
+first-class fares varied enormously, third-class fares were all similar and cheap. The
+error bar is not decoration; it tells you how much to trust the bar next to it.</p>
+<p>Set <code>errorbar=None</code> to remove it, but only when you have genuinely decided the reader
+does not need it.</p>
+<h3>Cell C — <code>hue</code> used correctly</h3>
+<p><code>hue=&quot;sex&quot;</code> is a <strong>different</strong> column from <code>x=&quot;class&quot;</code>, so male and female are real
+subgroups inside each class. Side-by-side bars are exactly right here, and the legend is
+worth keeping. Contrast this with section 17, where <code>hue</code> repeats <code>x</code>.</p>
+<h3>Common mistakes</h3>
+<ol>
+<li>Reading bar height as a total. It is a mean.</li>
+<li>Deleting the error bars to make a chart look tidy, and losing the uncertainty signal.</li>
+<li>Using <code>barplot</code> when you wanted <code>countplot</code> (row counts) — different question entirely.</li>
+</ol>
+<p><strong>Takeaway:</strong> <code>barplot</code> runs a <code>GROUP BY</code> and computes a mean with a bootstrapped
+confidence interval. Know that before you show one to anybody.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">titanic = sns.load_dataset(&quot;titanic&quot;)
+print(titanic)</pre></div>
+<div class="out"><div class="h">Output</div><pre>     survived  pclass     sex   age  sibsp  parch     fare embarked   class  \
+0           0       3    male  22.0      1      0   7.2500        S   Third   
+1           1       1  female  38.0      1      0  71.2833        C   First   
+2           1       3  female  26.0      0      0   7.9250        S   Third   
+3           1       1  female  35.0      1      0  53.1000        S   First   
+4           0       3    male  35.0      0      0   8.0500        S   Third   
+..        ...     ...     ...   ...    ...    ...      ...      ...     ...   
+886         0       2    male  27.0      0      0  13.0000        S  Second   
+887         1       1  female  19.0      0      0  30.0000        S   First   
+888         0       3  female   NaN      1      2  23.4500        S   Third   
+889         1       1    male  26.0      0      0  30.0000        C   First   
+890         0       3    male  32.0      0      0   7.7500        Q   Third   
+
+       who  adult_male deck  embark_town alive  alone  
+0      man        True  NaN  Southampton    no  False  
+1    woman       False    C    Cherbourg   yes  False  
+2    woman       False  NaN  Southampton   yes   True  
+3    woman       False    C  Southampton   yes  False  
+4      man        True  NaN  Southampton    no   True  
+..     ...         ...  ...          ...   ...    ...  
+886    man        True  NaN  Southampton    no   True  
+887  woman       False    B  Southampton   yes   True  
+888  woman       False  NaN  Southampton    no  False  
+889    man        True    C    Cherbourg   yes   True  
+890    man        True  NaN   Queenstown    no   True  
+
+[891 rows x 15 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">sns.barplot(x=&quot;class&quot;, y=&quot;fare&quot;, data=titanic)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;class&#x27;, ylabel=&#x27;fare&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c27-14.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">sns.barplot(x=&quot;class&quot;, y=&quot;fare&quot;, data=titanic,hue=&quot;sex&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;class&#x27;, ylabel=&#x27;fare&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c28-15.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="10-boxplot-the-five-number-summary">10. <code>boxplot</code> — the five-number summary</h2>
+<p>The <code>tips</code> dataset: 244 rows × 7 columns (<code>total_bill</code>, <code>tip</code>, <code>sex</code>, <code>smoker</code>, <code>day</code>,
+<code>time</code>, <code>size</code>). <code>day</code> is a <strong>categorical</strong> column with a fixed order — <code>Thur, Fri, Sat, Sun</code> — which is why seaborn puts the days in calendar order without being asked.</p>
+<div class="code"><pre class="py">sns.boxplot(x=&quot;day&quot;, y=&quot;total_bill&quot;, data=tips, hue=&quot;time&quot;)
+</pre></div>
+<p>Anatomy of one box — verified default <code>whis=1.5</code>:</p>
+<div class="code"><pre>        o    &lt;- outlier: beyond the whisker
+        o
+        |
+      __|__  &lt;- whisker top: last point within 1.5 x IQR
+     |     |
+     |-----| &lt;- Q3 (75th percentile)
+     |     |
+     |=====| &lt;- MEDIAN (50th)          IQR = Q3 - Q1 = the box height
+     |     |
+     |-----| &lt;- Q1 (25th percentile)
+     |_____|
+        |
+        |    &lt;- whisker bottom
+</pre></div>
+<p>The whiskers are <strong>not</strong> the min and max. They stop at the furthest point still within
+1.5 × IQR of the box; everything past that is drawn as an individual outlier dot. That
+rule is why outliers appear as separate points at all.</p>
+<p><code>hue=&quot;time&quot;</code> splits each day into Lunch and Dinner boxes side by side. This is <code>hue</code> used
+properly again — <code>time</code> is a different column from <code>day</code>, so the comparison is real. Note
+what it reveals: Thursday has both, but the weekend is dinner-only, so some boxes are
+missing. <strong>A missing box is information</strong>, not a bug.</p>
+<h3>Box vs violin — pick by question</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Question</th>
+  <th>Plot</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Where is the middle, and are there outliers?</td>
+  <td><code>boxplot</code></td>
+</tr>
+<tr>
+  <td>What <em>shape</em> is the distribution?</td>
+  <td><code>violinplot</code></td>
+</tr>
+<tr>
+  <td>Where is every individual row?</td>
+  <td><code>stripplot</code> / <code>swarmplot</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Takeaway:</strong> a box plot is five numbers — Q1, median, Q3, and two 1.5×IQR whiskers.
+It is compact and honest about the middle, and blind to shape.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">tips = sns.load_dataset(&quot;tips&quot;)
+print(tips)</pre></div>
+<div class="out"><div class="h">Output</div><pre>     total_bill   tip     sex smoker   day    time  size
+0         16.99  1.01  Female     No   Sun  Dinner     2
+1         10.34  1.66    Male     No   Sun  Dinner     3
+2         21.01  3.50    Male     No   Sun  Dinner     3
+3         23.68  3.31    Male     No   Sun  Dinner     2
+4         24.59  3.61  Female     No   Sun  Dinner     4
+..          ...   ...     ...    ...   ...     ...   ...
+239       29.03  5.92    Male     No   Sat  Dinner     3
+240       27.18  2.00  Female    Yes   Sat  Dinner     2
+241       22.67  2.00    Male    Yes   Sat  Dinner     2
+242       17.82  1.75    Male     No   Sat  Dinner     2
+243       18.78  3.00  Female     No  Thur  Dinner     2
+
+[244 rows x 7 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">sns.boxplot(x=&quot;day&quot;, y=&quot;total_bill&quot;, data=tips,hue=&quot;time&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;day&#x27;, ylabel=&#x27;total_bill&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c31-16.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="11-countplot-variants-orientation-and-real-group">11. <code>countplot</code> variants — orientation and real grouping</h2>
+<p>Three cells, three lessons.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>The one new thing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>sns.countplot(x='sex', hue=&quot;sex&quot;, data=tips)</code></td>
+  <td>Vertical bars. <code>hue</code> repeats <code>x</code> — colour only.</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.countplot(y='sex', data=tips, hue=&quot;sex&quot;)</code></td>
+  <td><strong><code>y</code> instead of <code>x</code></strong> flips the chart to horizontal.</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td><code>sns.countplot(x='sex', data=tips, hue=&quot;smoker&quot;)</code></td>
+  <td><code>hue</code> is a <strong>different</strong> column — each sex splits into smoker / non-smoker.</td>
+</tr>
+</tbody>
+</table>
+<h3>Horizontal is not just a style choice</h3>
+<p>Swapping <code>x=</code> for <code>y=</code> is the whole change in cell B. Use horizontal bars when category
+names are long or numerous — the labels stay readable instead of being rotated or
+truncated. This applies to <code>barplot</code>, <code>boxplot</code>, <code>stripplot</code> and <code>swarmplot</code> too: <strong>which
+axis you name decides the orientation.</strong></p>
+<h3>Cell C is the one that answers a question</h3>
+<p>Cells A and B tell you how many male and female rows exist. Cell C tells you something
+you could not otherwise see: the smoker/non-smoker split <em>within</em> each sex. That is the
+difference between a chart that describes the data and a chart that compares groups.</p>
+<div class="code"><pre>A / B:  hue == x        -&gt;  colour only, no new information
+C:      hue != x        -&gt;  a real second dimension
+</pre></div>
+<p><strong>Takeaway:</strong> <code>hue</code> is only worth using when it carries information <code>x</code> does not already
+carry.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">sns.countplot(x =&#x27;sex&#x27;, hue=&quot;sex&quot;, data = tips)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sex&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c33-17.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">sns.countplot(y =&#x27;sex&#x27;, data = tips,hue=&quot;sex&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;count&#x27;, ylabel=&#x27;sex&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c34-18.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">sns.countplot(x =&#x27;sex&#x27;, data = tips,hue = &quot;smoker&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sex&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c35-19.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="12-facetgrid-small-multiples">12. <code>FacetGrid</code> — small multiples</h2>
+<div class="code"><pre class="py">abc = sns.FacetGrid(tips, row=&#x27;smoker&#x27;, col=&#x27;time&#x27;)
+abc.map(plt.hist, &#x27;tip&#x27;, color=&#x27;gold&#x27;)
+</pre></div>
+<p>Instead of squeezing every group into one chart, <strong>split the data into a grid of small
+charts</strong> and let the reader compare panels. Verified: <code>row='smoker', col='time'</code> produces
+a <strong>2 × 2</strong> grid; <code>col='time'</code> alone produces <strong>1 × 2</strong>.</p>
+<div class="code"><pre>                col = time
+              Lunch     Dinner
+            +---------+---------+
+   row  Yes | subset  | subset  |    each panel = the rows matching
+ smoker     |         |         |    that row/column combination
+            +---------+---------+
+        No  | subset  | subset  |    all panels share the same axes
+            |         |         |    so they are directly comparable
+            +---------+---------+
+</pre></div>
+<h3>The two-step pattern</h3>
+<div class="code"><pre>1. FacetGrid(data, row=..., col=...)   -&gt; build the empty grid, split the data
+2. grid.map(function, &#x27;column&#x27;, ...)   -&gt; run that function once per panel
+</pre></div>
+<p><code>map</code> takes a <strong>plotting function object</strong>, not a string: <code>plt.hist</code>, <code>plt.scatter</code> —
+note there are no parentheses. Seaborn calls it for you, once per panel, passing that
+panel's subset. Extra keywords like <code>color='gold'</code> are forwarded to every call.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>.map(plt.hist, 'tip', color='gold')</code></td>
+  <td>one histogram of <code>tip</code> per panel — <strong>one</strong> column name because a histogram needs one variable</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>.map(plt.scatter, 'total_bill', 'tip', color='gold')</code></td>
+  <td>one scatter per panel — <strong>two</strong> column names, in <code>x, y</code> order</td>
+</tr>
+</tbody>
+</table>
+<p>The number of column names you pass must match what the plotting function expects. That
+is the only real rule here.</p>
+<h3>Why shared axes matter</h3>
+<p>Every panel uses the same x and y limits. That is what makes the comparison honest — a
+taller bar in one panel really is taller. If each panel scaled itself independently, the
+grid would be actively misleading.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p><code>FacetGrid</code> is the general engine underneath the figure-level functions. <code>pairplot</code> is a
+specialised grid (every numeric pair); <code>FacetGrid</code> is the one you configure yourself.
+In modern seaborn you would usually reach for <code>sns.displot(...)</code> or <code>sns.relplot(...)</code>,
+which wrap <code>FacetGrid</code> and take <code>col=</code> / <code>row=</code> directly — less code for the same grid.
+<code>FacetGrid</code> + <code>.map</code> is worth learning because it explains what those wrappers do.</p>
+</div>
+<p><strong>Takeaway:</strong> when one chart gets crowded, do not add another colour — split it into a
+grid. Small multiples with shared axes beat one overloaded chart.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">import matplotlib.pyplot as plt
+abc = sns.FacetGrid(tips, row =&#x27;smoker&#x27;, col =&#x27;time&#x27;)
+abc.map(plt.hist, &#x27;tip&#x27;,color =&#x27;gold&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.FacetGrid at 0x1195dd550&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c37-20.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">abc = sns.FacetGrid(tips, col =&#x27;time&#x27;)
+abc.map(plt.scatter,&#x27;total_bill&#x27;, &#x27;tip&#x27;,color =&#x27;gold&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.FacetGrid at 0x11979d590&gt;</pre></div>
+<figure class="shot"><img src="assets/example-01-c38-21.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="13-stripplot-every-single-row-as-a-dot">13. <code>stripplot</code> — every single row as a dot</h2>
+<p>The setup cell re-imports <code>matplotlib.pyplot as plt</code> and reloads <code>tips</code>. Harmless
+repetition; it makes this part of the notebook runnable on its own.</p>
+<p>Bars and boxes <strong>summarise</strong>. A strip plot shows you <strong>every observation</strong>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>The one new thing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>sns.stripplot(x=&quot;day&quot;, y=&quot;total_bill&quot;, data=tips, hue=&quot;day&quot;, palette=[4 colours], legend=False)</code></td>
+  <td>Baseline, one colour per day (same <code>hue</code> + <code>palette</code> rule as section 7 — 4 days need 4 colours).</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.stripplot(..., color=&quot;red&quot;)</code></td>
+  <td><code>color=</code> — <strong>one</strong> colour for everything. The contrast with A is the lesson.</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td><code>sns.stripplot(..., hue=&quot;sex&quot;)</code></td>
+  <td><code>hue</code> on a <strong>different</strong> column: two colours inside each day.</td>
+</tr>
+</tbody>
+</table>
+<h3>Jitter — why the dots are scattered sideways</h3>
+<p>Verified default: <code>jitter=True</code>.</p>
+<div class="code"><pre>jitter=False                    jitter=True (default)
+    |                                 |
+    #    &lt;- dots stack exactly       . : .
+    #       on the tick and hide      :.: .
+    #       each other               . :.:
+    |                                 |
+  measured x spread: 0.0000       measured x spread: 0.1898
+</pre></div>
+<p>Every dot in a category has the <em>same</em> x value, so without jitter they would all land on
+one vertical line and overlap. Seaborn nudges them sideways at random. <strong>The horizontal
+position carries no meaning</strong> — it exists purely so you can see density. Only the vertical
+position is data.</p>
+<p>Turn it off with <code>jitter=False</code> when you need exact alignment, and accept the overlap.</p>
+<h3><code>color</code> vs <code>hue</code> vs <code>palette</code> — the summary table</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>You want</th>
+  <th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>one colour for the whole plot</td>
+  <td><code>color=&quot;red&quot;</code></td>
+</tr>
+<tr>
+  <td>split into groups</td>
+  <td><code>hue=&quot;&lt;column&gt;&quot;</code></td>
+</tr>
+<tr>
+  <td>choose the colours for those groups</td>
+  <td><code>palette=[...]</code> or <code>palette=&quot;Set2&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cells A and B put this side by side. Cell C shows the version that adds information
+rather than decoration.</p>
+<p><strong>Takeaway:</strong> strip plots show the raw rows a box plot hides. Jitter is cosmetic spread,
+not data.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">import matplotlib.pyplot as plt
+tips = sns.load_dataset(&quot;tips&quot;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">sns.stripplot(
+    x=&quot;day&quot;,
+    y=&quot;total_bill&quot;,
+    data=tips,
+    hue=&quot;day&quot;,
+    palette=[&quot;orange&quot;, &quot;skyblue&quot;, &quot;lightgreen&quot;, &quot;salmon&quot;],
+    legend=False,
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c41-22.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">sns.stripplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ color=&quot;red&quot;
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c42-23.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">sns.stripplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ hue=&quot;sex&quot;,
+ data=tips
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c43-24.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="14-swarmplot-jitter-done-deliberately">14. <code>swarmplot</code> — jitter done deliberately</h2>
+<p>A swarm plot answers the same question as a strip plot but arranges the dots <strong>so that
+none of them overlap</strong>.</p>
+<div class="code"><pre>stripplot (random jitter)        swarmplot (computed positions)
+      . : .                              . . .
+     :.: .                              . . . .
+    . :.:                                . . .
+   random, may still collide       packed, never collides
+                                   -&gt; the width IS the density
+</pre></div>
+<p>Because the algorithm places each point, the <strong>width of the swarm at any height is a real
+measurement of how many rows sit at that value</strong>. In a strip plot, width is noise. That is
+the entire difference.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>The one new thing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>sns.swarmplot(x=&quot;day&quot;, y=&quot;total_bill&quot;, data=tips, hue=&quot;day&quot;)</code></td>
+  <td>Baseline swarm.</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.swarmplot(..., size=8)</code></td>
+  <td><code>size=</code> sets <strong>marker size</strong> — the point-plot equivalent of <code>width=</code> on a bar.</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td><code>sns.swarmplot(x=&quot;total_bill&quot;, y=&quot;day&quot;, ...)</code></td>
+  <td><code>x</code> and <code>y</code> <strong>swapped</strong> → horizontal swarm, same data.</td>
+</tr>
+</tbody>
+</table>
+<p>Verified: <code>size=8</code> produced <strong>no overflow warning</strong> on these 244 rows — the points still
+fit. On a larger dataset seaborn warns that points cannot be placed and some will
+overlap, which is the signal that the swarm has outgrown its space.</p>
+<h3>The scaling limit — and the honest fix</h3>
+<p>Swarm plots do not scale. With thousands of rows the algorithm runs out of horizontal
+room, warns, and the chart stops being accurate.</p>
+<div class="code"><pre>under ~1000 rows   -&gt;  swarmplot
+thousands of rows  -&gt;  stripplot with alpha, or violinplot, or boxplot
+</pre></div>
+<h3>The size knob, per plot family</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Plot</th>
+  <th>Argument</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>barplot</code> / <code>boxplot</code> / <code>violinplot</code></td>
+  <td><code>width=</code></td>
+  <td>fraction of the category slot</td>
+</tr>
+<tr>
+  <td><code>stripplot</code> / <code>swarmplot</code></td>
+  <td><code>size=</code></td>
+  <td>marker diameter</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Takeaway:</strong> swarm = strip with the overlap solved. Its width means something. Use it on
+small data, and fall back to strip or violin when it warns.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">sns.swarmplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ hue= &quot;day&quot;
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c45-25.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 46</span></div><pre class="py">sns.swarmplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ size=8,
+ hue=&quot;day&quot;
+)
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/seaborn/categorical.py:3399: UserWarning: 5.7% of the points cannot be placed; you may want to decrease the size of the markers or use stripplot.
+  warnings.warn(msg, UserWarning)</pre></div>
+<figure class="shot"><img src="assets/example-01-c46-26.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 47</span></div><pre class="py">sns.swarmplot(
+ x=&quot;total_bill&quot;,
+ y=&quot;day&quot;,
+ data=tips,
+ hue=&quot;day&quot;
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c47-27.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="15-regplot-scatter-plus-a-fitted-line">15. <code>regplot</code> — scatter plus a fitted line</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Call</th>
+  <th>The one new thing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td><code>sns.regplot(x=&quot;total_bill&quot;, y=&quot;tip&quot;, data=tips)</code></td>
+  <td>Dots <strong>plus</strong> a fitted regression line <strong>plus</strong> a shaded confidence band.</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td><code>sns.regplot(..., scatter=False)</code></td>
+  <td><code>scatter=False</code> removes the dots and keeps line and band.</td>
+</tr>
+</tbody>
+</table>
+<p>Verified defaults from the signature: <code>order=1</code> (straight line), <code>ci=95</code>, <code>n_boot=1000</code>.
+And verified from the drawn objects:</p>
+<div class="code"><pre>default        -&gt; 2 collections (the dots + the CI band) + 1 line
+scatter=False  -&gt; 1 collection  (the CI band only)      + 1 line
+</pre></div>
+<h3>What the three parts mean</h3>
+<div class="code"><pre>   tip
+    ^          .    .
+    |      .  .  ,-&#x27;&#x27;&#x27;-.        &lt;- shaded band = 95% CI of the FITTED LINE
+    |    . ,.-&#x27;&#x27;&#x27;
+    |   ,-&#x27;  .   .              &lt;- line = ordinary least squares fit, order=1
+    | ,&#x27; .  .
+    +-------------------&gt; total_bill
+        dots = the raw rows
+</pre></div>
+<p>The band is the uncertainty of <strong>the line</strong>, not the spread of the data. It is narrow in
+the middle where there are many rows, and flares at the edges where there are few. That
+flare is the chart telling you not to extrapolate.</p>
+<h3>Useful variations</h3>
+<div class="code"><pre class="py">sns.regplot(..., order=2)       # fit a curve instead of a line
+sns.regplot(..., ci=None)       # drop the band
+sns.regplot(..., lowess=True)   # local smoothing, no global model
+sns.lmplot(x=..., y=..., hue=&quot;smoker&quot;, data=tips)   # one line per group
+</pre></div>
+<p><code>regplot</code> cannot take <code>hue</code>. When you want a separate line per group, use <code>lmplot</code>, which
+is the figure-level version built on <code>FacetGrid</code>.</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>This is a real model fit, but it is an <strong>exploration</strong> tool. It gives you no
+coefficients, no R², no residuals, and no train/test split. When the fit matters, move
+to <code>scikit-learn</code> or <code>statsmodels</code>. Fitting on the full dataset like this is exactly the
+leakage habit you must avoid once modelling starts — there, you split first and fit only
+on the training portion.</p>
+</div>
+<p><strong>Takeaway:</strong> <code>regplot</code> answers &quot;is there a trend, roughly?&quot; in one line. It is a
+conversation starter, not a model.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 49</span></div><pre class="py">sns.regplot(
+ x=&quot;total_bill&quot;,
+ y=&quot;tip&quot;,
+ data=tips,
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c49-28.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">sns.regplot(
+ x=&quot;total_bill&quot;,
+ y=&quot;tip&quot;,
+ data=tips,
+ scatter=False
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c50-29.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="16-themes-set-theme-style">16. Themes — <code>set_theme(style=...)</code></h2>
+<p>Three cells plot the <strong>identical</strong> four-point line. Only the theme changes, which is what
+makes the comparison clean.</p>
+<p>Verified style settings:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Style</th>
+  <th>Axes background</th>
+  <th>Grid</th>
+  <th>Tick marks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>darkgrid</code></td>
+  <td><code>#EAEAF2</code> (grey)</td>
+  <td>on</td>
+  <td>off</td>
+</tr>
+<tr>
+  <td><code>whitegrid</code></td>
+  <td>white</td>
+  <td>on</td>
+  <td>off</td>
+</tr>
+<tr>
+  <td><code>ticks</code></td>
+  <td>white</td>
+  <td>off</td>
+  <td><strong>on</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="code"><pre>darkgrid            whitegrid           ticks
++----------+        +----------+        +----------+
+|##|##|##|#|        |  |  |  | |        |          |
+|--+--+--+-|        |--+--+--+-|        |          |
+|##|##|##|#|        |  |  |  | |        |          |
++----------+        +----------+        +-|--|--|--+
+grey + grid         white + grid        clean + ticks
+</pre></div>
+<h3>These calls are global and permanent</h3>
+<p><code>set_theme</code> mutates matplotlib's <code>rcParams</code> for the <strong>rest of the session</strong>. It is not an
+argument to one plot:</p>
+<div class="code"><pre>sns.set_theme(style=&quot;whitegrid&quot;)
+   |
+   +--&gt; every chart after this line, in every cell, until you change it again
+</pre></div>
+<p>That is why the notebook's earlier charts look different from the later ones — cell order
+has a lasting effect. Restore the default with <code>sns.set_theme()</code>.</p>
+<p>The other two styles are <code>white</code> and <code>dark</code> (same as the grid versions, without the grid).</p>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p>Global mutable configuration, exactly like calling a static setter at startup. Fine in a
+notebook, where you control the order. Dangerous in a shared library, where you would be
+changing rendering for every caller. The scoped alternative is a context manager:</p>
+<div class="code"><pre class="py">with sns.axes_style(&quot;whitegrid&quot;):
+    sns.lineplot(x=[1,2,3,4], y=[10,20,15,25])   # only this plot is affected
+</pre></div>
+</div>
+<p><strong>Which to use:</strong> <code>whitegrid</code> for reports and slides, <code>darkgrid</code> for screen work,
+<code>ticks</code> for publication-style figures.</p>
+<p><strong>Takeaway:</strong> <code>set_theme</code> is a session-wide switch, not a per-plot argument. Set it once
+near the top, or scope it with <code>axes_style</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 52</span></div><pre class="py">sns.set_theme(style=&quot;darkgrid&quot;)
+sns.lineplot(
+ x=[1,2,3,4],
+ y=[10,20,15,25]
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c52-30.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 53</span></div><pre class="py">sns.set_theme(style=&quot;whitegrid&quot;)
+sns.lineplot(
+ x=[1,2,3,4],
+ y=[10,20,15,25]
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c53-31.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 54</span></div><pre class="py">sns.set_theme(style=&quot;ticks&quot;)
+sns.lineplot(
+ x=[1,2,3,4],
+ y=[10,20,15,25]
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c54-32.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="17-palettes-width-and-the-dodge-trap">17. Palettes, <code>width</code>, and the <code>dodge</code> trap</h2>
+<p><code>set_palette</code> is global in exactly the same way <code>set_theme</code> is: it changes the default
+colour cycle for every chart that follows. Verified — <code>deep</code>, <code>pastel</code> and <code>bright</code> all
+contain <strong>10 colours</strong>; they differ in saturation and lightness:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Palette</th>
+  <th>First colour (RGB)</th>
+  <th>Character</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>deep</code></td>
+  <td><code>(0.30, 0.45, 0.69)</code></td>
+  <td>muted, the seaborn default</td>
+</tr>
+<tr>
+  <td><code>pastel</code></td>
+  <td><code>(0.63, 0.79, 0.96)</code></td>
+  <td>light, low contrast</td>
+</tr>
+<tr>
+  <td><code>bright</code></td>
+  <td><code>(0.01, 0.24, 1.00)</code></td>
+  <td>high saturation</td>
+</tr>
+</tbody>
+</table>
+<h3>The finding that matters most in this section</h3>
+<p>Verified on this data: <strong>without <code>hue</code>, a palette gives you exactly one colour.</strong></p>
+<div class="code"><pre>palette=deep    + no hue  -&gt;  1 distinct bar colour
+palette=pastel  + no hue  -&gt;  1 distinct bar colour
+palette=bright  + no hue  -&gt;  1 distinct bar colour
+</pre></div>
+<p>So the last cell, <code>set_palette(&quot;bright&quot;)</code> with no <code>hue</code>, produces four bars in a <em>single</em>
+blue — not four bright colours. Changing the palette changes <em>which</em> single colour it is.
+This is the same 0.13 rule from section 7, seen from the other side: <strong>a palette needs
+something mapped to it before it can spread colours around.</strong></p>
+<h3>The <code>dodge</code> trap — measured, not guessed</h3>
+<p>When <code>hue</code> is set, seaborn splits each category slot into one lane per hue level. It does
+this <strong>even when <code>hue</code> repeats <code>x</code></strong>. Measured bar geometry:</p>
+<div class="code"><pre>hue=&quot;day&quot;, width=0.5, dodge=&quot;auto&quot;   -&gt;  centre = -0.188   width = 0.125
+hue=&quot;day&quot;, width=0.9, dodge=&quot;auto&quot;   -&gt;  centre = -0.338   width = 0.225
+hue=&quot;day&quot;, width=0.9, dodge=False    -&gt;  centre =  0.000   width = 0.900   &lt;- correct
+</pre></div>
+<p>The bar was pushed off its tick and shrunk to a quarter width, because 4 lanes were
+reserved for 4 &quot;groups&quot; that are really the same thing.</p>
+<div class="code"><pre>dodge=&quot;auto&quot;  (4 lanes reserved)      dodge=False  (one bar, centred)
+     Thur slot                             Thur slot
+  |-----------|                         |-----------|
+   #                                     ###########
+   ^ lane 1 of 4, off-centre              ^ centred, full width
+</pre></div>
+<p>The same trap is present in the <code>countplot</code> cells of sections 8 and 11 — measured centres
+of <code>-0.2</code> and <code>1.2</code> instead of <code>0</code> and <code>1</code>. Small enough to miss by eye, but the bars are
+genuinely not on their ticks.</p>
+<h3>The rule</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Situation</th>
+  <th>Setting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>hue</code> is the <strong>same</strong> column as <code>x</code> (colour only)</td>
+  <td><code>dodge=False</code></td>
+</tr>
+<tr>
+  <td><code>hue</code> is a <strong>different</strong> column (real comparison)</td>
+  <td>leave dodging on</td>
+</tr>
+</tbody>
+</table>
+<p>And <code>width</code> is a fraction of the 1.0 category slot: <code>0.8</code> default, <code>0.9</code> wide, <code>1.0</code> bars
+touching. With <code>dodge=True</code> that width is <strong>divided</strong> among the hue lanes; with
+<code>dodge=False</code> one bar gets all of it.</p>
+<p><strong>Takeaway:</strong> <code>palette</code> needs <code>hue</code> to do anything, and <code>hue</code> that merely repeats <code>x</code>
+needs <code>dodge=False</code> — otherwise seaborn splits a slot that has nothing to split.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 56</span></div><pre class="py">sns.set_palette(&quot;deep&quot;)
+sns.barplot(
+    x=&quot;day&quot;,
+    y=&quot;total_bill&quot;,
+    data=tips,
+    hue=&quot;day&quot;,
+    width=0.9,
+    dodge=False,
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c56-33.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 57</span></div><pre class="py">sns.set_palette(&quot;pastel&quot;)
+sns.barplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ hue=&quot;day&quot;
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c57-34.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 58</span></div><pre class="py">sns.set_palette(&quot;bright&quot;)
+sns.barplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c58-35.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="closing-what-this-notebook-establishes">Closing — what this notebook establishes</h2>
+<h3>The one pattern behind every cell</h3>
+<div class="code"><pre>sns.&lt;plot&gt;(x=&lt;column&gt;, y=&lt;column&gt;, hue=&lt;column&gt;, data=&lt;DataFrame&gt;)
+              |            |          |            |
+        which column  which column  how to     long-form
+        on the x      on the y      split      rows
+</pre></div>
+<p>Learn that shape once and the whole library opens up. The plot name changes; the argument
+structure does not.</p>
+<h3>Choosing the plot</h3>
+<div class="code"><pre>How many variables?
+  |
+  +-- ONE numeric        -&gt; histplot / kdeplot
+  |
+  +-- TWO numeric        -&gt; scatterplot        (relationship)
+  |                      -&gt; regplot            (relationship + trend line)
+  |                      -&gt; lineplot           (ONLY if x is ordered, e.g. time)
+  |
+  +-- CATEGORY + numeric -&gt; barplot            (mean per group)
+  |                      -&gt; boxplot            (five-number summary)
+  |                      -&gt; violinplot         (full shape)
+  |                      -&gt; stripplot/swarmplot(every row)
+  |
+  +-- CATEGORY alone     -&gt; countplot          (row counts)
+  |
+  +-- MANY numeric       -&gt; pairplot           (all pairs at once)
+  |
+  +-- too crowded        -&gt; FacetGrid          (split into small multiples)
+</pre></div>
+<h3>Common mistakes this notebook demonstrates</h3>
+<ol>
+<li><strong><code>hue</code> takes a column name, never a colour.</strong> <code>color=</code> takes a colour.</li>
+<li><strong><code>palette</code> does nothing without <code>hue</code></strong> — verified: one colour, whatever the palette.</li>
+<li><strong><code>hue</code> repeating <code>x</code> still dodges</strong> — measured off-centre bars. Add <code>dodge=False</code>.</li>
+<li><strong><code>lineplot</code> aggregates</strong> — 50 setosa rows became 15 points plus a bootstrapped CI band.</li>
+<li><strong>A bar is a mean, not a total</strong> — verified equal to <code>groupby().mean()</code>.</li>
+<li><strong>Box whiskers are 1.5 × IQR, not min and max.</strong></li>
+<li><strong><code>set_theme</code> and <code>set_palette</code> are global</strong> and persist for the rest of the session.</li>
+<li><strong><code>swarmplot</code> does not scale</strong> past roughly a thousand rows.</li>
+</ol>
+<h3>Interview view</h3>
+<ul>
+<li><strong>&quot;Seaborn vs matplotlib?&quot;</strong> Seaborn is a statistical layer on top of matplotlib. It
+takes a DataFrame and column names, does the grouping and aggregation, and returns a
+matplotlib <code>Axes</code>. Matplotlib draws exactly what you pass it; seaborn computes first.</li>
+<li><strong>&quot;What does <code>hue</code> do?&quot;</strong> It maps a column to colour — effectively a <code>GROUP BY</code> that
+splits the data, re-runs the plot's statistic per group, and builds a legend.</li>
+<li><strong>&quot;Figure-level vs axes-level?&quot;</strong> Axes-level functions draw into one Axes and return it.
+Figure-level functions (<code>pairplot</code>, <code>lmplot</code>, <code>FacetGrid</code>, <code>displot</code>, <code>relplot</code>) create
+their own Figure and cannot be placed inside an existing subplot.</li>
+<li><strong>&quot;Which plot for a distribution across groups?&quot;</strong> <code>boxplot</code> for the summary,
+<code>violinplot</code> when shape matters, <code>stripplot</code>/<code>swarmplot</code> to show every row.</li>
+<li><strong>&quot;What does the shaded band mean?&quot;</strong> In <code>lineplot</code> and <code>barplot</code> it is a bootstrapped
+95% confidence interval of the estimate. In <code>regplot</code> it is the CI of the fitted line.</li>
+</ul>
+<h3>Key takeaway</h3>
+<p><strong>If you remember only one thing:</strong> seaborn plots <em>columns</em>, not numbers — and it runs
+statistics on them before drawing. <code>hue</code> is a <code>GROUP BY</code>, a bar is a mean, a band is a
+confidence interval. Know what has been computed before you trust the picture.</p>
+<hr />
+<p><strong>Next in M02:</strong> Plotly (interactive charts), then Streamlit in M04 to put these charts
+behind a UI.</p>
+
+<div class="src-head">📓 <a href="../Concept/pizza_seaborn.ipynb">pizza_seaborn.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load our pizza data
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+
+# Set the style — you already did this in your original notebook!
+sns.set_style(&#x27;darkgrid&#x27;)
+
+print(&quot;Seaborn version:&quot;, sns.__version__)
+print(&quot;Ready!&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Seaborn version: 0.13.2
+Ready!</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+
+ax.set_title(&#x27;Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c01-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py"># Version 1 — explicit Matplotlib canvas
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c02-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py"># Version 2 — Seaborn creates canvas automatically
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c03-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+# Remove error bars
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, errorbar=None)
+
+ax.set_title(&#x27;Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c04-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Show revenue by pizza type — but also split by area (Downtown vs Suburbs)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, hue=&#x27;area&#x27;, ax=ax)
+
+ax.set_title(&#x27;Revenue by Pizza Type and Area&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c06-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>boxplot</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+sns.boxplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+
+ax.set_title(&#x27;Revenue Distribution by Pizza&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c08-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Show me revenue for every pizza type on every day in one single view</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py"># Create a pivot table — pizza types as columns, days as rows
+day_order = [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;]
+
+pivot = df.pivot_table(values=&#x27;revenue&#x27;, 
+                       index=&#x27;date&#x27;, 
+                       columns=&#x27;pizza&#x27;,
+                       aggfunc=&#x27;sum&#x27;).reindex(day_order)
+
+print(pivot)</pre></div>
+<div class="out"><div class="h">Output</div><pre>pizza  BBQ Chicken  Margherita  Pepperoni
+date                                     
+Mon            NaN       120.0      135.0
+Tue          252.0         NaN      120.0
+Wed            NaN       156.0        NaN
+Thu          216.0         NaN      165.0
+Fri          288.0         NaN      225.0
+Sat          360.0         NaN        NaN
+Sun            NaN       216.0        NaN</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 6))
+
+sns.heatmap(pivot, 
+            annot=True,        # show numbers inside cells
+            fmt=&#x27;g&#x27;,           # clean number format
+            cmap=&#x27;YlOrRd&#x27;,     # color scheme
+            ax=ax)
+
+ax.set_title(&#x27;Revenue by Day and Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c11-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Build a complete dashboard:</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+# Chart 1 — top left — Bar chart with hue
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, 
+            hue=&#x27;area&#x27;, ax=axes[0,0])
+axes[0,0].set_title(&#x27;Revenue by Pizza and Area&#x27;)
+
+# Chart 2 — top right — Box plot
+sns.boxplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=axes[0,1])
+axes[0,1].set_title(&#x27;Revenue Distribution by Pizza&#x27;)
+
+# Chart 3 — bottom left — Heatmap
+sns.heatmap(pivot, annot=True, fmt=&#x27;g&#x27;, 
+            cmap=&#x27;YlOrRd&#x27;, ax=axes[1,0])
+axes[1,0].set_title(&#x27;Revenue by Day and Pizza&#x27;)
+
+# Chart 4 — bottom right — your turn!
+# Write a scatter plot of quantity vs revenue
+# colored by pizza type using hue
+# YOUR CODE HERE
+sns.scatterplot(data=df, x=&#x27;quantity&#x27;, y=&#x27;revenue&#x27;, hue=&quot;pizza&quot;,ax=axes[1,1])
+axes[1,1].set_title(&#x27;Revenue by Day and Pizza&#x27;)
+
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-seaborn-c13-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">fig.savefig(&#x27;pizza_final_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)</pre></div>
+<div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/pizza_seaborn.ipynb">pizza_seaborn.ipynb ↗</a><a class="btn" href="../Concept/README.md">README.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

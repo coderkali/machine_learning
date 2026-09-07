@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ridge Regression — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Ridge Regression</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#ridge-regression">Ridge Regression</a><a href="#1-the-data">1. The data</a><a href="#2-split-the-data">2. Split the data</a><a href="#3-ridge-the-default-alpha-1-0">3. Ridge() — the default alpha = 1.0</a><a href="#4-predict-and-score">4. predict() and score()</a><a href="#5-the-model-is-two-numbers">5. The model is two numbers</a><a href="#6-draw-the-line">6. Draw the line</a><a href="#7-alpha-100">7. alpha = 100</a><a href="#8-alpha-100-000">8. alpha = 100,000</a><a href="#9-alpha-10-000-000-the-line-becomes-the-average">9. alpha = 10,000,000 — the line becomes the average</a><a href="#10-the-alpha-table">10. The alpha table</a><a href="#11-wrap-up">11. Wrap up</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Ridge Regression</h1>
+  <p class="lede">Paying a penalty for large slopes, and the first hyperparameter you choose yourself.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Imran's model fitted the training rows beautifully and fell apart on new ones.</strong> Its coefficients were enormous — some in the thousands.</p><p>Huge coefficients mean the line is contorting itself to pass near every point. Move one input slightly and the prediction swings wildly.</p><p><span class='beat'>The model was not learning the trend; it was chasing every wobble.</span></p><p>Ridge adds a fine for large slopes. The model now has to justify every bit of steepness against a penalty, so it settles for a calmer line that generalises better. How big the fine is, is <code>alpha</code> — the first number you set rather than learn.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Ridge minimises error + α × slope². Alpha trades fitting the data against keeping the line calm.</p></div>
+<div class="src-head">📓 <a href="../Concept/07_Ridge.ipynb">07_Ridge.ipynb</a></div>
+<h2 id="ridge-regression">Ridge Regression</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M07 Machine Learning, scikit-learn module.</p>
+</div>
+<p>Linear regression has one goal. Make the error on the training rows as small as it can.
+Nothing stops it. If a bigger slope fits the training rows a little better, it takes the
+bigger slope.</p>
+<p>Ridge has two goals:</p>
+<div class="code"><pre>LinearRegression : make the error small
+Ridge            : make the error small  AND  keep the slope small
+</pre></div>
+<p>Those two goals pull against each other. <strong><code>alpha</code></strong> is the dial that decides which one
+wins.</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th><code>LinearRegression</code></th>
+  <th><code>Ridge</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>what it minimises</td>
+  <td>error only</td>
+  <td>error <strong>+ a penalty on the size of the slope</strong></td>
+</tr>
+<tr>
+  <td>the knob you set</td>
+  <td>none</td>
+  <td><code>alpha</code></td>
+</tr>
+<tr>
+  <td><code>alpha = 0</code></td>
+  <td>—</td>
+  <td>same model as <code>LinearRegression</code></td>
+</tr>
+<tr>
+  <td>big <code>alpha</code></td>
+  <td>—</td>
+  <td>the slope shrinks and the line goes flat</td>
+</tr>
+</tbody>
+</table>
+<p>Everything else is the same class you already know: <code>fit</code>, <code>predict</code>, <code>score</code>, <code>coef_</code>,
+<code>intercept_</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
+x,y = make_regression(n_features=1, noise=5, n_samples=10000)
+import matplotlib.pyplot as plt</pre></div>
+<h2 id="1-the-data">1. The data</h2>
+<p><code>make_regression</code> builds a straight line and adds noise to it. One input column, one
+output number, 10,000 rows.</p>
+<p>The cell above has no <code>random_state</code>, so it draws new data on every run. The next cell
+draws the same thing with a seed, so the numbers written in this notebook stay true.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py"># The cell above has no random_state, so it draws new data every run.
+# Draw it once with a seed so the numbers in this notebook stay true.
+x, y = make_regression(n_features=1, noise=5, n_samples=10000, random_state=42)
+print(&quot;x:&quot;, x.shape, &quot; y:&quot;, y.shape)</pre></div>
+<div class="out"><div class="h">Output</div><pre>x: (10000, 1)  y: (10000,)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">plt.scatter(x,y,s=5)
+plt.xlabel(&#x27;x&#x27;)
+plt.ylabel(&#x27;y&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/07-ridge-c04-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="2-split-the-data">2. Split the data</h2>
+<p>8,000 rows to train on. 2,000 kept hidden for scoring.</p>
+<p>We are about to compare several models, so they all have to be judged on the same hidden
+rows.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div>
+<h2 id="3-ridge-the-default-alpha-1-0">3. <code>Ridge()</code> — the default <code>alpha = 1.0</code></h2>
+<p>Same three steps as always. <code>Ridge()</code> with no argument means <code>alpha = 1.0</code>.</p>
+<h3>What <code>alpha</code> actually does</h3>
+<p>Ridge adds one extra cost:</p>
+<div class="code"><pre>   total cost  =  how wrong you are   +   alpha x (slope x slope)
+                          |                          |
+                  the only cost that            this part is new
+                  LinearRegression had
+</pre></div>
+<p>A big slope now costs something. <code>alpha</code> is the price tag on it.</p>
+<ul>
+<li><code>alpha</code> small → a big slope is cheap → keep the slope the data wants</li>
+<li><code>alpha</code> big → a big slope is expensive → shrink it</li>
+</ul>
+<p>Two things to remember:</p>
+<ol>
+<li><strong>Only the slope is charged. The intercept is not.</strong> This matters in section 9.</li>
+<li><strong><code>alpha</code> is a hyperparameter.</strong> You choose it, the data does not. That is why it has
+no underscore, while <code>coef_</code> and <code>intercept_</code> do.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.linear_model import Ridge
+reg = Ridge()
+reg.fit(X_train,y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Ridge()</pre></div>
+<h2 id="4-predict-and-score">4. <code>predict()</code> and <code>score()</code></h2>
+<p>Nothing changed here. Ridge still ends up with one slope and one intercept, so <code>predict</code>
+is still <code>m * x + c</code>.</p>
+<p><code>score</code> gives R² on the 2,000 hidden rows: <strong><code>0.9769</code></strong>. Almost perfect. On 8,000 rows an
+<code>alpha</code> of 1 is far too small to matter.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">reg.predict(X_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([26.7963039 ,  0.51790922, -2.20125853, ..., 17.8376875 ,
+       20.43818735, 43.21880194], shape=(2000,))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">reg.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9769119096071136</pre></div>
+<h2 id="5-the-model-is-two-numbers">5. The model is two numbers</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>value</th>
+  <th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>coef_</code></td>
+  <td><code>31.985047</code></td>
+  <td><code>y</code> moves 31.99 when <code>x</code> moves 1</td>
+</tr>
+<tr>
+  <td><code>intercept_</code></td>
+  <td><code>0.066653</code></td>
+  <td>the height of the line at <code>x = 0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Remember <strong><code>31.98</code></strong>. That is the number the rest of this notebook shrinks.</p>
+<p>Plain <code>LinearRegression</code> on the same rows gives <strong><code>31.989006</code></strong>. So <code>alpha = 1</code> only cost
+us <code>0.004</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">reg.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([31.98504656])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">reg.intercept_</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.0666527917276602)</pre></div>
+<h2 id="6-draw-the-line">6. Draw the line</h2>
+<p><code>reg.predict(x)</code> runs the formula on all 10,000 rows, so the orange dots draw the model
+right across the picture.</p>
+<p>The orange dots form a straight line. The blue cloud is the real noisy data. The line
+runs up the middle of it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">y_pred= reg.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/07-ridge-c17-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="7-alpha-100">7. <code>alpha = 100</code></h2>
+<p>Same code, one argument changed. The score barely moves (<code>0.976912</code> → <code>0.976598</code>) and
+<code>coef_</code> drops from <code>31.985</code> to <code>31.598</code>.</p>
+<h3>The one formula worth knowing</h3>
+<p>With one input column, this is exactly what Ridge does to the slope:</p>
+<div class="code"><pre>   new slope  =  old slope  x   S / (S + alpha)
+
+   S = how spread out your x values are on the training rows
+     = sum of (x - average x) squared
+</pre></div>
+<p><code>S / (S + alpha)</code> is the <strong>shrink factor</strong>. It is always between 0 and 1, so the slope
+can only get smaller. It never grows, and it never flips sign.</p>
+<p>Here <code>S = 8078.97</code>, so:</p>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right"><code>alpha</code></th>
+  <th style="text-align:right"><code>S / (S + alpha)</code></th>
+  <th style="text-align:right">slope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right"><code>1</code></td>
+  <td style="text-align:right"><code>0.9999</code></td>
+  <td style="text-align:right"><code>31.985</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>100</code></td>
+  <td style="text-align:right"><code>0.9878</code></td>
+  <td style="text-align:right"><code>31.598</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>8,079</code> (the same size as <code>S</code>)</td>
+  <td style="text-align:right"><code>0.5000</code></td>
+  <td style="text-align:right"><code>15.994</code> — exactly half</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>100,000</code></td>
+  <td style="text-align:right"><code>0.0748</code></td>
+  <td style="text-align:right"><code>2.391</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>10,000,000</code></td>
+  <td style="text-align:right"><code>0.0008</code></td>
+  <td style="text-align:right"><code>0.026</code></td>
+</tr>
+</tbody>
+</table>
+<p>Those are the real numbers this notebook printed.</p>
+<h3>Why a bigger <code>alpha</code> flattens the line</h3>
+<div class="code"><pre>   small alpha  -&gt;  shrink factor near 1   -&gt;  slope stays 31.99  -&gt;  steep line
+   bigger alpha -&gt;  shrink factor smaller  -&gt;  slope shrinks      -&gt;  line tilts down
+   huge alpha   -&gt;  shrink factor near 0   -&gt;  slope near 0       -&gt;  flat line
+</pre></div>
+<p><code>alpha</code> <strong>rotates</strong> the line. It does not slide it up or down.</p>
+<p>One useful side effect: <code>S</code> grows with the number of rows. So the same <code>alpha</code> is weaker
+on a big dataset. <code>alpha = 100</code> is nothing on 8,000 rows and a lot on 50 rows. That is
+why you cannot copy an <code>alpha</code> from another project.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.linear_model import Ridge
+reg = Ridge(alpha=100)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9765976836816457</pre></div>
+<h3>What <code>alpha = 100</code> looks like</h3>
+<p>Almost nothing. The line is 1.2% less steep and the score changes in the fourth decimal.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">y_pred = reg.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/07-ridge-c22-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">reg.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([31.59789266])</pre></div>
+<h2 id="8-alpha-100-000">8. <code>alpha = 100,000</code></h2>
+<p>Now <code>alpha</code> is much bigger than <code>S</code>, so the penalty wins:</p>
+<div class="code"><pre>   8078.97 / (8078.97 + 100000)  =  0.0748
+   31.989 x 0.0748               =  2.39
+</pre></div>
+<p>The slope falls from <code>31.99</code> to <code>2.39</code>. R² falls from <code>0.977</code> to <code>0.140</code>.</p>
+<p>In the chart the orange dots are now an almost flat band lying across the middle of the
+blue cloud.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">reg = Ridge(alpha=100000)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.13955010448963978</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">y_pred = reg.predict(x)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/07-ridge-c27-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">reg.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2.39119767])</pre></div>
+<h2 id="9-alpha-10-000-000-the-line-becomes-the-average">9. <code>alpha = 10,000,000</code> — the line becomes the average</h2>
+<p>Shrink factor <code>0.0008</code>. The slope is <code>0.026</code>, which is zero for any real purpose. R² is
+<code>0.0015</code>.</p>
+<p>Two things meet here:</p>
+<ol>
+<li><strong>The slope is gone</strong>, so <code>predict</code> returns nearly the same number for every <code>x</code>.</li>
+<li><strong>The intercept was never charged</strong>, so it is still free. With no slope, the best
+single number to predict is the <strong>average of <code>y_train</code></strong>.</li>
+</ol>
+<div class="code"><pre>   alpha gets huge  -&gt;  slope      -&gt; 0
+                        intercept  -&gt; average of y_train = 0.055079
+                        prediction -&gt; 0.055079, for every row
+</pre></div>
+<p>The notebook prints <code>intercept_ = 0.055089</code>. The average of <code>y_train</code> is <code>0.055079</code>.</p>
+<p>And that is why R² is 0. R² compares your model against <em>&quot;always guess the average&quot;</em>.
+R² = 0 means &quot;no better than guessing the average&quot; — and we have just built a model that
+<strong>is</strong> the average.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">reg = Ridge(alpha=10000000)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.0014861178826479637</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">y_pred = reg.predict(x)
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/07-ridge-c31-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">reg.coef_</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([0.02582296])</pre></div>
+<h2 id="10-the-alpha-table">10. The alpha table</h2>
+<p>Every value of <code>alpha</code> side by side, all fitted on the same split. The <code>formula</code> column
+is the shrink factor from section 7 applied to the unpenalised slope, so it shows that
+the formula and sklearn agree.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression, Ridge
+
+# S is the only property of the data that alpha competes with
+S     = ((X_train - X_train.mean()) ** 2).sum()
+ols   = LinearRegression().fit(X_train, y_train)
+w_ols = ols.coef_[0]
+
+rows = []
+for a in [0, 1, 100, 1_000, round(S), 10_000, 100_000, 1_000_000, 10_000_000]:
+    m = LinearRegression() if a == 0 else Ridge(alpha=a)
+    m.fit(X_train, y_train)
+    rows.append({
+        &quot;alpha&quot;:       a,
+        &quot;S/(S+alpha)&quot;: S / (S + a),
+        &quot;coef_&quot;:       m.coef_[0],
+        &quot;formula&quot;:     w_ols * S / (S + a),
+        &quot;intercept_&quot;:  m.intercept_,
+        &quot;train R2&quot;:    m.score(X_train, y_train),
+        &quot;test R2&quot;:     m.score(X_test, y_test),
+    })
+
+table = pd.DataFrame(rows)
+print(f&quot;S             = sum of squared centred x on the 8000 train rows = {S:,.4f}&quot;)
+print(f&quot;w_ols         = the unpenalised slope                          = {w_ols:.6f}&quot;)
+print(f&quot;mean(y_train) = where the flat line ends up                    = {y_train.mean():.6f}&quot;)
+print(f&quot;does the formula reproduce coef_ everywhere? -&gt; &quot;
+      f&quot;{np.allclose(table[&#x27;coef_&#x27;], table[&#x27;formula&#x27;])}&quot;)
+table.round(6)</pre></div>
+<div class="out"><div class="h">Output</div><pre>S             = sum of squared centred x on the 8000 train rows = 8,078.9688
+w_ols         = the unpenalised slope                          = 31.989006
+mean(y_train) = where the flat line ends up                    = 0.055079
+does the formula reproduce coef_ everywhere? -&gt; True
+      alpha  S/(S+alpha)      coef_    formula  intercept_  train R2   test R2
+0         0     1.000000  31.989006  31.989006    0.066654  0.976090  0.976914
+1         1     0.999876  31.985047  31.985047    0.066653  0.976090  0.976912
+2       100     0.987774  31.597893  31.597893    0.066513  0.975944  0.976598
+3      1000     0.889855  28.465587  28.465587    0.065379  0.964248  0.963682
+4      8079     0.499999  15.994472  15.994472    0.060867  0.732066  0.729147
+5     10000     0.446871  14.294962  14.294962    0.060252  0.677453  0.674523
+6    100000     0.074751   2.391198   2.391198    0.055945  0.140473  0.139550
+7   1000000     0.008014   0.256367   0.256367    0.055172  0.015583  0.015406
+8  10000000     0.000807   0.025823   0.025823    0.055089  0.001575  0.001486</pre></div>
+<h3>Reading the table</h3>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right"><code>alpha</code></th>
+  <th style="text-align:right">shrink factor</th>
+  <th style="text-align:right"><code>coef_</code></th>
+  <th style="text-align:right"><code>intercept_</code></th>
+  <th style="text-align:right">test R²</th>
+  <th>what happened</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right"><code>0</code></td>
+  <td style="text-align:right"><code>1.0000</code></td>
+  <td style="text-align:right"><code>31.989006</code></td>
+  <td style="text-align:right"><code>0.066654</code></td>
+  <td style="text-align:right"><code>0.976914</code></td>
+  <td>plain <code>LinearRegression</code></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>1</code></td>
+  <td style="text-align:right"><code>0.9999</code></td>
+  <td style="text-align:right"><code>31.985047</code></td>
+  <td style="text-align:right"><code>0.066653</code></td>
+  <td style="text-align:right"><code>0.976912</code></td>
+  <td>the default. No visible effect</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>100</code></td>
+  <td style="text-align:right"><code>0.9878</code></td>
+  <td style="text-align:right"><code>31.597893</code></td>
+  <td style="text-align:right"><code>0.066513</code></td>
+  <td style="text-align:right"><code>0.976598</code></td>
+  <td>1.2% flatter, no real cost</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>1,000</code></td>
+  <td style="text-align:right"><code>0.8899</code></td>
+  <td style="text-align:right"><code>28.465587</code></td>
+  <td style="text-align:right"><code>0.065379</code></td>
+  <td style="text-align:right"><code>0.963682</code></td>
+  <td>a visible tilt</td>
+</tr>
+<tr>
+  <td style="text-align:right"><strong><code>8,079</code></strong></td>
+  <td style="text-align:right"><strong><code>0.5000</code></strong></td>
+  <td style="text-align:right"><strong><code>15.994472</code></strong></td>
+  <td style="text-align:right"><code>0.060867</code></td>
+  <td style="text-align:right"><code>0.729147</code></td>
+  <td><strong>the slope is exactly halved</strong></td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>10,000</code></td>
+  <td style="text-align:right"><code>0.4469</code></td>
+  <td style="text-align:right"><code>14.294962</code></td>
+  <td style="text-align:right"><code>0.060252</code></td>
+  <td style="text-align:right"><code>0.674523</code></td>
+  <td>falling fast</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>100,000</code></td>
+  <td style="text-align:right"><code>0.0748</code></td>
+  <td style="text-align:right"><code>2.391198</code></td>
+  <td style="text-align:right"><code>0.055945</code></td>
+  <td style="text-align:right"><code>0.139550</code></td>
+  <td>nearly flat</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>1,000,000</code></td>
+  <td style="text-align:right"><code>0.0080</code></td>
+  <td style="text-align:right"><code>0.256367</code></td>
+  <td style="text-align:right"><code>0.055172</code></td>
+  <td style="text-align:right"><code>0.015406</code></td>
+  <td>flat</td>
+</tr>
+<tr>
+  <td style="text-align:right"><code>10,000,000</code></td>
+  <td style="text-align:right"><code>0.0008</code></td>
+  <td style="text-align:right"><code>0.025823</code></td>
+  <td style="text-align:right"><code>0.055089</code></td>
+  <td style="text-align:right"><code>0.001486</code></td>
+  <td>the line <strong>is</strong> the average, <code>0.055079</code></td>
+</tr>
+</tbody>
+</table>
+<p>Three things this table says:</p>
+<ol>
+<li><strong>The slope never reaches 0.</strong> The shrink factor is always above 0, so Ridge gets
+close to zero but never arrives. (<code>Lasso</code> is the one that sets coefficients to exactly
+0.)</li>
+<li><strong>The action happens around <code>S</code>.</strong> Below <code>alpha = 100</code> nothing happens. Above
+<code>alpha = 1,000,000</code> everything has already happened. So <code>alpha</code> is searched in jumps
+of ten — <code>0.1, 1, 10, 100, 1000</code> — never <code>1, 2, 3, 4</code>.</li>
+<li><strong>The intercept barely moves.</strong> It is not being charged. It just re-settles on the
+average of <code>y</code> as the slope disappears.</li>
+</ol>
+
+<h2 id="11-wrap-up">11. Wrap up</h2>
+<h3>Ridge in three lines</h3>
+<div class="code"><pre>cost       =  error  +  alpha x slope x slope
+new slope  =  old slope x S/(S + alpha)          S = spread of x on the train rows
+huge alpha =&gt;  slope -&gt; 0,  line goes flat at the average of y,  R2 -&gt; 0
+</pre></div>
+<h3>Common mistakes</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Mistake</th>
+  <th>What actually happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Copying an <code>alpha</code> from another project</td>
+  <td><code>alpha</code> only means something next to <code>S</code>, and <code>S</code> grows with your row count. The same number is heavy on 50 rows and invisible on 8,000.</td>
+</tr>
+<tr>
+  <td>Trying <code>alpha</code> as <code>1, 2, 3, 4, 5</code></td>
+  <td>Nothing changes at that scale. Move in jumps of ten: <code>0.01, 0.1, 1, 10, 100, 1000</code>.</td>
+</tr>
+<tr>
+  <td>Expecting Ridge to improve every model</td>
+  <td>It only helps when the model is overfitting. This dataset has 10,000 rows and one clean column, so there is nothing to fix and every increase of <code>alpha</code> only makes the score worse.</td>
+</tr>
+<tr>
+  <td>Expecting Ridge to remove useless columns</td>
+  <td>It shrinks them but never to exactly 0. <code>Lasso</code> is the tool that does that.</td>
+</tr>
+<tr>
+  <td><code>make_regression</code> with no <code>random_state</code></td>
+  <td>Every run is a different dataset, so nothing you write down stays true. Section 1 is the fix.</td>
+</tr>
+</tbody>
+</table>
+<h3>Key takeaway</h3>
+<p><strong>If you remember only one thing:</strong> <code>alpha</code> shrinks the slope by <code>S / (S + alpha)</code>. A
+small <code>alpha</code> gives you <code>LinearRegression</code>. A large <code>alpha</code> drives the slope to zero, so
+the line goes flat at the average of <code>y</code> — and a model that always predicts the average
+is exactly what R² = 0 means.</p>
+
+<div class="foot"><a class="btn" href="../Concept/07_Ridge.ipynb">07_Ridge.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

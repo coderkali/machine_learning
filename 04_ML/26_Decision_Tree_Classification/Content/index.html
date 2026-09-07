@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Tree Classification — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Decision Tree Classification</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#16-decision-tree-classification">16 - Decision Tree Classification</a><a href="#step-1-the-problem-you-are-confused">Step 1 - The problem: you are confused</a><a href="#step-2-entropy-putting-a-number-on-confusion">Step 2 - Entropy: putting a number on confusion</a><a href="#step-3-ask-the-first-question-quot-did-you-watch">Step 3 - Ask the first question: &amp;quot;did you watch</a><a href="#step-4-one-number-for-both-rooms">Step 4 - One number for both rooms</a><a href="#step-5-information-gain-was-the-question-worth-a">Step 5 - Information gain: was the question worth as</a><a href="#step-6-give-the-other-question-a-fair-chance">Step 6 - Give the other question a fair chance</a><a href="#step-7-pick-the-winner">Step 7 - Pick the winner</a><a href="#step-8-hand-it-over-to-scikit-learn">Step 8 - Hand it over to scikit-learn</a><a href="#step-9-separate-the-questions-from-the-answer">Step 9 - Separate the questions from the answer</a><a href="#step-10-train">Step 10 - Train</a><a href="#step-11-read-the-rulebook-it-wrote">Step 11 - Read the rulebook it wrote</a><a href="#step-12-a-new-student-walks-in">Step 12 - A new student walks in</a><a href="#step-13-how-good-is-it-honestly">Step 13 - How good is it, honestly?</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Decision Tree Classification</h1>
+  <p class="lede">Twenty questions, asked in the smartest possible order.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A teacher had to guess which students would pass.</strong> She could ask each student one question at a time.</p><p>Her first attempt asked whatever came to mind — favourite colour, bus route. After five questions she knew nothing useful.</p><p><span class='beat'>The questions were not wrong; the <em>order</em> was.</span> A good question splits a confused group into two clearer groups.</p><p>A decision tree scores every possible question by how much confusion it removes — that is information gain — and always asks the best one first. Then it repeats inside each half.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Entropy measures confusion. The best question is the one that removes the most of it.</p></div>
+<div class="src-head">📓 <a href="../Concept/16_Descison_Tree_Classfication.ipynb">16_Descison_Tree_Classfication.ipynb</a></div>
+<h2 id="16-decision-tree-classification">16 - Decision Tree Classification</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
+</div>
+<h3>The story</h3>
+<p>You run a small coaching centre. Ten students sat the exam. Five passed, five failed.</p>
+<p>You tracked only two things about each of them:</p>
+<ul>
+<li>did the student watch the video lessons? (<code>5me</code>, renamed to <code>yt</code> below)</li>
+<li>did the student have a guide, a mentor? (<code>guide</code>)</li>
+</ul>
+<p>A new batch joins tomorrow. You want to tell them one honest sentence: <strong>&quot;do this, and you will pass.&quot;</strong></p>
+<p>So which of the two actually decides the result - the videos, or the guide?</p>
+<h3>Why this needs a decision tree</h3>
+<p>As a Java developer you would write this by hand:</p>
+<div class="code"><pre>if (watchedVideos) {
+    if (hasGuide) return PASS;
+    ...
+}
+</pre></div>
+<p>You choose the conditions, and you choose which one to check first, from your own experience.</p>
+<p>A decision tree writes those <code>if</code> conditions <strong>from the data itself</strong> - including the order to check them in. That is the only difference, and it is the whole idea.</p>
+<h3>Where this is used in real life</h3>
+<p>Same shape, different business:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>The question</th>
+  <th>The columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Approve this loan?</td>
+  <td>salary, credit history, existing EMIs</td>
+</tr>
+<tr>
+  <td>Is this chest pain urgent?</td>
+  <td>age, blood pressure, ECG</td>
+</tr>
+<tr>
+  <td>Will this customer leave us?</td>
+  <td>plan, complaints, last login</td>
+</tr>
+<tr>
+  <td>Send this order to fraud review?</td>
+  <td>amount, country, age of card</td>
+</tr>
+</tbody>
+</table>
+<p>Banks and hospitals like trees for one reason: <strong>a tree can explain its answer</strong>. You can print the rules and show them to an auditor. Most other models cannot.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">data = pd.read_csv(&#x27;../../../01_Python/03_Pandas/Data/exam.csv&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">data</pre></div>
+<div class="out"><div class="h">Output</div><pre>   5me  guide result
+0    0      0   fail
+1    1      1   pass
+2    1      0   pass
+3    0      0   fail
+4    0      0   fail
+5    1      1   pass
+6    0      1   fail
+7    1      1   pass
+8    1      0   fail
+9    1      1   pass</pre></div>
+<h2 id="step-1-the-problem-you-are-confused">Step 1 - The problem: you are confused</h2>
+<p><code>data.result.value_counts()</code> counts each value in a column.</p>
+<p>Here is the whole class on one screen. <strong>P = passed, F = failed.</strong> Every diagram below moves these same ten letters around, so you can always check the answer by counting.</p>
+<div class="code"><pre>  row     0   1   2   3   4   5   6   7   8   9
+  ─────────────────────────────────────────────
+  videos  0   1   1   0   0   1   0   1   1   1
+  guide   0   1   0   0   0   1   1   1   0   1
+  result  F   P   P   F   F   P   F   P   F   P
+                          │
+                          ▼
+        one pile:   F P P F F P F P F P
+                    5 pass  /  5 fail
+</pre></div>
+<p>If a student walked in right now, your best answer would be a coin flip. <strong>That confusion is the thing we are trying to remove.</strong></p>
+<p>To remove it you ask a question and split the pile. But you have two possible questions and can only ask one first. So before anything else, you need a number for confusion.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">data.result.value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>result
+fail    5
+pass    5
+Name: count, dtype: int64</pre></div>
+<h2 id="step-2-entropy-putting-a-number-on-confusion">Step 2 - Entropy: putting a number on confusion</h2>
+<p>Entropy is the doubt in a pile, as a number between 0 and 1.</p>
+<div class="code"><pre>   pile                E        how sure are you?
+   ──────────────────────────────────────────────────────────
+   P P P P P P P P    0.00     ████████████  certain
+   P P P P P P P F    0.54     ███████░░░░░  nearly certain
+   P P P P P P F F    0.81     ████░░░░░░░░  leaning
+   P P P P P F F F    0.95     ██░░░░░░░░░░  barely leaning
+   P P P P F F F F    1.00     ░░░░░░░░░░░░  coin flip
+</pre></div>
+<ul>
+<li><strong>0</strong> = pure. Every row has the same answer.</li>
+<li><strong>1</strong> = fully mixed. 50/50. You know nothing.</li>
+</ul>
+<div class="code"><pre>E = -P(pass) * log2(P(pass))  -  P(fail) * log2(P(fail))
+</pre></div>
+<p><code>np.log2(x)</code> is log to base 2. Base 2 is chosen so a 50/50 pile lands on exactly 1.</p>
+<p>Our pile is 5 pass / 5 fail, so <strong>E = 1.0</strong> - the worst score there is. Everything below is an attempt to bring this number down.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">entropy_results = -(5/10)*np.log2(5/10) -(5/10)*np.log2(5/10)
+entropy_results</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(1.0)</pre></div>
+<h2 id="step-3-ask-the-first-question-quot-did-you-watch">Step 3 - Ask the first question: &quot;did you watch the videos?&quot;</h2>
+<p>Send the class into two rooms. Video watchers in one, the rest in the other. Then look at how messy each room is.</p>
+<p>Two bits of syntax for that:</p>
+<ul>
+<li><code>data.rename(columns={'5me':'yt'}, inplace=True)</code> renames a column. <code>inplace=True</code> edits <code>data</code> itself instead of handing back a copy.</li>
+<li><code>data[data.yt == 1]</code> is a <strong>boolean mask</strong>. <code>data.yt == 1</code> builds a True/False column, and <code>data[...]</code> keeps only the True rows. This is the &quot;send them into a room&quot; step.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">data.rename(columns = {&#x27;5me&#x27;:&#x27;yt&#x27;}, inplace = True)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">data</pre></div>
+<div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+1   1      1   pass
+2   1      0   pass
+3   0      0   fail
+4   0      0   fail
+5   1      1   pass
+6   0      1   fail
+7   1      1   pass
+8   1      0   fail
+9   1      1   pass</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">data[data.yt == 1]</pre></div>
+<div class="out"><div class="h">Output</div><pre>   yt  guide result
+1   1      1   pass
+2   1      0   pass
+5   1      1   pass
+7   1      1   pass
+8   1      0   fail
+9   1      1   pass</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">entropy_results_yt_yes = -(5/6)*np.log2(5/6) -(1/6)*np.log2(1/6)
+entropy_results_yt_yes</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.6500224216483541)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">data[data.yt == 0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+3   0      0   fail
+4   0      0   fail
+6   0      1   fail</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">data</pre></div>
+<div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+1   1      1   pass
+2   1      0   pass
+3   0      0   fail
+4   0      0   fail
+5   1      1   pass
+6   0      1   fail
+7   1      1   pass
+8   1      0   fail
+9   1      1   pass</pre></div>
+<p>This is where the ten students actually go:</p>
+<div class="code"><pre>                        ALL 10 STUDENTS
+                       F P P F F P F P F P
+                       5 pass / 5 fail        E = 1.00
+                                │
+              ┌───── did you watch the videos? ─────┐
+           NO │                                     │ YES
+              ▼                                     ▼
+      rows 0, 3, 4, 6                    rows 1, 2, 5, 7, 8, 9
+         F  F  F  F                         P  P  P  P  F  P
+      0 pass / 4 fail                      5 pass / 1 fail
+         E = 0.00                             E = 0.65
+   ✔ clean room, question over         one student out of place
+</pre></div>
+<p>The left room is <strong>pure</strong> - not one video-skipper passed. Its entropy is 0, which is why the next cell writes <code>(4/10) * 0</code> instead of a formula.</p>
+<h2 id="step-4-one-number-for-both-rooms">Step 4 - One number for both rooms</h2>
+<p>The rooms are different sizes, so a plain average would lie. Weight each room by how many students are in it:</p>
+<div class="code"><pre>    room          size      E        share × E
+    ──────────────────────────────────────────
+    NO videos     4/10     0.00        0.000
+    YES videos    6/10     0.65        0.390
+    ──────────────────────────────────────────
+                        E(after) =     0.39
+</pre></div>
+<p>Same idea as averaging response time across two servers - the one taking more traffic counts more.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">yt_entropy = (6/10) * entropy_results_yt_yes +  (4/10) * 0
+yt_entropy</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.39001345298901247)</pre></div>
+<h2 id="step-5-information-gain-was-the-question-worth-a">Step 5 - Information gain: was the question worth asking?</h2>
+<div class="code"><pre>   before  ██████████████████████████████  1.00
+   after   ███████████░░░░░░░░░░░░░░░░░░░  0.39
+           └──────────┘
+            removed 0.61   ← the information gain
+</pre></div>
+<div class="code"><pre>Information Gain = confusion before - confusion after = 1.00 - 0.39 = 0.61
+</pre></div>
+<p>This is the <strong>score of the question</strong>. Like interviewing: the question worth asking first is the one that tells you the most about the candidate.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">info_yt = entropy_results - (6/10) * entropy_results_yt_yes -  (4/10) * 0
+info_yt</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.6099865470109875)</pre></div>
+<h2 id="step-6-give-the-other-question-a-fair-chance">Step 6 - Give the other question a fair chance</h2>
+<p>Forget that split. Put all ten back in one pile and split on the guide instead.</p>
+<div class="code"><pre>                        ALL 10 STUDENTS
+                       F P P F F P F P F P
+                       5 pass / 5 fail        E = 1.00
+                                │
+              ┌────── did you have a guide? ───────┐
+           NO │                                    │ YES
+              ▼                                    ▼
+      rows 0, 2, 3, 4, 8                   rows 1, 5, 6, 7, 9
+         F  P  F  F  F                        P  P  F  P  P
+      1 pass / 4 fail                       4 pass / 1 fail
+         E = 0.72                              E = 0.72
+   ✘ still messy                        ✘ still messy
+</pre></div>
+<p>Neither room came out clean. Each one still hides a surprise student.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">data[data.guide == 1]</pre></div>
+<div class="out"><div class="h">Output</div><pre>   yt  guide result
+1   1      1   pass
+5   1      1   pass
+6   0      1   fail
+7   1      1   pass
+9   1      1   pass</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">entropy_results_guide_yes = -(4/5)*np.log2(4/5) -(1/5)*np.log2(1/5)
+entropy_results_guide_yes</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.7219280948873623)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">data[data.guide == 0]</pre></div>
+<div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+2   1      0   pass
+3   0      0   fail
+4   0      0   fail
+8   1      0   fail</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">entropy_results_guide_no = -(1/5)*np.log2(1/5) -(4/5)*np.log2(4/5)
+entropy_results_guide_no</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.7219280948873623)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">guide_entropy = (5/10) * entropy_results_guide_yes +  (5/10) * entropy_results_guide_no
+guide_entropy</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.7219280948873623)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">info_guide = entropy_results - guide_entropy
+info_guide</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(0.2780719051126377)</pre></div>
+<h2 id="step-7-pick-the-winner">Step 7 - Pick the winner</h2>
+<p>Put the two splits side by side and you can see it without any maths:</p>
+<div class="code"><pre>      SPLIT ON VIDEOS                       SPLIT ON GUIDE
+   ─────────────────────────            ─────────────────────────
+    F F F F  │  P P P P F P              F P F F F  │  P P F P P
+    E = 0.00 │  E = 0.65                 E = 0.72   │  E = 0.72
+        ▲                                     ▲          ▲
+   one room is perfectly clean          both rooms still mixed
+
+    left over  0.39                      left over  0.72
+    removed    0.61   ★ WINNER           removed    0.28
+</pre></div>
+<table class="tbl"><thead>
+<tr>
+  <th>Question</th>
+  <th>Confusion left</th>
+  <th>Information gain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>watched the videos</td>
+  <td>0.39</td>
+  <td><strong>0.61</strong></td>
+</tr>
+<tr>
+  <td>had a guide</td>
+  <td>0.72</td>
+  <td>0.28</td>
+</tr>
+</tbody>
+</table>
+<p>So <strong>&quot;did you watch the videos?&quot; becomes the first question the tree asks.</strong></p>
+<h3>Round 2 - repeat inside the messy room</h3>
+<p>The clean room is finished. Only the six video-watchers are still mixed, so run the same contest again on them - with <code>guide</code>, the column that is left:</p>
+<div class="code"><pre>        rows 1, 2, 5, 7, 8, 9
+           P P P P F P            E = 0.65
+                  │
+        ┌──── did you have a guide? ────┐
+     NO │                               │ YES
+        ▼                               ▼
+     rows 2, 8                    rows 1, 5, 7, 9
+       P  F                         P  P  P  P
+     E = 1.00                       E = 0.00
+   ✘ stuck, cannot split further   ✔ clean, done
+</pre></div>
+<p>Nothing is left to ask, so the tree stops. <strong>That is the finished model</strong> - and it is the same tree scikit-learn builds below.</p>
+<p>Your honest sentence for the new batch: <em>&quot;watch the videos.&quot;</em></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">print(info_yt)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.6099865470109875</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">print(info_guide)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.2780719051126377</pre></div>
+<h2 id="step-8-hand-it-over-to-scikit-learn">Step 8 - Hand it over to scikit-learn</h2>
+<p>You just did this by hand for 2 columns and 10 rows. Real data has 30 columns and a lakh rows. Nobody does that by hand - that is what the library is for. Everything below is the same maths, running faster.</p>
+<p><code>LabelEncoder</code> turns text labels into numbers, because the model can compare numbers, not the words &quot;pass&quot; and &quot;fail&quot;.
+<code>fit_transform</code> = <code>fit</code> (learn the labels, sorted alphabetically) + <code>transform</code> (replace them).</p>
+<p>So <strong>fail → 0, pass → 1</strong>. Hold on to that order - it decides how you read every result below.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">from sklearn.preprocessing import LabelEncoder</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">le = LabelEncoder()          # create the encoder that will learn the text-to-number mapping
+df = data                    # NOT a copy - df and data point to the same table in memory
+df.result = le.fit_transform(df.result)   # fit: sort unique labels (fail, pass) -&gt; 0, 1; transform: replace each value
+df</pre></div>
+<div class="out"><div class="h">Output</div><pre>   yt  guide  result
+0   0      0       0
+1   1      1       1
+2   1      0       1
+3   0      0       0
+4   0      0       0
+5   1      1       1
+6   0      1       0
+7   1      1       1
+8   1      0       0
+9   1      1       1</pre></div>
+<h2 id="step-9-separate-the-questions-from-the-answer">Step 9 - Separate the questions from the answer</h2>
+<div class="code"><pre>        x  (what you know)          y  (what happened)
+       ┌──────┬────────┐              ┌────────┐
+       │  yt  │ guide  │              │ result │
+       ├──────┼────────┤              ├────────┤
+       │  0   │   0    │              │   0    │
+       │  1   │   1    │              │   1    │
+       │ ...  │  ...   │              │  ...   │
+       └──────┴────────┘              └────────┘
+        a table (DataFrame)            one column (Series)
+        df[[&#x27;yt&#x27;,&#x27;guide&#x27;]]             df[&#x27;result&#x27;]
+        TWO brackets                   ONE bracket
+</pre></div>
+<p>Features always go in as a table, the answer as a single column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">x = df[[&#x27;yt&#x27;,&#x27;guide&#x27;]]
+y = df[&#x27;result&#x27;]</pre></div>
+<h2 id="step-10-train">Step 10 - Train</h2>
+<p><code>criterion='entropy'</code> tells sklearn to use the same formula you used by hand. The default is <code>'gini'</code>, a different mess-meter that nearly always builds the same tree. We pick entropy so the numbers match ours.</p>
+<p><code>dt.fit(x, y)</code> runs Steps 1 to 7 by itself, over and over, until it runs out of useful questions.</p>
+<p><strong>What <code>fit</code> leaves behind:</strong> the question at each node, and the fail/pass counts in each box. That is the whole model - a rulebook, nothing more. This is exactly why you can print a tree and defend it in a meeting.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">from sklearn.tree import DecisionTreeClassifier, export_graphviz</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">dt = DecisionTreeClassifier(criterion=&#x27;entropy&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">dt.fit(x,y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(criterion=&#x27;entropy&#x27;)</pre></div>
+<h2 id="step-11-read-the-rulebook-it-wrote">Step 11 - Read the rulebook it wrote</h2>
+<p><code>export_graphviz(dt, 'dt.tree', feature_names=['yt','guide'])</code> writes the tree out to a text file in DOT format. The next cell draws the same tree as a picture, right here in the notebook.</p>
+<p>Here is that tree with your ten students still visible inside it:</p>
+<div class="code"><pre>                       yt &lt;= 0.5 ?          ← &quot;did you watch the videos?&quot;
+                       E = 1.00   n = 10
+                       [5 fail, 5 pass]
+                              │
+           TRUE ┌─────────────┴─────────────┐ FALSE
+      (yt = 0)  │                           │  (yt = 1)
+                ▼                           ▼
+        rows 0, 3, 4, 6              guide &lt;= 0.5 ?
+           F F F F                   E = 0.65   n = 6
+        E = 0.00  n = 4              [1 fail, 5 pass]
+        [4 fail, 0 pass]                    │
+             → FAIL          TRUE ┌─────────┴─────────┐ FALSE
+                                  ▼                   ▼
+                            rows 2, 8           rows 1, 5, 7, 9
+                              P  F                 P P P P
+                            E = 1.00  n = 2      E = 0.00  n = 4
+                            [1 fail, 1 pass]     [0 fail, 4 pass]
+                              → tie                  → PASS
+</pre></div>
+<p><strong>Compare it with your Round 2 drawing in Step 7 - it is the same tree, student for student.</strong> The library found the same first question, the same second question, and the same numbers: 1.00 → 0.65 → 0.00.</p>
+<p>Two reading notes: <code>value = [5, 5]</code> means <code>[fail count, pass count]</code> (the LabelEncoder order), and <code>yt &lt;= 0.5</code> is only sklearn's way of writing <code>yt == 0</code> - it always splits numbers with <code>&lt;=</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">export_graphviz(dt,&#x27;dt.tree&#x27;,feature_names=[&#x27;yt&#x27;,&#x27;guide&#x27;])</pre></div>
+<p>Same tree, drawn by sklearn itself.</p>
+<ul>
+<li><strong>orange</strong> = this box leans fail, <strong>blue</strong> = it leans pass, and the stronger the colour the purer the box.</li>
+<li>the <strong>white</strong> box is the 50/50 one - rows 2 and 8, the two students no question can separate.</li>
+<li><code>class = fail</code> on the white box is sklearn breaking the tie by picking the lower class. That single choice is what costs you the 0.1 in Step 13.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 41</span></div><pre class="py">from sklearn.tree import plot_tree
+
+plt.figure(figsize=(9, 6))
+plot_tree(dt, feature_names=[&#x27;yt&#x27;, &#x27;guide&#x27;], class_names=[&#x27;fail&#x27;, &#x27;pass&#x27;], filled=True)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/16-descison-tree-classficati-c41-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-12-a-new-student-walks-in">Step 12 - A new student walks in</h2>
+<p><code>dt.predict([[1, 1]])</code> - a student who watched the videos and had a guide.
+Double brackets, because predict always expects a <em>table of rows</em>, even for one student.</p>
+<p>Walk him down yourself:</p>
+<div class="code"><pre>   new student: videos = 1, guide = 1
+            │
+            ▼
+   yt &lt;= 0.5 ?  →  NO   ──────────────→ go right
+            │
+            ▼
+   guide &lt;= 0.5 ?  →  NO ──────────────→ go right
+            │
+            ▼
+   box [0 fail, 4 pass]  →  answer: 1 = PASS
+</pre></div>
+<p>That short walk is all that happens in production. Training is the slow part; answering is two <code>if</code> checks. This is why trees are used where the answer has to come back in milliseconds.</p>
+<p>The warning only means the model was trained with column names but asked with a bare list. Harmless. Silence it with <code>pd.DataFrame([[1,1]], columns=['yt','guide'])</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">dt.predict([[1,1]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/utils/validation.py:2827: UserWarning: X does not have valid feature names, but DecisionTreeClassifier was fitted with feature names
+  warnings.warn(
+array([1])</pre></div>
+<h2 id="step-13-how-good-is-it-honestly">Step 13 - How good is it, honestly?</h2>
+<p><code>dt.score(x, y)</code> = accuracy = the share of rows it gets right. It says <strong>0.9</strong>, not 1.0.</p>
+<p>Drop all ten students into the three final boxes and mark each one:</p>
+<div class="code"><pre>  ┌─ no videos ────────┐ ┌─ videos, no guide ─┐ ┌─ videos + guide ───┐
+  │ rows 0, 3, 4, 6    │ │ rows 2, 8          │ │ rows 1, 5, 7, 9    │
+  │ truth:   F F F F   │ │ truth:   P    F    │ │ truth:   P P P P   │
+  │ tree says: FAIL    │ │ tree says: FAIL    │ │ tree says: PASS    │
+  │          ✓ ✓ ✓ ✓   │ │          ✗    ✓    │ │          ✓ ✓ ✓ ✓   │
+  └────────────────────┘ └────────────────────┘ └────────────────────┘
+
+                 9 ticks, 1 cross  →  9 / 10  =  0.9
+</pre></div>
+<p>That one cross is not a bug:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>row</th>
+  <th>watched videos</th>
+  <th>had guide</th>
+  <th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2</td>
+  <td>yes</td>
+  <td>no</td>
+  <td><strong>pass</strong></td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>yes</td>
+  <td>no</td>
+  <td><strong>fail</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Same answer to every question, opposite outcome. The tree cannot separate them - and neither could you. Real data is full of this: two customers with identical profiles, one leaves and one stays. The box must pick a side, it picks fail, so row 2 is marked wrong.</p>
+<p>Two honest warnings before you trust that number:</p>
+<ul>
+<li>We scored on the same 10 rows we trained on. That is a memory test, not an ability test. Real evaluation needs <a href="../../13_Train_Test_Split/Concept/01_train_test_split_data.ipynb">01_train_test_split_data.ipynb</a>.</li>
+<li>Let a tree grow deep enough and it invents a rule for every single student. Perfect on this data, useless on the next batch. The usual fix is to grow many small trees and let them vote - Random Forest, the next topic in your notes.</li>
+</ul>
+<p><strong>If you remember only one thing:</strong> a decision tree keeps asking <em>&quot;which question removes the most confusion?&quot;</em> Entropy measures the confusion. Information gain is the drop.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">dt.score(x,y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9</pre></div>
+<div class="foot"><a class="btn" href="../Concept/16_Descison_Tree_Classfication.ipynb">16_Descison_Tree_Classfication.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

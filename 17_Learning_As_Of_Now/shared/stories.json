@@ -1,0 +1,412 @@
+{
+ "04_ML/01_What_Is_ML": {
+  "lede": "Where the rules stop being written by hand, and start being learned from examples.",
+  "idea": "Traditional code is rules in, answers out. Machine learning is answers in, rules out.",
+  "story": [
+   "<strong>Anita wrote a spam filter.</strong> Her rule was simple: if the subject line contains \"FREE\", move it to spam.",
+   "It worked for a week. Then the spam arrived as \"F R E E\", then \"Fr&#101;e\", then \"no cost to you\". Every time she added a rule, the senders changed one character and walked around it.",
+   "<span class='beat'>The problem was never the rules — it was that she was writing them.</span> No human can hand-write a rule for every disguise, because disguises are invented faster than rules.",
+   "So she flipped the direction. Instead of writing rules to get answers, she gave a program ten thousand emails already labelled spam or not, and asked it to work out the rule itself. That flip is machine learning."
+  ]
+ },
+ "04_ML/02_Types_Of_Variables": {
+  "lede": "Numbers, labels and ranks — and why a model treats each one completely differently.",
+  "idea": "A column's type decides what maths you are allowed to do with it. Averaging a pin code is meaningless.",
+  "story": [
+   "<strong>Vikram loaded his first dataset</strong> and did what felt natural: he asked for the average of every column.",
+   "Age averaged to 34 — useful. Salary to ₹52,000 — useful. Pin code to 561042 — <em>meaningless</em>. And \"City\" simply crashed.",
+   "<span class='beat'>The computer never objected.</span> It happily added pin codes together, because to it they were just numbers. The mistake was Vikram's: he treated a label as a quantity.",
+   "So before any model, every column gets a type: numerical, categorical, or ordinal. That one decision controls which maths is legal and which encoding you must apply later."
+  ]
+ },
+ "04_ML/03_Data_Collection": {
+  "lede": "Where the numbers come from, and the failure hiding inside each source.",
+  "idea": "Every data source is blind in its own particular way. Knowing which blindness you have is the skill.",
+  "story": [
+   "<strong>Riverstone wanted to know why customers were leaving.</strong> The team pulled numbers from three places: the app database, a customer survey, and a bought-in market report.",
+   "All three disagreed. The database said churn was 8%, the survey said 22%, the report said 15%.",
+   "<span class='beat'>None was lying — each answered a different question.</span> The database only knew people who had an account. The survey only heard from people annoyed enough to reply. The report described the whole market, not Riverstone's customers.",
+   "So data collection is not \"get the data\". It is knowing what each source can and cannot see, before a single model is fitted on top of it."
+  ]
+ },
+ "04_ML/04_Data_Cleaning": {
+  "lede": "Real data arrives broken. This is the work nobody photographs.",
+  "idea": "A model can only be as honest as the table you hand it. Clean first, model second.",
+  "story": [
+   "<strong>Deepak got the loan dataset and went straight to the model.</strong> Fit, predict, score — 94% on the first try. He was delighted.",
+   "Then he looked at the table. Income had blanks. Gender was recorded as \"Male\", \"male\", \"M\" and \"  Male \". Two hundred rows were exact duplicates. One applicant was 3 years old.",
+   "<span class='beat'>The 94% was measuring the mess, not the customers.</span> The duplicated rows sat in both train and test, so the model was scored on rows it had already memorised.",
+   "Cleaning is not tidying for its own sake. Every defect above quietly changes the number the model reports back to you."
+  ]
+ },
+ "04_ML/05_Missing_Values": {
+  "lede": "Blanks are not zero. What you put in their place changes the answer.",
+  "idea": "Deleting rows loses information; filling them invents it. The skill is choosing which cost to pay.",
+  "story": [
+   "<strong>Sunita had 614 loan applications and 50 blanks in the income column.</strong> Her first instinct: delete those rows. Simple and honest.",
+   "But the blanks were not random. Self-employed applicants were the ones leaving income empty — so deleting them deleted almost every self-employed person from the data.",
+   "<span class='beat'>The model that came out was excellent at judging salaried applicants and blind to everyone else.</span> The bias came from the cleaning step, not the algorithm.",
+   "So the real question is <em>why</em> is it missing? Missing at random can be filled with a mean or median. Missing for a reason must be kept, flagged, and modelled."
+  ]
+ },
+ "04_ML/06_Categorical_Encoding": {
+  "lede": "Models only do arithmetic. Words have to become numbers without inventing an order.",
+  "idea": "One-hot when categories are unordered; ordinal only when the order is real.",
+  "story": [
+   "<strong>Kiran had a City column: Delhi, Mumbai, Chennai.</strong> The model refused text, so he numbered them 1, 2, 3 and moved on.",
+   "The model then did what models do — arithmetic. It concluded Chennai (3) was <em>three times</em> Delhi (1), and that the average of Delhi and Chennai was Mumbai.",
+   "<span class='beat'>None of that is true. He had invented an order that does not exist.</span>",
+   "One-hot encoding fixes it by giving each city its own yes/no column, so no city outranks another. Ordinal encoding is only correct when the order is genuine — Small &lt; Medium &lt; Large."
+  ]
+ },
+ "04_ML/07_Outliers": {
+  "lede": "One wrong row can drag an entire model off course.",
+  "idea": "Find the extreme points, then judge: an error to remove, or a rare truth to keep?",
+  "story": [
+   "<strong>Farhan calculated the average salary on his team of ten.</strong> It came out at ₹41 lakh. Nobody on the team recognised that number.",
+   "Nine people earned between ₹8 and ₹15 lakh. The tenth was the founder, on ₹3 crore. The average described nobody at all.",
+   "<span class='beat'>The mean is not robust — one extreme value pulls it anywhere.</span> The median stayed at ₹11 lakh and described the team honestly.",
+   "So outliers must be found (IQR, Z-score, DBSCAN) and then judged. A typing error gets removed. A genuine founder salary gets kept — and it tells you the mean was the wrong tool."
+  ]
+ },
+ "04_ML/08_Feature_Scaling": {
+  "lede": "When one column shouts and another whispers, the model only hears the shouting.",
+  "idea": "Scaling puts every column on the same footing, so distance means the same in every direction.",
+  "story": [
+   "<strong>Neha built a model on two columns: age (18–70) and salary (₹200,000–₹2,000,000).</strong>",
+   "The model ignored age completely. Not because age was unimportant — because one year of age is a difference of 1, while a salary gap is 50,000. Measured as distance, salary drowned everything else.",
+   "<span class='beat'>The units decided the outcome, not the meaning.</span> Had she recorded salary in lakhs instead of rupees, identical data would have given a different model.",
+   "Scaling removes the units. StandardScaler centres a column and divides by its spread; MinMaxScaler squeezes it to 0–1. Distance-based models need it; trees do not care."
+  ]
+ },
+ "04_ML/09_Duplicates_And_Dtypes": {
+  "lede": "The same row twice, and numbers stored as text — two quiet defects that break scoring.",
+  "idea": "A duplicate row leaks between train and test. A number stored as text silently disables arithmetic.",
+  "story": [
+   "<strong>Ramesh exported his sales table twice and appended it to itself by mistake.</strong> The model scored 99%.",
+   "Every row in the test set also sat in the training set. The model was not predicting — it was reciting rows it had already seen.",
+   "<span class='beat'>Duplication does not look like a bug. It looks like success.</span>",
+   "The second defect is quieter still: a price column loaded as text. <code>df['price'].mean()</code> then either crashes or glues strings together. Both are caught by looking at <code>.info()</code> and <code>.duplicated()</code> before modelling."
+  ]
+ },
+ "04_ML/10_Function_Transformer": {
+  "lede": "When the relationship is curved, reshape the column instead of abandoning the model.",
+  "idea": "A log or square-root transform can straighten a skewed column so a straight-line model can use it.",
+  "story": [
+   "<strong>Priya plotted income against spending and got a banana.</strong> Most people clustered on the left, a long thin tail stretched far to the right.",
+   "A straight line through that shape fitted nobody: it sat above the crowd and below the tail.",
+   "<span class='beat'>The model was not wrong — the column was the wrong shape.</span>",
+   "Taking the log of income pulled the tail in and spread the crowd out. The same straight line then fitted well. FunctionTransformer applies that reshaping as a proper, reusable pipeline step."
+  ]
+ },
+ "04_ML/11_Feature_Selection": {
+  "lede": "More columns is not more information. Some columns actively make the model worse.",
+  "idea": "Keep the columns that carry signal; drop the ones carrying noise, duplication, or nothing.",
+  "story": [
+   "<strong>Arun had 60 columns and believed every one helped.</strong> More information, better model — surely.",
+   "Test accuracy got <em>worse</em> as he added columns. The model was finding patterns in pure noise and trusting them.",
+   "<span class='beat'>With enough useless columns, something will look meaningful by pure chance.</span> A constant column carries nothing; a duplicated column splits the credit and confuses both halves.",
+   "Feature selection removes them: variance thresholds for dead columns, forward and backward selection to test whether a column actually earns its place."
+  ]
+ },
+ "04_ML/12_Preprocessing": {
+  "lede": "Three scalers, two encoders, and the one rule that stops you cheating.",
+  "idea": "Fit every transformer on training data only. Fitting on the whole table leaks the answer.",
+  "story": [
+   "<strong>Manoj scaled his data, then split it into train and test.</strong> That order felt harmless — scaling is just arithmetic.",
+   "His test score came out suspiciously high. When the model met genuinely new data later, it was much worse.",
+   "<span class='beat'>The scaler had computed the mean using the test rows too.</span> A little information about the test set had leaked into training, and the exam was no longer sealed.",
+   "So the rule is absolute: split first, <code>fit</code> the scaler on the training rows only, then <code>transform</code> both. A <code>Pipeline</code> makes it impossible to get wrong."
+  ]
+ },
+ "04_ML/13_Train_Test_Split": {
+  "lede": "Hiding some rows before you start is the only way to find out if the model actually learned.",
+  "idea": "Score on rows the model has never seen, or you are measuring memory instead of skill.",
+  "story": [
+   "<strong>Sanjay trained a model and scored it on the same rows he trained it with.</strong> 100%. Perfect.",
+   "He shipped it. On real customers it was barely better than guessing.",
+   "<span class='beat'>He had given the student the exam paper during the lesson.</span> Reciting answers you have already seen proves nothing about the next question.",
+   "<code>train_test_split</code> hides a slice of rows before learning starts. The model never sees them, so the score on those rows is the first honest number you get."
+  ]
+ },
+ "04_ML/14_Synthetic_Datasets": {
+  "lede": "Data you build yourself, where you already know the right answer.",
+  "idea": "When you generate the data, you know the truth — so you can check whether the model found it.",
+  "story": [
+   "<strong>Latha's model gave a coefficient of 4.7.</strong> Was that right? She had no way to tell — nobody knows the true coefficient of real house prices.",
+   "So she could not separate \"my code is wrong\" from \"the data is just like that\".",
+   "<span class='beat'>Learning needs a case where the answer is known in advance.</span>",
+   "<code>make_regression</code> builds data from a coefficient <em>you</em> choose. Fit a model, and if it recovers your number, your code is right. The <code>make_*</code> family also builds blobs, circles and moons — shapes designed to break specific algorithms so you can see them fail."
+  ]
+ },
+ "04_ML/15_EDA_Uni_Bi_Multivariate": {
+  "lede": "Look at one column, then two, then all of them — before fitting anything.",
+  "idea": "Univariate shows shape, bivariate shows relationship, multivariate shows which columns carry the signal.",
+  "story": [
+   "<strong>Rekha fitted a model on all four Iris columns and got a good score.</strong> Then someone asked which measurement actually mattered.",
+   "She had no answer. She had never looked at the data — only at the score.",
+   "<span class='beat'>A score tells you <em>whether</em> it worked, never <em>why</em>.</span>",
+   "So she plotted: one column at a time to see its shape, two at a time to see whether classes separate, then all of them at once with a pairplot. In ten minutes she could see that petal length and petal width did nearly all the work."
+  ]
+ },
+ "04_ML/17_Multiple_Linear_Regression": {
+  "lede": "More than one input column: the line becomes a plane, and coefficients change meaning.",
+  "idea": "With several columns each coefficient is a partial effect — the others being held still.",
+  "story": [
+   "<strong>Ravi added a second column to his price model and the first coefficient changed.</strong> Distance had been worth ₹61 per unit; beside \"number of parcels\" it dropped to ₹20.",
+   "Nothing about distance had changed. He suspected a bug.",
+   "<span class='beat'>There was no bug. The meaning of the number had changed.</span> Alone, distance was quietly taking credit for parcels too, because long trips carried more parcels. Once parcels had their own column, they took their share back.",
+   "A coefficient in a multi-column model always means: the effect of this column <em>while the others are held still</em>. That is why coefficients cannot be read one at a time."
+  ]
+ },
+ "04_ML/18_Polynomial_Regression": {
+  "lede": "When a straight line is too simple and a wiggly curve is too eager.",
+  "idea": "Raising the degree lets the curve bend. Raise it too far and it memorises the noise.",
+  "story": [
+   "<strong>Meena's data curved and her straight line missed it everywhere.</strong> So she let the model bend — degree 2, then 3, then 15.",
+   "By degree 15 the curve passed through <em>every single training point</em>. Perfect training score.",
+   "<span class='beat'>On the test rows it was a disaster.</span> The curve had stopped following the trend and started following the noise, whipping wildly between points.",
+   "That is the whole overfitting story in one picture: too simple and you miss the pattern, too flexible and you memorise the accidents. Degree is the dial between them."
+  ]
+ },
+ "04_ML/19_Ridge_Regression": {
+  "lede": "Paying a penalty for large slopes, and the first hyperparameter you choose yourself.",
+  "idea": "Ridge minimises error + α × slope². Alpha trades fitting the data against keeping the line calm.",
+  "story": [
+   "<strong>Imran's model fitted the training rows beautifully and fell apart on new ones.</strong> Its coefficients were enormous — some in the thousands.",
+   "Huge coefficients mean the line is contorting itself to pass near every point. Move one input slightly and the prediction swings wildly.",
+   "<span class='beat'>The model was not learning the trend; it was chasing every wobble.</span>",
+   "Ridge adds a fine for large slopes. The model now has to justify every bit of steepness against a penalty, so it settles for a calmer line that generalises better. How big the fine is, is <code>alpha</code> — the first number you set rather than learn."
+  ]
+ },
+ "04_ML/20_Lasso_Regression": {
+  "lede": "The penalty that can push a coefficient all the way to exactly zero.",
+  "idea": "L1 subtracts a flat amount from each slope, so weak columns reach 0 and drop out entirely.",
+  "story": [
+   "<strong>Ridge shrank all of Imran's coefficients, but none reached zero.</strong> He still had 60 columns, each with a tiny non-zero weight.",
+   "He wanted to know which columns actually mattered. Ridge would not tell him — everything was slightly important.",
+   "<span class='beat'>Shrinking is not the same as removing.</span>",
+   "Lasso penalises the absolute slope instead of the square. That subtracts a fixed amount every step, so a weak coefficient hits exactly 0 and stays there. Lasso does not just regularise — it selects features."
+  ]
+ },
+ "04_ML/21_ElasticNet": {
+  "lede": "Both penalties at once, with a dial between them.",
+  "idea": "alpha sets how strong the penalty is; l1_ratio sets how much of it behaves like Lasso.",
+  "story": [
+   "<strong>Imran now had two tools and a problem with each.</strong> Lasso zeroed columns — good — but when two columns were near-copies it kept one at random and threw the other away.",
+   "Ridge kept both and shared the credit — good — but never removed anything.",
+   "<span class='beat'>He wanted the selection of Lasso and the stability of Ridge.</span>",
+   "ElasticNet applies both penalties together. <code>l1_ratio</code> slides between them: 1.0 is pure Lasso, 0.0 is pure Ridge, and 0.5 gives selection that still handles correlated columns sensibly."
+  ]
+ },
+ "04_ML/22_Cost_Functions": {
+  "lede": "Turning \"this line is better\" into a single number a computer can minimise.",
+  "idea": "MAE treats every miss equally. MSE punishes big misses hard. RMSE puts MSE back into real units.",
+  "story": [
+   "<strong>Two delivery models were compared.</strong> Model A was off by 5 minutes on every one of ten trips. Model B was perfect on nine and 50 minutes late on the tenth.",
+   "Total error: A = 50 minutes, B = 50 minutes. By that measure they were identical.",
+   "<span class='beat'>But no customer would call them identical.</span> One is mildly unreliable; the other ruins a delivery completely.",
+   "Squaring the errors separates them: MSE makes B far worse than A, because 50² dwarfs ten lots of 5². Which measure you choose <em>is</em> a decision about which kind of mistake you refuse to tolerate."
+  ]
+ },
+ "04_ML/23_Cross_Validation": {
+  "lede": "One split can be lucky. Five splits are harder to fool.",
+  "idea": "K-fold uses every row as test data exactly once, then averages — a score with far less luck in it.",
+  "story": [
+   "<strong>Gautam ran train_test_split and scored 0.91. He changed random_state and got 0.78.</strong> Same data, same model.",
+   "So which number was true? Neither. Each was one hand of cards.",
+   "<span class='beat'>A single split makes the score depend on who happened to land in the test set.</span>",
+   "K-fold cuts the data into 5 parts and runs 5 times, each part taking a turn as the test set. Every row is tested exactly once, and the average across folds is a number that does not move when you change a seed."
+  ]
+ },
+ "04_ML/24_Model_Evaluation": {
+  "lede": "Accuracy alone will let a useless model look excellent.",
+  "idea": "The confusion matrix separates the two kinds of mistake; precision and recall price them differently.",
+  "story": [
+   "<strong>A cancer screening model reported 97% accuracy.</strong> The team celebrated.",
+   "Then someone checked the data: 97% of the scans were healthy. A model that answered \"healthy\" every single time — never detecting anything — would also score 97%.",
+   "<span class='beat'>The model had learned nothing and the metric could not tell.</span>",
+   "The confusion matrix splits the errors apart: missed cancers versus false alarms. Recall asks how many real cases you caught; precision asks how often your alarm was right. On imbalanced data those two numbers are the truth and accuracy is decoration."
+  ]
+ },
+ "04_ML/25_ROC_And_AUC": {
+  "lede": "A model outputs a probability. The threshold is your decision, not the model's.",
+  "idea": "ROC sweeps every threshold; AUC summarises the whole curve as one number.",
+  "story": [
+   "<strong>Ayesha's classifier gave 0.5 as its cut-off: above is positive, below is negative.</strong> The default.",
+   "For fraud detection that was far too relaxed — she would rather flag ten innocent transactions than miss one real fraud. For sending marketing emails it was far too aggressive.",
+   "<span class='beat'>The right threshold depends on which mistake costs more, and the model has no idea what your costs are.</span>",
+   "The ROC curve plots what happens at <em>every</em> threshold at once, so you can pick with your eyes open. AUC compresses that curve into one number: the chance the model ranks a random positive above a random negative."
+  ]
+ },
+ "04_ML/26_Decision_Tree_Classification": {
+  "lede": "Twenty questions, asked in the smartest possible order.",
+  "idea": "Entropy measures confusion. The best question is the one that removes the most of it.",
+  "story": [
+   "<strong>A teacher had to guess which students would pass.</strong> She could ask each student one question at a time.",
+   "Her first attempt asked whatever came to mind — favourite colour, bus route. After five questions she knew nothing useful.",
+   "<span class='beat'>The questions were not wrong; the <em>order</em> was.</span> A good question splits a confused group into two clearer groups.",
+   "A decision tree scores every possible question by how much confusion it removes — that is information gain — and always asks the best one first. Then it repeats inside each half."
+  ]
+ },
+ "04_ML/27_Decision_Tree_Regression": {
+  "lede": "The same tree, but each leaf now answers with a number instead of a label.",
+  "idea": "Swap entropy for variance: the best split is the one that makes each side most similar.",
+  "story": [
+   "<strong>The same teacher now had to predict exam <em>marks</em>, not just pass or fail.</strong>",
+   "Entropy no longer applied — you cannot measure the \"confusion\" of a group of numbers the way you measure a mix of labels.",
+   "<span class='beat'>She needed a new measuring tape.</span>",
+   "Variance is that tape. A group where everyone scored near 70 has low variance; a group spread from 20 to 95 has high variance. The best question is the one that leaves both sides tightly grouped, and each leaf predicts the average of whoever lands in it."
+  ]
+ },
+ "04_ML/28_Naive_Bayes": {
+  "lede": "Counting backwards from evidence to cause, and the shortcut in the name.",
+  "idea": "Bayes flips a conditional you can count into the one you actually want.",
+  "story": [
+   "<strong>You know what car owners do for a living.</strong> You counted it door to door: of the 3 car-owning houses, 1 has a job and 2 run a business.",
+   "A new family moves in. You know they have a business. You want their vehicle — the question pointing the <em>other</em> way.",
+   "<span class='beat'>You have P(job | car). You need P(car | job).</span> They are not the same number, and swapping them by accident is one of the oldest mistakes in probability.",
+   "Bayes theorem is the exact rule for turning one into the other. \"Naive\" is the shortcut: assume the columns do not affect each other. It is usually false and works surprisingly well anyway."
+  ]
+ },
+ "04_ML/29_K_Nearest_Neighbor": {
+  "lede": "No training at all — just ask the neighbours.",
+  "idea": "Store every row; to predict, find the k closest and take a vote.",
+  "story": [
+   "<strong>A new family moves into the street and you want to guess their income.</strong>",
+   "You have no formula and no model. But you do know the five nearest houses.",
+   "<span class='beat'>So you look at those five and take the average.</span> That is the entire algorithm.",
+   "KNN has no training step — it memorises the data and does all the work at prediction time. Two things decide everything: how many neighbours you ask (k), and what \"near\" means — which is why unscaled columns wreck it."
+  ]
+ },
+ "04_ML/30_Support_Vector_Machines": {
+  "lede": "Not just a line that separates — the line with the widest possible gap.",
+  "idea": "Maximise the margin. When no straight line works, add a dimension until one does.",
+  "story": [
+   "<strong>Ramesh could draw a hundred lines that separated his two groups.</strong> Every one of them was correct on the training data.",
+   "But some passed within a hair of a point. The first new customer who landed slightly to the left would be classified wrongly.",
+   "<span class='beat'>Correct on today's data is not the same as safe on tomorrow's.</span>",
+   "SVC picks the line with the widest empty corridor around it. And when the groups form a ring that no straight line can cut, the kernel trick lifts them into a higher dimension where a flat plane <em>can</em> separate them."
+  ]
+ },
+ "04_ML/31_Clustering_KMeans": {
+  "lede": "Five thousand customers and not a single label. Find the groups anyway.",
+  "idea": "Guess k centres, assign each point to the nearest, move the centres to the middle, repeat.",
+  "story": [
+   "<strong>A shop had 5,000 customers and wanted to market to them in groups.</strong> Nobody had ever labelled a single customer.",
+   "Every model so far needed a right answer to learn from. Here there was none — no y column at all.",
+   "<span class='beat'>This is a different kind of problem: not \"predict the label\" but \"is there any structure here at all?\"</span>",
+   "K-Means drops k markers, assigns each customer to the nearest, then moves each marker to the middle of its crowd, and repeats until nothing moves. The elbow method tells you what k should have been."
+  ]
+ },
+ "04_ML/32_Hierarchical_Clustering": {
+  "lede": "Nine strangers in an empty town, shaking hands nearest-first.",
+  "idea": "Repeatedly merge the two closest groups; the dendrogram records the whole history.",
+  "story": [
+   "<strong>K-Means made the shop pick k before it had looked at anything.</strong> Four groups? Six? It was a guess made too early.",
+   "Worse, K-Means only draws round blobs. Two long curved groups get sliced straight through the middle.",
+   "<span class='beat'>The number of groups should come out of the data, not go into it.</span>",
+   "Hierarchical clustering never asks for k. It merges the two nearest points, then the two nearest groups, and keeps going until everything is one. The dendrogram is the diary of those merges — cut it at any height to get any number of clusters."
+  ]
+ },
+ "04_ML/33_Hyperparameter_Tuning": {
+  "lede": "The settings the model cannot learn for itself.",
+  "idea": "Grid search tries every combination with cross-validation; random search samples a few and usually gets close.",
+  "story": [
+   "<strong>Nisha had three settings to choose and tried them by hand.</strong> Change one, refit, note the score. Change another, refit.",
+   "Three settings with four values each is 64 combinations. By combination nine she had lost track of which numbers she had already tried.",
+   "<span class='beat'>And each score came from a single split — so half the differences she was chasing were luck.</span>",
+   "GridSearchCV does the whole sweep, cross-validated, in one <code>fit()</code>. RandomizedSearchCV samples a handful instead — usually finding almost as good a setting in a fraction of the time."
+  ]
+ },
+ "04_ML/34_Ensemble_Methods": {
+  "lede": "One expert can be wrong. A panel that disagrees usefully is harder to fool.",
+  "idea": "Bagging averages many independent models; boosting builds each new one to fix the last one's mistakes.",
+  "story": [
+   "<strong>A single deep decision tree memorised the training data perfectly and failed on new rows.</strong>",
+   "Nisha's instinct was to prune it. But a shallow tree was too simple to be useful.",
+   "<span class='beat'>One tree is either too eager or too dull. The fix is not a better tree — it is more of them.</span>",
+   "Random Forest grows hundreds of trees on different random slices and averages the vote, so individual mistakes cancel out. Boosting goes the other way: each new tree is built specifically to correct what the previous ones got wrong."
+  ]
+ },
+ "04_ML/35_Project_Employee_Attrition": {
+  "lede": "Every step so far, applied end to end on one real dataset.",
+  "idea": "A project is where cleaning, encoding, scaling, splitting and modelling stop being separate lessons.",
+  "story": [
+   "<strong>An HR team wanted to know who was likely to resign.</strong> They had one messy spreadsheet of employees.",
+   "Every technique needed here had already been practised alone — missing values, encoding, scaling, splitting, fitting.",
+   "<span class='beat'>Practised alone is not the same as sequenced correctly.</span> The order matters, and one wrong ordering — transforming before splitting — silently inflates the score.",
+   "This project is where the pieces have to hold together as one pipeline, and where the review queue still records a real leakage defect worth fixing."
+  ]
+ },
+ "01_Python/02_NumPy": {
+  "lede": "Arrays that do arithmetic on a million numbers without a single loop.",
+  "idea": "A NumPy array is one typed block of memory, so operations run in compiled code, not Python loops.",
+  "story": [
+   "<strong>Rahul had a million temperature readings to convert to Fahrenheit.</strong> He wrote the obvious loop.",
+   "It took eleven seconds. His colleague did the same job in 0.02 seconds with one line and no loop at all.",
+   "<span class='beat'>A Python list holds a million separate objects, each checked one at a time.</span> The loop was not slow because of the maths — it was slow because of the bookkeeping.",
+   "A NumPy array stores those numbers as one solid block of one type. <code>c * 9/5 + 32</code> then runs as compiled code across the whole block at once. That is vectorisation, and everything else in the data stack is built on it."
+  ]
+ },
+ "01_Python/03_Pandas": {
+  "lede": "A spreadsheet you can program: labelled columns, grouping, joining and reshaping.",
+  "idea": "A DataFrame is NumPy with names on the rows and columns — so you select by meaning, not position.",
+  "story": [
+   "<strong>Shalini had sales data in a NumPy array and needed revenue per city.</strong>",
+   "She could do the maths, but she had to remember that column 3 was city and column 7 was revenue. One inserted column and every line of her code silently pointed at the wrong thing.",
+   "<span class='beat'>Position is a fragile way to refer to meaning.</span>",
+   "Pandas puts names on it. <code>df.groupby('city')['revenue'].sum()</code> says what it does, survives a reordered file, and replaces about thirty lines of index-juggling."
+  ]
+ },
+ "01_Python/04_Matplotlib": {
+  "lede": "The plotting library everything else is built on top of.",
+  "idea": "A figure holds axes; you draw onto axes. Once that is clear, every chart type is the same pattern.",
+  "story": [
+   "<strong>Arjun printed a table of 200 monthly sales figures and stared at it.</strong>",
+   "He could see the numbers but not the shape — was it growing, seasonal, flat with one bad month? The table would not say.",
+   "<span class='beat'>Numbers are for computing. Pictures are for noticing.</span>",
+   "One line plot answered it in a second: a steady rise with a dip every December. Matplotlib is the base layer — a little verbose, but it is what Seaborn and Pandas plotting are quietly calling underneath."
+  ]
+ },
+ "01_Python/05_Seaborn": {
+  "lede": "Statistical charts in one line, with the defaults already sensible.",
+  "idea": "Seaborn takes a whole DataFrame and a column name, and does the grouping and styling for you.",
+  "story": [
+   "<strong>Arjun wanted to compare the distribution of tips across four days.</strong>",
+   "In Matplotlib that meant filtering the data four times, drawing four histograms, aligning the axes and building the legend by hand — about twenty-five lines.",
+   "<span class='beat'>Most of that code was bookkeeping, not thinking.</span>",
+   "Seaborn does it in one: <code>sns.boxplot(data=tips, x='day', y='tip')</code>. It understands DataFrames, so grouping, colouring and the legend come for free."
+  ]
+ },
+ "02_DataScience/01_Measures_Of_Variability": {
+  "lede": "Two datasets can share an average and describe completely different worlds.",
+  "idea": "The mean tells you where the middle is. Variance and standard deviation tell you how far people are from it.",
+  "story": [
+   "<strong>Two teams both averaged 50 marks.</strong> On paper they looked identical.",
+   "Team A scored 48, 50, 51, 51. Team B scored 5, 20, 80, 95. Same average, utterly different classrooms.",
+   "<span class='beat'>The average hid the only thing that mattered — the spread.</span>",
+   "Variance measures how far the values sit from the mean, on average. Standard deviation is its square root, which puts the answer back into marks instead of marks-squared."
+  ]
+ },
+ "02_DataScience/05_Central_Limit_Theorem": {
+  "lede": "Why the bell curve keeps appearing, even when the data is nothing like a bell.",
+  "idea": "Averages of samples form a normal distribution, no matter what shape the original data had.",
+  "story": [
+   "<strong>Ishaan rolled one die ten thousand times and plotted the results.</strong> Flat — every face equally likely. No bell curve anywhere.",
+   "Then he rolled <em>five</em> dice at a time and plotted the average of each throw.",
+   "<span class='beat'>A bell curve appeared, out of flat data.</span>",
+   "That is the Central Limit Theorem, and it is why so much of statistics works: you rarely need the population to be normal, only the averages you take from it — and those become normal on their own."
+  ]
+ },
+ "02_DataScience/06_Hypothesis_Testing_Basics": {
+  "lede": "Telling a real effect apart from a run of good luck.",
+  "idea": "Assume nothing happened, then ask how surprising your result would be if that were true.",
+  "story": [
+   "<strong>A new checkout page converted at 12% against the old page's 10%.</strong> The team wanted to ship it.",
+   "But they had only tested 80 visitors. Flip a fair coin 80 times and you will often get 45 heads — the gap could easily be noise.",
+   "<span class='beat'>The question is not \"is the new number bigger?\" It is \"is it bigger than luck can explain?\"</span>",
+   "Hypothesis testing assumes there is no real difference, then computes how often chance alone would produce a gap this large. If that is rare enough, the difference is worth believing."
+  ]
+ }
+}

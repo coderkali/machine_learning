@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Z Test vs T Test — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">02 DataScience › <b>Z Test vs T Test</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#z-test-vs-t-test-notes">Z-Test vs T-Test — Notes</a><a href="#which-test-do-i-use">Which test do I use?</a><a href="#side-by-side-comparison">Side-by-side comparison</a><a href="#real-life-analogy">Real-life analogy</a><a href="#what-is-quot-df-quot-degrees-of-freedom">What is &amp;quot;df&amp;quot; (Degrees of Freedom)?</a><a href="#same-data-both-formulas">Same data, both formulas</a><a href="#z-test-vs-t-test-overview">Z-Test vs T-Test — Overview</a><a href="#which-test-do-i-use">Which test do I use?</a><a href="#side-by-side-comparison">Side-by-side comparison</a><a href="#why-the-t-distribution-has-fatter-tails">Why the t-distribution has fatter tails</a><a href="#same-data-both-formulas">Same data, both formulas</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Data science and statistics</p>
+  <h1>Z Test vs T Test</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">1 notebook · 1 note</span></div>
+</div>
+<div class="src-head">📝 <a href="../Concept/Z-Test vs T-Test.md">Z-Test vs T-Test.md</a></div>
+<h2 id="z-test-vs-t-test-notes">Z-Test vs T-Test — Notes</h2>
+<p>Both tests answer the same question — <strong>&quot;is the difference in the mean real, or just random sampling noise?&quot;</strong> — but they apply under different conditions.</p>
+<p><strong>Inferential Statistics, in one line:</strong> take a small <strong>sample</strong> from a large <strong>population</strong>, analyze it, and use that to draw a <strong>conclusion about the whole population</strong>.</p>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    A((Sample)) --&gt;|analyze| B((Conclusion&lt;br/&gt;about Population))
+</pre></div>
+<p>Z-test and T-test are both used to compare <strong>means (averages)</strong>. Chi-Square (categorical data) and ANOVA (variance across groups) are separate tests, not covered here.</p>
+<hr />
+<h2 id="which-test-do-i-use">Which test do I use?</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart TD
+    Q1{&quot;Do you know the&lt;br/&gt;population std (σ)?&quot;}
+    Q2{&quot;Is sample size&lt;br/&gt;n &gt; 30?&quot;}
+    Z[&quot;Use Z-Test&quot;]
+    T1[&quot;Use T-Test&quot;]
+    T2[&quot;Use T-Test&quot;]
+
+    Q1 --&gt;|Yes| Q2
+    Q1 --&gt;|No| T1
+    Q2 --&gt;|Yes| Z
+    Q2 --&gt;|No| T2
+
+    style Z fill:#2f9e6f,stroke:#1e6b4b,color:#fff
+    style T1 fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style T2 fill:#2f6fed,stroke:#1e4fae,color:#fff
+</pre></div>
+<p><strong>Intuition:</strong> the t-distribution exists to handle the <em>extra uncertainty</em> of not knowing σ and/or having few data points — it has fatter tails than the normal curve, which thin out and converge to the Z curve as <code>n</code> grows.</p>
+<hr />
+<h2 id="side-by-side-comparison">Side-by-side comparison</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Z-Test</th>
+  <th>T-Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Population std (σ)</td>
+  <td>Known</td>
+  <td>Unknown (estimate with sample std <code>S</code>)</td>
+</tr>
+<tr>
+  <td>Sample size</td>
+  <td>Large (n &gt; 30)</td>
+  <td>Small (n ≤ 30)</td>
+</tr>
+<tr>
+  <td>Distribution used</td>
+  <td>Normal (Z)</td>
+  <td>Student's t-distribution</td>
+</tr>
+<tr>
+  <td>Tails</td>
+  <td>Thinner</td>
+  <td>Fatter (more conservative)</td>
+</tr>
+<tr>
+  <td>Formula</td>
+  <td>$z = \dfrac{\bar{x} - \mu}{\sigma/\sqrt{n}}$</td>
+  <td>$t = \dfrac{\bar{x} - \mu}{S/\sqrt{n}}$</td>
+</tr>
+</tbody>
+</table>
+<p>Where:</p>
+<ul>
+<li>$\bar{x}$ = Sample mean</li>
+<li>$\mu$ = Population mean</li>
+<li>$\sigma$ = Population std (Z-test)</li>
+<li>$S$ = Sample std (T-test)</li>
+<li>$n$ = Sample size</li>
+</ul>
+<p><strong>Memory trick:</strong> <strong>T</strong> — <em>&quot;Thoda sa hi pata hai&quot;</em> (small sample, σ unknown). <strong>Z</strong> — <em>&quot;Zyada sure hain&quot;</em> (large sample, σ known).</p>
+<hr />
+<h2 id="real-life-analogy">Real-life analogy</h2>
+<p><strong>Z-Test case:</strong> Sarkar ke paas pure India ke logo ki height ka data pehle se hai — average bhi pata, spread (σ) bhi. Tumne 200 logo ka sample uthaya (n &gt; 30) aur national average se compare kar rahe ho. σ pehle se pata hai → <strong>Z-Test</strong>.</p>
+<p><strong>T-Test case:</strong> Tumne apni class ke sirf 15 students ke marks liye, poore school ke average se compare karna hai. Poore school ka σ pata nahi, sample bhi chhota hai. Uncertainty zyada hai → <strong>T-Test</strong>.</p>
+<hr />
+<h2 id="what-is-quot-df-quot-degrees-of-freedom">What is &quot;df&quot; (Degrees of Freedom)?</h2>
+<p>If you have 5 numbers and their average is fixed at 10, you can freely pick 4 of them — the 5th is automatically forced to make the average work out. So out of <code>n</code> numbers, only <code>n - 1</code> are &quot;free&quot; — that's degrees of freedom, <code>df = n - 1</code>.</p>
+<p><strong>Why it matters for T-test:</strong> estimating σ from a small sample (<code>S</code>) introduces bias. <code>df</code> corrects for that bias — the smaller the sample, the bigger the correction, the fatter the tails.</p>
+<hr />
+<h2 id="same-data-both-formulas">Same data, both formulas</h2>
+<p>Same sample, computed both ways (in practice you'd only ever use one, per the flowchart above):</p>
+<div class="code"><pre class="py">x_bar = 148     # sample mean
+mu = 150        # population mean (claimed)
+n = 25          # sample size
+
+sigma = 5       # population std -&gt; used only for Z
+S = 5           # sample std     -&gt; used only for T
+
+z_test = (x_bar - mu) / (sigma / n**0.5)
+t_test = (x_bar - mu) / (S / n**0.5)
+</pre></div>
+<p>The arithmetic gives the same number — the difference is <strong>which distribution/critical value</strong> you compare it against (<code>norm.ppf</code> vs <code>t.ppf(..., df)</code>). The t critical value is always slightly larger (more conservative) for the same α, especially at low <code>df</code>.</p>
+<hr />
+<p>Worked full examples with critical values and decision rules: see <strong>09_Hypothesis_Testing_T-Test.ipynb</strong> and <strong>10_Hypothesis_Testing_T-Test.ipynb</strong>.</p>
+
+<div class="src-head">📓 <a href="../Concept/Z-Test vs T-Test.ipynb">Z-Test vs T-Test.ipynb</a></div>
+<h2 id="z-test-vs-t-test-overview">Z-Test vs T-Test — Overview</h2>
+<p>Both tests answer the same kind of question — <strong>&quot;is the difference in the mean real, or just due to random sampling?&quot;</strong> — but they apply under different conditions.</p>
+<p><strong>Inferential Statistics, in one line:</strong> we take a small <strong>sample</strong> from a large <strong>population</strong>, analyze it, and use that to draw a <strong>conclusion about the whole population</strong>.</p>
+<div class="code"><pre>Sample  ──(analyze)──&gt;  Conclusion about Population
+</pre></div>
+<p>Z-test and T-test are both used to compare <strong>means (averages)</strong>. The other common tests are Chi-Square (categorical data) and ANOVA (variance across groups) — out of scope for this notebook.</p>
+
+<h2 id="which-test-do-i-use">Which test do I use?</h2>
+<p>Everything comes down to two questions:</p>
+<ol>
+<li><strong>Do I know the population standard deviation ($\sigma$)?</strong></li>
+<li><strong>Is my sample size large ($n &gt; 30$)?</strong></li>
+</ol>
+<div class="code"><pre>Do you know population σ ?
+├── No  ─────────────────────────────►  Use T-Test
+└── Yes
+     └── Is sample size n &gt; 30 ?
+          ├── Yes  ───────────────────►  Use Z-Test
+          └── No   ───────────────────►  Use T-Test
+</pre></div>
+<p><strong>Intuition:</strong> the t-distribution exists to handle the <em>extra uncertainty</em> of not knowing $\sigma$ and/or having few data points — it has fatter tails than the normal distribution, which get thinner and converge to the Z (normal) curve as $n$ grows.</p>
+
+<h2 id="side-by-side-comparison">Side-by-side comparison</h2>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Z-Test</th>
+  <th>T-Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Population std ($\sigma$)</td>
+  <td>Known</td>
+  <td>Unknown (estimate with sample std $S$)</td>
+</tr>
+<tr>
+  <td>Sample size</td>
+  <td>Large ($n &gt; 30$)</td>
+  <td>Small ($n \leq 30$)</td>
+</tr>
+<tr>
+  <td>Distribution used</td>
+  <td>Normal (Z)</td>
+  <td>Student's t-distribution</td>
+</tr>
+<tr>
+  <td>Tails</td>
+  <td>Thinner</td>
+  <td>Fatter (more conservative)</td>
+</tr>
+<tr>
+  <td>Formula</td>
+  <td>$z = \dfrac{\bar{x} - \mu}{\sigma/\sqrt{n}}$</td>
+  <td>$t = \dfrac{\bar{x} - \mu}{S/\sqrt{n}}$</td>
+</tr>
+</tbody>
+</table>
+<p>Where:</p>
+<ul>
+<li>$\bar{x}$ = Sample mean</li>
+<li>$\mu$ = Population mean</li>
+<li>$\sigma$ = Population std (Z-test)</li>
+<li>$S$ = Sample std (T-test)</li>
+<li>$n$ = Sample size</li>
+</ul>
+<p><strong>Memory trick:</strong> <strong>T</strong> — <em>&quot;Thoda sa hi pata hai&quot;</em> (small sample, $\sigma$ unknown). <strong>Z</strong> — <em>&quot;Zyada sure hain&quot;</em> (large sample, $\sigma$ known).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">import numpy as np
+import scipy.stats as st
+import matplotlib.pyplot as plt</pre></div>
+<h2 id="why-the-t-distribution-has-fatter-tails">Why the t-distribution has fatter tails</h2>
+<p>Let's visualize the standard normal (used by the Z-test) against the t-distribution at a few degrees of freedom. Notice how the t-curve's tails shrink toward the normal curve as <code>df</code> (≈ sample size) increases — this is exactly why small samples need the more &quot;cautious&quot; t-test.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">x = np.linspace(-4, 4, 500)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, st.norm.pdf(x), color=&quot;crimson&quot;, linewidth=2.5, label=&quot;Z (Normal)&quot;)
+
+for df_, style in [(2, &quot;:&quot;), (5, &quot;--&quot;), (29, &quot;-.&quot;)]:
+    ax.plot(x, st.t.pdf(x, df_), linestyle=style, linewidth=1.8, label=f&quot;t (df={df_})&quot;)
+
+ax.set_title(&quot;Z-distribution vs T-distribution at different sample sizes&quot;)
+ax.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/z-test-vs-t-test-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="same-data-both-formulas">Same data, both formulas</h2>
+<p>To make the difference concrete: same sample, computed both ways. In practice you'd only ever use <strong>one</strong> of these (per the flowchart above) — this is just to compare the mechanics side by side.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148     # sample mean
+mu = 150        # population mean (claimed)
+n = 25          # sample size
+
+sigma = 5       # population std -&gt; used only for Z
+S = 5           # sample std     -&gt; used only for T
+
+z_test = (x_bar - mu) / (sigma / np.sqrt(n))
+t_test = (x_bar - mu) / (S / np.sqrt(n))
+
+print(&quot;z_test:&quot;, z_test)
+print(&quot;t_test:&quot;, t_test)
+print(&quot;df for t:&quot;, n - 1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>z_test: -2.0
+t_test: -2.0
+df for t: 24</pre></div>
+<p><strong>Note:</strong> with the same numbers, $z_{test}$ and $t_{test}$ come out equal — the difference isn't in the statistic's arithmetic, it's in <strong>which critical value / distribution</strong> you compare it against (<code>st.norm.ppf</code> vs <code>st.t.ppf(..., df)</code>). The t-distribution's critical value is always slightly larger (more conservative) for the same $\alpha$, especially at low <code>df</code>.</p>
+<p>Next: worked full examples with critical values and decision rules are in <strong>09_Hypothesis_Testing_T-Test.ipynb</strong> and <strong>10_Hypothesis_Testing_T-Test.ipynb</strong>.</p>
+
+<div class="foot"><a class="btn" href="../Concept/Z-Test vs T-Test.ipynb">Z-Test vs T-Test.ipynb ↗</a><a class="btn" href="../Concept/Z-Test vs T-Test.md">Z-Test vs T-Test.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

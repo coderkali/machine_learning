@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Types Of Variables — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Types Of Variables</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#machine-learning-03-types-of-variables">Machine Learning — 03. Types of Variables</a><a href="#the-big-picture">The Big Picture</a><a href="#numerical-variables-discrete-vs-continuous">Numerical Variables — Discrete vs. Continuous</a><a href="#categorical-variables-ordinal-vs-nominal">Categorical Variables — Ordinal vs. Nominal</a><a href="#date-amp-time-and-mixed-variables">Date &amp;amp; Time, and Mixed Variables</a><a href="#master-reference-table">Master Reference Table</a><a href="#where-this-fits">Where This Fits</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Types Of Variables</h1>
+  <p class="lede">Numbers, labels and ranks — and why a model treats each one completely differently.</p>
+  <div class="tags"><span class="tag">1 note</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Vikram loaded his first dataset</strong> and did what felt natural: he asked for the average of every column.</p><p>Age averaged to 34 — useful. Salary to ₹52,000 — useful. Pin code to 561042 — <em>meaningless</em>. And "City" simply crashed.</p><p><span class='beat'>The computer never objected.</span> It happily added pin codes together, because to it they were just numbers. The mistake was Vikram's: he treated a label as a quantity.</p><p>So before any model, every column gets a type: numerical, categorical, or ordinal. That one decision controls which maths is legal and which encoding you must apply later.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>A column's type decides what maths you are allowed to do with it. Averaging a pin code is meaningless.</p></div>
+<div class="src-head">📝 <a href="../Concept/03_Types_Of_Variables.MD">03_Types_Of_Variables.MD</a></div>
+<h2 id="machine-learning-03-types-of-variables">Machine Learning — 03. Types of Variables</h2>
+<p>Source: external course (WsCubeTech). Why this matters right now: two of
+the five Feature Engineering sub-skills from <code>02_ML_Roadmap.MD</code> —
+<strong>Categorical Encoding</strong> and <strong>Normalizing &amp; Standardization</strong> — are
+literally impossible to do correctly until you know which type each column
+is. This file is that missing prerequisite.</p>
+<hr />
+<h2 id="the-big-picture">The Big Picture</h2>
+<div class="code"><div class="code-head"><span>flow diagram (rendered in the notebook)</span></div><pre class="flow">flowchart LR
+    V[&quot;Variables&quot;] --&gt; N[&quot;Numerical&quot;]
+    V --&gt; C[&quot;Categorical&quot;]
+    V --&gt; D[&quot;Dates &amp;amp; Times&quot;]
+    V --&gt; M[&quot;Mixed&quot;]
+
+    N --&gt; N1[&quot;Discrete&quot;]
+    N --&gt; N2[&quot;Continuous&quot;]
+    C --&gt; C1[&quot;Ordinal&quot;]
+    C --&gt; C2[&quot;Nominal&quot;]
+
+    style N fill:#2f6fed,stroke:#1e4fae,color:#fff
+    style C fill:#b3781f,stroke:#8a5c16,color:#fff
+    style D fill:#7a3f66,stroke:#552b47,color:#fff
+    style M fill:#5c636e,stroke:#3a3f47,color:#fff
+</pre></div>
+<hr />
+<h2 id="numerical-variables-discrete-vs-continuous">Numerical Variables — Discrete vs. Continuous</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Type</th>
+  <th>Definition</th>
+  <th>Slide's example</th>
+  <th>More examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Discrete</strong></td>
+  <td>Countable values — you <em>count</em> them, usually whole numbers</td>
+  <td><code>exp</code> (years of experience: 1, 2, 3...)</td>
+  <td>Number of children, number of existing loans, a dice roll</td>
+</tr>
+<tr>
+  <td><strong>Continuous</strong></td>
+  <td>Can take <em>any</em> value within a range — you <em>measure</em> them</td>
+  <td><code>Salary</code> (10000, 20000...)</td>
+  <td>Height, weight, temperature, time taken</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The gotcha worth knowing:</strong> the slide's <code>Age</code> column (15, 20, 25...) looks
+discrete because it's recorded as whole years — but age is <em>conceptually</em>
+continuous (you don't jump from 24 to 25 in an instant; you pass through
+24.5, 24.501...). Most datasets <strong>discretize</strong> continuous things like age
+to whole years for convenience. So &quot;is this discrete or continuous?&quot;
+sometimes depends on <em>how precisely it was recorded</em>, not just what the
+thing is in reality.</p>
+<hr />
+<h2 id="categorical-variables-ordinal-vs-nominal">Categorical Variables — Ordinal vs. Nominal</h2>
+<p>Using the slide's employee table:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column</th>
+  <th>Example values</th>
+  <th>Type</th>
+  <th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>Emp_id</code></td>
+  <td>12, 13, 14, 15</td>
+  <td>❌ <strong>Not actually categorical</strong></td>
+  <td>It's a unique identifier, not a feature — looks numeric, means nothing statistically. Drop it before modeling.</td>
+</tr>
+<tr>
+  <td><code>Gender</code></td>
+  <td>Male, Female</td>
+  <td><strong>Nominal</strong></td>
+  <td>No natural order between the categories.</td>
+</tr>
+<tr>
+  <td><code>Remarks</code></td>
+  <td>Nice, Good, Great</td>
+  <td><strong>Ordinal</strong></td>
+  <td>There <em>is</em> a natural rank: Nice &lt; Good &lt; Great.</td>
+</tr>
+<tr>
+  <td><code>Language</code></td>
+  <td>Python, Java, C++, C#, HTML</td>
+  <td><strong>Nominal</strong></td>
+  <td>No inherent order among programming languages.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why the Ordinal/Nominal split matters, concretely:</strong> if you label-encode
+<code>Language</code> as Python=0, Java=1, C++=2, C#=3, you've just told the model
+&quot;C++ is more than Java&quot; — a fake relationship that doesn't exist. That's
+exactly why:</p>
+<ul>
+<li><strong>Nominal → One-Hot Encoding</strong> (each category gets its own 0/1 column,
+no order implied)</li>
+<li><strong>Ordinal → Label/Ordinal Encoding</strong> (Nice=0, Good=1, Great=2 is fine
+<em>here</em>, because the order is real)</li>
+</ul>
+<p>This is the exact decision Feature Engineering step 4 (<code>02_ML_Roadmap.MD</code>)
+was pointing at without spelling out how to choose — now you know the rule.</p>
+<hr />
+<h2 id="date-amp-time-and-mixed-variables">Date &amp; Time, and Mixed Variables</h2>
+<p><strong>Date &amp; Time:</strong> a single column can hold a date only, a time only, or
+both together. In practice you rarely feed a raw timestamp into a model —
+you <strong>derive new features from it</strong> instead: day of week, month, is it a
+weekend, hour of day, or &quot;time since&quot; something else happened (e.g., days
+since the loan application). This derivation step is itself a form of
+Feature Engineering that isn't on the slide's 5-item list but shows up
+constantly in real projects.</p>
+<p><strong>Mixed Variables:</strong> a single column that contains <em>both</em> numbers and
+category-like text — e.g. a Riverstone Bank <code>Branch_Code</code> like <code>&quot;MUM04&quot;</code> or
+<code>&quot;DEL12&quot;</code> (letters = city, digits = branch number, both meaningful). The
+classic textbook example is the full Titanic dataset's <code>Ticket</code> column
+(values like <code>&quot;349909&quot;</code> alongside <code>&quot;PC 17599&quot;</code>) — not present in your
+trimmed <code>DataScience_Y/titanic_sample_1000.csv</code>, but the standard reference
+whenever this topic comes up. The fix is the same either way: <strong>split the
+column</strong> into its numeric part and its categorical part as two separate
+engineered features, rather than treating the whole thing as one opaque
+string.</p>
+<hr />
+<h2 id="master-reference-table">Master Reference Table</h2>
+<p>The one table to come back to whenever you're staring at a new column and
+asking &quot;what is this, and what do I do with it?&quot;</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Variable Type</th>
+  <th>Sub-type</th>
+  <th>Definition</th>
+  <th>Example Column</th>
+  <th>Example Values</th>
+  <th>Typical Handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Numerical</td>
+  <td>Discrete</td>
+  <td>Countable, usually whole numbers</td>
+  <td><code>experience_years</code></td>
+  <td>1, 2, 3, 5</td>
+  <td>Usually left as-is; sometimes binned</td>
+</tr>
+<tr>
+  <td>Numerical</td>
+  <td>Continuous</td>
+  <td>Measured, any value in a range</td>
+  <td><code>salary</code></td>
+  <td>45000, 62500.75</td>
+  <td>Normalize / Standardize</td>
+</tr>
+<tr>
+  <td>Categorical</td>
+  <td>Nominal</td>
+  <td>Categories, no natural order</td>
+  <td><code>gender</code>, <code>language</code></td>
+  <td>Male/Female, Python/Java</td>
+  <td>One-Hot Encoding</td>
+</tr>
+<tr>
+  <td>Categorical</td>
+  <td>Ordinal</td>
+  <td>Categories, natural rank order</td>
+  <td><code>remarks</code></td>
+  <td>Nice &lt; Good &lt; Great</td>
+  <td>Label/Ordinal Encoding (rank preserved)</td>
+</tr>
+<tr>
+  <td>Date &amp; Time</td>
+  <td>—</td>
+  <td>Date only, time only, or both</td>
+  <td><code>application_date</code></td>
+  <td>2026-07-29, 14:30:00</td>
+  <td>Derive day/month/weekday/hour as new features</td>
+</tr>
+<tr>
+  <td>Mixed</td>
+  <td>—</td>
+  <td>Same column has numbers <em>and</em> text</td>
+  <td><code>branch_code</code>, <code>ticket_no</code></td>
+  <td>&quot;MUM04&quot;, &quot;PC 17599&quot;</td>
+  <td>Split into separate numeric + categorical features</td>
+</tr>
+<tr>
+  <td><em>(not a real variable)</em></td>
+  <td>Identifier</td>
+  <td>Unique key, not a feature</td>
+  <td><code>emp_id</code></td>
+  <td>12, 13, 14</td>
+  <td>Drop before modeling</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="where-this-fits">Where This Fits</h2>
+<ul>
+<li><strong>Categorical Encoding</strong> (Feature Engineering, step 4 in
+<code>02_ML_Roadmap.MD</code>) needs the Ordinal/Nominal split from this file to
+pick the right encoding.</li>
+<li><strong>Normalizing &amp; Standardization</strong> (step 5) applies mainly to <strong>Continuous</strong>
+numerical variables — a Discrete count like &quot;number of existing loans&quot;
+rarely needs the same scaling treatment.</li>
+<li>All of this is prerequisite knowledge for <code>phase_3_classical_ml/</code>
+Topic 3 (Feature Engineering, Encoding), which is next up.</li>
+</ul>
+<hr />
+<h2 id="faq-common-mix-ups">FAQ — Common Mix-Ups</h2>
+<ol>
+<li><strong>&quot;Isn't <code>Age</code> obviously discrete since it's always a whole number in
+the data?&quot;</strong> Not quite — it's <em>recorded</em> as discrete (whole years) but
+<em>conceptually</em> continuous. Whether a variable is discrete or continuous
+is about its true nature, not just how it happens to be stored.</li>
+<li><strong>&quot;<code>Emp_id</code> is a number, so it's a numerical variable, right?&quot;</strong> No —
+looking numeric isn't the same as being meaningfully numerical. An ID
+has no relationship to the outcome you're predicting; it's a label, and
+the correct move is to exclude it, not encode it.</li>
+<li><strong>&quot;Ordinal and Nominal both just get Label Encoded, since both are
+categories.&quot;</strong> No — only Ordinal data has a real order to preserve.
+Label-encoding Nominal data invents an order that isn't there and can
+quietly mislead the model.</li>
+<li><strong>&quot;A Mixed variable is basically just categorical, since it has
+text.&quot;</strong> Not ideal — treating it as plain categorical throws away the
+numeric signal hidden inside. Splitting it into its numeric and
+categorical parts keeps both.</li>
+</ol>
+<hr />
+<h2 id="interview-style-q-amp-a">Interview-Style Q&amp;A</h2>
+<p><strong>Q: When would you choose One-Hot Encoding over Label Encoding?</strong>
+A: When the categorical variable is nominal — no natural order between
+categories. Label Encoding on nominal data invents a false order/magnitude
+relationship (e.g., implying one programming language is &quot;more&quot; than
+another), which One-Hot Encoding avoids by giving each category its own
+independent 0/1 column.</p>
+<p><strong>Q: Why shouldn't an ID column be fed into a model as a feature?</strong>
+A: It has no genuine statistical relationship with the target — it's a
+unique key. Including it risks the model latching onto ID-specific noise
+from training data (a form of overfitting) that won't generalize to new,
+unseen IDs.</p>
+<p><strong>Q: Is a <code>Salary</code> column continuous even if every value in your dataset
+happens to be a round number?</strong>
+A: Yes — continuity is a property of what the variable <em>can</em> be (any value
+in a range, including decimals), not a property of the specific sample
+you happened to collect.</p>
+
+<div class="foot"><a class="btn" href="../Concept/03_Types_Of_Variables.MD">03_Types_Of_Variables.MD ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

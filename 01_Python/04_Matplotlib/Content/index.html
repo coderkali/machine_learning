@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matplotlib — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">01 Python › <b>Matplotlib</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#matplotlib">Matplotlib</a><a href="#files">Files</a><a href="#covered-so-far">Covered so far</a><a href="#matplotlib-chart-fundamentals">Matplotlib — Chart Fundamentals</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#1-setup-the-import-cells">1. Setup — the import cells</a><a href="#2-line-plots-and-the-format-string-shortcut">2. Line plots and the format-string shortcut</a><a href="#3-styling-markers-and-lines-with-keywords">3. Styling markers and lines with keywords</a><a href="#4-titles-axis-labels-and-grid">4. Titles, axis labels, and grid</a><a href="#5-subplots-several-charts-on-one-figure">5. Subplots — several charts on one figure</a><a href="#6-scatter-plots">6. Scatter plots</a><a href="#7-bar-charts">7. Bar charts</a><a href="#8-histogram">8. Histogram</a><a href="#9-pie-charts">9. Pie charts</a><a href="#10-annotations">10. Annotations</a><a href="#11-filled-areas">11. Filled areas</a><a href="#12-saving-to-a-file">12. Saving to a file</a><a href="#quick-reference">Quick reference</a><a href="#issues-in-this-notebook">Issues in this notebook</a><a href="#summary">Summary</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Python and the data toolkit</p>
+  <h1>Matplotlib</h1>
+  <p class="lede">The plotting library everything else is built on top of.</p>
+  <div class="tags"><span class="tag">4 notebooks · 1 note</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Arjun printed a table of 200 monthly sales figures and stared at it.</strong></p><p>He could see the numbers but not the shape — was it growing, seasonal, flat with one bad month? The table would not say.</p><p><span class='beat'>Numbers are for computing. Pictures are for noticing.</span></p><p>One line plot answered it in a second: a steady rise with a dip every December. Matplotlib is the base layer — a little verbose, but it is what Seaborn and Pandas plotting are quietly calling underneath.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>A figure holds axes; you draw onto axes. Once that is clear, every chart type is the same pattern.</p></div>
+<div class="src-head">📝 <a href="../Concept/README.md">README.md</a></div>
+<h2 id="matplotlib">Matplotlib</h2>
+<p><strong>Curriculum module:</strong> M02 - Data Visualization with Python<br />
+<strong>Status:</strong> 🟡 Learning</p>
+<p>Matplotlib is Python's base plotting library. It turns arrays and lists into
+figures — lines, scatters, bars, histograms, pies — and writes them to a
+notebook or to an image file. Seaborn and Pandas' own <code>.plot()</code> are built on
+top of it.</p>
+<h2 id="files">Files</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>File</th>
+  <th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="../Concept/example_01.ipynb"><code>example_01.ipynb</code></a></td>
+  <td>Chart-type fundamentals: line, scatter, bar, histogram, pie, fill, annotations, subplots, and saving to file. <strong>All explanation lives in this notebook</strong>, in the Markdown cells above each group of code cells.</td>
+</tr>
+<tr>
+  <td><a href="../Data/chart.png"><code>chart.png</code></a></td>
+  <td>Output written by the notebook's last cell via <code>plt.savefig</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="covered-so-far">Covered so far</h2>
+<p>Line plots and format strings, marker and line-style keywords, titles and axis
+labels, grid, subplots, scatter with colormaps and bubble sizes, bar and barh,
+histograms, pie charts with labels and explode, annotations with arrows,
+<code>fill_between</code>, and <code>savefig</code>.</p>
+<p><strong>Not covered yet:</strong> legends, <code>autopct</code> on pie charts, the object-oriented
+<code>fig, ax = plt.subplots()</code> style, and plotting directly from a Pandas
+DataFrame. The instructor module also includes Seaborn and Plotly — add those
+folders when those lessons begin.</p>
+
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div>
+<h2 id="matplotlib-chart-fundamentals">Matplotlib — Chart Fundamentals</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — M02, Data Visualization with Python</p>
+</div>
+<p><strong>What this notebook is:</strong> a hands-on tour of <code>matplotlib.pyplot</code>, covering six chart families (line, scatter, bar, histogram, pie, fill) plus the styling arguments that apply across all of them.</p>
+<p><strong>How to read it:</strong> this notebook is a <strong>ladder</strong>. Almost every cell repeats the cell above it and changes exactly one thing. So the useful question at each step is <em>what is different from the cell before?</em> Each Markdown section below explains every code cell that follows it, up to the next section.</p>
+<p>Matplotlib version used here: <strong>3.10.9</strong>.</p>
+<hr />
+<h2 id="the-mental-model-read-this-first">The mental model — read this first</h2>
+<p>Every cell below is <code>plt.something(...)</code>, and that hides an object tree:</p>
+<div class="code"><pre>Figure  ......... the whole canvas / the page
+  |
+  +-- Axes  ..... ONE plot area  (not &quot;axis&quot; - an Axes HOLDS two Axis objects)
+        |
+        +-- Artists ... the things actually drawn: lines, dots, bars, wedges
+        +-- Axis ...... ticks, limits, tick labels
+</pre></div>
+<p>Which call touches what:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Acts on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plt.plot</code>, <code>plt.scatter</code>, <code>plt.bar</code>, <code>plt.pie</code></td>
+  <td>the <strong>current Axes</strong> — draws into it</td>
+</tr>
+<tr>
+  <td><code>plt.title</code>, <code>plt.xlabel</code>, <code>plt.ylabel</code>, <code>plt.grid</code></td>
+  <td>the <strong>current Axes</strong> — decorates it</td>
+</tr>
+<tr>
+  <td><code>plt.suptitle</code>, <code>plt.savefig</code>, <code>plt.show</code></td>
+  <td>the <strong>current Figure</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor curriculum.</em></p>
+<p><code>pyplot</code> keeps a hidden &quot;current figure / current Axes&quot; pointer, exactly like Spring's <code>RequestContextHolder</code> keeps the request in a thread-local so you can reach it without passing it around. <code>plt.title(...)</code> never says <em>which</em> chart it titles — it targets whatever is current. That is why cell order matters in this notebook, and why the explicit style (<code>fig, ax = plt.subplots()</code> then <code>ax.set_title(...)</code>) is what production code should use: constructor injection instead of a global lookup.</p>
+</div>
+<p>The flow in every single cell of this notebook is the same:</p>
+<div class="code"><pre>data (np.array or list)
+   -&gt; a plotting call     plt.plot / scatter / bar / hist / pie
+   -&gt; styling calls       plt.title / xlabel / ylabel / grid
+   -&gt; plt.savefig(...)    (before show, if saving)
+   -&gt; plt.show()          renders AND clears the figure
+</pre></div>
+
+<h2 id="1-setup-the-import-cells">1. Setup — the import cells</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell</th>
+  <th>Why it exists</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>import matplotlib</code></td>
+  <td>Imports the <strong>top-level package only</strong>. Gives version info and config (<code>matplotlib.rcParams</code>) but <strong>not</strong> the plotting functions — which is why a second import follows.</td>
+</tr>
+<tr>
+  <td><code>print(matplotlib.__version__)</code></td>
+  <td>Prints <code>3.10.9</code>. Checking the version first is a good habit: matplotlib keyword arguments have changed across major versions, so a snippet from the internet that fails may simply be written for a different one.</td>
+</tr>
+<tr>
+  <td><code>import matplotlib.pyplot as plt</code></td>
+  <td><code>pyplot</code> is the <strong>submodule</strong> that holds <code>plot</code>, <code>scatter</code>, <code>bar</code>, <code>show</code>, … The alias <code>plt</code> is universal convention.</td>
+</tr>
+<tr>
+  <td><code>import numpy as np</code></td>
+  <td>Most data below is built with <code>np.array</code>. Matplotlib accepts plain Python lists too — the annotation cells near the end prove it.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Takeaway:</strong> <code>matplotlib</code> is the library, <code>matplotlib.pyplot</code> is the drawing API. Importing the first does not give you the second.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">print(matplotlib.__version__)</pre></div>
+<div class="out"><div class="h">Output</div><pre>3.10.9</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np</pre></div>
+<hr />
+<h2 id="2-line-plots-and-the-format-string-shortcut">2. Line plots and the format-string shortcut</h2>
+<p>The next 12 cells all reuse the same two arrays:</p>
+<div class="code"><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+</pre></div>
+<p><code>y</code> is exactly <code>2 * x</code>, so the true shape is a straight line through the origin with slope 2. That is deliberate: when the data is boring and predictable, <strong>any change you see on screen is caused by the style argument, not by the data.</strong> Clean experiment design.</p>
+<h3>The baseline — <code>plt.plot(x, y)</code></h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Line</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plt.plot(x, y)</code></td>
+  <td>Pairs the arrays element-wise into points <code>(1,2), (2,4) … (10,20)</code> and connects them with a solid line. Both arrays <strong>must be the same length</strong>, or you get <code>ValueError: x and y must have same first dimension</code>.</td>
+</tr>
+<tr>
+  <td><code>plt.show()</code></td>
+  <td>Renders the figure, then <strong>clears</strong> it so the next cell starts on a fresh canvas.</td>
+</tr>
+</tbody>
+</table>
+<p>Defaults you get silently: line style <code>-</code> solid, line width <code>1.5</code>, no markers, and the first color of the property cycle (<code>#1f77b4</code>, a medium blue).</p>
+<p><em>On <code>plt.show()</code> in Jupyter:</em> the chart would display without it, but the call also suppresses the <code>[&lt;matplotlib.lines.Line2D ...&gt;]</code> repr text that would otherwise print above the image. Keeping it is correct, and it makes the code portable to a <code>.py</code> script where it is mandatory.</p>
+<h3>The format string</h3>
+<p>The third positional argument is a compact shorthand for <code>[marker][linestyle][color]</code>.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Code</th>
+  <th>Result</th>
+  <th>Rule it teaches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>'o'</code></td>
+  <td>circle markers, <strong>no line</strong></td>
+  <td>marker only ⇒ the connecting line disappears</td>
+</tr>
+<tr>
+  <td><code>'s'</code></td>
+  <td>square markers, no line</td>
+  <td>same rule</td>
+</tr>
+<tr>
+  <td><code>'d'</code></td>
+  <td>thin diamond, no line</td>
+  <td><code>'D'</code> uppercase is the fat diamond</td>
+</tr>
+<tr>
+  <td><code>'p'</code></td>
+  <td>pentagon, no line</td>
+  <td>same rule</td>
+</tr>
+<tr>
+  <td><code>'r'</code></td>
+  <td>red <strong>solid line</strong></td>
+  <td>color only ⇒ the default line is kept</td>
+</tr>
+<tr>
+  <td><code>'g'</code></td>
+  <td>green solid line</td>
+  <td>same rule</td>
+</tr>
+</tbody>
+</table>
+<p>Those two blocks are the lesson, learned by contrast: <strong>adding a marker removes the line; adding a color does not.</strong></p>
+<p>Single-letter colors: <code>b</code> blue, <code>g</code> green, <code>r</code> red, <code>c</code> cyan, <code>m</code> magenta, <code>y</code> yellow, <code>k</code> black, <code>w</code> white.</p>
+<h3>The same thing as a keyword</h3>
+<p><code>plt.plot(x, y, marker=&quot;*&quot;)</code> is identical in effect to passing <code>'*'</code>. Format strings are terse; keywords are readable and self-documenting. Both appear here so you can read other people's code.</p>
+<h3>All three parts at once</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Code</th>
+  <th>Marker</th>
+  <th>Line style</th>
+  <th>Color</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>'o-r'</code></td>
+  <td>circle</td>
+  <td><code>-</code> solid</td>
+  <td>red</td>
+</tr>
+<tr>
+  <td><code>'o:g'</code></td>
+  <td>circle</td>
+  <td><code>:</code> dotted</td>
+  <td>green</td>
+</tr>
+<tr>
+  <td><code>'o--y'</code></td>
+  <td>circle</td>
+  <td><code>--</code> dashed</td>
+  <td>yellow</td>
+</tr>
+<tr>
+  <td><code>'o-.m'</code></td>
+  <td>circle</td>
+  <td><code>-.</code> dash-dot</td>
+  <td>magenta</td>
+</tr>
+</tbody>
+</table>
+<p>Matplotlib parses the three parts in <strong>any order</strong> — <code>'o-r'</code>, <code>'-or'</code> and <code>'ro-'</code> are the same chart. The one real trap: <code>'-.'</code> (dash-dot) and <code>'-'</code> followed by a <code>.</code> marker look alike in text. Read them carefully.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c07-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;s&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c08-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;d&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c09-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;p&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c10-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;r&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c11-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;g&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c12-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,marker =&quot;*&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c13-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o-r&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c14-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o:g&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c15-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o--y&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c16-11.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o-.m&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c17-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="3-styling-markers-and-lines-with-keywords">3. Styling markers and lines with keywords</h2>
+<h3>The marker aliases</h3>
+<p>Five separate visual channels are controlled in the next two cells. The short names are aliases matplotlib accepts for the long ones:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Alias</th>
+  <th>Full name</th>
+  <th>Controls</th>
+  <th>1st cell</th>
+  <th>2nd cell</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>c</code></td>
+  <td><code>color</code></td>
+  <td>the <strong>connecting line</strong></td>
+  <td>yellow</td>
+  <td>magenta</td>
+</tr>
+<tr>
+  <td><code>marker</code></td>
+  <td>—</td>
+  <td>symbol shape</td>
+  <td>circle</td>
+  <td>circle</td>
+</tr>
+<tr>
+  <td><code>ms</code></td>
+  <td><code>markersize</code></td>
+  <td>symbol size, <strong>in points (diameter)</strong></td>
+  <td>10</td>
+  <td>20</td>
+</tr>
+<tr>
+  <td><code>mec</code></td>
+  <td><code>markeredgecolor</code></td>
+  <td>symbol border</td>
+  <td>black</td>
+  <td>black</td>
+</tr>
+<tr>
+  <td><code>mfc</code></td>
+  <td><code>markerfacecolor</code></td>
+  <td>symbol fill</td>
+  <td>magenta</td>
+  <td>yellow</td>
+</tr>
+</tbody>
+</table>
+<p>The second cell is the first one with the line and fill colors swapped and the marker doubled in size. It exists to prove <code>c</code> and <code>mfc</code> are genuinely independent — a common beginner confusion is expecting one <code>color</code> argument to control everything.</p>
+<p>⚠️ <code>ms</code> here is a <strong>diameter in points</strong>. In <code>plt.scatter</code> further down, the size argument <code>s</code> is an <strong>area in points²</strong>. Different scales — <code>ms=20</code> and <code>s=20</code> produce very different dots.</p>
+<h3>Line style by name and by symbol</h3>
+<p><code>linestyle='dotted'</code> and <code>linestyle=':'</code> draw the <strong>identical chart</strong>. That is the whole point of running them next to each other:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Name</th>
+  <th>Symbol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>'solid'</code></td>
+  <td><code>'-'</code></td>
+</tr>
+<tr>
+  <td><code>'dashed'</code></td>
+  <td><code>'--'</code></td>
+</tr>
+<tr>
+  <td><code>'dotted'</code></td>
+  <td><code>':'</code></td>
+</tr>
+<tr>
+  <td><code>'dashdot'</code></td>
+  <td><code>'-.'</code></td>
+</tr>
+</tbody>
+</table>
+<p>These cells pass no marker, so the markers are gone again and only the styled line remains.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,c=&#x27;y&#x27;,marker=&#x27;o&#x27;,ms=10,mec=&#x27;k&#x27;,mfc=&#x27;m&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c19-13.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,c=&#x27;m&#x27;, marker = &#x27;o&#x27;, ms = 20, mec = &#x27;k&#x27;, mfc = &#x27;y&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c20-14.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,linestyle = &#x27;dotted&#x27;,c=&#x27;m&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c21-15.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,linestyle = &#x27;dashed&#x27;,c=&#x27;m&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c22-16.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,linestyle = &#x27;:&#x27;,c=&#x27;m&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c23-17.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="4-titles-axis-labels-and-grid">4. Titles, axis labels, and grid</h2>
+<p>The first charts here that actually communicate something.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Line</th>
+  <th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plt.title(&quot;Plot&quot;, loc=&quot;left&quot;)</code></td>
+  <td>Title above the Axes. <code>loc</code> accepts <code>'left'</code>, <code>'center'</code> (the default), <code>'right'</code>.</td>
+</tr>
+<tr>
+  <td><code>plt.xlabel(&quot;X Axis&quot;)</code></td>
+  <td>Label under the horizontal axis.</td>
+</tr>
+<tr>
+  <td><code>plt.ylabel(&quot;Y axis&quot;)</code></td>
+  <td>Label beside the vertical axis, rotated 90°.</td>
+</tr>
+<tr>
+  <td><code>c='#00ffbd'</code></td>
+  <td>A <strong>hex RGB color</strong> (bright turquoise) — you are not restricted to the 8 single-letter colors.</td>
+</tr>
+<tr>
+  <td><code>plt.grid(color='r', linestyle=':', linewidth=0.6)</code></td>
+  <td>Turns the grid on and styles it: red, dotted, thin. A grid helps a reader estimate values off the chart.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notice the ordering.</strong> The title and label calls come <em>before</em> <code>plt.plot</code>, yet they still apply — because they all target the same current Axes, which pyplot creates on the first call that needs one. It reads oddly, though; <strong>draw first, then decorate</strong> is the convention that matches how people read code.</p>
+<p>⚠️ <code>linewidth='10'</code> passes a <strong>string</strong>. Matplotlib converts it to <code>10.0</code>, so the chart is correct, but it works by accident. Write <code>linewidth=10</code>.</p>
+<p>Two more grid facts worth knowing: <code>plt.grid(axis='y')</code> draws horizontal lines only, and calling <code>plt.grid()</code> a second time <strong>toggles it off</strong> — so pass <code>True</code> / <code>False</code> explicitly when it matters.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.title(&quot;Plot&quot;,loc=&quot;left&quot;)
+plt.xlabel(&quot;X Axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.plot(x,y,linestyle = &#x27;dotted&#x27;, linewidth=&#x27;10&#x27;,c=&#x27;#00ffbd&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c25-18.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.title(&quot;Plot&quot;, loc = &#x27;center&#x27;)
+plt.xlabel(&quot;X axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.plot(x,y,linestyle = &#x27;dotted&#x27;,linewidth = &#x27;10&#x27;,c=&#x27;k&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c26-19.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.title(&quot;Plot&quot;, loc = &#x27;center&#x27;)
+plt.xlabel(&quot;X axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.plot(x,y)
+plt.grid(color = &#x27;r&#x27;, linestyle = &#x27;:&#x27;, linewidth = 0.6)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c27-20.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="5-subplots-several-charts-on-one-figure">5. Subplots — several charts on one figure</h2>
+<p><code>plt.subplot(nrows, ncols, index)</code></p>
+<ul>
+<li><code>nrows</code>, <code>ncols</code> describe the <strong>grid</strong> you divide the figure into</li>
+<li><code>index</code> selects <strong>which panel</strong> you are about to draw in</li>
+<li>indexing starts at <strong>1</strong>, not 0, running left-to-right then top-to-bottom</li>
+</ul>
+<p>Every call after <code>plt.subplot(...)</code> targets that panel until the next <code>plt.subplot(...)</code> switches the current Axes.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Cell uses</th>
+  <th>Grid</th>
+  <th>Layout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>(1, 2, 1)</code> and <code>(1, 2, 2)</code></td>
+  <td>1 row × 2 cols</td>
+  <td>side by side</td>
+</tr>
+<tr>
+  <td><code>(2, 1, 1)</code> and <code>(2, 1, 2)</code></td>
+  <td>2 rows × 1 col</td>
+  <td>stacked — only the grid changed</td>
+</tr>
+<tr>
+  <td><code>(2, 2, 1)</code> and <code>(2, 2, 2)</code></td>
+  <td>2 rows × 2 cols</td>
+  <td>four panels, only the top two drawn, so the bottom row is empty whitespace</td>
+</tr>
+</tbody>
+</table>
+<p>Side-by-side is better for comparing shapes; stacked with a shared x-axis is better for comparing values at the same x. The half-empty 2×2 is useful to <em>see</em> once so the numbering clicks — but in real work, size the grid to the number of charts you actually have.</p>
+<h3>Panel title vs figure title</h3>
+<p>The last cell of this group is the important one:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Call</th>
+  <th>Scope</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plt.title(...)</code></td>
+  <td>current <strong>Axes</strong></td>
+  <td>one heading per panel</td>
+</tr>
+<tr>
+  <td><code>plt.suptitle(...)</code></td>
+  <td>the <strong>Figure</strong></td>
+  <td>one heading above everything</td>
+</tr>
+</tbody>
+</table>
+<p>Because <code>plt.title</code> follows the current-Axes rule, <strong>position matters</strong>: <code>&quot;First&quot;</code> lands on panel 1 only because it is called before the second <code>plt.subplot</code> switches context. Move that line down and the title moves with it. This is the mental model from the top of the notebook, in code.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(1, 2, 1)
+plt.plot(a,b)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(1, 2, 2)
+plt.plot(c,d)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c29-21.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(2, 1, 1)
+plt.plot(a,b)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(2, 1, 2)
+plt.plot(c,d)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c30-22.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(2, 2, 1)
+plt.plot(a,b)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(2, 2, 2)
+plt.plot(c,d)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c31-23.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(2, 2, 1)
+plt.plot(a,b)
+plt.title(&quot;First&quot;)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(2, 2, 2)
+plt.plot(c,d)
+plt.title(&quot;Second&quot;)
+plt.suptitle(&quot;Title&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c32-24.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="6-scatter-plots">6. Scatter plots</h2>
+<p>A scatter plot draws points <strong>without connecting them</strong>. Use it when x and y are paired observations and row order means nothing — a line plot implies a sequence, a scatter does not.</p>
+<p>The data changes here (<code>y = [5,7,2,1,3,4,7,6,8,3]</code> is unordered), so there is no longer a straight line to hide behind.</p>
+<h3>Series-level color</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Code</th>
+  <th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plt.scatter(x, y)</code></td>
+  <td>10 dots, default blue</td>
+</tr>
+<tr>
+  <td>two <code>scatter</code> calls in one cell</td>
+  <td>Matplotlib does <strong>not</strong> clear between calls — it layers. The second series automatically takes the next color in the cycle (orange).</td>
+</tr>
+<tr>
+  <td><code>color='m'</code></td>
+  <td>a <strong>single value</strong> ⇒ applies to the whole series</td>
+</tr>
+<tr>
+  <td><code>color=colors</code> (array of names)</td>
+  <td>an <strong>array</strong> ⇒ applies element-wise, dot <em>i</em> gets <code>colors[i]</code>. Length must match the number of points.</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ Two traps in this group. The two-series cells have <strong>no legend</strong>, so a reader cannot tell the groups apart — the fix is <code>label=&quot;...&quot;</code> on each call plus <code>plt.legend()</code>. And the per-point color array contains <code>&quot;white&quot;</code>, so that dot is drawn on a white background and is <strong>invisible</strong>: only 9 dots appear. The chart did not error, it silently lost data.</p>
+<h3>Color as data — colormap + colorbar</h3>
+<p>This is a genuinely different idea, and it is why <code>c</code> and <code>color</code> are separate arguments:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Line</th>
+  <th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>colorss = np.array([5, 15, 23, …])</code></td>
+  <td>A <strong>third variable</strong> measured at each point — not a color name, a number.</td>
+</tr>
+<tr>
+  <td><code>c=colorss</code></td>
+  <td>Feed numbers to <code>c</code> and matplotlib maps them onto a color scale: low values one end, high values the other.</td>
+</tr>
+<tr>
+  <td><code>cmap='winter'</code></td>
+  <td>Which scale to use. <code>'winter'</code> runs blue → green.</td>
+</tr>
+<tr>
+  <td><code>plt.colorbar()</code></td>
+  <td>Draws the strip that says which color means which number. <strong>Without it the colors are meaningless</strong>, so this call is not decoration.</td>
+</tr>
+</tbody>
+</table>
+<p>You now have a 3-dimensional chart: x, y, and color.</p>
+<h3>Size as data, and everything at once</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Argument</th>
+  <th>Encodes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>x</code>, <code>y</code></td>
+  <td>position</td>
+</tr>
+<tr>
+  <td><code>c=</code> + <code>cmap=</code></td>
+  <td>a third variable, as color</td>
+</tr>
+<tr>
+  <td><code>s=</code></td>
+  <td>a fourth variable, as <strong>bubble area in points²</strong></td>
+</tr>
+<tr>
+  <td><code>alpha=0.4</code></td>
+  <td>40% opacity, so overlapping bubbles stay readable</td>
+</tr>
+</tbody>
+</table>
+<p>In the final cell of this group <code>sizee</code> is redefined with much larger values (<code>2000</code>, <code>4000</code>, <code>3000</code>), so the big bubbles overlap — which is exactly the situation <code>alpha</code> exists for.</p>
+<div class="note"><div class="h">Note</div><p>💡 <code>'jet'</code> is a well-known bad default: it is not perceptually uniform (it creates false bands at the yellow/cyan transitions) and it fails for color-blind readers. <code>'viridis'</code> is the modern replacement, and matplotlib's default for a reason. Worth swapping in when you revisit this.</p>
+</div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 34</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+plt.title(&quot;Scatter&quot;, loc = &#x27;center&#x27;)
+plt.xlabel(&quot;X axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.scatter(x,y)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c34-25.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+a = np.array([1,2,3,4,5,6,7,8,9,10])
+b = np.array([7,6,3,4,2,5,1,7,5,2])
+plt.scatter(x,y)
+plt.scatter(a,b)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c35-26.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 36</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+a = np.array([1,2,3,4,5,6,7,8,9,10])
+b = np.array([7,6,3,4,2,5,1,7,5,2])
+plt.scatter(x,y,color = &#x27;m&#x27;)
+plt.scatter(a,b,color = &#x27;y&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c36-27.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+colors = np.array([&quot;yellow&quot;,&quot;green&quot;,&quot;blue&quot;,&quot;red&quot;,&quot;pink&quot;,&quot;black&quot;,&quot;orange&quot;,&quot;white&quot;,&quot;gold&quot;,&quot;violet&quot;])
+plt.scatter(x,y,color = colors)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c37-28.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 38</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+colorss = np.array([5, 15, 23, 34, 45, 49, 57, 59, 61, 75])
+plt.scatter(x,y,c=colorss,cmap=&#x27;winter&#x27;)
+plt.colorbar()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c38-29.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+sizee = np.array([1, 10, 50, 100, 150, 200, 250, 300, 350, 400])
+plt.scatter(x,y,c=&#x27;r&#x27;,s=sizee)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c39-30.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 40</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+colorss = np.array([5, 15, 23, 34, 45, 49, 57, 59, 61, 75])
+sizee = np.array([1, 10, 50, 100, 150, 2000, 4000, 3000, 350, 1500])
+plt.scatter(x,y,c=colorss,cmap=&#x27;jet&#x27;,s=sizee,alpha=0.4)
+plt.colorbar()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c40-31.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="7-bar-charts">7. Bar charts</h2>
+<p>Bars compare a <strong>measured value across categories</strong>. The x input becomes strings here, which is the signal that these are categories, not numbers.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Code</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plt.bar(x, y)</code></td>
+  <td>Vertical bars. Categories on the x-axis, value = bar <strong>height</strong>.</td>
+</tr>
+<tr>
+  <td><code>plt.barh(x, y)</code></td>
+  <td><strong>h</strong>orizontal bars. Categories move to the y-axis, value = bar <strong>length</strong>. Prefer this when category names are long.</td>
+</tr>
+<tr>
+  <td><code>plt.bar(..., width=0.3)</code></td>
+  <td><code>width</code> is the fraction of its slot each bar fills. Default <code>0.8</code>, so <code>0.3</code> gives thin bars with wide gaps.</td>
+</tr>
+<tr>
+  <td><code>plt.barh(..., height=0.3)</code></td>
+  <td>The same thinning for horizontal bars — but the argument is called <strong><code>height</code></strong>, because for <code>barh</code> the thickness runs vertically.</td>
+</tr>
+</tbody>
+</table>
+<p>That last pair is the one to remember: <strong><code>bar</code> → <code>width</code>, <code>barh</code> → <code>height</code>.</strong> Passing <code>width</code> to <code>barh</code> sets the bar <em>length</em> instead and silently gives you a wrong chart.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 42</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.bar(x,y)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c42-32.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 43</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.barh(x,y)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c43-33.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 44</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.bar(x,y,color = &quot;gold&quot;,width = 0.3)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c44-34.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.barh(x,y,color = &quot;gold&quot;,height = 0.3)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c45-35.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="8-histogram">8. Histogram</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Part</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>np.random.normal(100, 25, 100)</code></td>
+  <td>Draw <strong>100 random samples</strong> from a normal (bell-curve) distribution with <strong>mean 100</strong> and <strong>standard deviation 25</strong>. Arguments are <code>(loc, scale, size)</code>.</td>
+</tr>
+<tr>
+  <td><code>print(x)</code></td>
+  <td>Shows the raw numbers — worth doing once, so you see that a histogram is computed <em>from</em> a plain list of values.</td>
+</tr>
+<tr>
+  <td><code>plt.hist(x)</code></td>
+  <td>Sorts those values into <strong>10 bins by default</strong>, then draws one bar per bin whose height is the <strong>count</strong> of values in it.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A histogram is not a bar chart.</strong> A bar chart takes one value per category; a histogram takes many raw values and computes the categories (bins) itself. It answers <em>&quot;how is this variable distributed?&quot;</em> — here, a rough bell shape centred near 100, with most values between 50 and 150 (mean ± 2 std).</p>
+<p>⚠️ There is no <code>np.random.seed(...)</code>, so this cell produces different numbers and a slightly different chart on <strong>every run</strong>. Fine for teaching; set a seed for anything you want to reproduce or commit.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 47</span></div><pre class="py">x = np.random.normal(100,25,100)
+print(x)
+plt.hist(x)
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>[ 81.2829252   91.15129514 116.10742403 104.17538577 103.1004435
+  40.13223553  98.68850374  95.35637658 106.20417968  69.37054848
+  92.56989867  82.14785326 110.69171743 109.59521785 103.36829867
+ 150.58886122 117.80192489 113.84379326 105.77609099 150.50853499
+ 105.22843986 118.71694336  88.88212443 106.85582667 122.11802133
+  92.4784949  115.59243098 130.83143021 124.50241022 118.95398748
+  89.9272784  150.13108985 163.70634022  71.59596182  50.63277664
+ 115.3820677   96.09666236  68.25740502 167.471692    99.25294456
+  91.13829674 109.80117656 112.06291261 118.9570119  110.3368302
+ 117.06290435  73.36397175  69.40430168 125.2045863  108.14557398
+  70.8145471  107.99028069  82.85802779  72.18417272 104.55175158
+  72.97381716 110.43855742  94.1628878  170.75902854 141.295674
+ 130.62135207  90.21090726 137.10631239 102.21558602  64.94507887
+  97.15394976  60.10385977 100.05692878 117.04194155  99.89573425
+  54.39085523 103.31310885  74.65503589  96.64741768 122.71126311
+  58.54728899  95.11899139 109.65002277  92.43530477  63.29737392
+ 110.22591571 105.64929339  82.83405829 118.36556719 117.15033398
+  66.44037035  94.27324419  78.54819624 150.49708421 128.48586955
+ 130.9836046   81.54415178  61.1252223  123.17101992  90.05387746
+  96.65803205 134.36482871 127.87235947 105.05040152  91.96724225]</pre></div>
+<figure class="shot"><img src="assets/example-01-c47-36.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="9-pie-charts">9. Pie charts</h2>
+<p><code>x = np.array([10, 20, 30, 50])</code></p>
+<p><code>plt.pie</code> <strong>normalises for you</strong>: each wedge is <code>value / sum</code>. The sum here is 110, so the wedges come out as 9.1%, 18.2%, 27.3% and 45.5%. Wedges start at the 3 o'clock position and run counter-clockwise.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Argument</th>
+  <th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><em>(none)</em></td>
+  <td>Anonymous colored slices — true, but useless.</td>
+</tr>
+<tr>
+  <td><code>labels=labelss</code></td>
+  <td>Attaches a name to each wedge, outside it, matched <strong>by index</strong>. Now the chart means something.</td>
+</tr>
+<tr>
+  <td><code>startangle=10</code></td>
+  <td>Rotates where the first wedge begins, in degrees counter-clockwise from 3 o'clock. <code>startangle=90</code> starts at the top, which is the usual choice because readers expect it.</td>
+</tr>
+<tr>
+  <td><code>explode=[…]</code></td>
+  <td>One number per wedge: how far to push it out, as a <strong>fraction of the radius</strong>. Length must match the data.</td>
+</tr>
+</tbody>
+</table>
+<h3>The explode lesson</h3>
+<p><code>explode=[0.1, 0.12, 0.13, 0.14]</code> pulls <strong>all four</strong> wedges out by similar amounts — the gaps grow but nothing is emphasised, because emphasis is relative. <code>explode=[0.5, 0, 0, 0]</code> pulls out only MATHS (half a radius) and leaves the rest alone. That contrast is the point: <strong>explode is for highlighting one slice, not for decorating all of them.</strong></p>
+<h3>⚠️ The bug in the last pie cell</h3>
+<div class="code"><pre class="py">colorr = [&#x27;r&#x27;,&#x27;m&#x27;,&#x27;gold&#x27;,&#x27;g&#x27;]
+plt.pie(x, labels=labelss, startangle=90, explode=explodee)   # colorr never used!
+</pre></div>
+<p><code>colorr</code> is created and <strong>never passed</strong>, so that cell renders exactly the same chart as the one above it, with the default palette. Python does not warn about an unused variable and matplotlib has nothing to complain about — the chart is valid, just not the one intended. The fix is one keyword:</p>
+<div class="code"><pre class="py">plt.pie(x, labels=labelss, startangle=90, explode=explodee, colors=colorr)
+</pre></div>
+<p>Note it is <code>colors</code> (plural) for <code>pie</code>, while <code>plot</code> and <code>scatter</code> use <code>color</code> / <code>c</code>. That inconsistency is exactly what causes this class of silent bug.</p>
+<p><strong>Missing next step:</strong> <code>autopct='%1.1f%%'</code> prints the percentage inside each wedge, which is what makes a pie readable at a glance.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 49</span></div><pre class="py">x = np.array([10,20,30,50])
+plt.pie(x)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c49-37.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 50</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+plt.pie(x,labels = labelss)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c50-38.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 51</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+plt.pie(x,labels = labelss,startangle = 10)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c51-39.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 52</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+explodee = [0.1,0.12,0.13,0.14]
+plt.pie(x,labels = labelss,startangle = 90,explode =explodee)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c52-40.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 53</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+explodee = [0.5,0,0,0]
+plt.pie(x,labels = labelss,startangle = 90,explode =explodee)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c53-41.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 54</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+explodee = [0.5,0,0,0]
+colorr = [&#x27;r&#x27;,&#x27;m&#x27;,&#x27;gold&#x27;,&#x27;g&#x27;]
+plt.pie(x,labels = labelss,startangle = 90,explode =explodee)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c54-42.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="10-annotations">10. Annotations</h2>
+<p>Annotations put explanatory text <strong>on</strong> the chart, at a data coordinate. Note the data is now <strong>plain Python lists</strong>, not NumPy arrays — matplotlib accepts both.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Argument</th>
+  <th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>xy=(4, 25)</code></td>
+  <td>The point being annotated, in <strong>data coordinates</strong>. With no <code>xytext</code>, the text is placed right there — which is why the first version slightly overlaps the line.</td>
+</tr>
+<tr>
+  <td><code>xytext=(3, 30)</code></td>
+  <td>Where the <strong>text</strong> sits, also in data coordinates.</td>
+</tr>
+<tr>
+  <td><code>arrowprops={&quot;arrowstyle&quot;: &quot;-&gt;&quot;}</code></td>
+  <td>Draws the connecting arrow. <strong>Omit this dict and you get floating text with no arrow</strong>, even though <code>xytext</code> is set.</td>
+</tr>
+</tbody>
+</table>
+<p>The second version solves the first version's overlap: label in clear space, arrow pointing at the subject. <code>arrowprops</code> accepts other styles such as <code>&quot;-|&gt;&quot;</code> and <code>&quot;fancy&quot;</code>.</p>
+<h3>Labelling every point in a loop</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>Line</th>
+  <th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>for i in range(len(x))</code></td>
+  <td>Loop over positions 0, 1, 2.</td>
+</tr>
+<tr>
+  <td><code>y[i]</code></td>
+  <td>The <strong>text</strong> argument — the y-value itself becomes the label. It is an <code>int</code>, and matplotlib calls <code>str()</code> on it internally, so <code>10</code> renders as <code>&quot;10&quot;</code>. It works, but <code>str(y[i])</code> states the intent.</td>
+</tr>
+<tr>
+  <td><code>(x[i], y[i])</code></td>
+  <td>Passed <strong>positionally</strong>, so it lands in <code>xy</code>. Same as writing <code>xy=(x[i], y[i])</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Plot once, then loop to annotate — that is how you put value labels on a chart, and it works the same way for bars. (The indentation in that cell is a single space. Python accepts it; 4 spaces would match the rest of the file.)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 56</span></div><pre class="py">x = [1, 2, 3, 4]
+y = [10, 20, 15, 25]
+plt.plot(x, y)
+plt.annotate(
+ &quot;Highest&quot;,
+ xy=(4, 25)
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c56-43.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 57</span></div><pre class="py">x = [1, 2, 3, 4]
+y = [10, 20, 15, 25]
+plt.plot(x, y)
+plt.annotate(
+ &quot;Peak&quot;,
+ xy=(4, 25),
+ xytext=(3, 30),
+ arrowprops={&quot;arrowstyle&quot;: &quot;-&gt;&quot;}
+)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c57-44.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 58</span></div><pre class="py">x = [1, 2, 3]
+y = [10, 20, 15]
+plt.plot(x, y)
+for i in range(len(x)):
+ plt.annotate(
+ y[i],
+ (x[i], y[i])
+ )
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c58-45.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="11-filled-areas">11. Filled areas</h2>
+<p><code>fill_between(x, y1)</code> shades the region between the <code>y</code> curve and <strong><code>y2 = 0</code></strong>, which is the default — so it fills from the line down to the x-axis.</p>
+<p>The full form is <code>fill_between(x, y1, y2)</code>, which shades the band <em>between two curves</em>. That is how confidence intervals and min/max ranges are drawn, and it is the more useful version.</p>
+<p>In the two-fill cell, each fill is still measured from zero and they are layered in call order. Because <code>y2</code> is smaller everywhere, the second (orange) fill is drawn <strong>on top of</strong> part of the first, hiding it.</p>
+<p>⚠️ Two traps in one cell: no <code>alpha</code>, so the overlap is opaque rather than blended; and no <code>label</code> + <code>plt.legend()</code>, so nothing identifies the series. Compare with <code>plt.fill_between(x, y2, y1)</code> — a single call that shades only the gap between the two curves, which is usually what you actually want.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 60</span></div><pre class="py">x = [1, 2, 3, 4]
+y = [10, 20, 15, 25]
+plt.fill_between(x, y)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c60-46.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 61</span></div><pre class="py">x = [1,2,3,4]
+y1 = [10,20,15,25]
+y2 = [5,10,8,15]
+plt.fill_between(x, y1)
+plt.fill_between(x, y2)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c61-47.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="12-saving-to-a-file">12. Saving to a file</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Line</th>
+  <th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plt.plot([1,2,3],[10,20,15])</code></td>
+  <td>Data passed inline as lists — no variables needed.</td>
+</tr>
+<tr>
+  <td><code>plt.savefig(&quot;chart.png&quot;)</code></td>
+  <td>Writes the current figure to disk. The format comes from the <strong>file extension</strong> (<code>.png</code>, <code>.svg</code>, <code>.pdf</code>). The path is relative, so the file lands next to this notebook — <code>chart.png</code> in this folder is the real output of this cell.</td>
+</tr>
+<tr>
+  <td><code>plt.show()</code></td>
+  <td>Displays it afterwards.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The order here is correct and it matters.</strong> <code>plt.show()</code> renders <em>and clears</em> the figure, so calling <code>savefig</code> after <code>show</code> commonly writes a <strong>blank image</strong>. Rule: <strong>save first, show second.</strong></p>
+<p>For real work: <code>dpi=300</code> for print resolution, and <code>bbox_inches=&quot;tight&quot;</code> to stop long labels being cut off at the edges.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 63</span></div><pre class="py">plt.plot([1,2,3],[10,20,15])
+plt.savefig(&quot;chart.png&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/example-01-c63-48.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<hr />
+<h2 id="quick-reference">Quick reference</h2>
+<p><strong>Format string parts</strong> — <code>plt.plot(x, y, 'o--r')</code></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Markers</th>
+  <th>Line styles</th>
+  <th>Colors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>o</code> circle, <code>s</code> square, <code>d</code> thin diamond, <code>p</code> pentagon, <code>*</code> star</td>
+  <td><code>-</code> solid, <code>--</code> dashed, <code>:</code> dotted, <code>-.</code> dash-dot</td>
+  <td><code>b g r c m y k w</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Argument aliases used above</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Short</th>
+  <th>Long</th>
+  <th>Applies to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>c</code></td>
+  <td><code>color</code></td>
+  <td>line / marker color</td>
+</tr>
+<tr>
+  <td><code>ms</code></td>
+  <td><code>markersize</code></td>
+  <td>marker <strong>diameter</strong>, in points</td>
+</tr>
+<tr>
+  <td><code>mec</code></td>
+  <td><code>markeredgecolor</code></td>
+  <td>marker border</td>
+</tr>
+<tr>
+  <td><code>mfc</code></td>
+  <td><code>markerfacecolor</code></td>
+  <td>marker fill</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Which chart for which question</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th>Chart</th>
+  <th>Question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>plot</code></td>
+  <td>How does a value change across an ordered sequence?</td>
+</tr>
+<tr>
+  <td><code>scatter</code></td>
+  <td>Are two variables related?</td>
+</tr>
+<tr>
+  <td><code>bar</code> / <code>barh</code></td>
+  <td>How do categories compare?</td>
+</tr>
+<tr>
+  <td><code>hist</code></td>
+  <td>How is one variable distributed?</td>
+</tr>
+<tr>
+  <td><code>pie</code></td>
+  <td>What share does each part hold of a whole?</td>
+</tr>
+<tr>
+  <td><code>fill_between</code></td>
+  <td>What is the range, or the cumulative area?</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+<h2 id="issues-in-this-notebook">Issues in this notebook</h2>
+<p>Ordered by how much they matter. <strong>None of these break execution</strong> — which is precisely why they are worth knowing.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>#</th>
+  <th>Where</th>
+  <th>Issue</th>
+  <th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>last pie cell</td>
+  <td><code>colorr</code> is defined but never passed to <code>plt.pie</code>, so the intended colors never appear — silently</td>
+  <td>add <code>colors=colorr</code></td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>per-point scatter colors</td>
+  <td><code>&quot;white&quot;</code> makes one dot invisible on a white background</td>
+  <td>use a visible color, or <code>edgecolors='k'</code></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>two-scatter cell, two-fill cell</td>
+  <td>two data series drawn with no legend</td>
+  <td><code>label=&quot;...&quot;</code> on each call + <code>plt.legend()</code></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>histogram</td>
+  <td><code>np.random.normal</code> with no seed — the chart changes every run</td>
+  <td><code>np.random.seed(42)</code> first</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>title / label cells</td>
+  <td><code>linewidth='10'</code> passes a string; it works only because matplotlib coerces it</td>
+  <td><code>linewidth=10</code></td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>bubble scatter</td>
+  <td><code>cmap='jet'</code> is not perceptually uniform and is poor for color-blind readers</td>
+  <td><code>cmap='viridis'</code></td>
+</tr>
+<tr>
+  <td>7</td>
+  <td>annotation loop</td>
+  <td>one-space indentation, and an <code>int</code> where a string is expected</td>
+  <td>4-space indent, <code>str(y[i])</code></td>
+</tr>
+<tr>
+  <td>8</td>
+  <td>first title cell</td>
+  <td>title and labels called before <code>plt.plot</code> — valid, but reads backwards</td>
+  <td>draw first, then decorate</td>
+</tr>
+</tbody>
+</table>
+<p><strong>One structural note:</strong> the saved execution counts run <code>2, 3, 5, 7 … 77</code> with gaps, so these cells were run and re-run out of order rather than top-to-bottom in one clean pass. The saved images are real output, but a fresh <strong>Restart &amp; Run All</strong> is what proves the notebook still reproduces today.</p>
+
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>What this notebook is.</strong> A hands-on tour of the <code>matplotlib.pyplot</code> API, covering six chart families and the styling arguments that apply across them. It is a reference-by-example, not a data analysis — the data is deliberately trivial so that every visual change is traceable to one argument.</p>
+<p><strong>The five ideas that carry the whole file:</strong></p>
+<ol>
+<li><strong>There is a hidden current figure.</strong> <code>plt.plot</code>, <code>plt.title</code> and <code>plt.subplot</code> all act on whatever Axes is current. This is why order matters, and why <code>plt.title</code> attaches to one panel while <code>plt.suptitle</code> attaches to the whole figure.</li>
+<li><strong>Style has two dialects.</strong> The terse format string <code>'o--r'</code> and the explicit keywords <code>marker='o', linestyle='--', color='r'</code> do the same job. This notebook teaches both by running them side by side. Keywords are what you should write.</li>
+<li><strong>Data can drive more than position.</strong> <code>c=</code> with a numeric array plus a <code>cmap</code> encodes a third variable as color; <code>s=</code> with an array encodes a fourth as bubble area. Whenever color carries data, <code>plt.colorbar()</code> stops being optional.</li>
+<li><strong>Pick the chart from the question, not from the look.</strong> Line for sequence, scatter for relationship, bar for category comparison, histogram for distribution, pie for share of a whole. The <code>bar</code> vs <code>hist</code> distinction is the one people get wrong: bar takes one value per category, hist computes the categories from raw values.</li>
+<li><strong>The finishing calls are the ones that get skipped.</strong> Labels, legend, colorbar, and <code>savefig</code> <em>before</em> <code>show</code>. Three cells here are missing one of these, and every one of them still runs without error.</li>
+</ol>
+<p><strong>Where this notebook stops.</strong> No legends, no <code>autopct</code> on the pies, no object-oriented <code>fig, ax = plt.subplots()</code> style, and no chart drawn from a real Pandas DataFrame. Those are the natural next steps — especially the OO style, since that is what survives contact with real code, where you build several figures at once and cannot rely on a global &quot;current&quot; pointer.</p>
+<p><strong>If you remember only one thing:</strong> <em>matplotlib always draws into a current Figure and Axes — the chart is the data plus every styling call that lands on that Axes before you show or save it.</em> Get that model right and the hundreds of keyword arguments stop being something to memorise and start being something to look up.</p>
+
+<div class="src-head">📓 <a href="../Concept/matplotlib_example.ipynb">matplotlib_example.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import matplotlib.pyplot as plt
+
+# 10 students heights in cm
+heights = [142, 155, 148, 162, 155, 158, 142, 165, 148, 155]
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.hist(heights, bins=5, color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+ax.set_title(&#x27;Student Heights&#x27;)
+ax.set_xlabel(&#x27;Height (cm)&#x27;)
+ax.set_ylabel(&#x27;Number of Students&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/matplotlib-example-c00-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py"># All 10 values: 142, 155, 148, 162, 155, 158, 142, 165, 148, 155
+
+# Min = 142
+# Max = 165
+# Range = 165 - 142 = 23cm
+# Bin width = 23 / 5 = 4.6cm
+
+# Bin 1 → 142.0 to 146.6 → 142, 142          → 2 students
+# Bin 2 → 146.6 to 151.2 → 148, 148          → 2 students
+# Bin 3 → 151.2 to 155.8 → 155, 155, 155     → 3 students
+# Bin 4 → 155.8 to 160.4 → 158               → 1 student
+# Bin 5 → 160.4 to 165.0 → 162, 165          → 2 students</pre></div>
+<div class="src-head">📓 <a href="../Concept/pizza_matplotlib.ipynb">pizza_matplotlib.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Load our pizza data
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+
+print(&quot;Ready to plot!&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Ready to plot!</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">%matplotlib inline</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py"># Step 1 — prepare the data using Pandas
+revenue_by_pizza = df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum()
+print(revenue_by_pizza)</pre></div>
+<div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    1116
+Margherita      492
+Pepperoni       645
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">fix, ax = plt.subplots(figsize=(8,5))
+
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+ax.set_title(&quot;Total Revenue Pizza Type&quot;)
+ax.set_xlabel(&quot;Pizza Type&quot;)
+ax.set_ylabel(&quot;Revenue ($)&quot;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-c03-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py"># Small chart
+fig, ax = plt.subplots(figsize=(4, 3))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+plt.show()
+
+# Wide chart
+fig, ax = plt.subplots(figsize=(12, 4))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+plt.show()
+
+# Square chart
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-c04-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<figure class="shot"><img src="assets/pizza-matplotlib-c04-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<figure class="shot"><img src="assets/pizza-matplotlib-c04-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py"># See ALL methods and properties of ax
+print(dir(ax))</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&#x27;ArtistList&#x27;, &#x27;_AxesBase__clear&#x27;, &#x27;_PROPERTIES_EXCLUDED_FROM_SET&#x27;, &#x27;__annotate_func__&#x27;, &#x27;__class__&#x27;, &#x27;__delattr__&#x27;, &#x27;__dict__&#x27;, &#x27;__dir__&#x27;, &#x27;__doc__&#x27;, &#x27;__eq__&#x27;, &#x27;__firstlineno__&#x27;, &#x27;__format__&#x27;, &#x27;__ge__&#x27;, &#x27;__getattribute__&#x27;, &#x27;__getstate__&#x27;, &#x27;__gt__&#x27;, &#x27;__hash__&#x27;, &#x27;__init__&#x27;, &#x27;__init_subclass__&#x27;, &#x27;__le__&#x27;, &#x27;__lt__&#x27;, &#x27;__module__&#x27;, &#x27;__ne__&#x27;, &#x27;__new__&#x27;, &#x27;__reduce__&#x27;, &#x27;__reduce_ex__&#x27;, &#x27;__repr__&#x27;, &#x27;__setattr__&#x27;, &#x27;__setstate__&#x27;, &#x27;__sizeof__&#x27;, &#x27;__static_attributes__&#x27;, &#x27;__str__&#x27;, &#x27;__subclasshook__&#x27;, &#x27;__weakref__&#x27;, &#x27;_add_text&#x27;, &#x27;_adjustable&#x27;, &#x27;_agg_filter&#x27;, &#x27;_alias_map&#x27;, &#x27;_alpha&#x27;, &#x27;_anchor&#x27;, &#x27;_animated&#x27;, &#x27;_aspect&#x27;, &#x27;_autotitlepos&#x27;, &#x27;_axes&#x27;, &#x27;_axes_locator&#x27;, &#x27;_axis_map&#x27;, &#x27;_axis_names&#x27;, &#x27;_axisbelow&#x27;, &#x27;_box_aspect&#x27;, &#x27;_callbacks&#x27;, &#x27;_check_no_units&#x27;, &#x27;_children&#x27;, &#x27;_clipon&#x27;, &#x27;_clippath&#x27;, &#x27;_cm_set&#x27;, &#x27;_colorbars&#x27;, &#x27;_convert_dx&#x27;, &#x27;_current_image&#x27;, &#x27;_different_canvas&#x27;, &#x27;_errorevery_to_mask&#x27;, &#x27;_facecolor&#x27;, &#x27;_fill_between_process_units&#x27;, &#x27;_fill_between_x_or_y&#x27;, &#x27;_forward_navigation_events&#x27;, &#x27;_frameon&#x27;, &#x27;_fully_clipped_to_axes&#x27;, &#x27;_gci&#x27;, &#x27;_gen_axes_patch&#x27;, &#x27;_gen_axes_spines&#x27;, &#x27;_get_aspect_ratio&#x27;, &#x27;_get_lines&#x27;, &#x27;_get_pan_points&#x27;, &#x27;_get_patches_for_fill&#x27;, &#x27;_get_subplotspec_with_optional_colorbar&#x27;, &#x27;_get_view&#x27;, &#x27;_gid&#x27;, &#x27;_gridOn&#x27;, &#x27;_in_layout&#x27;, &#x27;_init_axis&#x27;, &#x27;_internal_update&#x27;, &#x27;_label&#x27;, &#x27;_label_outer_xaxis&#x27;, &#x27;_label_outer_yaxis&#x27;, &#x27;_left_title&#x27;, &#x27;_make_twin_axes&#x27;, &#x27;_mouseover&#x27;, &#x27;_mouseover_set&#x27;, &#x27;_navigate&#x27;, &#x27;_navigate_mode&#x27;, &#x27;_originalPosition&#x27;, &#x27;_parent_figure&#x27;, &#x27;_parse_bar_color_args&#x27;, &#x27;_parse_scatter_color_args&#x27;, &#x27;_path_effects&#x27;, &#x27;_pcolorargs&#x27;, &#x27;_picker&#x27;, &#x27;_position&#x27;, &#x27;_prepare_view_from_bbox&#x27;, &#x27;_process_unit_info&#x27;, &#x27;_projection_init&#x27;, &#x27;_quiver_units&#x27;, &#x27;_rasterization_zorder&#x27;, &#x27;_rasterized&#x27;, &#x27;_remove_legend&#x27;, &#x27;_remove_method&#x27;, &#x27;_request_autoscale_view&#x27;, &#x27;_right_title&#x27;, &#x27;_sci&#x27;, &#x27;_set_alpha_for_array&#x27;, &#x27;_set_artist_props&#x27;, &#x27;_set_gc_clip&#x27;, &#x27;_set_lim_and_transforms&#x27;, &#x27;_set_position&#x27;, &#x27;_set_title_offset_trans&#x27;, &#x27;_set_view&#x27;, &#x27;_set_view_from_bbox&#x27;, &#x27;_shared_axes&#x27;, &#x27;_sharex&#x27;, &#x27;_sharey&#x27;, &#x27;_sketch&#x27;, &#x27;_snap&#x27;, &#x27;_stale&#x27;, &#x27;_stale_viewlims&#x27;, &#x27;_sticky_edges&#x27;, &#x27;_subclass_uses_cla&#x27;, &#x27;_subplotspec&#x27;, &#x27;_tight&#x27;, &#x27;_transform&#x27;, &#x27;_transformSet&#x27;, &#x27;_twinned_axes&#x27;, &#x27;_unit_change_handler&#x27;, &#x27;_unstale_viewLim&#x27;, &#x27;_update_image_limits&#x27;, &#x27;_update_line_limits&#x27;, &#x27;_update_patch_limits&#x27;, &#x27;_update_props&#x27;, &#x27;_update_set_signature_and_docstring&#x27;, &#x27;_update_title_position&#x27;, &#x27;_update_transScale&#x27;, &#x27;_url&#x27;, &#x27;_use_sticky_edges&#x27;, &#x27;_validate_converted_limits&#x27;, &#x27;_viewLim&#x27;, &#x27;_visible&#x27;, &#x27;_xaxis_transform&#x27;, &#x27;_xmargin&#x27;, &#x27;_yaxis_transform&#x27;, &#x27;_ymargin&#x27;, &#x27;acorr&#x27;, &#x27;add_artist&#x27;, &#x27;add_callback&#x27;, &#x27;add_child_axes&#x27;, &#x27;add_collection&#x27;, &#x27;add_cont</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-c06-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+
+# Add value on top of each bar
+for i, value in enumerate(revenue_by_pizza.values):
+    ax.text(i, value+10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)
+
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-c07-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+for i, value in enumerate(revenue_by_pizza.values):
+    print(i)
+    print(value)
+    ax.text(i, value + 10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0
+1116
+1
+492
+2
+645</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-c08-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+
+# Add value on top of each bar
+for i, value in enumerate(revenue_by_pizza.values):
+    ax.text(i, value+10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)
+
+# Add grid
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.3,visible=True,which=&#x27;major&#x27;)    
+
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-c09-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Draw bars
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;],
+       edgecolor=&#x27;white&#x27;,
+       width=0.5)
+
+# Value on top of each bar
+for i, value in enumerate(revenue_by_pizza.values):
+    ax.text(i, value + 10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)
+
+# Grid
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.7)
+
+# Labels
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+
+# Save it
+fig.savefig(&#x27;pizza_revenue.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-c10-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="src-head">📓 <a href="../Concept/pizza_matplotlib_2.ipynb">pizza_matplotlib_2.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Load our pizza data
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+
+print(&quot;Ready to plot!&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Ready to plot!</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">revenue_by_day = df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum()
+print(revenue_by_day)</pre></div>
+<div class="out"><div class="h">Output</div><pre>date
+Fri    513
+Mon    255
+Sat    360
+Sun    216
+Thu    381
+Tue    372
+Wed    156
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py"># Define the correct day order
+day_order = [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;]
+
+revenue_by_day = df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().reindex(day_order)
+print(revenue_by_day)</pre></div>
+<div class="out"><div class="h">Output</div><pre>date
+Mon    255
+Tue    372
+Wed    156
+Thu    381
+Fri    513
+Sat    360
+Sun    216
+Name: revenue, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Draw line
+ax.plot(revenue_by_day.index, revenue_by_day.values,
+        color=&#x27;steelblue&#x27;,
+        linewidth=2,
+        marker=&#x27;o&#x27;,
+        markersize=8)
+
+#ax.plot(revenue_by_day.index, revenue_by_day.values)
+
+# To this
+#ax.bar(revenue_by_day.index, revenue_by_day.values)
+
+# Labels
+ax.set_title(&#x27;Revenue Trend by Day&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Day&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+
+# Grid
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.7)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-2-c03-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Is there a relationship between quantity ordered and revenue?</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Scatter plot — quantity vs revenue
+ax.scatter(df[&#x27;quantity&#x27;], df[&#x27;revenue&#x27;],
+           color=&#x27;steelblue&#x27;,
+           s=100,        # size of dots
+           alpha=0.7)    # transparency
+
+ax.set_title(&#x27;Quantity vs Revenue&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Quantity Ordered&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+
+ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-2-c05-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Three patterns you'll see in scatter plots:
+1)Dots go up left to right ↗
+2)Dots go down left to right ↘
+3)Dots randomly spread 🔵🔵🔵</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py"># Define colors for each pizza
+colors = {&#x27;Margherita&#x27;: &#x27;steelblue&#x27;, 
+          &#x27;Pepperoni&#x27;: &#x27;tomato&#x27;, 
+          &#x27;BBQ Chicken&#x27;: &#x27;green&#x27;}
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+# Plot each pizza type separately
+for pizza, group in df.groupby(&#x27;pizza&#x27;):
+    ax.scatter(group[&#x27;quantity&#x27;], group[&#x27;revenue&#x27;],
+               label=pizza,
+               color=colors[pizza],
+               s=100,
+               alpha=0.7)
+
+ax.set_title(&#x27;Quantity vs Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Quantity Ordered&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+ax.legend()
+ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-2-c07-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">for pizza, group in df.groupby(&#x27;pizza&#x27;):
+    #print(pizza)
+    print(group)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   date        pizza  price  quantity      area  revenue
+3   Thu  BBQ Chicken     18        12   Suburbs      216
+5   Sat  BBQ Chicken     18        20   Suburbs      360
+8   Tue  BBQ Chicken     18        14   Suburbs      252
+11  Fri  BBQ Chicken     18        16  Downtown      288
+  date       pizza  price  quantity      area  revenue
+0  Mon  Margherita     12        10  Downtown      120
+2  Wed  Margherita     12         6  Downtown       72
+6  Sun  Margherita     12        18  Downtown      216
+9  Wed  Margherita     12         7  Downtown       84
+   date      pizza  price  quantity      area  revenue
+1   Tue  Pepperoni     15         8   Suburbs      120
+4   Fri  Pepperoni     15        15  Downtown      225
+7   Mon  Pepperoni     15         9  Downtown      135
+10  Thu  Pepperoni     15        11   Suburbs      165</pre></div>
+<p>What is the most common quantity ordered at our pizza shop?</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">#Plain Python way first 
+
+# Count how many orders fall in each range
+quantities = df[&#x27;quantity&#x27;].values
+
+small = 0   # 0-10
+medium = 0  # 10-15
+large = 0   # 15+
+
+for q in quantities:
+    if q &lt;= 10:
+        small += 1
+    elif q &lt;= 15:
+        medium += 1
+    else:
+        large += 1
+
+print(&quot;Small (0-10):&quot;, small)
+print(&quot;Medium (10-15):&quot;, medium)
+print(&quot;Large (15+):&quot;, large)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Small (0-10): 5
+Medium (10-15): 4
+Large (15+): 3</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.hist(df[&#x27;quantity&#x27;],
+        bins=3,
+        color=&#x27;steelblue&#x27;,
+        edgecolor=&#x27;white&#x27;)
+
+ax.set_title(&#x27;Distribution of Quantity Ordered&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Quantity&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Number of Orders&#x27;, fontsize=12)
+
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.7)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-2-c11-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Subplots: Multiple charts in one page</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+# Chart 1 — top left — Bar chart
+revenue_by_pizza = df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum()
+axes[0,0].bar(revenue_by_pizza.index, revenue_by_pizza.values,
+              color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+axes[0,0].set_title(&#x27;Revenue by Pizza&#x27;)
+axes[0,0].set_xlabel(&#x27;Pizza Type&#x27;)
+axes[0,0].set_ylabel(&#x27;Revenue ($)&#x27;)
+
+# Chart 2 — top right — Line chart
+day_order = [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;]
+revenue_by_day = df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().reindex(day_order)
+axes[0,1].plot(revenue_by_day.index, revenue_by_day.values,
+               color=&#x27;steelblue&#x27;, linewidth=2, marker=&#x27;o&#x27;)
+axes[0,1].set_title(&#x27;Revenue Trend by Day&#x27;)
+axes[0,1].set_xlabel(&#x27;Day&#x27;)
+axes[0,1].set_ylabel(&#x27;Revenue ($)&#x27;)
+
+# Chart 3 — bottom left — Scatter plot
+axes[1,0].scatter(df[&#x27;quantity&#x27;], df[&#x27;revenue&#x27;],
+                  color=&#x27;steelblue&#x27;, s=100, alpha=0.7)
+axes[1,0].set_title(&#x27;Quantity vs Revenue&#x27;)
+axes[1,0].set_xlabel(&#x27;Quantity&#x27;)
+axes[1,0].set_ylabel(&#x27;Revenue ($)&#x27;)
+
+# Chart 4 — bottom right — Histogram
+axes[1,1].hist(df[&#x27;quantity&#x27;], bins=5,
+               color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+axes[1,1].set_title(&#x27;Distribution of Quantity&#x27;)
+axes[1,1].set_xlabel(&#x27;Quantity&#x27;)
+axes[1,1].set_ylabel(&#x27;Number of Orders&#x27;)
+
+# Fix spacing between charts
+plt.tight_layout()
+fig.savefig(&#x27;pizza_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/pizza-matplotlib-2-c13-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/matplotlib_example.ipynb">matplotlib_example.ipynb ↗</a><a class="btn" href="../Concept/pizza_matplotlib.ipynb">pizza_matplotlib.ipynb ↗</a><a class="btn" href="../Concept/pizza_matplotlib_2.ipynb">pizza_matplotlib_2.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

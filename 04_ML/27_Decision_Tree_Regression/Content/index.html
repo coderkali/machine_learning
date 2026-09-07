@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Tree Regression — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Decision Tree Regression</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#17-decision-tree-regression">17 - Decision Tree Regression</a><a href="#step-1-the-same-students-now-with-marks">Step 1 - The same students, now with marks</a><a href="#step-2-questions-and-answer">Step 2 - Questions and answer</a><a href="#step-3-hide-one-student-before-you-start">Step 3 - Hide one student before you start</a><a href="#step-4-the-new-measuring-tape-variance">Step 4 - The new measuring tape: variance</a><a href="#step-5-score-the-two-questions">Step 5 - Score the two questions</a><a href="#step-6-train">Step 6 - Train</a><a href="#step-7-read-the-rulebook">Step 7 - Read the rulebook</a><a href="#step-8-a-new-student-walks-in">Step 8 - A new student walks in</a><a href="#step-9-score-means-something-completely-differen">Step 9 - score means something completely different </a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Decision Tree Regression</h1>
+  <p class="lede">The same tree, but each leaf now answers with a number instead of a label.</p>
+  <div class="tags"><span class="tag">1 notebook</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>The same teacher now had to predict exam <em>marks</em>, not just pass or fail.</strong></p><p>Entropy no longer applied — you cannot measure the "confusion" of a group of numbers the way you measure a mix of labels.</p><p><span class='beat'>She needed a new measuring tape.</span></p><p>Variance is that tape. A group where everyone scored near 70 has low variance; a group spread from 20 to 95 has high variance. The best question is the one that leaves both sides tightly grouped, and each leaf predicts the average of whoever lands in it.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Swap entropy for variance: the best split is the one that makes each side most similar.</p></div>
+<div class="src-head">📓 <a href="../Concept/17_Descison_Tree_Regression.ipynb">17_Descison_Tree_Regression.ipynb</a></div>
+<h2 id="17-decision-tree-regression">17 - Decision Tree Regression</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
+</div>
+<h3>The story</h3>
+<p>Same coaching centre. Same ten students. Same two facts about each of them - videos, and guide.</p>
+<p>But the parent standing in front of you today is asking a different question.</p>
+<ul>
+<li>Notebook 16: <em>&quot;will my son pass?&quot;</em> → the answer is a <strong>label</strong>: pass or fail.</li>
+<li>This notebook: <em>&quot;how many marks will my son get?&quot;</em> → the answer is a <strong>number</strong>: 71, 88, 34.</li>
+</ul>
+<p>That one change breaks every measurement you built in notebook 16:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Classification (nb 16)</th>
+  <th>Regression (this one)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>The answer</td>
+  <td>pass / fail</td>
+  <td>marks out of 100</td>
+</tr>
+<tr>
+  <td>A box answers with</td>
+  <td>the majority label</td>
+  <td>the <strong>average</strong> of its numbers</td>
+</tr>
+<tr>
+  <td>Mess measured by</td>
+  <td>entropy</td>
+  <td><strong>variance</strong></td>
+</tr>
+<tr>
+  <td>A split is judged by</td>
+  <td>information gain</td>
+  <td><strong>variance reduction</strong></td>
+</tr>
+<tr>
+  <td><code>score()</code> gives you</td>
+  <td>accuracy</td>
+  <td><strong>R²</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The tree itself does not change at all. It still asks yes/no questions and sends people into rooms. Only the <strong>measuring tape</strong> changes - and that is the whole lesson of this notebook.</p>
+<h3>Where this is used</h3>
+<table class="tbl"><thead>
+<tr>
+  <th>The question</th>
+  <th>The number</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>What is this flat worth?</td>
+  <td>price in lakhs</td>
+</tr>
+<tr>
+  <td>How long will this delivery take?</td>
+  <td>minutes</td>
+</tr>
+<tr>
+  <td>How much will this customer spend next month?</td>
+  <td>rupees</td>
+</tr>
+<tr>
+  <td>How many servers do we need on Sunday?</td>
+  <td>count</td>
+</tr>
+</tbody>
+</table>
+<p>Anywhere the answer is <em>how much</em> or <em>how many</em>, instead of <em>which one</em>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">data = pd.read_csv(&#x27;../../../01_Python/03_Pandas/Data/exam1.csv&#x27;)</pre></div>
+<h2 id="step-1-the-same-students-now-with-marks">Step 1 - The same students, now with marks</h2>
+<p><code>result</code> is no longer a word. It is a mark out of 100.</p>
+<p>Line the ten students up by their marks and the shape of the problem jumps straight out:</p>
+<div class="code"><pre>    20   25  30 31 32                        55                      89 90 90 91
+    │    │   │  │  │                          │                       │  │  │  │
+ ───┴────┴───┴──┴──┴──────────────────────────┴───────────────────────┴──┴──┴──┴──
+   row8 row6  0  3  4                        row2                     1  5  9  7
+
+    └────── the low group ──────┘        ← stranded ──→      └──── the high group ────┘
+</pre></div>
+<p>Two clear clumps, and one student stranded in the middle with 55.</p>
+<p><strong>Remember row 2.</strong> He decides the score at the end of this notebook.</p>
+<p>The tree's job is to find a question that separates the low clump from the high clump.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">data</pre></div>
+<div class="out"><div class="h">Output</div><pre>   5me  guide  result
+0    0      0      30
+1    1      1      89
+2    1      0      55
+3    0      0      31
+4    0      0      32
+5    1      1      90
+6    0      1      25
+7    1      1      91
+8    1      0      20
+9    1      1      90</pre></div>
+<h2 id="step-2-questions-and-answer">Step 2 - Questions and answer</h2>
+<div class="code"><pre>         x  (what you know)              y  (what you want)
+        ┌──────┬────────┐                  ┌────────┐
+        │ 5me  │ guide  │                  │ result │
+        ├──────┼────────┤                  ├────────┤
+        │  0   │   0    │                  │   30   │  ← a number now,
+        │  1   │   1    │                  │   89   │    not a label
+        └──────┴────────┘                  └────────┘
+         two brackets = table               one bracket = column
+</pre></div>
+<p>One step from notebook 16 disappears here: there is no <code>LabelEncoder</code>. You needed it to turn &quot;pass&quot;/&quot;fail&quot; into 1/0. Marks are already numbers.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">x=data[[&#x27;5me&#x27;,&#x27;guide&#x27;]]
+y=data[&#x27;result&#x27;]</pre></div>
+<h2 id="step-3-hide-one-student-before-you-start">Step 3 - Hide one student before you start</h2>
+<p><code>train_test_split(x, y, test_size=0.10, random_state=1)</code> puts 10% of the rows aside. Ten students, so <strong>nine train the tree and one is locked away.</strong></p>
+<div class="code"><pre>   TRAIN - 9 students                     TEST - 1 student
+   rows 9 6 4 0 3 1 7 8 5                 row 2
+   the tree studies these                 the tree never sees him
+                                          5me=1, guide=0, marks=55
+</pre></div>
+<p><code>random_state=1</code> fixes <em>which</em> student is picked. Without it you get a different split every run, and two models can never be compared fairly.</p>
+<p>Now look at who got locked away: <strong>row 2 - the stranded student from Step 1.</strong> Bad luck, and you will feel it in Step 9.</p>
+<p>Why hide anybody at all? A tree can memorise. Scoring it on rows it studied is like grading a student on the exact questions he was given to practise.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.10, random_state = 1)
+print(X_train)
+print(y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   5me  guide
+9    1      1
+6    0      1
+4    0      0
+0    0      0
+3    0      0
+1    1      1
+7    1      1
+8    1      0
+5    1      1
+9    90
+6    25
+4    32
+0    30
+3    31
+1    89
+7    91
+8    20
+5    90
+Name: result, dtype: int64</pre></div>
+<h2 id="step-4-the-new-measuring-tape-variance">Step 4 - The new measuring tape: variance</h2>
+<p>Entropy asked <em>&quot;are these labels mixed?&quot;</em>. That question means nothing for marks - marks are never &quot;mixed&quot;, they are <strong>spread out</strong>. So you measure the spread instead.</p>
+<p><strong>Variance = the average squared distance from the mean.</strong></p>
+<div class="code"><pre>   tight group                         spread out group
+   30  31  32                          20        55        90
+    ● ● ●                              ●         ●         ●
+    └─┬─┘                              └─────────┬─────────┘
+   mean = 31                              mean = 55
+   variance ≈ 0.7                       variance ≈ 817
+   one number describes all three       one number describes nobody
+</pre></div>
+<ul>
+<li>Small variance = everyone in this box scored about the same.</li>
+<li>Large variance = the box is still holding very different students.</li>
+</ul>
+<p>And the answer a box gives is simply <strong>the average of the marks inside it</strong>. That is the regression version of &quot;majority vote&quot;.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.tree import DecisionTreeRegressor, export_graphviz</pre></div>
+<h2 id="step-5-score-the-two-questions">Step 5 - Score the two questions</h2>
+<p>Start with all nine training students in one box:</p>
+<div class="code"><pre>   90  25  32  30  31  89  91  20  90       mean = 55.33
+                                            variance = 972.89   ← the mess to remove
+</pre></div>
+<p>Now try each question and measure the mess left behind:</p>
+<div class="code"><pre>        SPLIT ON VIDEOS (5me)                      SPLIT ON GUIDE
+   ───────────────────────────────         ───────────────────────────────
+    no │ 25  32  30  31                     no │ 32  30  31  20
+       │ mean 29.50   var 7.25                 │ mean 28.25   var 23.19
+   ────┼──────────────────────────         ────┼──────────────────────────
+   yes │ 90  89  91  20  90                yes │ 90  25  89  91  90
+       │ mean 76.00   var 784.40               │ mean 77.00   var 676.40
+                  ▲                                        ▲
+          20 is trapped in the                    25 is trapped in the
+          high room - big mess                    high room - big mess
+
+    left over  439.00                       left over  386.08
+    removed    533.89                       removed    586.81   ★ WINNER
+</pre></div>
+<p><code>left over</code> is the size-weighted average, exactly like Step 4 of notebook 16:</p>
+<div class="code"><pre>(4/9) × 23.19  +  (5/9) × 676.40  =  386.08
+
+Variance Reduction = 972.89 - 386.08 = 586.81
+</pre></div>
+<p><strong>Notice that <code>guide</code> wins here, while <code>5me</code> won in notebook 16 - same ten students, same two columns.</strong> Nothing is broken. The <em>question you are answering</em> changed. The best question for &quot;who passes&quot; is not automatically the best question for &quot;how many marks&quot;.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">dt = DecisionTreeRegressor()</pre></div>
+<h2 id="step-6-train">Step 6 - Train</h2>
+<p><code>DecisionTreeRegressor()</code> uses <code>criterion='squared_error'</code> by default, which is the variance you just computed. There is no <code>entropy</code> option here - entropy has no meaning for numbers.</p>
+<p><code>dt.fit(X_train, y_train)</code> repeats Step 5 inside each room until no question helps any more:</p>
+<div class="code"><pre>                9 students      var = 972.89
+                       │
+            ┌──── had a guide? ────┐
+         NO │                      │ YES
+            ▼                      ▼
+      32  30  31  20         90  25  89  91  90
+      var 23.19              var 676.40
+            │                      │
+     ┌ watched videos? ┐    ┌ watched videos? ┐
+   NO│                 │YES NO│                │YES
+     ▼                 ▼      ▼                ▼
+  32 30 31            20     25          90 89 91 90
+  mean = 31       mean = 20  mean = 25    mean = 90
+</pre></div>
+<p>Four boxes, four averages: <strong>31, 20, 25, 90.</strong></p>
+<p><strong>What <code>fit</code> leaves behind:</strong> two questions and four numbers. That is the entire model.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">dt.fit(X_train,y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>DecisionTreeRegressor()</pre></div>
+<h2 id="step-7-read-the-rulebook">Step 7 - Read the rulebook</h2>
+<p><code>export_graphviz(dt, 'dt1.tree', feature_names=['5me','guide'])</code> writes the tree to a text file. The next cell draws the same tree as a picture, right here in the notebook.</p>
+<p>The boxes read differently now:</p>
+<div class="code"><pre>    classification box (nb 16)        regression box (this notebook)
+   ┌────────────────────┐            ┌───────────────────────┐
+   │ entropy = 0.65     │            │ squared_error = 23.19 │  ← how spread out
+   │ samples = 6        │            │ samples = 4           │
+   │ value = [1, 5]     │            │ value = 28.25         │  ← the answer
+   │ class = pass       │            │                       │
+   └────────────────────┘            └───────────────────────┘
+     counts per class                  one average, no class line
+</pre></div>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">export_graphviz(dt,&#x27;dt1.tree&#x27;,feature_names=[&#x27;5me&#x27;,&#x27;guide&#x27;])</pre></div>
+<p>Same tree, drawn by sklearn itself. In a <strong>regression</strong> tree the colour no longer means &quot;which class&quot; - it means <strong>how big the number is</strong>. Darker = higher marks.</p>
+<p>Read the four leaves along the bottom: <strong>31.0, 20.0, 25.0, 90.0</strong> - the same four averages you worked out in Step 6. Those four numbers are the only answers this model can ever give.</p>
+<p>Two details worth catching:</p>
+<ul>
+<li>the root is <code>guide &lt;= 0.5</code> with <code>squared_error = 972.889</code> and <code>value = 55.333</code> - your Step 5 numbers exactly.</li>
+<li><code>samples</code> on the leaves reads 3, 1, 1, 4 = nine students. The tenth is still locked in the vault.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">from sklearn.tree import plot_tree
+
+plt.figure(figsize=(9, 6))
+plot_tree(dt, feature_names=[&#x27;5me&#x27;, &#x27;guide&#x27;], filled=True)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/17-descison-tree-regression-c18-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-8-a-new-student-walks-in">Step 8 - A new student walks in</h2>
+<p><code>dt.predict([[1, 1]])</code> - watched the videos, had a guide.</p>
+<div class="code"><pre>   new student:  5me = 1,  guide = 1
+              │
+              ▼
+   guide &lt;= 0.5 ?   →  NO  ────────→  go right  (the high room)
+              │
+              ▼
+   5me &lt;= 0.5 ?     →  NO  ────────→  go right
+              │
+              ▼
+   box holding 90, 89, 91, 90   →   answer = their average = 90.0
+</pre></div>
+<p>The output is <code>90.</code> - and that shows the honest limit of a regression tree. <strong>It can only ever answer with one of its four stored averages.</strong> Ask it about a hundred different students and you still get back 31, 20, 25 or 90. It can never say 73. A straight line (notebook 05, Linear Regression) can. A tree answers in steps.</p>
+<p>Double brackets again, because predict wants a table of rows. The warning is the same one as notebook 16 - trained with column names, asked with a bare list.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">dt.predict([[1,1]])</pre></div>
+<div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/utils/validation.py:2827: UserWarning: X does not have valid feature names, but DecisionTreeRegressor was fitted with feature names
+  warnings.warn(
+array([90.])</pre></div>
+<h2 id="step-9-score-means-something-completely-differen">Step 9 - <code>score</code> means something completely different now</h2>
+<p>⚠️ This is the trap in this notebook. For a classifier, <code>score</code> was accuracy - &quot;9 out of 10 correct&quot;. <strong>A regressor is almost never exactly right</strong>, so counting correct answers is pointless. <code>score</code> returns <strong>R²</strong> instead.</p>
+<p>R² answers one question: <em>how much better is my tree than just saying &quot;55.3 marks&quot; to everybody?</em></p>
+<div class="code"><pre>   R² = 1.00   perfect
+   R² = 0.86   ← this model
+   R² = 0.00   no better than always answering the average
+   R² &lt; 0      worse than that
+</pre></div>
+<p>The result is <strong>0.8596</strong>, and here is exactly where it comes from. <code>dt.score(x, y)</code> was called on <strong>all ten</strong> rows - including the hidden student:</p>
+<div class="code"><pre>   row   actual   tree says    miss
+   ─────────────────────────────────
+    0      30        31          1
+    1      89        90          1
+    2      55        20    ✗    35     ← the student we locked away
+    3      31        31          0
+    4      32        31          1
+    5      90        90          0
+    6      25        25          0
+    7      91        90          1
+    8      20        20          0
+    9      90        90          0
+</pre></div>
+<p>Nine students out of ten are within a single mark. <strong>One student is 35 marks off, and he alone drags the score from 1.00 down to 0.86.</strong></p>
+<p>Look back at the number line in Step 1. Row 2 is the student stranded between the two clumps. The tree only ever saw a low group and a high group, so when he finally arrived it filed him with the low group and answered 20.</p>
+<p>Two honest notes:</p>
+<ul>
+<li><code>dt.score(x, y)</code> mixes the nine rows the tree studied with the one it did not. The fair test is <code>dt.score(X_test, y_test)</code> - the hidden student on his own.</li>
+<li>The tree got all nine training rows nearly perfect because it was allowed to grow until every box was tiny. That is memorising. On ten rows it is harmless; on real data you hold it back with <code>max_depth</code>, or grow many trees and average them - Random Forest.</li>
+</ul>
+<p><strong>If you remember only one thing:</strong> a regression tree is the same tree with two swaps - a box answers with the <strong>average</strong> of the numbers inside it, and a split is judged by how much <strong>variance</strong> it removes.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">dt.score(x,y)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.8596407076209728</pre></div>
+<div class="foot"><a class="btn" href="../Concept/17_Descison_Tree_Regression.ipynb">17_Descison_Tree_Regression.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

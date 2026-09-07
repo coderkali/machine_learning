@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Algebra — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">03 Math › <b>Algebra</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#examples-library-math-for-ml">Examples Library — Math for ML</a><a href="#example-01-chai-stall-topic-01-variables-amp-exp">Example 01 — Chai Stall (Topic 01: Variables &amp;amp; E</a><a href="#example-02-rival-chai-stall-topic-01-solving-for">Example 02 — Rival Chai Stall (Topic 01: Solving for</a><a href="#example-03-food-budget-topic-01-real-life-y-wx-b">Example 03 — Food Budget (Topic 01: Real life y = wx</a><a href="#example-04-movie-theatre-topic-01-mixed-practice">Example 04 — Movie Theatre (Topic 01: Mixed practice</a><a href="#example-05-linear-vs-non-linear-topic-02-functio">Example 05 — Linear vs Non-linear (Topic 02: Functio</a><a href="#example-06-farmer-amp-wheat-topic-02-where-y-wx-">Example 06 — Farmer &amp;amp; Wheat (Topic 02: Where y=w</a><a href="#example-07-farmer-water-amp-crop-yield-mixed-pra">Example 07 — Farmer Water &amp;amp; Crop Yield (Mixed Pr</a><a href="#example-08-linear-vs-non-linear-comparison-mixed">Example 08 — Linear vs Non-linear comparison (Mixed </a><a href="#topic-01-variables-amp-expressions">Topic 01 — Variables &amp;amp; Expressions</a><a href="#the-story">The Story</a><a href="#the-formula">The Formula</a><a href="#what-each-symbol-means">What Each Symbol Means</a><a href="#ml-connection">ML Connection</a><a href="#memory-hook">Memory Hook</a><a href="#practice-working">Practice Working</a><a href="#practice-working">Practice Working</a><a href="#my-understanding">My Understanding</a><a href="#topic-02-functions-amp-graphs">Topic 02 — Functions &amp;amp; Graphs</a><a href="#the-concept">The Concept</a><a href="#the-formula">The Formula</a><a href="#what-each-symbol-means">What Each Symbol Means</a><a href="#linear-vs-non-linear">Linear vs Non-linear</a><a href="#ml-connection">ML Connection</a><a href="#memory-hook">Memory Hook</a><a href="#practice-working">Practice Working</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Mathematics for ML</p>
+  <h1>Algebra</h1>
+  <p class="lede">Everything studied in this topic, rendered from the notebooks and notes themselves.</p>
+  <div class="tags"><span class="tag">2 notes</span></div>
+</div>
+<div class="src-head">📝 <a href="../Concept/00_examples_library.md">00_examples_library.md</a></div>
+<h2 id="examples-library-math-for-ml">Examples Library — Math for ML</h2>
+<p>This file contains all real life examples used during learning.
+Each example shows the problem, formula, and solution.</p>
+<hr />
+<h2 id="example-01-chai-stall-topic-01-variables-amp-exp">Example 01 — Chai Stall (Topic 01: Variables &amp; Expressions)</h2>
+<p><strong>Story:</strong> Chai stall profit depends on cups sold. Setup cost is fixed.</p>
+<p><strong>Formula:</strong> P = 5c - 200</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Type</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>P</td>
+  <td>Variable</td>
+  <td>Profit — the output</td>
+</tr>
+<tr>
+  <td>c</td>
+  <td>Variable</td>
+  <td>Cups sold — input</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Coefficient</td>
+  <td>Profit per cup</td>
+</tr>
+<tr>
+  <td>200</td>
+  <td>Constant</td>
+  <td>Daily setup cost</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Substitution:</strong></p>
+<ul>
+<li>c = 10 → P = 5*10 - 200 = -150 (loss)</li>
+<li>c = 40 → P = 5*40 - 200 = 0 (break even)</li>
+<li>c = 80 → P = 5*80 - 200 = 200 (profit)</li>
+<li>c = 100 → P = 5*100 - 200 = 300 (great day)</li>
+</ul>
+<p><strong>ML Connection:</strong> Same shape as y = wx + b (linear regression)</p>
+<hr />
+<h2 id="example-02-rival-chai-stall-topic-01-solving-for">Example 02 — Rival Chai Stall (Topic 01: Solving for x)</h2>
+<p><strong>Problem:</strong> Find break even point when P = 8c - 400</p>
+<p><strong>Working:</strong>
+Step 1: Set P = 0
+0 = 8c - 400
+Step 2: Add 400 to both sides
+400 = 8c
+Step 3: Divide both sides by 8
+c = 50</p>
+<p><strong>Result:</strong> Need to sell 50 cups to break even</p>
+<hr />
+<h2 id="example-03-food-budget-topic-01-real-life-y-wx-b">Example 03 — Food Budget (Topic 01: Real life y = wx + b)</h2>
+<p><strong>Story:</strong> Monthly food spend depends on how many times eating outside.</p>
+<p><strong>Formula:</strong> y = 60x + b</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>x</td>
+  <td>Number of times eating outside</td>
+</tr>
+<tr>
+  <td>60</td>
+  <td>Cost per meal</td>
+</tr>
+<tr>
+  <td>b</td>
+  <td>Fixed food cost (groceries)</td>
+</tr>
+<tr>
+  <td>y</td>
+  <td>Total food spend</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Substitution:</strong></p>
+<ul>
+<li>x = 5 → y = 60*5 + b = 300 + b</li>
+</ul>
+<hr />
+<hr />
+<h2 id="example-04-movie-theatre-topic-01-mixed-practice">Example 04 — Movie Theatre (Topic 01: Mixed practice)</h2>
+<p><strong>Formula:</strong> P = 12t - 300</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Type</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>t</td>
+  <td>Variable</td>
+  <td>Tickets sold</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>Coefficient</td>
+  <td>Profit per ticket</td>
+</tr>
+<tr>
+  <td>300</td>
+  <td>Constant</td>
+  <td>Daily setup cost</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Break even:</strong>
+Step 1: Set P = 0
+0 = 12t - 300
+Step 2: Add 300 to both sides
+300 = 12t
+Step 3: Divide both sides by 12
+t = 25</p>
+<p><strong>Result:</strong> Need to sell 25 tickets to break even</p>
+<hr />
+<h2 id="example-05-linear-vs-non-linear-topic-02-functio">Example 05 — Linear vs Non-linear (Topic 02: Functions &amp; Graphs)</h2>
+<p><strong>Story:</strong> Two chai stall owners with different formulas.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Owner</th>
+  <th>Formula</th>
+  <th>Shape</th>
+  <th>Growth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A</td>
+  <td>y = 10x + 50</td>
+  <td>Straight line</td>
+  <td>Steady</td>
+</tr>
+<tr>
+  <td>B</td>
+  <td>y = 10x² + 50</td>
+  <td>U curve</td>
+  <td>Accelerating</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule:</strong> x¹ = linear = straight line. x² or higher = non-linear = curve.</p>
+<hr />
+<h2 id="example-06-farmer-amp-wheat-topic-02-where-y-wx-">Example 06 — Farmer &amp; Wheat (Topic 02: Where y=wx+b comes from)</h2>
+<p><strong>Story:</strong> Farmer notices consistent pattern between fertiliser and wheat yield.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Fertiliser bags (x)</th>
+  <th>Wheat kg (y)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2</td>
+  <td>50</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>90</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>130</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pattern discovered:</strong> Every +2 bags gives +40kg wheat
+Ratio = 40/2 = 20 → this is w</p>
+<p><strong>Formula found:</strong> y = 20x + 10</p>
+<p><strong>Verification:</strong></p>
+<ul>
+<li>x=2 → 20*2 + 10 = 50 ✓</li>
+<li>x=4 → 20*4 + 10 = 90 ✓</li>
+<li>x=6 → 20*6 + 10 = 130 ✓</li>
+</ul>
+<p><strong>Prediction:</strong> x=10 → 20*10 + 10 = 210kg</p>
+<p><strong>Why w and b exist:</strong></p>
+<ul>
+<li>w = how much y changes per unit of x (the ratio)</li>
+<li>b = baseline value when x = 0</li>
+</ul>
+<p><strong>ML Connection:</strong> This is exactly what Linear Regression does —
+finds w and b automatically from thousands of rows of data.</p>
+<hr />
+<h2 id="example-07-farmer-water-amp-crop-yield-mixed-pra">Example 07 — Farmer Water &amp; Crop Yield (Mixed Practice Q2)</h2>
+<p><strong>Problem:</strong> Find formula from data and predict unknown value.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Water litres (x)</th>
+  <th>Crop yield kg (y)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>3</td>
+  <td>70</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>130</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td>190</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Finding w:</strong>
+y increases by 60, x increases by 3
+w = 60 / 3 = 20</p>
+<p><strong>Finding b:</strong>
+70 = 20*3 + b
+70 = 60 + b
+b = 10</p>
+<p><strong>Full formula:</strong> y = 20x + 10</p>
+<p><strong>Prediction:</strong> x = 15 → y = 20*15 + 10 = 310</p>
+<h2 id="example-08-linear-vs-non-linear-comparison-mixed">Example 08 — Linear vs Non-linear comparison (Mixed Practice Q3)</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Formula</th>
+  <th>Type</th>
+  <th>Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>y = 4x + 10</td>
+  <td>Linear</td>
+  <td>Straight line</td>
+</tr>
+<tr>
+  <td>y = 4x² + 10</td>
+  <td>Non-linear</td>
+  <td>U shape</td>
+</tr>
+<tr>
+  <td>y = 4x³ + 10</td>
+  <td>Non-linear</td>
+  <td>S shape</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Y-intercept rule:</strong>
+Constant b = 10 → all three cross vertical axis at y = 10
+When x = 0 → y always equals b</p>
+<p><strong>Key word:</strong> Y-intercept = where graph crosses vertical axis</p>
+
+<div class="src-head">📝 <a href="../Concept/01_variables_expressions.md">01_variables_expressions.md</a></div>
+<h2 id="topic-01-variables-amp-expressions">Topic 01 — Variables &amp; Expressions</h2>
+<p>Date:</p>
+<h2 id="the-story">The Story</h2>
+<p>(Write the chai stall story in 2-3 lines, your own words)</p>
+<h2 id="the-formula">The Formula</h2>
+<p>P = 5c − 200</p>
+<h2 id="what-each-symbol-means">What Each Symbol Means</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Name</th>
+  <th>What it means to me</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>P</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>c</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>200</td>
+  <td></td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="ml-connection">ML Connection</h2>
+<p>y = wx + b</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Chai stall</th>
+  <th>ML</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>P</td>
+  <td>y</td>
+  <td>Output — what we want to predict</td>
+</tr>
+<tr>
+  <td>c</td>
+  <td>x</td>
+  <td>Input — the data we feed in</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>w</td>
+  <td>Weight — how much input affects output</td>
+</tr>
+<tr>
+  <td>200</td>
+  <td>b</td>
+  <td>Bias — fixed shift, always there</td>
+</tr>
+</tbody>
+</table>
+<h2 id="memory-hook">Memory Hook</h2>
+<p>(Write one sentence — how will YOU remember this?)</p>
+<h2 id="practice-working">Practice Working</h2>
+<p>(Your step by step answers go here after you solve them)</p>
+<h2 id="practice-working">Practice Working</h2>
+<h3>Q1 — Substitution (c = 60)</h3>
+<p>P = 5c - 200
+P = 5 * 60 - 200
+P = 300 - 200
+P = 100
+Result: Profit of ₹100</p>
+<h3>Q2 — Solve for break-even (P = 0)</h3>
+<p>Formula: P = 8c - 400
+Step 1: Substitute P = 0
+0 = 8c - 400
+Step 2: Add 400 to both sides
+400 = 8c
+Step 3: Divide both sides by 8
+c = 400 / 8
+c = 50
+Result: Need to sell 50 cups to break even</p>
+<h3>Q3 — ML formula thinking</h3>
+<p>y = wx + b</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Type</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>x</td>
+  <td>Variable</td>
+  <td>Input — changes every time</td>
+</tr>
+<tr>
+  <td>w</td>
+  <td>Coefficient</td>
+  <td>Multiplier attached to x</td>
+</tr>
+<tr>
+  <td>b</td>
+  <td>Constant</td>
+  <td>Fixed value, always present</td>
+</tr>
+</tbody>
+</table>
+<p>Real life example — Food budget:
+x = number of times eating outside
+w = cost per meal (60$)
+b = fixed food cost (groceries etc)
+y = total food spend</p>
+<p>y = 60x + b
+If x = 5: y = 60*5 + b = 300 + b</p>
+<h2 id="my-understanding">My Understanding</h2>
+<p>Variable    : Something that keeps changing, we can't predict its value</p>
+<p>Constant    : Always fixed before the equation starts, never changes</p>
+<p>Coefficient : The multiplier attached to a variable</p>
+<h2 id="topic-02-functions-amp-graphs">Topic 02 — Functions &amp; Graphs</h2>
+<p>Date:</p>
+<h2 id="the-concept">The Concept</h2>
+<p>A function takes an input, does a calculation, and gives one output.
+One input always gives one output — no surprises.</p>
+<h2 id="the-formula">The Formula</h2>
+<p>f(x) = 5x - 200</p>
+<h2 id="what-each-symbol-means">What Each Symbol Means</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Symbol</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>f(x)</td>
+  <td>The function — the machine</td>
+</tr>
+<tr>
+  <td>x</td>
+  <td>Input — what you put in</td>
+</tr>
+<tr>
+  <td>f(x)</td>
+  <td>Output — what comes out</td>
+</tr>
+</tbody>
+</table>
+<h2 id="linear-vs-non-linear">Linear vs Non-linear</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Formula</th>
+  <th>Shape</th>
+  <th>Power</th>
+  <th>ML Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>y = x</td>
+  <td>Straight line</td>
+  <td>x¹</td>
+  <td>Linear</td>
+</tr>
+<tr>
+  <td>y = x²</td>
+  <td>U shape</td>
+  <td>x²</td>
+  <td>Non-linear</td>
+</tr>
+<tr>
+  <td>y = x³</td>
+  <td>S shape</td>
+  <td>x³</td>
+  <td>Non-linear</td>
+</tr>
+</tbody>
+</table>
+<p>Rule: x¹ = straight line. x² or higher = curve.</p>
+<h2 id="ml-connection">ML Connection</h2>
+<ul>
+<li>Linear Regression uses y = wx + b — straight line only</li>
+<li>Neural Networks use non-linear functions — can learn curves</li>
+<li>If data has curved pattern, straight line model will fail</li>
+</ul>
+<h2 id="memory-hook">Memory Hook</h2>
+<p>(Write your own one sentence here)</p>
+<h2 id="practice-working">Practice Working</h2>
+<p>(Your answers go here)</p>
+
+<div class="foot"><a class="btn" href="../Concept/00_examples_library.md">00_examples_library.md ↗</a><a class="btn" href="../Concept/01_variables_expressions.md">01_variables_expressions.md ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

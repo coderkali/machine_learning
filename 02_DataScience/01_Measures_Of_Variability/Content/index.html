@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measures Of Variability — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">02 DataScience › <b>Measures Of Variability</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Data science and statistics</p>
+  <h1>Measures Of Variability</h1>
+  <p class="lede">Two datasets can share an average and describe completely different worlds.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Two teams both averaged 50 marks.</strong> On paper they looked identical.</p><p>Team A scored 48, 50, 51, 51. Team B scored 5, 20, 80, 95. Same average, utterly different classrooms.</p><p><span class='beat'>The average hid the only thing that mattered — the spread.</span></p><p>Variance measures how far the values sit from the mean, on average. Standard deviation is its square root, which puts the answer back into marks instead of marks-squared.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>The mean tells you where the middle is. Variance and standard deviation tell you how far people are from it.</p></div>
+<div class="src-head">📓 <a href="../Concept/02_MeasureMent_Of_Variability.ipynb">02_MeasureMent_Of_Variability.ipynb</a></div>
+<p>Finding out the Range</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+dataset = pd.read_csv(&quot;../../_shared_data/titanic_sample_1000.csv&quot;)
+dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   PassengerId  Survived  Pclass     Sex   Age  SibSp  Parch    Fare Embarked
+0            1         1       2    male  21.0      0      0   40.82        S
+1            2         0       3    male  17.0      1      0   10.52        S
+2            3         0       3  female  23.0      1      0   12.33        S
+3            4         0       3  female  29.0      0      2   11.98        C
+4            5         1       1  female   NaN      0      0  113.87        S</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">min_r = dataset[&quot;Age&quot;].min()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">max_r = dataset[&quot;Age&quot;].max()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">dataset[dataset[&quot;Age&quot;] &gt; 100]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Empty DataFrame
+Columns: [PassengerId, Survived, Pclass, Sex, Age, SibSp, Parch, Fare, Embarked]
+Index: []</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">range = max_r - min_r
+range</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(65.0)</pre></div>
+<p>Mean Aboslute Deviation</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">sec_a = np.array([75,65,73,68,72,76])
+sec_b = np.array([90,47,43,96,93,51])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">mean_sec_A = np.mean(sec_a)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">mean_sec_B = np.mean(sec_b)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">no = np.array([1,2,3,4,5,6])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">plt.figure(figsize=(10,3))
+plt.scatter(sec_a,no, label=&quot;Sec A&quot;)
+plt.scatter(sec_b,no, label=&quot;Sec B&quot;)
+plt.plot([70,70,70,70,70,70],no,c=&quot;blue&quot;, label=&quot;Mean&quot;)
+plt.legend()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/02-measurement-of-variabilit-c11-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Matematical way of iodentyifying the MAD</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">mad_a = np.sum(np.abs(sec_a-mean_sec_A))/len(sec_a)
+mad_a</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(3.3333333333333335)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">mad_b = np.sum(np.abs(sec_b-mean_sec_B))/len(sec_b)
+mad_b</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(23.0)</pre></div>
+<div class="src-head">📓 <a href="../Concept/03_standard_deviation.ipynb">03_standard_deviation.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">sec_a = np.array([75,65,73,68,72,76])
+sec_b = np.array([90,47,43,96,93,51])
+no = np.array([1,2,3,4,5,6])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">np.std(sec_a), np.std(sec_b)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(3.8622100754188224), np.float64(23.18045153428495))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">np.var(sec_a), np.var(sec_b)</pre></div>
+<div class="out"><div class="h">Output</div><pre>(np.float64(14.916666666666666), np.float64(537.3333333333334))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/titanic_sample_1000.csv&quot;)
+dataset.head(3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   PassengerId  Survived  Pclass     Sex   Age  SibSp  Parch   Fare Embarked
+0            1         1       2    male  21.0      0      0  40.82        S
+1            2         0       3    male  17.0      1      0  10.52        S
+2            3         0       3  female  23.0      1      0  12.33        S</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset[&quot;Age&quot;].var()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(137.24456194967115)</pre></div>
+<p>The above data is fully spreaded</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">sns.histplot(x=&quot;Age&quot;,data=dataset)
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/03-standard-deviation-c07-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">dataset[&quot;Age&quot;].std()</pre></div>
+<div class="out"><div class="h">Output</div><pre>np.float64(11.715142421228654)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">dataset.describe()</pre></div>
+<div class="out"><div class="h">Output</div><pre>       PassengerId     Survived      Pclass         Age        SibSp  \
+count  1000.000000  1000.000000  1000.00000  810.000000  1000.000000   
+mean    500.500000     0.302000     2.28400   29.186420     0.438000   
+std     288.819436     0.459355     0.84502   11.715142     0.805484   
+min       1.000000     0.000000     1.00000    1.000000     0.000000   
+25%     250.750000     0.000000     1.00000   21.000000     0.000000   
+50%     500.500000     0.000000     3.00000   29.000000     0.000000   
+75%     750.250000     1.000000     3.00000   37.000000     1.000000   
+max    1000.000000     1.000000     3.00000   66.000000     4.000000   
+
+            Parch         Fare  
+count  1000.00000  1000.000000  
+mean      0.36000    39.147900  
+std       0.73276    49.681657  
+min       0.00000     4.530000  
+25%       0.00000    10.397500  
+50%       0.00000    17.385000  
+75%       0.00000    47.207500  
+max       3.00000   512.330000</pre></div>
+<div class="foot"><a class="btn" href="../Concept/02_MeasureMent_Of_Variability.ipynb">02_MeasureMent_Of_Variability.ipynb ↗</a><a class="btn" href="../Concept/03_standard_deviation.ipynb">03_standard_deviation.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

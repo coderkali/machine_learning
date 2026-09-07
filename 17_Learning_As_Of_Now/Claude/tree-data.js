@@ -20,8 +20,9 @@ const TREE = {
           "status": "archive",
           "details": [
             "Concept: README.md",
-            "Concept: variables_data_types_numbers_strings.ipynb"
+            "Concept: sales_analysis_explained.md"
           ],
+          "lesson": "../../01_Python/01_Variables_And_Data_Types/Content/index.html",
           "path": "../../01_Python/01_Variables_And_Data_Types/Concept/variables_data_types_numbers_strings.ipynb"
         },
         {
@@ -29,26 +30,21 @@ const TREE = {
           "meta": "4 notebooks · 1 note",
           "status": "archive",
           "details": [
-            "Concept: NumPy_exmaple.py",
             "Concept: README.md",
-            "Concept: example_01.ipynb",
-            "Concept: example_01.py",
-            "Concept: example_02.ipynb",
-            "Concept: example_02.py"
+            "Concept: sales_analysis_explained.md"
           ],
+          "lesson": "../../01_Python/02_NumPy/Content/index.html",
           "path": "../../01_Python/02_NumPy/Concept/example_01.ipynb"
         },
         {
           "title": "Pandas",
-          "meta": "3 notebooks · 1 note · 4 data files",
+          "meta": "3 notebooks · 1 note · 16 data files",
           "status": "archive",
           "details": [
             "Concept: README.md",
-            "Concept: example_01.ipynb",
-            "Concept: example_01.py",
-            "Concept: example_02.ipynb",
-            "Concept: pizza_panda.ipynb"
+            "Concept: sales_analysis_explained.md"
           ],
+          "lesson": "../../01_Python/03_Pandas/Content/index.html",
           "path": "../../01_Python/03_Pandas/Concept/example_01.ipynb"
         },
         {
@@ -57,12 +53,9 @@ const TREE = {
           "status": "archive",
           "details": [
             "Concept: README.md",
-            "Concept: example_01.ipynb",
-            "Concept: example_01.py",
-            "Concept: matplotlib_example.ipynb",
-            "Concept: pizza_matplotlib.ipynb",
-            "Concept: pizza_matplotlib_2.ipynb"
+            "Concept: sales_analysis_explained.md"
           ],
+          "lesson": "../../01_Python/04_Matplotlib/Content/index.html",
           "path": "../../01_Python/04_Matplotlib/Concept/example_01.ipynb"
         },
         {
@@ -71,10 +64,9 @@ const TREE = {
           "status": "archive",
           "details": [
             "Concept: README.md",
-            "Concept: example_01.ipynb",
-            "Concept: example_01.py",
-            "Concept: pizza_seaborn.ipynb"
+            "Concept: sales_analysis_explained.md"
           ],
+          "lesson": "../../01_Python/05_Seaborn/Content/index.html",
           "path": "../../01_Python/05_Seaborn/Concept/example_01.ipynb"
         },
         {
@@ -83,9 +75,9 @@ const TREE = {
           "status": "archive",
           "details": [
             "Concept: README.md",
-            "Concept: concept_3d_projection.md",
-            "Concept: example_01.ipynb"
+            "Concept: sales_analysis_explained.md"
           ],
+          "lesson": "../../01_Python/06_Plotly/Content/index.html",
           "path": "../../01_Python/06_Plotly/Concept/example_01.ipynb"
         },
         {
@@ -96,6 +88,7 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "lesson": "../../01_Python/07_Streamlit/Content/index.html",
           "path": "../../01_Python/07_Streamlit/Concept/README.md"
         },
         {
@@ -130,6 +123,7 @@ const TREE = {
           "details": [
             "Concept: zip_python.ipynb"
           ],
+          "lesson": "../../01_Python/10_Pizza_Dashboard_Lab/Content/index.html",
           "path": "../../01_Python/10_Pizza_Dashboard_Lab/Concept/zip_python.ipynb"
         }
       ]
@@ -149,6 +143,7 @@ const TREE = {
             "Concept: 02_MeasureMent_Of_Variability.ipynb",
             "Concept: 03_standard_deviation.ipynb"
           ],
+          "lesson": "../../02_DataScience/01_Measures_Of_Variability/Content/index.html",
           "path": "../../02_DataScience/01_Measures_Of_Variability/Concept/02_MeasureMent_Of_Variability.ipynb"
         },
         {
@@ -158,6 +153,7 @@ const TREE = {
           "details": [
             "Concept: 04_IQR.ipynb"
           ],
+          "lesson": "../../02_DataScience/02_IQR/Content/index.html",
           "path": "../../02_DataScience/02_IQR/Concept/04_IQR.ipynb"
         },
         {
@@ -167,6 +163,7 @@ const TREE = {
           "details": [
             "Concept: 05_skewness.ipynb"
           ],
+          "lesson": "../../02_DataScience/03_Skewness/Content/index.html",
           "path": "../../02_DataScience/03_Skewness/Concept/05_skewness.ipynb"
         },
         {
@@ -176,6 +173,7 @@ const TREE = {
           "details": [
             "Concept: 06_co-relation.ipynb"
           ],
+          "lesson": "../../02_DataScience/04_Correlation/Content/index.html",
           "path": "../../02_DataScience/04_Correlation/Concept/06_co-relation.ipynb"
         },
         {
@@ -185,6 +183,7 @@ const TREE = {
           "details": [
             "Concept: 07_Central_Limit_Theorem.ipynb"
           ],
+          "lesson": "../../02_DataScience/05_Central_Limit_Theorem/Content/index.html",
           "path": "../../02_DataScience/05_Central_Limit_Theorem/Concept/07_Central_Limit_Theorem.ipynb"
         },
         {
@@ -195,6 +194,7 @@ const TREE = {
             "Concept: 08_Hypothesis_Testing.ipynb",
             "Concept: 08_Hypothesis_Testing_1.ipynb"
           ],
+          "lesson": "../../02_DataScience/06_Hypothesis_Testing_Basics/Content/index.html",
           "path": "../../02_DataScience/06_Hypothesis_Testing_Basics/Concept/08_Hypothesis_Testing.ipynb"
         },
         {
@@ -204,6 +204,7 @@ const TREE = {
           "details": [
             "Concept: 11_Hypothesis_Testing_Z-Test.ipynb"
           ],
+          "lesson": "../../02_DataScience/07_Z_Test/Content/index.html",
           "path": "../../02_DataScience/07_Z_Test/Concept/11_Hypothesis_Testing_Z-Test.ipynb"
         },
         {
@@ -216,6 +217,7 @@ const TREE = {
             "Concept: 12_Hypothesis_Testing_T-Test_95.ipynb",
             "Concept: 13_Hypothesis_Testing_T-Test_80.ipynb"
           ],
+          "lesson": "../../02_DataScience/08_T_Test/Content/index.html",
           "path": "../../02_DataScience/08_T_Test/Concept/09_Hypothesis_Testing_T-Test.ipynb"
         },
         {
@@ -225,6 +227,7 @@ const TREE = {
           "details": [
             "Concept: 14_Hypothesis_Testing_T-Test_Paired.ipynb"
           ],
+          "lesson": "../../02_DataScience/09_Paired_T_Test/Content/index.html",
           "path": "../../02_DataScience/09_Paired_T_Test/Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb"
         },
         {
@@ -235,6 +238,7 @@ const TREE = {
             "Concept: 15_Hypothesis_Testing_Chi_Square_Test.ipynb",
             "Concept: 16_Hypothesis_Testing_Chi_Square_Test.ipynb"
           ],
+          "lesson": "../../02_DataScience/10_Chi_Square_Test/Content/index.html",
           "path": "../../02_DataScience/10_Chi_Square_Test/Concept/15_Hypothesis_Testing_Chi_Square_Test.ipynb"
         },
         {
@@ -245,6 +249,7 @@ const TREE = {
             "Concept: Z-Test vs T-Test.ipynb",
             "Concept: Z-Test vs T-Test.md"
           ],
+          "lesson": "../../02_DataScience/11_Z_Test_vs_T_Test/Content/index.html",
           "path": "../../02_DataScience/11_Z_Test_vs_T_Test/Concept/Z-Test vs T-Test.ipynb"
         },
         {
@@ -259,10 +264,11 @@ const TREE = {
         },
         {
           "title": "shared data",
-          "meta": "2 data files",
+          "meta": "2 files",
           "status": "archive",
           "details": [
-            "(no notes yet)"
+            "tips.csv",
+            "titanic_sample_1000.csv"
           ],
           "path": "../../02_DataScience/_shared_data"
         }
@@ -283,7 +289,7 @@ const TREE = {
             "Concept: 00_examples_library.md",
             "Concept: 01_variables_expressions.md"
           ],
-          "lesson": "../../03_Math/01_Algebra/Content/linear_vs_nonlinear_charts.html",
+          "lesson": "../../03_Math/01_Algebra/Content/index.html",
           "path": "../../03_Math/01_Algebra/Concept/00_examples_library.md"
         },
         {
@@ -298,6 +304,7 @@ const TREE = {
             "Concept: 04_normal_distribution.md",
             "Concept: 05_correlation.md"
           ],
+          "lesson": "../../03_Math/02_Statistics/Content/index.html",
           "path": "../../03_Math/02_Statistics/Concept/00_what_is_statistics.md"
         },
         {
@@ -310,6 +317,7 @@ const TREE = {
             "Concept: linear_algebra_notes.md",
             "Concept: practical_example.md"
           ],
+          "lesson": "../../03_Math/03_Linear_Algebra/Content/index.html",
           "path": "../../03_Math/03_Linear_Algebra/Concept/doubts_and_clarifications.md"
         },
         {
@@ -323,6 +331,7 @@ const TREE = {
             "Concept: 02_derivative_new.md",
             "Concept: 03_gradient_descent.md"
           ],
+          "lesson": "../../03_Math/04_Calculus/Content/index.html",
           "path": "../../03_Math/04_Calculus/Concept/01_02_slope_and_derivative.md"
         },
         {
@@ -337,6 +346,7 @@ const TREE = {
             "Concept: 05_derivative_inside_gradient_descent.md",
             "Concept: 06_messy_data_gradient_descent.md"
           ],
+          "lesson": "../../03_Math/05_Linear_Regression_From_Scratch/Content/index.html",
           "path": "../../03_Math/05_Linear_Regression_From_Scratch/Concept/01_linear_regression_intro.md"
         }
       ]
@@ -356,6 +366,7 @@ const TREE = {
             "Concept: 01._LEARNING.MD",
             "Concept: 02_ML_Roadmap.MD"
           ],
+          "lesson": "../../04_ML/01_What_Is_ML/Content/index.html",
           "path": "../../04_ML/01_What_Is_ML/Concept/01._LEARNING.MD"
         },
         {
@@ -365,6 +376,7 @@ const TREE = {
           "details": [
             "Concept: 03_Types_Of_Variables.MD"
           ],
+          "lesson": "../../04_ML/02_Types_Of_Variables/Content/index.html",
           "path": "../../04_ML/02_Types_Of_Variables/Concept/03_Types_Of_Variables.MD"
         },
         {
@@ -375,6 +387,7 @@ const TREE = {
             "Concept: 00_strategy.md",
             "Concept: 01_data_collection.md"
           ],
+          "lesson": "../../04_ML/03_Data_Collection/Content/index.html",
           "path": "../../04_ML/03_Data_Collection/Concept/00_strategy.md"
         },
         {
@@ -386,6 +399,7 @@ const TREE = {
             "Concept: 04_Data_Cleaning.MD",
             "Concept: 05_Data_Cleaning_Practice.ipynb"
           ],
+          "lesson": "../../04_ML/04_Data_Cleaning/Content/index.html",
           "path": "../../04_ML/04_Data_Cleaning/Concept/05_Data_Cleaning_Practice.ipynb"
         },
         {
@@ -400,6 +414,7 @@ const TREE = {
             "Concept: 07_Filling_Missing_Values.ipynb",
             "Concept: 07b_Ordered_And_Wide_Fill_Practice.ipynb"
           ],
+          "lesson": "../../04_ML/05_Missing_Values/Content/index.html",
           "path": "../../04_ML/05_Missing_Values/Concept/06_Dropping_Missing_Values.ipynb"
         },
         {
@@ -411,6 +426,7 @@ const TREE = {
             "Concept: 10_Label_Encoding.ipynb",
             "Concept: 11_Ordinal_Encoding.ipynb"
           ],
+          "lesson": "../../04_ML/06_Categorical_Encoding/Content/index.html",
           "path": "../../04_ML/06_Categorical_Encoding/Concept/09_one_hot_encoding.ipynb"
         },
         {
@@ -424,6 +440,7 @@ const TREE = {
             "DBSCAN — who is standing in a crowd and who is standing alone",
             "Reading the plot line, once, properly"
           ],
+          "lesson": "../../04_ML/07_Outliers/Content/index.html",
           "path": "../../04_ML/07_Outliers/Concept/12_Outlier.ipynb"
         },
         {
@@ -434,6 +451,7 @@ const TREE = {
             "Concept: 15_Feature_Scaling.ipynb",
             "Concept: 16_Feature_Scaling_Normalization.ipynb"
           ],
+          "lesson": "../../04_ML/08_Feature_Scaling/Content/index.html",
           "path": "../../04_ML/08_Feature_Scaling/Concept/15_Feature_Scaling.ipynb"
         },
         {
@@ -444,6 +462,7 @@ const TREE = {
             "Concept: 17_Handling_Duploicate_Data.ipynb",
             "Concept: 18_Replace_Change_Data_Type.ipynb"
           ],
+          "lesson": "../../04_ML/09_Duplicates_And_Dtypes/Content/index.html",
           "path": "../../04_ML/09_Duplicates_And_Dtypes/Concept/17_Handling_Duploicate_Data.ipynb"
         },
         {
@@ -453,6 +472,7 @@ const TREE = {
           "details": [
             "Concept: 19_Function_Transformer.ipynb"
           ],
+          "lesson": "../../04_ML/10_Function_Transformer/Content/index.html",
           "path": "../../04_ML/10_Function_Transformer/Concept/19_Function_Transformer.ipynb"
         },
         {
@@ -465,6 +485,7 @@ const TREE = {
             "Concept: 21_Feature_Selection_VarianceThreshold.ipynb",
             "Concept: 22_Forward_Backward_Practice.ipynb"
           ],
+          "lesson": "../../04_ML/11_Feature_Selection/Content/index.html",
           "path": "../../04_ML/11_Feature_Selection/Concept/20_Feature_Selection_techniques.ipynb"
         },
         {
@@ -478,6 +499,7 @@ const TREE = {
             "A measured data-leakage demo",
             "First Pipeline + ColumnTransformer"
           ],
+          "lesson": "../../04_ML/12_Preprocessing/Content/index.html",
           "path": "../../04_ML/12_Preprocessing/Concept/03_preprocessing.ipynb"
         },
         {
@@ -491,6 +513,7 @@ const TREE = {
             "The four-value return order",
             "Three experiments with three charts"
           ],
+          "lesson": "../../04_ML/13_Train_Test_Split/Content/index.html",
           "path": "../../04_ML/13_Train_Test_Split/Concept/01_train_test_split_data.ipynb"
         },
         {
@@ -504,6 +527,7 @@ const TREE = {
             "make_circles — factor · make_moons",
             "The shuffle=True column-permutation gotcha, found by the learner"
           ],
+          "lesson": "../../04_ML/14_Synthetic_Datasets/Content/index.html",
           "path": "../../04_ML/14_Synthetic_Datasets/Concept/02_make_*_dataset.ipynb"
         },
         {
@@ -517,6 +541,7 @@ const TREE = {
             "Multivariate — sns.pairplot(hue=, markers=)",
             "A real mislabelling bug kept and explained, not hidden"
           ],
+          "lesson": "../../04_ML/15_EDA_Uni_Bi_Multivariate/Content/index.html",
           "path": "../../04_ML/15_EDA_Uni_Bi_Multivariate/Concept/04_uni_boi_multi_variate_analaysis.ipynb"
         },
         {
@@ -531,7 +556,7 @@ const TREE = {
             "The Normal Equation (XᵀX)⁻¹Xᵀy checked against sklearn",
             "Hand-written gradient descent reaching the same answer in 60 steps"
           ],
-          "lesson": "../../04_ML/16_Linear_Regression/Content/linear-regression.html",
+          "lesson": "../../04_ML/16_Linear_Regression/Content/index.html",
           "path": "../../04_ML/16_Linear_Regression/Concept/05_Linear_Regression.ipynb"
         },
         {
@@ -544,6 +569,7 @@ const TREE = {
             "Coefficients as partial effects — Age moves from −61 to −20.4 once Degrees joins",
             "Why a 0.976 test R² over 2 rows is not evidence"
           ],
+          "lesson": "../../04_ML/17_Multiple_Linear_Regression/Content/index.html",
           "path": "../../04_ML/17_Multiple_Linear_Regression/Concept/06_multiple_linear_regression.ipynb"
         },
         {
@@ -555,6 +581,7 @@ const TREE = {
             "The first worked underfit / overfit comparison",
             "Reading the chart: what the curve is really doing between the points"
           ],
+          "lesson": "../../04_ML/18_Polynomial_Regression/Content/index.html",
           "path": "../../04_ML/18_Polynomial_Regression/Concept/10_Polynomial Regression.ipynb"
         },
         {
@@ -568,6 +595,7 @@ const TREE = {
             "Why a large alpha flattens the line onto mean(y_train)",
             "The alpha table from 0 to 10,000,000"
           ],
+          "lesson": "../../04_ML/19_Ridge_Regression/Content/index.html",
           "path": "../../04_ML/19_Ridge_Regression/Concept/07_Ridge.ipynb"
         },
         {
@@ -580,6 +608,7 @@ const TREE = {
             "alpha = 9.5 is the point where the slope hits zero",
             "Common mistakes and a key takeaway"
           ],
+          "lesson": "../../04_ML/20_Lasso_Regression/Content/index.html",
           "path": "../../04_ML/20_Lasso_Regression/Concept/08_Lasso.ipynb"
         },
         {
@@ -591,6 +620,7 @@ const TREE = {
             "alpha sets penalty strength, l1_ratio sets the mix",
             "Sweeping alpha from 0.01 to 100 — from plain LinearRegression to a flat mean line"
           ],
+          "lesson": "../../04_ML/21_ElasticNet/Content/index.html",
           "path": "../../04_ML/21_ElasticNet/Concept/09_ElasticNet.ipynb"
         },
         {
@@ -604,6 +634,7 @@ const TREE = {
             "Concept: 32_Root_Mean_Squared_Error.MD",
             "Concept: 33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb"
           ],
+          "lesson": "../../04_ML/22_Cost_Functions/Content/index.html",
           "path": "../../04_ML/22_Cost_Functions/Concept/30_Cost_Function_MSE_GradientDescent.ipynb"
         },
         {
@@ -617,6 +648,7 @@ const TREE = {
             "LeavePOut(p=2) and LeaveOneOut",
             "Which one to use, and when"
           ],
+          "lesson": "../../04_ML/23_Cross_Validation/Content/index.html",
           "path": "../../04_ML/23_Cross_Validation/Concept/11_Corss_validation.ipynb"
         },
         {
@@ -630,6 +662,7 @@ const TREE = {
             "One habit to fix: the argument order accuracy_score(Y_pred, Y_test)",
             "Handwritten note: 15_Model_Evaluation.png"
           ],
+          "lesson": "../../04_ML/24_Model_Evaluation/Content/index.html",
           "path": "../../04_ML/24_Model_Evaluation/Concept/15_Model_Evaluation.ipynb"
         },
         {
@@ -643,6 +676,7 @@ const TREE = {
             "The metrics.plot_roc_curve AttributeError kept on purpose, with RocCurveDisplay beside it",
             "Handwritten note: 14_ROC_Curve.png"
           ],
+          "lesson": "../../04_ML/25_ROC_And_AUC/Content/index.html",
           "path": "../../04_ML/25_ROC_And_AUC/Concept/14_roc.ipynb"
         },
         {
@@ -657,6 +691,7 @@ const TREE = {
             "Handing it to DecisionTreeClassifier · exported dt.tree",
             "Handwritten note: 16_DTC.png"
           ],
+          "lesson": "../../04_ML/26_Decision_Tree_Classification/Content/index.html",
           "path": "../../04_ML/26_Decision_Tree_Classification/Concept/16_Descison_Tree_Classfication.ipynb"
         },
         {
@@ -670,6 +705,7 @@ const TREE = {
             "Why score() means something completely different for a regressor",
             "Handwritten note: 17_DTR.png"
           ],
+          "lesson": "../../04_ML/27_Decision_Tree_Regression/Content/index.html",
           "path": "../../04_ML/27_Decision_Tree_Regression/Concept/17_Descison_Tree_Regression.ipynb"
         },
         {
@@ -684,6 +720,7 @@ const TREE = {
             "Reading the classification report",
             "Handwritten note: 18_Naive_Bayes_Detailed_Handwritten_Notes.png"
           ],
+          "lesson": "../../04_ML/28_Naive_Bayes/Content/index.html",
           "path": "../../04_ML/28_Naive_Bayes/Concept/18_Naive_Bayers.ipynb"
         },
         {
@@ -693,6 +730,7 @@ const TREE = {
           "details": [
             "Concept: 25_K_Nearest_Neighbor_explained.ipynb"
           ],
+          "lesson": "../../04_ML/29_K_Nearest_Neighbor/Content/index.html",
           "path": "../../04_ML/29_K_Nearest_Neighbor/Concept/25_K_Nearest_Neighbor_explained.ipynb"
         },
         {
@@ -706,6 +744,7 @@ const TREE = {
             "Doing it without building the extra columns by hand",
             "One caution about reading the picture"
           ],
+          "lesson": "../../04_ML/30_Support_Vector_Machines/Content/index.html",
           "path": "../../04_ML/30_Support_Vector_Machines/Concept/22_svc_2D.ipynb"
         },
         {
@@ -719,6 +758,7 @@ const TREE = {
             "What .fit() actually stores, and what predict() means with no labels",
             "Where K-Means gets it wrong"
           ],
+          "lesson": "../../04_ML/31_Clustering_KMeans/Content/index.html",
           "path": "../../04_ML/31_Clustering_KMeans/Concept/12_clustering.ipynb"
         },
         {
@@ -747,6 +787,7 @@ const TREE = {
             "The trade-off, and the syntax in one place",
             "Handwritten note: 19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png"
           ],
+          "lesson": "../../04_ML/33_Hyperparameter_Tuning/Content/index.html",
           "path": "../../04_ML/33_Hyperparameter_Tuning/Concept/19_Hyperparameter_Tuning.ipynb"
         },
         {
@@ -760,6 +801,7 @@ const TREE = {
             "Gradient Boosting — boosting by chasing the leftover error",
             "Where each one is used in real systems"
           ],
+          "lesson": "../../04_ML/34_Ensemble_Methods/Content/index.html",
           "path": "../../04_ML/34_Ensemble_Methods/Concept/20_Ensemble_methods.ipynb"
         },
         {
@@ -771,14 +813,22 @@ const TREE = {
             "The most integrated project in the archive",
             "Open gap: preprocessing is fitted before the train/test split — a real leakage defect"
           ],
+          "lesson": "../../04_ML/35_Project_Employee_Attrition/Content/index.html",
           "path": "../../04_ML/35_Project_Employee_Attrition/Concept/Employee_Attrition_Pipeline.ipynb"
         },
         {
           "title": "shared data",
-          "meta": "9 data files",
+          "meta": "9 files",
           "status": "learning",
           "details": [
-            "(no notes yet)"
+            "daily_temperature.csv",
+            "diabetes.csv",
+            "loans.csv",
+            "loans_guarantor.csv",
+            "placement.csv",
+            "polynomial_dataset.csv",
+            "predict.jpg",
+            "regression_dataset.csv"
           ],
           "path": "../../04_ML/_shared_data"
         }
@@ -1102,11 +1152,13 @@ const TREE = {
         },
         {
           "title": "shared",
-          "meta": "2 files",
+          "meta": "4 files",
           "status": "learning",
           "details": [
+            "build_lessons.py",
             "lesson.css",
-            "lesson.js"
+            "lesson.js",
+            "stories.json"
           ],
           "path": "../../17_Learning_As_Of_Now/shared"
         }
