@@ -1,49 +1,54 @@
-# AI/ML Engineering Learning Repository
+# Machine Learning — Learning Repository
 
-This repository organizes my instructor-led AI/ML learning into a visual
-roadmap, focused notes, runnable code, and projects.
+A personal AI/ML engineering handbook: notebooks, written notes, illustrated
+lesson pages, and a visual map that ties them together.
 
-## Start here
+**Start here → [`17_Learning_As_Of_Now/Claude/index.html`](./17_Learning_As_Of_Now/Claude/index.html)**
+— an interactive map of every topic, with a reading view that opens everything
+at once.
 
-- **[Open the visual roadmap](./ROADMAP.html)**
-- [Open the active learning folders](./AI_ML_Series/README.md)
-- [View demonstrated skills](./SKILLS.md)
-- [View the instructor-to-repository map](./docs/curriculum-map.md)
-- [View the glossary](./docs/glossary.md)
+## Layout
 
-## Current progress
+Every topic folder has the same three parts:
 
 ```text
-Phase 01 — Engineering and Python Foundation     🟡 Learning
-Phase 02 — Python Data Toolkit and Rapid Apps    🟡 Learning
-All other phases                                 ⬜ Not Started
+<NN>_Subject/<NN>_Topic/
+├── Concept/    the notebooks and notes  (.ipynb, .md)
+├── Content/    the illustrated lesson   (.html)
+└── Data/       datasets and figures     (.csv, .png, .svg)
 ```
 
-Current work:
+| Folder | What is in it |
+|---|---|
+| [`01_Python/`](./01_Python/) | Python, NumPy, Pandas, Matplotlib, Seaborn, Plotly, Streamlit |
+| [`02_DataScience/`](./02_DataScience/) | Descriptive statistics, probability, hypothesis testing |
+| [`03_Math/`](./03_Math/) | Algebra, statistics, linear algebra, calculus, regression from scratch |
+| [`04_ML/`](./04_ML/) | Classical machine learning — 35 topics, the current course |
+| [`05_Deep_Learning/`](./05_Deep_Learning/) | Neural networks, NLP, computer vision, RL — not started |
+| [`06_Transformers_And_Prompting/`](./06_Transformers_And_Prompting/) | Transformers, prompt engineering — not started |
+| [`07_Retrieval_And_LLM_Apps/`](./07_Retrieval_And_LLM_Apps/) | LangChain, vector databases, RAG — not started |
+| [`08_Agentic_AI/`](./08_Agentic_AI/) | Agents, fine-tuning, no-code AI — not started |
+| [`09_MLOps_And_Containers/`](./09_MLOps_And_Containers/) | Docker, MLOps — not started |
+| [`10_Data_Platforms/`](./10_Data_Platforms/) | Kafka, Spark, Snowflake, Airflow, dbt — not started |
+| [`11_Cloud_And_LLMOps/`](./11_Cloud_And_LLMOps/) | Azure, AWS, GCP, LLMOps — not started |
+| [`12_Analytics_And_BI/`](./12_Analytics_And_BI/) | Excel, Power BI, Tableau, Looker — not started |
+| [`13_SQL_And_Databases/`](./13_SQL_And_Databases/) | MySQL, PostgreSQL — not started |
+| [`14_System_Design_And_Career/`](./14_System_Design_And_Career/) | AI system design, job readiness — not started |
+| [`15_Docs/`](./15_Docs/) | Roadmap, skills matrix, curriculum map, glossary, review queue |
+| [`16_Experiments/`](./16_Experiments/) | Scratch work and multi-topic projects |
+| [`17_Learning_As_Of_Now/`](./17_Learning_As_Of_Now/) | The visual map, plus earlier attempts at one |
 
-- [Python Session 01 — Variables, Data Types, Numbers, and Strings](./AI_ML_Series/01_engineering_python/01_python/session_01_variables_data_types_numbers_strings/README.md)
-- [NumPy — current lesson](./AI_ML_Series/02_data_toolkit_apps/01_numpy/README.md): arrays, operations, broadcasting, and linear algebra
-- [NumPy API-health exercise](./AI_ML_Series/02_data_toolkit_apps/01_numpy/project_01_api_health.ipynb) — in progress, Parts 1-2 of 12
-- [Pandas — current lesson](./AI_ML_Series/02_data_toolkit_apps/02_pandas/README.md): selection, cleaning, grouping, and the `.dt` / `.str` accessors
-- Data visualization: [Matplotlib](./AI_ML_Series/02_data_toolkit_apps/03_matplotlib/README.md), [Seaborn](./AI_ML_Series/02_data_toolkit_apps/04_seaborn/README.md), [Plotly](./AI_ML_Series/02_data_toolkit_apps/06_plotly/README.md)
-- [Streamlit](./AI_ML_Series/02_data_toolkit_apps/07_streamlit/README.md) — two open defects in the learner app, see the [review queue](./docs/review-queue.md)
+## Where things live
 
-## Main structure
+- **What have I learned?** → the map, or [`15_Docs/SKILLS.md`](./15_Docs/SKILLS.md)
+- **What is next in the course?** → [`15_Docs/ROADMAP.md`](./15_Docs/ROADMAP.md)
+- **What needs fixing?** → [`15_Docs/review-queue.md`](./15_Docs/review-queue.md)
+- **Which instructor module is which?** → [`15_Docs/curriculum-map.md`](./15_Docs/curriculum-map.md)
 
-```text
-MACHINE_LEARNING/
-├── ROADMAP.html          # Open this visual dashboard
-├── README.md
-├── ROADMAP.md            # Short text fallback
-├── SKILLS.md
-├── CLAUDE.md
-├── AI_ML_Series/         # Active 13-phase learning structure
-├── docs/                 # Course map, glossary, concepts, review queue
-├── experiments/          # Temporary investigations
-├── projects/             # Larger multi-topic applications
-└── Foundations_Archive/  # Earlier work preserved as evidence
-```
+## A note on history
 
-The instructor PDF is the source of truth. Its 41 modules are grouped into 13
-dependency-aware phases. Prior work can prove a skill, but it does not
-automatically complete a current bootcamp phase.
+Work done before the current bootcamp used to live in `Foundations_Archive/`.
+It has been merged into the subject folders by topic, so a topic can hold both
+prior work and current-course work side by side. **Prior work still proves a
+skill, not a completed module** — the two are tracked separately in
+`15_Docs/SKILLS.md` and `15_Docs/ROADMAP.md`.

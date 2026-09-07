@@ -7,21 +7,54 @@ skills in Python, machine learning, generative AI, RAG, agents, data platforms,
 and AI operations.
 
 The instructor bootcamp PDF is the primary source for curriculum scope. Use
-[`ROADMAP.html`](./ROADMAP.html) as the main visual learning order,
-[`ROADMAP.md`](./ROADMAP.md) as its short text fallback, and
-[`docs/curriculum-map.md`](./docs/curriculum-map.md) for source traceability.
-Do not add a topic to the official curriculum unless it appears in that map.
+[`17_Learning_As_Of_Now/Claude/index.html`](./17_Learning_As_Of_Now/Claude/index.html)
+as the main visual learning map, [`15_Docs/ROADMAP.md`](./15_Docs/ROADMAP.md) as
+its short text fallback, and [`15_Docs/curriculum-map.md`](./15_Docs/curriculum-map.md)
+for source traceability. Do not add a topic to the official curriculum unless it
+appears in that map.
 
-## Repository roles
+## Repository layout
 
-- `AI_ML_Series/` is the active 13-phase learning and evidence workspace.
-- `Foundations_Archive/` is historical evidence. Preserve it. Do not move,
-  rename, or silently modernize it.
-- `docs/` is the small shared knowledge base.
-- `projects/` and `experiments/` are created only when real work needs them.
-- `ROADMAP.html` is the primary visual roadmap; `ROADMAP.md` is its concise
-  fallback.
-- `SKILLS.md` tracks demonstrated ability. These are different measurements.
+The repository was reorganised on 2026-09-07 into numbered subject folders. The
+previous `AI_ML_Series/` and `Foundations_Archive/` trees no longer exist; their
+contents were merged into the subjects below by topic, with history preserved
+through `git mv`.
+
+```text
+01_Python  02_DataScience  03_Math  04_ML  05_Deep_Learning
+06_Transformers_And_Prompting  07_Retrieval_And_LLM_Apps  08_Agentic_AI
+09_MLOps_And_Containers  10_Data_Platforms  11_Cloud_And_LLMOps
+12_Analytics_And_BI  13_SQL_And_Databases  14_System_Design_And_Career
+15_Docs  16_Experiments  17_Learning_As_Of_Now
+```
+
+Every topic folder has the same three parts:
+
+```text
+<NN>_Subject/<NN>_Topic/
+├── Concept/    notebooks and written notes (.ipynb, .md)
+├── Content/    the rendered lesson page (.html, .css, .js)
+└── Data/       datasets, figures, scanned handwritten notes
+```
+
+- `Concept/` is the source of truth for what was learned.
+- `Content/` holds the illustrated lesson page for that topic, if one exists.
+  Shared lesson styling lives in `17_Learning_As_Of_Now/shared/`.
+- `Data/` is per topic. Datasets used by many topics live in a subject-level
+  `_shared_data/` folder instead of being duplicated.
+- `15_Docs/` is the knowledge base: roadmap, skills matrix, curriculum map,
+  glossary, review queue.
+- `16_Experiments/` is scratch and multi-topic project work.
+- `17_Learning_As_Of_Now/` is the visual map that links to every folder. It is
+  generated from the folder structure — regenerate it after moving files.
+
+Work that predates the current bootcamp is still **prior evidence**, not course
+completion, even though it now sits beside current work. Say which is which in
+topic READMEs and in `15_Docs/SKILLS.md`; do not silently upgrade a status
+because two folders were merged.
+
+- `15_Docs/SKILLS.md` tracks demonstrated ability, separately from course
+  progress. These are different measurements.
 
 ## Core behavior
 
@@ -249,8 +282,10 @@ Before creating a file, ask: does it make the repository easier to learn from?
 If not, do not create it.
 
 Avoid duplicate notes, empty phase folders, placeholder `.gitkeep` forests,
-huge README files, repeated explanations, random temporary files, and bulk
-reorganization. Keep the root as a navigation and progress control plane.
+huge README files, repeated explanations, and random temporary files. Keep the
+root as a navigation and progress control plane. The subject layout above is
+settled — add a topic folder when a topic is actually studied, and do not
+restructure the repository again without an explicit request.
 
 Do not delete existing notebook checkpoints, environments, legacy files, or
 historical notes merely as cleanup. They are user-owned work and require a
@@ -265,8 +300,8 @@ the rules below for active work:
 - For a new ML algorithm, let the learner attempt it before supplying a full
   implementation. Compare the attempt with a trusted library result when that
   comparison is part of the lesson.
-- Do not relocate the current Pandas notebook without repairing its existing
-  absolute dataset paths.
+- Dataset paths were repaired during the 2026-09-07 reorganisation and all 51
+  references resolve. Keep them relative; never reintroduce an absolute path.
 - The incomplete NumPy API-health project remains learning work; do not mark it
   complete until its promised parts are actually done or its scope is revised.
 
