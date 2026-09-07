@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Regression — Lesson</title>
+<link rel="stylesheet" href="lesson.css">
+</head>
+<body>
+
+<div class="progress"></div>
+
+<header class="bar">
+  <div class="crumb">AI_ML_Series › Phase 02 › scikit-learn › <b>05 — Linear Regression</b></div>
+  <a class="btn" href="../index.html">← Map</a>
+  <a class="btn primary" href="../../AI_ML_Series/02_data_toolkit_apps/08_sklearn/05_Linear_Regression.ipynb">Open the notebook ↗</a>
+</header>
+
+<div class="wrap">
+
+<nav class="toc">
+  <p class="toc-h">On this page</p>
+  <a href="#story">The problem</a>
+  <a href="#idea">The one idea</a>
+  <a href="#data">1 · Look at the data</a>
+  <a href="#split">2 · Split first</a>
+  <a href="#fit">3 · fit()</a>
+  <a href="#numbers">4 · The two numbers</a>
+  <a href="#predict">5 · predict()</a>
+  <a href="#score">6 · score() and R²</a>
+  <a href="#knobs">7 · The two knobs</a>
+  <a href="#how">8 · How fit() finds them</a>
+  <a href="#matrix">9 · More than one column</a>
+  <a href="#gd">10 · Gradient descent</a>
+  <a href="#ext">Engineering extension</a>
+  <a href="#mistakes">Common mistakes</a>
+  <a href="#takeaway">Takeaway</a>
+</nav>
+
+<main class="doc">
+
+<div class="hero">
+  <p class="eyebrow">Machine Learning · Module M07 · scikit-learn</p>
+  <h1>Linear Regression</h1>
+  <p class="lede">Turning ten thousand rows into two numbers — and then discovering
+     that prediction is nothing more than those two numbers in
+     <code>y = m·x + c</code>.</p>
+  <div class="tags">
+    <span class="tag done">Done</span>
+    <span class="tag">49 cells · 21 code cells</span>
+    <span class="tag">📘 Instructor Curriculum</span>
+  </div>
+</div>
+
+<!-- ══════════ STORY ══════════ -->
+<section class="story" id="story">
+  <p class="who">The problem that made someone invent this</p>
+  <p><strong>Ravi runs a small courier service.</strong> A customer calls and asks
+     one simple question: <em>"How much to send a parcel 7.3 km?"</em></p>
+  <p>Ravi has ten thousand past deliveries in a spreadsheet — the distance, and what
+     he charged. So he does the obvious thing: <strong>he looks it up.</strong></p>
+  <p><span class="beat">It fails, twice.</span> First, he has never driven exactly
+     7.3 km. The closest rows are 7.28 and 7.34 — near, but not the question that was
+     asked. Second, when he does find two trips at almost the same distance, they
+     <em>disagree</em>: one was ₹631, the other ₹648. Traffic, fuel that week, a tip.
+     The spreadsheet has no single answer to give him.</p>
+  <p>So a lookup table is the wrong tool. Ravi does not need to remember ten thousand
+     rows. He needs <strong>one rule</strong> that turns any distance into a price —
+     including distances he has never driven.</p>
+  <p>That rule is a straight line. <strong>Linear regression is how you find it.</strong></p>
+</section>
+
+<figure class="svgfig">
+<svg viewBox="0 0 700 210" role="img" aria-label="A number line of past deliveries with a gap at 7.3 km">
+  <line x1="45" y1="150" x2="670" y2="150" stroke="#333e5c" stroke-width="2"/>
+  <g fill="#8791ab" font-size="11" font-family="monospace">
+    <text x="45"  y="172">5 km</text><text x="215" y="172">6.5</text>
+    <text x="455" y="172">8</text>   <text x="630" y="172">9 km</text>
+  </g>
+  <g fill="#38bdf8">
+    <circle cx="70"  cy="150" r="5"/><circle cx="130" cy="150" r="5"/>
+    <circle cx="205" cy="150" r="5"/><circle cx="255" cy="150" r="5"/>
+    <circle cx="330" cy="150" r="5"/><circle cx="368" cy="150" r="5"/>
+    <circle cx="470" cy="150" r="5"/><circle cx="545" cy="150" r="5"/>
+    <circle cx="620" cy="150" r="5"/>
+  </g>
+  <!-- the asked-for distance -->
+  <line x1="410" y1="42" x2="410" y2="163" stroke="#fbbf24" stroke-width="2" stroke-dasharray="5 4"/>
+  <circle cx="410" cy="150" r="6" fill="none" stroke="#fbbf24" stroke-width="2"/>
+  <text x="410" y="32" fill="#fbbf24" font-size="13" font-weight="700" text-anchor="middle">7.3 km — never driven</text>
+  <!-- two conflicting neighbours -->
+  <g font-size="11.5" font-family="monospace">
+    <text x="330" y="128" fill="#fb7185" text-anchor="middle">₹631</text>
+    <text x="368" y="110" fill="#fb7185" text-anchor="middle">₹648</text>
+  </g>
+  <path d="M330 134 L330 140 M368 116 L368 140" stroke="#fb7185" stroke-width="1.4"/>
+  <text x="349" y="195" fill="#fb7185" font-size="12" text-anchor="middle">nearly the same trip, two different answers</text>
+</svg>
+<figcaption><b>Why the lookup fails.</b> The blue dots are trips Ravi has actually
+  driven. The question falls in a gap — and even where rows do exist, they contradict
+  each other. No table can answer this. A rule can.</figcaption>
+</figure>
+
+<!-- ══════════ THE IDEA ══════════ -->
+<h2 id="idea"><span class="num">·</span>The one idea</h2>
+
+<p>Linear regression draws a single straight line through a cloud of dots, then uses
+   that line to answer questions. It is the smallest useful model in machine learning,
+   and everything harder is a variation on it.</p>
+
+<div class="formula">
+  y = coefficient × x + intercept
+  <span class="sm">School wrote it <code>y = mx + c</code>. Same line, longer names.</span>
+</div>
+
+<table class="tbl">
+  <tr><th>Maths</th><th>scikit-learn</th><th>In this notebook</th></tr>
+  <tr><td>slope <code>m</code></td><td><code>regressor.coef_</code></td><td class="win">86.43</td></tr>
+  <tr><td>intercept <code>c</code></td><td><code>regressor.intercept_</code></td><td class="win">0.04</td></tr>
+</table>
+
+<p><code>fit()</code> finds those two numbers. <code>predict()</code> puts an
+   <code>x</code> into the line. That is the entire model.</p>
+
+<div class="note curriculum">
+  <p class="h">📘 Instructor Curriculum</p>
+  <p>M07 Machine Learning, scikit-learn module. This lesson follows
+     <code>05_Linear_Regression.ipynb</code> cell by cell, using the numbers that
+     notebook actually produced.</p>
+</div>
+
+<!-- ══════════ DATA ══════════ -->
+<h2 id="data"><span class="num">1 ·</span>Look at the data first</h2>
+
+<div class="code">
+  <div class="code-head"><span>Build a straight-line dataset and look at it</span><span class="cell">cell 1</span></div>
+<pre class="py">
+from sklearn.datasets import make_regression
+x, y = make_regression(n_features=1, noise=5, n_samples=10000, random_state=1)
+
+import matplotlib.pyplot as plt
+plt.scatter(x, y)
+plt.xlabel('x'); plt.ylabel('y')
+plt.show()
+</pre>
+</div>
+
+<ul class="lines">
+  <li><span class="c">make_regression</span> builds fake data that already <b>is</b> a
+      straight line, so we can check the answer we get.</li>
+  <li><span class="c">noise=5</span> scatters the dots so it does not look artificially
+      perfect. This is Ravi's ₹631-versus-₹648 problem, put in on purpose.</li>
+  <li><span class="c">n_features=1</span> means one input column, so <code>x</code> has
+      shape <b>(10000, 1)</b> — ten thousand rows, one column.</li>
+</ul>
+
+<figure class="shot">
+  <img src="assets/lr-cell01.png" alt="Scatter plot of the generated data">
+  <figcaption><b>The notebook's own output.</b> A band of dots climbing to the right —
+    that is what a positive coefficient looks like. The job is to find the one line
+    that sits in the middle of the band.</figcaption>
+</figure>
+
+<div class="note warn">
+  <p class="h">⚠️ One honest note about the units</p>
+  <p>Ravi's story is the <em>why</em>. The notebook's data is synthetic and
+     <b>centred on zero</b>, so <code>x</code> runs about −4 to +4 instead of 5 to 9 km,
+     and <code>y</code> can be negative. Nothing about the method changes — but it is
+     the reason the intercept lands on <b>0.04</b> instead of a real base fare.</p>
+</div>
+
+<!-- ══════════ SPLIT ══════════ -->
+<h2 id="split"><span class="num">2 ·</span>Split before fitting</h2>
+
+<div class="code">
+  <div class="code-head"><span>Keep 2000 rows hidden</span><span class="cell">cell 4</span></div>
+<pre class="py">
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
+</pre>
+</div>
+
+<p>8000 rows to learn from, 2000 kept back for the exam. The model never sees
+   <code>X_test</code> while it is learning. Score it on rows it has already
+   memorised and you learn nothing about how it handles a new customer.</p>
+
+<!-- ══════════ FIT ══════════ -->
+<h2 id="fit"><span class="num">3 ·</span><code>fit()</code> — find the best line</h2>
+
+<div class="code">
+  <div class="code-head"><span>Train the model</span><span class="cell">cell 6</span></div>
+<pre class="py">
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+</pre>
+</div>
+
+<p><code>LinearRegression()</code> on its own knows nothing — it is an empty box.
+   <code>fit()</code> fills it. And what goes in is not what stays:
+   <strong>8000 rows go in, two floats come out.</strong> The rows are not kept.</p>
+
+<figure class="svgfig">
+<svg viewBox="0 0 700 230" role="img" aria-label="fit turns training rows into two numbers, predict uses them">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="#4b5a80"/>
+    </marker>
+  </defs>
+  <!-- fit row -->
+  <rect x="18"  y="24" width="150" height="52" rx="9" fill="#141a2b" stroke="#26304a"/>
+  <text x="93" y="46" fill="#e8ecf7" font-size="12.5" text-anchor="middle">X_train, y_train</text>
+  <text x="93" y="64" fill="#8791ab" font-size="11" text-anchor="middle">8000 rows</text>
+
+  <line x1="172" y1="50" x2="228" y2="50" stroke="#4b5a80" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="232" y="28" width="96" height="44" rx="9" fill="#1e2b52" stroke="#3b82f6"/>
+  <text x="280" y="55" fill="#93c5fd" font-size="13.5" font-family="monospace" text-anchor="middle">fit()</text>
+
+  <line x1="332" y1="50" x2="388" y2="50" stroke="#4b5a80" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="392" y="20" width="200" height="60" rx="9" fill="#123a2c" stroke="#34d399"/>
+  <text x="492" y="43" fill="#6ee7b7" font-size="12.5" font-family="monospace" text-anchor="middle">coef_      = 86.43</text>
+  <text x="492" y="63" fill="#6ee7b7" font-size="12.5" font-family="monospace" text-anchor="middle">intercept_ =  0.04</text>
+
+  <text x="620" y="46" fill="#8791ab" font-size="11">the whole</text>
+  <text x="620" y="61" fill="#8791ab" font-size="11">model</text>
+
+  <!-- the two numbers feed predict -->
+  <path d="M492 84 L492 128" stroke="#34d399" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+
+  <!-- predict row -->
+  <rect x="18" y="150" width="150" height="46" rx="9" fill="#141a2b" stroke="#26304a"/>
+  <text x="93" y="178" fill="#e8ecf7" font-size="12.5" text-anchor="middle">a new x</text>
+
+  <line x1="172" y1="173" x2="228" y2="173" stroke="#4b5a80" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="232" y="151" width="96" height="44" rx="9" fill="#1e2b52" stroke="#3b82f6"/>
+  <text x="280" y="178" fill="#93c5fd" font-size="13" font-family="monospace" text-anchor="middle">predict()</text>
+
+  <line x1="332" y1="173" x2="388" y2="173" stroke="#4b5a80" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="392" y="151" width="200" height="44" rx="9" fill="#141a2b" stroke="#26304a"/>
+  <text x="492" y="178" fill="#e8ecf7" font-size="12.5" font-family="monospace" text-anchor="middle">y = 86.43·x + 0.04</text>
+</svg>
+<figcaption><b>The shape of the whole library.</b> Learning happens once, on the left.
+  After that, predicting is arithmetic — the two green numbers are all that survive
+  training.</figcaption>
+</figure>
+
+<div class="note">
+  <p class="h">🔤 The trailing-underscore rule</p>
+  <p>Anything <code>fit</code> learns is stored with a <b>trailing underscore</b> —
+     <code>coef_</code>, <code>intercept_</code>, <code>rank_</code>. No underscore
+     means <em>you</em> typed it in. An underscore means <em>the data</em> taught it.
+     This rule holds across all of scikit-learn and is the fastest way to read an
+     unfamiliar class.</p>
+</div>
+
+<!-- ══════════ THE TWO NUMBERS ══════════ -->
+<h2 id="numbers"><span class="num">4 ·</span>The two numbers that <em>are</em> the model</h2>
+
+<div class="code">
+  <div class="code-head"><span>Read the model out</span><span class="cell">cells 14, 16</span></div>
+<pre class="py">
+regressor.coef_
+regressor.intercept_
+</pre>
+</div>
+<div class="out">
+  <p class="h">Output</p>
+<pre>array([86.43440685])
+np.float64(0.042274723015908955)</pre>
+</div>
+
+<h3>The coefficient — how steep</h3>
+<p><strong>How much <code>y</code> moves when <code>x</code> goes up by 1.</strong>
+   Ours is <code>86.43</code>: one step right, and the line climbs 86.43. In Ravi's
+   world this is <em>rupees per kilometre</em> — the number he actually wanted.</p>
+
+<figure class="svgfig">
+<svg viewBox="0 0 640 320" role="img" aria-label="The fitted line with its intercept and its rise over run">
+  <!-- axes -->
+  <line x1="70" y1="270" x2="610" y2="270" stroke="#333e5c" stroke-width="1.5"/>
+  <line x1="200" y1="30"  x2="200" y2="292" stroke="#333e5c" stroke-width="1.5"/>
+  <text x="600" y="290" fill="#8791ab" font-size="12">x</text>
+  <text x="178" y="40"  fill="#8791ab" font-size="12">y</text>
+  <text x="188" y="288" fill="#5b6784" font-size="11">0</text>
+
+  <!-- the fitted line -->
+  <line x1="90" y1="300" x2="580" y2="45" stroke="#fb7185" stroke-width="2.5"/>
+  <text x="470" y="82" fill="#fb7185" font-size="12.5" font-family="monospace">y = 86.43x + 0.04</text>
+
+  <!-- intercept -->
+  <circle cx="200" cy="243" r="7" fill="#e8ecf7"/>
+  <path d="M200 243 L118 196" stroke="#8791ab" stroke-width="1.2"/>
+  <text x="34" y="186" fill="#e8ecf7" font-size="12" font-weight="600">intercept_ = 0.04</text>
+  <text x="34" y="202" fill="#8791ab" font-size="11">y when x = 0</text>
+
+  <!-- rise over run triangle -->
+  <line x1="330" y1="175" x2="440" y2="175" stroke="#34d399" stroke-width="2"/>
+  <line x1="440" y1="175" x2="440" y2="118" stroke="#34d399" stroke-width="2"/>
+  <path d="M330 175 L440 118" stroke="none"/>
+  <circle cx="330" cy="175" r="4.5" fill="#34d399"/>
+  <circle cx="440" cy="118" r="4.5" fill="#34d399"/>
+  <text x="385" y="194" fill="#34d399" font-size="12" text-anchor="middle">run = 1</text>
+  <text x="452" y="150" fill="#34d399" font-size="12">rise = 86.43</text>
+  <text x="452" y="166" fill="#8791ab" font-size="11">← coef_</text>
+</svg>
+<figcaption><b>Both numbers, drawn.</b> The white dot is where the line crosses the
+  vertical axis — the intercept. The green triangle is one step right and the climb
+  that follows — the coefficient.</figcaption>
+</figure>
+
+<p><code>coef_</code> comes back as an <b>array</b>, not a single number:
+   <code>array([86.43440685])</code>. One entry per input column. One column here, so
+   one coefficient — with five columns you would get five.</p>
+
+<table class="tbl">
+  <tr><th>Sign</th><th>What it means</th></tr>
+  <tr><td class="win">+</td><td>x goes up, y goes up</td></tr>
+  <tr><td class="bad">−</td><td>x goes up, y goes down</td></tr>
+  <tr><td>near 0</td><td>this column barely matters</td></tr>
+</table>
+
+<h3>The intercept — where the line starts</h3>
+<p><strong>The value of <code>y</code> when <code>x</code> is 0.</strong> Ours is
+   <code>0.042</code>, almost nothing, because <code>make_regression</code> centres its
+   data on the origin. It is a plain float, not an array — one line has one starting
+   height.</p>
+
+<div class="note key">
+  <p class="h">🔑 Short version</p>
+  <p>The <b>coefficient tilts</b> the line. The <b>intercept slides</b> it up and
+     down. A straight line has only those two knobs.</p>
+</div>
+
+<!-- ══════════ PREDICT ══════════ -->
+<h2 id="predict"><span class="num">5 ·</span><code>predict()</code> is one multiply and one add</h2>
+
+<p>No learning happens in <code>predict()</code>. For every row it does exactly
+   <code>86.43 × x + 0.04</code>. If that is true, then writing the formula ourselves
+   must give identical numbers.</p>
+
+<div class="code">
+  <div class="code-head"><span>Rebuild predict() by hand and compare</span><span class="cell">cell 18</span></div>
+<pre class="py">
+import numpy as np
+
+m = regressor.coef_[0]        # the slope         (coefficient)
+c = regressor.intercept_      # the height at x=0 (intercept)
+
+by_hand    = m * X_test + c
+by_sklearn = regressor.predict(X_test)
+
+print("first 3 by hand   :", by_hand.ravel()[:3])
+print("first 3 by sklearn:", by_sklearn[:3])
+print("same? ->", np.allclose(by_hand.ravel(), by_sklearn))
+</pre>
+</div>
+<div class="out">
+  <p class="h">Output</p>
+<pre>first 3 by hand   : [ 107.6063556    85.17598825 -137.70846548]
+first 3 by sklearn: [ 107.6063556    85.17598825 -137.70846548]
+same? -> True</pre>
+</div>
+
+<p><code>True</code>. There is nothing hidden inside <code>predict()</code>. Check the
+   first row yourself: the first test value is <code>1.24445906</code>, and
+   <code>86.43 × 1.24445906 + 0.04 = 107.6</code> — exactly the first prediction.</p>
+
+<div class="note">
+  <p class="h">📐 Why the double brackets</p>
+  <p><code>X_test</code> prints as <code>[[ 1.24445906 ]]</code> — a 2-D array.
+     scikit-learn always wants <code>X</code> as a <b>table</b>, even when the table
+     has one column. A flat list is the single most common beginner error here.</p>
+</div>
+
+<!-- ══════════ SCORE ══════════ -->
+<h2 id="score"><span class="num">6 ·</span><code>score()</code> — how good is the line</h2>
+
+<div class="code">
+  <div class="code-head"><span>Score on the held-out rows</span><span class="cell">cell 12</span></div>
+<pre class="py">
+regressor.score(X_test, y_test)
+</pre>
+</div>
+<div class="out"><p class="h">Output</p><pre>0.9966263246017432</pre></div>
+
+<p>For a regression model, <code>score</code> returns <b>R²</b>.</p>
+<ul class="plain">
+  <li><code>1.0</code> — the line passes through every point.</li>
+  <li><code>0.0</code> — the line is no better than always guessing the average of <code>y</code>.</li>
+</ul>
+<p>We got <b>0.9966</b>: the line explains about 99.7% of the movement in
+   <code>y</code>. Be suspicious of that number — it is this high only because the data
+   <em>was generated</em> as a straight line. Real courier prices are messier.</p>
+
+<figure class="shot">
+  <img src="assets/lr-cell27.png" alt="Actual values against predicted values">
+  <figcaption><b>Actual (blue) against predicted (orange).</b> The orange points form a
+    perfectly straight line because every one of them came out of
+    <code>86.43x + 0.04</code> — a model's predictions can never be more crooked than
+    the model itself. The blue cloud sitting <b>evenly</b> around the orange line is
+    the sign of a good fit. If the blue curved away, a straight line would be the wrong
+    model.</figcaption>
+</figure>
+
+<!-- ══════════ KNOBS ══════════ -->
+<h2 id="knobs"><span class="num">7 ·</span>What each knob actually does</h2>
+
+<div class="code">
+  <div class="code-head"><span>Turn one knob at a time</span><span class="cell">cell 22</span></div>
+<pre class="py">
+for slope in [20, 86, 160]:        # intercept fixed -> the line TILTS
+    ax[0].plot(xs, slope * xs + c, label=f"coef_ = {slope}")
+
+for shift in [-150, 0, 150]:       # slope fixed -> the line SHIFTS
+    ax[1].plot(xs, m * xs + shift, label=f"intercept_ = {shift}")
+</pre>
+</div>
+
+<figure class="shot">
+  <img src="assets/lr-cell22.png" alt="Left: changing the coefficient tilts the line. Right: changing the intercept shifts it">
+  <figcaption><b>Left:</b> all three lines cross the axis at the same place but lean
+    differently — that is the <b>coefficient</b>. <b>Right:</b> all three lean the same
+    but sit at different heights — that is the <b>intercept</b>. <code>fit()</code>
+    picked the one pair of settings that puts the line closest to our dots.</figcaption>
+</figure>
+
+<!-- ══════════ HOW ══════════ -->
+<h2 id="how"><span class="num">8 ·</span>How does <code>fit()</code> actually find them?</h2>
+
+<p><strong>Short answer: it does not try values one by one. It solves one equation,
+   once.</strong></p>
+
+<p>Trying many candidate lines and keeping the best is a <em>search</em> — that is
+   gradient descent, and it is what neural networks use. Linear regression does not
+   need it, because for a straight line there is an exact formula for the answer.</p>
+
+<h3>First — what does "best" mean?</h3>
+<p>Before anything can be found, "best" has to be a number. Take a line, run it over
+   the training rows, measure the <b>vertical gap</b> between each real dot and the
+   line, square each gap, and average them.</p>
+
+<div class="formula">
+  cost = average of (actual y − predicted y)²
+  <span class="sm">One number for the whole line. Low cost = good line. Also called loss, or MSE.</span>
+</div>
+
+<p><b>Why square the gaps?</b></p>
+<ul class="plain">
+  <li>It removes the sign. Being 100 too high on one row and 100 too low on the next
+      would otherwise cancel out to a perfect score.</li>
+  <li>It punishes big misses far harder than small ones — off by 10 is 100× worse than
+      off by 1, not 10× worse.</li>
+  <li>It keeps the maths smooth, which is what lets an exact formula exist at all.</li>
+</ul>
+
+<div class="code">
+  <div class="code-head"><span>Score four candidate lines</span><span class="cell">cell 31</span></div>
+<pre class="py">
+def cost(m_try, c_try):
+    predicted = m_try * X_train.ravel() + c_try
+    return ((y_train - predicted) ** 2).mean()
+</pre>
+</div>
+<div class="out"><p class="h">Output</p>
+<pre>sklearn's line       m=86.43, c=0.04 :     25.6
+too flat             m=50.00, c=0.04 :   1350.4
+too steep            m=120.0, c=0.04 :   1149.99
+right tilt, too high m=86.43, c=100  :  10017.15</pre>
+</div>
+
+<p>sklearn's pair wins, and every other pair is worse. Its cost is not zero only
+   because we added <code>noise=5</code> on purpose — and <b>5² = 25</b>, which is
+   almost exactly the 25.6 we measured. That leftover is the part no straight line
+   could ever have captured. It is Ravi's ₹631-versus-₹648.</p>
+
+<h3>The shape of the cost — this is the whole trick</h3>
+
+<figure class="svgfig">
+<svg viewBox="0 0 720 320" role="img" aria-label="The cost curve is a bowl with one lowest point">
+  <line x1="70" y1="268" x2="700" y2="268" stroke="#333e5c" stroke-width="1.5"/>
+  <line x1="70" y1="30"  x2="70"  y2="268" stroke="#333e5c" stroke-width="1.5"/>
+  <text x="380" y="305" fill="#8791ab" font-size="12" text-anchor="middle">coef_  (the slope we are trying)</text>
+  <text x="18"  y="150" fill="#8791ab" font-size="12" transform="rotate(-90 18 150)" text-anchor="middle">cost</text>
+
+  <polyline fill="none" stroke="#fb7185" stroke-width="2.5" points="207.8,55.2 214.7,72.1 221.6,88.2 228.4,103.6 235.3,118.3 242.2,132.3 249.1,145.6 256.0,158.2 262.9,170.1 269.8,181.3 276.7,191.7 283.6,201.5 290.4,210.5 297.3,218.9 304.2,226.5 311.1,233.4 318.0,239.7 324.9,245.2 331.8,250.0 338.7,254.1 345.6,257.5 352.4,260.1 359.3,262.1 366.2,263.4 373.1,263.9 380.0,263.8 386.9,262.9 393.8,261.4 400.7,259.1 407.6,256.1 414.4,252.4 421.3,248.0 428.2,242.9 435.1,237.1 442.0,230.6 448.9,223.4 455.8,215.5 462.7,206.8 469.6,197.5 476.4,187.4 483.3,176.7 490.2,165.2 497.1,153.0 504.0,140.1 510.9,126.5 517.8,112.2 524.7,97.2 531.6,81.5 538.4,65.1 545.3,47.9"/>
+
+  <!-- measured points -->
+  <circle cx="207.8" cy="55.6" r="5" fill="#fbbf24"/>
+  <text x="196" y="45" fill="#fbbf24" font-size="11.5" text-anchor="end">m=50 → 1350.4</text>
+  <circle cx="529.3" cy="87.2" r="5" fill="#fbbf24"/>
+  <text x="543" y="80" fill="#fbbf24" font-size="11.5">m=120 → 1149.99</text>
+
+  <!-- the minimum -->
+  <line x1="375.1" y1="264" x2="375.1" y2="268" stroke="#34d399" stroke-width="2"/>
+  <circle cx="375.1" cy="264" r="6.5" fill="#34d399"/>
+  <path d="M375.1 264 L440 205" stroke="#34d399" stroke-width="1.3"/>
+  <text x="446" y="200" fill="#34d399" font-size="12.5" font-weight="600">lowest point</text>
+  <text x="446" y="216" fill="#34d399" font-size="11.5">coef_ = 86.43, cost 25.6</text>
+  <!-- flat tangent at the bottom -->
+  <line x1="325" y1="264" x2="425" y2="264" stroke="#e8ecf7" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <text x="375" y="288" fill="#e8ecf7" font-size="11" text-anchor="middle">here the curve is flat</text>
+</svg>
+<figcaption><b>The cost curve is a bowl</b> — not a bumpy landscape with many dips.
+  The three yellow-and-green points are the values measured in the notebook.</figcaption>
+</figure>
+
+<p>Two facts about a bowl, and the second one removes the search entirely:</p>
+<ul class="plain">
+  <li>It has exactly <b>one</b> lowest point. So the best line is unique — no risk of
+      settling for good-but-not-best.</li>
+  <li>At that lowest point the curve is <b>flat</b>. Its slope is zero.</li>
+</ul>
+
+<p>So instead of hunting for the bottom, you write down <em>"the slope of the cost
+   curve is zero"</em> as an equation and solve it, like school algebra. Two knobs, two
+   equations, two unknowns:</p>
+
+<div class="formula">
+  m = Σ(x − x̄)(y − ȳ) ⁄ Σ(x − x̄)²  &nbsp;&nbsp;·&nbsp;&nbsp;  c = ȳ − m·x̄
+  <span class="sm">Top of m: do x and y move together? (covariance) · Bottom: how spread out is x? (variance)</span>
+</div>
+
+<div class="code">
+  <div class="code-head"><span>The formula, by hand, against sklearn</span><span class="cell">cell 35</span></div>
+<pre class="py">
+xt, yt = X_train.ravel(), y_train
+
+m_hand = ((xt - xt.mean()) * (yt - yt.mean())).sum() / ((xt - xt.mean()) ** 2).sum()
+c_hand = yt.mean() - m_hand * xt.mean()
+
+print("same? ->", np.allclose([m_hand, c_hand], [m, c]))
+</pre>
+</div>
+<div class="out"><p class="h">Output</p>
+<pre>my formula  ->  m = 86.43440685172207   c = 0.042274723015908844
+sklearn     ->  m = 86.43440685172204   c = 0.042274723015908955
+same? -> True</pre>
+</div>
+
+<p>Same numbers. Two lines of arithmetic over 8000 rows — no repetition, no tuning,
+   no starting guess.</p>
+
+<!-- ══════════ MATRIX ══════════ -->
+<h2 id="matrix"><span class="num">9 ·</span>More than one column — the Normal Equation</h2>
+
+<p>Those two formulas only work for a single input column. With many columns you
+   cannot write <code>m</code> on its own, because the columns influence each other.
+   The same idea in matrix form:</p>
+
+<div class="formula">
+  β = (XᵀX)⁻¹ Xᵀ y
+  <span class="sm">β holds every coefficient plus the intercept</span>
+</div>
+
+<p>To make the intercept fall out of it, glue a column of <b>1s</b> onto <code>X</code>.
+   That fake column's "coefficient" is the intercept, because it is multiplied by 1 on
+   every row.</p>
+
+<div class="code">
+  <div class="code-head"><span>The Normal Equation, literally</span><span class="cell">cell 37</span></div>
+<pre class="py">
+X_b  = np.c_[np.ones(len(X_train)), X_train]     # glue the 1s column in front
+beta = np.linalg.inv(X_b.T @ X_b) @ X_b.T @ y_train
+</pre>
+</div>
+<div class="out"><p class="h">Output</p>
+<pre>beta    -> [4.22747230e-02  8.64344069e+01]     # [intercept, coefficient]
+same? -> True</pre>
+</div>
+
+<h3>What scikit-learn actually runs</h3>
+<p>Not the line we just wrote. Inverting <code>XᵀX</code> literally is numerically
+   risky — if two columns are near-duplicates the matrix is nearly un-invertible and
+   the answer explodes. So sklearn hands the problem to LAPACK through
+   <code>scipy.linalg.lstsq</code>, which solves it with an <b>SVD</b>. Same answer,
+   no inverse ever formed.</p>
+
+<table class="tbl">
+  <tr><th>Step</th><th>What happens</th><th>Where</th></tr>
+  <tr><td>1</td><td>subtract the mean from X and y (centring)</td><td><code>_preprocess_data()</code></td></tr>
+  <tr><td>2</td><td>solve the centred system with an SVD</td><td><code>scipy.linalg.lstsq</code></td></tr>
+  <tr><td>3</td><td>put the intercept back from the means</td><td><code>_set_intercept()</code></td></tr>
+</table>
+
+<div class="out" style="margin:20px 0;border-radius:12px;border-top:1px solid var(--line)">
+  <p class="h">Output — cell 39</p>
+<pre>rank_     : 1
+singular_ : [89.35213963]
+by sklearn's own route -> [86.43440685] 0.042274723015908955   same? -> True</pre>
+</div>
+<p><code>rank_</code> is 1 because there is one usable column, and
+   <code>singular_</code> has one entry for the same reason. Hold on to
+   <code>rank_</code> — it becomes the warning light in the extension below.</p>
+
+<!-- ══════════ GD ══════════ -->
+<h2 id="gd"><span class="num">10 ·</span>The iterative way — gradient descent</h2>
+
+<p>This is the walking-downhill method. It is real, it is what almost every
+   <em>other</em> model uses — and it is <b>not</b> what <code>LinearRegression</code>
+   uses. It starts at a guess and walks down the bowl from section 8.</p>
+
+<div class="code">
+  <div class="code-head"><span>Sixty steps downhill from a deliberately wrong guess</span><span class="cell">cell 41</span></div>
+<pre class="py">
+m_gd, c_gd = 0.0, 0.0          # start at a deliberately wrong guess
+learning_rate = 0.1
+
+for step in range(60):
+    predicted = m_gd * xt + c_gd
+    error = predicted - yt
+
+    down_m = 2 * (error * xt).mean()   # which way is downhill for the slope
+    down_c = 2 * error.mean()          # which way is downhill for the intercept
+
+    m_gd -= learning_rate * down_m     # take one small step
+    c_gd -= learning_rate * down_c
+</pre>
+</div>
+
+<table class="tbl">
+  <tr><th>Step</th><th>m</th><th>c</th><th>cost</th></tr>
+  <tr><td>0</td><td>17.2522</td><td>0.0764</td><td class="bad">7481.53</td></tr>
+  <tr><td>1</td><td>31.0608</td><td>0.1239</td><td>4802.15</td></tr>
+  <tr><td>2</td><td>42.1132</td><td>0.1511</td><td>3085.65</td></tr>
+  <tr><td>5</td><td>63.7075</td><td>0.1649</td><td>830.20</td></tr>
+  <tr><td>10</td><td>78.9683</td><td>0.1190</td><td>112.44</td></tr>
+  <tr><td>59</td><td class="win">86.4344</td><td class="win">0.0423</td><td class="win">25.6</td></tr>
+</table>
+
+<p>Big jumps at first, because the bowl is steep far from the bottom, then smaller and
+   smaller steps as the ground flattens. That slowdown is <b>automatic</b> — the
+   gradient itself shrinks near the bottom.</p>
+
+<figure class="shot">
+  <img src="assets/lr-cell43.png" alt="Gradient descent walking down the cost surface into the exact answer">
+  <figcaption><b>The orange track walks straight into the green star</b> — the same
+    destination the formula reached, in 60 passes over the data instead of one shot.
+    The track is nearly flat because this data is centred on zero, so the intercept
+    had almost nowhere to travel and all the work was in the slope. On real data —
+    house prices, salaries, Ravi's fares — the track would curve in from both
+    directions.</figcaption>
+</figure>
+
+<div class="note">
+  <p class="h">❓ So why does gradient descent exist at all?</p>
+  <ul class="plain">
+    <li><b>Columns.</b> The direct formula costs about <code>p³</code> in the column
+        count. At 50,000 columns that is fatal. Gradient descent never builds
+        <code>XᵀX</code> — one step is one pass over the data.</li>
+    <li><b>Memory.</b> If the data does not fit in RAM you cannot form
+        <code>XᵀX</code> at all, but you can still feed it batches
+        (<code>SGDRegressor.partial_fit</code>).</li>
+    <li><b>Most models have no formula.</b> Logistic regression, SVMs, neural
+        networks — none of them can be solved in one shot.</li>
+  </ul>
+</div>
+
+<!-- ══════════ EXTENSION ══════════ -->
+<h2 id="ext"><span class="num">·</span>When the direct formula has no answer</h2>
+
+<div class="note ext">
+  <p class="h">💡 Engineering Extension</p>
+  <p><em>Recommended Extension — Not part of instructor curriculum</em></p>
+</div>
+
+<p>The formula assumes <code>XᵀX</code> can be inverted. Hand it a duplicated column
+   and it cannot: if column B is a copy of column A, then <code>2A + 0B</code>,
+   <code>0A + 2B</code> and <code>1A + 1B</code> all give identical predictions. There
+   are infinitely many equally-best answers, so there is no single one to return.</p>
+
+<div class="code">
+  <div class="code-head"><span>Give it the same column twice</span><span class="cell">cell 46</span></div>
+<pre class="py">
+X_dup = np.c_[X_train, X_train]      # column 2 is an exact copy of column 1
+dup_model = LinearRegression().fit(X_dup, y_train)
+</pre>
+</div>
+<div class="out"><p class="h">Output</p>
+<pre>coefficients : [43.21720343 43.21720343]  -> they add up to 86.43440685
+rank_        : 1 of 2 columns
+condition number of X.T @ X : 2.495e+32   (huge = not invertible)
+np.linalg.inv says: Singular matrix</pre>
+</div>
+
+<p>Two coefficients of about <code>43.2</code> each, adding up to our original
+   <code>86.43</code> — the model split the credit evenly instead of picking a winner.
+   The SVD does not crash; it returns the smallest of the equally-good answers and
+   drops <code>rank_</code> to <b>1 of 2</b>. That is what <code>rank_</code> is for:
+   it tells you how many of your columns actually carried independent information.</p>
+
+<p>This is exactly the problem <b>Ridge regression</b> was invented to fix, and it is
+   why duplicated or near-duplicated features are worth removing before fitting.</p>
+
+<!-- ══════════ MISTAKES ══════════ -->
+<h2 id="mistakes"><span class="num">·</span>Common mistakes</h2>
+
+<table class="tbl">
+  <tr><th>Mistake</th><th>What goes wrong</th></tr>
+  <tr><td>Passing <code>X</code> as a flat list</td>
+      <td>sklearn wants a 2-D table. Use <code>[[1.24]]</code>, or
+          <code>.reshape(-1, 1)</code>.</td></tr>
+  <tr><td>Scoring on the training rows</td>
+      <td>You measure memory, not skill. Always score on the held-out split.</td></tr>
+  <tr><td>Reading a high R² as success</td>
+      <td>0.9966 here is a property of <em>synthetic</em> data. On real data treat any
+          R² above ~0.95 as a reason to go looking for leakage.</td></tr>
+  <tr><td>Comparing coefficient sizes across unscaled columns</td>
+      <td>A column measured in metres and one in kilometres get wildly different
+          coefficients for the same real effect. Scale first.</td></tr>
+  <tr><td>Assuming <code>fit()</code> loops</td>
+      <td>It solves one equation. The looping method is gradient descent, and that is a
+          different tool.</td></tr>
+</table>
+
+<!-- ══════════ TAKEAWAY ══════════ -->
+<h2 id="takeaway"><span class="num">·</span>Takeaway</h2>
+
+<div class="note key">
+  <p class="h">🔑 If you remember only one thing…</p>
+  <p><strong><code>fit()</code> squeezes thousands of rows into two numbers, and
+     <code>predict()</code> is nothing more than those two numbers in
+     <code>y = coef_ · x + intercept_</code>.</strong></p>
+</div>
+
+<table class="tbl">
+  <tr><th></th><th>Question it answers</th><th>Type</th><th>Value here</th></tr>
+  <tr><td><code>coef_</code></td><td>how steep is the line?</td>
+      <td>array, one per input column</td><td class="win">[86.43]</td></tr>
+  <tr><td><code>intercept_</code></td><td>where does the line start?</td>
+      <td>single float</td><td class="win">0.04</td></tr>
+</table>
+
+<p>With many columns the formula just gets longer — one coefficient each, still one
+   intercept:</p>
+<div class="formula">y = c₀·x₀ + c₁·x₁ + c₂·x₂ + … + intercept</div>
+
+<p>And <em>how</em> those numbers are found: not by trying candidates one at a time.
+   The cost curve is a bowl, the bottom of a bowl is flat, so "flat" gets written as an
+   equation and solved in one shot. Gradient descent reaches the same place by walking,
+   and is what nearly every other model must use.</p>
+
+<p>Ravi gets his rule: <strong>₹86.43 per unit of distance, starting from ₹0.04.</strong>
+   One line, and every future customer has an answer — including the ones he has never
+   driven for.</p>
+
+<div class="foot">
+  <a class="btn primary" href="../../AI_ML_Series/02_data_toolkit_apps/08_sklearn/05_Linear_Regression.ipynb">Open the real notebook ↗</a>
+  <a class="btn" href="../index.html">← Back to the map</a>
+  <span class="sp"></span>
+  <a class="btn" href="../../AI_ML_Series/02_data_toolkit_apps/08_sklearn/README.md">scikit-learn README</a>
+</div>
+
+</main>
+</div>
+
+<script src="lesson.js"></script>
+</body>
+</html>

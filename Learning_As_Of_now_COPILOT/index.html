@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A browsable tree of topics studied across the MACHINE_LEARNING repository.">
+  <title>My Machine Learning Knowledge Tree</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#tree">Skip to the learning tree</a>
+  <header class="site-header">
+    <div class="brand-mark" aria-hidden="true">ML</div>
+    <div>
+      <p class="overline">MACHINE_LEARNING repository</p>
+      <h1>My learning tree</h1>
+    </div>
+    <p class="header-note">Open a branch to see the topics behind it.</p>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="intro-title">
+      <div>
+        <p class="overline">A living map of the work</p>
+        <h2 id="intro-title">From Python foundations to ML systems</h2>
+        <p class="intro-copy">This map was assembled from the folders, notebooks, markdown notes, apps, and projects in this repository. Active work and archive evidence stay visibly separate, so the tree is useful without pretending that every topic is complete.</p>
+      </div>
+      <div class="legend" aria-label="Topic status legend">
+        <span><i class="dot learned"></i>Learned evidence</span>
+        <span><i class="dot learning"></i>In progress</span>
+        <span><i class="dot archive"></i>Archive evidence</span>
+        <span><i class="dot planned"></i>Planned / scaffold</span>
+      </div>
+    </section>
+
+    <section class="dashboard" aria-label="Tree controls and repository summary">
+      <div class="stat"><strong id="topic-count">0</strong><span>topics</span></div>
+      <div class="stat"><strong id="branch-count">0</strong><span>branches</span></div>
+      <div class="stat"><strong id="source-count">0</strong><span>source areas</span></div>
+      <label class="search-box" for="search"><span>Find a topic</span><input id="search" type="search" placeholder="Try gradient descent or Pandas" autocomplete="off"></label>
+      <div class="control-row">
+        <button type="button" id="expand-all">Expand all</button>
+        <button type="button" id="collapse-all">Collapse all</button>
+        <button type="button" id="reset-view">Reset</button>
+      </div>
+    </section>
+
+    <section id="tree" class="tree-section" aria-labelledby="tree-title">
+      <div class="section-heading">
+        <div>
+          <p class="overline">Browse by branch</p>
+          <h2 id="tree-title">The knowledge tree</h2>
+        </div>
+        <p id="result-count" class="result-count" aria-live="polite"></p>
+      </div>
+      <div id="tree-root" class="tree" role="tree" aria-label="Machine learning topic tree"></div>
+      <p id="empty-state" class="empty-state" hidden>No matching topics. Try a broader word such as <strong>data</strong>, <strong>model</strong>, or <strong>Python</strong>.</p>
+    </section>
+
+    <section class="method-note" aria-labelledby="method-title">
+      <div>
+        <p class="overline">How to read this</p>
+        <h2 id="method-title">Evidence, not a scorecard</h2>
+      </div>
+      <p><strong>Learned evidence</strong> means a notebook, app, or worked note exists. <strong>In progress</strong> means the material is present but has open gaps. <strong>Archive evidence</strong> records earlier study and is intentionally not treated as current bootcamp completion. <strong>Planned</strong> marks repository structure that has not yet produced topic evidence.</p>
+    </section>
+  </main>
+
+  <aside id="details" class="details-panel" aria-labelledby="details-title" aria-hidden="true">
+    <button id="close-details" class="close-button" type="button" aria-label="Close topic details">×</button>
+    <div id="details-content"></div>
+  </aside>
+  <div id="backdrop" class="backdrop" hidden></div>
+
+  <footer><span>Built from the MACHINE_LEARNING repository</span><span>Static site · no server required</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>

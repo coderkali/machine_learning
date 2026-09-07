@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Learning Universe — AI/ML</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="hud">
+  <div class="hud-left">
+    <svg class="donut" viewBox="0 0 42 42" aria-hidden="true">
+      <circle class="ring-bg" cx="21" cy="21" r="15.9"></circle>
+      <circle class="ring seg-done"     cx="21" cy="21" r="15.9"></circle>
+      <circle class="ring seg-learning" cx="21" cy="21" r="15.9"></circle>
+      <circle class="ring seg-archive"  cx="21" cy="21" r="15.9"></circle>
+      <circle class="ring seg-todo"     cx="21" cy="21" r="15.9"></circle>
+      <text class="donut-num" x="21" y="22.6" id="donutNum">0</text>
+    </svg>
+    <div class="titles">
+      <h1>My Learning Universe</h1>
+      <p id="tagline">Every topic in this repository, mapped.</p>
+    </div>
+  </div>
+
+  <div class="hud-right">
+    <div class="views" role="tablist">
+      <button class="view-btn active" data-view="map"  role="tab">🌌 Map</button>
+      <button class="view-btn"        data-view="read" role="tab">📖 Deep dive</button>
+    </div>
+    <div class="search-wrap">
+      <input type="search" id="search" placeholder="Search 72 topics…" autocomplete="off">
+      <span id="hits" class="hits"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════ MAP VIEW ══════════════ -->
+<section id="view-map" class="view">
+  <div class="viewport" id="viewport">
+    <div class="canvas" id="canvas">
+      <svg class="edges" id="edges"></svg>
+      <div class="nodes" id="nodes"></div>
+    </div>
+
+    <div class="controls">
+      <button class="ctl" id="expandAll" title="Open every branch">⤢ Open everything</button>
+      <button class="ctl" id="collapseAll" title="Back to the three branches">⤡ Collapse</button>
+      <span class="ctl-sep"></span>
+      <button class="ctl sq" id="zoomOut" title="Zoom out">−</button>
+      <button class="ctl sq" id="zoomIn"  title="Zoom in">+</button>
+      <button class="ctl" id="fit" title="Fit to screen">⤾ Fit</button>
+    </div>
+
+    <div class="legend">
+      <span class="lg done">Done</span>
+      <span class="lg learning">Learning</span>
+      <span class="lg archive">Archive</span>
+      <span class="lg todo">Not started</span>
+    </div>
+
+    <p class="hint">drag or scroll to move · ⌘/ctrl + scroll to zoom · click a node to open it</p>
+  </div>
+
+  <!-- detail drawer -->
+  <aside class="drawer" id="drawer">
+    <button class="drawer-close" id="drawerClose" aria-label="Close">×</button>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+</section>
+
+<!-- ══════════════ READING VIEW ══════════════ -->
+<section id="view-read" class="view hidden">
+  <nav class="toc" id="toc"></nav>
+  <div class="reader" id="reader"></div>
+</section>
+
+<script src="tree-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

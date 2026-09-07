@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A detailed, evidence-backed knowledge atlas of everything learned across the MACHINE_LEARNING repository.">
+  <meta name="theme-color" content="#09120e">
+  <title>Learning Atlas · My AI/ML Knowledge System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#atlas">Skip to the learning atlas</a>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Learning Atlas home">
+      <span class="brand-sigil" aria-hidden="true"><i></i><b>ML</b></span>
+      <span><strong>Learning Atlas</strong><small>My AI/ML knowledge system</small></span>
+    </a>
+
+    <nav class="topnav" aria-label="Page navigation">
+      <a href="#current">Current</a>
+      <a href="#atlas">Knowledge tree</a>
+      <a href="#sources">Sources</a>
+    </nav>
+
+    <label class="global-search">
+      <span class="sr-only">Search concepts, formulas, or source files</span>
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="search" type="search" placeholder="Search the atlas…" autocomplete="off">
+      <kbd>/</kbd>
+    </label>
+
+    <button id="theme-toggle" class="round-button" type="button" aria-label="Toggle color theme" title="Toggle color theme">◐</button>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="live-label"><i></i> Repository intelligence · 07 Sep 2026</div>
+        <h1 id="hero-title">From scattered notes<br>to a <em>living knowledge system.</em></h1>
+        <p>Explore what you learned, how it works, what it connects to, and exactly which notebook or note proves it. Every concept is grounded in this repository.</p>
+        <div class="hero-actions">
+          <a class="primary-action" href="#atlas">Explore the knowledge tree <span>↓</span></a>
+          <button id="random-topic" class="secondary-action" type="button">Surprise revision <span>↗</span></button>
+        </div>
+        <div class="hero-proof">
+          <span><i class="status-dot learned"></i> Active evidence</span>
+          <span><i class="status-dot growing"></i> Growing now</span>
+          <span><i class="status-dot prior"></i> Prior foundation</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Twelve connected learning domains">
+        <div class="orbit orbit-outer" aria-hidden="true"></div>
+        <div class="orbit orbit-inner" aria-hidden="true"></div>
+        <div class="atlas-core"><span>MY</span><strong>AI / ML</strong><small>KNOWLEDGE</small></div>
+        <div id="orbit-nodes" class="orbit-nodes"></div>
+        <div class="signal-card signal-top"><small>CONCEPTS MAPPED</small><strong id="hero-topic-count">—</strong></div>
+        <div class="signal-card signal-bottom"><small>EVIDENCE LINKS</small><strong id="hero-source-count">—</strong></div>
+      </div>
+    </section>
+
+    <section id="overview" class="overview" aria-label="Learning overview">
+      <div id="stats" class="metric-grid"></div>
+      <article class="coverage-card">
+        <header><div><span class="micro-label">Repository coverage</span><h2>Knowledge composition</h2></div><span class="honesty-badge">Evidence, not course %</span></header>
+        <div id="composition" class="composition"></div>
+      </article>
+    </section>
+
+    <section id="current" class="current-section" aria-labelledby="current-title">
+      <header class="section-heading">
+        <div><span class="section-number">01</span><div><p class="eyebrow">Resume your work</p><h2 id="current-title">Currently growing</h2></div></div>
+        <p>These topics have real repository evidence, but their experiments or review checkpoints are still open.</p>
+      </header>
+      <div id="current-track" class="current-track"></div>
+    </section>
+
+    <section id="atlas" class="atlas-section" aria-labelledby="atlas-title">
+      <header class="section-heading">
+        <div><span class="section-number">02</span><div><p class="eyebrow">Explore the system</p><h2 id="atlas-title">Interactive knowledge atlas</h2></div></div>
+        <p>Open a domain, then a cluster, then a concept. Select any concept for a full lesson card with mechanics, formulas, code, evidence, and connections.</p>
+      </header>
+
+      <div class="atlas-shell">
+        <aside class="atlas-sidebar">
+          <div class="sidebar-heading"><span>Domains</span><strong>12 branches</strong></div>
+          <nav id="branch-nav" class="branch-nav" aria-label="Learning domains"></nav>
+          <div class="sidebar-note"><i aria-hidden="true">i</i><p>Planned curriculum folders are not counted as learned unless a note, notebook, experiment, or project supports them.</p></div>
+        </aside>
+
+        <div class="atlas-workspace">
+          <div class="atlas-toolbar">
+            <div class="filters" role="group" aria-label="Filter by evidence status">
+              <button class="filter active" type="button" data-status="all" aria-pressed="true">All</button>
+              <button class="filter" type="button" data-status="learned" aria-pressed="false"><i class="status-dot learned"></i>Learned</button>
+              <button class="filter" type="button" data-status="growing" aria-pressed="false"><i class="status-dot growing"></i>Learning</button>
+              <button class="filter" type="button" data-status="prior" aria-pressed="false"><i class="status-dot prior"></i>Prior</button>
+            </div>
+            <div class="view-actions">
+              <div class="view-switch" role="group" aria-label="Tree layout">
+                <button class="active" type="button" data-view="tree" aria-pressed="true" title="Vertical tree">⑂</button>
+                <button type="button" data-view="grid" aria-pressed="false" title="Card grid">▦</button>
+              </div>
+              <button id="expand-all" type="button">Open all</button>
+              <button id="collapse-all" type="button">Close</button>
+            </div>
+          </div>
+
+          <div class="tree-context">
+            <div><span class="pulse-dot"></span><strong>Machine Learning &amp; AI</strong></div>
+            <p id="result-summary" aria-live="polite"></p>
+          </div>
+          <div id="tree" class="knowledge-tree" role="tree"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sources" class="sources-section" aria-labelledby="sources-title">
+      <header class="section-heading">
+        <div><span class="section-number">03</span><div><p class="eyebrow">Reverse traceability</p><h2 id="sources-title">Source explorer</h2></div></div>
+        <p>Start with a file and discover the concepts it supports. Every link points back to the original repository artifact.</p>
+      </header>
+
+      <div class="source-shell">
+        <div class="source-toolbar">
+          <label><span class="sr-only">Filter source files</span><span aria-hidden="true">⌕</span><input id="source-search" type="search" placeholder="Filter evidence files…"></label>
+          <select id="source-type" aria-label="Filter source type">
+            <option value="all">All file types</option>
+            <option value="ipynb">Notebooks</option>
+            <option value="md">Markdown notes</option>
+            <option value="py">Python files</option>
+            <option value="html">HTML visuals</option>
+            <option value="image">Images &amp; diagrams</option>
+            <option value="data">Datasets</option>
+          </select>
+          <span id="source-result-count"></span>
+        </div>
+        <div id="source-list" class="source-list"></div>
+        <button id="show-more-sources" class="show-more" type="button">Show more evidence</button>
+      </div>
+    </section>
+
+    <section class="audit-section" aria-labelledby="audit-title">
+      <div><p class="eyebrow">Repository audit</p><h2 id="audit-title">What this atlas actually inspected</h2><p>Virtual environments, caches, notebook checkpoints, generated learning sites, and system files were excluded. Archive evidence remains visible without being promoted to current-bootcamp completion.</p></div>
+      <div class="audit-grid">
+        <article><small>ACTIVE SERIES</small><strong>96</strong><span>learning files</span></article>
+        <article><small>FOUNDATION ARCHIVE</small><strong>160</strong><span>learning files</span></article>
+        <article><small>NOTEBOOKS</small><strong>95</strong><span>content-scanned</span></article>
+        <article><small>DATASETS</small><strong>28</strong><span>CSV sources</span></article>
+      </div>
+    </section>
+  </main>
+
+  <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+  <aside id="topic-drawer" class="topic-drawer" aria-labelledby="drawer-title" aria-hidden="true">
+    <header class="drawer-topbar">
+      <div class="drawer-location" id="drawer-location"></div>
+      <div class="drawer-top-actions"><button id="copy-topic-link" type="button" title="Copy topic link">⌁</button><button id="drawer-close" type="button" aria-label="Close topic details">×</button></div>
+    </header>
+    <div id="drawer-content"></div>
+  </aside>
+
+  <footer>
+    <div class="footer-brand"><span class="brand-sigil small" aria-hidden="true"><i></i><b>ML</b></span><span><strong>Learning Atlas</strong><small>Built from your repository, not a generic curriculum.</small></span></div>
+    <p>Static · local · dependency-free · evidence-first</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="../AI_ML_Series/learning-website/learning-map.js"></script>
+  <script src="learning-data.js"></script>
+  <script src="knowledge-guides.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
