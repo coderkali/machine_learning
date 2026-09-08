@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyperparameter Tuning — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/19_Hyperparameter_Tuning.ipynb">19_Hyperparameter_Tuning.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+from sklearn.datasets import load_iris
+iris = load_iris()
+table = pd.DataFrame(iris.data,columns=iris.feature_names)
+table.head()</pre></div><div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+0                5.1               3.5                1.4               0.2
+1                4.9               3.0                1.4               0.2
+2                4.7               3.2                1.3               0.2
+3                4.6               3.1                1.5               0.2
+4                5.0               3.6                1.4               0.2</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">table[&#x27;target&#x27;] = iris.target
+table.head()</pre></div><div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+0                5.1               3.5                1.4               0.2   
+1                4.9               3.0                1.4               0.2   
+2                4.7               3.2                1.3               0.2   
+3                4.6               3.1                1.5               0.2   
+4                5.0               3.6                1.4               0.2   
+
+   target  
+0       0  
+1       0  
+2       0  
+3       0  
+4       0</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 3</span></div><pre class="py">x = table.drop([&#x27;target&#x27;], axis=&#x27;columns&#x27;)
+y = iris.target</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.tree import DecisionTreeClassifier</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 8</span></div><pre class="py">dt1 = DecisionTreeClassifier(criterion= &#x27;gini&#x27;, splitter= &#x27;best&#x27;, max_depth=2)
+dt2 = DecisionTreeClassifier(criterion= &#x27;entropy&#x27;, splitter= &#x27;best&#x27;, max_depth=5)
+dt3 = DecisionTreeClassifier(criterion= &#x27;gini&#x27;, splitter= &#x27;random&#x27;, max_depth= 4)
+dt4 = DecisionTreeClassifier(criterion= &#x27;entropy&#x27;, splitter= &#x27;random&#x27;, max_depth= 6)</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 10</span></div><pre class="py">dt1.fit(X_train, y_train)
+dt2.fit(X_train, y_train)
+dt3.fit(X_train, y_train)
+dt4.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(criterion=&#x27;entropy&#x27;, max_depth=6, splitter=&#x27;random&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 11</span></div><pre class="py">print(&#x27;dt1 -&gt; &#x27;,dt1.score(X_test, y_test))
+print(&#x27;dt2 -&gt; &#x27;,dt2.score(X_test, y_test))
+print(&#x27;dt3 -&gt; &#x27;,dt3.score(X_test, y_test))
+print(&#x27;dt4 -&gt; &#x27;,dt4.score(X_test, y_test))</pre></div><div class="out"><div class="h">Output</div><pre>dt1 -&gt;  0.9666666666666667
+dt2 -&gt;  1.0
+dt3 -&gt;  0.9
+dt4 -&gt;  1.0</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">dt = DecisionTreeClassifier()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 15</span></div><pre class="py">from sklearn.model_selection import GridSearchCV</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 16</span></div><pre class="py">options = {&#x27;criterion&#x27;: (&#x27;gini&#x27;,&#x27;entropy&#x27;),&#x27;splitter&#x27;: (&#x27;best&#x27;,&#x27;random&#x27;),&#x27;max_depth&#x27; : list(range(1,7)) }</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 18</span></div><pre class="py">gs = GridSearchCV(dt,options)
+gs.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>GridSearchCV(estimator=DecisionTreeClassifier(),
+             param_grid={&#x27;criterion&#x27;: (&#x27;gini&#x27;, &#x27;entropy&#x27;),
+                         &#x27;max_depth&#x27;: [1, 2, 3, 4, 5, 6],
+                         &#x27;splitter&#x27;: (&#x27;best&#x27;, &#x27;random&#x27;)})</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 20</span></div><pre class="py">gs.cv_results_[&#x27;params&#x27;]</pre></div><div class="out"><div class="h">Output</div><pre>[{&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 6, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 6, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 1, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 2, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 3, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;best&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;max_depth&#x27;: 5, &#x27;splitter&#x27;: &#x27;random&#x27;},
+ {&#x27;criterion&#x27;: &#x27;entropy&#x27;, &#x27;m</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 22</span></div><pre class="py">gs.best_params_</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;criterion&#x27;: &#x27;gini&#x27;, &#x27;max_depth&#x27;: 4, &#x27;splitter&#x27;: &#x27;random&#x27;}</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 24</span></div><pre class="py">scores=gs.cv_results_[&#x27;mean_test_score&#x27;]
+scores</pre></div><div class="out"><div class="h">Output</div><pre>array([0.69166667, 0.69166667, 0.95      , 0.76666667, 0.93333333,
+       0.95833333, 0.925     , 0.975     , 0.93333333, 0.95      ,
+       0.925     , 0.925     , 0.69166667, 0.68333333, 0.93333333,
+       0.9       , 0.93333333, 0.90833333, 0.93333333, 0.86666667,
+       0.93333333, 0.925     , 0.925     , 0.925     ])</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 26</span></div><pre class="py">import numpy as np
+np.argmax(scores)</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(7)</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 27</span></div><pre class="py">scores[2]</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.95)</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 30</span></div><pre class="py"># every combination GridSearchCV tried, drawn as the grid it really is
+import numpy as np
+import matplotlib.pyplot as plt
+
+params = gs.cv_results_[&#x27;params&#x27;]
+scores = gs.cv_results_[&#x27;mean_test_score&#x27;]
+
+depths = sorted({p[&#x27;max_depth&#x27;] for p in params})
+rows = [(c, s) for c in (&#x27;gini&#x27;, &#x27;entropy&#x27;) for s in (&#x27;best&#x27;, &#x27;random&#x27;)]
+grid = np.full((len(rows), len(depths)), np.nan)
+for p, sc in zip(params, scores):
+    grid[rows.index((p[&#x27;criterion&#x27;], p[&#x27;splitter&#x27;])), depths.index(p[&#x27;max_depth&#x27;])] = sc
+
+fig, ax = plt.subplots(figsize=(8, 3.4))
+im = ax.imshow(grid, cmap=&#x27;YlGn&#x27;)
+ax.set_xticks(range(len(depths)), [f&quot;depth {d}&quot; for d in depths])
+ax.set_yticks(range(len(rows)), [f&quot;{c} / {s}&quot; for c, s in rows])
+for r in range(grid.shape[0]):
+    for c in range(grid.shape[1]):
+        ax.text(c, r, f&quot;{grid[r, c]:.3f}&quot;, ha=&#x27;center&#x27;, va=&#x27;center&#x27;, fontsize=9)
+
+best = np.unravel_index(np.nanargmax(grid), grid.shape)
+ax.add_patch(plt.Rectangle((best[1] - .5, best[0] - .5), 1, 1, fill=False, edgecolor=&#x27;red&#x27;, lw=2.5))
+ax.set_title(&quot;mean_test_score of all 24 combinations  (red box = best_params_)&quot;)
+plt.colorbar(im, label=&#x27;mean CV accuracy&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">from sklearn.model_selection import RandomizedSearchCV</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 34</span></div><pre class="py">dt = DecisionTreeClassifier()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 35</span></div><pre class="py">options = {&#x27;criterion&#x27;: (&#x27;gini&#x27;,&#x27;entropy&#x27;),&#x27;splitter&#x27;: (&#x27;best&#x27;,&#x27;random&#x27;),&#x27;max_depth&#x27; : list(range(1,7)) }</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 36</span></div><pre class="py">samples = 5  
+rs = RandomizedSearchCV(dt, param_distributions=options, n_iter=samples)</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 37</span></div><pre class="py">rs.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>RandomizedSearchCV(estimator=DecisionTreeClassifier(), n_iter=5,
+                   param_distributions={&#x27;criterion&#x27;: (&#x27;gini&#x27;, &#x27;entropy&#x27;),
+                                        &#x27;max_depth&#x27;: [1, 2, 3, 4, 5, 6],
+                                        &#x27;splitter&#x27;: (&#x27;best&#x27;, &#x27;random&#x27;)})</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 38</span></div><pre class="py">rs.cv_results_[&#x27;params&#x27;]</pre></div><div class="out"><div class="h">Output</div><pre>[{&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 2, &#x27;criterion&#x27;: &#x27;gini&#x27;},
+ {&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 5, &#x27;criterion&#x27;: &#x27;gini&#x27;},
+ {&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 5, &#x27;criterion&#x27;: &#x27;entropy&#x27;},
+ {&#x27;splitter&#x27;: &#x27;random&#x27;, &#x27;max_depth&#x27;: 1, &#x27;criterion&#x27;: &#x27;entropy&#x27;},
+ {&#x27;splitter&#x27;: &#x27;random&#x27;, &#x27;max_depth&#x27;: 4, &#x27;criterion&#x27;: &#x27;gini&#x27;}]</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 40</span></div><pre class="py">rs.best_params_</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;splitter&#x27;: &#x27;best&#x27;, &#x27;max_depth&#x27;: 2, &#x27;criterion&#x27;: &#x27;gini&#x27;}</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 41</span></div><pre class="py">scores = rs.cv_results_[&#x27;mean_test_score&#x27;]
+scores</pre></div><div class="out"><div class="h">Output</div><pre>array([0.95      , 0.925     , 0.925     , 0.66666667, 0.91666667])</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 42</span></div><pre class="py">import numpy as np
+np.argmax(scores)</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

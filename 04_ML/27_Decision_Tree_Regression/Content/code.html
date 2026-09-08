@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Tree Regression — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/17_Descison_Tree_Regression.ipynb">17_Descison_Tree_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">data = pd.read_csv(&#x27;../../../01_Python/03_Pandas/Data/exam1.csv&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">data</pre></div><div class="out"><div class="h">Output</div><pre>   5me  guide  result
+0    0      0      30
+1    1      1      89
+2    1      0      55
+3    0      0      31
+4    0      0      32
+5    1      1      90
+6    0      1      25
+7    1      1      91
+8    1      0      20
+9    1      1      90</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">x=data[[&#x27;5me&#x27;,&#x27;guide&#x27;]]
+y=data[&#x27;result&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.10, random_state = 1)
+print(X_train)
+print(y_train)</pre></div><div class="out"><div class="h">Output</div><pre>   5me  guide
+9    1      1
+6    0      1
+4    0      0
+0    0      0
+3    0      0
+1    1      1
+7    1      1
+8    1      0
+5    1      1
+9    90
+6    25
+4    32
+0    30
+3    31
+1    89
+7    91
+8    20
+5    90
+Name: result, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.tree import DecisionTreeRegressor, export_graphviz</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 12</span></div><pre class="py">dt = DecisionTreeRegressor()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 14</span></div><pre class="py">dt.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>DecisionTreeRegressor()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 16</span></div><pre class="py">export_graphviz(dt,&#x27;dt1.tree&#x27;,feature_names=[&#x27;5me&#x27;,&#x27;guide&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 18</span></div><pre class="py">from sklearn.tree import plot_tree
+
+plt.figure(figsize=(9, 6))
+plot_tree(dt, feature_names=[&#x27;5me&#x27;, &#x27;guide&#x27;], filled=True)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 20</span></div><pre class="py">dt.predict([[1,1]])</pre></div><div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/utils/validation.py:2827: UserWarning: X does not have valid feature names, but DecisionTreeRegressor was fitted with feature names
+  warnings.warn(
+array([90.])</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 22</span></div><pre class="py">dt.score(x,y)</pre></div><div class="out"><div class="h">Output</div><pre>0.8596407076209728</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

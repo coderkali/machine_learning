@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Evaluation — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import load_breast_cancer
+from sklearn import metrics</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">data = load_breast_cancer()
+#data.info()  Can you check how can i porint the data details like columns and how many data you have</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py"># 1) straight from the Bunch
+print(&quot;rows, columns  :&quot;, data.data.shape)
+print(&quot;target names   :&quot;, data.target_names)      # [&#x27;malignant&#x27; &#x27;benign&#x27;] -&gt; 0, 1
+print(&quot;first 5 columns:&quot;, list(data.feature_names[:5]))
+
+# 2) or ask sklearn for a DataFrame and use pandas as usual
+df = load_breast_cancer(as_frame=True).frame
+df.info()
+df[&quot;target&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>rows, columns  : (569, 30)
+target names   : [&#x27;malignant&#x27; &#x27;benign&#x27;]
+first 5 columns: [np.str_(&#x27;mean radius&#x27;), np.str_(&#x27;mean texture&#x27;), np.str_(&#x27;mean perimeter&#x27;), np.str_(&#x27;mean area&#x27;), np.str_(&#x27;mean smoothness&#x27;)]
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 569 entries, 0 to 568
+Data columns (total 31 columns):
+ #   Column                   Non-Null Count  Dtype  
+---  ------                   --------------  -----  
+ 0   mean radius              569 non-null    float64
+ 1   mean texture             569 non-null    float64
+ 2   mean perimeter           569 non-null    float64
+ 3   mean area                569 non-null    float64
+ 4   mean smoothness          569 non-null    float64
+ 5   mean compactness         569 non-null    float64
+ 6   mean concavity           569 non-null    float64
+ 7   mean concave points      569 non-null    float64
+ 8   mean symmetry            569 non-null    float64
+ 9   mean fractal dimension   569 non-null    float64
+ 10  radius error             569 non-null    float64
+ 11  texture error            569 non-null    float64
+ 12  perimeter error          569 non-null    float64
+ 13  area error               569 non-null    float64
+ 14  smoothness error         569 non-null    float64
+ 15  compactness error        569 non-null    float64
+ 16  concavity error          569 non-null    float64
+ 17  concave points error     569 non-null    float64
+ 18  symmetry e</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train , X_test,Y_train, Y_test = train_test_split(data.data, data.target, test_size=0.20, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.naive_bayes import GaussianNB
+classfier1 = GaussianNB()
+classfier1.fit(X_train,Y_train)</pre></div><div class="out"><div class="h">Output</div><pre>GaussianNB()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 9</span></div><pre class="py">classfier1.score(X_test,Y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9298245614035088</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">Y_pred =classfier1.predict(X_test)
+Y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+       1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1,
+       0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1,
+       0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1,
+       0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0,
+       1, 0, 0, 1])</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 12</span></div><pre class="py">metrics.accuracy_score(Y_pred,Y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9298245614035088</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">confusion_matrix = metrics.confusion_matrix(Y_test,Y_pred)
+confusion_matrix</pre></div><div class="out"><div class="h">Output</div><pre>array([[43,  4],
+       [ 4, 63]])</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 16</span></div><pre class="py">cm = metrics.ConfusionMatrixDisplay(confusion_matrix= confusion_matrix, display_labels=classfier1.classes_)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 17</span></div><pre class="py">import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 18</span></div><pre class="py">cm.plot()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 20</span></div><pre class="py">print(metrics.classification_report(Y_test, Y_pred, target_names=data.target_names, digits=3))</pre></div><div class="out"><div class="h">Output</div><pre>              precision    recall  f1-score   support
+
+   malignant      0.915     0.915     0.915        47
+      benign      0.940     0.940     0.940        67
+
+    accuracy                          0.930       114
+   macro avg      0.928     0.928     0.928       114
+weighted avg      0.930     0.930     0.930       114</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

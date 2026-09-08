@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cost Functions — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/30_Cost_Function_MSE_GradientDescent.ipynb">30_Cost_Function_MSE_GradientDescent.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 3</span></div><pre class="py">import pandas as pd    # pandas: load the CSV and work with it as a table
+import numpy as np     # numpy: arrays, sums, means -- all the math below
+import matplotlib.pyplot as plt   # matplotlib: every chart in this notebook
+
+dataset = pd.read_csv(&quot;../../_shared_data/placement.csv&quot;)   # same 100-row file used in 25, 26, 29
+dataset.head()                           # peek at the first 5 rows -- sanity check</pre></div><div class="out"><div class="h">Output</div><pre>   cgpa  package
+0  6.89     3.26
+1  5.12     1.98
+2  7.82     3.25
+3  7.42     3.67
+4  6.94     3.57</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 5</span></div><pre class="py">x = dataset[&quot;cgpa&quot;].values      # independent variable, as a plain numpy array
+y = dataset[&quot;package&quot;].values   # dependent variable (actual values), as a plain numpy array
+n = len(x)                      # how many rows/students we have -- the &quot;n&quot; in every formula below
+n</pre></div><div class="out"><div class="h">Output</div><pre>100</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">plt.figure(figsize=(7, 5))
+plt.scatter(x, y, color=&quot;#2f6fed&quot;, edgecolor=&quot;white&quot;, s=60)
+plt.xlabel(&quot;cgpa (x)&quot;)
+plt.ylabel(&quot;package, LPA (y)&quot;)
+plt.title(&quot;Raw data — no line drawn yet&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py">def predict(x, m, c):
+    return m * x + c   # the whole model: multiply slope by x, then shift by intercept</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 12</span></div><pre class="py">m_bad, c_bad = 0.1, 0.5            # a careless guess -- too flat, shifted up
+m_decent, c_decent = 0.59, -1.23  # close to the true best-fit line (checked later in Step 9)
+
+y_hat_bad = predict(x, m_bad, c_bad)        # predicted package for every row, using the bad line
+y_hat_decent = predict(x, m_decent, c_decent)  # predicted package for every row, using the decent line
+y_hat_bad[:5], y_hat_decent[:5]</pre></div><div class="out"><div class="h">Output</div><pre>(array([1.189, 1.012, 1.282, 1.242, 1.194]),
+ array([2.8351, 1.7908, 3.3838, 3.1478, 2.8646]))</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 14</span></div><pre class="py">plt.figure(figsize=(8, 5))
+plt.scatter(x, y, color=&quot;#2f6fed&quot;, edgecolor=&quot;white&quot;, s=50, label=&quot;actual data&quot;, zorder=3)
+
+# vertical error bars for the bad line only — this is the &quot;red triangle&quot; picture from the screenshot
+for xi, yi, yhi in zip(x, y, y_hat_bad):
+    plt.plot([xi, xi], [yi, yhi], color=&quot;#b3781f&quot;, linewidth=1, alpha=0.5, zorder=1)
+
+order = np.argsort(x)   # sort by x first, otherwise plt.plot() draws a zig-zag instead of a straight line
+plt.plot(x[order], y_hat_bad[order], color=&quot;#b3781f&quot;, linewidth=2, label=f&quot;bad guess: m={m_bad}, c={c_bad}&quot;)
+plt.plot(x[order], y_hat_decent[order], color=&quot;#2f9e6f&quot;, linewidth=2, label=f&quot;decent guess: m={m_decent}, c={c_decent}&quot;)
+plt.xlabel(&quot;cgpa (x)&quot;)
+plt.ylabel(&quot;package, LPA (y)&quot;)
+plt.title(&quot;Bad line vs. decent line — orange bars are the errors&quot;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 17</span></div><pre class="py">def mean_squared_error(y_actual, y_predicted):
+    errors = y_actual - y_predicted   # actual minus predicted, one number per row
+    squared_errors = errors ** 2      # square each one -- negatives become positive, big misses grow fast
+    return np.mean(squared_errors)    # average across every row -- the formula&#x27;s (1/n) x sum</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 19</span></div><pre class="py">mse_bad = mean_squared_error(y, y_hat_bad)
+mse_decent = mean_squared_error(y, y_hat_decent)
+mse_bad, mse_decent</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(2.6509399899999995), np.float64(0.09556856790000001))</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 22</span></div><pre class="py">raw_errors = y - y_hat_decent          # actual minus predicted, NOT squared this time
+mean_raw_error = np.mean(raw_errors)   # average of the raw (signed) errors
+mean_raw_error</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.019351000000000226)</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 24</span></div><pre class="py">mean_squared_error_decent = mean_squared_error(y, y_hat_decent)
+mean_raw_error, mean_squared_error_decent</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.019351000000000226), np.float64(0.09556856790000001))</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 27</span></div><pre class="py">m_range = np.linspace(-0.5, 1.7, 200)   # 200 candidate slopes to test, evenly spaced
+c_fixed = -1.226                        # hold the intercept fixed, so this is a clean 2-D picture
+
+costs = [mean_squared_error(y, predict(x, m_candidate, c_fixed)) for m_candidate in m_range]
+costs = np.array(costs)   # one MSE value per candidate slope in m_range
+costs[:5]</pre></div><div class="out"><div class="h">Output</div><pre>array([53.48774875, 52.41245013, 51.34808992, 50.29466811, 49.25218471])</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 29</span></div><pre class="py">best_index = np.argmin(costs)              # position of the smallest cost in the list
+best_m_from_sweep = m_range[best_index]    # the slope at that position
+best_cost_from_sweep = costs[best_index]   # the cost at that position
+best_m_from_sweep, best_cost_from_sweep</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.5944723618090453), np.float64(0.09539817988106362))</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 31</span></div><pre class="py">plt.figure(figsize=(7, 5))
+plt.plot(m_range, costs, color=&quot;#2f6fed&quot;, linewidth=2)
+plt.scatter([best_m_from_sweep], [best_cost_from_sweep], color=&quot;#2f9e6f&quot;, s=90, zorder=3,
+            label=f&quot;minimum ≈ m={best_m_from_sweep:.3f}&quot;)
+plt.xlabel(&quot;candidate slope, m (c held fixed)&quot;)
+plt.ylabel(&quot;MSE — J(m)&quot;)
+plt.title(&quot;The cost bowl — real computed numbers, not a sketch&quot;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 34</span></div><pre class="py">def gradients(x, y, m, c):
+    y_hat = predict(x, m, c)                     # current line&#x27;s prediction for every row
+    error = y - y_hat                            # how far off each prediction is (signed, not squared)
+    dL_dm = -(2 / len(x)) * np.sum(x * error)     # dL/dm from the formula above
+    dL_dc = -(2 / len(x)) * np.sum(error)         # dL/dc from the formula above
+    return dL_dm, dL_dc</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 36</span></div><pre class="py"># quick proof that too-large a learning rate breaks Gradient Descent, before we pick a working one
+m_test, c_test = 0.0, 0.0
+for _ in range(5):
+    dL_dm, dL_dc = gradients(x, y, m_test, c_test)
+    m_test = m_test - 0.05 * dL_dm   # learning_rate = 0.05, deliberately too big
+    c_test = c_test - 0.05 * dL_dc
+m_test, c_test   # blown up / not a real slope and intercept -- confirms 0.05 is too large</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(234.41944710168642), np.float64(34.739234649926246))</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 40</span></div><pre class="py">learning_rate = 0.02   # step size -- tuned above; 0.05 was too big, 0.02 stays stable
+epochs = 8000           # how many times we&#x27;ll nudge m and c
+snapshot_epochs = {0, 1, 2, 5, 20, 100, 1000, epochs}   # which epochs to freeze -- used by the Step 8 plot
+
+m, c = 0.0, 0.0     # start from the flattest, laziest possible guess
+cost_history = []   # MSE at every single epoch -- for the &quot;cost vs epoch&quot; plot in Step 8
+snapshots = []      # (epoch, m, c) saved only at snapshot_epochs -- these become the redrawn lines</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 42</span></div><pre class="py">for epoch in range(epochs + 1):
+    if epoch in snapshot_epochs:
+        snapshots.append((epoch, m, c))   # freeze a &quot;photo&quot; of the current line -- this IS the redraw
+    cost_history.append(mean_squared_error(y, predict(x, m, c)))   # how good is the current line, right now
+    if epoch == epochs:
+        break   # last epoch: record it, but don&#x27;t take one more step past it
+    dL_dm, dL_dc = gradients(x, y, m, c)   # which way is uphill, from here
+    m = m - learning_rate * dL_dm          # step downhill for the slope     -- mNew = mOld - lr * dL/dm
+    c = c - learning_rate * dL_dc          # step downhill for the intercept -- cNew = cOld - lr * dL/dc</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 44</span></div><pre class="py">m_final, c_final = m, c   # the line the loop settled on after 8000 steps
+m_final, c_final</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.5914952856012292), np.float64(-1.2204698463361396))</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 46</span></div><pre class="py">progress = pd.DataFrame(snapshots, columns=[&quot;epoch&quot;, &quot;m&quot;, &quot;c&quot;])
+progress[&quot;MSE&quot;] = [mean_squared_error(y, predict(x, m_i, c_i)) for _, m_i, c_i in snapshots]
+progress</pre></div><div class="out"><div class="h">Output</div><pre>   epoch         m         c       MSE
+0      0  0.000000  0.000000  7.667213
+1      1  0.735035  0.108068  5.311518
+2      2  0.125718  0.016850  3.691458
+3      5  0.559961  0.078546  1.284112
+4     20  0.394813  0.040769  0.127365
+5    100  0.414280 -0.025011  0.120258
+6   1000  0.495812 -0.575010  0.102555
+7   8000  0.591495 -1.220470  0.095190</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 49</span></div><pre class="py">plt.figure(figsize=(8, 6))
+plt.scatter(x, y, color=&quot;#8a8f98&quot;, edgecolor=&quot;white&quot;, s=45, label=&quot;actual data&quot;, zorder=2)
+
+colors = [&quot;#d64545&quot;, &quot;#e08a2b&quot;, &quot;#b3781f&quot;, &quot;#8a8f98&quot;, &quot;#6a8fd8&quot;, &quot;#2f6fed&quot;, &quot;#1e4fae&quot;, &quot;#2f9e6f&quot;]
+x_line = np.linspace(x.min(), x.max(), 50)   # smooth set of x-values just for drawing straight lines
+
+for (epoch, m_i, c_i), color in zip(snapshots, colors):
+    plt.plot(x_line, predict(x_line, m_i, c_i), color=color, linewidth=2,
+              label=f&quot;epoch {epoch}: m={m_i:.3f}, c={c_i:.3f}&quot;)   # one redraw per saved snapshot
+
+plt.xlabel(&quot;cgpa (x)&quot;)
+plt.ylabel(&quot;package, LPA (y)&quot;)
+plt.title(&quot;Gradient Descent redrawing the line, epoch by epoch&quot;)
+plt.legend(fontsize=8, loc=&quot;upper left&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 51</span></div><pre class="py">plt.figure(figsize=(7, 5))
+plt.plot(range(len(cost_history)), cost_history, color=&quot;#2f6fed&quot;)
+plt.xlabel(&quot;epoch&quot;)
+plt.ylabel(&quot;MSE&quot;)
+plt.title(&quot;Cost falling as Gradient Descent walks down the bowl from Step 5&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 54</span></div><pre class="py">from sklearn.linear_model import LinearRegression   # scikit-learn&#x27;s Simple Linear Regression, same as 26
+
+x_2d = dataset[[&quot;cgpa&quot;]]     # scikit-learn wants features as a 2-D table, even with just 1 column
+y_1d = dataset[&quot;package&quot;]    # target stays 1-D
+
+sklearn_model = LinearRegression().fit(x_2d, y_1d)   # .fit() runs Ordinary Least Squares internally
+m_sklearn = sklearn_model.coef_[0]     # the slope it found
+c_sklearn = sklearn_model.intercept_   # the intercept it found
+m_sklearn, c_sklearn</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.5923194539434177), np.float64(-1.2260295310441962))</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 56</span></div><pre class="py">comparison = pd.DataFrame({
+    &quot;method&quot;: [&quot;Gradient Descent (ours)&quot;, &quot;scikit-learn (OLS)&quot;],
+    &quot;m&quot;: [m_final, m_sklearn],
+    &quot;c&quot;: [c_final, c_sklearn],
+})
+comparison[&quot;MSE&quot;] = [
+    mean_squared_error(y, predict(x, m_final, c_final)),
+    mean_squared_error(y, predict(x, m_sklearn, c_sklearn)),
+]
+comparison</pre></div><div class="out"><div class="h">Output</div><pre>                    method         m        c      MSE
+0  Gradient Descent (ours)  0.591495 -1.22047  0.09519
+1       scikit-learn (OLS)  0.592319 -1.22603  0.09519</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 59</span></div><pre class="py">baseline_yhat = predict(x, m_sklearn, c_sklearn)      # predictions from the trusted best-fit line
+baseline_mse = mean_squared_error(y, baseline_yhat)
+
+def mean_absolute_error(y_actual, y_predicted):
+    return np.mean(np.abs(y_actual - y_predicted))   # MAE: absolute value instead of squaring
+
+baseline_mae = mean_absolute_error(y, baseline_yhat)
+baseline_mse, baseline_mae</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.0951899229285146), np.float64(0.25186528612796927))</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 61</span></div><pre class="py"># one deliberately wrong row: a 6.9 cgpa student &quot;offered&quot; 15 LPA (real max in the data is under 4 LPA)
+x_with_outlier = np.append(x, 6.9)      # same 100 rows, plus the fake row&#x27;s cgpa
+y_with_outlier = np.append(y, 15.0)     # plus the fake row&#x27;s absurd package
+
+outlier_yhat = predict(x_with_outlier, m_sklearn, c_sklearn)   # predict all 101 rows with the SAME line as before
+outlier_mse = mean_squared_error(y_with_outlier, outlier_yhat)
+outlier_mae = mean_absolute_error(y_with_outlier, outlier_yhat)
+outlier_mse, outlier_mae</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(1.5532171039465175), np.float64(0.3695599397191242))</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 63</span></div><pre class="py">outlier_comparison = pd.DataFrame({
+    &quot;metric&quot;: [&quot;MSE&quot;, &quot;MAE&quot;],
+    &quot;before outlier (100 rows)&quot;: [baseline_mse, baseline_mae],
+    &quot;after 1 outlier (101 rows)&quot;: [outlier_mse, outlier_mae],
+})
+outlier_comparison[&quot;growth factor&quot;] = (
+    outlier_comparison[&quot;after 1 outlier (101 rows)&quot;] / outlier_comparison[&quot;before outlier (100 rows)&quot;]
+)
+outlier_comparison</pre></div><div class="out"><div class="h">Output</div><pre>  metric  before outlier (100 rows)  after 1 outlier (101 rows)  growth factor
+0    MSE                   0.095190                    1.553217      16.317033
+1    MAE                   0.251865                    0.369560       1.467292</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 65</span></div><pre class="py">plt.figure(figsize=(6, 5))
+plt.bar(outlier_comparison[&quot;metric&quot;], outlier_comparison[&quot;growth factor&quot;], color=[&quot;#d64545&quot;, &quot;#2f9e6f&quot;])
+plt.ylabel(&quot;growth factor (after 1 outlier ÷ before)&quot;)
+plt.title(&quot;One outlier out of 101 rows — MSE vs. MAE reaction&quot;)
+plt.axhline(1, color=&quot;#8a8f98&quot;, linewidth=1)
+for i, v in enumerate(outlier_comparison[&quot;growth factor&quot;]):
+    plt.text(i, v + 0.3, f&quot;×{v:.1f}&quot;, ha=&quot;center&quot;)
+plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb">33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb</a></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd    # pandas: load the CSV and work with it as a table
+import numpy as np     # numpy: arrays, sums, means -- all the math below
+import matplotlib.pyplot as plt   # matplotlib: charts, once we get to them
+
+dataset = pd.read_csv(&quot;../../_shared_data/placement.csv&quot;)   # same 100-row file used in 25, 26, 29, 30
+dataset.head()                           # peek at the first 5 rows -- sanity check</pre></div><div class="out"><div class="h">Output</div><pre>   cgpa  package
+0  6.89     3.26
+1  5.12     1.98
+2  7.82     3.25
+3  7.42     3.67
+4  6.94     3.57</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 3</span></div><pre class="py">x = dataset[&quot;cgpa&quot;].values      # independent variable, as a plain numpy array
+y = dataset[&quot;package&quot;].values   # dependent variable (actual values), as a plain numpy array
+n = len(x)                      # how many rows/students we have -- the &quot;n&quot; in every formula below
+n</pre></div><div class="out"><div class="h">Output</div><pre>100</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 4</span></div><pre class="py">def predict(x, m, c):
+    return m * x + c   # the whole model: multiply slope by x, then shift by intercept
+
+m_bad, c_bad = 0.1, 0.5            # a careless guess -- too flat, shifted up
+m_decent, c_decent = 0.59, -1.23   # close to the true best-fit line
+
+y_hat_bad = predict(x, m_bad, c_bad)        # predicted package for every row, using the bad line
+y_hat_decent = predict(x, m_decent, c_decent)  # predicted package for every row, using the decent line
+
+y_hat_bad[:5], y_hat_decent[:5]</pre></div><div class="out"><div class="h">Output</div><pre>(array([1.189, 1.012, 1.282, 1.242, 1.194]),
+ array([2.8351, 1.7908, 3.3838, 3.1478, 2.8646]))</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 5</span></div><pre class="py">def mean_squared_error(y_actual, y_predicted):
+    errors = y_actual - y_predicted   # actual minus predicted, one number per row
+    squared_errors = errors ** 2      # square each one -- negatives become positive, big misses grow fast
+    return np.mean(squared_errors)    # average across every row</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 6</span></div><pre class="py">mean_squared_error(y, y_hat_bad)</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(2.6509399899999995)</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 7</span></div><pre class="py">def gradients(x, y, m, c):
+    y_hat = predict(x, m, c)                     # current line&#x27;s prediction for every row
+    error = y - y_hat                            # how far off each prediction is (signed, not squared)
+    dL_dm = -(2 / len(x)) * np.sum(x * error)     # slope of the MSE bowl, in the m direction
+    dL_dc = -(2 / len(x)) * np.sum(error)         # slope of the MSE bowl, in the c direction
+    return dL_dm, dL_dc</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 8</span></div><pre class="py">gradients(x, y, m_bad, c_bad)</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(-21.1708142), np.float64(-3.07718))</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 9</span></div><pre class="py">learning_rate = 0.02   # step size for each update -- small enough to stay stable, found by testing
+epochs = 8000           # how many times we&#x27;ll nudge m and c
+
+m, c = 0.0, 0.0      # start from the flattest, laziest possible guess
+cost_history = []    # track MSE at every step, just so we can watch it fall
+
+for epoch in range(epochs):
+    cost_history.append(mean_squared_error(y, predict(x, m, c)))   # how good is the line right now?
+    dL_dm, dL_dc = gradients(x, y, m, c)                           # which way is downhill, from here?
+    m = m - learning_rate * dL_dm                                  # take one small step downhill
+    c = c - learning_rate * dL_dc
+
+
+m_final, c_final = m, c
+m_final, c_final , cost_history[:5], cost_history[-5:]</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.5914952856012292),
+ np.float64(-1.2204698463361396),
+ [np.float64(7.667213),
+  np.float64(5.311518266304031),
+  np.float64(3.6914582451691444),
+  np.float64(2.577305664311544),
+  np.float64(1.8110735085444198)],
+ [np.float64(0.09519046377050902),
+  np.float64(0.0951904630350011),
+  np.float64(0.09519046230049344),
+  np.float64(0.09519046156698466),
+  np.float64(0.09519046083447331)])</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

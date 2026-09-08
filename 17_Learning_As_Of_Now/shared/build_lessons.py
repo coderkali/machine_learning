@@ -150,6 +150,56 @@ def gallery_html(scans):
             f'<div class="hn-grid">{thumbs}</div>\n'
             "<!-- HANDWRITTEN:END -->")
 
+def build_code_page(subject, topic, tdir, odir, title):
+    """A plain, syntax-highlighted view of every code cell in the topic."""
+    cdir = os.path.join(tdir, "Concept")
+    nbs = sorted(f for f in os.listdir(cdir) if f.endswith(".ipynb"))
+    pys = sorted(f for f in os.listdir(cdir) if f.endswith(".py"))
+    if not nbs and not pys: return False
+    out, n = [], 0
+    for f in nbs:
+        nb = json.load(open(os.path.join(cdir, f), encoding="utf-8"))
+        out.append(f'<div class="src-head">\U0001F4D3 <a href="../Concept/{H.escape(f)}">'
+                   f'{H.escape(f)}</a></div>')
+        for i, c in enumerate(nb.get("cells", [])):
+            if c["cell_type"] != "code": continue
+            src = "".join(c.get("source", "")).rstrip()
+            if not src.strip(): continue
+            n += 1
+            texts = []
+            for o in c.get("outputs", []):
+                if o.get("output_type") == "stream": texts.append("".join(o.get("text", "")))
+                d = o.get("data", {})
+                if "text/plain" in d and "image/png" not in d: texts.append("".join(d["text/plain"]))
+                if o.get("output_type") == "error":
+                    texts.append("\n".join(o.get("traceback", []))[:600])
+            blob = "\n".join(t.rstrip() for t in texts if t.strip())[:1400]
+            out.append('<div class="code"><div class="code-head"><span>In [' + str(n) +
+                       ']</span><span class="cell">cell ' + str(i) + "</span></div>"
+                       f'<pre class="py">{H.escape(src)}</pre></div>')
+            if blob:
+                out.append('<div class="out"><div class="h">Output</div>'
+                           f'<pre>{H.escape(re.sub(chr(27) + r"[[0-9;]*m", "", blob))}</pre></div>')
+    for f in pys:
+        src = open(os.path.join(cdir, f), encoding="utf-8", errors="ignore").read()
+        out.append(f'<div class="src-head">\U0001F40D <a href="../Concept/{H.escape(f)}">'
+                   f'{H.escape(f)}</a></div>')
+        out.append(f'<div class="code"><pre class="py">{H.escape(src)}</pre></div>')
+
+    doc = f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{H.escape(title)} — code</title>
+<link rel="stylesheet" href="../../../{SHARED}/lesson.css">
+<style>body{{background:#0a0f1a}} .wrap{{padding:16px 18px 60px;max-width:none}}
+.doc{{max-width:none}} .code{{margin:12px 0}}</style>
+</head><body><div class="wrap"><main class="doc">
+{''.join(out)}
+</main></div><script src="../../../{SHARED}/lesson.js"></script></body></html>
+"""
+    open(os.path.join(odir, "code.html"), "w", encoding="utf-8").write(doc)
+    return True
+
 def pretty(name):
     n = re.sub(r"^\d+[_-]", "", name).replace("_", " ")
     fix = {"Ml":"ML","Eda":"EDA","Knn":"KNN","Roc":"ROC","Auc":"AUC","Iqr":"IQR",
@@ -169,6 +219,7 @@ def build(subject, topic):
     if os.path.exists(dest) and not FORCE:
         cur = open(dest, encoding="utf-8", errors="ignore").read()
         if "hand-authored" in cur[:400]:
+            build_code_page(subject, topic, tdir, odir, pretty(topic))
             # do not regenerate the prose, but do refresh the handwritten gallery
             blk = gallery_html(handwritten(tdir))
             new = re.sub(r"<!-- HANDWRITTEN:START -->.*?<!-- HANDWRITTEN:END -->",
@@ -252,6 +303,7 @@ def build(subject, topic):
 """
     os.makedirs(odir, exist_ok=True)
     open(dest, "w", encoding="utf-8").write(doc)
+    build_code_page(subject, topic, tdir, odir, title)
     return f"{len(nbs)}nb {len(notes)}md {'story' if story else '-'}"
 
 if __name__ == "__main__":

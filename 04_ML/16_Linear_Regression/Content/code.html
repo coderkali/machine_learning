@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Regression — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/05_Linear_Regression.ipynb">05_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
+x,y = make_regression(n_features=1, noise=5, n_samples=10000,random_state=1)
+import matplotlib.pyplot as plt
+plt.scatter(x,y)
+plt.xlabel(&#x27;x&#x27;)
+plt.ylabel(&#x27;y&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(x,y,test_size=0.2, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 8</span></div><pre class="py">X_test</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 1.24445906],
+       [ 0.98495167],
+       [-1.59370261],
+       ...,
+       [ 0.24745387],
+       [ 0.05529735],
+       [ 0.07425068]], shape=(2000, 1))</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py">regressor.predict(X_test)</pre></div><div class="out"><div class="h">Output</div><pre>array([ 107.6063556 ,   85.17598825, -137.70846548, ...,   21.43080311,
+          4.82186867,    6.46008839], shape=(2000,))</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py">regressor.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9966263246017432</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 14</span></div><pre class="py">regressor.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([86.43440685])</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 16</span></div><pre class="py">regressor.intercept_</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.042274723015908955)</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 18</span></div><pre class="py">import numpy as np
+
+m = regressor.coef_[0]        # the slope        (coefficient)
+c = regressor.intercept_      # the height at x=0 (intercept)
+
+by_hand  = m * X_test + c
+by_sklearn = regressor.predict(X_test)
+
+print(&quot;first 3 by hand   :&quot;, by_hand.ravel()[:3])
+print(&quot;first 3 by sklearn:&quot;, by_sklearn[:3])
+print(&quot;same? -&gt;&quot;, np.allclose(by_hand.ravel(), by_sklearn))</pre></div><div class="out"><div class="h">Output</div><pre>first 3 by hand   : [ 107.6063556    85.17598825 -137.70846548]
+first 3 by sklearn: [ 107.6063556    85.17598825 -137.70846548]
+same? -&gt; True</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 20</span></div><pre class="py">line_x = np.linspace(x.min(), x.max(), 100).reshape(-1, 1)
+line_y = regressor.predict(line_x)
+
+plt.figure(figsize=(8, 5.5))
+plt.scatter(x[:400], y[:400], s=8, alpha=0.25, label=&quot;data&quot;)
+plt.plot(line_x, line_y, color=&quot;crimson&quot;, lw=2, label=f&quot;y = {m:.2f}x + {c:.2f}&quot;)
+
+# --- intercept: where the line crosses x = 0 ---
+plt.axvline(0, color=&quot;grey&quot;, ls=&quot;:&quot;, lw=1)
+plt.axhline(0, color=&quot;grey&quot;, ls=&quot;:&quot;, lw=1)
+plt.scatter([0], [c], color=&quot;black&quot;, zorder=5, s=80)
+plt.annotate(f&quot;intercept_ = {c:.2f}\n(y when x = 0)&quot;,
+             xy=(0, c), xytext=(-3.6, 120),
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;black&quot;))
+
+# --- coefficient: the rise over a run of 1 ---
+plt.plot([1, 2], [m*1 + c, m*1 + c], color=&quot;green&quot;, lw=2)   # run  = 1
+plt.plot([2, 2], [m*1 + c, m*2 + c], color=&quot;green&quot;, lw=2)   # rise = coef_
+plt.annotate(f&quot;coef_ = {m:.2f}\n(rise for a run of 1)&quot;,
+             xy=(2.05, m*1.5 + c), xytext=(2.3, -70),
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;green&quot;))
+
+plt.xlabel(&quot;x&quot;); plt.ylabel(&quot;y&quot;); plt.legend(loc=&quot;upper left&quot;)
+plt.title(&quot;intercept_ places the line, coef_ tilts it&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">xs = np.linspace(-3, 3, 50)
+fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+
+for slope in [20, 86, 160]:                      # intercept fixed
+    ax[0].plot(xs, slope * xs + c, label=f&quot;coef_ = {slope}&quot;)
+ax[0].set_title(&quot;change coef_  -&gt;  the line TILTS&quot;)
+
+for shift in [-150, 0, 150]:                     # slope fixed
+    ax[1].plot(xs, m * xs + shift, label=f&quot;intercept_ = {shift}&quot;)
+ax[1].set_title(&quot;change intercept_  -&gt;  the line SHIFTS&quot;)
+
+for a in ax:
+    a.axhline(0, color=&quot;grey&quot;, lw=0.8)
+    a.axvline(0, color=&quot;grey&quot;, lw=0.8)
+    a.set_xlabel(&quot;x&quot;); a.set_ylabel(&quot;y&quot;); a.legend(fontsize=8)
+
+plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 25</span></div><pre class="py">y_pred = regressor.predict(x)
+y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([ 130.08472986,  -44.53477921, -167.86426893, ..., -142.37365931,
+         13.8749839 ,  -72.20838078], shape=(10000,))</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,y,label=&quot;Actual&quot;)
+plt.scatter(x,y_pred,label=&quot;Predicted&quot;)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 31</span></div><pre class="py">def cost(m_try, c_try):
+    # average squared vertical gap over the 8000 training rows
+    predicted = m_try * X_train.ravel() + c_try
+    return ((y_train - predicted) ** 2).mean()
+
+print(&quot;sklearn&#x27;s line       m=86.43, c=0.04 :&quot;, round(cost(m, c), 2))
+print(&quot;too flat             m=50.00, c=0.04 :&quot;, round(cost(50, c), 2))
+print(&quot;too steep            m=120.0, c=0.04 :&quot;, round(cost(120, c), 2))
+print(&quot;right tilt, too high m=86.43, c=100  :&quot;, round(cost(m, 100), 2))</pre></div><div class="out"><div class="h">Output</div><pre>sklearn&#x27;s line       m=86.43, c=0.04 : 25.6
+too flat             m=50.00, c=0.04 : 1350.4
+too steep            m=120.0, c=0.04 : 1149.99
+right tilt, too high m=86.43, c=100  : 10017.15</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 33</span></div><pre class="py">slopes     = np.linspace(m - 60, m + 60, 200)
+intercepts = np.linspace(c - 200, c + 200, 200)
+best = cost(m, c)
+
+fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+
+ax[0].plot(slopes, [cost(s, c) for s in slopes], color=&quot;crimson&quot;)
+ax[0].axvline(m, ls=&quot;--&quot;, color=&quot;black&quot;)
+ax[0].scatter([m], [best], color=&quot;black&quot;, zorder=5)
+ax[0].annotate(f&quot;lowest point\ncoef_ = {m:.2f}&quot;, xy=(m, best), xytext=(0.08, 0.62),
+               textcoords=&quot;axes fraction&quot;, arrowprops=dict(arrowstyle=&quot;-&gt;&quot;))
+ax[0].set_title(&quot;cost while sliding the slope&quot;)
+ax[0].set_xlabel(&quot;coef_ (slope)&quot;)
+
+ax[1].plot(intercepts, [cost(m, i) for i in intercepts], color=&quot;crimson&quot;)
+ax[1].axvline(c, ls=&quot;--&quot;, color=&quot;black&quot;)
+ax[1].scatter([c], [best], color=&quot;black&quot;, zorder=5)
+ax[1].annotate(f&quot;lowest point\nintercept_ = {c:.2f}&quot;, xy=(c, best), xytext=(0.08, 0.62),
+               textcoords=&quot;axes fraction&quot;, arrowprops=dict(arrowstyle=&quot;-&gt;&quot;))
+ax[1].set_title(&quot;cost while sliding the intercept&quot;)
+ax[1].set_xlabel(&quot;intercept_&quot;)
+
+for a in ax:
+    a.set_ylabel(&quot;cost (mean squared gap)&quot;)
+plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 35</span></div><pre class="py">xt = X_train.ravel()
+yt = y_train
+
+m_hand = ((xt - xt.mean()) * (yt - yt.mean())).sum() / ((xt - xt.mean()) ** 2).sum()
+c_hand = yt.mean() - m_hand * xt.mean()
+
+print(&quot;my formula  -&gt;  m =&quot;, m_hand, &quot; c =&quot;, c_hand)
+print(&quot;sklearn     -&gt;  m =&quot;, m,      &quot; c =&quot;, c)
+print(&quot;same? -&gt;&quot;, np.allclose([m_hand, c_hand], [m, c]))</pre></div><div class="out"><div class="h">Output</div><pre>my formula  -&gt;  m = 86.43440685172207  c = 0.042274723015908844
+sklearn     -&gt;  m = 86.43440685172204  c = 0.042274723015908955
+same? -&gt; True</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 37</span></div><pre class="py">X_b = np.c_[np.ones(len(X_train)), X_train]        # glue the column of 1s in front
+
+beta = np.linalg.inv(X_b.T @ X_b) @ X_b.T @ y_train
+
+print(&quot;beta    -&gt;&quot;, beta)                # [intercept, coefficient]
+print(&quot;sklearn -&gt; [&quot;, c, &quot;,&quot;, m, &quot;]&quot;)
+print(&quot;same? -&gt;&quot;, np.allclose(beta, [c, m]))</pre></div><div class="out"><div class="h">Output</div><pre>beta    -&gt; [4.22747230e-02 8.64344069e+01]
+sklearn -&gt; [ 0.042274723015908955 , 86.43440685172204 ]
+same? -&gt; True</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 39</span></div><pre class="py">print(&quot;rank_     :&quot;, regressor.rank_)       # how many columns were actually independent
+print(&quot;singular_ :&quot;, regressor.singular_)   # the SVD&#x27;s singular values
+
+# reproduce sklearn&#x27;s own three steps by hand
+X_off, y_off = X_train.mean(axis=0), y_train.mean()                            # 1. centre
+coef_svd = np.linalg.lstsq(X_train - X_off, y_train - y_off, rcond=None)[0]    # 2. lstsq
+intercept_svd = y_off - X_off @ coef_svd                                       # 3. intercept back
+
+print(&quot;\nby sklearn&#x27;s own route -&gt;&quot;, coef_svd, intercept_svd)
+print(&quot;same? -&gt;&quot;, np.allclose([coef_svd[0], intercept_svd], [m, c]))</pre></div><div class="out"><div class="h">Output</div><pre>rank_     : 1
+singular_ : [89.35213963]
+
+by sklearn&#x27;s own route -&gt; [86.43440685] 0.042274723015908955
+same? -&gt; True</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 41</span></div><pre class="py">m_gd, c_gd = 0.0, 0.0          # start at a deliberately wrong guess
+learning_rate = 0.1
+path = []
+
+for step in range(60):
+    predicted = m_gd * xt + c_gd
+    error = predicted - yt
+
+    down_m = 2 * (error * xt).mean()      # which way is downhill for the slope
+    down_c = 2 * error.mean()             # which way is downhill for the intercept
+
+    m_gd -= learning_rate * down_m        # take one small step
+    c_gd -= learning_rate * down_c
+    path.append((m_gd, c_gd, (error ** 2).mean()))
+
+    if step in (0, 1, 2, 5, 10, 20, 40, 59):
+        print(f&quot;step {step:&gt;2}   m = {m_gd:8.4f}   c = {c_gd:7.4f}   cost = {(error ** 2).mean():12.2f}&quot;)
+
+print(&quot;\ngradient descent -&gt;&quot;, round(m_gd, 6), round(c_gd, 6))
+print(&quot;the formula      -&gt;&quot;, round(m, 6), round(c, 6))</pre></div><div class="out"><div class="h">Output</div><pre>step  0   m =  17.2522   c =  0.0764   cost =      7481.53
+step  1   m =  31.0608   c =  0.1239   cost =      4802.15
+step  2   m =  42.1132   c =  0.1511   cost =      3085.65
+step  5   m =  63.7075   c =  0.1649   cost =       830.20
+step 10   m =  78.9683   c =  0.1190   cost =       112.44
+step 20   m =  85.6286   c =  0.0584   cost =        26.61
+step 40   m =  86.4250   c =  0.0426   cost =        25.60
+step 59   m =  86.4343   c =  0.0423   cost =        25.60
+
+gradient descent -&gt; 86.43427 0.042283
+the formula      -&gt; 86.434407 0.042275</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 43</span></div><pre class="py">path = np.array(path)
+
+M, C = np.meshgrid(np.linspace(-5, 110, 80), np.linspace(-40, 40, 80))
+Z = np.array([[cost(mm, cc) for mm, cc in zip(row_m, row_c)] for row_m, row_c in zip(M, C)])
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 4.5))
+
+ax[0].contourf(M, C, np.log10(Z), levels=30, cmap=&quot;Blues_r&quot;)
+ax[0].plot(path[:, 0], path[:, 1], &quot;o-&quot;, color=&quot;orange&quot;, ms=3, lw=1, label=&quot;each step&quot;)
+ax[0].scatter([0], [0], color=&quot;red&quot;, s=60, zorder=5, label=&quot;start (0, 0)&quot;)
+ax[0].scatter([m], [c], marker=&quot;*&quot;, color=&quot;lime&quot;, s=280, zorder=5, label=&quot;the formula&#x27;s answer&quot;)
+ax[0].set_xlabel(&quot;coef_&quot;); ax[0].set_ylabel(&quot;intercept_&quot;)
+ax[0].set_title(&quot;walking downhill on the cost bowl&quot;); ax[0].legend(fontsize=8)
+
+ax[1].plot(path[:, 2], color=&quot;crimson&quot;)
+ax[1].set_yscale(&quot;log&quot;)
+ax[1].set_xlabel(&quot;step&quot;); ax[1].set_ylabel(&quot;cost (log scale)&quot;)
+ax[1].set_title(&quot;cost drops fast, then flattens - it has arrived&quot;)
+
+plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 46</span></div><pre class="py">X_dup = np.c_[X_train, X_train]      # column 2 is an exact copy of column 1
+
+dup_model = LinearRegression().fit(X_dup, y_train)
+print(&quot;coefficients :&quot;, dup_model.coef_, &quot;-&gt; they add up to&quot;, dup_model.coef_.sum())
+print(&quot;rank_        :&quot;, dup_model.rank_, &quot;of&quot;, X_dup.shape[1], &quot;columns&quot;)
+
+# meanwhile, the raw normal equation on the same data
+gram = np.c_[np.ones(len(X_dup)), X_dup]
+gram = gram.T @ gram
+print(&quot;\ncondition number of X.T @ X :&quot;, f&quot;{np.linalg.cond(gram):.3e}&quot;, &quot; (huge = not invertible)&quot;)
+try:
+    np.linalg.inv(gram)
+    print(&quot;np.linalg.inv returned something, but at this condition number it is meaningless&quot;)
+except np.linalg.LinAlgError as e:
+    print(&quot;np.linalg.inv says:&quot;, e)</pre></div><div class="out"><div class="h">Output</div><pre>coefficients : [43.21720343 43.21720343] -&gt; they add up to 86.43440685172203
+rank_        : 1 of 2 columns
+
+condition number of X.T @ X : 2.495e+32  (huge = not invertible)
+np.linalg.inv says: Singular matrix</pre></div><div class="src-head">📓 <a href="../Concept/05a_Coef_And_Intercept_By_Hand.ipynb">05a_Coef_And_Intercept_By_Hand.ipynb</a></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1, 2, 3, 4, 5])        # years of experience
+y = np.array([30, 35, 50, 55, 60])   # salary in thousands
+
+plt.scatter(x, y, s=80)
+plt.xlabel(&quot;x  (years)&quot;)
+plt.ylabel(&quot;y  (salary)&quot;)
+plt.grid(alpha=0.3)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 5</span></div><pre class="py">x_bar = x.mean()
+y_bar = y.mean()
+
+print(&quot;average x =&quot;, x_bar)
+print(&quot;average y =&quot;, y_bar)</pre></div><div class="out"><div class="h">Output</div><pre>average x = 3.0
+average y = 46.0</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 7</span></div><pre class="py">x_diff = x - x_bar
+
+print(x_diff)</pre></div><div class="out"><div class="h">Output</div><pre>[-2. -1.  0.  1.  2.]</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 9</span></div><pre class="py">y_diff = y - y_bar
+
+print(y_diff)</pre></div><div class="out"><div class="h">Output</div><pre>[-16. -11.   4.   9.  14.]</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 11</span></div><pre class="py">products = x_diff * y_diff
+
+print(&quot;each row :&quot;, products)
+print(&quot;top      :&quot;, products.sum())</pre></div><div class="out"><div class="h">Output</div><pre>each row : [32. 11.  0.  9. 28.]
+top      : 80.0</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 13</span></div><pre class="py">squares = x_diff ** 2
+
+print(&quot;each row :&quot;, squares)
+print(&quot;bottom   :&quot;, squares.sum())</pre></div><div class="out"><div class="h">Output</div><pre>each row : [4. 1. 0. 1. 4.]
+bottom   : 10.0</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 15</span></div><pre class="py">m = products.sum() / squares.sum()
+
+print(&quot;coef_ =&quot;, m)</pre></div><div class="out"><div class="h">Output</div><pre>coef_ = 8.0</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 17</span></div><pre class="py">c = y_bar - m * x_bar
+
+print(&quot;intercept_ =&quot;, c)
+print()
+print(f&quot;our line:  y = {m} * x + {c}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>intercept_ = 22.0
+
+our line:  y = 8.0 * x + 22.0</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 20</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8.5, 6))
+
+# the crosshairs through the average point
+ax.axvline(x_bar, color=&quot;grey&quot;, ls=&quot;--&quot;, lw=1)
+ax.axhline(y_bar, color=&quot;grey&quot;, ls=&quot;--&quot;, lw=1)
+
+# one rectangle per person: width = x - x̄, height = y - ȳ, area = the product
+for xi, yi, p in zip(x, y, products):
+    colour = &quot;seagreen&quot; if p &gt; 0 else &quot;indianred&quot;
+    ax.add_patch(plt.Rectangle((min(xi, x_bar), min(yi, y_bar)),
+                               abs(xi - x_bar), abs(yi - y_bar),
+                               facecolor=colour, alpha=0.22, edgecolor=colour, lw=1.5))
+    if p != 0:
+        ax.annotate(f&quot;{p:.0f}&quot;, xy=((xi + x_bar) / 2, (yi + y_bar) / 2),
+                    ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=13, fontweight=&quot;bold&quot;, color=colour)
+
+ax.scatter(x, y, s=90, color=&quot;steelblue&quot;, zorder=5)
+ax.scatter([x_bar], [y_bar], marker=&quot;*&quot;, s=380, color=&quot;black&quot;, zorder=6)
+ax.annotate(&quot;average point (3, 46)&quot;, xy=(x_bar, y_bar), xytext=(3.3, 31),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;))
+
+# what each quadrant does to the total
+ax.text(5.5, 64, &quot;+&quot;, fontsize=22, color=&quot;seagreen&quot;, ha=&quot;center&quot;)
+ax.text(0.7, 29, &quot;+&quot;, fontsize=22, color=&quot;seagreen&quot;, ha=&quot;center&quot;)
+ax.text(0.7, 64, &quot;−&quot;, fontsize=22, color=&quot;indianred&quot;, ha=&quot;center&quot;)
+ax.text(5.5, 29, &quot;−&quot;, fontsize=22, color=&quot;indianred&quot;, ha=&quot;center&quot;)
+ax.text(5.5, 61, &quot;above avg on both&quot;, fontsize=8, color=&quot;seagreen&quot;, ha=&quot;center&quot;)
+ax.text(0.7, 32, &quot;below avg on both&quot;, fontsize=8, color=&quot;seagreen&quot;, ha=&quot;center&quot;)
+ax.text(0.7, 61, &quot;few years,\nhigh salary&quot;, fontsize=8, color=&quot;indianred&quot;, ha=&quot;center&quot;)
+ax.text(5.5, 26.5, &quot;many years,\nlow salary&quot;, fontsize=8, color=&quot;indianred&quot;, ha=&quot;center&quot;)
+
+ax.set_xlim(0.2, 6.1); ax.set_ylim(24, 68)
+ax.set_xlabel(&quot;x  (years)&quot;); ax.set_ylabel(&quot;y  (salary)&quot;)
+ax.set_title(&quot;TOP = total shaded area = 32 + 11 + 0 + 9 + 28 = 80&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 23</span></div><pre class="py">fig, ax = plt.subplots(figsize=(10, 3.2))
+
+slots = [0, 2.8, 5.6, 8.4, 11.2]          # one slot per person, spaced out
+names = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;]
+
+for slot, name, d, s in zip(slots, names, x_diff, squares):
+    side = abs(d)
+    if side &gt; 0:
+        ax.add_patch(plt.Rectangle((slot - side / 2, 0), side, side,
+                                   facecolor=&quot;steelblue&quot;, alpha=0.3, edgecolor=&quot;steelblue&quot;, lw=1.5))
+        ax.annotate(f&quot;{s:.0f}&quot;, xy=(slot, side / 2), ha=&quot;center&quot;, va=&quot;center&quot;,
+                    fontsize=13, fontweight=&quot;bold&quot;, color=&quot;steelblue&quot;)
+    else:
+        ax.scatter([slot], [0.03], color=&quot;steelblue&quot;, s=60)
+        ax.annotate(&quot;0&quot;, xy=(slot, 0.25), ha=&quot;center&quot;, fontsize=13,
+                    fontweight=&quot;bold&quot;, color=&quot;steelblue&quot;)
+    ax.annotate(f&quot;{name}\nx − 3 = {d:+.0f}&quot;, xy=(slot, -0.55), ha=&quot;center&quot;, fontsize=9)
+
+ax.set_xlim(-1.8, 13); ax.set_ylim(-1.0, 2.6)
+ax.set_aspect(&quot;equal&quot;); ax.axis(&quot;off&quot;)
+ax.set_title(&quot;BOTTOM = total area of these squares = 4 + 1 + 0 + 1 + 4 = 10&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 26</span></div><pre class="py">fig, ax = plt.subplots(figsize=(10, 2.4))
+
+for k in range(10):
+    ax.add_patch(plt.Rectangle((k * 8, 0), 8, 1, facecolor=&quot;seagreen&quot;,
+                               alpha=0.25, edgecolor=&quot;seagreen&quot;, lw=1.2))
+    ax.annotate(&quot;8&quot;, xy=(k * 8 + 4, 0.5), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=11)
+
+ax.annotate(&quot;TOP = 80&quot;, xy=(40, 1.45), ha=&quot;center&quot;, fontsize=12, fontweight=&quot;bold&quot;, color=&quot;seagreen&quot;)
+ax.annotate(&quot;cut into BOTTOM = 10 equal pieces   →   each piece is 8   →   coef_ = 8&quot;,
+            xy=(40, -0.55), ha=&quot;center&quot;, fontsize=11)
+
+ax.set_xlim(-3, 83); ax.set_ylim(-1.1, 2.0); ax.axis(&quot;off&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 29</span></div><pre class="py">line_x = np.linspace(-0.2, 6, 50)
+
+fig, ax = plt.subplots(figsize=(8.5, 6))
+ax.plot(line_x, m * line_x + c, color=&quot;crimson&quot;, lw=2, label=f&quot;y = {m:.0f}x + {c:.0f}&quot;)
+ax.scatter(x, y, s=80, color=&quot;steelblue&quot;, zorder=5, label=&quot;the 5 people&quot;)
+
+# three hops back along the line, from the average point to the y-axis
+for step in range(3):
+    x0 = x_bar - step
+    ax.annotate(&quot;&quot;, xy=(x0 - 1, m * (x0 - 1) + c), xytext=(x0, m * x0 + c),
+                arrowprops=dict(arrowstyle=&quot;-|&gt;&quot;, color=&quot;darkorange&quot;, lw=2.5))
+    ax.annotate(&quot;−8&quot;, xy=(x0 - 0.5, m * (x0 - 0.5) + c + 2.5),
+                color=&quot;darkorange&quot;, ha=&quot;center&quot;, fontsize=12, fontweight=&quot;bold&quot;)
+
+ax.scatter([x_bar], [y_bar], marker=&quot;*&quot;, s=380, color=&quot;green&quot;, zorder=6,
+           label=&quot;start here: average point (3, 46)&quot;)
+ax.scatter([0], [c], color=&quot;black&quot;, s=110, zorder=6, label=f&quot;arrive here: intercept_ = {c:.0f}&quot;)
+
+ax.axvline(0, color=&quot;grey&quot;, lw=1)
+ax.annotate(&quot;3 years back,\n8 lost each time,\n46 − 24 = 22&quot;, xy=(0, c), xytext=(1.9, 26.5),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;), fontsize=10)
+
+ax.set_xlim(-0.5, 6); ax.set_ylim(20, 68)
+ax.set_xlabel(&quot;x  (years)&quot;); ax.set_ylabel(&quot;y  (salary)&quot;)
+ax.legend(loc=&quot;lower right&quot;, fontsize=9); ax.grid(alpha=0.25)
+ax.set_title(&quot;intercept_ = walk from the average point back to x = 0&quot;)
+plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/26_Simple_Linear_Regression.ipynb">26_Simple_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                     # pandas: load the CSV and work with it as a table (DataFrame)
+import seaborn as sns                                    # seaborn: nicer statistical plots, built on top of matplotlib
+import matplotlib.pyplot as plt                          # matplotlib: base plotting library, used here for fine control (labels, legends, saving files)
+from sklearn.model_selection import train_test_split     # splits our data into a training pool and a held-back testing pool
+from sklearn.linear_model import LinearRegression        # the actual Simple Linear Regression model class</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/placement.csv&quot;)  # read the CSV file from disk into a pandas DataFrame called &quot;dataset&quot;</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 5</span></div><pre class="py">dataset.head(3)  # show only the first 3 rows, just to eyeball the columns and their values</pre></div><div class="out"><div class="h">Output</div><pre>   cgpa  package
+0  6.89     3.26
+1  5.12     1.98
+2  7.82     3.25</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 7</span></div><pre class="py">dataset.isnull().sum()  # count missing values in every column — should be 0 for both, since this dataset is already clean</pre></div><div class="out"><div class="h">Output</div><pre>cgpa       0
+package    0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 9</span></div><pre class="py">x = dataset[&quot;cgpa&quot;]   # pull out just the &quot;cgpa&quot; column, using single brackets — this returns a 1-D pandas Series, not a table
+x                      # display it, to see what we just built</pre></div><div class="out"><div class="h">Output</div><pre>0     6.89
+1     5.12
+2     7.82
+3     7.42
+4     6.94
+      ... 
+95    5.22
+96    7.16
+97    6.06
+98    6.61
+99    7.15
+Name: cgpa, Length: 100, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 11</span></div><pre class="py">x.ndim  # 1 = one dimension (a flat Series), not the 2-D table shape scikit-learn expects for its inputs</pre></div><div class="out"><div class="h">Output</div><pre>1</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 13</span></div><pre class="py">x = dataset[[&quot;cgpa&quot;]]  # double brackets: pass a list of one column name, so pandas keeps this as a DataFrame (2-D table), not a flattened Series</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 14</span></div><pre class="py">x.ndim  # now 2 = two dimensions (a table with 1 column) — this is the shape scikit-learn expects</pre></div><div class="out"><div class="h">Output</div><pre>2</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 16</span></div><pre class="py">y = dataset[&quot;package&quot;]   # pull out the &quot;package&quot; column as a 1-D Series — this is fine for y, unlike x
+y                          # display it</pre></div><div class="out"><div class="h">Output</div><pre>0     3.26
+1     1.98
+2     3.25
+3     3.67
+4     3.57
+      ... 
+95    1.60
+96    2.61
+97    2.49
+98    3.23
+99    3.06
+Name: package, Length: 100, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 18</span></div><pre class="py">plt.figure(figsize=(5,3))                              # open a new, fairly small figure to draw on
+sns.scatterplot(x=&quot;cgpa&quot;, y=&quot;package&quot;, data=dataset)    # one dot per student: cgpa on the x-axis, package on the y-axis
+plt.show()                                              # render the plot</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 21</span></div><pre class="py">x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)  # 80 rows go to *_train, 20 rows go to *_test</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 23</span></div><pre class="py">lr = LinearRegression()          # create a fresh, untrained Simple Linear Regression model
+lr.fit(x_train, y_train)         # train it on the 80 training rows — this is where sklearn works out the best m (slope) and c (intercept)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 25</span></div><pre class="py"># row 0 in the CSV: cgpa=6.89, package=3.26 (actual) — let&#x27;s see what the model predicts for that same cgpa
+new_row = pd.DataFrame([[6.89]], columns=[&quot;cgpa&quot;])   # wrap the new cgpa value in a DataFrame with the matching column name
+lr.predict(new_row)                                   # ask the trained model to predict the package for cgpa=6.89</pre></div><div class="out"><div class="h">Output</div><pre>array([2.83654417])</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 28</span></div><pre class="py">lr.score(x_test, y_test) * 100  # R² score on the 20 held-back test rows, as a percentage-style number</pre></div><div class="out"><div class="h">Output</div><pre>68.79138403839303</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 31</span></div><pre class="py">lr.coef_  # the slope, m — an array because sklearn supports many features at once; here there&#x27;s only one value, for &quot;cgpa&quot;. Positive → the line rises left to right.</pre></div><div class="out"><div class="h">Output</div><pre>array([0.58176641])</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 32</span></div><pre class="py">lr.intercept_  # the intercept, c — a single number here. Negative → the line crosses the y-axis below zero (it dips below the x-axis before turning positive).</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(-1.1718264038996313)</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 34</span></div><pre class="py"># y = 0.58176641 * x + (-1.1718264038996313)  &lt;- this run&#x27;s fitted line, shown for reference only; the next cell reads these numbers from the model itself instead of retyping them</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 36</span></div><pre class="py">m = lr.coef_[0]                     # pull the slope straight out of the trained model, instead of retyping the printed number
+c = lr.intercept_                   # pull the intercept straight out of the trained model
+manual_prediction = m * 6.89 + c    # apply y = m*x + c by hand, for the same cgpa=6.89 used in Step 11
+manual_prediction</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(2.8365441666439155)</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 39</span></div><pre class="py">y_prd = lr.predict(x)  # predict the package for every row in x (all 100 students) — used to draw the fitted line</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 41</span></div><pre class="py">plt.figure(figsize=(6,4))                                                  # open a new figure, a bit wider for the legend/labels
+sns.scatterplot(x=&quot;cgpa&quot;, y=&quot;package&quot;, data=dataset, label=&quot;Actual data&quot;)  # label the real data points, so the legend can find them
+plt.plot(dataset[&quot;cgpa&quot;], y_prd, c=&quot;red&quot;, label=&quot;Predicted line&quot;)          # label the fitted line the same way
+plt.xlabel(&quot;CGPA&quot;)                                                         # name the x-axis
+plt.ylabel(&quot;Package (LPA)&quot;)                                                # name the y-axis
+plt.title(&quot;CGPA vs Package — Actual Data vs Fitted Regression Line&quot;)       # title the chart
+plt.legend()                                                               # this now works: it reads the labels above automatically, no args needed
+plt.savefig(&quot;predict.jpg&quot;)                                                 # save a copy of the chart to disk, as before
+plt.show()                                                                 # render it</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 43</span></div><pre class="py">plt.figure(figsize=(6,4))                                                   # new figure for this visualization
+sns.scatterplot(x=&quot;cgpa&quot;, y=&quot;package&quot;, data=dataset, label=&quot;Actual data&quot;)   # the real data points again
+plt.plot(dataset[&quot;cgpa&quot;], y_prd, c=&quot;red&quot;, label=&quot;Predicted line&quot;)           # the fitted line again
+plt.vlines(dataset[&quot;cgpa&quot;], y, y_prd, colors=&quot;gray&quot;, linestyles=&quot;dashed&quot;, alpha=0.6, label=&quot;Residual&quot;)  # one dashed line per student, from actual y down/up to predicted y
+plt.xlabel(&quot;CGPA&quot;)
+plt.ylabel(&quot;Package (LPA)&quot;)
+plt.title(&quot;Residuals — the Gap Between Actual and Predicted Package&quot;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 45</span></div><pre class="py">residuals = y - y_prd                                            # actual minus predicted, for every student — positive means the model under-predicted, negative means it over-predicted
+
+plt.figure(figsize=(6,4))
+sns.scatterplot(x=y_prd, y=residuals)                             # predicted package on x, residual on y
+plt.axhline(0, color=&quot;red&quot;, linestyle=&quot;--&quot;)                       # a flat reference line at residual=0, i.e. &quot;perfect prediction&quot;
+plt.xlabel(&quot;Predicted Package&quot;)
+plt.ylabel(&quot;Residual (Actual − Predicted)&quot;)
+plt.title(&quot;Residuals vs Predicted Values&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 47</span></div><pre class="py">plt.figure(figsize=(5,3))
+sns.histplot(residuals, kde=True, color=&quot;teal&quot;)   # bar-chart of how often each residual size occurs, plus a smoothed curve (kde) over it
+plt.axvline(0, color=&quot;red&quot;, linestyle=&quot;--&quot;)        # mark residual=0 for reference
+plt.xlabel(&quot;Residual (Actual − Predicted)&quot;)
+plt.title(&quot;Distribution of Residuals&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 49</span></div><pre class="py">plt.figure(figsize=(5,5))
+sns.scatterplot(x=y, y=y_prd)                                       # actual package on x, predicted package on y
+lims = [min(y.min(), y_prd.min()), max(y.max(), y_prd.max())]        # shared axis limits, so the diagonal line spans the full plot
+plt.plot(lims, lims, color=&quot;red&quot;, linestyle=&quot;--&quot;, label=&quot;Perfect prediction (actual = predicted)&quot;)  # the y = x reference line
+plt.xlabel(&quot;Actual Package&quot;)
+plt.ylabel(&quot;Predicted Package&quot;)
+plt.title(&quot;Actual vs Predicted Package&quot;)
+plt.legend()
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

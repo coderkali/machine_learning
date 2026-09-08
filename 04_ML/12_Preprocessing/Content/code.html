@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preprocessing — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/03_preprocessing.ipynb">03_preprocessing.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler,MinMaxScaler,RobustScaler,Binarizer,Normalizer,OneHotEncoder,LabelEncoder</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">np.random.seed(5)
+a = np.random.normal(0,2,10000)
+b = np.random.normal(5,3,10000)
+c = np.random.normal(-5,5,10000)
+
+df = pd.DataFrame({&quot;A&quot;:a, &quot;B&quot;:b,&quot;C&quot;:c})
+df</pre></div><div class="out"><div class="h">Output</div><pre>             A         B          C
+0     0.882455  1.466990  -7.089363
+1    -0.661740  0.571914  -3.105893
+2     4.861542  7.828852  -1.039068
+3    -0.504184  5.001904  -9.755722
+4     0.219220  1.731128  -7.679528
+...        ...       ...        ...
+9995 -0.068972  3.739968  -4.303864
+9996 -2.167260  0.681434  -9.584910
+9997  2.188712  9.860986  -9.986860
+9998  0.595445  5.982577 -11.128039
+9999  0.122246  9.105143  -6.612080
+
+[10000 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py"># keep a clean, untouched copy of the raw data.
+# the cells below overwrite `df` several times, and we will want the original back.
+raw = df.copy()
+
+raw.describe().round(2)</pre></div><div class="out"><div class="h">Output</div><pre>              A         B         C
+count  10000.00  10000.00  10000.00
+mean      -0.00      5.01     -4.95
+std        2.00      3.02      5.01
+min       -7.20     -6.00    -24.56
+25%       -1.36      2.98     -8.32
+50%        0.01      5.01     -5.02
+75%        1.37      7.05     -1.53
+max        7.22     15.88     14.02</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 8</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py"># proof that a KDE is just a smoothed histogram.
+# `density=True` makes the histogram use the same y-axis scale as the KDE line.
+fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+colors = {&quot;A&quot;: &quot;#2f6fed&quot;, &quot;B&quot;: &quot;#b3781f&quot;, &quot;C&quot;: &quot;#7a3f66&quot;}
+
+for ax, col in zip(axes, raw.columns):
+    ax.hist(raw[col], bins=40, density=True, color=colors[col], alpha=0.35,
+            edgecolor=&quot;white&quot;, label=&quot;histogram (density=True)&quot;)
+    raw[col].plot.kde(ax=ax, color=colors[col], lw=2.4, label=&quot;KDE line&quot;)
+    ax.set_title(f&quot;column {col}&quot;, fontweight=&quot;bold&quot;)
+    ax.grid(alpha=0.2)
+    ax.set_ylabel(&quot;&quot;)
+    ax.legend(fontsize=8)
+
+axes[0].set_ylabel(&quot;density&quot;)
+fig.suptitle(&quot;A KDE is the smooth line drawn over the histogram bars&quot;,
+             fontsize=13, fontweight=&quot;bold&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py"># the &quot;before&quot; picture, annotated the way it would be drawn on a whiteboard
+fig, ax = plt.subplots(figsize=(12, 6))
+raw.plot.kde(ax=ax, color=[&quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;], lw=2.4)
+
+# a double-headed arrow per column, showing how much of the axis it claims
+for i, col in enumerate(raw.columns):
+    y = 0.225 - i * 0.017
+    ax.annotate(&quot;&quot;, xy=(raw[col].min(), y), xytext=(raw[col].max(), y),
+                arrowprops=dict(arrowstyle=&quot;&lt;-&gt;&quot;, lw=1.6, color=colors[col]))
+    ax.text(raw[col].mean(), y, f&quot;{col} spans {raw[col].max() - raw[col].min():.1f} units&quot;,
+            ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=9.5, color=colors[col], fontweight=&quot;bold&quot;,
+            bbox=dict(boxstyle=&quot;round,pad=0.25&quot;, fc=&quot;white&quot;, ec=&quot;none&quot;))
+
+# the mean of each column, marked on the axis
+lines = []
+for col in raw.columns:
+    m = raw[col].mean()
+    ax.axvline(m, color=colors[col], ls=&quot;--&quot;, lw=1.3, alpha=0.8)
+    ax.annotate(f&quot;{col}&quot;, xy=(m, 0), xytext=(m, -0.014), ha=&quot;center&quot;,
+                fontsize=12, fontweight=&quot;bold&quot;, color=colors[col])
+    lines.append(f&quot;{col}:  mean {m:6.2f}   std {raw[col].std():5.2f}   &quot;
+                 f&quot;min {raw[col].min():7.2f}   max {raw[col].max():6.2f}&quot;)
+
+ax.text(0.985, 0.985, &quot;\n&quot;.join(lines), transform=ax.transAxes, ha=&quot;right&quot;, va=&quot;top&quot;,
+        family=&quot;monospace&quot;, fontsize=9.5,
+        bbox=dict(boxstyle=&quot;round,pad=0.5&quot;, fc=&quot;#f7f9fc&quot;, ec=&quot;#8a8f98&quot;))
+
+ax.set_xlim(-30, 20)
+ax.set_ylim(-0.025, 0.315)
+ax.legend(loc=&quot;upper left&quot;)
+ax.set_title(&quot;BEFORE scaling \u2014 three columns, three different rulers&quot;,
+             fontsize=13, fontweight=&quot;bold&quot;)
+ax.set_xlabel(&quot;value&quot;)
+ax.set_ylabel(&quot;density&quot;)
+ax.grid(alpha=0.25)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 15</span></div><pre class="py">df.plot.bar() # What is this plot and why it takes time for 24 sec to render</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 17</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
+
+# left: a bar chart used properly — few rows, so each bar is readable
+raw.head(15).plot.bar(ax=axes[0], color=[&quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;], width=0.8)
+axes[0].set_title(&quot;plot.bar() on 15 rows — instant, and readable&quot;, fontweight=&quot;bold&quot;)
+axes[0].set_xlabel(&quot;row number&quot;)
+axes[0].grid(axis=&quot;y&quot;, alpha=0.25)
+
+# right: the whole column, summarised instead of drawn value by value
+raw.plot.hist(ax=axes[1], bins=60, alpha=0.55,
+              color=[&quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;])
+axes[1].set_title(&quot;plot.hist() on all 10,000 rows — instant, and informative&quot;,
+                  fontweight=&quot;bold&quot;)
+axes[1].grid(axis=&quot;y&quot;, alpha=0.25)
+
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 19</span></div><pre class="py">scaler = StandardScaler() 
+scaled = scaler.fit_transform(df)
+
+df = pd.DataFrame(scaled,columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 21</span></div><pre class="py"># what did .fit() actually store?
+scaler_demo = StandardScaler().fit(raw)
+
+print(&quot;mean_   (the μ it subtracts) :&quot;, scaler_demo.mean_.round(4))
+print(&quot;scale_  (the σ it divides by):&quot;, scaler_demo.scale_.round(4))
+print()
+
+# do the formula by hand, then check it against sklearn
+manual = (raw - raw.mean()) / raw.std(ddof=0)      # ddof=0 -&gt; population std, what sklearn uses
+sk     = scaler_demo.transform(raw)
+
+print(&quot;manual (x - μ) / σ  matches sklearn :&quot;, np.allclose(manual.values, sk))
+print()
+
+after = pd.DataFrame(sk, columns=raw.columns)
+print(&quot;after StandardScaler&quot;)
+print(&quot;  mean :&quot;, after.mean().round(10).tolist(), &quot;  -&gt; 0&quot;)
+print(&quot;  std  :&quot;, after.std(ddof=0).round(10).tolist(), &quot;  -&gt; 1&quot;)
+print(&quot;  min  :&quot;, after.min().round(2).tolist())
+print(&quot;  max  :&quot;, after.max().round(2).tolist(), &quot;  &lt;- NOT bounded&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>mean_   (the μ it subtracts) : [-6.0000e-04  5.0106e+00 -4.9549e+00]
+scale_  (the σ it divides by): [2.0017 3.0158 5.0075]
+
+manual (x - μ) / σ  matches sklearn : True
+
+after StandardScaler
+  mean : [-0.0, 0.0, 0.0]   -&gt; 0
+  std  : [1.0, 1.0, 1.0]   -&gt; 1
+  min  : [-3.59, -3.65, -3.91]
+  max  : [3.61, 3.61, 3.79]   &lt;- NOT bounded</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 24</span></div><pre class="py">minimax = MinMaxScaler()
+mm_scaled = minimax.fit_transform(df)
+
+df = pd.DataFrame(mm_scaled,columns=[&quot;A&quot;,&#x27;B&#x27;,&quot;C&quot;])
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 26</span></div><pre class="py"># what did .fit() actually store?
+mm_demo = MinMaxScaler().fit(raw)
+
+print(&quot;data_min_ :&quot;, mm_demo.data_min_.round(3))
+print(&quot;data_max_ :&quot;, mm_demo.data_max_.round(3))
+print(&quot;data_range_ (max - min) :&quot;, mm_demo.data_range_.round(3))
+print()
+
+manual = (raw - raw.min()) / (raw.max() - raw.min())
+sk     = mm_demo.transform(raw)
+print(&quot;manual (x - min) / (max - min) matches sklearn :&quot;, np.allclose(manual.values, sk))
+print()
+
+after = pd.DataFrame(sk, columns=raw.columns)
+print(&quot;after MinMaxScaler&quot;)
+print(&quot;  min :&quot;, after.min().round(6).tolist(), &quot;  -&gt; exactly 0&quot;)
+print(&quot;  max :&quot;, after.max().round(6).tolist(), &quot;  -&gt; exactly 1&quot;)
+print()
+
+# the whiteboard&#x27;s own worked example, checked
+tiny = np.array([[2.], [3.], [5.]])
+print(&quot;whiteboard example [2, 3, 5] -&gt;&quot;, MinMaxScaler().fit_transform(tiny).ravel().round(4))</pre></div><div class="out"><div class="h">Output</div><pre>data_min_ : [ -7.196  -6.002 -24.558]
+data_max_ : [ 7.225 15.884 14.023]
+data_range_ (max - min) : [14.42  21.886 38.581]
+
+manual (x - min) / (max - min) matches sklearn : True
+
+after MinMaxScaler
+  min : [0.0, 0.0, 0.0]   -&gt; exactly 0
+  max : [1.0, 1.0, 1.0]   -&gt; exactly 1
+
+whiteboard example [2, 3, 5] -&gt; [0.     0.3333 1.    ]</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 28</span></div><pre class="py">rscaler = RobustScaler()
+robust = rscaler.fit_transform(df)
+df = pd.DataFrame(robust, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py"># what did .fit() actually store?
+rs_demo = RobustScaler().fit(raw)
+
+print(&quot;center_ (the median Q2 it subtracts) :&quot;, rs_demo.center_.round(4))
+print(&quot;scale_  (the IQR it divides by)      :&quot;, rs_demo.scale_.round(4))
+print()
+
+q1 = raw.quantile(0.25)
+q2 = raw.quantile(0.50)
+q3 = raw.quantile(0.75)
+print(&quot;Q1 :&quot;, q1.round(4).tolist())
+print(&quot;Q2 :&quot;, q2.round(4).tolist(), &quot;  &lt;- median, matches center_&quot;)
+print(&quot;Q3 :&quot;, q3.round(4).tolist())
+print(&quot;IQR = Q3 - Q1 :&quot;, (q3 - q1).round(4).tolist(), &quot;  &lt;- matches scale_&quot;)
+print()
+
+manual = (raw - q2) / (q3 - q1)
+print(&quot;manual (x - Q2) / IQR matches sklearn :&quot;, np.allclose(manual.values, rs_demo.transform(raw)))
+print()
+
+# the &quot;one bad value&quot; demo from the notes above, run for real
+clean_col = np.array([[1.], [2.], [3.], [4.], [5.]])
+dirty_col = np.array([[1.], [2.], [3.], [4.], [1000.]])
+for name, col in [(&quot;clean [1,2,3,4,5]&quot;, clean_col), (&quot;dirty [1,2,3,4,1000]&quot;, dirty_col)]:
+    print(f&quot;{name:24s} mean={col.mean():8.2f}  std={col.std():8.2f}&quot;
+          f&quot;  median={np.median(col):5.2f}  IQR={np.percentile(col,75)-np.percentile(col,25):5.2f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>center_ (the median Q2 it subtracts) : [ 0.0124  5.0121 -5.0212]
+scale_  (the IQR it divides by)      : [2.7274 4.0721 6.7854]
+
+Q1 : [-1.3573, 2.9752, -8.3152]
+Q2 : [0.0124, 5.0121, -5.0212]   &lt;- median, matches center_
+Q3 : [1.3701, 7.0473, -1.5298]
+IQR = Q3 - Q1 : [2.7274, 4.0721, 6.7854]   &lt;- matches scale_
+
+manual (x - Q2) / IQR matches sklearn : True
+
+clean [1,2,3,4,5]        mean=    3.00  std=    1.41  median= 3.00  IQR= 2.00
+dirty [1,2,3,4,1000]     mean=  202.00  std=  399.00  median= 3.00  IQR= 2.00</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 32</span></div><pre class="py"># rebuild the exact chain the three scaler cells above created
+chain_std    = StandardScaler().fit_transform(raw)
+chain_mm     = MinMaxScaler().fit_transform(chain_std)     # minmax applied to standardised data
+chain_robust = RobustScaler().fit_transform(chain_mm)      # robust applied to min-maxed data
+
+# and the fair version: each scaler applied straight to the raw data
+direct_std    = StandardScaler().fit_transform(raw)
+direct_mm     = MinMaxScaler().fit_transform(raw)
+direct_robust = RobustScaler().fit_transform(raw)
+
+print(&quot;chained result == direct result ?&quot;)
+print(&quot;  StandardScaler :&quot;, np.allclose(chain_std,    direct_std))
+print(&quot;  MinMaxScaler   :&quot;, np.allclose(chain_mm,     direct_mm),
+      &quot;   max difference:&quot;, np.abs(chain_mm - direct_mm).max())
+print(&quot;  RobustScaler   :&quot;, np.allclose(chain_robust, direct_robust),
+      &quot;   max difference:&quot;, np.abs(chain_robust - direct_robust).max())</pre></div><div class="out"><div class="h">Output</div><pre>chained result == direct result ?
+  StandardScaler : True
+  MinMaxScaler   : True    max difference: 2.220446049250313e-16
+  RobustScaler   : True    max difference: 1.3322676295501878e-15</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 35</span></div><pre class="py"># every scaler fed from `raw` — no chaining, each result gets its own name
+views = {
+    &quot;1. RAW (no scaling)&quot;: raw,
+    &quot;2. StandardScaler&quot;:   pd.DataFrame(StandardScaler().fit_transform(raw), columns=raw.columns),
+    &quot;3. MinMaxScaler&quot;:     pd.DataFrame(MinMaxScaler().fit_transform(raw),   columns=raw.columns),
+    &quot;4. RobustScaler&quot;:     pd.DataFrame(RobustScaler().fit_transform(raw),   columns=raw.columns),
+}
+
+fig, axes = plt.subplots(2, 2, figsize=(13.5, 8.5))
+for ax, (name, d) in zip(axes.ravel(), views.items()):
+    d.plot.kde(ax=ax, color=[&quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;], lw=2.3)
+    lo, hi = d.min().min(), d.max().max()
+    peak = max(line.get_ydata().max() for line in ax.get_lines())
+    ax.set_title(f&quot;{name}\nx-axis spans {lo:.2f} to {hi:.2f}   |   curve peaks at {peak:.2f}&quot;,
+                 fontweight=&quot;bold&quot;, fontsize=11)
+    ax.grid(alpha=0.25)
+    ax.set_ylabel(&quot;density&quot;)
+    ax.axvline(0, color=&quot;#8a8f98&quot;, lw=0.8, ls=&quot;:&quot;)
+
+fig.suptitle(&quot;Same 10,000 rows, three scalers — the SHAPE never changes, only the ruler&quot;,
+             fontsize=14, fontweight=&quot;bold&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 37</span></div><pre class="py"># the same four panels, as a table
+rows = []
+for name, d in views.items():
+    rows.append({
+        &quot;view&quot;:   name,
+        &quot;mean&quot;:   round(d.values.mean(), 3),
+        &quot;std&quot;:    round(d.values.std(), 3),
+        &quot;min&quot;:    round(d.values.min(), 3),
+        &quot;max&quot;:    round(d.values.max(), 3),
+        &quot;median&quot;: round(float(np.median(d.values)), 3),
+        &quot;IQR&quot;:    round(float(np.percentile(d.values, 75) - np.percentile(d.values, 25)), 3),
+    })
+
+pd.DataFrame(rows).set_index(&quot;view&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>                      mean    std     min     max  median    IQR
+view                                                            
+1. RAW (no scaling)  0.018  5.411 -24.558  15.884   0.426  6.483
+2. StandardScaler    0.000  1.000  -3.915   3.790  -0.003  1.357
+3. MinMaxScaler      0.503  0.136   0.000   1.000   0.503  0.184
+4. RobustScaler      0.002  0.738  -2.879   2.807  -0.000  1.002</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 40</span></div><pre class="py"># five values, four rulers — the whiteboard version
+vals = np.array([[2.], [5.], [8.], [12.], [20.]])
+
+rulers = [
+    (&quot;RAW&quot;,             vals.ravel(),                                    &quot;no formula&quot;,                    &quot;#8a8f98&quot;),
+    (&quot;StandardScaler&quot;,  StandardScaler().fit_transform(vals).ravel(),     r&quot;$(x - \mu)\,/\,\sigma$&quot;,       &quot;#2f6fed&quot;),
+    (&quot;MinMaxScaler&quot;,    MinMaxScaler().fit_transform(vals).ravel(),       r&quot;$(x - x_{min})\,/\,(x_{max}-x_{min})$&quot;, &quot;#b3781f&quot;),
+    (&quot;RobustScaler&quot;,    RobustScaler().fit_transform(vals).ravel(),       r&quot;$(x - Q_2)\,/\,IQR$&quot;,           &quot;#2f9e6f&quot;),
+]
+
+fig, axes = plt.subplots(4, 1, figsize=(12.5, 7))
+for ax, (name, v, formula, c) in zip(axes, rulers):
+    pad = (v.max() - v.min()) * 0.18
+    ax.axhline(0, color=c, lw=2.5)
+    ax.plot(v, np.zeros_like(v), &quot;o&quot;, ms=11, color=c, zorder=3)
+    for original, scaled in zip(vals.ravel(), v):
+        ax.annotate(f&quot;{scaled:.2f}&quot;, xy=(scaled, 0), xytext=(scaled, 0.35),
+                    ha=&quot;center&quot;, fontsize=10, fontweight=&quot;bold&quot;, color=c)
+        ax.annotate(f&quot;{original:.0f}&quot;, xy=(scaled, 0), xytext=(scaled, -0.55),
+                    ha=&quot;center&quot;, fontsize=9, color=&quot;#8a8f98&quot;)
+    ax.set_xlim(v.min() - pad, v.max() + pad)
+    ax.set_ylim(-1, 1)
+    ax.set_yticks([])
+    ax.text(-0.005, 0.5, f&quot;{name}\n{formula}&quot;, transform=ax.transAxes,
+            ha=&quot;right&quot;, va=&quot;center&quot;, fontsize=10.5, fontweight=&quot;bold&quot;, color=c)
+    ax.spines[[&quot;top&quot;, &quot;right&quot;, &quot;left&quot;, &quot;bottom&quot;]].set_visible(False)
+    ax.tick_params(labelsize=8, colors=&quot;#8a8f98&quot;)
+
+fig.suptitle(&quot;Five values, four rulers — the dots never change their ORDER or their SPACING RATIO&quot;,
+             fontsize=13, fontweight=&quot;bold&quot;)
+fig.subplots_adjust(left=0.20, top=0.90, hspace=0.55)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 43</span></div><pre class="py"># 10,000 good rows, then the same rows with 3 absurd values bolted on
+clean_data = raw[[&quot;A&quot;]].values                                   # real range is about -7 .. +7
+dirty_data = np.vstack([clean_data, [[150.], [160.], [170.]]])   # 3 nonsense readings
+
+fig, axes = plt.subplots(3, 1, figsize=(12.5, 8))
+summary = []
+
+for ax, (name, Scaler) in zip(axes, [(&quot;StandardScaler&quot;, StandardScaler),
+                                     (&quot;MinMaxScaler&quot;,   MinMaxScaler),
+                                     (&quot;RobustScaler&quot;,   RobustScaler)]):
+    a = Scaler().fit_transform(clean_data).ravel()          # fitted without outliers
+    b = Scaler().fit_transform(dirty_data).ravel()          # fitted WITH outliers
+    b_good = b[:len(clean_data)]                            # where the good rows landed
+
+    for y, vals, label, c in [(1.0, a,      &quot;10,000 clean rows&quot;,             &quot;#2f9e6f&quot;),
+                              (0.4, b_good, &quot;the SAME rows, 3 outliers added&quot;, &quot;#d64545&quot;)]:
+        lo, hi = np.percentile(vals, 0.5), np.percentile(vals, 99.5)
+        ax.plot([lo, hi], [y, y], lw=14, color=c, solid_capstyle=&quot;butt&quot;, alpha=0.85)
+        ax.text(lo, y + 0.19, f&quot;{label} — real data now spans {hi - lo:.2f}&quot;,
+                va=&quot;bottom&quot;, ha=&quot;left&quot;, fontsize=9.5, color=c, fontweight=&quot;bold&quot;)
+
+    ax.scatter(b[len(clean_data):], [0.4] * 3, marker=&quot;x&quot;, s=110, color=&quot;black&quot;, zorder=5)
+    ax.text(b[len(clean_data):].max(), 0.08, &quot;the 3 outliers&quot;, fontsize=9, ha=&quot;right&quot;)
+
+    before = np.percentile(a, 99.5) - np.percentile(a, 0.5)
+    after  = np.percentile(b_good, 99.5) - np.percentile(b_good, 0.5)
+    summary.append({&quot;scaler&quot;: name, &quot;span before&quot;: round(before, 3),
+                    &quot;span after&quot;: round(after, 3), &quot;shrunk by&quot;: f&quot;{before / after:.1f}x&quot;})
+
+    ax.set_yticks([]); ax.set_ylim(0, 1.55)
+    ax.set_title(name, loc=&quot;left&quot;, fontweight=&quot;bold&quot;, fontsize=12)
+    ax.axvline(0, color=&quot;#8a8f98&quot;, lw=0.8)
+    ax.grid(axis=&quot;x&quot;, alpha=0.25)
+
+fig.suptitle(&quot;What 3 bad values do to 10,000 good rows   (each row has its own x-axis)&quot;,
+             fontsize=13.5, fontweight=&quot;bold&quot;)
+plt.tight_layout()
+plt.show()
+
+pd.DataFrame(summary).set_index(&quot;scaler&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>                span before  span after shrunk by
+scaler                                           
+StandardScaler        5.055       2.958      1.7x
+MinMaxScaler          0.702       0.057     12.3x
+RobustScaler          3.710       3.709      1.0x</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 46</span></div><pre class="py">binary = Binarizer(threshold=5)
+
+a = np.array([[ 30, 10,  22],
+              [ 20,  2,  10],
+              [ 33,  5, 5]])
+
+binary1 = binary.transform(a)
+binary1</pre></div><div class="out"><div class="h">Output</div><pre>array([[1, 1, 1],
+       [1, 0, 1],
+       [1, 0, 0]])</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 48</span></div><pre class="py"># what the threshold rule actually looks like
+x = np.linspace(0, 40, 1000)
+y = (x &gt; 5).astype(int)
+
+fig, ax = plt.subplots(figsize=(11, 4))
+ax.plot(x, y, lw=3, color=&quot;#2f6fed&quot;, drawstyle=&quot;steps-post&quot;)
+ax.axvline(5, color=&quot;#d64545&quot;, ls=&quot;--&quot;, lw=2)
+ax.text(5.5, 0.5, &quot;threshold = 5&quot;, color=&quot;#d64545&quot;, fontsize=11, fontweight=&quot;bold&quot;)
+
+# drop the 9 real values from the matrix onto the step
+for value in a.ravel():
+    ax.plot(value, int(value &gt; 5), &quot;o&quot;, ms=11, color=&quot;#b3781f&quot;, zorder=5)
+    hit = int(value &gt; 5)
+    ax.annotate(f&quot;{value}&quot;, xy=(value, hit), xytext=(value, hit + (0.12 if hit else -0.13)),
+                ha=&quot;center&quot;, fontsize=9, fontweight=&quot;bold&quot;, color=&quot;#b3781f&quot;,
+                bbox=dict(boxstyle=&quot;round,pad=0.12&quot;, fc=&quot;white&quot;, ec=&quot;none&quot;))
+
+ax.annotate(&quot;value 5 sits exactly ON the line\nand becomes 0, because the rule is  &gt;  not  &gt;=&quot;,
+            xy=(5, 0), xytext=(11, 0.22), fontsize=10, color=&quot;#d64545&quot;,
+            arrowprops=dict(arrowstyle=&quot;-|&gt;&quot;, color=&quot;#d64545&quot;, lw=1.8),
+            bbox=dict(boxstyle=&quot;round,pad=0.4&quot;, fc=&quot;#fff3f3&quot;, ec=&quot;#d64545&quot;))
+
+ax.set_yticks([0, 1])
+ax.set_ylim(-0.28, 1.35)
+ax.set_xlabel(&quot;input value&quot;)
+ax.set_ylabel(&quot;output&quot;)
+ax.set_title(&quot;Binarizer(threshold=5) — one step, nothing else&quot;, fontweight=&quot;bold&quot;, fontsize=12)
+ax.grid(alpha=0.25)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 50</span></div><pre class="py">X = [[5, 2, 3],
+     [2, 4, 10],
+     [6, 8, 6]]
+
+sss = [np.sqrt(np.sum(np.power(X[i], 2))) for i in range(len(X))]
+len(X)</pre></div><div class="out"><div class="h">Output</div><pre>3</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 52</span></div><pre class="py">np.array([X[k] / sss[k] for k in range(len(X))])</pre></div><div class="out"><div class="h">Output</div><pre>array([[0.81110711, 0.32444284, 0.48666426],
+       [0.18257419, 0.36514837, 0.91287093],
+       [0.51449576, 0.68599434, 0.51449576]])</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 54</span></div><pre class="py">normalizer = Normalizer()
+data_tf = normalizer.fit_transform(X)
+data_tf</pre></div><div class="out"><div class="h">Output</div><pre>array([[0.81110711, 0.32444284, 0.48666426],
+       [0.18257419, 0.36514837, 0.91287093],
+       [0.51449576, 0.68599434, 0.51449576]])</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 56</span></div><pre class="py"># why &quot;length 1&quot; is easier to see with two columns than three
+pts = np.array([[5., 2.], [2., 4.], [6., 8.], [1., 0.5], [3., 7.]])
+pts_n = Normalizer().fit_transform(pts)
+arrow_colors = [&quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;, &quot;#2f9e6f&quot;, &quot;#d64545&quot;]
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5.2))
+for ax, (data, title, show_arc) in zip(axes, [(pts,   &quot;BEFORE — every row a different length&quot;, False),
+                                              (pts_n, &quot;AFTER Normalizer — every row length 1&quot;, True)]):
+    for i, (px, py) in enumerate(data):
+        ax.annotate(&quot;&quot;, xy=(px, py), xytext=(0, 0),
+                    arrowprops=dict(arrowstyle=&quot;-|&gt;&quot;, lw=2.2, color=arrow_colors[i],
+                                    shrinkA=0, shrinkB=0))
+        ax.text(px, py, f&quot;  row {i}  (len {np.hypot(px, py):.2f})&quot;, fontsize=8.5,
+                color=arrow_colors[i], va=&quot;center&quot;)
+    if show_arc:
+        th = np.linspace(0, np.pi / 2, 200)
+        ax.plot(np.cos(th), np.sin(th), ls=&quot;--&quot;, color=&quot;#8a8f98&quot;, lw=1.4)
+        ax.text(1.03, 0.62, &quot;the unit circle\n(every arrow ends here)&quot;,
+                fontsize=9, color=&quot;#8a8f98&quot;)
+    ax.set_aspect(&quot;equal&quot;)
+    ax.grid(alpha=0.25)
+    ax.set_title(title, fontweight=&quot;bold&quot;, fontsize=11)
+    ax.set_xlabel(&quot;column 0&quot;)
+    ax.set_ylabel(&quot;column 1&quot;)
+
+axes[0].set_xlim(-0.4, 10.5); axes[0].set_ylim(-0.4, 9)
+axes[1].set_xlim(-0.1, 1.6);  axes[1].set_ylim(-0.1, 1.25)
+
+fig.suptitle(&quot;Normalizer keeps each row&#x27;s DIRECTION and throws away its SIZE&quot;,
+             fontsize=13, fontweight=&quot;bold&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 59</span></div><pre class="py">dff = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/encoding.csv&quot;)
+dff</pre></div><div class="out"><div class="h">Output</div><pre>  TEAM  YEAR
+0    A  2000
+1    B  2002
+2    C  2003
+3    D  2004
+4    A  2005
+5    C  2006
+6    B  2007
+7    A  2008
+8    D  2009</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 62</span></div><pre class="py">le = LabelEncoder()
+df1 = dff
+df1.TEAM = le.fit_transform(df1.TEAM)
+df1</pre></div><div class="out"><div class="h">Output</div><pre>   TEAM  YEAR
+0     0  2000
+1     1  2002
+2     2  2003
+3     3  2004
+4     0  2005
+5     2  2006
+6     1  2007
+7     0  2008
+8     3  2009</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 64</span></div><pre class="py">print(&quot;le.classes_ :&quot;, le.classes_)
+print(&quot;the integer a label gets IS its index in that array:&quot;)
+for i, label in enumerate(le.classes_):
+    print(f&quot;   position {i}  -&gt;  &#x27;{label}&#x27;&quot;)
+print()
+
+# gotcha 1, demonstrated rather than asserted
+print(&quot;df1 is dff  -&gt;&quot;, df1 is dff, &quot;  (two names, one object — that is why dff changed too)&quot;)
+print()
+print(&quot;dff now holds:&quot;)
+print(dff.head(3))
+print()
+
+# going back from numbers to labels
+print(&quot;inverse_transform([0, 1, 2, 3]) -&gt;&quot;, le.inverse_transform([0, 1, 2, 3]))</pre></div><div class="out"><div class="h">Output</div><pre>le.classes_ : [&#x27;A&#x27; &#x27;B&#x27; &#x27;C&#x27; &#x27;D&#x27;]
+the integer a label gets IS its index in that array:
+   position 0  -&gt;  &#x27;A&#x27;
+   position 1  -&gt;  &#x27;B&#x27;
+   position 2  -&gt;  &#x27;C&#x27;
+   position 3  -&gt;  &#x27;D&#x27;
+
+df1 is dff  -&gt; True   (two names, one object — that is why dff changed too)
+
+dff now holds:
+   TEAM  YEAR
+0     0  2000
+1     1  2002
+2     2  2003
+
+inverse_transform([0, 1, 2, 3]) -&gt; [&#x27;A&#x27; &#x27;B&#x27; &#x27;C&#x27; &#x27;D&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 66</span></div><pre class="py">enc = OneHotEncoder()
+enc_df1 = pd.DataFrame(enc.fit_transform(df1[[&#x27;TEAM&#x27;]]).toarray())
+enc_df1</pre></div><div class="out"><div class="h">Output</div><pre>     0    1    2    3
+0  1.0  0.0  0.0  0.0
+1  0.0  1.0  0.0  0.0
+2  0.0  0.0  1.0  0.0
+3  0.0  0.0  0.0  1.0
+4  1.0  0.0  0.0  0.0
+5  0.0  0.0  1.0  0.0
+6  0.0  1.0  0.0  0.0
+7  1.0  0.0  0.0  0.0
+8  0.0  0.0  0.0  1.0</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 68</span></div><pre class="py"># `dff` was overwritten in the cell above (gotcha 1), so the letters are gone.
+# re-read the file to get them back — and note the RELATIVE path this time.
+fresh = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/encoding.csv&quot;)
+
+enc_named = OneHotEncoder(sparse_output=False)
+matrix = enc_named.fit_transform(fresh[[&quot;TEAM&quot;]])
+
+print(&quot;categories_             :&quot;, enc_named.categories_)
+print(&quot;get_feature_names_out() :&quot;, enc_named.get_feature_names_out())
+print()
+
+named = pd.DataFrame(matrix, columns=enc_named.get_feature_names_out(), dtype=int)
+print(named.head(4))
+print()
+
+# drop=&#x27;first&#x27; — the &quot;dummy variable trap&quot; option
+enc_drop = OneHotEncoder(sparse_output=False, drop=&quot;first&quot;)
+dropped = pd.DataFrame(enc_drop.fit_transform(fresh[[&quot;TEAM&quot;]]),
+                       columns=enc_drop.get_feature_names_out(), dtype=int)
+print(&quot;with drop=&#x27;first&#x27; — 3 columns instead of 4:&quot;)
+print(dropped.head(4))</pre></div><div class="out"><div class="h">Output</div><pre>categories_             : [array([&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;], dtype=object)]
+get_feature_names_out() : [&#x27;TEAM_A&#x27; &#x27;TEAM_B&#x27; &#x27;TEAM_C&#x27; &#x27;TEAM_D&#x27;]
+
+   TEAM_A  TEAM_B  TEAM_C  TEAM_D
+0       1       0       0       0
+1       0       1       0       0
+2       0       0       1       0
+3       0       0       0       1
+
+with drop=&#x27;first&#x27; — 3 columns instead of 4:
+   TEAM_B  TEAM_C  TEAM_D
+0       0       0       0
+1       1       0       0
+2       0       1       0
+3       0       0       1</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 70</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(13, 4.8))
+
+# LEFT — LabelEncoder puts the four teams on one axis, which invents an order
+ax = axes[0]
+ax.axhline(0, color=&quot;#d64545&quot;, lw=2.5)
+for i, label in enumerate(le.classes_):
+    ax.plot(i, 0, &quot;o&quot;, ms=16, color=&quot;#d64545&quot;, zorder=3)
+    ax.annotate(f&quot;{label}&quot;, xy=(i, 0), xytext=(i, 0.28), ha=&quot;center&quot;,
+                fontsize=13, fontweight=&quot;bold&quot;, color=&quot;#d64545&quot;)
+    ax.annotate(f&quot;{i}&quot;, xy=(i, 0), xytext=(i, -0.35), ha=&quot;center&quot;, fontsize=11, color=&quot;#8a8f98&quot;)
+ax.annotate(&quot;&quot;, xy=(3, 0.13), xytext=(0, 0.13),
+            arrowprops=dict(arrowstyle=&quot;&lt;-&gt;&quot;, lw=1.6, color=&quot;#d64545&quot;))
+ax.text(1.5, 0.17, &quot;the model reads this gap as 3&quot;, ha=&quot;center&quot;, fontsize=9.5,
+        color=&quot;#d64545&quot;, fontweight=&quot;bold&quot;)
+ax.text(1.5, -0.62, &quot;INVENTED:  D &gt; C &gt; B &gt; A,  and B is the average of A and C&quot;,
+        ha=&quot;center&quot;, fontsize=10, color=&quot;#d64545&quot;, fontweight=&quot;bold&quot;,
+        bbox=dict(boxstyle=&quot;round,pad=0.4&quot;, fc=&quot;#fff3f3&quot;, ec=&quot;#d64545&quot;))
+ax.set_xlim(-0.8, 3.8); ax.set_ylim(-0.85, 0.55)
+ax.set_yticks([]); ax.set_xticks([])
+ax.spines[[&quot;top&quot;, &quot;right&quot;, &quot;left&quot;, &quot;bottom&quot;]].set_visible(False)
+ax.set_title(&quot;LabelEncoder — one axis, so an order appears from nowhere&quot;,
+             fontweight=&quot;bold&quot;, fontsize=11.5)
+
+# RIGHT — OneHotEncoder gives each team its own column, so all pairs are equidistant
+ax = axes[1]
+grid = np.eye(4)
+ax.imshow(grid, cmap=&quot;Blues&quot;, vmin=-0.4, vmax=1.4)
+for r in range(4):
+    for c in range(4):
+        ax.text(c, r, int(grid[r, c]), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=13,
+                fontweight=&quot;bold&quot;, color=&quot;white&quot; if grid[r, c] else &quot;#1b1f24&quot;)
+ax.set_xticks(range(4), [f&quot;TEAM_{t}&quot; for t in le.classes_], fontsize=10)
+ax.set_yticks(range(4), [f&quot;row = {t}&quot; for t in le.classes_], fontsize=10)
+ax.set_title(&quot;OneHotEncoder — four axes, so every pair is equally far apart&quot;,
+             fontweight=&quot;bold&quot;, fontsize=11.5)
+ax.text(1.5, 4.15, &quot;NO invented order — the distance between any two teams is the same&quot;,
+        ha=&quot;center&quot;, fontsize=10, color=&quot;#2f9e6f&quot;, fontweight=&quot;bold&quot;,
+        bbox=dict(boxstyle=&quot;round,pad=0.4&quot;, fc=&quot;#eaf7f1&quot;, ec=&quot;#2f9e6f&quot;))
+
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 71</span></div><pre class="py">abc = df1.join(enc_df1)
+abc</pre></div><div class="out"><div class="h">Output</div><pre>   TEAM  YEAR    0    1    2    3
+0     0  2000  1.0  0.0  0.0  0.0
+1     1  2002  0.0  1.0  0.0  0.0
+2     2  2003  0.0  0.0  1.0  0.0
+3     3  2004  0.0  0.0  0.0  1.0
+4     0  2005  1.0  0.0  0.0  0.0
+5     2  2006  0.0  0.0  1.0  0.0
+6     1  2007  0.0  1.0  0.0  0.0
+7     0  2008  1.0  0.0  0.0  0.0
+8     3  2009  0.0  0.0  0.0  1.0</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 73</span></div><pre class="py">final = abc.drop([&#x27;TEAM&#x27;], axis=&#x27;columns&#x27;)
+final</pre></div><div class="out"><div class="h">Output</div><pre>   YEAR    0    1    2    3
+0  2000  1.0  0.0  0.0  0.0
+1  2002  0.0  1.0  0.0  0.0
+2  2003  0.0  0.0  1.0  0.0
+3  2004  0.0  0.0  0.0  1.0
+4  2005  1.0  0.0  0.0  0.0
+5  2006  0.0  0.0  1.0  0.0
+6  2007  0.0  1.0  0.0  0.0
+7  2008  1.0  0.0  0.0  0.0
+8  2009  0.0  0.0  0.0  1.0</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 76</span></div><pre class="py">from matplotlib.patches import FancyBboxPatch
+
+BLUE, BRASS, GREEN, RED, GREY = &quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#2f9e6f&quot;, &quot;#d64545&quot;, &quot;#8a8f98&quot;
+
+fig, ax = plt.subplots(figsize=(15, 9))
+ax.set_xlim(0, 120); ax.set_ylim(0, 100); ax.axis(&quot;off&quot;)
+
+def box(x, y, w, h, text, fc=&quot;#ffffff&quot;, ec=GREY, fs=10, bold=False):
+    ax.add_patch(FancyBboxPatch((x - w / 2, y - h / 2), w, h,
+                                boxstyle=&quot;round,pad=0,rounding_size=1.5&quot;,
+                                fc=fc, ec=ec, lw=2, zorder=2))
+    ax.text(x, y, text, ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=fs, zorder=3,
+            fontweight=&quot;bold&quot; if bold else &quot;normal&quot;, color=&quot;#1b1f24&quot;, linespacing=1.45)
+    return (x, y, w, h)
+
+def arrow(a, b, label=&quot;&quot;, color=GREY):
+    x1, y1, _, h1 = a
+    x2, y2, _, h2 = b
+    ax.annotate(&quot;&quot;, xy=(x2, y2 + h2 / 2), xytext=(x1, y1 - h1 / 2),
+                arrowprops=dict(arrowstyle=&quot;-|&gt;&quot;, lw=2, color=color, shrinkA=1, shrinkB=1), zorder=1)
+    if label:
+        ax.text((x1 + x2) / 2, (y1 - h1 / 2 + y2 + h2 / 2) / 2, label,
+                ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=9.5, fontweight=&quot;bold&quot;, color=color,
+                bbox=dict(boxstyle=&quot;round,pad=0.3&quot;, fc=&quot;white&quot;, ec=color, lw=1.2), zorder=4)
+
+root = box(60, 94, 46, 8, &quot;Which preprocessing do I use for THIS column?&quot;,
+           fc=&quot;#eef3ff&quot;, ec=BLUE, bold=True, fs=13)
+qcat = box(25, 77, 32, 8, &quot;TEXT / CATEGORY\nteam, city, yes-no&quot;, fc=&quot;#fdf4e6&quot;, ec=BRASS, bold=True, fs=11)
+qnum = box(92, 77, 32, 8, &quot;NUMBER\nage, salary, pixel&quot;, fc=&quot;#eef3ff&quot;, ec=BLUE, bold=True, fs=11)
+arrow(root, qcat, &quot;text&quot;, BRASS)
+arrow(root, qnum, &quot;numeric&quot;, BLUE)
+
+qord = box(25, 60, 34, 8, &quot;Do the labels have a\nnatural order?&quot;, ec=BRASS)
+qout = box(92, 60, 34, 8, &quot;Does the column have\nextreme outliers?&quot;, ec=BLUE)
+arrow(qcat, qord)
+arrow(qnum, qout)
+
+e1 = box(9, 40, 17, 11, &quot;OrdinalEncoder\nlow &lt; mid &lt; high\nkeeps the order&quot;, fc=&quot;#fdf4e6&quot;, ec=BRASS, fs=9.5)
+e2 = box(36, 40, 20, 11, &quot;OneHotEncoder\none 0/1 column\nper label&quot;, fc=&quot;#fdf4e6&quot;, ec=BRASS, fs=9.5)
+arrow(qord, e1, &quot;yes&quot;, BRASS)
+arrow(qord, e2, &quot;no&quot;, BRASS)
+
+s1 = box(110, 40, 17, 11, &quot;RobustScaler\nmedian &amp; IQR\noutliers ignored&quot;, fc=&quot;#eaf7f1&quot;, ec=GREEN, fs=9.5)
+qbox = box(76, 40, 30, 11, &quot;Do you need every value\nsquashed inside a\nfixed 0 to 1 box?&quot;, ec=BLUE)
+arrow(qout, s1, &quot;yes&quot;, GREEN)
+arrow(qout, qbox, &quot;no&quot;, BLUE)
+
+s2 = box(60, 19, 24, 11, &quot;MinMaxScaler\nneural nets, images,\nbounded features&quot;, fc=&quot;#eef3ff&quot;, ec=BLUE, fs=9.5)
+s3 = box(93, 19, 26, 11, &quot;StandardScaler\nTHE DEFAULT\nlinear, SVM, KNN, PCA&quot;, fc=&quot;#eef3ff&quot;, ec=BLUE, fs=9.5)
+arrow(qbox, s2, &quot;yes&quot;, BLUE)
+arrow(qbox, s3, &quot;no&quot;, BLUE)
+
+box(23, 19, 34, 11, &quot;LabelEncoder\nis for the TARGET y only.\nNever for an input column.&quot;,
+    fc=&quot;#fff3f3&quot;, ec=RED, fs=9.5, bold=True)
+box(60, 4, 112, 6,
+    &quot;Tree models — DecisionTree, RandomForest, XGBoost — need NO scaling at all. Encoding is still required.&quot;,
+    fc=&quot;#f4f5f7&quot;, ec=GREY, fs=11, bold=True)
+
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 79</span></div><pre class="py">from sklearn.model_selection import train_test_split
+
+X_train, X_test = train_test_split(raw, test_size=0.2, random_state=42)
+
+# WRONG — the scaler sees every row, including the ones it is about to be tested on
+wrong = StandardScaler().fit(raw)
+
+# RIGHT — the scaler only ever sees the training rows
+right = StandardScaler().fit(X_train)
+
+print(&quot;mean_ learned from ALL rows   :&quot;, wrong.mean_.round(5))
+print(&quot;mean_ learned from TRAIN only :&quot;, right.mean_.round(5))
+print(&quot;difference                    :&quot;, (wrong.mean_ - right.mean_).round(5))
+print()
+print(&quot;scale_ from ALL rows   :&quot;, wrong.scale_.round(5))
+print(&quot;scale_ from TRAIN only :&quot;, right.scale_.round(5))
+print()
+print(&quot;The two rulers are different. On this clean synthetic data the gap is tiny,&quot;)
+print(&quot;but on a small or skewed real dataset it is the difference between an honest&quot;)
+print(&quot;score and a flattering one.&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>mean_ learned from ALL rows   : [-5.90000e-04  5.01057e+00 -4.95491e+00]
+mean_ learned from TRAIN only : [ 0.00616  5.00088 -4.96477]
+difference                    : [-0.00675  0.00969  0.00987]
+
+scale_ from ALL rows   : [2.0017  3.01579 5.00754]
+scale_ from TRAIN only : [1.98886 2.99677 5.01382]
+
+The two rulers are different. On this clean synthetic data the gap is tiny,
+but on a small or skewed real dataset it is the difference between an honest
+score and a flattering one.</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 81</span></div><pre class="py">from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+
+# a small mixed table: two numeric columns and one text column
+demo = pd.DataFrame({
+    &quot;age&quot;:    [25, 34, 51, 62, 29, 45, 38, 55],
+    &quot;salary&quot;: [300000, 480000, 910000, 1200000, 350000, 700000, 520000, 880000],
+    &quot;city&quot;:   [&quot;Pune&quot;, &quot;Mumbai&quot;, &quot;Delhi&quot;, &quot;Mumbai&quot;, &quot;Pune&quot;, &quot;Delhi&quot;, &quot;Pune&quot;, &quot;Mumbai&quot;],
+})
+target = [0, 0, 1, 1, 0, 1, 0, 1]
+
+# one object that says: scale these columns, one-hot those columns
+prep = ColumnTransformer([
+    (&quot;numeric&quot;, StandardScaler(),                        [&quot;age&quot;, &quot;salary&quot;]),
+    (&quot;text&quot;,    OneHotEncoder(handle_unknown=&quot;ignore&quot;),  [&quot;city&quot;]),
+])
+
+pipe = Pipeline([
+    (&quot;prep&quot;,  prep),
+    (&quot;model&quot;, LogisticRegression()),
+])
+
+X_tr, X_te, y_tr, y_te = train_test_split(demo, target, test_size=0.25, random_state=0)
+
+pipe.fit(X_tr, y_tr)          # &lt;- the scaler is fitted on X_tr only. Leakage is impossible.
+print(&quot;test accuracy :&quot;, pipe.score(X_te, y_te))
+print()
+print(&quot;columns produced by the preprocessing step:&quot;)
+print(pipe.named_steps[&quot;prep&quot;].get_feature_names_out())
+print()
+print(&quot;what the scaler inside the pipeline learned (from the TRAIN rows only):&quot;)
+inner = pipe.named_steps[&quot;prep&quot;].named_transformers_[&quot;numeric&quot;]
+print(&quot;  mean_  :&quot;, inner.mean_.round(2))
+print(&quot;  scale_ :&quot;, inner.scale_.round(2))</pre></div><div class="out"><div class="h">Output</div><pre>test accuracy : 1.0
+
+columns produced by the preprocessing step:
+[&#x27;numeric__age&#x27; &#x27;numeric__salary&#x27; &#x27;text__city_Delhi&#x27; &#x27;text__city_Mumbai&#x27;
+ &#x27;text__city_Pune&#x27;]
+
+what the scaler inside the pipeline learned (from the TRAIN rows only):
+  mean_  : [4.1670000e+01 6.5166667e+05]
+  scale_ : [1.3540000e+01 3.1603885e+05]</pre></div><div class="src-head">📓 <a href="../Concept/24_Preprocessing_Concepts.ipynb">24_Preprocessing_Concepts.ipynb</a></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler,MinMaxScaler,RobustScaler,Binarizer,Normalizer,OneHotEncoder,LabelEncoder</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 4</span></div><pre class="py">np.random.seed(5)
+a = np.random.normal(0, 2, 10000)
+b = np.random.normal(5, 3, 10000)
+c = np.random.normal(-5, 5, 10000)
+
+df = pd.DataFrame({
+    &#x27;A&#x27; : a,
+    &#x27;B&#x27; : b,
+    &#x27;C&#x27; : c
+})
+df</pre></div><div class="out"><div class="h">Output</div><pre>             A         B          C
+0     0.882455  1.466990  -7.089363
+1    -0.661740  0.571914  -3.105893
+2     4.861542  7.828852  -1.039068
+3    -0.504184  5.001904  -9.755722
+4     0.219220  1.731128  -7.679528
+...        ...       ...        ...
+9995 -0.068972  3.739968  -4.303864
+9996 -2.167260  0.681434  -9.584910
+9997  2.188712  9.860986  -9.986860
+9998  0.595445  5.982577 -11.128039
+9999  0.122246  9.105143  -6.612080
+
+[10000 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 6</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 9</span></div><pre class="py">scaler = StandardScaler()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 10</span></div><pre class="py">scaled = scaler.fit_transform(df)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 11</span></div><pre class="py">df = pd.DataFrame(scaled, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 13</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 14</span></div><pre class="py">minmax = MinMaxScaler()
+mm_scaled = minmax.fit_transform(df)</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 15</span></div><pre class="py">df = pd.DataFrame(mm_scaled,columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 16</span></div><pre class="py">rscaler = RobustScaler()</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 17</span></div><pre class="py">robust = rscaler.fit_transform(df)
+df = pd.DataFrame(robust, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 18</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 20</span></div><pre class="py"># Rebuild the RAW data (same seed -&gt; identical values), then add ONE outlier to column C.
+np.random.seed(5)
+df_raw = pd.DataFrame({
+    &#x27;A&#x27;: np.random.normal(0, 2, 10000),
+    &#x27;B&#x27;: np.random.normal(5, 3, 10000),
+    &#x27;C&#x27;: np.random.normal(-5, 5, 10000),
+})
+df_raw.loc[0, &#x27;C&#x27;] = 500          # a single wild sensor spike
+
+fig, axes = plt.subplots(1, 4, figsize=(18, 4), sharey=False)
+
+df_raw.plot.kde(ax=axes[0], title=&#x27;Raw&#x27;)
+pd.DataFrame(StandardScaler().fit_transform(df_raw), columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;]).plot.kde(ax=axes[1], title=&#x27;StandardScaler&#x27;)
+pd.DataFrame(MinMaxScaler().fit_transform(df_raw), columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;]).plot.kde(ax=axes[2], title=&#x27;MinMaxScaler&#x27;)
+pd.DataFrame(RobustScaler().fit_transform(df_raw), columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;]).plot.kde(ax=axes[3], title=&#x27;RobustScaler&#x27;)
+
+for ax in axes:
+    ax.legend(fontsize=8)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 23</span></div><pre class="py">binary = Binarizer(threshold=5)
+
+a = np.array([[ 30, 10,  22],
+              [ 20,  2,  10],
+              [ 33,  5, 5]])
+
+binary1 = binary.transform(a)
+binary1</pre></div><div class="out"><div class="h">Output</div><pre>array([[1, 1, 1],
+       [1, 0, 1],
+       [1, 0, 0]])</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 26</span></div><pre class="py">X = [[5, 2, 3],
+     [2, 4, 10],
+     [6, 8, 6]]
+
+sss = [np.sqrt(np.sum(np.power(X[i], 2))) for i in range(len(X))]</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 27</span></div><pre class="py">len(X)</pre></div><div class="out"><div class="h">Output</div><pre>3</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 28</span></div><pre class="py">np.array([X[k] / sss[k] for k in range(len(X))])</pre></div><div class="out"><div class="h">Output</div><pre>array([[0.81110711, 0.32444284, 0.48666426],
+       [0.18257419, 0.36514837, 0.91287093],
+       [0.51449576, 0.68599434, 0.51449576]])</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 29</span></div><pre class="py">normalizer = Normalizer()
+data_tf = normalizer.fit_transform(X)</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 30</span></div><pre class="py">data_tf</pre></div><div class="out"><div class="h">Output</div><pre>array([[0.81110711, 0.32444284, 0.48666426],
+       [0.18257419, 0.36514837, 0.91287093],
+       [0.51449576, 0.68599434, 0.51449576]])</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 34</span></div><pre class="py">dff = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/encoding.csv&quot;)
+dff</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+Cell In[18], line 1
+----&gt; 1 dff = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/encoding.csv&quot;)
+      2 dff
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/io/parsers/readers.py:873, in read_csv(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine,</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 35</span></div><pre class="py">le = LabelEncoder()
+df1 = dff
+df1.TEAM = le.fit_transform(df1.TEAM)
+df1</pre></div><div class="out"><div class="h">Output</div><pre>   TEAM  YEAR
+0     0  2000
+1     1  2002
+2     2  2003
+3     3  2004
+4     0  2005
+5     2  2006
+6     1  2007
+7     0  2008
+8     3  2009</pre></div><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 36</span></div><pre class="py">enc = OneHotEncoder()
+enc_df1 = pd.DataFrame(enc.fit_transform(df1[[&#x27;TEAM&#x27;]]).toarray())
+enc_df1</pre></div><div class="out"><div class="h">Output</div><pre>     0    1    2    3
+0  1.0  0.0  0.0  0.0
+1  0.0  1.0  0.0  0.0
+2  0.0  0.0  1.0  0.0
+3  0.0  0.0  0.0  1.0
+4  1.0  0.0  0.0  0.0
+5  0.0  0.0  1.0  0.0
+6  0.0  1.0  0.0  0.0
+7  1.0  0.0  0.0  0.0
+8  0.0  0.0  0.0  1.0</pre></div><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 37</span></div><pre class="py">abc = df1.join(enc_df1)
+abc</pre></div><div class="out"><div class="h">Output</div><pre>   TEAM  YEAR    0    1    2    3
+0     0  2000  1.0  0.0  0.0  0.0
+1     1  2002  0.0  1.0  0.0  0.0
+2     2  2003  0.0  0.0  1.0  0.0
+3     3  2004  0.0  0.0  0.0  1.0
+4     0  2005  1.0  0.0  0.0  0.0
+5     2  2006  0.0  0.0  1.0  0.0
+6     1  2007  0.0  1.0  0.0  0.0
+7     0  2008  1.0  0.0  0.0  0.0
+8     3  2009  0.0  0.0  0.0  1.0</pre></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 38</span></div><pre class="py">final = abc.drop([&#x27;TEAM&#x27;], axis=&#x27;columns&#x27;)
+final</pre></div><div class="out"><div class="h">Output</div><pre>   YEAR    0    1    2    3
+0  2000  1.0  0.0  0.0  0.0
+1  2002  0.0  1.0  0.0  0.0
+2  2003  0.0  0.0  1.0  0.0
+3  2004  0.0  0.0  0.0  1.0
+4  2005  1.0  0.0  0.0  0.0
+5  2006  0.0  0.0  1.0  0.0
+6  2007  0.0  1.0  0.0  0.0
+7  2008  1.0  0.0  0.0  0.0
+8  2009  0.0  0.0  0.0  1.0</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 40</span></div><pre class="py"># A stand-in for the missing encoding.csv: a TEAM column + a numeric feature.
+dff = pd.DataFrame({
+    &#x27;TEAM&#x27;:  [&#x27;RCB&#x27;, &#x27;CSK&#x27;, &#x27;MI&#x27;, &#x27;RCB&#x27;, &#x27;MI&#x27;, &#x27;CSK&#x27;],
+    &#x27;SCORE&#x27;: [180,  150,  200,  175,  210,  160],
+})
+
+# --- LabelEncoder: one integer per team (alphabetical: CSK=0, MI=1, RCB=2) ---
+le = LabelEncoder()
+dff[&#x27;TEAM_label&#x27;] = le.fit_transform(dff[&#x27;TEAM&#x27;])
+
+# --- OneHotEncoder: one 0/1 column per team, no fake order ---
+# sparse_output=False -&gt; return a normal dense array (not a sparse matrix).
+enc = OneHotEncoder(sparse_output=False)
+onehot = pd.DataFrame(
+    enc.fit_transform(dff[[&#x27;TEAM&#x27;]]),          # shape: (6 rows, 3 team-columns)
+    columns=enc.get_feature_names_out([&#x27;TEAM&#x27;]) # -&gt; [&#x27;TEAM_CSK&#x27;,&#x27;TEAM_MI&#x27;,&#x27;TEAM_RCB&#x27;]
+)
+
+final = dff.join(onehot).drop([&#x27;TEAM&#x27;], axis=&#x27;columns&#x27;)
+print(&quot;LabelEncoded (note the invented order):&quot;)
+print(dff[[&#x27;TEAM&#x27;, &#x27;TEAM_label&#x27;]])
+print(&quot;\nOne-Hot final (no order, 3 extra columns):&quot;)
+print(final)</pre></div><div class="out"><div class="h">Output</div><pre>LabelEncoded (note the invented order):
+  TEAM  TEAM_label
+0  RCB           2
+1  CSK           0
+2   MI           1
+3  RCB           2
+4   MI           1
+5  CSK           0
+
+One-Hot final (no order, 3 extra columns):
+   SCORE  TEAM_label  TEAM_CSK  TEAM_MI  TEAM_RCB
+0    180           2       0.0      0.0       1.0
+1    150           0       1.0      0.0       0.0
+2    200           1       0.0      1.0       0.0
+3    175           2       0.0      0.0       1.0
+4    210           1       0.0      1.0       0.0
+5    160           0       1.0      0.0       0.0</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 43</span></div><pre class="py">import pandas as pd
+from sklearn.preprocessing import OrdinalEncoder
+
+df = pd.DataFrame({&quot;Size&quot;: [&quot;Small&quot;, &quot;Medium&quot;, &quot;Large&quot;, &quot;Small&quot;, &quot;Large&quot;]})
+
+encoder = OrdinalEncoder(categories=[[&quot;Small&quot;, &quot;Medium&quot;, &quot;Large&quot;]])
+
+df[&quot;Size_Encoded&quot;] = encoder.fit_transform(df[[&quot;Size&quot;]])
+
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>     Size  Size_Encoded
+0   Small           0.0
+1  Medium           1.0
+2   Large           2.0
+3   Small           0.0
+4   Large           2.0</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 46</span></div><pre class="py">pip install imbalanced-learn</pre></div><div class="out"><div class="h">Output</div><pre>Collecting imbalanced-learn
+  Downloading imbalanced_learn-0.14.2-py3-none-any.whl.metadata (8.9 kB)
+Requirement already satisfied: numpy&lt;3,&gt;=1.25.2 in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from imbalanced-learn) (2.4.6)
+Requirement already satisfied: scipy&lt;2,&gt;=1.11.4 in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from imbalanced-learn) (1.18.0)
+Requirement already satisfied: scikit-learn&lt;2,&gt;=1.4.2 in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from imbalanced-learn) (1.9.0)
+Collecting sklearn-compat&lt;0.2,&gt;=0.1.6 (from imbalanced-learn)
+  Downloading sklearn_compat-0.1.6-py3-none-any.whl.metadata (22 kB)
+Requirement already satisfied: joblib&lt;2,&gt;=1.2.0 in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from imbalanced-learn) (1.5.3)
+Requirement already satisfied: threadpoolctl&lt;4,&gt;=2.0.0 in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from imbalanced-learn) (3.6.0)
+Requirement already satisfied: narwhals&gt;=2.0.1 in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from scikit-learn&lt;2,&gt;=1.4.2-&gt;imbalanced-learn) (2.24.0)
+Downloading imbalanced_learn-0.14.2-py3-none-any.whl (236 kB)
+Downloading sklearn_compat-0.1.6-py3-none-any.whl (22 kB)
+Installi</pre></div><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 47</span></div><pre class="py">from imblearn.over_sampling import RandomOverSampler
+
+X = pd.DataFrame({&quot;Marks&quot;: [10, 20, 30, 40, 50]})
+y = [&quot;Fail&quot;, &quot;Fail&quot;, &quot;Fail&quot;, &quot;Pass&quot;, &quot;Pass&quot;]
+
+ros = RandomOverSampler()
+
+X_resampled, y_resampled = ros.fit_resample(X, y)
+
+print(y_resampled)</pre></div><div class="out"><div class="h">Output</div><pre>[&#x27;Fail&#x27;, &#x27;Fail&#x27;, &#x27;Fail&#x27;, &#x27;Pass&#x27;, &#x27;Pass&#x27;, &#x27;Pass&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 48</span></div><pre class="py">from imblearn.under_sampling import RandomUnderSampler
+
+X = pd.DataFrame({&quot;Marks&quot;: [10, 20, 30, 40, 50]})
+y = [&quot;Fail&quot;, &quot;Fail&quot;, &quot;Fail&quot;, &quot;Pass&quot;, &quot;Pass&quot;]
+
+rus = RandomUnderSampler()
+
+X_resampled, y_resampled = rus.fit_resample(X, y)
+
+print(y_resampled)</pre></div><div class="out"><div class="h">Output</div><pre>[&#x27;Fail&#x27;, &#x27;Fail&#x27;, &#x27;Pass&#x27;, &#x27;Pass&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 52</span></div><pre class="py">from sklearn.impute import SimpleImputer
+
+df = pd.DataFrame({&quot;Age&quot;: [20, 25, None, 30, 35]})
+
+imputer = SimpleImputer(strategy=&quot;mean&quot;)
+
+df[&quot;Age&quot;] = imputer.fit_transform(df[[&quot;Age&quot;]])
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>    Age
+0  20.0
+1  25.0
+2  27.5
+3  30.0
+4  35.0</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 53</span></div><pre class="py">from sklearn.impute import SimpleImputer
+
+df = pd.DataFrame({&quot;Age&quot;: [20, 25, None, 30, 35]})
+
+imputer = SimpleImputer(strategy=&quot;median&quot;)
+
+df[&quot;Age&quot;] = imputer.fit_transform(df[[&quot;Age&quot;]])
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>    Age
+0  20.0
+1  25.0
+2  27.5
+3  30.0
+4  35.0</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 54</span></div><pre class="py">from sklearn.impute import KNNImputer
+
+df = pd.DataFrame({&quot;Height&quot;: [170, 172, 171, 180], &quot;Weight&quot;: [65, 67, None, 85]})
+
+imputer = KNNImputer(n_neighbors=2)
+
+df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+
+print(&quot;After Imputation&quot;)
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>After Imputation
+   Height  Weight
+0   170.0    65.0
+1   172.0    67.0
+2   171.0    66.0
+3   180.0    85.0</pre></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 55</span></div><pre class="py">df = pd.DataFrame({&quot;Age&quot;: [20, 25, None, 30, 35]})
+
+df = df.dropna()
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>    Age
+0  20.0
+1  25.0
+3  30.0
+4  35.0</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 56</span></div><pre class="py">df = pd.DataFrame({&quot;Name&quot;: [&quot;Ram&quot;, &quot;Shyam&quot;, &quot;Ram&quot;, &quot;Amit&quot;]})
+
+df = df.drop_duplicates()
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>    Name
+0    Ram
+1  Shyam
+3   Amit</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 59</span></div><pre class="py">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({&quot;Salary&quot;: [10000, 20000, 50000, 100000]})
+
+df[&quot;Log_Salary&quot;] = np.log(df[&quot;Salary&quot;])
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>   Salary  Log_Salary
+0   10000    9.210340
+1   20000    9.903488
+2   50000   10.819778
+3  100000   11.512925</pre></div><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 60</span></div><pre class="py">import pandas as pd
+
+df = pd.DataFrame({&quot;Length&quot;: [2, 3, 4], &quot;Width&quot;: [5, 6, 7]})
+
+df[&quot;Area&quot;] = df[&quot;Length&quot;] * df[&quot;Width&quot;]
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>   Length  Width  Area
+0       2      5    10
+1       3      6    18
+2       4      7    28</pre></div><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 61</span></div><pre class="py">from sklearn.preprocessing import KBinsDiscretizer
+
+df = pd.DataFrame({&quot;Age&quot;: [18, 25, 35, 45, 60]})
+
+encoder = KBinsDiscretizer(n_bins=3, encode=&quot;ordinal&quot;, strategy=&quot;uniform&quot;)
+
+df[&quot;Age_Bin&quot;] = encoder.fit_transform(df[[&quot;Age&quot;]])
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Age_Bin
+0   18      0.0
+1   25      0.0
+2   35      1.0
+3   45      1.0
+4   60      2.0</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 62</span></div><pre class="py">df = pd.DataFrame({&quot;Date&quot;: [&quot;2025-01-10&quot;, &quot;2025-02-15&quot;, &quot;2025-03-20&quot;]})
+
+df[&quot;Date&quot;] = pd.to_datetime(df[&quot;Date&quot;])
+
+df[&quot;Year&quot;] = df[&quot;Date&quot;].dt.year
+df[&quot;Month&quot;] = df[&quot;Date&quot;].dt.month
+df[&quot;Day&quot;] = df[&quot;Date&quot;].dt.day
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>        Date  Year  Month  Day
+0 2025-01-10  2025      1   10
+1 2025-02-15  2025      2   15
+2 2025-03-20  2025      3   20</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

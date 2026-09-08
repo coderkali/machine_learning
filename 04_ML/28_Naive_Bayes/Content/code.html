@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naive Bayes — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/18_Naive_Bayers.ipynb">18_Naive_Bayers.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+X = np.array([80,70,90,75,70,86,96,80,65,70,90,91,95,85])
+Y = np.array([1,1,1,1,1,1,1,1,1,0,0,0,0,0])</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">x = X.reshape(-1,1)
+from sklearn.naive_bayes import GaussianNB
+classifier = GaussianNB()
+classifier.fit(x,Y)</pre></div><div class="out"><div class="h">Output</div><pre>GaussianNB()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 6</span></div><pre class="py">classifier.predict([[74]])</pre></div><div class="out"><div class="h">Output</div><pre>array([1])</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 8</span></div><pre class="py">classifier.predict([[99]])</pre></div><div class="out"><div class="h">Output</div><pre>array([0])</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py"># the two bell curves GaussianNB learned from the 14 students
+mu = classifier.theta_.ravel()           # mean of each class
+sd = np.sqrt(classifier.var_.ravel())    # standard deviation of each class
+grid = np.linspace(50, 115, 400)
+
+plt.figure(figsize=(9, 4))
+for label, colour, name in [(1, &#x27;green&#x27;, &#x27;watched  (1)&#x27;), (0, &#x27;red&#x27;, &#x27;did not  (0)&#x27;)]:
+    i = list(classifier.classes_).index(label)
+    bell = 1 / np.sqrt(2 * np.pi * sd[i] ** 2) * np.exp(-(grid - mu[i]) ** 2 / (2 * sd[i] ** 2))
+    plt.plot(grid, bell, color=colour, label=f&quot;{name}   mean={mu[i]:.1f}   sd={sd[i]:.1f}&quot;)
+    plt.plot(X[Y == label], np.zeros((Y == label).sum()), &#x27;|&#x27;, color=colour, markersize=14)
+
+for mark in [74, 99]:
+    plt.axvline(mark, color=&#x27;gray&#x27;, linestyle=&#x27;--&#x27;)
+    plt.text(mark + 0.5, 0.045, f&quot;mark = {mark}&quot;, color=&#x27;gray&#x27;)
+
+plt.title(&quot;What GaussianNB learned: one bell curve per class&quot;)
+plt.xlabel(&quot;mark&quot;)
+plt.ylabel(&quot;probability density&quot;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py">from sklearn.datasets import load_iris
+iris = load_iris()
+table = pd.DataFrame(iris.data,columns=iris.feature_names)
+table.head()</pre></div><div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+0                5.1               3.5                1.4               0.2
+1                4.9               3.0                1.4               0.2
+2                4.7               3.2                1.3               0.2
+3                4.6               3.1                1.5               0.2
+4                5.0               3.6                1.4               0.2</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 13</span></div><pre class="py">table[&#x27;target&#x27;] = iris.target
+table.head()</pre></div><div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+0                5.1               3.5                1.4               0.2   
+1                4.9               3.0                1.4               0.2   
+2                4.7               3.2                1.3               0.2   
+3                4.6               3.1                1.5               0.2   
+4                5.0               3.6                1.4               0.2   
+
+   target  
+0       0  
+1       0  
+2       0  
+3       0  
+4       0</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 15</span></div><pre class="py">x = table.drop([&#x27;target&#x27;], axis=&#x27;columns&#x27;)
+y = iris.target</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 17</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.naive_bayes import GaussianNB
+classifier1 = GaussianNB()
+classifier1.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>GaussianNB()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 21</span></div><pre class="py">y_pred=classifier1.predict(X_test)
+y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 2, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 2, 1,
+       0, 0, 2, 0, 0, 1, 1, 0])</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 22</span></div><pre class="py">y_test</pre></div><div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 2, 0, 2, 0, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 1, 0, 0, 2, 1,
+       0, 0, 2, 0, 0, 1, 1, 0])</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 24</span></div><pre class="py">from sklearn.naive_bayes import MultinomialNB
+classifier2 = MultinomialNB()
+classifier2.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>MultinomialNB()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 25</span></div><pre class="py">classifier2.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.5666666666666667</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.naive_bayes import BernoulliNB
+classifier3 = BernoulliNB()
+classifier3.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>BernoulliNB()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">classifier3.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.2</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 31</span></div><pre class="py">from matplotlib import pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 32</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">x,y = make_classification(n_samples=5000, n_features=2, n_redundant=0)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 34</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11fbfd310&gt;</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 37</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 39</span></div><pre class="py">classifier2 = MultinomialNB()
+classifier3 = BernoulliNB(binarize=0.5)</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 40</span></div><pre class="py">classifier3.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>BernoulliNB(binarize=0.5)</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">classifier3.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.817</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 43</span></div><pre class="py">classifier2.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[59], line 1
+----&gt; 1 classifier2.fit(X_train, y_train)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/base.py:1403, in _fit_context.&lt;locals&gt;.decorator.&lt;locals&gt;.wrapper(estimator, *args, **kwargs)
+   1393     estimator._validate_params()
+   1395 with[39</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 45</span></div><pre class="py">x_before = x.copy()      # keep the raw data, Step 15 compares against it
+
+plt.figure(figsize=(6, 5))
+plt.axvspan(x[:, 0].min() - 0.5, 0, color=&#x27;red&#x27;, alpha=0.08)
+plt.axhspan(x[:, 1].min() - 0.5, 0, color=&#x27;red&#x27;, alpha=0.08)
+plt.scatter(x[:, 0], x[:, 1], c=y, s=6)
+plt.axvline(0, color=&#x27;red&#x27;)
+plt.axhline(0, color=&#x27;red&#x27;)
+plt.title(&quot;red zone = negative values, %.0f%% of the data\nMultinomialNB will not accept any of it&quot;
+          % (100 * (x &lt; 0).mean()))
+plt.xlabel(&quot;feature 1&quot;)
+plt.ylabel(&quot;feature 2&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 47</span></div><pre class="py">from sklearn.preprocessing import MinMaxScaler</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 48</span></div><pre class="py">scalar = MinMaxScaler()
+x = scalar.fit_transform(x)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 50</span></div><pre class="py">fig, ax = plt.subplots(1, 2, figsize=(11, 4.5))
+
+ax[0].scatter(x_before[:, 0], x_before[:, 1], c=y, s=6)
+ax[0].axvline(0, color=&#x27;red&#x27;)
+ax[0].axhline(0, color=&#x27;red&#x27;)
+ax[0].set_title(&quot;before:  %.2f to %.2f&quot; % (x_before.min(), x_before.max()))
+
+ax[1].scatter(x[:, 0], x[:, 1], c=y, s=6)
+ax[1].set_title(&quot;after MinMaxScaler:  %.2f to %.2f&quot; % (x.min(), x.max()))
+
+for a in ax:
+    a.set_xlabel(&quot;feature 1&quot;)
+    a.set_ylabel(&quot;feature 2&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 52</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 53</span></div><pre class="py">classifier2 = MultinomialNB()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 55</span></div><pre class="py">classifier2.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[64], line 1
+----&gt; 1 classifier2.fit(X_train, y_train)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/base.py:1403, in _fit_context.&lt;locals&gt;.decorator.&lt;locals&gt;.wrapper(estimator, *args, **kwargs)
+   1393     estimator._validate_params()
+   1395 with[39</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 56</span></div><pre class="py">classifier2.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[65], line 1
+----&gt; 1 classifier2.score(X_test, y_test)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/base.py:628, in ClassifierMixin.score(self, X, y, sample_weight)
+    603 &quot;&quot;&quot;
+    604 Return :ref:`accuracy &lt;accuracy_score&gt;`</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

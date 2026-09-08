@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multiple Linear Regression — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/06_multiple_linear_regression.ipynb">06_multiple_linear_regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">df  = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/age2.csv&quot;)
+df.head(5)</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Degrees  Income
+0   50        5    5000
+1   60        3    4500
+2   10        1    7000
+3   20        2    6000
+4   40        7    3500</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py">import matplotlib.pyplot as plt
+plt.scatter(df[&#x27;Age&#x27;],df[&#x27;Income&#x27;])
+plt.xlabel(&#x27;Age&#x27;)
+plt.ylabel(&#x27;Income&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">plt.scatter(df[&#x27;Degrees&#x27;],df[&#x27;Income&#x27;])
+plt.xlabel(&#x27;Degrees&#x27;)
+plt.ylabel(&#x27;Income&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 9</span></div><pre class="py">x = df[[&#x27;Age&#x27;, &#x27;Degrees&#x27;]]
+y = df[&#x27;Income&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(x,y,test_size=0.3,random_state=0)
+X_train</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Degrees
+1   60        3
+3   20        2
+0   50        5
+4   40        7</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 12</span></div><pre class="py">X_test</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Degrees
+5   80        9
+2   10        1</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 14</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+clf = LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 15</span></div><pre class="py">clf.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 17</span></div><pre class="py">clf.predict(X_test)</pre></div><div class="out"><div class="h">Output</div><pre>array([2314.81481481, 6555.55555556])</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 19</span></div><pre class="py">clf.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9762688614540466</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 21</span></div><pre class="py">clf.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([ -20.37037037, -351.85185185])</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 23</span></div><pre class="py">clf.intercept_</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(7111.11111111111)</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 25</span></div><pre class="py">import numpy as np
+
+b0 = clf.intercept_          # 7111.11
+w  = clf.coef_               # [-20.37, -351.85]
+
+by_hand    = b0 + X_test.values @ w      # @ = dot product = w1*Age + w2*Degrees
+by_sklearn = clf.predict(X_test)
+
+print(&quot;by hand   :&quot;, by_hand)
+print(&quot;by sklearn:&quot;, by_sklearn)
+print(&quot;same? -&gt;&quot;, np.allclose(by_hand, by_sklearn))
+
+# spell out one row completely
+age, deg = X_test.iloc[0]
+print(f&quot;\nrow 0: {b0:.2f} + ({w[0]:.2f} * {age}) + ({w[1]:.2f} * {deg}) = {b0 + w[0]*age + w[1]*deg:.2f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>by hand   : [2314.81481481 6555.55555556]
+by sklearn: [2314.81481481 6555.55555556]
+same? -&gt; True
+
+row 0: 7111.11 + (-20.37 * 80) + (-351.85 * 9) = 2314.81</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 27</span></div><pre class="py">import numpy as np
+import matplotlib.pyplot as plt
+
+b0 = clf.intercept_
+w1, w2 = clf.coef_
+
+fig = plt.figure(figsize=(9, 6.5))
+ax = fig.add_subplot(111, projection=&#x27;3d&#x27;, computed_zorder=False)
+
+# the fitted plane: Income = b0 + w1*Age + w2*Degrees
+ages    = np.linspace(0, 90, 15)
+degrees = np.linspace(0, 10, 15)
+AG, DG = np.meshgrid(ages, degrees)
+INCOME = b0 + w1 * AG + w2 * DG
+
+ax.plot_wireframe(AG, DG, INCOME, color=&quot;tab:blue&quot;, lw=0.7, alpha=0.9)
+ax.plot_surface(AG, DG, INCOME, color=&quot;tab:blue&quot;, alpha=0.20, shade=False)
+
+# red stick = the error for that person
+for age, deg, real in zip(df[&#x27;Age&#x27;], df[&#x27;Degrees&#x27;], y):
+    ax.plot([age, age], [deg, deg], [real, b0 + w1*age + w2*deg],
+            color=&quot;crimson&quot;, lw=1.2, zorder=10)
+
+ax.scatter(X_train[&#x27;Age&#x27;], X_train[&#x27;Degrees&#x27;], y_train, s=70, color=&quot;black&quot;,
+           depthshade=False, label=&quot;train rows&quot;, zorder=11)
+ax.scatter(X_test[&#x27;Age&#x27;], X_test[&#x27;Degrees&#x27;], y_test, s=110, color=&quot;crimson&quot;,
+           marker=&quot;^&quot;, depthshade=False, label=&quot;test rows (actual)&quot;, zorder=11)
+
+ax.set_xlabel(&quot;Age&quot;); ax.set_ylabel(&quot;Degrees&quot;); ax.set_zlabel(&quot;Income&quot;)
+ax.set_title(f&quot;Two inputs -&gt; the model is a PLANE\nIncome = {b0:.2f} + ({w1:.2f} * Age) + ({w2:.2f} * Degrees)&quot;)
+ax.legend(loc=&quot;upper left&quot;)
+ax.view_init(22, -58)
+plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+import numpy as np
+import matplotlib.pyplot as plt
+
+b0 = clf.intercept_
+w1, w2 = clf.coef_
+ages = np.linspace(0, 90, 50)
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 4.5))
+
+# --- left: slice the plane at fixed Degrees -&gt; parallel lines
+for d in [1, 5, 9]:
+    ax[0].plot(ages, b0 + w1*ages + w2*d, label=f&quot;Degrees = {d}&quot;)
+ax[0].scatter(df[&#x27;Age&#x27;], y, color=&quot;black&quot;, s=45, zorder=5, label=&quot;real people&quot;)
+ax[0].set_title(&quot;coef_[0] = the tilt of ONE slice\n(Degrees held fixed)&quot;)
+
+# --- right: Age alone vs Age inside the multiple model
+simple = LinearRegression().fit(df[[&#x27;Age&#x27;]], y)
+ax[1].scatter(df[&#x27;Age&#x27;], y, color=&quot;black&quot;, s=45, zorder=5)
+ax[1].plot(ages, simple.intercept_ + simple.coef_[0]*ages, color=&quot;crimson&quot;, lw=2,
+           label=f&quot;Age alone: {simple.coef_[0]:.1f} per year&quot;)
+ax[1].plot(ages, b0 + w1*ages + w2*df[&#x27;Degrees&#x27;].mean(), color=&quot;tab:blue&quot;, lw=2,
+           label=f&quot;Age + Degrees: {w1:.1f} per year&quot;)
+ax[1].set_title(&quot;same column, different coefficient&quot;)
+
+for a in ax:
+    a.set_xlabel(&quot;Age&quot;); a.set_ylabel(&quot;Income&quot;); a.legend(fontsize=8)
+
+plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 31</span></div><pre class="py">y_pred = clf.predict(x)
+y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([4333.33333333, 4833.33333333, 6555.55555556, 6000.        ,
+       3833.33333333, 2314.81481481])</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 33</span></div><pre class="py">import seaborn as sns
+sns.regplot(x=y, y=y_pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;Income&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 35</span></div><pre class="py">import matplotlib.pyplot as plt
+
+y_pred = clf.predict(x)
+
+fig, ax = plt.subplots(figsize=(6.5, 6))
+lim = [y.min() * 0.85, y.max() * 1.08]
+
+ax.plot(lim, lim, ls=&quot;--&quot;, color=&quot;grey&quot;, label=&quot;perfect prediction (y = x)&quot;)
+ax.scatter(y, y_pred, s=70, color=&quot;tab:blue&quot;, zorder=5)
+for actual, pred in zip(y, y_pred):
+    ax.plot([actual, actual], [actual, pred], color=&quot;crimson&quot;, lw=1.2)   # the error
+
+for actual, pred in zip(y, y_pred):
+    ax.annotate(f&quot;{pred - actual:+.0f}&quot;, (actual, pred), textcoords=&quot;offset points&quot;,
+                xytext=(8, -4), fontsize=8, color=&quot;crimson&quot;)
+
+ax.set_xlabel(&quot;Actual Income&quot;); ax.set_ylabel(&quot;Predicted Income&quot;)
+ax.set_title(&quot;Actual vs Predicted  (red stick = error)&quot;)
+ax.set_xlim(lim); ax.set_ylim(lim); ax.set_aspect(&quot;equal&quot;); ax.legend(fontsize=8)
+plt.tight_layout(); plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/27_Multiple_Linear_Regression.ipynb">27_Multiple_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                   # pandas: load the CSV and work with it as a table (DataFrame)
+import seaborn as sns                                  # seaborn: nicer statistical plots (pairplot, heatmap), built on matplotlib
+import matplotlib.pyplot as plt                        # matplotlib: base plotting library, used for titles/labels/showing figures
+from sklearn.model_selection import train_test_split   # splits our data into a training pool and a held-back testing pool
+from sklearn.linear_model import LinearRegression      # the model class — now fitting more than one predictor at once</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/regression_dataset.csv&quot;)  # read the CSV file from disk into a pandas DataFrame called &quot;dataset&quot;</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 5</span></div><pre class="py">dataset.head(3)  # show only the first 3 rows, just to eyeball the columns and their values</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Experience  Salary
+0   25           4   30794
+1   52          23  103892
+2   47          15   75315</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 7</span></div><pre class="py">dataset.shape  # (rows, columns) — confirms 1000 people, 3 columns</pre></div><div class="out"><div class="h">Output</div><pre>(1000, 3)</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 9</span></div><pre class="py">dataset.isnull().sum()  # count missing values per column — all 0 here, since this dataset was generated clean</pre></div><div class="out"><div class="h">Output</div><pre>Age           0
+Experience    0
+Salary        0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 11</span></div><pre class="py">sns.pairplot(data=dataset)   # scatter every column against every other column, histogram on the diagonal
+plt.show()                   # render the grid of plots</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 13</span></div><pre class="py">sns.heatmap(data=dataset.corr(), annot=True)   # dataset.corr() computes the correlation table; heatmap colors + prints each value</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 15</span></div><pre class="py">x = dataset.iloc[:, :-1]   # every row, every column except the last (&quot;Salary&quot;) — this is now a 2-column table
+x                          # display it, to see what we just built</pre></div><div class="out"><div class="h">Output</div><pre>     Age  Experience
+0     25           4
+1     52          23
+2     47          15
+3     39          16
+4     38           2
+..   ...         ...
+995   46           0
+996   42          12
+997   36          15
+998   59          10
+999   41           5
+
+[1000 rows x 2 columns]</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 17</span></div><pre class="py">x.ndim   # 2 = already a 2-D table (rows x columns) — no reshape needed, unlike the single-column case</pre></div><div class="out"><div class="h">Output</div><pre>2</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 19</span></div><pre class="py">y = dataset[&quot;Salary&quot;]   # pull out just the &quot;Salary&quot; column — this is what the model will learn to predict
+y                        # display it, to see what we just built</pre></div><div class="out"><div class="h">Output</div><pre>0       30794
+1      103892
+2       75315
+3       67706
+4       43926
+        ...  
+995     43949
+996     63166
+997     58387
+998     80121
+999     55561
+Name: Salary, Length: 1000, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 21</span></div><pre class="py">dataset.shape   # still (1000, 3) — slicing into x and y doesn&#x27;t change the original dataset</pre></div><div class="out"><div class="h">Output</div><pre>(1000, 3)</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 23</span></div><pre class="py">x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)   # 80% train, 20% held back for testing</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 25</span></div><pre class="py">lr = LinearRegression()      # create an (untrained) Linear Regression model
+lr.fit(x_train, y_train)     # train it — this step learns m1, m2, and c from the training rows</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 27</span></div><pre class="py">lr.score(x_test, y_test) * 100   # R² on the test set, as a percentage — how much of Salary&#x27;s variation Age+Experience explain</pre></div><div class="out"><div class="h">Output</div><pre>75.26418389841064</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 29</span></div><pre class="py">#y = m1x1 + m2x2 + c</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 31</span></div><pre class="py">lr.coef_   # [m1, m2] — one slope per predictor column, in the same order as x.columns</pre></div><div class="out"><div class="h">Output</div><pre>array([ 719.07681097, 1784.49764362])</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 33</span></div><pre class="py">lr.intercept_   # c — the fitted plane&#x27;s value when Age = 0 and Experience = 0 (an extrapolation, not a real scenario)</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(13428.445576810147)</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 35</span></div><pre class="py">x.columns   # confirms coef_[0] belongs to Age and coef_[1] belongs to Experience, in this order</pre></div><div class="out"><div class="h">Output</div><pre>Index([&#x27;Age&#x27;, &#x27;Experience&#x27;], dtype=&#x27;str&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 37</span></div><pre class="py"># y_prd = 719.07681097*Age + 1784.49764362*Experience + 13428.445576810147</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 39</span></div><pre class="py">lr.predict(x_test)   # run the fitted equation on every test row — returns 200 predicted salaries</pre></div><div class="out"><div class="h">Output</div><pre>array([ 39981.51004756,  40380.63160446,  76522.48356907,  40700.58685853,
+        43923.2381241 ,  79319.62451012,  52872.11510983,  69384.49299458,
+        94367.46000531,  77907.85965579,  94740.1927946 ,  53937.53594248,
+        37504.32436057,  52898.50387744,  76096.97324455,  60781.96003052,
+        50714.88467691,  44269.58214578,  60409.22724123,  71515.33465988,
+        47944.13250348,  48663.20931445,  63285.53448512,  32843.51947306,
+        48930.38703329,  67227.26256166,  41419.6636695 ,  83980.42939763,
+        47492.23341134,  43550.5053348 , 110107.98354386,  59317.41764097,
+        42191.5180157 ,  67520.82904811,  61794.60332795,  60010.10568432,
+        63631.8785068 ,  57879.26401902,  31751.7098728 ,  62220.11365247,
+        39981.51004756,  51780.30550956,  39262.43323658,  38197.01240393,
+        29248.1354182 ,  93648.38319434,  41073.31964782,  91863.88555071,
+        68586.24988076,  37850.66838225,  59422.97271142,  50074.97416878,
+        46054.0797894 ,  60834.73756575, 108669.82992191,  57532.91999734,
+        47145.88938966,  52552.15985576,  59317.41764097,  29248.1354182 ,
+        69038.1489729 ,  44695.0924703 ,  34281.67309501, 104355.36905608,
+        59396.58394381,  96178.34641655,  29967.21222917,  56893.00948921,
+        90798.46471806,  40700.58685853,  90052.99913948,  60062.88321955,
+        94367.46000531,  91144.80873974,  82621.44</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 41</span></div><pre class="py">y_pred = lr.predict(x_test)   # predicted salaries for every test row (same call as Step 19, saved this time for reuse below)
+
+plt.figure(figsize=(5, 5))
+sns.scatterplot(x=y_test, y=y_pred)                                          # actual salary on x, predicted salary on y
+lims = [min(y_test.min(), y_pred.min()), max(y_test.max(), y_pred.max())]    # shared axis limits so the diagonal spans the full plot
+plt.plot(lims, lims, color=&quot;red&quot;, linestyle=&quot;--&quot;, label=&quot;Perfect prediction (actual = predicted)&quot;)
+plt.xlabel(&quot;Actual Salary&quot;)
+plt.ylabel(&quot;Predicted Salary&quot;)
+plt.title(&quot;Actual vs Predicted Salary (Test Set)&quot;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 43</span></div><pre class="py">plt.figure(figsize=(5, 4))
+plt.bar(x.columns, lr.coef_, color=[&quot;#2a78d6&quot;, &quot;#eb6834&quot;])   # one bar per predictor, height = its fitted slope
+plt.axhline(0, color=&quot;#c3c2b7&quot;, linewidth=1)                 # baseline for reference
+plt.ylabel(&quot;Coefficient (₹ change in Salary per +1 unit)&quot;)
+plt.title(&quot;Fitted Coefficients by Predictor&quot;)
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

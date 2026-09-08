@@ -6,6 +6,13 @@ React, Kafka, AWS, and distributed-systems engineer who is building practical
 skills in Python, machine learning, generative AI, RAG, agents, data platforms,
 and AI operations.
 
+> **Starting a new session?** The steps to follow whenever a new concept is
+> learned are in [Learning-session workflow](#learning-session-workflow). The
+> short version: put the files in `Concept/`, add a story to
+> `17_Learning_As_Of_Now/shared/stories.json`, then run
+> `python3 17_Learning_As_Of_Now/shared/build_site.py`, which rebuilds every
+> lesson page and the learning map and verifies every link.
+
 The instructor bootcamp PDF is the primary source for curriculum scope. Use
 [`17_Learning_As_Of_Now/Claude/index.html`](./17_Learning_As_Of_Now/Claude/index.html)
 as the main visual learning map, [`15_Docs/ROADMAP.md`](./15_Docs/ROADMAP.md) as
@@ -126,25 +133,128 @@ listed in the instructor PDF.
 
 ## Learning-session workflow
 
+When the learner has studied a new concept, the topic is not finished until every
+step below is done. Do them in this order — later steps read the output of
+earlier ones.
+
 ```mermaid
 flowchart LR
-    A[Instructor teaches] --> B[Learner writes code]
-    B --> C[Review and run]
-    C --> D[Explain the concept]
-    D --> E[Add one useful visual]
-    E --> F[Update topic notes]
-    F --> G[Update skills evidence]
-    G --> H[Update roadmap status]
+    A[1 Place the source] --> B[2 Write the story]
+    B --> C[3 Build the pages]
+    C --> D[4 Handwritten notes]
+    D --> E[5 Rebuild the map]
+    E --> F[6 Update the docs]
 ```
 
-At the end of a real learning session, update only what applies:
+### 1. Place the source files
 
-- the topic README or concept note;
-- `SKILLS.md` when there is new evidence;
-- `ROADMAP.html` and `ROADMAP.md` when curriculum status changed;
-- `docs/curriculum-map.md` when an evidence path or status changed;
-- `docs/glossary.md` for genuinely important new terms;
-- `docs/review-queue.md` for a real gap that needs revisiting.
+```text
+<NN>_Subject/<NN>_Topic/
+├── Concept/            the .ipynb or .md the learner worked in
+├── Data/               datasets and figures for this topic only
+└── Handwritten_Notes/  scans and generated note pages
+```
+
+Create the topic folder only when the topic is really studied. Reuse the
+subject's `_shared_data/` for any dataset more than one topic needs. Keep every
+dataset path **relative** — never reintroduce an absolute path.
+
+### 2. Write the story
+
+Add an entry for the topic to
+[`17_Learning_As_Of_Now/shared/stories.json`](./17_Learning_As_Of_Now/shared/stories.json):
+
+```json
+"04_ML/13_Train_Test_Split": {
+  "lede": "One sentence on what the topic gives you.",
+  "idea": "The single idea to remember.",
+  "story": ["<strong>Name did X.</strong> …",
+            "<span class='beat'>It failed, and here is why.</span> …",
+            "So the fix is this. …"]
+}
+```
+
+This is the `Story -> Concept -> Why` rule in machine-readable form. The builder
+puts it at the top of the lesson page. A topic without a story reads as a data
+dump — write one.
+
+### 3. Build the lesson and code pages
+
+The lesson page is **generated**, never written by hand. The builder reads the
+topic's `Concept/` folder and produces two pages:
+
+- `Content/index.html` — the illustrated lesson: story, prose, formulas, the
+  real plots pulled out of the notebook, and a gallery of the handwritten notes
+- `Content/code.html` — every code cell with its saved output, for the
+  workspace's Code pane
+
+Run it with the single command in step 5.
+
+### 4. Handwritten notes
+
+If `Handwritten_Notes/` has no images, generate them using
+[`17_Learning_As_Of_Now/shared/CODEX_HANDWRITTEN_NOTES_PROMPT.md`](./17_Learning_As_Of_Now/shared/CODEX_HANDWRITTEN_NOTES_PROMPT.md).
+That prompt carries the full page spec — 1055x1491, ruled paper, the colour
+system, the density floor, and the self-check. The reference pages every new page
+must match are:
+
+```text
+04_ML/12_Preprocessing/Handwritten_Notes/Preprocessing_Page_1of3.png
+04_ML/07_Outliers/Handwritten_Notes/21_Outlier.png
+```
+
+Name them `<Topic>_01.png`, `<Topic>_02.png`, … so they sort in reading order.
+Scans the learner photographs go in the same folder, under their own names.
+
+### 5. Rebuild everything
+
+**One command does steps 3 and 5 and verifies the result:**
+
+```bash
+python3 17_Learning_As_Of_Now/shared/build_site.py
+```
+
+It regenerates every `Content/index.html` and `Content/code.html`, rebuilds
+`17_Learning_As_Of_Now/Claude/tree-data.js`, and fails loudly if any lesson,
+source file or scan it references is missing. Run it after **any** change to a
+`Concept/`, `Data/` or `Handwritten_Notes/` folder. It is idempotent.
+
+Never hand-edit `tree-data.js` or a generated `Content/index.html` — the next
+build overwrites them. To change a lesson's wording, change the notebook, the
+note, or `stories.json`. A page whose first lines contain `hand-authored` is
+skipped by the builder and is safe to edit directly.
+
+### 6. Update the written record
+
+Update only what actually changed:
+
+- [`15_Docs/SKILLS.md`](./15_Docs/SKILLS.md) when there is new evidence of ability;
+- [`15_Docs/ROADMAP.md`](./15_Docs/ROADMAP.md) when curriculum status changed;
+- [`15_Docs/curriculum-map.md`](./15_Docs/curriculum-map.md) when an evidence path
+  or module status changed;
+- [`15_Docs/glossary.md`](./15_Docs/glossary.md) for a genuinely important new term;
+- [`15_Docs/review-queue.md`](./15_Docs/review-queue.md) for a real gap to revisit.
+
+Bootcamp status and skill level are separate measurements. Do not mark a module
+`🟢 Completed` because a lesson page was generated for it.
+
+### The build scripts
+
+Everything the site needs lives in `17_Learning_As_Of_Now/shared/`. Do not move
+these or copy them to a temporary directory:
+
+| File | What it does |
+|---|---|
+| `build_site.py` | **the entry point** — runs the two builders, then verifies |
+| `build_lessons.py` | topic → `Content/index.html` + `Content/code.html` |
+| `gen_tree.py` | folder structure → `Claude/tree-data.js` |
+| `stories.json` | the hand-written story per topic |
+| `lesson.css`, `lesson.js` | shared styling, highlighting, notes lightbox |
+| `CODEX_HANDWRITTEN_NOTES_PROMPT.md` | the spec for generating note pages |
+
+The website itself is `17_Learning_As_Of_Now/Claude/` — `index.html` (home, map
+and library) and `workspace.html` (the three-pane Content / Code / Handwritten
+Notes reader).
 
 ## Topic documentation
 

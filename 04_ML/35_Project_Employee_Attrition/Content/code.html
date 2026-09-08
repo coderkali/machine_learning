@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Employee Attrition — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/Employee_Attrition_Pipeline.ipynb">Employee_Attrition_Pipeline.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.preprocessing import (
+    FunctionTransformer,
+    StandardScaler,
+    MinMaxScaler,
+    OneHotEncoder,
+    OrdinalEncoder,
+    LabelEncoder,
+)</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../Data/employee_attrition_raw.csv&quot;)
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>  EmployeeID   Age   Gender   Department    Education PriorCompanies  \
+0      E0390  24.0     Male        Sales    Bachelors              1   
+1      E0122  36.0     Male    Marketing  High School              1   
+2      E0523  46.0  Female         Sales    Bachelors              1   
+3      E0310  49.0     Male        Sales      Masters             3+   
+4      E0647  40.0   Female  Engineering          PhD              0   
+
+   YearsAtCompany  MonthlyIncome  DistanceFromHome OverTime PerformanceRating  \
+0             1.2         8576.0               3.0       No            Medium   
+1            29.3         4869.0               1.1       No            Medium   
+2             4.6         1889.0              13.5      Yes            Medium   
+3             1.2        19591.0              18.8      Yes               Low   
+4            10.1        14041.0               NaN       NO            Medium   
+
+  Attrition  
+0        No  
+1        No  
+2       Yes  
+3        No  
+4        No</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(706, 12)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 5</span></div><pre class="py">dataset.info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 706 entries, 0 to 705
+Data columns (total 12 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   EmployeeID         706 non-null    str    
+ 1   Age                685 non-null    float64
+ 2   Gender             692 non-null    str    
+ 3   Department         699 non-null    str    
+ 4   Education          685 non-null    str    
+ 5   PriorCompanies     692 non-null    str    
+ 6   YearsAtCompany     685 non-null    float64
+ 7   MonthlyIncome      678 non-null    float64
+ 8   DistanceFromHome   692 non-null    float64
+ 9   OverTime           699 non-null    str    
+ 10  PerformanceRating  685 non-null    str    
+ 11  Attrition          706 non-null    str    
+dtypes: float64(4), str(8)
+memory usage: 66.3 KB</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 7</span></div><pre class="py">dataset[&quot;Attrition&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Attrition
+No     500
+Yes    206
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 8</span></div><pre class="py">plt.figure(figsize=(5, 4))
+counts = dataset[&quot;Attrition&quot;].value_counts()
+bars = plt.bar(counts.index, counts.values, color=[&quot;#2f9e6f&quot;, &quot;#d03b3b&quot;])
+plt.title(&quot;Attrition — target column&quot;)
+plt.ylabel(&quot;employees&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width() / 2, b.get_height() + 5,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>EmployeeID            0
+Age                  21
+Gender               14
+Department            7
+Education            21
+PriorCompanies       14
+YearsAtCompany       21
+MonthlyIncome        28
+DistanceFromHome     14
+OverTime              7
+PerformanceRating    21
+Attrition             0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 12</span></div><pre class="py">missing = dataset.isnull().sum()
+missing = missing[missing &gt; 0].sort_values(ascending=False)
+
+plt.figure(figsize=(8, 4.5))
+bars = plt.bar(missing.index, missing.values, color=&quot;#d03b3b&quot;)
+plt.title(&quot;Missing values per column (raw)&quot;)
+plt.ylabel(&quot;missing rows&quot;)
+plt.xticks(rotation=40, ha=&quot;right&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width() / 2, b.get_height() + 0.3,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">num_median_cols = [&quot;Age&quot;, &quot;YearsAtCompany&quot;, &quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
+
+for c in num_median_cols:
+    dataset[c] = dataset[c].fillna(dataset[c].median())
+
+dataset[num_median_cols].isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Age                 0
+YearsAtCompany      0
+MonthlyIncome       0
+DistanceFromHome    0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 17</span></div><pre class="py">dataset.duplicated().sum()</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(6)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 18</span></div><pre class="py">before_dedup = dataset.shape[0]
+dataset = dataset.drop_duplicates().reset_index(drop=True)
+before_dedup, dataset.shape[0]</pre></div><div class="out"><div class="h">Output</div><pre>(706, 700)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 19</span></div><pre class="py">plt.figure(figsize=(5, 4))
+bars = plt.bar([&quot;before dedup&quot;, &quot;after dedup&quot;], [before_dedup, dataset.shape[0]],
+                color=[&quot;#d03b3b&quot;, &quot;#2a78d6&quot;])
+plt.ylabel(&quot;rows&quot;)
+plt.title(&quot;Duplicate rows removed&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width() / 2, b.get_height() + 3,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 22</span></div><pre class="py">dataset[&quot;Gender&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Gender
+Male       356
+Female     229
+Male        23
+male        21
+MALE        19
+FEMALE      17
+female      11
+Female      10
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 23</span></div><pre class="py">dataset[&quot;OverTime&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>OverTime
+No     425
+Yes    184
+no      25
+NO      24
+yes     19
+YES     16
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 25</span></div><pre class="py">messy_dummy_cols = pd.get_dummies(dataset[&quot;Gender&quot;]).shape[1]
+messy_dummy_cols</pre></div><div class="out"><div class="h">Output</div><pre>8</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 27</span></div><pre class="py">dataset[&quot;Gender&quot;] = dataset[&quot;Gender&quot;].str.strip().str.capitalize()
+dataset[&quot;OverTime&quot;] = dataset[&quot;OverTime&quot;].str.strip().str.capitalize()
+
+dataset[&quot;Gender&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Gender
+Male      419
+Female    267
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 28</span></div><pre class="py">dataset[&quot;OverTime&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>OverTime
+No     474
+Yes    219
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 29</span></div><pre class="py">pd.get_dummies(dataset[&quot;Gender&quot;]).shape[1]</pre></div><div class="out"><div class="h">Output</div><pre>2</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 30</span></div><pre class="py">messy_gender = pd.read_csv(&quot;../Data/employee_attrition_raw.csv&quot;)[&quot;Gender&quot;].value_counts()
+clean_gender = dataset[&quot;Gender&quot;].value_counts()
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
+axes[0].bar(messy_gender.index, messy_gender.values, color=&quot;#d03b3b&quot;)
+axes[0].set_title(f&quot;Gender — before cleaning ({len(messy_gender)} spellings)&quot;)
+axes[0].tick_params(axis=&quot;x&quot;, rotation=60)
+
+axes[1].bar(clean_gender.index, clean_gender.values, color=&quot;#2a78d6&quot;)
+axes[1].set_title(f&quot;Gender — after cleaning ({len(clean_gender)} categories)&quot;)
+
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 33</span></div><pre class="py">cat_mode_cols = [&quot;Gender&quot;, &quot;Department&quot;, &quot;Education&quot;,
+                 &quot;PriorCompanies&quot;, &quot;OverTime&quot;, &quot;PerformanceRating&quot;]
+
+for c in cat_mode_cols:
+    dataset[c] = dataset[c].fillna(dataset[c].mode()[0])
+
+dataset.isnull().sum().sum()</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 36</span></div><pre class="py">dataset[&quot;PriorCompanies&quot;].unique()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;1&#x27;, &#x27;3+&#x27;, &#x27;0&#x27;, &#x27;2&#x27;]
+Length: 4, dtype: str</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 37</span></div><pre class="py">dataset[&quot;PriorCompanies&quot;] = dataset[&quot;PriorCompanies&quot;].replace(&quot;3+&quot;, &quot;3&quot;)
+dataset[&quot;PriorCompanies&quot;] = dataset[&quot;PriorCompanies&quot;].astype(&quot;int64&quot;)
+
+dataset[&quot;PriorCompanies&quot;].dtype</pre></div><div class="out"><div class="h">Output</div><pre>dtype(&#x27;int64&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 38</span></div><pre class="py">plt.figure(figsize=(5, 4))
+counts = dataset[&quot;PriorCompanies&quot;].value_counts().sort_index()
+bars = plt.bar(counts.index.astype(str), counts.values, color=&quot;#2a78d6&quot;)
+plt.xlabel(&quot;PriorCompanies (cleaned)&quot;)
+plt.ylabel(&quot;employees&quot;)
+plt.title(&#x27;PriorCompanies after &quot;3+&quot; → 3, cast to int64&#x27;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width() / 2, b.get_height() + 3,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">outlier_cols = [&quot;Age&quot;, &quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
+
+fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+for ax, c in zip(axes, outlier_cols):
+    sns.boxplot(y=dataset[c], ax=ax, color=&quot;#8a8f98&quot;)
+    ax.set_title(c)
+plt.suptitle(&quot;Before outlier removal&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 42</span></div><pre class="py">iqr_bounds = {}
+for c in outlier_cols:
+    q1, q3 = dataset[c].quantile(0.25), dataset[c].quantile(0.75)
+    iqr = q3 - q1
+    lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    iqr_bounds[c] = (lo, hi)
+    n_out = ((dataset[c] &lt; lo) | (dataset[c] &gt; hi)).sum()
+    print(f&quot;{c}: IQR bounds=({lo:.1f}, {hi:.1f})  outliers={n_out}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Age: IQR bounds=(16.5, 52.5)  outliers=12
+MonthlyIncome: IQR bounds=(-1109.2, 11250.8)  outliers=39
+DistanceFromHome: IQR bounds=(-12.5, 26.4)  outliers=34</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 43</span></div><pre class="py">for c in outlier_cols:
+    z = (dataset[c] - dataset[c].mean()) / dataset[c].std()
+    n_out = (z.abs() &gt; 3).sum()
+    print(f&quot;{c}: Z-score outliers(|z|&gt;3)={n_out}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Age: Z-score outliers(|z|&gt;3)=5
+MonthlyIncome: Z-score outliers(|z|&gt;3)=9
+DistanceFromHome: Z-score outliers(|z|&gt;3)=9</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 45</span></div><pre class="py">before_rows = dataset.shape[0]
+
+mask = pd.Series(True, index=dataset.index)
+for c in outlier_cols:
+    lo, hi = iqr_bounds[c]
+    mask &amp;= (dataset[c] &gt;= lo) &amp; (dataset[c] &lt;= hi)
+
+dataset = dataset[mask].copy()
+before_rows, dataset.shape[0]</pre></div><div class="out"><div class="h">Output</div><pre>(700, 616)</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 47</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+for ax, c in zip(axes, outlier_cols):
+    sns.boxplot(y=dataset[c], ax=ax, color=&quot;#2a78d6&quot;)
+    ax.set_title(c)
+plt.suptitle(&quot;After outlier removal&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 49</span></div><pre class="py">skew_cols = [&quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
+skew_before = {c: dataset[c].skew() for c in skew_cols}
+skew_before</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;MonthlyIncome&#x27;: np.float64(0.6832499144477358),
+ &#x27;DistanceFromHome&#x27;: np.float64(1.0946791576029027)}</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 50</span></div><pre class="py">log_ft = FunctionTransformer(func=np.log1p)
+
+for c in skew_cols:
+    dataset[c + &quot;_log&quot;] = log_ft.fit_transform(dataset[[c]])
+
+skew_after = {c: dataset[c + &quot;_log&quot;].skew() for c in skew_cols}
+skew_after</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;MonthlyIncome&#x27;: np.float64(-0.43733459028916893),
+ &#x27;DistanceFromHome&#x27;: np.float64(-0.1389232654364261)}</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 51</span></div><pre class="py">fig, axes = plt.subplots(2, 2, figsize=(10, 7))
+
+for i, c in enumerate(skew_cols):
+    sns.distplot(dataset[c], ax=axes[0, i], color=&quot;#8a8f98&quot;)
+    axes[0, i].set_title(f&quot;{c} (before)\nskew={skew_before[c]:.2f}&quot;)
+
+    sns.distplot(dataset[c + &quot;_log&quot;], ax=axes[1, i], color=&quot;#2f9e6f&quot;)
+    axes[1, i].set_title(f&quot;{c} (log1p)\nskew={skew_after[c]:.2f}&quot;)
+
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_38049/219068399.py:4: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[c], ax=axes[0, i], color=&quot;#8a8f98&quot;)
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_38049/219068399.py:7: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[c + &quot;_log&quot;], ax=axes[1, i], color=&quot;#2f9e6f&quot;)
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_38049/219068399.py:4: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to upd</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 54</span></div><pre class="py">log_cols = [c + &quot;_log&quot; for c in skew_cols]
+scaled_cols = [c + &quot;_scaled&quot; for c in skew_cols]
+
+scaler = StandardScaler()
+dataset[scaled_cols] = scaler.fit_transform(dataset[log_cols])
+
+dataset[scaled_cols].mean().round(3), dataset[scaled_cols].std().round(3)</pre></div><div class="out"><div class="h">Output</div><pre>(MonthlyIncome_scaled       0.0
+ DistanceFromHome_scaled    0.0
+ dtype: float64,
+ MonthlyIncome_scaled       1.001
+ DistanceFromHome_scaled    1.001
+ dtype: float64)</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 55</span></div><pre class="py">mm_scaler = MinMaxScaler()
+dataset[[&quot;Age_scaled&quot;, &quot;YearsAtCompany_scaled&quot;]] = mm_scaler.fit_transform(
+    dataset[[&quot;Age&quot;, &quot;YearsAtCompany&quot;]]
+)
+
+dataset[[&quot;Age_scaled&quot;, &quot;YearsAtCompany_scaled&quot;]].min(), dataset[[&quot;Age_scaled&quot;, &quot;YearsAtCompany_scaled&quot;]].max()</pre></div><div class="out"><div class="h">Output</div><pre>(Age_scaled               0.0
+ YearsAtCompany_scaled    0.0
+ dtype: float64,
+ Age_scaled               1.0
+ YearsAtCompany_scaled    1.0
+ dtype: float64)</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 56</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
+sns.distplot(dataset[&quot;MonthlyIncome_log&quot;], ax=axes[0], color=&quot;#8a8f98&quot;)
+axes[0].set_title(&quot;MonthlyIncome_log (before scaling)&quot;)
+
+sns.distplot(dataset[&quot;MonthlyIncome_scaled&quot;], ax=axes[1], color=&quot;#2f9e6f&quot;)
+axes[1].set_title(&quot;MonthlyIncome_scaled (after StandardScaler)&quot;)
+
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_38049/2549408374.py:2: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;MonthlyIncome_log&quot;], ax=axes[0], color=&quot;#8a8f98&quot;)
+/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_38049/2549408374.py:5: UserWarning: 
+
+`distplot` is a deprecated function and will be removed in seaborn v0.14.0.
+
+Please adapt your code to use either `displot` (a figure-level function with
+similar flexibility) or `histplot` (an axes-level function for histograms).
+
+For a guide to updating your code to use the new functions, please see
+https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
+
+  sns.distplot(dataset[&quot;MonthlyIncome_scaled&quot;], ax=axes[1], color=&quot;#2f9e6f&quot;)</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 60</span></div><pre class="py">nominal_cols = [&quot;Gender&quot;, &quot;OverTime&quot;, &quot;Department&quot;]
+
+ohe = OneHotEncoder(drop=&quot;first&quot;, sparse_output=False)
+ohe_array = ohe.fit_transform(dataset[nominal_cols])
+ohe_names = ohe.get_feature_names_out(nominal_cols)
+
+dataset[list(ohe_names)] = ohe_array.astype(int)
+list(ohe_names)</pre></div><div class="out"><div class="h">Output</div><pre>[&#x27;Gender_Male&#x27;,
+ &#x27;OverTime_Yes&#x27;,
+ &#x27;Department_Finance&#x27;,
+ &#x27;Department_HR&#x27;,
+ &#x27;Department_Marketing&#x27;,
+ &#x27;Department_Sales&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 61</span></div><pre class="py">sample = dataset[list(ohe_names)].head(12)
+
+plt.figure(figsize=(8, 5))
+sns.heatmap(sample, annot=True, cmap=&quot;Blues&quot;, cbar=False, linewidths=0.5, linecolor=&quot;white&quot;)
+plt.title(&quot;One-Hot Encoded Columns — first 12 rows&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 63</span></div><pre class="py">oe_edu = OrdinalEncoder(categories=[[&quot;High School&quot;, &quot;Bachelors&quot;, &quot;Masters&quot;, &quot;PhD&quot;]])
+dataset[&quot;Education_ord&quot;] = oe_edu.fit_transform(dataset[[&quot;Education&quot;]]).astype(int)
+
+oe_perf = OrdinalEncoder(categories=[[&quot;Low&quot;, &quot;Medium&quot;, &quot;High&quot;, &quot;Excellent&quot;]])
+dataset[&quot;PerformanceRating_ord&quot;] = oe_perf.fit_transform(dataset[[&quot;PerformanceRating&quot;]]).astype(int)
+
+dataset[[&quot;Education&quot;, &quot;Education_ord&quot;, &quot;PerformanceRating&quot;, &quot;PerformanceRating_ord&quot;]].drop_duplicates()</pre></div><div class="out"><div class="h">Output</div><pre>      Education  Education_ord PerformanceRating  PerformanceRating_ord
+0     Bachelors              1            Medium                      1
+1   High School              0            Medium                      1
+5     Bachelors              1         Excellent                      3
+8   High School              0              High                      2
+9       Masters              2         Excellent                      3
+10          PhD              3              High                      2
+11          PhD              3            Medium                      1
+12  High School              0         Excellent                      3
+14      Masters              2            Medium                      1
+15    Bachelors              1               Low                      0
+17      Masters              2              High                      2
+20    Bachelors              1              High                      2
+21      Masters              2               Low                      0
+37  High School              0               Low                      0
+54          PhD              3               Low                      0
+87          PhD              3         Excellent                      3</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 65</span></div><pre class="py">le = LabelEncoder()
+dataset[&quot;Attrition&quot;] = le.fit_transform(dataset[&quot;Attrition&quot;])
+
+le.classes_</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;No&#x27;, &#x27;Yes&#x27;], dtype=object)</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 68</span></div><pre class="py">final_cols = (
+    [&quot;PriorCompanies&quot;, &quot;Age_scaled&quot;, &quot;YearsAtCompany_scaled&quot;]
+    + scaled_cols
+    + list(ohe_names)
+    + [&quot;Education_ord&quot;, &quot;PerformanceRating_ord&quot;, &quot;Attrition&quot;]
+)
+
+final_dataset = dataset[final_cols]
+final_dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>   PriorCompanies  Age_scaled  YearsAtCompany_scaled  MonthlyIncome_scaled  \
+0               1     0.12500               0.040956              1.425322   
+1               1     0.50000               1.000000              0.152347   
+2               1     0.81250               0.156997             -1.976476   
+5               2     0.65625               0.167235             -0.724989   
+7               3     0.46875               0.054608             -0.571408   
+
+   DistanceFromHome_scaled  Gender_Male  OverTime_Yes  Department_Finance  \
+0                -0.426237            1             0                   0   
+1                -1.181590            1             0                   0   
+2                 1.083462            0             1                   0   
+5                -0.886984            1             0                   0   
+7                -1.837605            0             0                   0   
+
+   Department_HR  Department_Marketing  Department_Sales  Education_ord  \
+0              0                     0                 1              1   
+1              0                     1                 0              0   
+2              0                     0                 1              1   
+5              0                     0                 1              1   
+7              0                     1                 0              1   
+
+   PerformanceRat</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 69</span></div><pre class="py">final_dataset.dtypes</pre></div><div class="out"><div class="h">Output</div><pre>PriorCompanies               int64
+Age_scaled                 float64
+YearsAtCompany_scaled      float64
+MonthlyIncome_scaled       float64
+DistanceFromHome_scaled    float64
+Gender_Male                  int64
+OverTime_Yes                 int64
+Department_Finance           int64
+Department_HR                int64
+Department_Marketing         int64
+Department_Sales             int64
+Education_ord                int64
+PerformanceRating_ord        int64
+Attrition                    int64
+dtype: object</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 70</span></div><pre class="py">final_dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(616, 14)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 72</span></div><pre class="py">stages = {
+    &quot;raw&quot;: 706,
+    &quot;after dedup&quot;: 700,
+    &quot;after outlier\nremoval&quot;: final_dataset.shape[0],
+}
+
+plt.figure(figsize=(6.5, 4.2))
+bars = plt.bar(stages.keys(), stages.values(), color=[&quot;#8a8f98&quot;, &quot;#8a8f98&quot;, &quot;#2a78d6&quot;])
+plt.ylabel(&quot;rows&quot;)
+plt.title(&quot;Row count through the pipeline&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width() / 2, b.get_height() + 5,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 73</span></div><pre class="py">plt.figure(figsize=(10, 8))
+sns.heatmap(final_dataset.corr(), annot=True, fmt=&quot;.2f&quot;, cmap=&quot;coolwarm&quot;,
+            center=0, linewidths=0.5)
+plt.title(&quot;Correlation — final feature set&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 74</span></div><pre class="py">final_dataset.corr()[&quot;Attrition&quot;].sort_values(ascending=False)</pre></div><div class="out"><div class="h">Output</div><pre>Attrition                  1.000000
+OverTime_Yes               0.361770
+Department_HR              0.086736
+Age_scaled                 0.064836
+Education_ord              0.056450
+DistanceFromHome_scaled    0.034860
+PriorCompanies            -0.004357
+Gender_Male               -0.010123
+PerformanceRating_ord     -0.010904
+Department_Sales          -0.011539
+Department_Marketing      -0.047225
+Department_Finance        -0.049931
+YearsAtCompany_scaled     -0.060726
+MonthlyIncome_scaled      -0.113386
+Name: Attrition, dtype: float64</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

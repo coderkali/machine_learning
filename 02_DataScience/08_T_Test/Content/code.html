@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T Test — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/09_Hypothesis_Testing_T-Test.ipynb">09_Hypothesis_Testing_T-Test.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import scipy.stats as st
+import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 5</span></div><pre class="py">import matplotlib.pyplot as plt
+
+df_ = 24
+t_crit = st.t.ppf(0.05, df_)          # -1.7109
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df_)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;crimson&quot;, linewidth=2)
+
+# shade rejection region (Ha) - left tail
+x_reject = np.linspace(-4, t_crit, 100)
+ax.fill_between(x_reject, st.t.pdf(x_reject, df_), color=&quot;crimson&quot;, alpha=0.4)
+
+# H0 dashed centerline
+ax.axvline(0, color=&quot;crimson&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+
+# critical t-value line + label
+ax.axvline(t_crit, color=&quot;navy&quot;, linewidth=1.5)
+ax.text(t_crit, -0.01, f&quot;t = {t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;navy&quot;)
+
+ax.text(t_crit - 1, max(y) * 0.5, &quot;Ha\n(reject H0)&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+ax.text(2, max(y) * 0.5, &quot;fail to reject H0&quot;, ha=&quot;center&quot;, color=&quot;black&quot;)
+ax.text(t_crit - 0.3, 0.02, &quot;α = 0.05&quot;, color=&quot;navy&quot;)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(&quot;One-Tailed T-Test (left-tailed), df = 24&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148
+p_u = 150
+s_std = 5
+n = 25
+alpha = 0.05
+df = n - 1
+
+t_critical = st.t.ppf(alpha, df)   # left-tailed -&gt; use alpha directly, not 1-alpha
+t_test = (x_bar - p_u) / (s_std / np.sqrt(n))
+
+print(&quot;df:&quot;, df)
+print(&quot;t_critical:&quot;, t_critical)
+print(&quot;t_test:&quot;, t_test)
+
+if t_test &lt; t_critical:
+    print(&quot;Reject H0 -&gt; Ha is right (avg weight &lt; 150 gm)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 is right (avg weight = 150 gm)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>df: 24
+t_critical: -1.7108820799094284
+t_test: -2.0
+Reject H0 -&gt; Ha is right (avg weight &lt; 150 gm)</pre></div><div class="src-head">📓 <a href="../Concept/10_Hypothesis_Testing_T-Test.ipynb">10_Hypothesis_Testing_T-Test.ipynb</a></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 3</span></div><pre class="py">import matplotlib.pyplot as plt
+import scipy.stats as st
+import numpy as np
+
+df_ = 38
+t_crit = st.t.ppf(0.975, df_)          # 2.0244
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df_)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;navy&quot;, linewidth=2)
+
+# shade rejection regions (Ha) - both tails
+x_left = np.linspace(-4, -t_crit, 100)
+x_right = np.linspace(t_crit, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df_), color=&quot;crimson&quot;, alpha=0.4)
+ax.fill_between(x_right, st.t.pdf(x_right, df_), color=&quot;crimson&quot;, alpha=0.4)
+
+# H0 dashed centerline
+ax.axvline(0, color=&quot;navy&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0&quot;, ha=&quot;center&quot;, color=&quot;navy&quot;)
+
+# critical t-value lines + labels
+ax.axvline(-t_crit, color=&quot;crimson&quot;, linewidth=1.5)
+ax.axvline(t_crit, color=&quot;crimson&quot;, linewidth=1.5)
+ax.text(-t_crit, -0.01, f&quot;t = {-t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit, -0.01, f&quot;t = {t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.text(-t_crit - 0.6, max(y) * 0.5, &quot;Ha&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit + 0.6, max(y) * 0.5, &quot;Ha&quot;, ha=&quot;center&quot;, color=&quot;crimson&quot;)
+ax.text(0, max(y) * 0.5, &quot;fail to reject H0&quot;, ha=&quot;center&quot;, color=&quot;black&quot;)
+ax.text(-t_crit - 0.3, 0.02, &quot;\u03b1/2 = 0.025&quot;, color=&quot;crimson&quot;, fontsize=8)
+ax.text(t_crit + 0.3, 0.02, &quot;\u03b1/2 = 0.025&quot;, color=&quot;crimson&quot;, fontsize=8)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(&quot;Two-Tailed T-Test, df = 38&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 5</span></div><pre class="py">x_bar_A = 80
+s_A = 5
+n_A = 20
+
+x_bar_B = 75
+s_B = 6
+n_B = 20
+
+alpha = 0.05
+df = n_A + n_B - 2
+
+se = np.sqrt((s_A**2 / n_A) + (s_B**2 / n_B))
+t_test = (x_bar_A - x_bar_B) / se
+t_critical = st.t.ppf(1 - alpha / 2, df)   # two-tailed -&gt; use alpha/2
+
+print(&quot;df:&quot;, df)
+print(&quot;standard error:&quot;, se)
+print(&quot;t_critical: +-&quot;, t_critical)
+print(&quot;t_test:&quot;, t_test)
+
+if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; Ha is right (there IS a difference in productivity)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 is right (no significant difference in productivity)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>df: 38
+standard error: 1.746424919657298
+t_critical: +- 2.0243941639119694
+t_test: 2.862991671569341
+Reject H0 -&gt; Ha is right (there IS a difference in productivity)</pre></div><div class="src-head">📓 <a href="../Concept/12_Hypothesis_Testing_T-Test_95.ipynb">12_Hypothesis_Testing_T-Test_95.ipynb</a></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
+import numpy as np
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 6</span></div><pre class="py">df = 29
+alpha = 0.05
+
+t_crit = st.t.ppf(1 - alpha / 2, df)   # 2.045
+
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions - both tails
+x_left = np.linspace(-4, -t_crit, 100)
+x_right = np.linspace(t_crit, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.4)
+
+# acceptance region
+x_mid = np.linspace(-t_crit, t_crit, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (95%)&quot;)
+
+ax.axvline(0, color=&quot;black&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0 (μ=100)&quot;, ha=&quot;center&quot;)
+ax.axvline(-t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_crit, -0.01, f&quot;-{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit, -0.01, f&quot;+{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 95% CI)&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
+mu = 100
+S = 20
+n = 30
+alpha = 0.05
+df = n - 1
+
+t_critical = st.t.ppf(1 - alpha / 2, df)   # two-tailed -&gt; 2.045
+t_test = (x_bar - mu) / (S / np.sqrt(n))
+
+print(&quot;df:&quot;, df)
+print(&quot;t_critical: +-&quot;, round(t_critical, 4))
+print(&quot;t_test:&quot;, round(t_test, 4))</pre></div><div class="out"><div class="h">Output</div><pre>df: 29
+t_critical: +- 2.0452
+t_test: 10.9545</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 10</span></div><pre class="py">if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (medication DOES affect intelligence)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Reject H0 -&gt; H1 is right (medication DOES affect intelligence)</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 12</span></div><pre class="py">x = np.linspace(-4, 12, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions
+x_left = np.linspace(-4, -t_critical, 100)
+x_right = np.linspace(t_critical, 12, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.3)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.3)
+
+# acceptance region
+x_mid = np.linspace(-t_critical, t_critical, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.25)
+
+# critical boundaries
+ax.axvline(-t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_critical, -0.01, f&quot;-{t_critical:.2f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_critical, -0.01, f&quot;+{t_critical:.2f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+# actual test statistic
+ax.axvline(t_test, color=&quot;darkorange&quot;, linewidth=2)
+ax.plot(t_test, st.t.pdf(t_test, df), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=8, zorder=5)
+ax.annotate(f&quot;t_test = {t_test:.2f}\n(deep in rejection region)&quot;,
+            xy=(t_test, st.t.pdf(t_test, df)),
+            xytext=(t_test - 5, max(y) * 0.55),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;darkorange&quot;),
+            color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(&quot;Where does t_test land? (df=29, 95% CI)&quot;)
+plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/13_Hypothesis_Testing_T-Test_80.ipynb">13_Hypothesis_Testing_T-Test_80.ipynb</a></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
+import numpy as np
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 6</span></div><pre class="py">df = 29
+alpha = 0.20
+
+t_crit = st.t.ppf(1 - alpha / 2, df)   # ~1.311
+
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions - both tails
+x_left = np.linspace(-4, -t_crit, 100)
+x_right = np.linspace(t_crit, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.4)
+
+# acceptance region
+x_mid = np.linspace(-t_crit, t_crit, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (80%)&quot;)
+
+ax.axvline(0, color=&quot;black&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0 (μ=100)&quot;, ha=&quot;center&quot;)
+ax.axvline(-t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_crit, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_crit, -0.01, f&quot;-{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_crit, -0.01, f&quot;+{t_crit:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 80% CI)&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
+mu = 100
+S = 20
+n = 30
+alpha = 0.20
+df = n - 1
+
+t_critical = st.t.ppf(1 - alpha / 2, df)   # two-tailed -&gt; ~1.311
+t_test = (x_bar - mu) / (S / np.sqrt(n))
+
+print(&quot;df:&quot;, df)
+print(&quot;t_critical: +-&quot;, round(t_critical, 4))
+print(&quot;t_test:&quot;, round(t_test, 4))</pre></div><div class="out"><div class="h">Output</div><pre>df: 29
+t_critical: +- 1.3114
+t_test: 10.9545</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 10</span></div><pre class="py">if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (medication DOES affect intelligence)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Reject H0 -&gt; H1 is right (medication DOES affect intelligence)</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 12</span></div><pre class="py">dfree = 29
+t_test_val = 10.9545
+
+alphas = {&quot;95% CI&quot;: 0.05, &quot;80% CI&quot;: 0.20}
+
+x = np.linspace(-4, 12, 500)
+y = st.t.pdf(x, dfree)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4), sharey=True)
+
+for ax, (label, a) in zip(axes, alphas.items()):
+    t_c = st.t.ppf(1 - a / 2, dfree)
+    ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+    x_left = np.linspace(-4, -t_c, 100)
+    x_right = np.linspace(t_c, 12, 100)
+    ax.fill_between(x_left, st.t.pdf(x_left, dfree), color=&quot;crimson&quot;, alpha=0.35)
+    ax.fill_between(x_right, st.t.pdf(x_right, dfree), color=&quot;crimson&quot;, alpha=0.35)
+
+    x_mid = np.linspace(-t_c, t_c, 200)
+    ax.fill_between(x_mid, st.t.pdf(x_mid, dfree), color=&quot;seagreen&quot;, alpha=0.25)
+
+    ax.axvline(t_c, color=&quot;crimson&quot;, linestyle=&quot;:&quot;)
+    ax.axvline(-t_c, color=&quot;crimson&quot;, linestyle=&quot;:&quot;)
+
+    ax.axvline(t_test_val, color=&quot;darkorange&quot;, linewidth=2)
+    ax.plot(t_test_val, st.t.pdf(t_test_val, dfree), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=7, zorder=5)
+
+    ax.set_yticks([])
+    ax.set_xlabel(&quot;t&quot;)
+    ax.set_title(f&quot;{label}   (t_critical = ±{t_c:.3f})&quot;)
+
+plt.tight_layout()
+plt.show()
+
+print(f&quot;{&#x27;CI&#x27;:&lt;10}{&#x27;alpha&#x27;:&lt;10}{&#x27;t_critical&#x27;:&lt;14}{&#x27;t_test&#x27;:&lt;10}{&#x27;Decision&#x27;}&quot;)
+for label, a in alphas.items():
+    t_c = st.t.ppf(1 - a / 2, dfree)
+    decision = &quot;Reject H0&quot; if abs(t_test_val) &gt; t_c else &quot;Fail to reject H0&quot;
+    print(f&quot;{label:&lt;10}{a:&lt;10}{t_c:&lt;14.4f}{t_test_val:&lt;10.4f}{decision}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>CI        alpha     t_critical    t_test    Decision
+95% CI    0.05      2.0452        10.9545   Reject H0
+80% CI    0.2       1.3114        10.9545   Reject H0</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

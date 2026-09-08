@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train Test Split — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/01_train_test_split_data.ipynb">01_train_test_split_data.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+from sklearn.model_selection import train_test_split</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">data1 = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/age1.csv&quot;)
+data1</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Income
+0   20   10000
+1   30   15000
+2   80   50000
+3   50   30000
+4   10    5000
+5   45   25000
+6   30   20000
+7   55   35000
+8   60   40000
+9   70   45000</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py">X = data1[&#x27;Age&#x27;]
+Y = data1[&#x27;Income&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 7</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2,random_state=0, shuffle=False)
+# I wanted t you to test the with different values show me those outputs in different visulisation ways like changing the random state , then huffle , i wanted to explain each and every bit of this method</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 9</span></div><pre class="py">print(X_train,&#x27;\n&#x27;)
+print(X_test,&#x27;\n&#x27;)
+print(y_train,&#x27;\n&#x27;)
+print(y_test,&#x27;\n&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>0    20
+1    30
+2    80
+3    50
+4    10
+5    45
+6    30
+7    55
+Name: Age, dtype: int64 
+
+8    60
+9    70
+Name: Age, dtype: int64 
+
+0    10000
+1    15000
+2    50000
+3    30000
+4     5000
+5    25000
+6    20000
+7    35000
+Name: Income, dtype: int64 
+
+8    40000
+9    45000
+Name: Income, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 11</span></div><pre class="py">def test_rows(**kwargs):
+    &quot;&quot;&quot;Return the original row labels that land in the test set.&quot;&quot;&quot;
+    _, X_test, _, _ = train_test_split(X, Y, **kwargs)
+    return list(X_test.index)
+
+
+print(&quot;your current settings -&gt;&quot;, test_rows(test_size=0.2, random_state=0, shuffle=False))</pre></div><div class="out"><div class="h">Output</div><pre>your current settings -&gt; [8, 9]</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 13</span></div><pre class="py">a = test_rows(test_size=0.2, random_state=0,   shuffle=False)
+b = test_rows(test_size=0.2, random_state=99,  shuffle=False)
+c = test_rows(test_size=0.2, random_state=1234, shuffle=False)
+
+print(&quot;random_state=0    -&gt;&quot;, a)
+print(&quot;random_state=99   -&gt;&quot;, b)
+print(&quot;random_state=1234 -&gt;&quot;, c)
+print()
+print(&quot;all identical:&quot;, a == b == c)
+print(&quot;-&gt; with shuffle=False, random_state is ignored completely&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>random_state=0    -&gt; [8, 9]
+random_state=99   -&gt; [8, 9]
+random_state=1234 -&gt; [8, 9]
+
+all identical: True
+-&gt; with shuffle=False, random_state is ignored completely</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 16</span></div><pre class="py">for rs in [0, 1, 42]:
+    print(f&quot;random_state={rs:&lt;3} -&gt; test rows {test_rows(test_size=0.2, random_state=rs)}&quot;)
+
+print()
+print(&quot;Same seed, called twice:&quot;)
+print(&quot;  &quot;, test_rows(test_size=0.2, random_state=7))
+print(&quot;  &quot;, test_rows(test_size=0.2, random_state=7), &quot; &lt;- identical, every time&quot;)
+
+print()
+print(&quot;No seed at all (random_state=None), called twice:&quot;)
+print(&quot;  &quot;, test_rows(test_size=0.2))
+print(&quot;  &quot;, test_rows(test_size=0.2), &quot; &lt;- different, every run&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>random_state=0   -&gt; test rows [2, 8]
+random_state=1   -&gt; test rows [2, 9]
+random_state=42  -&gt; test rows [8, 1]
+
+Same seed, called twice:
+   [8, 5]
+   [8, 5]  &lt;- identical, every time
+
+No seed at all (random_state=None), called twice:
+   [1, 7]
+   [0, 2]  &lt;- different, every run</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 19</span></div><pre class="py">import matplotlib.pyplot as plt
+
+configs = [
+    (&quot;shuffle=False, rs=0&quot;,   dict(test_size=0.2, random_state=0,  shuffle=False)),
+    (&quot;shuffle=False, rs=99&quot;,  dict(test_size=0.2, random_state=99, shuffle=False)),
+    (&quot;shuffle=True,  rs=0&quot;,   dict(test_size=0.2, random_state=0)),
+    (&quot;shuffle=True,  rs=1&quot;,   dict(test_size=0.2, random_state=1)),
+    (&quot;shuffle=True,  rs=42&quot;,  dict(test_size=0.2, random_state=42)),
+]
+
+fig, ax = plt.subplots(figsize=(9, 3.4))
+
+for row, (label, kw) in enumerate(configs):
+    held_out = test_rows(**kw)
+    for col in range(len(X)):
+        is_test = col in held_out
+        ax.add_patch(plt.Rectangle((col, -row), 0.88, 0.88,
+                                   facecolor=&quot;#f59e0b&quot; if is_test else &quot;#86efac&quot;,
+                                   edgecolor=&quot;white&quot;, linewidth=2))
+        ax.text(col + 0.44, -row + 0.44, str(col),
+                ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=9, color=&quot;#1f2937&quot;)
+
+ax.set_xlim(-0.1, len(X)); ax.set_ylim(-len(configs) + 0.05, 1.0)
+ax.set_yticks([-r + 0.44 for r in range(len(configs))])
+ax.set_yticklabels([c[0] for c in configs], fontsize=9, family=&quot;monospace&quot;)
+ax.set_xticks([]); ax.set_frame_on(False)
+ax.set_title(&quot;Which row goes where?   green = train,   orange = test&quot;, fontsize=11)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 21</span></div><pre class="py">pairs = [
+    (&quot;shuffle=False (your call)&quot;, dict(test_size=0.2, random_state=0, shuffle=False)),
+    (&quot;shuffle=True,  rs=0&quot;,       dict(test_size=0.2, random_state=0)),
+]
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharex=True, sharey=True)
+
+for ax, (label, kw) in zip(axes, pairs):
+    held_out  = test_rows(**kw)
+    kept      = [i for i in X.index if i not in held_out]
+    ax.scatter(X.loc[kept],     Y.loc[kept],     s=110, c=&quot;#16a34a&quot;, label=&quot;train&quot;)
+    ax.scatter(X.loc[held_out], Y.loc[held_out], s=170, c=&quot;#f59e0b&quot;,
+               marker=&quot;D&quot;, edgecolor=&quot;#7c2d12&quot;, label=&quot;test&quot;)
+    for i in X.index:
+        ax.annotate(str(i), (X.loc[i], Y.loc[i]), fontsize=8,
+                    xytext=(6, 6), textcoords=&quot;offset points&quot;, color=&quot;#6b7280&quot;)
+    ax.set_title(label, fontsize=10)
+    ax.set_xlabel(&quot;Age&quot;)
+    ax.legend(loc=&quot;upper left&quot;, fontsize=9)
+
+axes[0].set_ylabel(&quot;Income&quot;)
+fig.suptitle(&quot;Same data, two split strategies&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 23</span></div><pre class="py">sizes = [0.1, 0.2, 0.3, 0.5]
+counts = []
+
+for ts in sizes:
+    X_tr, X_te, _, _ = train_test_split(X, Y, test_size=ts, random_state=0)
+    counts.append((len(X_tr), len(X_te)))
+    print(f&quot;test_size={ts}  -&gt;  train {len(X_tr)} rows, test {len(X_te)} rows&quot;)
+
+labels = [f&quot;test_size={s}&quot; for s in sizes]
+train_n = [c[0] for c in counts]
+test_n  = [c[1] for c in counts]
+
+fig, ax = plt.subplots(figsize=(7.5, 3.4))
+ax.barh(labels, train_n, color=&quot;#86efac&quot;, label=&quot;train&quot;)
+ax.barh(labels, test_n, left=train_n, color=&quot;#f59e0b&quot;, label=&quot;test&quot;)
+
+for i, (a, b) in enumerate(counts):
+    ax.text(a / 2,     i, str(a), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=10)
+    ax.text(a + b / 2, i, str(b), ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=10)
+
+ax.set_xlabel(&quot;number of rows&quot;)
+ax.set_title(&quot;test_size decides how many rows are held back&quot;)
+ax.legend(loc=&quot;lower right&quot;, fontsize=9)
+ax.invert_yaxis()
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>test_size=0.1  -&gt;  train 9 rows, test 1 rows
+test_size=0.2  -&gt;  train 8 rows, test 2 rows
+test_size=0.3  -&gt;  train 7 rows, test 3 rows
+test_size=0.5  -&gt;  train 5 rows, test 5 rows</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 25</span></div><pre class="py">try:
+    train_test_split(X, Y, test_size=0.2, shuffle=False, stratify=Y)
+except ValueError as e:
+    print(&quot;ValueError:&quot;, e)</pre></div><div class="out"><div class="h">Output</div><pre>ValueError: Stratified train/test split is not implemented for shuffle=False</pre></div><div class="src-head">📓 <a href="../Concept/23_Simple_Dataset_Practice.ipynb">23_Simple_Dataset_Practice.ipynb</a></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 4</span></div><pre class="py">hours_studied = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+passed = [0,0,0,0,0,0,0,0,0,1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+
+dataset = pd.DataFrame({&quot;Hours_Studied&quot;: hours_studied, &quot;Passed&quot;: passed})
+dataset.index = range(1, 21)
+dataset.index.name = &quot;Student&quot;
+dataset</pre></div><div class="out"><div class="h">Output</div><pre>         Hours_Studied  Passed
+Student                       
+1                    1       0
+2                    2       0
+3                    3       0
+4                    4       0
+5                    5       0
+6                    6       0
+7                    7       0
+8                    8       0
+9                    9       0
+10                  10       1
+11                  11       0
+12                  12       0
+13                  13       1
+14                  14       1
+15                  15       1
+16                  16       1
+17                  17       1
+18                  18       1
+19                  19       1
+20                  20       1</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 6</span></div><pre class="py">X = dataset.drop(columns=[&quot;Passed&quot;])
+y = dataset[&quot;Passed&quot;]</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 8</span></div><pre class="py">X.shape, y.shape</pre></div><div class="out"><div class="h">Output</div><pre>((20, 1), (20,))</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+X_train.shape, X_test.shape</pre></div><div class="out"><div class="h">Output</div><pre>((16, 1), (4, 1))</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 12</span></div><pre class="py">
+from sklearn.tree import DecisionTreeClassifier
+
+model = DecisionTreeClassifier(max_depth=1, random_state=42)
+model.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(max_depth=1, random_state=42)</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 15</span></div><pre class="py">from sklearn.tree import export_text
+print(export_text(model, feature_names=[&quot;Hours_Studied&quot;]))</pre></div><div class="out"><div class="h">Output</div><pre>|--- Hours_Studied &lt;= 12.50
+|   |--- class: 0
+|--- Hours_Studied &gt;  12.50
+|   |--- class: 1</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 17</span></div><pre class="py">import matplotlib.pyplot as plt
+
+train_view = X_train.join(y_train).sort_values(&quot;Hours_Studied&quot;)
+fail = train_view[train_view[&quot;Passed&quot;] == 0]
+passed_rows = train_view[train_view[&quot;Passed&quot;] == 1]
+
+fig, ax = plt.subplots(figsize=(10, 2.5))
+
+ax.scatter(fail[&quot;Hours_Studied&quot;], [0]*len(fail), color=&quot;#2a78d6&quot;, s=120, label=&quot;Failed (0)&quot;, zorder=3)
+ax.scatter(passed_rows[&quot;Hours_Studied&quot;], [0]*len(passed_rows), color=&quot;#eb6834&quot;, s=120, label=&quot;Passed (1)&quot;, zorder=3)
+
+for hrs in train_view[&quot;Hours_Studied&quot;]:
+    ax.text(hrs, 0.15, str(hrs), ha=&quot;center&quot;, fontsize=9, color=&quot;#52514e&quot;)
+
+ax.axvline(12.5, color=&quot;#0b0b0b&quot;, linestyle=&quot;--&quot;, linewidth=1.5)
+ax.text(12.5, -0.35, &quot;threshold: 12.50&quot;, ha=&quot;center&quot;, fontsize=10)
+ax.axvspan(0, 12.5, color=&quot;#2a78d6&quot;, alpha=0.07)
+ax.axvspan(12.5, 21, color=&quot;#eb6834&quot;, alpha=0.07)
+
+ax.set_xlim(0, 21)
+ax.set_ylim(-0.5, 0.5)
+ax.set_yticks([])
+ax.set_xlabel(&quot;Hours Studied&quot;)
+ax.set_title(&quot;The 16 training students, split at Hours_Studied &lt;= 12.5&quot;)
+ax.legend(loc=&quot;upper left&quot;, frameon=False)
+for spine in [&quot;top&quot;, &quot;right&quot;, &quot;left&quot;]:
+    ax.spines[spine].set_visible(False)
+
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.metrics import accuracy_score
+
+y_pred = model.predict(X_test)
+y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([0, 1, 1, 0])</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 21</span></div><pre class="py">y_test</pre></div><div class="out"><div class="h">Output</div><pre>Student
+4     0
+19    1
+16    1
+7     0
+Name: Passed, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 23</span></div><pre class="py">accuracy_score(y_test, y_pred)</pre></div><div class="out"><div class="h">Output</div><pre>1.0</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

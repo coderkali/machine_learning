@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Tree Classification — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/16_Descison_Tree_Classfication.ipynb">16_Descison_Tree_Classfication.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">data = pd.read_csv(&#x27;../../../01_Python/03_Pandas/Data/exam.csv&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 3</span></div><pre class="py">data</pre></div><div class="out"><div class="h">Output</div><pre>   5me  guide result
+0    0      0   fail
+1    1      1   pass
+2    1      0   pass
+3    0      0   fail
+4    0      0   fail
+5    1      1   pass
+6    0      1   fail
+7    1      1   pass
+8    1      0   fail
+9    1      1   pass</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 5</span></div><pre class="py">data.result.value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>result
+fail    5
+pass    5
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 7</span></div><pre class="py">entropy_results = -(5/10)*np.log2(5/10) -(5/10)*np.log2(5/10)
+entropy_results</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(1.0)</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 9</span></div><pre class="py">data.rename(columns = {&#x27;5me&#x27;:&#x27;yt&#x27;}, inplace = True)</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 10</span></div><pre class="py">data</pre></div><div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+1   1      1   pass
+2   1      0   pass
+3   0      0   fail
+4   0      0   fail
+5   1      1   pass
+6   0      1   fail
+7   1      1   pass
+8   1      0   fail
+9   1      1   pass</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 11</span></div><pre class="py">data[data.yt == 1]</pre></div><div class="out"><div class="h">Output</div><pre>   yt  guide result
+1   1      1   pass
+2   1      0   pass
+5   1      1   pass
+7   1      1   pass
+8   1      0   fail
+9   1      1   pass</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 12</span></div><pre class="py">entropy_results_yt_yes = -(5/6)*np.log2(5/6) -(1/6)*np.log2(1/6)
+entropy_results_yt_yes</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.6500224216483541)</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 13</span></div><pre class="py">data[data.yt == 0]</pre></div><div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+3   0      0   fail
+4   0      0   fail
+6   0      1   fail</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 14</span></div><pre class="py">data</pre></div><div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+1   1      1   pass
+2   1      0   pass
+3   0      0   fail
+4   0      0   fail
+5   1      1   pass
+6   0      1   fail
+7   1      1   pass
+8   1      0   fail
+9   1      1   pass</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py">yt_entropy = (6/10) * entropy_results_yt_yes +  (4/10) * 0
+yt_entropy</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.39001345298901247)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 18</span></div><pre class="py">info_yt = entropy_results - (6/10) * entropy_results_yt_yes -  (4/10) * 0
+info_yt</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.6099865470109875)</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 20</span></div><pre class="py">data[data.guide == 1]</pre></div><div class="out"><div class="h">Output</div><pre>   yt  guide result
+1   1      1   pass
+5   1      1   pass
+6   0      1   fail
+7   1      1   pass
+9   1      1   pass</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 21</span></div><pre class="py">entropy_results_guide_yes = -(4/5)*np.log2(4/5) -(1/5)*np.log2(1/5)
+entropy_results_guide_yes</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.7219280948873623)</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 22</span></div><pre class="py">data[data.guide == 0]</pre></div><div class="out"><div class="h">Output</div><pre>   yt  guide result
+0   0      0   fail
+2   1      0   pass
+3   0      0   fail
+4   0      0   fail
+8   1      0   fail</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 23</span></div><pre class="py">entropy_results_guide_no = -(1/5)*np.log2(1/5) -(4/5)*np.log2(4/5)
+entropy_results_guide_no</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.7219280948873623)</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 24</span></div><pre class="py">guide_entropy = (5/10) * entropy_results_guide_yes +  (5/10) * entropy_results_guide_no
+guide_entropy</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.7219280948873623)</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 25</span></div><pre class="py">info_guide = entropy_results - guide_entropy
+info_guide</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.2780719051126377)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 27</span></div><pre class="py">print(info_yt)</pre></div><div class="out"><div class="h">Output</div><pre>0.6099865470109875</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 28</span></div><pre class="py">print(info_guide)</pre></div><div class="out"><div class="h">Output</div><pre>0.2780719051126377</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 30</span></div><pre class="py">from sklearn.preprocessing import LabelEncoder</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 31</span></div><pre class="py">le = LabelEncoder()          # create the encoder that will learn the text-to-number mapping
+df = data                    # NOT a copy - df and data point to the same table in memory
+df.result = le.fit_transform(df.result)   # fit: sort unique labels (fail, pass) -&gt; 0, 1; transform: replace each value
+df</pre></div><div class="out"><div class="h">Output</div><pre>   yt  guide  result
+0   0      0       0
+1   1      1       1
+2   1      0       1
+3   0      0       0
+4   0      0       0
+5   1      1       1
+6   0      1       0
+7   1      1       1
+8   1      0       0
+9   1      1       1</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 33</span></div><pre class="py">x = df[[&#x27;yt&#x27;,&#x27;guide&#x27;]]
+y = df[&#x27;result&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 35</span></div><pre class="py">from sklearn.tree import DecisionTreeClassifier, export_graphviz</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 36</span></div><pre class="py">dt = DecisionTreeClassifier(criterion=&#x27;entropy&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 37</span></div><pre class="py">dt.fit(x,y)</pre></div><div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(criterion=&#x27;entropy&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 39</span></div><pre class="py">export_graphviz(dt,&#x27;dt.tree&#x27;,feature_names=[&#x27;yt&#x27;,&#x27;guide&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 41</span></div><pre class="py">from sklearn.tree import plot_tree
+
+plt.figure(figsize=(9, 6))
+plot_tree(dt, feature_names=[&#x27;yt&#x27;, &#x27;guide&#x27;], class_names=[&#x27;fail&#x27;, &#x27;pass&#x27;], filled=True)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 43</span></div><pre class="py">dt.predict([[1,1]])</pre></div><div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/sklearn/utils/validation.py:2827: UserWarning: X does not have valid feature names, but DecisionTreeClassifier was fitted with feature names
+  warnings.warn(
+array([1])</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 45</span></div><pre class="py">dt.score(x,y)</pre></div><div class="out"><div class="h">Output</div><pre>0.9</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

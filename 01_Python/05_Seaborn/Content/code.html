@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seaborn — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import seaborn as sns
+import numpy as np
+import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">print(sns.__version__)</pre></div><div class="out"><div class="h">Output</div><pre>0.13.2</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 5</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+sns.lineplot(x=x,y=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 6</span></div><pre class="py">df = pd.DataFrame({
+ &#x27;x&#x27;: x,
+ &#x27;y&#x27;: y
+})
+sns.lineplot(x=&#x27;x&#x27;, y=&#x27;y&#x27;, data=df)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;x&#x27;, ylabel=&#x27;y&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 8</span></div><pre class="py">data = sns.load_dataset(&quot;iris&quot;)
+print(data)</pre></div><div class="out"><div class="h">Output</div><pre>     sepal_length  sepal_width  petal_length  petal_width    species
+0             5.1          3.5           1.4          0.2     setosa
+1             4.9          3.0           1.4          0.2     setosa
+2             4.7          3.2           1.3          0.2     setosa
+3             4.6          3.1           1.5          0.2     setosa
+4             5.0          3.6           1.4          0.2     setosa
+..            ...          ...           ...          ...        ...
+145           6.7          3.0           5.2          2.3  virginica
+146           6.3          2.5           5.0          1.9  virginica
+147           6.5          3.0           5.2          2.0  virginica
+148           6.2          3.4           5.4          2.3  virginica
+149           5.9          3.0           5.1          1.8  virginica
+
+[150 rows x 5 columns]</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 10</span></div><pre class="py">sns.scatterplot(x=&quot;sepal_length&quot;,y = &quot;petal_length&quot;,data= data)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 11</span></div><pre class="py">data = sns.load_dataset(&#x27;iris&#x27;)
+sns.lineplot(x = &quot;sepal_length&quot;, y = &quot;petal_length&quot;, data = data, hue=&quot;species&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 12</span></div><pre class="py">data = sns.load_dataset(&#x27;iris&#x27;)
+sns.lineplot(x=&quot;sepal_length&quot;, y=&quot;petal_length&quot;, data=data,hue=&quot;species&quot;,style=&quot;species&quot;, markers=True)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 13</span></div><pre class="py">data = sns.load_dataset(&quot;iris&quot;)
+data.info()
+sns.scatterplot(x=&quot;sepal_length&quot;,y = &quot;petal_length&quot;, hue=&quot;species&quot;, size=&quot;species&quot;,data=data,sizes=(20, 100))</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 150 entries, 0 to 149
+Data columns (total 5 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   sepal_length  150 non-null    float64
+ 1   sepal_width   150 non-null    float64
+ 2   petal_length  150 non-null    float64
+ 3   petal_width   150 non-null    float64
+ 4   species       150 non-null    str    
+dtypes: float64(4), str(1)
+memory usage: 6.0 KB
+&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 15</span></div><pre class="py">sns.histplot(x=&quot;sepal_length&quot;, data=data)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Count&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py">sns.histplot(data=data, x=&quot;sepal_length&quot;, kde=True, color=&quot;purple&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Count&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 17</span></div><pre class="py">sns.kdeplot(data=data, x=&quot;sepal_length&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 18</span></div><pre class="py">sns.kdeplot(data= data, x = &quot;sepal_length&quot;, hue= &quot;species&quot;, fill = True, alpha=0.4)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 20</span></div><pre class="py">sns.pairplot(data, hue=&quot;species&quot;, markers=[&quot;o&quot;, &quot;s&quot;, &quot;D&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.PairGrid at 0x1185f06e0&gt;</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 22</span></div><pre class="py">sns.violinplot(
+    x=&quot;species&quot;,
+    y=&quot;sepal_length&quot;,
+    data=data,
+    hue=&quot;species&quot;,
+    palette=[&quot;orange&quot;, &quot;skyblue&quot;, &quot;lightgreen&quot;],
+    legend=False,
+)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;species&#x27;, ylabel=&#x27;sepal_length&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 24</span></div><pre class="py">sns.countplot(x =&#x27;species&#x27;,hue=&quot;species&quot;, data = data)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;species&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 26</span></div><pre class="py">titanic = sns.load_dataset(&quot;titanic&quot;)
+print(titanic)</pre></div><div class="out"><div class="h">Output</div><pre>     survived  pclass     sex   age  sibsp  parch     fare embarked   class  \
+0           0       3    male  22.0      1      0   7.2500        S   Third   
+1           1       1  female  38.0      1      0  71.2833        C   First   
+2           1       3  female  26.0      0      0   7.9250        S   Third   
+3           1       1  female  35.0      1      0  53.1000        S   First   
+4           0       3    male  35.0      0      0   8.0500        S   Third   
+..        ...     ...     ...   ...    ...    ...      ...      ...     ...   
+886         0       2    male  27.0      0      0  13.0000        S  Second   
+887         1       1  female  19.0      0      0  30.0000        S   First   
+888         0       3  female   NaN      1      2  23.4500        S   Third   
+889         1       1    male  26.0      0      0  30.0000        C   First   
+890         0       3    male  32.0      0      0   7.7500        Q   Third   
+
+       who  adult_male deck  embark_town alive  alone  
+0      man        True  NaN  Southampton    no  False  
+1    woman       False    C    Cherbourg   yes  False  
+2    woman       False  NaN  Southampton   yes   True  
+3    woman       False    C  Southampton   yes  False  
+4      man        True  NaN  Southampton    no   True  
+..     ...         ...  ...          ...   ...    ...  
+886    man        True  NaN  Southampton    no   True  
+887</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 27</span></div><pre class="py">sns.barplot(x=&quot;class&quot;, y=&quot;fare&quot;, data=titanic)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;class&#x27;, ylabel=&#x27;fare&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 28</span></div><pre class="py">sns.barplot(x=&quot;class&quot;, y=&quot;fare&quot;, data=titanic,hue=&quot;sex&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;class&#x27;, ylabel=&#x27;fare&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 30</span></div><pre class="py">tips = sns.load_dataset(&quot;tips&quot;)
+print(tips)</pre></div><div class="out"><div class="h">Output</div><pre>     total_bill   tip     sex smoker   day    time  size
+0         16.99  1.01  Female     No   Sun  Dinner     2
+1         10.34  1.66    Male     No   Sun  Dinner     3
+2         21.01  3.50    Male     No   Sun  Dinner     3
+3         23.68  3.31    Male     No   Sun  Dinner     2
+4         24.59  3.61  Female     No   Sun  Dinner     4
+..          ...   ...     ...    ...   ...     ...   ...
+239       29.03  5.92    Male     No   Sat  Dinner     3
+240       27.18  2.00  Female    Yes   Sat  Dinner     2
+241       22.67  2.00    Male    Yes   Sat  Dinner     2
+242       17.82  1.75    Male     No   Sat  Dinner     2
+243       18.78  3.00  Female     No  Thur  Dinner     2
+
+[244 rows x 7 columns]</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 31</span></div><pre class="py">sns.boxplot(x=&quot;day&quot;, y=&quot;total_bill&quot;, data=tips,hue=&quot;time&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;day&#x27;, ylabel=&#x27;total_bill&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 33</span></div><pre class="py">sns.countplot(x =&#x27;sex&#x27;, hue=&quot;sex&quot;, data = tips)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sex&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 34</span></div><pre class="py">sns.countplot(y =&#x27;sex&#x27;, data = tips,hue=&quot;sex&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;count&#x27;, ylabel=&#x27;sex&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 35</span></div><pre class="py">sns.countplot(x =&#x27;sex&#x27;, data = tips,hue = &quot;smoker&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sex&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 37</span></div><pre class="py">import matplotlib.pyplot as plt
+abc = sns.FacetGrid(tips, row =&#x27;smoker&#x27;, col =&#x27;time&#x27;)
+abc.map(plt.hist, &#x27;tip&#x27;,color =&#x27;gold&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.FacetGrid at 0x1195dd550&gt;</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 38</span></div><pre class="py">abc = sns.FacetGrid(tips, col =&#x27;time&#x27;)
+abc.map(plt.scatter,&#x27;total_bill&#x27;, &#x27;tip&#x27;,color =&#x27;gold&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.FacetGrid at 0x11979d590&gt;</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 40</span></div><pre class="py">import matplotlib.pyplot as plt
+tips = sns.load_dataset(&quot;tips&quot;)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 41</span></div><pre class="py">sns.stripplot(
+    x=&quot;day&quot;,
+    y=&quot;total_bill&quot;,
+    data=tips,
+    hue=&quot;day&quot;,
+    palette=[&quot;orange&quot;, &quot;skyblue&quot;, &quot;lightgreen&quot;, &quot;salmon&quot;],
+    legend=False,
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 42</span></div><pre class="py">sns.stripplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ color=&quot;red&quot;
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 43</span></div><pre class="py">sns.stripplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ hue=&quot;sex&quot;,
+ data=tips
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 45</span></div><pre class="py">sns.swarmplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ hue= &quot;day&quot;
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 46</span></div><pre class="py">sns.swarmplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ size=8,
+ hue=&quot;day&quot;
+)
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/seaborn/categorical.py:3399: UserWarning: 5.7% of the points cannot be placed; you may want to decrease the size of the markers or use stripplot.
+  warnings.warn(msg, UserWarning)</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 47</span></div><pre class="py">sns.swarmplot(
+ x=&quot;total_bill&quot;,
+ y=&quot;day&quot;,
+ data=tips,
+ hue=&quot;day&quot;
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 49</span></div><pre class="py">sns.regplot(
+ x=&quot;total_bill&quot;,
+ y=&quot;tip&quot;,
+ data=tips,
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 50</span></div><pre class="py">sns.regplot(
+ x=&quot;total_bill&quot;,
+ y=&quot;tip&quot;,
+ data=tips,
+ scatter=False
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 52</span></div><pre class="py">sns.set_theme(style=&quot;darkgrid&quot;)
+sns.lineplot(
+ x=[1,2,3,4],
+ y=[10,20,15,25]
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 53</span></div><pre class="py">sns.set_theme(style=&quot;whitegrid&quot;)
+sns.lineplot(
+ x=[1,2,3,4],
+ y=[10,20,15,25]
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 54</span></div><pre class="py">sns.set_theme(style=&quot;ticks&quot;)
+sns.lineplot(
+ x=[1,2,3,4],
+ y=[10,20,15,25]
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 56</span></div><pre class="py">sns.set_palette(&quot;deep&quot;)
+sns.barplot(
+    x=&quot;day&quot;,
+    y=&quot;total_bill&quot;,
+    data=tips,
+    hue=&quot;day&quot;,
+    width=0.9,
+    dodge=False,
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 57</span></div><pre class="py">sns.set_palette(&quot;pastel&quot;)
+sns.barplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips,
+ hue=&quot;day&quot;
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 58</span></div><pre class="py">sns.set_palette(&quot;bright&quot;)
+sns.barplot(
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ data=tips
+)
+plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/pizza_seaborn.ipynb">pizza_seaborn.ipynb</a></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 0</span></div><pre class="py">import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load our pizza data
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+
+# Set the style — you already did this in your original notebook!
+sns.set_style(&#x27;darkgrid&#x27;)
+
+print(&quot;Seaborn version:&quot;, sns.__version__)
+print(&quot;Ready!&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Seaborn version: 0.13.2
+Ready!</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 1</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+
+ax.set_title(&#x27;Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 2</span></div><pre class="py"># Version 1 — explicit Matplotlib canvas
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 3</span></div><pre class="py"># Version 2 — Seaborn creates canvas automatically
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 4</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+# Remove error bars
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, errorbar=None)
+
+ax.set_title(&#x27;Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 6</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, hue=&#x27;area&#x27;, ax=ax)
+
+ax.set_title(&#x27;Revenue by Pizza Type and Area&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 8</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+sns.boxplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=ax)
+
+ax.set_title(&#x27;Revenue Distribution by Pizza&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 10</span></div><pre class="py"># Create a pivot table — pizza types as columns, days as rows
+day_order = [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;]
+
+pivot = df.pivot_table(values=&#x27;revenue&#x27;, 
+                       index=&#x27;date&#x27;, 
+                       columns=&#x27;pizza&#x27;,
+                       aggfunc=&#x27;sum&#x27;).reindex(day_order)
+
+print(pivot)</pre></div><div class="out"><div class="h">Output</div><pre>pizza  BBQ Chicken  Margherita  Pepperoni
+date                                     
+Mon            NaN       120.0      135.0
+Tue          252.0         NaN      120.0
+Wed            NaN       156.0        NaN
+Thu          216.0         NaN      165.0
+Fri          288.0         NaN      225.0
+Sat          360.0         NaN        NaN
+Sun            NaN       216.0        NaN</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 11</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 6))
+
+sns.heatmap(pivot, 
+            annot=True,        # show numbers inside cells
+            fmt=&#x27;g&#x27;,           # clean number format
+            cmap=&#x27;YlOrRd&#x27;,     # color scheme
+            ax=ax)
+
+ax.set_title(&#x27;Revenue by Day and Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 13</span></div><pre class="py">fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+# Chart 1 — top left — Bar chart with hue
+sns.barplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, 
+            hue=&#x27;area&#x27;, ax=axes[0,0])
+axes[0,0].set_title(&#x27;Revenue by Pizza and Area&#x27;)
+
+# Chart 2 — top right — Box plot
+sns.boxplot(data=df, x=&#x27;pizza&#x27;, y=&#x27;revenue&#x27;, ax=axes[0,1])
+axes[0,1].set_title(&#x27;Revenue Distribution by Pizza&#x27;)
+
+# Chart 3 — bottom left — Heatmap
+sns.heatmap(pivot, annot=True, fmt=&#x27;g&#x27;, 
+            cmap=&#x27;YlOrRd&#x27;, ax=axes[1,0])
+axes[1,0].set_title(&#x27;Revenue by Day and Pizza&#x27;)
+
+# Chart 4 — bottom right — your turn!
+# Write a scatter plot of quantity vs revenue
+# colored by pizza type using hue
+# YOUR CODE HERE
+sns.scatterplot(data=df, x=&#x27;quantity&#x27;, y=&#x27;revenue&#x27;, hue=&quot;pizza&quot;,ax=axes[1,1])
+axes[1,1].set_title(&#x27;Revenue by Day and Pizza&#x27;)
+
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 14</span></div><pre class="py">fig.savefig(&#x27;pizza_final_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)</pre></div><div class="src-head">🐍 <a href="../Concept/example_01.py">example_01.py</a></div><div class="code"><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+
+plt.figure(figsize=(8,5))
+plt.plot([1,2,3],[4,5,6])
+plt.show()
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.plot([1,2,3], [4,5,6])
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

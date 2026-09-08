@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K Nearest Neighbor — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/25_K_Nearest_Neighbor_explained.ipynb">25_K_Nearest_Neighbor_explained.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.datasets import make_blobs, make_regression
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 6</span></div><pre class="py">story_points = [
+    (1.0, 1.2, &#x27;blue&#x27;), (1.6, 1.8, &#x27;blue&#x27;), (2.2, 1.1, &#x27;blue&#x27;),
+    (2.8, 2.0, &#x27;orange&#x27;), (3.2, 1.3, &#x27;orange&#x27;),
+    (6.0, 5.5, &#x27;orange&#x27;), (6.6, 6.2, &#x27;orange&#x27;),
+    (7.0, 5.2, &#x27;blue&#x27;), (7.5, 6.5, &#x27;blue&#x27;)
+]
+new_customer = (2.0, 1.5)
+nearest_indexes = [0, 1, 2, 3, 4]
+
+plt.figure(figsize=(8, 5))
+for index, (feature_1, feature_2, group) in enumerate(story_points):
+    plt.scatter(feature_1, feature_2, c=group, s=90, edgecolor=&#x27;black&#x27;)
+    plt.text(feature_1 + 0.08, feature_2 + 0.08, f&#x27;customer {index + 1}&#x27;, fontsize=9)
+
+for index in nearest_indexes:
+    feature_1, feature_2, _ = story_points[index]
+    plt.plot(
+        [new_customer[0], feature_1],
+        [new_customer[1], feature_2],
+        color=&#x27;gray&#x27;, linestyle=&#x27;--&#x27;, linewidth=1
+    )
+
+plt.scatter(
+    *new_customer, c=&#x27;gold&#x27;, edgecolor=&#x27;black&#x27;, marker=&#x27;X&#x27;, s=220,
+    label=&#x27;Maya\&#x27;s new customer&#x27;
+)
+plt.annotate(
+    &#x27;5 closest neighbours:\n3 blue + 2 orange\n=&gt; predict blue&#x27;,
+    xy=new_customer, xytext=(3.8, 0.4),
+    arrowprops={&#x27;arrowstyle&#x27;: &#x27;-&gt;&#x27;, &#x27;color&#x27;: &#x27;black&#x27;},
+    bbox={&#x27;boxstyle&#x27;: &#x27;round,pad=0.4&#x27;, &#x27;facecolor&#x27;: &#x27;white&#x27;, &#x27;edgecolor&#x27;: &#x27;black&#x27;}
+)
+plt.xlabel(&#x27;feature 1: horizontal customer measurement&#x27;)
+plt.ylabel(&#x27;feature 2: vertical customer measurement&#x27;)
+plt.title(&#x27;Maya asks nearby customers for a majority vote&#x27;)
+plt.xlim(0, 8.5)
+plt.ylim(0, 7.2)
+plt.grid(alpha=0.2)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 9</span></div><pre class="py">X, y = make_blobs(
+    n_features=2,
+    n_samples=1000,
+    cluster_std=2,
+    centers=2,
+    random_state=1
+)
+print(&#x27;X shape:&#x27;, X.shape)
+print(&#x27;y shape:&#x27;, y.shape)
+print(&#x27;first X row:&#x27;, X[0])
+print(&#x27;first y value:&#x27;, y[0])</pre></div><div class="out"><div class="h">Output</div><pre>X shape: (1000, 2)
+y shape: (1000,)
+first X row: [-4.45718554  4.57002551]
+first y value: 0</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 12</span></div><pre class="py">plt.scatter(X[:, 0], X[:, 1], alpha=0.6, c=y)
+plt.scatter(-5, 0, c=&#x27;red&#x27;, marker=&#x27;x&#x27;, s=100, label=&#x27;new point&#x27;)
+plt.xlabel(&#x27;feature 1&#x27;)
+plt.ylabel(&#x27;feature 2&#x27;)
+plt.title(&#x27;Customer examples and one new customer&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 15</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=0
+)
+print(X_train.shape, X_test.shape)
+print(y_train.shape, y_test.shape)</pre></div><div class="out"><div class="h">Output</div><pre>(700, 2) (300, 2)
+(700,) (300,)</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 17</span></div><pre class="py">classifier = KNeighborsClassifier(n_neighbors=5)
+classifier.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>KNeighborsClassifier()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 19</span></div><pre class="py">training_accuracy = classifier.score(X_train, y_train)
+test_accuracy = classifier.score(X_test, y_test)
+print(&#x27;training accuracy:&#x27;, training_accuracy)
+print(&#x27;test accuracy:&#x27;, test_accuracy)</pre></div><div class="out"><div class="h">Output</div><pre>training accuracy: 0.9971428571428571
+test accuracy: 1.0</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 21</span></div><pre class="py">distances, positions = classifier.kneighbors([[-5, 0]])
+print(&#x27;distances:&#x27;, distances)
+print(&#x27;training-row positions:&#x27;, positions)
+print(&#x27;neighbour labels:&#x27;, y_train.iloc[positions[0]] if hasattr(y_train, &#x27;iloc&#x27;) else y_train[positions[0]])
+print(&#x27;prediction:&#x27;, classifier.predict([[-5, 0]]))</pre></div><div class="out"><div class="h">Output</div><pre>distances: [[0.67827132 0.90025909 1.1140586  1.19193246 1.50207321]]
+training-row positions: [[286 463 171 479 143]]
+neighbour labels: [1 0 0 1 0]
+prediction: [0]</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 25</span></div><pre class="py">X_reg, y_reg = make_regression(
+    n_features=1, noise=20, n_samples=10000, random_state=1
+)
+plt.scatter(X_reg, y_reg, s=3)
+plt.xlabel(&#x27;input feature&#x27;)
+plt.ylabel(&#x27;numeric target&#x27;)
+plt.title(&#x27;Examples for KNN regression&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 27</span></div><pre class="py">regressor = KNeighborsRegressor(n_neighbors=3)
+regressor.fit(X_reg, y_reg)
+print(&#x27;training R^2:&#x27;, regressor.score(X_reg, y_reg))
+distances, positions = regressor.kneighbors([[1]])
+neighbour_targets = y_reg[positions[0]]
+prediction = regressor.predict([[1]])
+print(&#x27;neighbour targets:&#x27;, neighbour_targets)
+print(&#x27;manual average:&#x27;, neighbour_targets.mean())
+print(&#x27;KNN prediction:&#x27;, prediction)</pre></div><div class="out"><div class="h">Output</div><pre>training R^2: 0.9657784708687274
+neighbour targets: [81.98019188 51.59353389 62.51252132]
+manual average: 65.36208236231441
+KNN prediction: [65.36208236]</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

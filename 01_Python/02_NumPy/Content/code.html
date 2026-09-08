@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NumPy — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">arr1 = [&#x27;pune&#x27;, &quot;mumbai&quot;, &#x27;surat&#x27;, &quot;kolkata&quot;, &#x27;bihar&#x27;, &quot;jaipur&quot;, &#x27;chennai&#x27;]
+arr1</pre></div><div class="out"><div class="h">Output</div><pre>[&#x27;pune&#x27;, &#x27;mumbai&#x27;, &#x27;surat&#x27;, &#x27;kolkata&#x27;, &#x27;bihar&#x27;, &#x27;jaipur&#x27;, &#x27;chennai&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">type(arr1)</pre></div><div class="out"><div class="h">Output</div><pre>list</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py"># lists are indexed from 0
+arr1[0]</pre></div><div class="out"><div class="h">Output</div><pre>&#x27;pune&#x27;</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 7</span></div><pre class="py">import numpy
+
+arr2 = numpy.array([10, 20, 30, 40, 50])
+arr2</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 8</span></div><pre class="py">type(arr2)</pre></div><div class="out"><div class="h">Output</div><pre>numpy.ndarray</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 10</span></div><pre class="py">print(arr2)</pre></div><div class="out"><div class="h">Output</div><pre>[10 20 30 40 50]</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">arr2</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 14</span></div><pre class="py">arr3 = numpy.array((100, 200, 300, 400, 500))
+arr3</pre></div><div class="out"><div class="h">Output</div><pre>array([100, 200, 300, 400, 500])</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 15</span></div><pre class="py">type(arr3)</pre></div><div class="out"><div class="h">Output</div><pre>numpy.ndarray</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 18</span></div><pre class="py">import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 20</span></div><pre class="py"># 0-D array (scalar)
+a0 = np.array(5)
+a0</pre></div><div class="out"><div class="h">Output</div><pre>array(5)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 21</span></div><pre class="py">a0.ndim, a0.shape</pre></div><div class="out"><div class="h">Output</div><pre>(0, ())</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 23</span></div><pre class="py"># 1-D array
+a1 = np.array([0, 1, 2, 3])
+a1</pre></div><div class="out"><div class="h">Output</div><pre>array([0, 1, 2, 3])</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 24</span></div><pre class="py">a1.ndim, a1.shape</pre></div><div class="out"><div class="h">Output</div><pre>(1, (4,))</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 26</span></div><pre class="py"># 2-D array
+a2 = np.array([[1, 2, 3], [4, 5, 6]])
+a2</pre></div><div class="out"><div class="h">Output</div><pre>array([[1, 2, 3],
+       [4, 5, 6]])</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 27</span></div><pre class="py">a2.ndim, a2.shape</pre></div><div class="out"><div class="h">Output</div><pre>(2, (2, 3))</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 29</span></div><pre class="py"># 3-D array
+a3 = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+a3</pre></div><div class="out"><div class="h">Output</div><pre>array([[[1, 2],
+        [3, 4]],
+
+       [[5, 6],
+        [7, 8]]])</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 30</span></div><pre class="py">a3.ndim, a3.shape</pre></div><div class="out"><div class="h">Output</div><pre>(3, (2, 2, 2))</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 32</span></div><pre class="py"># 4-D array -&gt; each extra pair of brackets adds one more dimension
+a4 = np.array([[[[4, 44, 444, 4444]]]])
+a4</pre></div><div class="out"><div class="h">Output</div><pre>array([[[[   4,   44,  444, 4444]]]])</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 33</span></div><pre class="py">a4.ndim, a4.shape</pre></div><div class="out"><div class="h">Output</div><pre>(4, (1, 1, 1, 4))</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 35</span></div><pre class="py">a4b = np.array([4, 44, 444, 4444], ndmin=4)
+a4b</pre></div><div class="out"><div class="h">Output</div><pre>array([[[[   4,   44,  444, 4444]]]])</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 36</span></div><pre class="py">a4b.ndim, a4b.shape</pre></div><div class="out"><div class="h">Output</div><pre>(4, (1, 1, 1, 4))</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 39</span></div><pre class="py">amix1 = np.asarray([True, 5, 5.0, &quot;Kali&quot;])
+amix1</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;True&#x27;, &#x27;5&#x27;, &#x27;5.0&#x27;, &#x27;Kali&#x27;], dtype=&#x27;&lt;U32&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">amix1.dtype</pre></div><div class="out"><div class="h">Output</div><pre>dtype(&#x27;&lt;U32&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 43</span></div><pre class="py">amix2 = np.array([True, 5])
+amix2</pre></div><div class="out"><div class="h">Output</div><pre>array([1, 5])</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 45</span></div><pre class="py">amix3 = np.array([False, 10])
+amix3</pre></div><div class="out"><div class="h">Output</div><pre>array([ 0, 10])</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 47</span></div><pre class="py">amix4 = np.array([True, &#x27;shridhar&#x27;, 5, 5.0])
+amix4</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;True&#x27;, &#x27;shridhar&#x27;, &#x27;5&#x27;, &#x27;5.0&#x27;], dtype=&#x27;&lt;U32&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 50</span></div><pre class="py">amix5 = np.asarray([False, 10], dtype=np.int32)
+amix5</pre></div><div class="out"><div class="h">Output</div><pre>array([ 0, 10], dtype=int32)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 52</span></div><pre class="py">amix6 = np.array([1, 5.55, 2, 6.9], dtype=np.float64)
+amix6</pre></div><div class="out"><div class="h">Output</div><pre>array([1.  , 5.55, 2.  , 6.9 ])</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 55</span></div><pre class="py"># indexing a 1-D array
+a1[0], a1[1], a1[-1]</pre></div><div class="out"><div class="h">Output</div><pre>(np.int64(0), np.int64(1), np.int64(3))</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 57</span></div><pre class="py"># indexing a 2-D array -&gt; row first, then column
+a2[1]          # whole row at index 1</pre></div><div class="out"><div class="h">Output</div><pre>array([4, 5, 6])</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 59</span></div><pre class="py">a2[1][2], a2[1, 2]   # same element, two ways to write it</pre></div><div class="out"><div class="h">Output</div><pre>(np.int64(6), np.int64(6))</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 61</span></div><pre class="py"># indexing a 3-D array -&gt; block first, then row, then column
+a3[1]          # whole 2x2 block at index 1</pre></div><div class="out"><div class="h">Output</div><pre>array([[5, 6],
+       [7, 8]])</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 62</span></div><pre class="py">a3[1][0]       # row 0 inside block 1</pre></div><div class="out"><div class="h">Output</div><pre>array([5, 6])</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 63</span></div><pre class="py">a3[1][0][1], a3[1, 0, 1]   # single element, two ways to write it</pre></div><div class="out"><div class="h">Output</div><pre>(np.int64(6), np.int64(6))</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 65</span></div><pre class="py"># indexing a 4-D array -&gt; peel off one bracket layer at a time
+a4[0]          # drops to 3-D: shape (1, 1, 4)</pre></div><div class="out"><div class="h">Output</div><pre>array([[[   4,   44,  444, 4444]]])</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 66</span></div><pre class="py">a4[0][0][0], a4[0, 0, 0]      # drops to 1-D: array([4, 44, 444, 4444])</pre></div><div class="out"><div class="h">Output</div><pre>(array([   4,   44,  444, 4444]), array([   4,   44,  444, 4444]))</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 67</span></div><pre class="py">a4[0, 0, 0, 2]      # single element -&gt; 444</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(444)</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 70</span></div><pre class="py">arr2</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 71</span></div><pre class="py">arr2[-1]</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(50)</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 72</span></div><pre class="py">arr2[-2]</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(40)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 75</span></div><pre class="py">a12 = np.array([1, 2, 3])
+a12</pre></div><div class="out"><div class="h">Output</div><pre>array([1, 2, 3])</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 76</span></div><pre class="py">a12[3]      # only 0, 1, 2 exist -&gt; IndexError</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[43], line 1
+----&gt; 1 a12[3]      # only 0, 1, 2 exist -&gt; IndexError
+
+IndexError: index 3 is out of bounds for axis 0 with size 3</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 78</span></div><pre class="py">a4[0, 0, 1, 0]      # axis 2 has size 1, so index 1 is too big</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[44], line 1
+----&gt; 1 a4[0, 0, 1, 0]      # axis 2 has size 1, so index 1 is too big
+
+IndexError: index 1 is out of bounds for axis 2 with size 1</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 81</span></div><pre class="py">arr2</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 82</span></div><pre class="py">arr2[1:]        # from index 1 to the end</pre></div><div class="out"><div class="h">Output</div><pre>array([20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 83</span></div><pre class="py">arr2[:3]        # from the start up to (not including) index 3</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30])</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 85</span></div><pre class="py">arr2[:]         # everything</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 86</span></div><pre class="py">arr2[1:4:1]     # start 1, stop 4, step 1</pre></div><div class="out"><div class="h">Output</div><pre>array([20, 30, 40])</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 87</span></div><pre class="py">arr2[1:4:2]     # same window, but skip every other item</pre></div><div class="out"><div class="h">Output</div><pre>array([20, 40])</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 89</span></div><pre class="py">arr2[:4:3]      # start 0, stop 4, step 3</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 40])</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 91</span></div><pre class="py">arr2[::4]       # whole array, step 4</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 50])</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 92</span></div><pre class="py">arr2[::]        # same as arr2[:]</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 95</span></div><pre class="py">for i in arr2:
+    print(i)</pre></div><div class="out"><div class="h">Output</div><pre>10
+20
+30
+40
+50</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 98</span></div><pre class="py">x = np.where(arr2 == 20)
+print(x)</pre></div><div class="out"><div class="h">Output</div><pre>(array([1]),)</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 100</span></div><pre class="py">x = np.where(arr2 == 50)
+print(x)</pre></div><div class="out"><div class="h">Output</div><pre>(array([4]),)</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 102</span></div><pre class="py">arrr = np.array([1, 2, 3, 1, 2, 3, 1, 2, 3])
+arrr</pre></div><div class="out"><div class="h">Output</div><pre>array([1, 2, 3, 1, 2, 3, 1, 2, 3])</pre></div><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 103</span></div><pre class="py">x = np.where(arrr == 2)
+print(x)</pre></div><div class="out"><div class="h">Output</div><pre>(array([1, 4, 7]),)</pre></div><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 106</span></div><pre class="py">arraysort = np.array([2, 1, 5, 3, 7, 5, 9, 8, 5, 7, 3])
+arraysort</pre></div><div class="out"><div class="h">Output</div><pre>array([2, 1, 5, 3, 7, 5, 9, 8, 5, 7, 3])</pre></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 107</span></div><pre class="py">np.sort(arraysort)</pre></div><div class="out"><div class="h">Output</div><pre>array([1, 2, 3, 3, 5, 5, 5, 7, 7, 8, 9])</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 108</span></div><pre class="py">arraysort      # unchanged</pre></div><div class="out"><div class="h">Output</div><pre>array([2, 1, 5, 3, 7, 5, 9, 8, 5, 7, 3])</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 111</span></div><pre class="py">np.insert(arr2, 5, 60)      # add 60 at the end position</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50, 60])</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 112</span></div><pre class="py">arr2      # still 5 items</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 114</span></div><pre class="py">arrr1 = np.insert(arr2, 5, 60)
+arrr1</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50, 60])</pre></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 115</span></div><pre class="py">np.insert(arraysort, 0, 100)     # insert at the front</pre></div><div class="out"><div class="h">Output</div><pre>array([100,   2,   1,   5,   3,   7,   5,   9,   8,   5,   7,   3])</pre></div><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 117</span></div><pre class="py">np.delete(arraysort, 0)      # remove the item at index 0</pre></div><div class="out"><div class="h">Output</div><pre>array([1, 5, 3, 7, 5, 9, 8, 5, 7, 3])</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 119</span></div><pre class="py">index = [0, 1, 2]
+arrr2 = np.delete(arr2, index)
+arrr2</pre></div><div class="out"><div class="h">Output</div><pre>array([40, 50])</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 120</span></div><pre class="py">arr2      # again, untouched</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 123</span></div><pre class="py">np.flip(arr2)</pre></div><div class="out"><div class="h">Output</div><pre>array([50, 40, 30, 20, 10])</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 124</span></div><pre class="py">arr2</pre></div><div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 126</span></div><pre class="py">arrflip = np.flip(arr2)
+arrflip</pre></div><div class="out"><div class="h">Output</div><pre>array([50, 40, 30, 20, 10])</pre></div><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 128</span></div><pre class="py">arr2[0] = 100
+arr2</pre></div><div class="out"><div class="h">Output</div><pre>array([100,  20,  30,  40,  50])</pre></div><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 131</span></div><pre class="py">arr2.sort()</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 132</span></div><pre class="py">arr2</pre></div><div class="out"><div class="h">Output</div><pre>array([ 20,  30,  40,  50, 100])</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 135</span></div><pre class="py">np.append(arr2, 1000)</pre></div><div class="out"><div class="h">Output</div><pre>array([  20,   30,   40,   50,  100, 1000])</pre></div><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 136</span></div><pre class="py">arr2      # not appended</pre></div><div class="out"><div class="h">Output</div><pre>array([ 20,  30,  40,  50, 100])</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 138</span></div><pre class="py">arr2.append(1000)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[77], line 1
+----&gt; 1 arr2.append(1000)
+
+AttributeError: &#x27;numpy.ndarray&#x27; object has no attribute &#x27;append&#x27;</pre></div><div class="src-head">📓 <a href="../Concept/example_02.ipynb">example_02.ipynb</a></div><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [79]</span><span class="cell">cell 4</span></div><pre class="py">arr1 = np.array([1,2,3])
+arr2 = np.array((4,5,6))
+arr3 = np.array([[1,2],[3,4]])
+arr4 = np.array([True,False,True])
+print(arr1,arr2,arr3,arr4)</pre></div><div class="out"><div class="h">Output</div><pre>[1 2 3] [4 5 6] [[1 2]
+ [3 4]] [ True False  True]</pre></div><div class="code"><div class="code-head"><span>In [80]</span><span class="cell">cell 6</span></div><pre class="py">print(np.array([1,2,3]).ndim)
+print(np.array([[1,2],[3,4]]).ndim)
+print(np.array([[[1],[2]],[[3],[4]]]).ndim)
+print(np.array([[[[1]]]]).ndim)</pre></div><div class="out"><div class="h">Output</div><pre>1
+2
+3
+4</pre></div><div class="code"><div class="code-head"><span>In [81]</span><span class="cell">cell 8</span></div><pre class="py">a = np.arange(6)
+print(a.shape)
+print(a.reshape(2,3))
+print(a.reshape(3,2))
+print(a.reshape(1,6))
+# print(a.reshape(1,4)) Error here</pre></div><div class="out"><div class="h">Output</div><pre>(6,)
+[[0 1 2]
+ [3 4 5]]
+[[0 1]
+ [2 3]
+ [4 5]]
+[[0 1 2 3 4 5]]
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[5], line 6
+      2 print(a.shape)
+      3 print(a.reshape(2,3))
+      4 print(a.reshape(3,2))
+      5 print(a.reshape(1,6))
+----&gt; 6 print(a.reshape(1,4))
+
+ValueError: cannot reshape array of size 6 into shape (1,4)</pre></div><div class="code"><div class="code-head"><span>In [82]</span><span class="cell">cell 10</span></div><pre class="py">print(np.array([1,2,3]).dtype)
+print(np.array([1.1,2.2]).dtype)
+print(np.array([1,2,3],dtype=float).dtype)
+print(np.array([&#x27;ABVFJDDH&#x27;,&#x27;BCJ&#x27;]).dtype)</pre></div><div class="out"><div class="h">Output</div><pre>int64
+float64
+float64
+&lt;U8</pre></div><div class="code"><div class="code-head"><span>In [83]</span><span class="cell">cell 12</span></div><pre class="py">a=np.array([1,2,3])
+b=np.array([4,5,6])
+print(a+b)
+print(a-b)
+print(a*b)
+print(a/b)</pre></div><div class="out"><div class="h">Output</div><pre>[5 7 9]
+[-3 -3 -3]
+[ 4 10 18]
+[0.25 0.4  0.5 ]</pre></div><div class="code"><div class="code-head"><span>In [84]</span><span class="cell">cell 14</span></div><pre class="py">a=np.array([10,20,30])
+print(a&gt;15)
+print(a==20)
+print(a!=20)
+print(a&lt;=20)</pre></div><div class="out"><div class="h">Output</div><pre>[False  True  True]
+[False  True False]
+[ True False  True]
+[ True  True False]</pre></div><div class="code"><div class="code-head"><span>In [85]</span><span class="cell">cell 16</span></div><pre class="py">a=np.array([1,2,3])
+print(a+10)
+print(a*5)
+print(a+[10,20,30])
+print(np.array([[1],[2],[3]])+np.array([10,20]))</pre></div><div class="out"><div class="h">Output</div><pre>[11 12 13]
+[ 5 10 15]
+[11 22 33]
+[[11 21]
+ [12 22]
+ [13 23]]</pre></div><div class="code"><div class="code-head"><span>In [86]</span><span class="cell">cell 18</span></div><pre class="py">print(np.zeros((2,2)))
+print(np.ones((2,2)))
+print(np.full((2,2),9))
+print(np.eye(3))</pre></div><div class="out"><div class="h">Output</div><pre>[[0. 0.]
+ [0. 0.]]
+[[1. 1.]
+ [1. 1.]]
+[[9 9]
+ [9 9]]
+[[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]</pre></div><div class="code"><div class="code-head"><span>In [87]</span><span class="cell">cell 20</span></div><pre class="py">print(np.arange(1,10))
+print(np.arange(1,10,2))
+print(np.linspace(0,1,5))
+print(np.linspace(10,20,4))</pre></div><div class="out"><div class="h">Output</div><pre>[1 2 3 4 5 6 7 8 9]
+[1 3 5 7 9]
+[0.   0.25 0.5  0.75 1.  ]
+[10.         13.33333333 16.66666667 20.        ]</pre></div><div class="code"><div class="code-head"><span>In [88]</span><span class="cell">cell 22</span></div><pre class="py">print(np.random.randint(1,10,5))
+print(np.random.rand(3))
+print(np.random.randn(3))
+print(np.random.choice([10,20,30],5))</pre></div><div class="out"><div class="h">Output</div><pre>[8 6 2 6 8]
+[0.71121896 0.45439005 0.08269947]
+[ 0.85181675  0.46243431 -1.0139461 ]
+[30 10 30 30 20]</pre></div><div class="code"><div class="code-head"><span>In [89]</span><span class="cell">cell 24</span></div><pre class="py">arr=np.array([10,20,30,40])
+print(np.sum(arr))
+print(np.min(arr))
+print(np.max(arr))
+print(np.mean(arr))
+print(np.median(arr))
+print(np.std(arr))
+print(np.var(arr))</pre></div><div class="out"><div class="h">Output</div><pre>100
+10
+40
+25.0
+25.0
+11.180339887498949
+125.0</pre></div><div class="code"><div class="code-head"><span>In [90]</span><span class="cell">cell 26</span></div><pre class="py">print(&quot;Information about array&quot;)
+print(np.info(arr))</pre></div><div class="out"><div class="h">Output</div><pre>Information about array
+class:  ndarray
+shape:  (4,)
+strides:  (8,)
+itemsize:  8
+aligned:  True
+contiguous:  True
+fortran:  True
+data pointer: 0x85d878580
+byteorder:  little
+byteswap:  False
+type: int64
+None</pre></div><div class="code"><div class="code-head"><span>In [91]</span><span class="cell">cell 28</span></div><pre class="py">a=np.array([1,2,3])
+b=np.array([4,5,6])
+print(np.dot(a,b))
+print(a@b)</pre></div><div class="out"><div class="h">Output</div><pre>32
+32</pre></div><div class="code"><div class="code-head"><span>In [92]</span><span class="cell">cell 30</span></div><pre class="py">a=np.array([[1,2],[3,4]])
+b=np.array([[5,6],[7,8]])
+print(np.matmul(a,b))
+print(a@b)</pre></div><div class="out"><div class="h">Output</div><pre>[[19 22]
+ [43 50]]
+[[19 22]
+ [43 50]]</pre></div><div class="code"><div class="code-head"><span>In [93]</span><span class="cell">cell 32</span></div><pre class="py">arr=np.array([40,10,30,20])
+print(np.sort(arr))
+print(np.argsort(arr))
+print(np.where(arr==30))
+print(np.searchsorted(np.sort(arr),25))</pre></div><div class="out"><div class="h">Output</div><pre>[10 20 30 40]
+[1 3 2 0]
+(array([2]),)
+2</pre></div><div class="code"><div class="code-head"><span>In [94]</span><span class="cell">cell 34</span></div><pre class="py">a=np.array([1,2])
+b=np.array([3,4])
+print(np.vstack((a,b)))
+print(np.hstack((a,b)))
+arr=np.array([1,2,3,4,5,6])
+print(np.split(arr,3))</pre></div><div class="code"><div class="code-head"><span>In [95]</span><span class="cell">cell 36</span></div><pre class="py">a=np.array([[1,2],[3,4]])
+print(np.linalg.inv(a))
+print(np.linalg.det(a))
+vals,vecs=np.linalg.eig(a)
+print(vals)
+print(vecs)</pre></div><div class="out"><div class="h">Output</div><pre>[[-2.   1. ]
+ [ 1.5 -0.5]]
+-2.0000000000000004
+[-0.37228132  5.37228132]
+[[-0.82456484 -0.41597356]
+ [ 0.56576746 -0.90937671]]</pre></div><div class="src-head">📓 <a href="../Concept/pizza_numpy.ipynb">pizza_numpy.ipynb</a></div><div class="code"><div class="code-head"><span>In [96]</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+print(np.__version__)</pre></div><div class="out"><div class="h">Output</div><pre>2.4.6</pre></div><div class="code"><div class="code-head"><span>In [97]</span><span class="cell">cell 1</span></div><pre class="py"># Your pizza shop — 7 days of revenue
+revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# Try to add 10% tax to every value
+print(revenue * 1.1)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[2], line 5
+      1 # Your pizza shop — 7 days of revenue
+      2 revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+      3 
+      4 # Try to add 10% tax to every value
+----&gt; 5 print(revenue * 1.1)</pre></div><div class="code"><div class="code-head"><span>In [98]</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+
+# Same numbers — but now as a NumPy array
+revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Now multiply the whole thing by 1.1
+print(revenue * 1.1)</pre></div><div class="out"><div class="h">Output</div><pre>[1320. 1650.  990. 1980. 2310. 2640. 2145.]</pre></div><div class="code"><div class="code-head"><span>In [99]</span><span class="cell">cell 3</span></div><pre class="py"># Python list — just a container
+python_list = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# NumPy array — a smart calculator
+numpy_array = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+print(type(python_list))   # what Python thinks it is
+print(type(numpy_array))   # what NumPy thinks it is</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;list&#x27;&gt;
+&lt;class &#x27;numpy.ndarray&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [100]</span><span class="cell">cell 4</span></div><pre class="py"># Plain Python — no NumPy
+revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# Total
+total = 0
+for r in revenue:
+    total = total + r
+print(&quot;Total:&quot;, total)
+
+# Average
+average = total / len(revenue)
+print(&quot;Average:&quot;, average)
+
+# Best day
+best = revenue[0]
+for r in revenue:
+    if r &gt; best:
+        best = r
+print(&quot;Best day:&quot;, best)
+
+# Worst day
+worst = revenue[0]
+for r in revenue:
+    if r &lt; worst:
+        worst = r
+print(&quot;Worst day:&quot;, worst)</pre></div><div class="out"><div class="h">Output</div><pre>Total: 11850
+Average: 1692.857142857143
+Best day: 2400
+Worst day: 900</pre></div><div class="code"><div class="code-head"><span>In [101]</span><span class="cell">cell 5</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+print(&quot;Total reveneue this week. &quot;, np.sum(revenue))
+print(&quot;Average Daily Revenue &quot;, np.mean(revenue))
+print(&quot;Best Day &quot;, np.max(revenue))
+print(&quot;Worst Day &quot;, np.max(revenue))</pre></div><div class="out"><div class="h">Output</div><pre>Total reveneue this week.  11850
+Average Daily Revenue  1692.857142857143
+Best Day  2400
+Worst Day  2400</pre></div><div class="code"><div class="code-head"><span>In [102]</span><span class="cell">cell 6</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+print(&quot;Total reveneue this week. &quot;, revenue * 1.1)
+print(&quot;With discount:&quot;, revenue * 0.95)
+print(&quot;After Delivery Cost &quot;, revenue - 50)
+print(&quot;Doubled prices: &quot;, revenue * 2)</pre></div><div class="out"><div class="h">Output</div><pre>Total reveneue this week.  [1320. 1650.  990. 1980. 2310. 2640. 2145.]
+With discount: [1140.  1425.   855.  1710.  1995.  2280.  1852.5]
+After Delivery Cost  [1150 1450  850 1750 2050 2350 1900]
+Doubled prices:  [2400 3000 1800 3600 4200 4800 3900]</pre></div><div class="code"><div class="code-head"><span>In [103]</span><span class="cell">cell 7</span></div><pre class="py"># Revenue from your two pizza branches this week
+branch_1 = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+branch_2 = np.array([800,  900, 750, 1200, 1800, 2000, 1600])
+
+# Total revenue both branches combined each day
+print(&quot;Combined daily:&quot;, branch_1 + branch_2)
+
+# Which branch made more each day?
+print(&quot;Branch 1 better?&quot;, branch_1 &gt; branch_2)</pre></div><div class="out"><div class="h">Output</div><pre>Combined daily: [2000 2400 1650 3000 3900 4400 3550]
+Branch 1 better? [ True  True  True  True  True  True  True]</pre></div><div class="code"><div class="code-head"><span>In [104]</span><span class="cell">cell 8</span></div><pre class="py"># Plain Python — same tasks
+branch_1 = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+branch_2 = [800,  900, 750, 1200, 1800, 2000, 1600]
+
+# On how many days was branch 1 better?
+days_won = 0
+for i in range(len(branch_1)):
+    if branch_1[i] &gt; branch_2[i]:
+        days_won = days_won + 1
+print(&quot;Days branch 1 won:&quot;, days_won)
+
+# Branch 1 revenue ONLY on days it beat branch 2
+winning_days = []
+for i in range(len(branch_1)):
+    if branch_1[i] &gt; branch_2[i]:
+        winning_days.append(branch_1[i])
+print(&quot;Branch 1 revenue on winning days:&quot;, winning_days)</pre></div><div class="out"><div class="h">Output</div><pre>Days branch 1 won: 7
+Branch 1 revenue on winning days: [1200, 1500, 900, 1800, 2100, 2400, 1950]</pre></div><div class="code"><div class="code-head"><span>In [105]</span><span class="cell">cell 9</span></div><pre class="py">branch_1 = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+branch_2 = np.array([800,  900, 750, 1200, 1800, 2000, 1600])
+
+# On how many days was branch 1 better?
+print(&quot;Days branch 1 won:&quot;, np.sum(branch_1 &gt; branch_2))
+
+# What was branch 1 revenue ONLY on days it beat branch 2?
+print(&quot;Branch 1 revenue on winning days:&quot;, branch_1[branch_1 &gt; branch_2])</pre></div><div class="code"><div class="code-head"><span>In [106]</span><span class="cell">cell 10</span></div><pre class="py">branch_1 = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+branch_2 = np.array([800,  900, 750, 1200, 1800, 2000, 1600])
+
+# Step 1 — NumPy compares position by position first
+comparison = branch_1 &gt; branch_2
+print(&quot;Step 1 comparison:&quot;, comparison)
+print(&quot;Type:&quot;, type(comparison))
+
+# Step 2 — np.sum counts the Trues
+print(&quot;Step 2 sum:&quot;, np.sum(comparison))</pre></div><div class="out"><div class="h">Output</div><pre>Step 1 comparison: [ True  True  True  True  True  True  True]
+Type: &lt;class &#x27;numpy.ndarray&#x27;&gt;
+Step 2 sum: 7</pre></div><div class="code"><div class="code-head"><span>In [107]</span><span class="cell">cell 11</span></div><pre class="py"># Plain Python
+revenue = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+
+# Get Monday&#x27;s revenue (position 0)
+print(&quot;Monday:&quot;, revenue[0])
+
+# Get Friday&#x27;s revenue (position 4)
+print(&quot;Friday:&quot;, revenue[4])
+
+# Get first 3 days
+print(&quot;First 3 days:&quot;, revenue[0:3])
+
+# Get last 2 days
+print(&quot;Last 2 days:&quot;, revenue[5:7])
+
+# Get weekdays only (Mon to Fri = 0 to 4)
+print(&quot;Weekdays:&quot;, revenue[0:5])
+
+# Get weekend only (Sat, Sun = 5, 6)
+print(&quot;Weekend:&quot;, revenue[5:7])</pre></div><div class="out"><div class="h">Output</div><pre>Monday: 1200
+Friday: 2100
+First 3 days: [1200, 1500, 900]
+Last 2 days: [2400, 1950]
+Weekdays: [1200, 1500, 900, 1800, 2100]
+Weekend: [2400, 1950]</pre></div><div class="code"><div class="code-head"><span>In [108]</span><span class="cell">cell 12</span></div><pre class="py"># NumPy
+revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Get Monday&#x27;s revenue (position 0)
+print(&quot;Monday:&quot;, revenue[0])
+
+# Get Friday&#x27;s revenue (position 4)
+print(&quot;Friday:&quot;, revenue[4])
+
+# Get first 3 days
+print(&quot;First 3 days:&quot;, revenue[0:3])
+
+# Get last 2 days
+print(&quot;Last 2 days:&quot;, revenue[-2:])
+
+# Get weekdays only (Mon to Fri)
+print(&quot;Weekdays:&quot;, revenue[0:5])
+
+# Get weekend only
+print(&quot;Weekend:&quot;, revenue[5:])</pre></div><div class="out"><div class="h">Output</div><pre>Monday: 1200
+Friday: 2100
+First 3 days: [1200 1500  900]
+Last 2 days: [2400 1950]
+Weekdays: [1200 1500  900 1800 2100]
+Weekend: [2400 1950]</pre></div><div class="code"><div class="code-head"><span>In [109]</span><span class="cell">cell 13</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Pick specific days — Monday, Wednesday, Saturday
+# Plain Python way
+plain = [1200, 1500, 900, 1800, 2100, 2400, 1950]
+specific_plain = [plain[0], plain[2], plain[5]]
+print(&quot;Plain Python specific days:&quot;, specific_plain)
+
+# NumPy way — pass a list of positions directly
+specific_numpy = revenue[[0, 2, 5]]
+print(&quot;NumPy specific days:&quot;, specific_numpy)
+
+# Only days where revenue was above 1500
+print(&quot;Good days only:&quot;, revenue[revenue &gt; 1500])
+
+# Only days where revenue was between 1000 and 2000
+print(&quot;Medium days:&quot;, revenue[(revenue &gt; 1000) &amp; (revenue &lt; 2000)])</pre></div><div class="out"><div class="h">Output</div><pre>Plain Python specific days: [1200, 900, 2400]
+NumPy specific days: [1200  900 2400]
+Good days only: [1800 2100 2400 1950]
+Medium days: [1200 1500 1800 1950]</pre></div><div class="code"><div class="code-head"><span>In [110]</span><span class="cell">cell 14</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# &amp; means AND — both conditions must be true
+print(&quot;Between 1000 and 2000:&quot;, revenue[(revenue &gt; 1000) &amp; (revenue &lt; 2000)])
+
+# | means OR — at least one condition must be true
+print(&quot;Below 1000 OR above 2000:&quot;, revenue[(revenue &lt; 1000) | (revenue &gt; 2000)])
+
+# ~ means NOT — flips True to False and False to True
+print(&quot;above 2000:&quot;, revenue[(revenue &gt; 2000)])
+
+print(&quot;not above 2000:&quot;, revenue[~(revenue &gt; 2000)])</pre></div><div class="out"><div class="h">Output</div><pre>Between 1000 and 2000: [1200 1500 1800 1950]
+Below 1000 OR above 2000: [ 900 2100 2400]
+above 2000: [2100 2400]
+not above 2000: [1200 1500  900 1800 1950]</pre></div><div class="code"><div class="code-head"><span>In [111]</span><span class="cell">cell 15</span></div><pre class="py">revenue = np.array([1200, 1500, 900, 1800, 2100, 2400, 1950])
+
+# Challenge 1 — What was the total revenue on days above 1500 only?
+print(&quot;total revenue on days above 1500 only :: &quot;, np.sum(revenue[revenue &gt; 1500]))
+
+# Challenge 2 — Your costs are $500 every day. 
+#               Calculate profit for each day (revenue - cost)
+#               Then find the average profit
+
+print(&quot;Avergae Profit :: &quot;, np.mean(revenue-500))
+
+# Challenge 3 — What percentage of days had revenue above 1800?
+#               Hint: you already know True = 1, False = 0
+
+
+days_above = np.sum(revenue &gt; 1800)
+print(&quot;Days above 1800:&quot;, days_above)
+
+total_days = len(revenue)
+print(&quot;Total days:&quot;, total_days)
+
+percentage = (days_above / total_days) * 100
+print(&quot;Percentage of daya revenue above 1800:&quot;, percentage)
+
+print(&quot;Percentage:&quot;, (np.sum(revenue &gt; 1800) / len(revenue)) * 100)</pre></div><div class="out"><div class="h">Output</div><pre>total revenue on days above 1500 only ::  8250
+Avergae Profit ::  1192.857142857143
+Days above 1800: 3
+Total days: 7
+Percentage of daya revenue above 1800: 42.857142857142854
+Percentage: 42.857142857142854</pre></div><div class="src-head">📓 <a href="../Concept/project_01_api_health.ipynb">project_01_api_health.ipynb</a></div><div class="code"><div class="code-head"><span>In [112]</span><span class="cell">cell 5</span></div><pre class="py"># 1.1  imports and print options
+import numpy as np
+
+# make float output readable: 1 decimal, no scientific notation
+np.set_printoptions(precision=1, suppress=True)
+np.__version__</pre></div><div class="out"><div class="h">Output</div><pre>&#x27;2.4.6&#x27;</pre></div><div class="code"><div class="code-head"><span>In [113]</span><span class="cell">cell 6</span></div><pre class="py"># 1.2  labels: services and days
+services = np.array([&#x27;auth&#x27;, &#x27;catalog&#x27;, &#x27;cart&#x27;, &#x27;search&#x27;, &#x27;payment&#x27;, &#x27;order&#x27;])
+days     = np.array([&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;])
+
+services.shape, days.shape</pre></div><div class="out"><div class="h">Output</div><pre>((6,), (7,))</pre></div><div class="code"><div class="code-head"><span>In [114]</span><span class="cell">cell 7</span></div><pre class="py"># 1.3  latency_ms  (6 services x 7 days)
+latency_ms = np.array([
+    [ 42,  45,  44,  46,  51,  38,  36],   # auth
+    [ 58,  61,  59,  63,  72,  50,  47],   # catalog
+    [115, 120, 118, 125, 140, 102,  98],   # cart
+    [205, 210, 215, 208, 980, 195, 190],   # search   &lt;- Friday spike
+    [148, 152, np.nan, 150, 165, 140, 135],  # payment &lt;- Wednesday missing
+    [175, 180, 178, 185, 240, 165, 160],   # order
+], dtype=float)
+
+latency_ms</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 42.,  45.,  44.,  46.,  51.,  38.,  36.],
+       [ 58.,  61.,  59.,  63.,  72.,  50.,  47.],
+       [115., 120., 118., 125., 140., 102.,  98.],
+       [205., 210., 215., 208., 980., 195., 190.],
+       [148., 152.,  nan, 150., 165., 140., 135.],
+       [175., 180., 178., 185., 240., 165., 160.]])</pre></div><div class="code"><div class="code-head"><span>In [115]</span><span class="cell">cell 8</span></div><pre class="py"># 1.4  errors_5xx  (6 services x 7 days)&#x27;
+errors_5xx = np.array([
+    [ 2,  1,  3,  2,  5,  1,  0],   # auth
+    [ 4,  3,  5,  4,  9,  2,  2],   # catalog
+    [ 8,  7,  9, 10, 22,  5,  4],   # cart
+    [ 6,  5,  7,  6, 85,  4,  3],   # search
+    [11, 12, 10, 13, 31,  8,  7],   # payment
+    [14, 13, 15, 16, 48, 10,  9],   # order
+])
+
+errors_5xx</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 2,  1,  3,  2,  5,  1,  0],
+       [ 4,  3,  5,  4,  9,  2,  2],
+       [ 8,  7,  9, 10, 22,  5,  4],
+       [ 6,  5,  7,  6, 85,  4,  3],
+       [11, 12, 10, 13, 31,  8,  7],
+       [14, 13, 15, 16, 48, 10,  9]])</pre></div><div class="code"><div class="code-head"><span>In [116]</span><span class="cell">cell 9</span></div><pre class="py"># 1.5  sla_ms (per service) and traffic_k (per day)
+# one SLA per service  -&gt; lines up with ROWS
+sla_ms = np.array([50, 65, 120, 200, 150, 190])
+
+# platform traffic in thousands, one per day -&gt; lines up with COLUMNS
+traffic_k = np.array([420, 455, 468, 482, 610, 305, 268])
+
+sla_ms.shape, traffic_k.shape</pre></div><div class="out"><div class="h">Output</div><pre>((6,), (7,))</pre></div><div class="code"><div class="code-head"><span>In [117]</span><span class="cell">cell 10</span></div><pre class="py"># 1.6  sanity checks
+print(&quot;latency  shape:&quot;, latency_ms.shape, &quot;dtype:&quot;, latency_ms.dtype)
+print(&quot;errors   shape:&quot;, errors_5xx.shape, &quot;dtype:&quot;, errors_5xx.dtype)
+print(&quot;ndim:&quot;, latency_ms.ndim, &quot;| size:&quot;, latency_ms.size, &quot;| bytes:&quot;, latency_ms.nbytes)
+
+# fail loudly now rather than get a wrong answer in Part 4
+assert latency_ms.shape == errors_5xx.shape == (len(services), len(days))
+assert sla_ms.shape[0] == len(services)
+assert traffic_k.shape[0] == len(days)
+print(&quot;\nall shape checks passed&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>latency  shape: (6, 7) dtype: float64
+errors   shape: (6, 7) dtype: int64
+ndim: 2 | size: 42 | bytes: 336
+
+all shape checks passed</pre></div><div class="code"><div class="code-head"><span>In [118]</span><span class="cell">cell 13</span></div><pre class="py"># 2.1  find the missing reading
+print(&quot;mean of the whole matrix:&quot;, latency_ms.mean())
+print(&quot;missing readings:&quot;, np.isnan(latency_ms).sum())
+
+rows, cols = np.where(np.isnan(latency_ms))
+print(&quot;row(s):&quot;, rows, &quot; col(s):&quot;, cols)
+print(&quot;-&gt;&quot;, services[rows[0]], &quot;on&quot;, days[cols[0]])</pre></div><div class="out"><div class="h">Output</div><pre>mean of the whole matrix: nan
+missing readings: 1
+row(s): [4]  col(s): [2]
+-&gt; payment on Wed</pre></div><div class="code"><div class="code-head"><span>In [119]</span><span class="cell">cell 14</span></div><pre class="py"># 2.2  why filling with 0 is wrong
+payment = latency_ms[4]
+
+print(&quot;payment week       :&quot;, payment)
+print(&quot;nanmean (skip it)  :&quot;, round(np.nanmean(payment), 2))
+print(&quot;filled with 0      :&quot;, round(np.nan_to_num(payment).mean(), 2))</pre></div><div class="out"><div class="h">Output</div><pre>payment week       : [148. 152.  nan 150. 165. 140. 135.]
+nanmean (skip it)  : 148.33
+filled with 0      : 127.14</pre></div><div class="code"><div class="code-head"><span>In [120]</span><span class="cell">cell 15</span></div><pre class="py"># 2.3  copy vs view
+view = latency_ms[0]        # a slice is a VIEW, shared memory
+print(&quot;View&quot;, view[0])
+view[0] = 999
+print(&quot;View&quot;, view[0])
+print(&quot;original after touching the view:&quot;, latency_ms[0, 0])
+
+latency_ms[0, 0] = 42       # put it back
+clean = latency_ms.copy()   # .copy() = independent memory
+clean[0, 0] = 999
+print(&quot;copy:&quot;, clean[0, 0], &quot;| original safe:&quot;, latency_ms[0, 0])
+clean[0, 0] = 42</pre></div><div class="out"><div class="h">Output</div><pre>View 42.0
+View 999.0
+original after touching the view: 999.0
+copy: 999.0 | original safe: 42.0</pre></div><div class="code"><div class="code-head"><span>In [121]</span><span class="cell">cell 16</span></div><pre class="py"># 2.4  impute the missing value
+#
+# GOAL: payment has no Wednesday number. Estimate it from payment&#x27;s own week.
+# We fill on a COPY so the raw measurements stay provable.
+
+# .copy() = new memory. Without it we&#x27;d overwrite the raw data (see 2.3).
+clean = latency_ms.copy()
+
+# rows/cols came from 2.1 and are ARRAYS: rows=[4], cols=[2].
+# latency_ms[rows] -&gt; shape (1, 7), still 2-D, because we indexed with an array.
+# nanmean(axis=1)  -&gt; collapse the 7 days into 1 number per row, skipping NaN.
+#                     Divides by 6, not 7. Result: [148.33], shape (1,).
+# clean[rows, cols] pairs rows[0] with cols[0] -&gt; writes to cell (4,2) only.
+clean[rows, cols] = np.nanmean(latency_ms[rows], axis=1)
+
+print(&quot;imputed value        :&quot;, round(clean[4, 2], 1))   # 148.3
+print(&quot;any NaN left in clean:&quot;, np.isnan(clean).any())   # False
+print(&quot;original still NaN   :&quot;, np.isnan(latency_ms[4, 2]))  # True - raw is safe
+print(&quot;clean matrix mean    :&quot;, round(clean.mean(), 1))  # 144.2 (was nan)</pre></div><div class="out"><div class="h">Output</div><pre>imputed value        : 148.3
+any NaN left in clean: False
+original still NaN   : True
+clean matrix mean    : 144.2</pre></div><div class="code"><div class="code-head"><span>In [122]</span><span class="cell">cell 17</span></div><pre class="py"># 2.5  outlier hunt, attempt 1: the z-score test
+search = clean[3]
+z = (search - search.mean()) / search.std()
+
+print(&quot;search week:&quot;, search)
+print(&quot;z-scores   :&quot;, np.round(z, 2))
+print(&quot;max z      :&quot;, round(z.max(), 2))
+print(&quot;flagged at the usual threshold of 3?&quot;, bool(z.max() &gt; 3))</pre></div><div class="out"><div class="h">Output</div><pre>search week: [205. 210. 215. 208. 980. 195. 190.]
+z-scores   : [-0.4 -0.4 -0.4 -0.4  2.5 -0.4 -0.5]
+max z      : 2.45
+flagged at the usual threshold of 3? False</pre></div><div class="code"><div class="code-head"><span>In [123]</span><span class="cell">cell 18</span></div><pre class="py"># 2.6  why the z-score test failed
+print(&quot;mean:&quot;, round(search.mean(), 1), &quot; &lt;- dragged UP by the 980&quot;)
+print(&quot;std :&quot;, round(search.std(), 1), &quot; &lt;- inflated BY the 980&quot;)
+
+without_fri = np.delete(search, 4)
+print(&quot;\nwithout Friday -&gt; mean:&quot;, round(without_fri.mean(), 1),
+      &quot; std:&quot;, round(without_fri.std(), 1))
+print(&quot;z of 980 against THAT std:&quot;,
+      round((980 - without_fri.mean()) / without_fri.std(), 1))</pre></div><div class="out"><div class="h">Output</div><pre>mean: 314.7  &lt;- dragged UP by the 980
+std : 271.7  &lt;- inflated BY the 980
+
+without Friday -&gt; mean: 203.8  std: 8.7
+z of 980 against THAT std: 89.5</pre></div><div class="code"><div class="code-head"><span>In [124]</span><span class="cell">cell 19</span></div><pre class="py"># 2.7  outlier hunt, attempt 2: median + MAD
+med = np.median(search)
+mad = np.median(np.abs(search - med))     # median absolute deviation
+modified_z = 0.6745 * (search - med) / mad
+
+print(&quot;median:&quot;, med, &quot; MAD:&quot;, mad)
+print(&quot;modified z:&quot;, np.round(modified_z, 1))
+print(&quot;max:&quot;, round(modified_z.max(), 1),
+      &quot;-&gt; flagged at threshold 3.5?&quot;, bool(modified_z.max() &gt; 3.5))</pre></div><div class="out"><div class="h">Output</div><pre>median: 208.0  MAD: 7.0
+modified z: [-0.3  0.2  0.7  0.  74.4 -1.3 -1.7]
+max: 74.4 -&gt; flagged at threshold 3.5? True</pre></div><div class="src-head">🐍 <a href="../Concept/NumPy_exmaple.py">NumPy_exmaple.py</a></div><div class="code"><pre class="py"></pre></div><div class="src-head">🐍 <a href="../Concept/example_01.py">example_01.py</a></div><div class="code"><pre class="py">import numpy as np
+import time
+
+print(np.__version__)
+
+n = 1_000_000
+py_list = list(range(n))
+np_array = np.arange(n)
+
+print(len(py_list))
+print(len(np_array))
+
+print(py_list[0:5])
+
+print(np_array[0:5])
+
+t1 = time.time()
+py_result = [x * 2 for x in py_list]
+t2 = time.time()
+
+t3 = time.time()
+np_result = np_array * 2
+t4 = time.time()
+
+
+print(&quot;List Time &quot;, t2-t1)
+print(&quot;Numpy time &quot;, t4-t3)
+
+
+</pre></div><div class="src-head">🐍 <a href="../Concept/example_02.py">example_02.py</a></div><div class="code"><pre class="py">import numpy as np
+arr1 = np.array([1,2,3,4])
+
+print(&quot;1D array : &quot;, arr1)
+
+arr2 = np.array([[1,2,3,4],[5,6,7,8]])
+
+print(&quot;2D array : \n&quot;, arr2)
+
+arr3 = np.array([[[1,2,3,4],[5,6,7,8]],[[12,6,7,8],[5,13,7,8]]])
+
+print(&quot;3D array : \n&quot;, arr3)
+
+print(&quot;------Array Attributes-----------&quot;)
+
+print(&quot;Shape &quot;,arr2.shape)
+print(&quot;Dimensions &quot;,arr2.ndim)
+print(&quot;Data Type  &quot;,arr2.dtype)
+print(&quot;Total Elements &quot;,arr2.size)
+
+print(&quot;-------------------\n&quot;)
+
+print(&quot;Creating Special Array ::&quot;)
+
+zeros = np.zeros((2,3))
+
+print(zeros)
+print(&quot;-------------------\n&quot;)
+
+ones = np.ones((3,2)) # 2 column and 3 rows
+
+print(ones)
+print(&quot;-------------------\n&quot;)
+
+random_arr = np.random.rand(3,3)
+
+print(random_arr)
+print(&quot;-------------------\n&quot;)
+
+eye = np.eye(3)
+
+print(eye)
+print(&quot;-------------------\n&quot;)
+
+range_arr = np.arange(0,10)
+
+print(range_arr)
+print(&quot;-------------------\n&quot;)
+
+
+print(&quot;-------Indexing and Slicing-----------\n&quot;)
+
+
+arr = np.array([[10,20,30],[40,50,60],[70,80,90]])
+
+print(arr[0,2]) # Individual elements 
+
+print(arr[2])# row access
+
+print(arr[:,1]) # Column access of 1
+
+
+print(&quot;-------Array Operations-----------\n&quot;)
+
+
+a = np.array([1,2,3])
+b = np.array([4,5,6])
+
+print(&quot;Addition &quot;, a + b)
+print(&quot;Substraction &quot;, a - b)
+print(&quot;Multiplication &quot;, a * b)
+print(&quot;Division &quot;, a / b)
+print(&quot;Dot Product &quot;, np.dot(a,b))
+print(&quot;Cross Product &quot;, np.cross(a,b))
+
+
+print(&quot;\n-------Reshaping and Flatteining-----------\n&quot;)
+
+
+
+arr = np.arange(1,10)
+reshaped = arr.reshape(3,3)
+flatted = reshaped.flatten()
+
+print(arr)
+print(&quot;-------------------\n&quot;)
+print(reshaped)
+print(&quot;-------------------\n&quot;)
+print(flatted)
+</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

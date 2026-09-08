@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+"""Rebuild everything after a learning session.
+
+    python3 17_Learning_As_Of_Now/shared/build_site.py
+
+Runs, in the order that matters:
+  1. build_lessons.py  -> Content/index.html + Content/code.html for every topic
+  2. gen_tree.py       -> 17_Learning_As_Of_Now/Claude/tree-data.js
+  3. a verification pass that fails loudly on a broken link
+
+Safe to run as often as you like; it is idempotent.
+"""
+import json, os, re, subprocess, sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SHARED = os.path.join(ROOT, "17_Learning_As_Of_Now", "shared")
+os.chdir(ROOT)
+
+def run(script, label):
+    print(f"\n\033[1m{label}\033[0m")
+    r = subprocess.run([sys.executable, os.path.join(SHARED, script)],
+                       capture_output=True, text=True)
+    tail = [l for l in (r.stdout or "").strip().splitlines() if l.strip()][-3:]
+    for l in tail: print("   " + l)
+    if r.returncode:
+        print("   " + (r.stderr or "").strip()[-500:])
+        sys.exit(f"\n{script} failed")
+
+run("build_lessons.py", "1/3  Building lesson + code pages")
+run("gen_tree.py",      "2/3  Rebuilding the learning map data")
+
+# ── 3. verify ───────────────────────────────────────────────────────────────
+print("\n\033[1m3/3  Verifying\033[0m")
+HUB  = "17_Learning_As_Of_Now/Claude"     # paths in tree-data.js are relative to here
+tree = open(os.path.join(HUB, "tree-data.js"), encoding="utf-8").read()
+problems = []
+
+def real(p):
+    """resolve a map-relative path to a repo path"""
+    return os.path.normpath(os.path.join(HUB, p))
+
+lessons = re.findall(r'"lesson":\s*"([^"]+)"', tree)
+for p in lessons:
+    if not os.path.exists(real(p)): problems.append(f"missing lesson page: {p}")
+    if p.endswith("code.html"): problems.append(f"lesson points at the code view: {p}")
+
+for p in re.findall(r'"path":\s*"([^"]+)"', tree):
+    if not os.path.exists(real(p).rstrip("/")): problems.append(f"missing source: {p}")
+
+# handwritten notes referenced by the map must exist on disk
+for m in re.finditer(r'"lesson":\s*"([^"]+)/Content/index\.html"[^}]*?"noteFiles":\s*\[([^\]]*)\]',
+                     tree, re.S):
+    folder, files = m.group(1), re.findall(r'"([^"]+)"', m.group(2))
+    for f in files:
+        fp = real(os.path.join(folder, "Handwritten_Notes", f))
+        if not os.path.exists(fp): problems.append(f"missing scan: {fp}")
+
+topics = len(re.findall(r'"lesson":', tree))
+notes  = sum(len(re.findall(r'"([^"]+)"', m.group(1)))
+             for m in re.finditer(r'"noteFiles":\s*\[([^\]]*)\]', tree))
+codes  = len(re.findall(r'"hasCode":\s*true', tree))
+
+print(f"   {topics} lessons · {codes} code views · {notes} handwritten pages")
+if problems:
+    print("\n\033[31m   PROBLEMS\033[0m")
+    for p in problems[:15]: print("     - " + p)
+    sys.exit(f"\n{len(problems)} problem(s) found")
+print("   \033[32mall links resolve\033[0m")
+print("\nOpen 17_Learning_As_Of_Now/Claude/index.html")

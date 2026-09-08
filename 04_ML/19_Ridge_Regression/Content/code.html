@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ridge Regression — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/07_Ridge.ipynb">07_Ridge.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
+x,y = make_regression(n_features=1, noise=5, n_samples=10000)
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py"># The cell above has no random_state, so it draws new data every run.
+# Draw it once with a seed so the numbers in this notebook stay true.
+x, y = make_regression(n_features=1, noise=5, n_samples=10000, random_state=42)
+print(&quot;x:&quot;, x.shape, &quot; y:&quot;, y.shape)</pre></div><div class="out"><div class="h">Output</div><pre>x: (10000, 1)  y: (10000,)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">plt.scatter(x,y,s=5)
+plt.xlabel(&#x27;x&#x27;)
+plt.ylabel(&#x27;y&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.linear_model import Ridge
+reg = Ridge()
+reg.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>Ridge()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 10</span></div><pre class="py">reg.predict(X_test)</pre></div><div class="out"><div class="h">Output</div><pre>array([26.7963039 ,  0.51790922, -2.20125853, ..., 17.8376875 ,
+       20.43818735, 43.21880194], shape=(2000,))</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">reg.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9769119096071136</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 13</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([31.98504656])</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">reg.intercept_</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.0666527917276602)</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 16</span></div><pre class="py">y_pred= reg.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 17</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.linear_model import Ridge
+reg = Ridge(alpha=100)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9765976836816457</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 21</span></div><pre class="py">y_pred = reg.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 22</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 23</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([31.59789266])</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 25</span></div><pre class="py">reg = Ridge(alpha=100000)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.13955010448963978</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 26</span></div><pre class="py">y_pred = reg.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 28</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([2.39119767])</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 30</span></div><pre class="py">reg = Ridge(alpha=10000000)
+reg.fit(X_train,y_train)
+reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.0014861178826479637</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 31</span></div><pre class="py">y_pred = reg.predict(x)
+plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
+plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 32</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([0.02582296])</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 34</span></div><pre class="py">import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression, Ridge
+
+# S is the only property of the data that alpha competes with
+S     = ((X_train - X_train.mean()) ** 2).sum()
+ols   = LinearRegression().fit(X_train, y_train)
+w_ols = ols.coef_[0]
+
+rows = []
+for a in [0, 1, 100, 1_000, round(S), 10_000, 100_000, 1_000_000, 10_000_000]:
+    m = LinearRegression() if a == 0 else Ridge(alpha=a)
+    m.fit(X_train, y_train)
+    rows.append({
+        &quot;alpha&quot;:       a,
+        &quot;S/(S+alpha)&quot;: S / (S + a),
+        &quot;coef_&quot;:       m.coef_[0],
+        &quot;formula&quot;:     w_ols * S / (S + a),
+        &quot;intercept_&quot;:  m.intercept_,
+        &quot;train R2&quot;:    m.score(X_train, y_train),
+        &quot;test R2&quot;:     m.score(X_test, y_test),
+    })
+
+table = pd.DataFrame(rows)
+print(f&quot;S             = sum of squared centred x on the 8000 train rows = {S:,.4f}&quot;)
+print(f&quot;w_ols         = the unpenalised slope                          = {w_ols:.6f}&quot;)
+print(f&quot;mean(y_train) = where the flat line ends up                    = {y_train.mean():.6f}&quot;)
+print(f&quot;does the formula reproduce coef_ everywhere? -&gt; &quot;
+      f&quot;{np.allclose(table[&#x27;coef_&#x27;], table[&#x27;formula&#x27;])}&quot;)
+table.round(6)</pre></div><div class="out"><div class="h">Output</div><pre>S             = sum of squared centred x on the 8000 train rows = 8,078.9688
+w_ols         = the unpenalised slope                          = 31.989006
+mean(y_train) = where the flat line ends up                    = 0.055079
+does the formula reproduce coef_ everywhere? -&gt; True
+      alpha  S/(S+alpha)      coef_    formula  intercept_  train R2   test R2
+0         0     1.000000  31.989006  31.989006    0.066654  0.976090  0.976914
+1         1     0.999876  31.985047  31.985047    0.066653  0.976090  0.976912
+2       100     0.987774  31.597893  31.597893    0.066513  0.975944  0.976598
+3      1000     0.889855  28.465587  28.465587    0.065379  0.964248  0.963682
+4      8079     0.499999  15.994472  15.994472    0.060867  0.732066  0.729147
+5     10000     0.446871  14.294962  14.294962    0.060252  0.677453  0.674523
+6    100000     0.074751   2.391198   2.391198    0.055945  0.140473  0.139550
+7   1000000     0.008014   0.256367   0.256367    0.055172  0.015583  0.015406
+8  10000000     0.000807   0.025823   0.025823    0.055089  0.001575  0.001486</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

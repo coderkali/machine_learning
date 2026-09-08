@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plotly — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">pip install plotly</pre></div><div class="out"><div class="h">Output</div><pre>Collecting plotly
+  Downloading plotly-6.9.0-py3-none-any.whl.metadata (9.0 kB)
+Requirement already satisfied: narwhals&gt;=1.15.1 in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from plotly) (2.24.0)
+Requirement already satisfied: packaging in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (from plotly) (26.2)
+Downloading plotly-6.9.0-py3-none-any.whl (9.9 MB)
+[2K   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.9/9.9 MB 51.4 MB/s  0:00:00 eta 0:00:01
+[?25hInstalling collected packages: plotly
+Successfully installed plotly-6.9.0
+
+[notice] A new release of pip is available: 26.0.1 -&gt; 26.2.1
+[notice] To update, run: pip install --upgrade pip
+Note: you may need to restart the kernel to use updated packages.</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">pip install --upgrade pip</pre></div><div class="out"><div class="h">Output</div><pre>Requirement already satisfied: pip in /Users/kaliprasad/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages (26.0.1)
+Collecting pip
+  Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+[2K   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 25.4 MB/s  0:00:00
+[?25hInstalling collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 26.0.1
+    Uninstalling pip-26.0.1:
+      Successfully uninstalled pip-26.0.1
+Successfully installed pip-26.2.1
+Note: you may need to restart the kernel to use updated packages.</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">import plotly.express as px
+import plotly.graph_objects as go</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">tips = px.data.tips()
+tips</pre></div><div class="out"><div class="h">Output</div><pre>     total_bill   tip     sex smoker   day    time  size
+0         16.99  1.01  Female     No   Sun  Dinner     2
+1         10.34  1.66    Male     No   Sun  Dinner     3
+2         21.01  3.50    Male     No   Sun  Dinner     3
+3         23.68  3.31    Male     No   Sun  Dinner     2
+4         24.59  3.61  Female     No   Sun  Dinner     4
+..          ...   ...     ...    ...   ...     ...   ...
+239       29.03  5.92    Male     No   Sat  Dinner     3
+240       27.18  2.00  Female    Yes   Sat  Dinner     2
+241       22.67  2.00    Male    Yes   Sat  Dinner     2
+242       17.82  1.75    Male     No   Sat  Dinner     2
+243       18.78  3.00  Female     No  Thur  Dinner     2
+
+[244 rows x 7 columns]</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 7</span></div><pre class="py">df = px.data.gapminder().query(&quot;country==&#x27;India&#x27;&quot;)
+df.head()</pre></div><div class="out"><div class="h">Output</div><pre>    country continent  year  lifeExp        pop   gdpPercap iso_alpha  iso_num
+696   India      Asia  1952   37.373  372000000  546.565749       IND      356
+697   India      Asia  1957   40.249  409000000  590.061996       IND      356
+698   India      Asia  1962   43.605  454000000  658.347151       IND      356
+699   India      Asia  1967   47.193  506000000  700.770611       IND      356
+700   India      Asia  1972   50.651  567000000  724.032527       IND      356</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 9</span></div><pre class="py">fig = px.line(df, x=&quot;year&quot;,y=&quot;lifeExp&quot;)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 10</span></div><pre class="py">fig = px.line(
+ df,
+ x=&quot;year&quot;,
+ y=&quot;lifeExp&quot;,
+ markers=True
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 11</span></div><pre class="py">fig = px.line(
+ df,
+ x=&quot;year&quot;,
+ y=&quot;lifeExp&quot;,
+ title=&quot;Life Expectancy of India&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 13</span></div><pre class="py">fig = px.scatter(
+ tips,
+ x=&quot;total_bill&quot;,
+ y=&quot;tip&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 14</span></div><pre class="py">fig = px.scatter(
+ tips,
+ x=&quot;total_bill&quot;,
+ y=&quot;tip&quot;,
+ color=&quot;sex&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 15</span></div><pre class="py">fig = px.scatter(
+ tips,
+ x=&quot;total_bill&quot;,
+ y=&quot;tip&quot;,
+ size=&quot;size&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 17</span></div><pre class="py">fig = px.bar(
+ tips,
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 18</span></div><pre class="py">fig = px.bar(
+ tips,
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;,
+ color=&quot;sex&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 19</span></div><pre class="py">fig = px.bar(
+ tips,
+ x=&quot;total_bill&quot;,
+ y=&quot;day&quot;,
+ orientation=&quot;h&quot; 
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 21</span></div><pre class="py">fig = px.box(
+ tips,
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 22</span></div><pre class="py">fig = px.violin(
+ tips,
+ x=&quot;day&quot;,
+ y=&quot;total_bill&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 24</span></div><pre class="py">fig = px.pie(
+ names=[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;],
+ values=[30,40,30]
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 25</span></div><pre class="py">fig = px.pie(
+ tips,
+ names=&quot;day&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 27</span></div><pre class="py">fig = px.area(
+ df,
+ x=&quot;year&quot;,
+ y=&quot;lifeExp&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 29</span></div><pre class="py">iris = px.data.iris()
+fig = px.scatter_3d(
+ iris,
+ x=&quot;sepal_length&quot;,
+ y=&quot;sepal_width&quot;,
+ z=&quot;petal_length&quot;,
+ color=&quot;species&quot;
+)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 31</span></div><pre class="py">fig = px.sunburst(
+ tips,
+ path=[&quot;sex&quot;,&quot;day&quot;]
+)
+fig.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

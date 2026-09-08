@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feature Selection — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/20_Feature_Selection_techniques.ipynb">20_Feature_Selection_techniques.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from mlxtend.feature_selection import SequentialFeatureSelector as SFS</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/diabetes.csv&quot;)
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>   Glucose  BloodPressure  SkinThickness   BMI  Age  Outcome
+0      148             72             35  33.6   50        1
+1       85             66             29  26.6   31        0
+2      183             64              0  23.3   32        1
+3       89             66             23  28.1   21        0
+4      137             40             35  43.1   33        1</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(768, 6)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Glucose          0
+BloodPressure    0
+SkinThickness    0
+BMI              0
+Age              0
+Outcome          0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py">X = dataset.drop(columns=[&quot;Outcome&quot;])
+y = dataset[&quot;Outcome&quot;]</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 11</span></div><pre class="py">X,y</pre></div><div class="out"><div class="h">Output</div><pre>(     Glucose  BloodPressure  SkinThickness   BMI  Age
+ 0        148             72             35  33.6   50
+ 1         85             66             29  26.6   31
+ 2        183             64              0  23.3   32
+ 3         89             66             23  28.1   21
+ 4        137             40             35  43.1   33
+ ..       ...            ...            ...   ...  ...
+ 763      101             76             48  32.9   63
+ 764      122             70             27  36.8   27
+ 765      121             72             23  26.2   30
+ 766      126             60              0  30.1   47
+ 767       93             70             31  30.4   23
+ 
+ [768 rows x 5 columns],
+ 0      1
+ 1      0
+ 2      1
+ 3      0
+ 4      1
+       ..
+ 763    0
+ 764    0
+ 765    0
+ 766    1
+ 767    0
+ Name: Outcome, Length: 768, dtype: int64)</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 12</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+X_train.shape, X_test.shape</pre></div><div class="out"><div class="h">Output</div><pre>((614, 5), (154, 5))</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 15</span></div><pre class="py">y.value_counts(normalize=True)</pre></div><div class="out"><div class="h">Output</div><pre>Outcome
+0    0.651042
+1    0.348958
+Name: proportion, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 16</span></div><pre class="py">y_train.value_counts(normalize=True)</pre></div><div class="out"><div class="h">Output</div><pre>Outcome
+0    0.651466
+1    0.348534
+Name: proportion, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 17</span></div><pre class="py">y_test.value_counts(normalize=True)</pre></div><div class="out"><div class="h">Output</div><pre>Outcome
+0    0.649351
+1    0.350649
+Name: proportion, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 20</span></div><pre class="py">baseline_model = DecisionTreeClassifier(max_depth=4, random_state=42)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 21</span></div><pre class="py">baseline_model.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(max_depth=4, random_state=42)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 23</span></div><pre class="py">y_pred = baseline_model.predict(X_test)</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 24</span></div><pre class="py">baseline_accuracy = accuracy_score(y_test, y_pred)
+baseline_accuracy</pre></div><div class="out"><div class="h">Output</div><pre>0.8051948051948052</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 28</span></div><pre class="py">sfs_forward = SFS(
+    DecisionTreeClassifier(max_depth=4, random_state=42),
+    k_features=(1, X.shape[1]),
+    forward=True,
+    floating=False,
+    scoring=&quot;accuracy&quot;,
+    cv=5,
+)</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">sfs_forward.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/.venv/lib/python3.14/site-packages/sklearn/externals/_numpydoc/docscrape.py:203: UserWarning: potentially wrong underline length... 
+Examples 
+----------- in 
+Sequential Feature Selection for Classification and Regression.
+...
+  while not self._is_at_section() and not self._doc.eof():
+SequentialFeatureSelector(estimator=DecisionTreeClassifier(max_depth=4,
+                                                           random_state=42),
+                          k_features=(1, 5), scoring=&#x27;accuracy&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 30</span></div><pre class="py">forward_table = pd.DataFrame(sfs_forward.subsets_).T
+forward_table</pre></div><div class="out"><div class="h">Output</div><pre>       feature_idx                                          cv_scores  \
+1             (0,)  [0.7642276422764228, 0.7073170731707317, 0.691...   
+2           (0, 1)  [0.7642276422764228, 0.7398373983739838, 0.707...   
+3        (0, 1, 2)  [0.7560975609756098, 0.7479674796747967, 0.707...   
+4     (0, 1, 2, 3)  [0.7398373983739838, 0.7073170731707317, 0.707...   
+5  (0, 1, 2, 3, 4)  [0.7154471544715447, 0.6991869918699187, 0.707...   
+
+  avg_score                                      feature_names  
+1  0.739504                                         (Glucose,)  
+2  0.749247                           (Glucose, BloodPressure)  
+3  0.752526            (Glucose, BloodPressure, SkinThickness)  
+4  0.739491       (Glucose, BloodPressure, SkinThickness, BMI)  
+5   0.72487  (Glucose, BloodPressure, SkinThickness, BMI, Age)</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 32</span></div><pre class="py">forward_features = list(sfs_forward.k_feature_names_)
+forward_features</pre></div><div class="out"><div class="h">Output</div><pre>[&#x27;Glucose&#x27;, &#x27;BloodPressure&#x27;, &#x27;SkinThickness&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">sfs_forward.k_score_</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.752525656404105)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 35</span></div><pre class="py">sfs_backward = SFS(
+    DecisionTreeClassifier(max_depth=4, random_state=42),
+    k_features=(1, X.shape[1]),
+    forward=False,
+    floating=False,
+    scoring=&quot;accuracy&quot;,
+    cv=5,
+)</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 36</span></div><pre class="py">sfs_backward.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>SequentialFeatureSelector(estimator=DecisionTreeClassifier(max_depth=4,
+                                                           random_state=42),
+                          forward=False, k_features=(1, 5), scoring=&#x27;accuracy&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 37</span></div><pre class="py">backward_table = pd.DataFrame(sfs_backward.subsets_).T
+backward_table</pre></div><div class="out"><div class="h">Output</div><pre>       feature_idx                                          cv_scores  \
+5  (0, 1, 2, 3, 4)  [0.7154471544715447, 0.6991869918699187, 0.707...   
+4     (0, 1, 2, 3)  [0.7398373983739838, 0.7073170731707317, 0.707...   
+3        (0, 1, 2)  [0.7560975609756098, 0.7479674796747967, 0.707...   
+2           (0, 1)  [0.7642276422764228, 0.7398373983739838, 0.707...   
+1             (0,)  [0.7642276422764228, 0.7073170731707317, 0.691...   
+
+  avg_score                                      feature_names  
+5   0.72487  (Glucose, BloodPressure, SkinThickness, BMI, Age)  
+4  0.739491       (Glucose, BloodPressure, SkinThickness, BMI)  
+3  0.752526            (Glucose, BloodPressure, SkinThickness)  
+2  0.749247                           (Glucose, BloodPressure)  
+1  0.739504                                         (Glucose,)</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 39</span></div><pre class="py">backward_features = list(sfs_backward.k_feature_names_)
+backward_features</pre></div><div class="out"><div class="h">Output</div><pre>[&#x27;Glucose&#x27;, &#x27;BloodPressure&#x27;, &#x27;SkinThickness&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">forward_scores = forward_table[&quot;avg_score&quot;].astype(float)
+backward_scores = backward_table.sort_index()[&quot;avg_score&quot;].astype(float)
+
+fig, ax = plt.subplots(figsize=(7, 4.5))
+
+ax.plot(forward_table.index.astype(int), forward_scores,
+        color=&quot;#2a78d6&quot;, linewidth=2, marker=&quot;o&quot;, markersize=7,
+        label=&quot;Forward Selection&quot;)
+ax.plot(backward_table.sort_index().index.astype(int), backward_scores,
+        color=&quot;#eb6834&quot;, linewidth=2, linestyle=&quot;--&quot;, marker=&quot;s&quot;, markersize=6,
+        label=&quot;Backward Elimination&quot;)
+
+best_k = forward_scores.astype(float).idxmax()
+ax.scatter([int(best_k)], [forward_scores.loc[best_k]], s=160,
+           facecolors=&quot;none&quot;, edgecolors=&quot;#0b0b0b&quot;, linewidths=1.5, zorder=5)
+ax.annotate(f&quot;peak: {best_k} features&quot;, xy=(int(best_k), forward_scores.loc[best_k]),
+            xytext=(int(best_k) + 0.15, forward_scores.loc[best_k] - 0.012),
+            fontsize=9, color=&quot;#52514e&quot;)
+
+ax.set_xlabel(&quot;Number of features&quot;)
+ax.set_ylabel(&quot;Cross-validated accuracy&quot;)
+ax.set_title(&quot;Forward and backward search trace the same curve here&quot;)
+ax.set_xticks(range(1, X.shape[1] + 1))
+ax.grid(True, color=&quot;#e1e0d9&quot;, linewidth=1)
+ax.set_axisbelow(True)
+for spine in [&quot;top&quot;, &quot;right&quot;]:
+    ax.spines[spine].set_visible(False)
+ax.legend(frameon=False)
+
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 44</span></div><pre class="py">final_forward_model = DecisionTreeClassifier(max_depth=4, random_state=42)
+final_forward_model.fit(X_train[forward_features], y_train)
+forward_test_accuracy = accuracy_score(
+    y_test, final_forward_model.predict(X_test[forward_features])
+)
+forward_test_accuracy</pre></div><div class="out"><div class="h">Output</div><pre>0.7012987012987013</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 45</span></div><pre class="py">final_backward_model = DecisionTreeClassifier(max_depth=4, random_state=42)
+final_backward_model.fit(X_train[backward_features], y_train)
+backward_test_accuracy = accuracy_score(
+    y_test, final_backward_model.predict(X_test[backward_features])
+)
+backward_test_accuracy</pre></div><div class="out"><div class="h">Output</div><pre>0.7012987012987013</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 48</span></div><pre class="py">comparison = pd.DataFrame({
+    &quot;features_used&quot;: [X.shape[1], len(forward_features), len(backward_features)],
+    &quot;test_accuracy&quot;: [baseline_accuracy, forward_test_accuracy, backward_test_accuracy],
+}, index=[&quot;All features (baseline)&quot;, &quot;Forward Selection&quot;, &quot;Backward Elimination&quot;])
+comparison</pre></div><div class="out"><div class="h">Output</div><pre>                         features_used  test_accuracy
+All features (baseline)              5       0.805195
+Forward Selection                    3       0.701299
+Backward Elimination                 3       0.701299</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 49</span></div><pre class="py">fig, ax = plt.subplots(figsize=(6, 4.5))
+bars = ax.bar(
+    [&quot;All 5 features\n(baseline)&quot;, &quot;Selected 3 features\n(forward &amp; backward)&quot;],
+    [baseline_accuracy, forward_test_accuracy],
+    color=[&quot;#2a78d6&quot;, &quot;#eb6834&quot;],
+    width=0.55,
+)
+ax.set_ylabel(&quot;Test-set accuracy&quot;)
+ax.set_ylim(0, 1)
+ax.set_title(&quot;Final test-set accuracy: full model vs. selected features&quot;)
+ax.grid(True, axis=&quot;y&quot;, color=&quot;#e1e0d9&quot;, linewidth=1)
+ax.set_axisbelow(True)
+for spine in [&quot;top&quot;, &quot;right&quot;]:
+    ax.spines[spine].set_visible(False)
+
+for bar, value in zip(bars, [baseline_accuracy, forward_test_accuracy]):
+    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
+            f&quot;{value:.1%}&quot;, ha=&quot;center&quot;, fontsize=10, color=&quot;#0b0b0b&quot;)
+
+plt.tight_layout()
+plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/21_Feature_Selection_VarianceThreshold.ipynb">21_Feature_Selection_VarianceThreshold.ipynb</a></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+from sklearn.feature_selection import VarianceThreshold</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 2</span></div><pre class="py">data = pd.DataFrame({&quot;A&quot;:[1,2,4,1,2,4],
+                      &quot;B&quot;:[4,5,6,7,8,9],
+                      &quot;C&quot;:[0,0,0,0,0,0],
+                      &quot;D&quot;:[1,1,1,1,1,1]})
+data</pre></div><div class="out"><div class="h">Output</div><pre>   A  B  C  D
+0  1  4  0  1
+1  2  5  0  1
+2  4  6  0  1
+3  1  7  0  1
+4  2  8  0  1
+5  4  9  0  1</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 3</span></div><pre class="py">vt = VarianceThreshold(threshold=0.0)
+vt.fit(data)</pre></div><div class="out"><div class="h">Output</div><pre>VarianceThreshold()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 4</span></div><pre class="py">vt.variances_</pre></div><div class="out"><div class="h">Output</div><pre>array([1.55555556, 2.91666667, 0.        , 0.        ])</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 5</span></div><pre class="py">vt.get_support()</pre></div><div class="out"><div class="h">Output</div><pre>array([ True,  True, False, False])</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 6</span></div><pre class="py">data.columns[vt.get_support()]</pre></div><div class="out"><div class="h">Output</div><pre>Index([&#x27;A&#x27;, &#x27;B&#x27;], dtype=&#x27;str&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 7</span></div><pre class="py">vt.transform(data)</pre></div><div class="out"><div class="h">Output</div><pre>array([[1, 4],
+       [2, 5],
+       [4, 6],
+       [1, 7],
+       [2, 8],
+       [4, 9]])</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 8</span></div><pre class="py">data_filtered = pd.DataFrame(vt.transform(data), columns=data.columns[vt.get_support()])
+data_filtered</pre></div><div class="out"><div class="h">Output</div><pre>   A  B
+0  1  4
+1  2  5
+2  4  6
+3  1  7
+4  2  8
+5  4  9</pre></div><div class="src-head">📓 <a href="../Concept/22_Forward_Backward_Practice.ipynb">22_Forward_Backward_Practice.ipynb</a></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from mlxtend.feature_selection import SequentialFeatureSelector as SFS</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 4</span></div><pre class="py">rng = np.random.default_rng(18)
+n = 150
+
+Target = rng.integers(0, 2, n)
+
+Feature1 = Target * 1.8 + rng.normal(0, 1.0, n)
+Feature2 = Target * 1.1 + rng.normal(0, 1.0, n)
+Feature3 = rng.normal(0, 1.0, n)
+Feature4 = rng.normal(0, 1.0, n)
+Feature5 = rng.normal(0, 1.0, n)
+
+dataset = pd.DataFrame({
+    &quot;Feature1&quot;: Feature1, &quot;Feature2&quot;: Feature2, &quot;Feature3&quot;: Feature3,
+    &quot;Feature4&quot;: Feature4, &quot;Feature5&quot;: Feature5, &quot;Target&quot;: Target,
+})
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>   Feature1  Feature2  Feature3  Feature4  Feature5  Target
+0  2.161596  1.335954 -0.403696  0.048703 -0.352747       1
+1 -0.980579  0.071353  0.288733 -0.439909 -0.578918       0
+2  0.567174 -0.811513  0.056646 -1.168114  0.306735       0
+3  1.134049 -0.711547 -0.076631  0.726083  1.106567       1
+4  0.631721  1.273348 -1.062992 -0.264813 -0.738309       1</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 6</span></div><pre class="py">dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(150, 6)</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 8</span></div><pre class="py">dataset[&quot;Target&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Target
+1    85
+0    65
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 10</span></div><pre class="py">X = dataset.drop(columns=[&quot;Target&quot;])
+y = dataset[&quot;Target&quot;]</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 12</span></div><pre class="py">X, y</pre></div><div class="out"><div class="h">Output</div><pre>(     Feature1  Feature2  Feature3  Feature4  Feature5
+ 0    2.161596  1.335954 -0.403696  0.048703 -0.352747
+ 1   -0.980579  0.071353  0.288733 -0.439909 -0.578918
+ 2    0.567174 -0.811513  0.056646 -1.168114  0.306735
+ 3    1.134049 -0.711547 -0.076631  0.726083  1.106567
+ 4    0.631721  1.273348 -1.062992 -0.264813 -0.738309
+ ..        ...       ...       ...       ...       ...
+ 145 -0.266569  0.954740 -1.347425 -0.104743 -0.776740
+ 146  1.218765  0.401340  0.393746  0.362350 -1.043485
+ 147  0.648704 -0.009586 -0.605813  1.161052 -1.784982
+ 148  1.590029 -0.770502 -0.132640 -1.196658  0.006370
+ 149  1.895690  0.019675  2.084451  0.551775 -0.504388
+ 
+ [150 rows x 5 columns],
+ 0      1
+ 1      0
+ 2      0
+ 3      1
+ 4      1
+       ..
+ 145    0
+ 146    1
+ 147    0
+ 148    0
+ 149    1
+ Name: Target, Length: 150, dtype: int64)</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 14</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+X_train.shape, X_test.shape, y_train.shape, y_test.shape</pre></div><div class="out"><div class="h">Output</div><pre>((120, 5), (30, 5), (120,), (30,))</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 16</span></div><pre class="py">a = train_test_split(X, y, test_size=0.2)[0].index[:5]
+b = train_test_split(X, y, test_size=0.2)[0].index[:5]
+a, b   # no random_state — these will very likely differ
+
+c = train_test_split(X, y, test_size=0.2, random_state=42)[0].index[:5]
+d = train_test_split(X, y, test_size=0.2, random_state=42)[0].index[:5]
+c, d   # random_state=42 — these will be identical</pre></div><div class="out"><div class="h">Output</div><pre>(Index([22, 15, 65, 11, 42], dtype=&#x27;int64&#x27;),
+ Index([22, 15, 65, 11, 42], dtype=&#x27;int64&#x27;))</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 18</span></div><pre class="py">baseline_model = DecisionTreeClassifier(max_depth=4, random_state=42)
+baseline_model.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(max_depth=4, random_state=42)</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 20</span></div><pre class="py">from sklearn.tree import export_text
+print(export_text(baseline_model, feature_names=list(X_train.columns)))</pre></div><div class="out"><div class="h">Output</div><pre>|--- Feature1 &lt;= 0.70
+|   |--- Feature2 &lt;= 0.39
+|   |   |--- Feature4 &lt;= -1.78
+|   |   |   |--- Feature2 &lt;= 0.07
+|   |   |   |   |--- class: 1
+|   |   |   |--- Feature2 &gt;  0.07
+|   |   |   |   |--- class: 0
+|   |   |--- Feature4 &gt;  -1.78
+|   |   |   |--- class: 0
+|   |--- Feature2 &gt;  0.39
+|   |   |--- Feature1 &lt;= -0.23
+|   |   |   |--- class: 0
+|   |   |--- Feature1 &gt;  -0.23
+|   |   |   |--- Feature4 &lt;= 1.36
+|   |   |   |   |--- class: 1
+|   |   |   |--- Feature4 &gt;  1.36
+|   |   |   |   |--- class: 0
+|--- Feature1 &gt;  0.70
+|   |--- Feature2 &lt;= -0.20
+|   |   |--- Feature1 &lt;= 1.74
+|   |   |   |--- Feature5 &lt;= -0.46
+|   |   |   |   |--- class: 0
+|   |   |   |--- Feature5 &gt;  -0.46
+|   |   |   |   |--- class: 0
+|   |   |--- Feature1 &gt;  1.74
+|   |   |   |--- Feature1 &lt;= 2.65
+|   |   |   |   |--- class: 1
+|   |   |   |--- Feature1 &gt;  2.65
+|   |   |   |   |--- class: 0
+|   |--- Feature2 &gt;  -0.20
+|   |   |--- Feature1 &lt;= 0.87
+|   |   |   |--- Feature4 &lt;= 0.03
+|   |   |   |   |--- class: 1
+|   |   |   |--- Feature4 &gt;  0.03
+|   |   |   |   |--- class: 0
+|   |   |--- Feature1 &gt;  0.87
+|   |   |   |--- Feature2 &lt;= 0.34
+|   |   |   |   |--- class: 1
+|   |   |   |--- Feature2 &gt;  0.34
+|   |   |   |   |--- class: 1</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 22</span></div><pre class="py">baseline_model</pre></div><div class="out"><div class="h">Output</div><pre>DecisionTreeClassifier(max_depth=4, random_state=42)</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 24</span></div><pre class="py">y_pred = baseline_model.predict(X_test)
+baseline_accuracy = accuracy_score(y_test, y_pred)
+baseline_accuracy</pre></div><div class="out"><div class="h">Output</div><pre>0.7333333333333333</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 26</span></div><pre class="py">sfs_forward = SFS(
+    DecisionTreeClassifier(max_depth=4, random_state=42),
+    k_features=(1, 5),
+    forward=True,
+    floating=False,
+    scoring=&quot;accuracy&quot;,
+    cv=5,
+)
+sfs_forward.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>SequentialFeatureSelector(estimator=DecisionTreeClassifier(max_depth=4,
+                                                           random_state=42),
+                          k_features=(1, 5), scoring=&#x27;accuracy&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 28</span></div><pre class="py">sfs_forward.k_feature_names_</pre></div><div class="out"><div class="h">Output</div><pre>(&#x27;Feature1&#x27;, &#x27;Feature2&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 30</span></div><pre class="py">forward_table = pd.DataFrame(sfs_forward.subsets_).T
+forward_table</pre></div><div class="out"><div class="h">Output</div><pre>       feature_idx                                          cv_scores  \
+1             (0,)  [0.7083333333333334, 0.625, 0.75, 0.7083333333...   
+2           (0, 1)  [0.875, 0.875, 0.8333333333333334, 0.875, 0.79...   
+3        (0, 1, 4)  [0.8333333333333334, 0.875, 0.8333333333333334...   
+4     (0, 1, 2, 4)  [0.75, 0.8333333333333334, 0.8333333333333334,...   
+5  (0, 1, 2, 3, 4)  [0.6666666666666666, 0.8333333333333334, 0.875...   
+
+  avg_score                                      feature_names  
+1     0.725                                        (Feature1,)  
+2      0.85                               (Feature1, Feature2)  
+3  0.841667                     (Feature1, Feature2, Feature5)  
+4  0.808333           (Feature1, Feature2, Feature3, Feature5)  
+5  0.791667  (Feature1, Feature2, Feature3, Feature4, Featu...</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 32</span></div><pre class="py">sfs_forward.k_score_</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.85)</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 33</span></div><pre class="py">forward_features = list(sfs_forward.k_feature_names_)
+
+final_forward_model = DecisionTreeClassifier(max_depth=4, random_state=42)
+final_forward_model.fit(X_train[forward_features], y_train)
+
+forward_test_accuracy = accuracy_score(
+    y_test, final_forward_model.predict(X_test[forward_features])
+)
+forward_test_accuracy</pre></div><div class="out"><div class="h">Output</div><pre>0.7333333333333333</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 36</span></div><pre class="py">sfs_backward = SFS(
+    DecisionTreeClassifier(max_depth=4, random_state=42),
+    k_features=(1, 5),
+    forward=False,
+    floating=False,
+    scoring=&quot;accuracy&quot;,
+    cv=5,
+)
+sfs_backward.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>SequentialFeatureSelector(estimator=DecisionTreeClassifier(max_depth=4,
+                                                           random_state=42),
+                          forward=False, k_features=(1, 5), scoring=&#x27;accuracy&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 38</span></div><pre class="py">sfs_backward.k_feature_names_</pre></div><div class="out"><div class="h">Output</div><pre>(&#x27;Feature1&#x27;, &#x27;Feature2&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 40</span></div><pre class="py">backward_table = pd.DataFrame(sfs_backward.subsets_).T
+backward_table</pre></div><div class="out"><div class="h">Output</div><pre>       feature_idx                                          cv_scores  \
+5  (0, 1, 2, 3, 4)  [0.6666666666666666, 0.8333333333333334, 0.875...   
+4     (0, 1, 2, 4)  [0.75, 0.8333333333333334, 0.8333333333333334,...   
+3        (0, 1, 4)  [0.8333333333333334, 0.875, 0.8333333333333334...   
+2           (0, 1)  [0.875, 0.875, 0.8333333333333334, 0.875, 0.79...   
+1             (0,)  [0.7083333333333334, 0.625, 0.75, 0.7083333333...   
+
+  avg_score                                      feature_names  
+5  0.791667  (Feature1, Feature2, Feature3, Feature4, Featu...  
+4  0.808333           (Feature1, Feature2, Feature3, Feature5)  
+3  0.841667                     (Feature1, Feature2, Feature5)  
+2      0.85                               (Feature1, Feature2)  
+1     0.725                                        (Feature1,)</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 42</span></div><pre class="py">sfs_backward.k_score_</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.85)</pre></div><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 44</span></div><pre class="py">backward_features = list(sfs_backward.k_feature_names_)
+
+final_backward_model = DecisionTreeClassifier(max_depth=4, random_state=42)
+final_backward_model.fit(X_train[backward_features], y_train)
+
+backward_test_accuracy = accuracy_score(
+    y_test, final_backward_model.predict(X_test[backward_features])
+)
+backward_test_accuracy</pre></div><div class="out"><div class="h">Output</div><pre>0.7333333333333333</pre></div><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 46</span></div><pre class="py">comparison = pd.DataFrame({
+    &quot;features_used&quot;: [X.shape[1], len(forward_features), len(backward_features)],
+    &quot;test_accuracy&quot;: [baseline_accuracy, forward_test_accuracy, backward_test_accuracy],
+}, index=[&quot;All features (baseline)&quot;, &quot;Forward Selection&quot;, &quot;Backward Elimination&quot;])
+comparison</pre></div><div class="out"><div class="h">Output</div><pre>                         features_used  test_accuracy
+All features (baseline)              5       0.733333
+Forward Selection                    2       0.733333
+Backward Elimination                 2       0.733333</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outliers — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/12_Outlier.ipynb">12_Outlier.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">l = [5,6,7,5,4,6,7,5]
+sum(l)/len(l)</pre></div><div class="out"><div class="h">Output</div><pre>5.625</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">l_with_outlier = l + [100]
+sum(l_with_outlier)/len(l_with_outlier)</pre></div><div class="out"><div class="h">Output</div><pre>16.11111111111111</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 6</span></div><pre class="py">import statistics
+
+statistics.median(l), statistics.median(l_with_outlier)</pre></div><div class="out"><div class="h">Output</div><pre>(5.5, 6)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 8</span></div><pre class="py">statistics.pstdev(l), statistics.pstdev(l_with_outlier)</pre></div><div class="out"><div class="h">Output</div><pre>(0.9921567416492215, 29.673948336487737)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+
+labels = [&quot;Mean&quot;, &quot;Median&quot;]
+without = [sum(l)/len(l), statistics.median(l)]
+with_out = [sum(l_with_outlier)/len(l_with_outlier), statistics.median(l_with_outlier)]
+
+x = np.arange(len(labels))
+width = 0.35
+
+fig, ax = plt.subplots(figsize=(5.5, 3.5))
+bars1 = ax.bar(x - width/2, without, width, label=&quot;Without outlier&quot;, color=&quot;#2a78d6&quot;)
+bars2 = ax.bar(x + width/2, with_out, width, label=&quot;With outlier (100 added)&quot;, color=&quot;#d03b3b&quot;)
+ax.bar_label(bars1, fmt=&quot;%.2f&quot;, padding=2, fontsize=8.5)
+ax.bar_label(bars2, fmt=&quot;%.2f&quot;, padding=2, fontsize=8.5)
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.set_ylabel(&quot;Value&quot;)
+ax.set_title(&quot;One extra value moves the mean a lot, the median barely at all&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 14</span></div><pre class="py">import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 15</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 16</span></div><pre class="py">dataset.info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 618 entries, 0 to 617
+Data columns (total 13 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Loan_ID            618 non-null    str    
+ 1   Gender             605 non-null    str    
+ 2   Married            612 non-null    str    
+ 3   Dependents         603 non-null    str    
+ 4   Education          609 non-null    str    
+ 5   Self_Employed      586 non-null    str    
+ 6   ApplicantIncome    616 non-null    float64
+ 7   CoapplicantIncome  618 non-null    int64  
+ 8   LoanAmount         596 non-null    float64
+ 9   Loan_Amount_Term   597 non-null    float64
+ 10  Credit_History     568 non-null    float64
+ 11  Property_Area      609 non-null    str    
+ 12  Loan_Status        618 non-null    str    
+dtypes: float64(4), int64(1), str(8)
+memory usage: 62.9 KB</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 18</span></div><pre class="py">dataset.describe()</pre></div><div class="out"><div class="h">Output</div><pre>       ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+count       616.000000         618.000000  596.000000        597.000000   
+mean       4730.256494        1385.077670  223.031879        312.723618   
+std        2180.942773        1611.760337   93.055097         89.102680   
+min        1500.000000           0.000000   40.000000         36.000000   
+25%        3160.500000           0.000000  152.000000        300.000000   
+50%        4325.000000        1089.000000  208.500000        360.000000   
+75%        5810.750000        2217.750000  282.000000        360.000000   
+max       16981.000000       10288.000000  480.000000        360.000000   
+
+       Credit_History  
+count      568.000000  
+mean         0.836268  
+std          0.370359  
+min          0.000000  
+25%          1.000000  
+50%          1.000000  
+75%          1.000000  
+max          1.000000</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 20</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot;,data=dataset)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">sns.boxplot(x=&quot;ApplicantIncome&quot;,data=dataset)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">for col in [&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]:
+    s = dataset[col].dropna()
+    Q1, Q3 = s.quantile(0.25), s.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound, upper_bound = Q1 - 1.5 * IQR, Q3 + 1.5 * IQR
+    is_outlier = (s &lt; lower_bound) | (s &gt; upper_bound)
+    print(f&quot;{col}: Q1={Q1:.1f}  Q3={Q3:.1f}  IQR={IQR:.1f}  &quot;
+          f&quot;bounds=({lower_bound:.1f}, {upper_bound:.1f})  &quot;
+          f&quot;outliers={is_outlier.sum()} ({100*is_outlier.mean():.2f}%)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>ApplicantIncome: Q1=3160.5  Q3=5810.8  IQR=2650.2  bounds=(-814.9, 9786.1)  outliers=21 (3.41%)
+CoapplicantIncome: Q1=0.0  Q3=2217.8  IQR=2217.8  bounds=(-3326.6, 5544.4)  outliers=15 (2.43%)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 27</span></div><pre class="py">s = dataset[&quot;ApplicantIncome&quot;].dropna()
+Q1, Q3 = s.quantile(0.25), s.quantile(0.75)
+IQR = Q3 - Q1
+lower_bound, upper_bound = Q1 - 1.5 * IQR, Q3 + 1.5 * IQR
+
+fig, ax = plt.subplots(figsize=(8, 4))
+sns.histplot(s, kde=True, color=&quot;#2a78d6&quot;, ax=ax, stat=&quot;density&quot;, alpha=0.35)
+
+# Shade the outlier region in the tail that actually has data past the bound
+ax.axvspan(upper_bound, s.max(), color=&quot;#d03b3b&quot;, alpha=0.18, label=&quot;Outlier region&quot;)
+for val, label in [(Q1, &quot;Q1&quot;), (Q3, &quot;Q3&quot;), (upper_bound, &quot;Q3 + 1.5×IQR&quot;)]:
+    ax.axvline(val, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
+    ax.text(val, ax.get_ylim()[1]*0.96, label, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+
+ax.set_title(&quot;ApplicantIncome — distribution with the box plot&#x27;s outlier boundary&quot;)
+ax.set_xlabel(&quot;ApplicantIncome&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py">mean, std = s.mean(), s.std()
+z_scores = (s - mean) / std
+iqr_outliers = (s &lt; lower_bound) | (s &gt; upper_bound)
+z_outliers = z_scores.abs() &gt; 3
+
+print(f&quot;IQR method:      {iqr_outliers.sum()} outliers flagged&quot;)
+print(f&quot;Z-score method:  {z_outliers.sum()} outliers flagged&quot;)
+print(f&quot;Flagged by IQR but not Z-score: {(iqr_outliers &amp; ~z_outliers).sum()}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>IQR method:      21 outliers flagged
+Z-score method:  8 outliers flagged
+Flagged by IQR but not Z-score: 13</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 33</span></div><pre class="py">print(&quot;Shape before:&quot;, dataset.shape)
+
+cleaned = dataset[(dataset[&quot;ApplicantIncome&quot;] &gt;= lower_bound) &amp; (dataset[&quot;ApplicantIncome&quot;] &lt;= upper_bound)]
+
+print(&quot;Shape after:&quot;, cleaned.shape)
+print(&quot;Rows dropped:&quot;, dataset.shape[0] - cleaned.shape[0])</pre></div><div class="out"><div class="h">Output</div><pre>Shape before: (618, 13)
+Shape after: (595, 13)
+Rows dropped: 23</pre></div><div class="src-head">📓 <a href="../Concept/13_Outlier_Removal_IQR.ipynb">13_Outlier_Removal_IQR.ipynb</a></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 5</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
+q3 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.75)
+q1, q3</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.0), np.float64(2217.75))</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 7</span></div><pre class="py">IQR = q3-q1
+IQR</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(2217.75)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 9</span></div><pre class="py">min_range = q1 - (1.5*IQR)
+max_range = q3 + (1.5*IQR)
+min_range , max_range</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(-3326.625), np.float64(5544.375))</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 11</span></div><pre class="py">both_bounds = dataset[(dataset[&quot;CoapplicantIncome&quot;] &gt;= min_range) &amp; (dataset[&quot;CoapplicantIncome&quot;] &lt;= max_range)]
+upper_only = dataset[dataset[&quot;CoapplicantIncome&quot;] &lt;= max_range]
+both_bounds.shape, upper_only.shape</pre></div><div class="out"><div class="h">Output</div><pre>((603, 13), (603, 13))</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 14</span></div><pre class="py">new_dataset = dataset[dataset[&quot;CoapplicantIncome&quot;]&lt;=max_range]
+dataset.shape, new_dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>((618, 13), (603, 13))</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 16</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5), sharex=True)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=dataset, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(f&quot;Before  (n={dataset.shape[0]})&quot;)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=new_dataset, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(f&quot;After  (n={new_dataset.shape[0]})&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 18</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
+sns.kdeplot(dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;, fill=True, alpha=0.25, label=f&quot;Before (n={dataset.shape[0]})&quot;, ax=ax)
+sns.kdeplot(new_dataset[&quot;CoapplicantIncome&quot;], color=&quot;#2a78d6&quot;, fill=True, alpha=0.35, label=f&quot;After (n={new_dataset.shape[0]})&quot;, ax=ax)
+ax.axvline(max_range, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
+ax.text(max_range, ax.get_ylim()[1]*0.96, &quot;max_range&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.set_title(&quot;CoapplicantIncome distribution — before vs. after removal&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 21</span></div><pre class="py">before_mean, before_std = dataset[&quot;CoapplicantIncome&quot;].mean(), dataset[&quot;CoapplicantIncome&quot;].std()
+after_mean, after_std = new_dataset[&quot;CoapplicantIncome&quot;].mean(), new_dataset[&quot;CoapplicantIncome&quot;].std()
+
+print(f&quot;mean:  {before_mean:.1f} -&gt; {after_mean:.1f}  ({100*(after_mean-before_mean)/before_mean:+.1f}%)&quot;)
+print(f&quot;std:   {before_std:.1f} -&gt; {after_std:.1f}  ({100*(after_std-before_std)/before_std:+.1f}%)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>mean:  1385.1 -&gt; 1248.6  (-9.9%)
+std:   1611.8 -&gt; 1360.1  (-15.6%)</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 25</span></div><pre class="py">s = dataset[&quot;ApplicantIncome&quot;].dropna()
+Q1_app, Q3_app = s.quantile(0.25), s.quantile(0.75)
+IQR_app = Q3_app - Q1_app
+lo_app, hi_app = Q1_app - 1.5 * IQR_app, Q3_app + 1.5 * IQR_app
+
+cleaned = dataset[(dataset[&quot;ApplicantIncome&quot;] &gt;= lo_app) &amp; (dataset[&quot;ApplicantIncome&quot;] &lt;= hi_app)]
+cleaned = cleaned[cleaned[&quot;CoapplicantIncome&quot;] &lt;= max_range]
+
+print(&quot;Original:                       &quot;, dataset.shape)
+print(&quot;After ApplicantIncome filter:   &quot;, (dataset[(dataset[&quot;ApplicantIncome&quot;] &gt;= lo_app) &amp; (dataset[&quot;ApplicantIncome&quot;] &lt;= hi_app)]).shape)
+print(&quot;After both filters (chained):   &quot;, cleaned.shape)</pre></div><div class="out"><div class="h">Output</div><pre>Original:                        (618, 13)
+After ApplicantIncome filter:    (595, 13)
+After both filters (chained):    (581, 13)</pre></div><div class="src-head">📓 <a href="../Concept/14_Outlier_Removal_Z_Score.ipynb">14_Outlier_Removal_Z_Score.ipynb</a></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 5</span></div><pre class="py">dataset.describe()</pre></div><div class="out"><div class="h">Output</div><pre>       ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+count       616.000000         618.000000  596.000000        597.000000   
+mean       4730.256494        1385.077670  223.031879        312.723618   
+std        2180.942773        1611.760337   93.055097         89.102680   
+min        1500.000000           0.000000   40.000000         36.000000   
+25%        3160.500000           0.000000  152.000000        300.000000   
+50%        4325.000000        1089.000000  208.500000        360.000000   
+75%        5810.750000        2217.750000  282.000000        360.000000   
+max       16981.000000       10288.000000  480.000000        360.000000   
+
+       Credit_History  
+count      568.000000  
+mean         0.836268  
+std          0.370359  
+min          0.000000  
+25%          1.000000  
+50%          1.000000  
+75%          1.000000  
+max          1.000000</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 6</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=dataset)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 8</span></div><pre class="py">sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#2a78d6&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 11</span></div><pre class="py">min_range = dataset[&quot;CoapplicantIncome&quot;].mean() - (3*dataset[&quot;CoapplicantIncome&quot;].std())
+max_range = dataset[&quot;CoapplicantIncome&quot;].mean() + (3*dataset[&quot;CoapplicantIncome&quot;].std())
+min_range, max_range</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(-3450.2033416842687), np.float64(6220.358681490095))</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 13</span></div><pre class="py">new_data = dataset[dataset[&quot;CoapplicantIncome&quot;]&lt;=max_range]
+new_data.shape</pre></div><div class="out"><div class="h">Output</div><pre>(610, 13)</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 15</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot; ,data= new_data)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 18</span></div><pre class="py">z_score = (dataset[&quot;CoapplicantIncome&quot;] - dataset[&quot;CoapplicantIncome&quot;].mean()) / (dataset[&quot;CoapplicantIncome&quot;].std())
+z_score.head()</pre></div><div class="out"><div class="h">Output</div><pre>0   -0.226509
+1   -0.114209
+2   -0.198589
+3   -0.859357
+4    0.557107
+Name: CoapplicantIncome, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 20</span></div><pre class="py">(z_score &gt; 3).sum()</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(8)</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 23</span></div><pre class="py">z_cleaned = dataset[z_score.abs() &lt; 3]
+z_cleaned.shape</pre></div><div class="out"><div class="h">Output</div><pre>(610, 13)</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 25</span></div><pre class="py">&quot;z_score&quot; in z_cleaned.columns, &quot;z_score&quot; in dataset.columns</pre></div><div class="out"><div class="h">Output</div><pre>(False, False)</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 27</span></div><pre class="py">new_data.shape[0] == z_cleaned.shape[0] == (618 - (z_score &gt; 3).sum())</pre></div><div class="out"><div class="h">Output</div><pre>np.True_</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 30</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5), sharex=True)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=dataset, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(f&quot;Before  (n={dataset.shape[0]})&quot;)
+sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=z_cleaned, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(f&quot;After — Z-score  (n={z_cleaned.shape[0]})&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 32</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
+sns.histplot(z_score, kde=True, color=&quot;#2a78d6&quot;, alpha=0.35, ax=ax)
+ax.axvspan(3, z_score.max(), color=&quot;#d03b3b&quot;, alpha=0.18, label=&quot;z &gt; 3 (flagged)&quot;)
+ax.axvline(3, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
+ax.text(3, ax.get_ylim()[1]*0.96, &quot;z = 3&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.set_title(&quot;CoapplicantIncome — distances from the mean, in σ units&quot;)
+ax.set_xlabel(&quot;z-score&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 35</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
+q3 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.75)
+iqr_bound = q3 + 1.5 * (q3 - q1)
+
+iqr_flagged = dataset[&quot;CoapplicantIncome&quot;] &gt; iqr_bound
+z_flagged = z_score &gt; 3
+
+print(f&quot;IQR bound:      {iqr_bound:.1f}   -&gt;  {iqr_flagged.sum()} rows flagged&quot;)
+print(f&quot;Z-score bound:  {max_range:.1f}   -&gt;  {z_flagged.sum()} rows flagged&quot;)
+print(f&quot;Flagged by both:            {(iqr_flagged &amp; z_flagged).sum()}&quot;)
+print(f&quot;Flagged by IQR, missed by Z-score: {(iqr_flagged &amp; ~z_flagged).sum()}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>IQR bound:      5544.4   -&gt;  15 rows flagged
+Z-score bound:  6220.4   -&gt;  8 rows flagged
+Flagged by both:            8
+Flagged by IQR, missed by Z-score: 7</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 37</span></div><pre class="py">dataset.loc[iqr_flagged &amp; ~z_flagged, [&quot;CoapplicantIncome&quot;]].sort_values(&quot;CoapplicantIncome&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>     CoapplicantIncome
+133               5784
+514               5831
+232               5834
+90                6016
+384               6025
+428               6074
+576               6177</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 39</span></div><pre class="py">fig, ax = plt.subplots(figsize=(9, 4))
+sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#2a78d6&quot;, alpha=0.3, ax=ax)
+ax.axvspan(iqr_bound, max_range, color=&quot;#fab219&quot;, alpha=0.35, label=f&quot;Gap — flagged by IQR, missed by Z-score ({(iqr_flagged &amp; ~z_flagged).sum()} rows)&quot;)
+ax.axvspan(max_range, dataset[&quot;CoapplicantIncome&quot;].max(), color=&quot;#d03b3b&quot;, alpha=0.2, label=f&quot;Flagged by both ({(iqr_flagged &amp; z_flagged).sum()} rows)&quot;)
+ax.axvline(iqr_bound, color=&quot;#2a78d6&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.axvline(max_range, color=&quot;#d03b3b&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(iqr_bound, ax.get_ylim()[1]*0.96, &quot;IQR bound&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.text(max_range, ax.get_ylim()[1]*0.96, &quot;Z-score bound&quot;, rotation=90, va=&quot;top&quot;, ha=&quot;right&quot;, fontsize=8)
+ax.set_title(&quot;Why the two methods disagree — the gap between their bounds&quot;)
+ax.legend(frameon=False, fontsize=8.5)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 42</span></div><pre class="py">print(&quot;Original:            &quot;, dataset.shape)
+print(&quot;IQR-cleaned (13):     &quot;, (dataset[dataset[&quot;CoapplicantIncome&quot;] &lt;= iqr_bound]).shape)
+print(&quot;Z-score-cleaned (14): &quot;, z_cleaned.shape)</pre></div><div class="out"><div class="h">Output</div><pre>Original:             (618, 13)
+IQR-cleaned (13):      (603, 13)
+Z-score-cleaned (14):  (610, 13)</pre></div><div class="src-head">📓 <a href="../Concept/21_Outliers.ipynb">21_Outliers.ipynb</a></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 2</span></div><pre class="py">from sklearn.cluster import DBSCAN
+from sklearn.ensemble import IsolationForest
+from sklearn.covariance import EllipticEnvelope
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
+import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 4</span></div><pre class="py">x,y = make_blobs(n_samples=500, centers=3, cluster_std=0.4,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 5</span></div><pre class="py">import pandas as pd
+
+# Display the data created by make_blobs.
+data_view = pd.DataFrame(x, columns=[&#x27;feature_0&#x27;, &#x27;feature_1&#x27;])
+data_view[&#x27;true_blob&#x27;] = y
+
+print(f&#x27;x shape: {x.shape}&#x27;)
+print(f&#x27;y shape: {y.shape}&#x27;)
+print(f&#x27;Rows created: {x.shape[0]}&#x27;)
+print(f&#x27;Feature columns created: {x.shape[1]}&#x27;)
+display(data_view.head(10))</pre></div><div class="out"><div class="h">Output</div><pre>x shape: (500, 2)
+y shape: (500,)
+Rows created: 500
+Feature columns created: 2
+   feature_0  feature_1  true_blob
+0   1.027035   4.464583          0
+1  -1.689281   3.207630          2
+2  -1.729911   2.497130          2
+3   1.232323   3.657005          0
+4   0.201758   4.379299          0
+5   0.964997   4.475120          0
+6   0.718823   3.414426          0
+7  -1.447717   3.350656          2
+8  -1.435683   2.998474          2
+9   1.275145   3.828209          0</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 7</span></div><pre class="py"># Compare cluster_std: same 500 rows and 3 groups, different spread.
+std_values = [0.2, 0.4, 1.0]
+figure, axes = plt.subplots(1, 3, figsize=(14, 4), sharex=True, sharey=True)
+
+for axis, std_value in zip(axes, std_values):
+    demo_x, demo_y = make_blobs(
+        n_samples=500,
+        centers=3,
+        cluster_std=std_value,
+        random_state=0
+    )
+    axis.scatter(demo_x[:, 0], demo_x[:, 1], c=demo_y, s=12)
+    axis.set_title(f&#x27;cluster_std = {std_value}&#x27;)
+    axis.set_xlabel(&#x27;feature 0&#x27;)
+    axis.grid(alpha=0.2)
+
+axes[0].set_ylabel(&#x27;feature 1&#x27;)
+figure.suptitle(&#x27;The spread changes; rows, features, and groups stay the same&#x27;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1202152b0&gt;</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 12</span></div><pre class="py"># How DBSCAN measures. It is plain distance and counting - nothing else.
+import math
+
+eps = 1.5
+min_pts = 3
+
+names = [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;, &#x27;F&#x27;]
+points = [(1, 1), (2, 1), (1, 2), (2, 2), (3.2, 2), (6, 5)]
+
+print(&#x27;STEP 1 - distance from every point to every other point&#x27;)
+print(&#x27;         &#x27; + &#x27;     &#x27;.join(names))
+for name, p in zip(names, points):
+    row = &#x27;&#x27;
+    for q in points:
+        row = row + f&#x27;{math.dist(p, q):6.2f}&#x27;
+    print(f&#x27;    {name}  {row}&#x27;)
+
+print()
+print(f&#x27;STEP 2 - who is inside my circle of radius {eps}, including me?&#x27;)
+neighbours = {}
+for name, p in zip(names, points):
+    inside = [n for n, q in zip(names, points) if math.dist(p, q) &lt;= eps]
+    neighbours[name] = inside
+    verdict = &#x27;CORE&#x27; if len(inside) &gt;= min_pts else &#x27;not core&#x27;
+    print(f&#x27;    {name} -&gt; {str(inside):22s} count = {len(inside)}   {verdict}&#x27;)
+
+print()
+print(&#x27;STEP 3 - for the ones that are not core: border or noise?&#x27;)
+kind = {}
+for name in names:
+    if len(neighbours[name]) &gt;= min_pts:
+        kind[name] = &#x27;core&#x27;
+
+for name in names:
+    if name in kind:
+        continue
+    near_a_core = [c for c in names if kind.get(c) == &#x27;core&#x27; and name in neighbours[c]]
+    if near_a_core:
+        kind[name] = &#x27;border&#x27;
+        print(f&quot;    {name} is not core, but it sits inside {near_a_core}&#x27;s circle -&gt; BORDER&quot;)
+    else:
+        kind[name] = &#x27;noise&#x27;
+        print(f&quot;    {name} is not core and sits inside nobody&#x27;s circle -&gt; NOISE (label -1)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>STEP 1 - distance from every point to every other point
+         A     B     C     D     E     F
+    A    0.00  1.00  1.00  1.41  2.42  6.40
+    B    1.00  0.00  1.41  1.00  1.56  5.66
+    C    1.00  1.41  0.00  1.00  2.20  5.83
+    D    1.41  1.00  1.00  0.00  1.20  5.00
+    E    2.42  1.56  2.20  1.20  0.00  4.10
+    F    6.40  5.66  5.83  5.00  4.10  0.00
+
+STEP 2 - who is inside my circle of radius 1.5, including me?
+    A -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]   count = 4   CORE
+    B -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]   count = 4   CORE
+    C -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]   count = 4   CORE
+    D -&gt; [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;] count = 5   CORE
+    E -&gt; [&#x27;D&#x27;, &#x27;E&#x27;]             count = 2   not core
+    F -&gt; [&#x27;F&#x27;]                  count = 1   not core
+
+STEP 3 - for the ones that are not core: border or noise?
+    E is not core, but it sits inside [&#x27;D&#x27;]&#x27;s circle -&gt; BORDER
+    F is not core and sits inside nobody&#x27;s circle -&gt; NOISE (label -1)</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 14</span></div><pre class="py"># The whiteboard picture: one circle of radius eps around every point.
+colour = {&#x27;core&#x27;: &#x27;teal&#x27;, &#x27;border&#x27;: &#x27;orange&#x27;, &#x27;noise&#x27;: &#x27;black&#x27;}
+title = {&#x27;core&#x27;: &#x27;core point&#x27;, &#x27;border&#x27;: &#x27;boundary point&#x27;, &#x27;noise&#x27;: &#x27;noise point&#x27;}
+label_spot = {&#x27;A&#x27;: (12, -20), &#x27;B&#x27;: (12, -20), &#x27;C&#x27;: (-22, 10),
+              &#x27;D&#x27;: (-4, 14), &#x27;E&#x27;: (14, 6), &#x27;F&#x27;: (14, 6)}
+
+figure, axis = plt.subplots(figsize=(8, 6.5))
+already_named = []
+
+for name, p in zip(names, points):
+    this_kind = kind[name]
+    axis.add_patch(plt.Circle(p, eps, fill=False, linestyle=&#x27;--&#x27;,
+                              edgecolor=&#x27;grey&#x27;, alpha=0.7))
+    legend_text = None
+    if this_kind not in already_named:
+        legend_text = title[this_kind]
+        already_named.append(this_kind)
+    axis.plot(p[0], p[1], &#x27;o&#x27;, markersize=14, color=colour[this_kind],
+              label=legend_text)
+    axis.annotate(name, p, xytext=label_spot[name], textcoords=&#x27;offset points&#x27;,
+                  fontsize=13, fontweight=&#x27;bold&#x27;)
+
+# what eps actually measures, drawn out from A into empty space
+axis.annotate(&#x27;&#x27;, xy=(1 - eps, 1), xytext=(1, 1),
+              arrowprops=dict(arrowstyle=&#x27;&lt;-&gt;&#x27;, color=&#x27;crimson&#x27;))
+axis.text(-0.45, 1.12, f&#x27;eps = {eps}&#x27;, color=&#x27;crimson&#x27;, fontsize=11)
+
+# D is core and E sits inside D&#x27;s circle, so D reaches E in one step
+axis.annotate(&#x27;&#x27;, xy=(3.15, 2), xytext=(2.05, 2),
+              arrowprops=dict(arrowstyle=&#x27;-&gt;&#x27;, color=&#x27;seagreen&#x27;, lw=2))
+axis.text(1.95, 1.62, &#x27;D --&gt; E : directly density-reachable&#x27;,
+          color=&#x27;seagreen&#x27;, fontsize=10)
+
+axis.set_title(f&#x27;eps = {eps},   MinPts = {min_pts}&#x27;, fontsize=13)
+axis.set_xlabel(&#x27;feature 1&#x27;)
+axis.set_ylabel(&#x27;feature 2&#x27;)
+axis.set_aspect(&#x27;equal&#x27;)
+axis.grid(alpha=0.2)
+axis.legend(loc=&#x27;upper left&#x27;, fontsize=10)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 16</span></div><pre class="py"># Does sklearn agree with the hand working?
+check = DBSCAN(eps=eps, min_samples=min_pts).fit(np.array(points))
+
+print(&#x27;point order              :&#x27;, names)
+print(&#x27;sklearn labels_          :&#x27;, check.labels_)
+print(&#x27;sklearn core points      :&#x27;, [names[i] for i in check.core_sample_indices_])
+print(&#x27;my hand answer           :&#x27;, [kind[n] for n in names])</pre></div><div class="out"><div class="h">Output</div><pre>point order              : [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;, &#x27;F&#x27;]
+sklearn labels_          : [ 0  0  0  0  0 -1]
+sklearn core points      : [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]
+my hand answer           : [&#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;border&#x27;, &#x27;noise&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 18</span></div><pre class="py">db = DBSCAN(eps=0.3,min_samples=10).fit(x)</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 20</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120478b90&gt;</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 21</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=db.labels_)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1204d25d0&gt;</pre></div><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 23</span></div><pre class="py"># Teaching experiment: separate names preserve your original x, y, and db.
+lesson_db_x = x.copy()
+lesson_fig, lesson_axes = plt.subplots(1, 3, figsize=(14, 4), sharex=True, sharey=True)
+for lesson_axis, lesson_eps in zip(lesson_axes, [0.15, 0.3, 0.6]):
+    lesson_labels = DBSCAN(eps=lesson_eps, min_samples=10).fit_predict(lesson_db_x)
+    lesson_noise = lesson_labels == -1  # one True/False value per row
+    lesson_groups = len(set(lesson_labels) - {-1})
+    lesson_axis.scatter(lesson_db_x[~lesson_noise, 0], lesson_db_x[~lesson_noise, 1],
+                        s=14, color=&#x27;steelblue&#x27;, label=&#x27;in a cluster&#x27;)
+    lesson_axis.scatter(lesson_db_x[lesson_noise, 0], lesson_db_x[lesson_noise, 1],
+                        s=35, marker=&#x27;x&#x27;, color=&#x27;crimson&#x27;, label=&#x27;noise&#x27;)
+    lesson_axis.set_title(f&#x27;eps={lesson_eps}: {lesson_groups} clusters, {lesson_noise.sum()} noise&#x27;)
+    lesson_axis.set_xlabel(&#x27;feature 1&#x27;)
+    lesson_axis.legend(fontsize=8)
+lesson_axes[0].set_ylabel(&#x27;feature 2&#x27;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 26</span></div><pre class="py">x,y = make_blobs(n_samples=2000, centers=2, cluster_std=0.9,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12071d450&gt;</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 29</span></div><pre class="py">ee = EllipticEnvelope(contamination=0.1)
+ee.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>EllipticEnvelope()</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 30</span></div><pre class="py">prediction = ee.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 31</span></div><pre class="py">plt.scatter(x[:,0],x[:,1], c= prediction)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12076b4d0&gt;</pre></div><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 33</span></div><pre class="py"># Use your already-fitted ee and its current two-cloud x.
+lesson_ee_flags = ee.predict(x) == -1
+lesson_gx, lesson_gy = np.meshgrid(
+    np.linspace(x[:, 0].min() - 1, x[:, 0].max() + 1, 180),
+    np.linspace(x[:, 1].min() - 1, x[:, 1].max() + 1, 180)
+)
+lesson_grid = np.column_stack([lesson_gx.ravel(), lesson_gy.ravel()])
+lesson_surface = ee.decision_function(lesson_grid).reshape(lesson_gx.shape)
+plt.figure(figsize=(7, 5))
+plt.scatter(x[~lesson_ee_flags, 0], x[~lesson_ee_flags, 1], s=10,
+            color=&#x27;steelblue&#x27;, label=&#x27;inlier (+1)&#x27;)
+plt.scatter(x[lesson_ee_flags, 0], x[lesson_ee_flags, 1], s=25,
+            color=&#x27;crimson&#x27;, marker=&#x27;x&#x27;, label=&#x27;outlier (-1)&#x27;)
+plt.contour(lesson_gx, lesson_gy, lesson_surface, levels=[0], colors=&#x27;black&#x27;)
+plt.title(f&#x27;One fitted ellipse; {lesson_ee_flags.sum()} of {len(x)} rows flagged&#x27;)
+plt.xlabel(&#x27;feature 1&#x27;)
+plt.ylabel(&#x27;feature 2&#x27;)
+plt.legend()
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 36</span></div><pre class="py">x,y = make_blobs(n_samples=500, centers=3, cluster_std=0.4,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 38</span></div><pre class="py">iso = IsolationForest()</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 39</span></div><pre class="py">iso.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>IsolationForest()</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 40</span></div><pre class="py">pred = iso.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 41</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120ab8b90&gt;</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 43</span></div><pre class="py"># Reproducible score experiment on the same three-cloud data.
+lesson_iso = IsolationForest(random_state=0).fit(x)
+lesson_raw = lesson_iso.score_samples(x)
+lesson_decision = lesson_iso.decision_function(x)
+lesson_flags = lesson_iso.predict(x) == -1
+print(&#x27;score offset:&#x27;, lesson_iso.offset_)
+print(&#x27;row | score_samples | decision score | predicted label&#x27;)
+for lesson_i in np.argsort(lesson_raw)[[0, len(x) // 2, -1]]:
+    print(f&#x27;{lesson_i:3d} | {lesson_raw[lesson_i]:13.3f} | &#x27;
+          f&#x27;{lesson_decision[lesson_i]:14.3f} | {(-1 if lesson_flags[lesson_i] else 1):+d}&#x27;)
+plt.figure(figsize=(8, 3))
+plt.hist(lesson_decision, bins=25, color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+plt.axvline(0, color=&#x27;crimson&#x27;, linestyle=&#x27;--&#x27;, label=&#x27;label cutoff = 0&#x27;)
+plt.xlabel(&#x27;decision score: negative → flagged; nonnegative → inlier&#x27;)
+plt.ylabel(&#x27;number of observations&#x27;)
+plt.title(&#x27;Continuous scores become labels after applying a cutoff&#x27;)
+plt.legend()
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>score offset: -0.5
+row | score_samples | decision score | predicted label
+442 |        -0.645 |         -0.145 | -1
+415 |        -0.470 |          0.030 | +1
+181 |        -0.425 |          0.075 | +1</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 48</span></div><pre class="py"># Visualize DBSCAN&#x27;s discovered clusters and point types
+from matplotlib.lines import Line2D
+
+# Use the three-cluster data for a clear DBSCAN example.
+x, y = make_blobs(
+    n_samples=500,
+    centers=3,
+    cluster_std=0.4,
+    random_state=0
+)
+db = DBSCAN(eps=0.3, min_samples=10).fit(x)
+labels = db.labels_
+core_mask = np.zeros(labels.shape, dtype=bool)
+core_mask[db.core_sample_indices_] = True
+
+fig, axes = plt.subplots(1, 3, figsize=(16, 4))
+
+# 1. Raw points: no groups have been assigned yet.
+axes[0].scatter(x[:, 0], x[:, 1], s=18, color=&quot;steelblue&quot;)
+axes[0].set_title(&quot;1. Raw points&quot;)
+
+# 2. DBSCAN&#x27;s discovered cluster IDs.
+cluster_ids = sorted(set(labels))
+colors = plt.cm.tab10(np.linspace(0, 1, max(len(cluster_ids), 1)))
+for color, cluster_id in zip(colors, cluster_ids):
+    point_mask = labels == cluster_id
+    point_color = &quot;black&quot; if cluster_id == -1 else color
+    axes[1].scatter(
+        x[point_mask, 0],
+        x[point_mask, 1],
+        s=22,
+        color=point_color,
+        label=&quot;noise (-1)&quot; if cluster_id == -1 else f&quot;cluster {cluster_id}&quot;
+    )
+axes[1].set_title(&quot;2. DBSCAN cluster labels&quot;)
+axes[1].legend(fontsize=8)
+
+# 3. Core points build the dense regions; border points join from the edge.
+noise_mask = labels == -1
+border_mask = ~core_mask &amp; ~noise_mask
+axes[2].scatter(
+    x[noise_mask, 0], x[noise_mask, 1],
+    s=28, color=&quot;black&quot;, label=&quot;noise (-1)&quot;
+)
+axes[2].scatter(
+    x[border_mask, 0], x[border_mask, 1],
+    s=28, color=&quot;orange&quot;, label=&quot;border point&quot;
+)
+axes[2].scatter(
+    x[core_mask, 0], x[core_mask, 1],
+    s=48, color=&quot;teal&quot;, edgecolors=&quot;white&quot;, label=&quot;core point&quot;
+)
+axes[2].set_title(&quot;3. Core, border, and noise points&quot;)
+axes[2].legend(fontsize=8)
+
+for axis in axes:
+    axis.set_xlabel(&quot;feature 1&quot;)
+    axis.set_ylabel(&quot;feature 2&quot;)
+    axis.grid(alpha=0.2)
+
+plt.tight_layout()
+plt.show()
+
+print(f&quot;Clusters found: {len(set(labels)) - (1 if -1 in labels else 0)}&quot;)
+print(f&quot;Core points: {core_mask.sum()}&quot;)
+print(f&quot;Border points: {border_mask.sum()}&quot;)
+print(f&quot;Noise points: {noise_mask.sum()}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Clusters found: 3
+Core points: 415
+Border points: 60
+Noise points: 25</pre></div><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.neighbors import LocalOutlierFactor</pre></div><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 52</span></div><pre class="py">clf = LocalOutlierFactor(n_neighbors=3)
+clf.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>LocalOutlierFactor(n_neighbors=3)</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 53</span></div><pre class="py">pred = clf.fit_predict(x)</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 54</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120da7c50&gt;</pre></div><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 56</span></div><pre class="py">x = np.array([[1,5],[1,6],[1,7],[2,5],[2,6],[6,5],[9,1]])</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 57</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 59</span></div><pre class="py">X = x[:,0]
+y = x[:,1]
+
+X = X.reshape(-1,1)
+clf = LocalOutlierFactor(n_neighbors=3)
+clf.fit(X)</pre></div><div class="out"><div class="h">Output</div><pre>LocalOutlierFactor(n_neighbors=3)</pre></div><div class="code"><div class="code-head"><span>In [79]</span><span class="cell">cell 60</span></div><pre class="py">pred = clf.fit_predict(X)
+plt.scatter(X, y,c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120efc190&gt;</pre></div><div class="code"><div class="code-head"><span>In [80]</span><span class="cell">cell 62</span></div><pre class="py"># Compare without overwriting your original X, y, clf, or pred.
+lesson_small = x.copy()
+lesson_inputs = [lesson_small[:, [0]], lesson_small]
+lesson_titles = [&#x27;LOF sees feature 1 only&#x27;, &#x27;LOF sees both features&#x27;]
+lesson_fig, lesson_axes = plt.subplots(1, 2, figsize=(11, 4), sharex=True, sharey=True)
+lesson_names = list(&#x27;ABCDEFG&#x27;)
+for lesson_axis, lesson_input, lesson_title in zip(lesson_axes, lesson_inputs, lesson_titles):
+    lesson_lof = LocalOutlierFactor(n_neighbors=3)
+    lesson_prediction = lesson_lof.fit_predict(lesson_input)
+    lesson_positive_lof = -lesson_lof.negative_outlier_factor_
+    print(&#x27;\n&#x27; + lesson_title + f&#x27;; input shape = {lesson_input.shape}&#x27;)
+    print(&#x27;row | positive LOF | label&#x27;)
+    for lesson_name, lesson_score, lesson_label in zip(lesson_names, lesson_positive_lof, lesson_prediction):
+        print(f&#x27;{lesson_name:3s} | {lesson_score:12.3f} | {lesson_label:+d}&#x27;)
+    for lesson_label, lesson_color, lesson_marker, lesson_text in [
+        (1, &#x27;steelblue&#x27;, &#x27;o&#x27;, &#x27;inlier (+1)&#x27;), (-1, &#x27;crimson&#x27;, &#x27;x&#x27;, &#x27;outlier (-1)&#x27;)
+    ]:
+        lesson_mask = lesson_prediction == lesson_label
+        lesson_axis.scatter(lesson_small[lesson_mask, 0], lesson_small[lesson_mask, 1],
+                            color=lesson_color, marker=lesson_marker, s=70, label=lesson_text)
+    for lesson_name, lesson_point in zip(lesson_names, lesson_small):
+        lesson_axis.annotate(lesson_name, lesson_point, xytext=(5, 5), textcoords=&#x27;offset points&#x27;)
+    lesson_axis.set_title(lesson_title)
+    lesson_axis.set_xlabel(&#x27;feature 1&#x27;)
+    lesson_axis.legend()
+lesson_axes[0].set_ylabel(&#x27;feature 2 (displayed in BOTH panels)&#x27;)
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>
+LOF sees feature 1 only; input shape = (7, 1)
+row | positive LOF | label
+A   |        1.000 | +1
+B   |        1.000 | +1
+C   |        1.000 | +1
+D   |        1.000 | +1
+E   |        1.000 | +1
+F   |        3.611 | -1
+G   |        4.400 | -1
+
+LOF sees both features; input shape = (7, 2)
+row | positive LOF | label
+A   |        0.898 | +1
+B   |        1.205 | +1
+C   |        1.073 | +1
+D   |        1.032 | +1
+E   |        0.898 | +1
+F   |        3.316 | -1
+G   |        4.139 | -1</pre></div><div class="code"><div class="code-head"><span>In [81]</span><span class="cell">cell 64</span></div><pre class="py">print(&#x27;k | positive LOF for F | positive LOF for G | rows flagged&#x27;)
+for lesson_k in [2, 3, 6]:
+    lesson_k_model = LocalOutlierFactor(n_neighbors=lesson_k)
+    lesson_k_labels = lesson_k_model.fit_predict(lesson_small)
+    lesson_k_scores = -lesson_k_model.negative_outlier_factor_
+    lesson_flag_names = [name for name, label in zip(lesson_names, lesson_k_labels) if label == -1]
+    print(f&#x27;{lesson_k} | {lesson_k_scores[5]:18.3f} | {lesson_k_scores[6]:18.3f} | {lesson_flag_names}&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>k | positive LOF for F | positive LOF for G | rows flagged
+2 |              4.062 |              4.070 | [&#x27;F&#x27;, &#x27;G&#x27;]
+3 |              3.316 |              4.139 | [&#x27;F&#x27;, &#x27;G&#x27;]
+6 |              1.074 |              0.970 | []</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Z Test vs T Test — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/Z-Test vs T-Test.ipynb">Z-Test vs T-Test.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 3</span></div><pre class="py">import numpy as np
+import scipy.stats as st
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 5</span></div><pre class="py">x = np.linspace(-4, 4, 500)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, st.norm.pdf(x), color=&quot;crimson&quot;, linewidth=2.5, label=&quot;Z (Normal)&quot;)
+
+for df_, style in [(2, &quot;:&quot;), (5, &quot;--&quot;), (29, &quot;-.&quot;)]:
+    ax.plot(x, st.t.pdf(x, df_), linestyle=style, linewidth=1.8, label=f&quot;t (df={df_})&quot;)
+
+ax.set_title(&quot;Z-distribution vs T-distribution at different sample sizes&quot;)
+ax.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148     # sample mean
+mu = 150        # population mean (claimed)
+n = 25          # sample size
+
+sigma = 5       # population std -&gt; used only for Z
+S = 5           # sample std     -&gt; used only for T
+
+z_test = (x_bar - mu) / (sigma / np.sqrt(n))
+t_test = (x_bar - mu) / (S / np.sqrt(n))
+
+print(&quot;z_test:&quot;, z_test)
+print(&quot;t_test:&quot;, t_test)
+print(&quot;df for t:&quot;, n - 1)</pre></div><div class="out"><div class="h">Output</div><pre>z_test: -2.0
+t_test: -2.0
+df for t: 24</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

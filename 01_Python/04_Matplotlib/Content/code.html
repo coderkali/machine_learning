@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matplotlib — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">print(matplotlib.__version__)</pre></div><div class="out"><div class="h">Output</div><pre>3.10.9</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 7</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 8</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;s&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 9</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;d&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 10</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;p&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 11</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;r&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 12</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;g&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 13</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,marker =&quot;*&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 14</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o-r&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 15</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o:g&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 16</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o--y&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 17</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,&#x27;o-.m&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 19</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,c=&#x27;y&#x27;,marker=&#x27;o&#x27;,ms=10,mec=&#x27;k&#x27;,mfc=&#x27;m&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 20</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,c=&#x27;m&#x27;, marker = &#x27;o&#x27;, ms = 20, mec = &#x27;k&#x27;, mfc = &#x27;y&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 21</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,linestyle = &#x27;dotted&#x27;,c=&#x27;m&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 22</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,linestyle = &#x27;dashed&#x27;,c=&#x27;m&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 23</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.plot(x,y,linestyle = &#x27;:&#x27;,c=&#x27;m&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 25</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.title(&quot;Plot&quot;,loc=&quot;left&quot;)
+plt.xlabel(&quot;X Axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.plot(x,y,linestyle = &#x27;dotted&#x27;, linewidth=&#x27;10&#x27;,c=&#x27;#00ffbd&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 26</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.title(&quot;Plot&quot;, loc = &#x27;center&#x27;)
+plt.xlabel(&quot;X axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.plot(x,y,linestyle = &#x27;dotted&#x27;,linewidth = &#x27;10&#x27;,c=&#x27;k&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 27</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([2,4,6,8,10,12,14,16,18,20])
+plt.title(&quot;Plot&quot;, loc = &#x27;center&#x27;)
+plt.xlabel(&quot;X axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.plot(x,y)
+plt.grid(color = &#x27;r&#x27;, linestyle = &#x27;:&#x27;, linewidth = 0.6)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 29</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(1, 2, 1)
+plt.plot(a,b)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(1, 2, 2)
+plt.plot(c,d)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 30</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(2, 1, 1)
+plt.plot(a,b)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(2, 1, 2)
+plt.plot(c,d)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 31</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(2, 2, 1)
+plt.plot(a,b)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(2, 2, 2)
+plt.plot(c,d)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 32</span></div><pre class="py">a = np.array([1, 2, 3])
+b = np.array([2, 4, 6])
+plt.subplot(2, 2, 1)
+plt.plot(a,b)
+plt.title(&quot;First&quot;)
+c = np.array([1, 2, 3])
+d = np.array([5, 10, 15])
+plt.subplot(2, 2, 2)
+plt.plot(c,d)
+plt.title(&quot;Second&quot;)
+plt.suptitle(&quot;Title&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 34</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+plt.title(&quot;Scatter&quot;, loc = &#x27;center&#x27;)
+plt.xlabel(&quot;X axis&quot;)
+plt.ylabel(&quot;Y axis&quot;)
+plt.scatter(x,y)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 35</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+a = np.array([1,2,3,4,5,6,7,8,9,10])
+b = np.array([7,6,3,4,2,5,1,7,5,2])
+plt.scatter(x,y)
+plt.scatter(a,b)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 36</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+a = np.array([1,2,3,4,5,6,7,8,9,10])
+b = np.array([7,6,3,4,2,5,1,7,5,2])
+plt.scatter(x,y,color = &#x27;m&#x27;)
+plt.scatter(a,b,color = &#x27;y&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 37</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+colors = np.array([&quot;yellow&quot;,&quot;green&quot;,&quot;blue&quot;,&quot;red&quot;,&quot;pink&quot;,&quot;black&quot;,&quot;orange&quot;,&quot;white&quot;,&quot;gold&quot;,&quot;violet&quot;])
+plt.scatter(x,y,color = colors)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 38</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+colorss = np.array([5, 15, 23, 34, 45, 49, 57, 59, 61, 75])
+plt.scatter(x,y,c=colorss,cmap=&#x27;winter&#x27;)
+plt.colorbar()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 39</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+sizee = np.array([1, 10, 50, 100, 150, 200, 250, 300, 350, 400])
+plt.scatter(x,y,c=&#x27;r&#x27;,s=sizee)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 40</span></div><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([5,7,2,1,3,4,7,6,8,3])
+colorss = np.array([5, 15, 23, 34, 45, 49, 57, 59, 61, 75])
+sizee = np.array([1, 10, 50, 100, 150, 2000, 4000, 3000, 350, 1500])
+plt.scatter(x,y,c=colorss,cmap=&#x27;jet&#x27;,s=sizee,alpha=0.4)
+plt.colorbar()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 42</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.bar(x,y)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 43</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.barh(x,y)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 44</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.bar(x,y,color = &quot;gold&quot;,width = 0.3)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 45</span></div><pre class="py">x = np.array([&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
+y = np.array([5, 10, 15])
+plt.barh(x,y,color = &quot;gold&quot;,height = 0.3)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 47</span></div><pre class="py">x = np.random.normal(100,25,100)
+print(x)
+plt.hist(x)
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>[ 81.2829252   91.15129514 116.10742403 104.17538577 103.1004435
+  40.13223553  98.68850374  95.35637658 106.20417968  69.37054848
+  92.56989867  82.14785326 110.69171743 109.59521785 103.36829867
+ 150.58886122 117.80192489 113.84379326 105.77609099 150.50853499
+ 105.22843986 118.71694336  88.88212443 106.85582667 122.11802133
+  92.4784949  115.59243098 130.83143021 124.50241022 118.95398748
+  89.9272784  150.13108985 163.70634022  71.59596182  50.63277664
+ 115.3820677   96.09666236  68.25740502 167.471692    99.25294456
+  91.13829674 109.80117656 112.06291261 118.9570119  110.3368302
+ 117.06290435  73.36397175  69.40430168 125.2045863  108.14557398
+  70.8145471  107.99028069  82.85802779  72.18417272 104.55175158
+  72.97381716 110.43855742  94.1628878  170.75902854 141.295674
+ 130.62135207  90.21090726 137.10631239 102.21558602  64.94507887
+  97.15394976  60.10385977 100.05692878 117.04194155  99.89573425
+  54.39085523 103.31310885  74.65503589  96.64741768 122.71126311
+  58.54728899  95.11899139 109.65002277  92.43530477  63.29737392
+ 110.22591571 105.64929339  82.83405829 118.36556719 117.15033398
+  66.44037035  94.27324419  78.54819624 150.49708421 128.48586955
+ 130.9836046   81.54415178  61.1252223  123.17101992  90.05387746
+  96.65803205 134.36482871 127.87235947 105.05040152  91.96724225]</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 49</span></div><pre class="py">x = np.array([10,20,30,50])
+plt.pie(x)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 50</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+plt.pie(x,labels = labelss)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 51</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+plt.pie(x,labels = labelss,startangle = 10)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 52</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+explodee = [0.1,0.12,0.13,0.14]
+plt.pie(x,labels = labelss,startangle = 90,explode =explodee)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 53</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+explodee = [0.5,0,0,0]
+plt.pie(x,labels = labelss,startangle = 90,explode =explodee)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 54</span></div><pre class="py">x = np.array([10,20,30,50])
+labelss = [&quot;MATHS&quot;, &quot;HINDI&quot;, &quot;SCIENCE&quot;, &quot;ENGLISH&quot;]
+explodee = [0.5,0,0,0]
+colorr = [&#x27;r&#x27;,&#x27;m&#x27;,&#x27;gold&#x27;,&#x27;g&#x27;]
+plt.pie(x,labels = labelss,startangle = 90,explode =explodee)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 56</span></div><pre class="py">x = [1, 2, 3, 4]
+y = [10, 20, 15, 25]
+plt.plot(x, y)
+plt.annotate(
+ &quot;Highest&quot;,
+ xy=(4, 25)
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 57</span></div><pre class="py">x = [1, 2, 3, 4]
+y = [10, 20, 15, 25]
+plt.plot(x, y)
+plt.annotate(
+ &quot;Peak&quot;,
+ xy=(4, 25),
+ xytext=(3, 30),
+ arrowprops={&quot;arrowstyle&quot;: &quot;-&gt;&quot;}
+)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 58</span></div><pre class="py">x = [1, 2, 3]
+y = [10, 20, 15]
+plt.plot(x, y)
+for i in range(len(x)):
+ plt.annotate(
+ y[i],
+ (x[i], y[i])
+ )
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 60</span></div><pre class="py">x = [1, 2, 3, 4]
+y = [10, 20, 15, 25]
+plt.fill_between(x, y)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 61</span></div><pre class="py">x = [1,2,3,4]
+y1 = [10,20,15,25]
+y2 = [5,10,8,15]
+plt.fill_between(x, y1)
+plt.fill_between(x, y2)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 63</span></div><pre class="py">plt.plot([1,2,3],[10,20,15])
+plt.savefig(&quot;chart.png&quot;)
+plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/matplotlib_example.ipynb">matplotlib_example.ipynb</a></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 0</span></div><pre class="py">import matplotlib.pyplot as plt
+
+# 10 students heights in cm
+heights = [142, 155, 148, 162, 155, 158, 142, 165, 148, 155]
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.hist(heights, bins=5, color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+ax.set_title(&#x27;Student Heights&#x27;)
+ax.set_xlabel(&#x27;Height (cm)&#x27;)
+ax.set_ylabel(&#x27;Number of Students&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 1</span></div><pre class="py"># All 10 values: 142, 155, 148, 162, 155, 158, 142, 165, 148, 155
+
+# Min = 142
+# Max = 165
+# Range = 165 - 142 = 23cm
+# Bin width = 23 / 5 = 4.6cm
+
+# Bin 1 → 142.0 to 146.6 → 142, 142          → 2 students
+# Bin 2 → 146.6 to 151.2 → 148, 148          → 2 students
+# Bin 3 → 151.2 to 155.8 → 155, 155, 155     → 3 students
+# Bin 4 → 155.8 to 160.4 → 158               → 1 student
+# Bin 5 → 160.4 to 165.0 → 162, 165          → 2 students</pre></div><div class="src-head">📓 <a href="../Concept/pizza_matplotlib.ipynb">pizza_matplotlib.ipynb</a></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 0</span></div><pre class="py">import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Load our pizza data
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+
+print(&quot;Ready to plot!&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Ready to plot!</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 1</span></div><pre class="py">%matplotlib inline</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 2</span></div><pre class="py"># Step 1 — prepare the data using Pandas
+revenue_by_pizza = df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum()
+print(revenue_by_pizza)</pre></div><div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    1116
+Margherita      492
+Pepperoni       645
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 3</span></div><pre class="py">fix, ax = plt.subplots(figsize=(8,5))
+
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+ax.set_title(&quot;Total Revenue Pizza Type&quot;)
+ax.set_xlabel(&quot;Pizza Type&quot;)
+ax.set_ylabel(&quot;Revenue ($)&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 4</span></div><pre class="py"># Small chart
+fig, ax = plt.subplots(figsize=(4, 3))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+plt.show()
+
+# Wide chart
+fig, ax = plt.subplots(figsize=(12, 4))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+plt.show()
+
+# Square chart
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 5</span></div><pre class="py"># See ALL methods and properties of ax
+print(dir(ax))</pre></div><div class="out"><div class="h">Output</div><pre>[&#x27;ArtistList&#x27;, &#x27;_AxesBase__clear&#x27;, &#x27;_PROPERTIES_EXCLUDED_FROM_SET&#x27;, &#x27;__annotate_func__&#x27;, &#x27;__class__&#x27;, &#x27;__delattr__&#x27;, &#x27;__dict__&#x27;, &#x27;__dir__&#x27;, &#x27;__doc__&#x27;, &#x27;__eq__&#x27;, &#x27;__firstlineno__&#x27;, &#x27;__format__&#x27;, &#x27;__ge__&#x27;, &#x27;__getattribute__&#x27;, &#x27;__getstate__&#x27;, &#x27;__gt__&#x27;, &#x27;__hash__&#x27;, &#x27;__init__&#x27;, &#x27;__init_subclass__&#x27;, &#x27;__le__&#x27;, &#x27;__lt__&#x27;, &#x27;__module__&#x27;, &#x27;__ne__&#x27;, &#x27;__new__&#x27;, &#x27;__reduce__&#x27;, &#x27;__reduce_ex__&#x27;, &#x27;__repr__&#x27;, &#x27;__setattr__&#x27;, &#x27;__setstate__&#x27;, &#x27;__sizeof__&#x27;, &#x27;__static_attributes__&#x27;, &#x27;__str__&#x27;, &#x27;__subclasshook__&#x27;, &#x27;__weakref__&#x27;, &#x27;_add_text&#x27;, &#x27;_adjustable&#x27;, &#x27;_agg_filter&#x27;, &#x27;_alias_map&#x27;, &#x27;_alpha&#x27;, &#x27;_anchor&#x27;, &#x27;_animated&#x27;, &#x27;_aspect&#x27;, &#x27;_autotitlepos&#x27;, &#x27;_axes&#x27;, &#x27;_axes_locator&#x27;, &#x27;_axis_map&#x27;, &#x27;_axis_names&#x27;, &#x27;_axisbelow&#x27;, &#x27;_box_aspect&#x27;, &#x27;_callbacks&#x27;, &#x27;_check_no_units&#x27;, &#x27;_children&#x27;, &#x27;_clipon&#x27;, &#x27;_clippath&#x27;, &#x27;_cm_set&#x27;, &#x27;_colorbars&#x27;, &#x27;_convert_dx&#x27;, &#x27;_current_image&#x27;, &#x27;_different_canvas&#x27;, &#x27;_errorevery_to_mask&#x27;, &#x27;_facecolor&#x27;, &#x27;_fill_between_process_units&#x27;, &#x27;_fill_between_x_or_y&#x27;, &#x27;_forward_navigation_events&#x27;, &#x27;_frameon&#x27;, &#x27;_fully_clipped_to_axes&#x27;, &#x27;_gci&#x27;, &#x27;_gen_axes_patch&#x27;, &#x27;_gen_axes_spines&#x27;, &#x27;_get_aspect_ratio&#x27;, &#x27;_get_lines&#x27;, &#x27;_get_pan_points&#x27;, &#x27;_get_patches_for_fill&#x27;, &#x27;_get_subplotspec_with_optional_colorbar&#x27;, &#x27;_get_view&#x27;, &#x27;_gid&#x27;, &#x27;_gridOn&#x27;, &#x27;_in_layout&#x27;, &#x27;_init_axis&#x27;, &#x27;_internal_update&#x27;, &#x27;_label&#x27;, &#x27;_label_outer_xaxis&#x27;, &#x27;_label_outer_yaxis&#x27;, &#x27;_left_title&#x27;, &#x27;_make_twin_axes&#x27;, &#x27;_mouseover&#x27;, &#x27;_mouseover_set&#x27;, &#x27;_navigate&#x27;</pre></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 6</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 7</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+
+# Add value on top of each bar
+for i, value in enumerate(revenue_by_pizza.values):
+    ax.text(i, value+10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)
+
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 8</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+for i, value in enumerate(revenue_by_pizza.values):
+    print(i)
+    print(value)
+    ax.text(i, value + 10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)</pre></div><div class="out"><div class="h">Output</div><pre>0
+1116
+1
+492
+2
+645</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 9</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+
+# Add value on top of each bar
+for i, value in enumerate(revenue_by_pizza.values):
+    ax.text(i, value+10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)
+
+# Add grid
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.3,visible=True,which=&#x27;major&#x27;)    
+
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 10</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Draw bars
+ax.bar(revenue_by_pizza.index, revenue_by_pizza.values,
+       color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;],
+       edgecolor=&#x27;white&#x27;,
+       width=0.5)
+
+# Value on top of each bar
+for i, value in enumerate(revenue_by_pizza.values):
+    ax.text(i, value + 10, f&#x27;${value}&#x27;, ha=&#x27;center&#x27;, fontsize=11)
+
+# Grid
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.7)
+
+# Labels
+ax.set_title(&#x27;Total Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Pizza Type&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+
+# Save it
+fig.savefig(&#x27;pizza_revenue.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)
+
+plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/pizza_matplotlib_2.ipynb">pizza_matplotlib_2.ipynb</a></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 0</span></div><pre class="py">import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Load our pizza data
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+
+print(&quot;Ready to plot!&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Ready to plot!</pre></div><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 1</span></div><pre class="py">revenue_by_day = df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum()
+print(revenue_by_day)</pre></div><div class="out"><div class="h">Output</div><pre>date
+Fri    513
+Mon    255
+Sat    360
+Sun    216
+Thu    381
+Tue    372
+Wed    156
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 2</span></div><pre class="py"># Define the correct day order
+day_order = [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;]
+
+revenue_by_day = df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().reindex(day_order)
+print(revenue_by_day)</pre></div><div class="out"><div class="h">Output</div><pre>date
+Mon    255
+Tue    372
+Wed    156
+Thu    381
+Fri    513
+Sat    360
+Sun    216
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 3</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Draw line
+ax.plot(revenue_by_day.index, revenue_by_day.values,
+        color=&#x27;steelblue&#x27;,
+        linewidth=2,
+        marker=&#x27;o&#x27;,
+        markersize=8)
+
+#ax.plot(revenue_by_day.index, revenue_by_day.values)
+
+# To this
+#ax.bar(revenue_by_day.index, revenue_by_day.values)
+
+# Labels
+ax.set_title(&#x27;Revenue Trend by Day&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Day&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+
+# Grid
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.7)
+
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 5</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+# Scatter plot — quantity vs revenue
+ax.scatter(df[&#x27;quantity&#x27;], df[&#x27;revenue&#x27;],
+           color=&#x27;steelblue&#x27;,
+           s=100,        # size of dots
+           alpha=0.7)    # transparency
+
+ax.set_title(&#x27;Quantity vs Revenue&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Quantity Ordered&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+
+ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 7</span></div><pre class="py"># Define colors for each pizza
+colors = {&#x27;Margherita&#x27;: &#x27;steelblue&#x27;, 
+          &#x27;Pepperoni&#x27;: &#x27;tomato&#x27;, 
+          &#x27;BBQ Chicken&#x27;: &#x27;green&#x27;}
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+# Plot each pizza type separately
+for pizza, group in df.groupby(&#x27;pizza&#x27;):
+    ax.scatter(group[&#x27;quantity&#x27;], group[&#x27;revenue&#x27;],
+               label=pizza,
+               color=colors[pizza],
+               s=100,
+               alpha=0.7)
+
+ax.set_title(&#x27;Quantity vs Revenue by Pizza Type&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Quantity Ordered&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Revenue ($)&#x27;, fontsize=12)
+ax.legend()
+ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
+
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 8</span></div><pre class="py">for pizza, group in df.groupby(&#x27;pizza&#x27;):
+    #print(pizza)
+    print(group)</pre></div><div class="out"><div class="h">Output</div><pre>   date        pizza  price  quantity      area  revenue
+3   Thu  BBQ Chicken     18        12   Suburbs      216
+5   Sat  BBQ Chicken     18        20   Suburbs      360
+8   Tue  BBQ Chicken     18        14   Suburbs      252
+11  Fri  BBQ Chicken     18        16  Downtown      288
+  date       pizza  price  quantity      area  revenue
+0  Mon  Margherita     12        10  Downtown      120
+2  Wed  Margherita     12         6  Downtown       72
+6  Sun  Margherita     12        18  Downtown      216
+9  Wed  Margherita     12         7  Downtown       84
+   date      pizza  price  quantity      area  revenue
+1   Tue  Pepperoni     15         8   Suburbs      120
+4   Fri  Pepperoni     15        15  Downtown      225
+7   Mon  Pepperoni     15         9  Downtown      135
+10  Thu  Pepperoni     15        11   Suburbs      165</pre></div><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 10</span></div><pre class="py">#Plain Python way first 
+
+# Count how many orders fall in each range
+quantities = df[&#x27;quantity&#x27;].values
+
+small = 0   # 0-10
+medium = 0  # 10-15
+large = 0   # 15+
+
+for q in quantities:
+    if q &lt;= 10:
+        small += 1
+    elif q &lt;= 15:
+        medium += 1
+    else:
+        large += 1
+
+print(&quot;Small (0-10):&quot;, small)
+print(&quot;Medium (10-15):&quot;, medium)
+print(&quot;Large (15+):&quot;, large)</pre></div><div class="out"><div class="h">Output</div><pre>Small (0-10): 5
+Medium (10-15): 4
+Large (15+): 3</pre></div><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 11</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.hist(df[&#x27;quantity&#x27;],
+        bins=3,
+        color=&#x27;steelblue&#x27;,
+        edgecolor=&#x27;white&#x27;)
+
+ax.set_title(&#x27;Distribution of Quantity Ordered&#x27;, fontsize=14, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;Quantity&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Number of Orders&#x27;, fontsize=12)
+
+ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.7)
+
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 13</span></div><pre class="py">fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+# Chart 1 — top left — Bar chart
+revenue_by_pizza = df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum()
+axes[0,0].bar(revenue_by_pizza.index, revenue_by_pizza.values,
+              color=[&#x27;steelblue&#x27;, &#x27;tomato&#x27;, &#x27;green&#x27;])
+axes[0,0].set_title(&#x27;Revenue by Pizza&#x27;)
+axes[0,0].set_xlabel(&#x27;Pizza Type&#x27;)
+axes[0,0].set_ylabel(&#x27;Revenue ($)&#x27;)
+
+# Chart 2 — top right — Line chart
+day_order = [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;]
+revenue_by_day = df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().reindex(day_order)
+axes[0,1].plot(revenue_by_day.index, revenue_by_day.values,
+               color=&#x27;steelblue&#x27;, linewidth=2, marker=&#x27;o&#x27;)
+axes[0,1].set_title(&#x27;Revenue Trend by Day&#x27;)
+axes[0,1].set_xlabel(&#x27;Day&#x27;)
+axes[0,1].set_ylabel(&#x27;Revenue ($)&#x27;)
+
+# Chart 3 — bottom left — Scatter plot
+axes[1,0].scatter(df[&#x27;quantity&#x27;], df[&#x27;revenue&#x27;],
+                  color=&#x27;steelblue&#x27;, s=100, alpha=0.7)
+axes[1,0].set_title(&#x27;Quantity vs Revenue&#x27;)
+axes[1,0].set_xlabel(&#x27;Quantity&#x27;)
+axes[1,0].set_ylabel(&#x27;Revenue ($)&#x27;)
+
+# Chart 4 — bottom right — Histogram
+axes[1,1].hist(df[&#x27;quantity&#x27;], bins=5,
+               color=&#x27;steelblue&#x27;, edgecolor=&#x27;white&#x27;)
+axes[1,1].set_title(&#x27;Distribution of Quantity&#x27;)
+axes[1,1].set_xlabel(&#x27;Quantity&#x27;)
+axes[1,1].set_ylabel(&#x27;Number of Orders&#x27;)
+
+# Fix spacing between charts
+plt.tight_layout()
+fig.savefig(&#x27;pizza_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)
+
+plt.show()</pre></div><div class="src-head">🐍 <a href="../Concept/example_01.py">example_01.py</a></div><div class="code"><pre class="py">import numpy as np
+import pandas as pd
+
+import matplotlib.pyplot as plt
+import matplotlib
+
+print(matplotlib.__version__)
+
+
+print(&quot;\n--------Simple Line Plot-------\n&quot;)
+x = np.linspace(0,10,50)
+y = np.sin(x)
+
+# print(x,&quot; :; &quot;,y)
+
+print(x[:5])
+print(y[:5])
+
+plt.plot(x,y)
+# plt.title(&quot;Simple Line Plot&quot;)
+# plt.xlabel(&quot;x- Axis&quot;)
+# plt.ylabel(&quot;y=Sin(x)&quot;)
+# plt.show()
+
+
+plt.figure(figsize=(7,4))
+plt.plot(x,y,color=&quot;red&quot;, linestyle=&quot;--&quot;, marker=&quot;o&quot; ,label=&quot;sin(x)&quot;)
+plt.title(&quot;Customizeed Line Port&quot;)
+plt.xlabel(&quot;X Value&quot;)
+plt.ylabel(&quot;Y Values&quot;)
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+print(&quot;\n-------------Bar Chart-----------\n&quot;)
+
+
+student = [&quot;Kali&quot;,&quot;Meeta&quot;,&quot;Rishi&quot;]
+scores = [85,79,88]
+
+plt.bar(student,scores,color =&quot;orange&quot;)
+plt.title(&quot;Student Score &quot;)
+plt.xlabel(&quot;x label&quot;)
+plt.ylabel(&quot;Y label&quot;)
+plt.show()
+
+print(&quot;\n---------Horizzontal Bar Chart---------\n&quot;)
+
+plt.barh(student,scores,color =&quot;orange&quot;)
+plt.title(&quot;Student Score &quot;)
+plt.xlabel(&quot;x label&quot;)
+plt.ylabel(&quot;Y label&quot;)
+plt.show()
+
+
+print(&quot;\n------------Scatter Plot--------------\n&quot;)
+
+np.random.seed(42)
+x = np.random.randn(50)
+y = np.random.randn(50)
+
+print(x[:5])
+print(x[:5])
+
+plt.scatter(x,y,color=&quot;Purple&quot;)
+plt.title(&quot;Scatter Plot&quot;)
+plt.xlabel(&quot;Feature 1&quot;)
+plt.ylabel(&quot;Feature 2&quot;)
+plt.show()
+
+
+print(&quot;\n------------Histogram-------------\n&quot;)
+
+data =np.random.randn(1000)
+
+plt.hist(data,bins = 30, color= &quot;blue&quot;, edgecolor = &quot;black&quot;)
+plt.title(&quot;Hitogram&quot;)
+plt.xlabel(&quot;Value&quot;)
+plt.ylabel(&quot;Frequency&quot;)
+plt.show()
+
+print(&quot;\n------------Pie Chart-------------\n&quot;)
+
+lables = [&quot;Python&quot;,&quot;Java&quot;,&quot;C++&quot;,&quot;Go&quot;]
+sizes = [45,60,34,13]
+
+plt.pie(sizes,labels=lables,autopct=&quot;%1.1f%%&quot;)
+plt.title(&quot;Programming language Popularity&quot;)
+plt.show()
+
+print(&quot;\n------------Multiple Plot-------------\n&quot;)
+
+x = np.linspace(0,10,100)
+plt.figure(figsize=(10,4))
+plt.subplot(1,2,1)
+plt.plot(x,np.sin(x),&quot;r--&quot;)
+plt.title(&quot;Sine&quot;)
+plt.subplot(1,2,2)
+plt.plot(x,np.cos(x),&quot;r--&quot;)
+plt.title(&quot;Cosine&quot;)
+
+plt.show()
+</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

@@ -22,6 +22,14 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Variables_And_Data_Types_01.png",
+            "Variables_And_Data_Types_02.png",
+            "Variables_And_Data_Types_Page_1of2.png",
+            "Variables_And_Data_Types_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lesson": "../../01_Python/01_Variables_And_Data_Types/Content/index.html",
           "path": "../../01_Python/01_Variables_And_Data_Types/Concept/variables_data_types_numbers_strings.ipynb"
         },
@@ -33,6 +41,16 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "NumPy_01.png",
+            "NumPy_02.png",
+            "NumPy_03.png",
+            "NumPy_Page_1of3.png",
+            "NumPy_Page_2of3.png",
+            "NumPy_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lede": "Arrays that do arithmetic on a million numbers without a single loop.",
           "hasStory": true,
           "lesson": "../../01_Python/02_NumPy/Content/index.html",
@@ -46,6 +64,16 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "Pandas_01.png",
+            "Pandas_02.png",
+            "Pandas_03.png",
+            "Pandas_Page_1of3.png",
+            "Pandas_Page_2of3.png",
+            "Pandas_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lede": "A spreadsheet you can program: labelled columns, grouping, joining and reshaping.",
           "hasStory": true,
           "lesson": "../../01_Python/03_Pandas/Content/index.html",
@@ -59,6 +87,12 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Matplotlib_01.png",
+            "Matplotlib_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "The plotting library everything else is built on top of.",
           "hasStory": true,
           "lesson": "../../01_Python/04_Matplotlib/Content/index.html",
@@ -72,6 +106,14 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Seaborn_01.png",
+            "Seaborn_02.png",
+            "Seaborn_Page_1of2.png",
+            "Seaborn_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "Statistical charts in one line, with the defaults already sensible.",
           "hasStory": true,
           "lesson": "../../01_Python/05_Seaborn/Content/index.html",
@@ -85,6 +127,14 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Plotly_01.png",
+            "Plotly_02.png",
+            "Plotly_Page_1of2.png",
+            "Plotly_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lesson": "../../01_Python/06_Plotly/Content/index.html",
           "path": "../../01_Python/06_Plotly/Concept/example_01.ipynb"
         },
@@ -95,6 +145,11 @@ const TREE = {
           "details": [
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
+          ],
+          "notes": 2,
+          "noteFiles": [
+            "Streamlit_01.png",
+            "Streamlit_Page_1of1.png"
           ],
           "lesson": "../../01_Python/07_Streamlit/Content/index.html",
           "path": "../../01_Python/07_Streamlit/Concept/README.md"
@@ -111,6 +166,14 @@ const TREE = {
             "Concept: iris_exploration_3.ipynb",
             "Concept: iris_exploration_4.ipynb"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Iris_Visual_Explorer_01.png",
+            "Iris_Visual_Explorer_02.png",
+            "Iris_Visual_Explorer_Page_1of2.png",
+            "Iris_Visual_Explorer_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lesson": "../../01_Python/08_Iris_Visual_Explorer/Content/index.html",
           "path": "../../01_Python/08_Iris_Visual_Explorer/Concept/iris_dataset_explained.ipynb"
         },
@@ -131,6 +194,12 @@ const TREE = {
           "details": [
             "Concept: zip_python.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Pizza_Dashboard_Lab_01.png",
+            "Pizza_Dashboard_Lab_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../01_Python/10_Pizza_Dashboard_Lab/Content/index.html",
           "path": "../../01_Python/10_Pizza_Dashboard_Lab/Concept/zip_python.ipynb"
         }
@@ -151,6 +220,12 @@ const TREE = {
             "Concept: 02_MeasureMent_Of_Variability.ipynb",
             "Concept: 03_standard_deviation.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Measures_Of_Variability_01.png",
+            "Measures_Of_Variability_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Two datasets can share an average and describe completely different worlds.",
           "hasStory": true,
           "lesson": "../../02_DataScience/01_Measures_Of_Variability/Content/index.html",
@@ -163,6 +238,12 @@ const TREE = {
           "details": [
             "Concept: 04_IQR.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "IQR_01.png",
+            "IQR_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/02_IQR/Content/index.html",
           "path": "../../02_DataScience/02_IQR/Concept/04_IQR.ipynb"
         },
@@ -173,6 +254,12 @@ const TREE = {
           "details": [
             "Concept: 05_skewness.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Skewness_01.png",
+            "Skewness_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/03_Skewness/Content/index.html",
           "path": "../../02_DataScience/03_Skewness/Concept/05_skewness.ipynb"
         },
@@ -183,6 +270,12 @@ const TREE = {
           "details": [
             "Concept: 06_co-relation.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Correlation_01.png",
+            "Correlation_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/04_Correlation/Content/index.html",
           "path": "../../02_DataScience/04_Correlation/Concept/06_co-relation.ipynb"
         },
@@ -193,6 +286,12 @@ const TREE = {
           "details": [
             "Concept: 07_Central_Limit_Theorem.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Central_Limit_Theorem_01.png",
+            "Central_Limit_Theorem_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Why the bell curve keeps appearing, even when the data is nothing like a bell.",
           "hasStory": true,
           "lesson": "../../02_DataScience/05_Central_Limit_Theorem/Content/index.html",
@@ -206,6 +305,12 @@ const TREE = {
             "Concept: 08_Hypothesis_Testing.ipynb",
             "Concept: 08_Hypothesis_Testing_1.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Hypothesis_Testing_Basics_01.png",
+            "Hypothesis_Testing_Basics_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Telling a real effect apart from a run of good luck.",
           "hasStory": true,
           "lesson": "../../02_DataScience/06_Hypothesis_Testing_Basics/Content/index.html",
@@ -218,6 +323,12 @@ const TREE = {
           "details": [
             "Concept: 11_Hypothesis_Testing_Z-Test.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Z_Test_01.png",
+            "Z_Test_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/07_Z_Test/Content/index.html",
           "path": "../../02_DataScience/07_Z_Test/Concept/11_Hypothesis_Testing_Z-Test.ipynb"
         },
@@ -231,6 +342,14 @@ const TREE = {
             "Concept: 12_Hypothesis_Testing_T-Test_95.ipynb",
             "Concept: 13_Hypothesis_Testing_T-Test_80.ipynb"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "T_Test_01.png",
+            "T_Test_02.png",
+            "T_Test_Page_1of2.png",
+            "T_Test_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/08_T_Test/Content/index.html",
           "path": "../../02_DataScience/08_T_Test/Concept/09_Hypothesis_Testing_T-Test.ipynb"
         },
@@ -241,6 +360,12 @@ const TREE = {
           "details": [
             "Concept: 14_Hypothesis_Testing_T-Test_Paired.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Paired_T_Test_01.png",
+            "Paired_T_Test_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/09_Paired_T_Test/Content/index.html",
           "path": "../../02_DataScience/09_Paired_T_Test/Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb"
         },
@@ -252,6 +377,12 @@ const TREE = {
             "Concept: 15_Hypothesis_Testing_Chi_Square_Test.ipynb",
             "Concept: 16_Hypothesis_Testing_Chi_Square_Test.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Chi_Square_Test_01.png",
+            "Chi_Square_Test_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/10_Chi_Square_Test/Content/index.html",
           "path": "../../02_DataScience/10_Chi_Square_Test/Concept/15_Hypothesis_Testing_Chi_Square_Test.ipynb"
         },
@@ -263,6 +394,12 @@ const TREE = {
             "Concept: Z-Test vs T-Test.ipynb",
             "Concept: Z-Test vs T-Test.md"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Z_Test_vs_T_Test_01.png",
+            "Z_Test_vs_T_Test_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lesson": "../../02_DataScience/11_Z_Test_vs_T_Test/Content/index.html",
           "path": "../../02_DataScience/11_Z_Test_vs_T_Test/Concept/Z-Test vs T-Test.ipynb"
         },
@@ -303,6 +440,11 @@ const TREE = {
             "Concept: 00_examples_library.md",
             "Concept: 01_variables_expressions.md"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Algebra_01.png",
+            "Algebra_Page_1of1.png"
+          ],
           "lesson": "../../03_Math/01_Algebra/Content/index.html",
           "path": "../../03_Math/01_Algebra/Concept/00_examples_library.md"
         },
@@ -318,6 +460,15 @@ const TREE = {
             "Concept: 04_normal_distribution.md",
             "Concept: 05_correlation.md"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "Statistics_01.png",
+            "Statistics_02.png",
+            "Statistics_03.png",
+            "Statistics_Page_1of3.png",
+            "Statistics_Page_2of3.png",
+            "Statistics_Page_3of3.png"
+          ],
           "lesson": "../../03_Math/02_Statistics/Content/index.html",
           "path": "../../03_Math/02_Statistics/Concept/00_what_is_statistics.md"
         },
@@ -330,6 +481,13 @@ const TREE = {
             "Concept: faq.md",
             "Concept: linear_algebra_notes.md",
             "Concept: practical_example.md"
+          ],
+          "notes": 4,
+          "noteFiles": [
+            "Linear_Algebra_01.png",
+            "Linear_Algebra_02.png",
+            "Linear_Algebra_Page_1of2.png",
+            "Linear_Algebra_Page_2of2.png"
           ],
           "lesson": "../../03_Math/03_Linear_Algebra/Content/index.html",
           "path": "../../03_Math/03_Linear_Algebra/Concept/doubts_and_clarifications.md"
@@ -345,6 +503,13 @@ const TREE = {
             "Concept: 02_derivative_new.md",
             "Concept: 03_gradient_descent.md"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Calculus_01.png",
+            "Calculus_02.png",
+            "Calculus_Page_1of2.png",
+            "Calculus_Page_2of2.png"
+          ],
           "lesson": "../../03_Math/04_Calculus/Content/index.html",
           "path": "../../03_Math/04_Calculus/Concept/01_02_slope_and_derivative.md"
         },
@@ -359,6 +524,15 @@ const TREE = {
             "Concept: 04_finding_w_and_b.md",
             "Concept: 05_derivative_inside_gradient_descent.md",
             "Concept: 06_messy_data_gradient_descent.md"
+          ],
+          "notes": 6,
+          "noteFiles": [
+            "Linear_Regression_From_Scratch_01.png",
+            "Linear_Regression_From_Scratch_02.png",
+            "Linear_Regression_From_Scratch_03.png",
+            "Linear_Regression_From_Scratch_Page_1of3.png",
+            "Linear_Regression_From_Scratch_Page_2of3.png",
+            "Linear_Regression_From_Scratch_Page_3of3.png"
           ],
           "lesson": "../../03_Math/05_Linear_Regression_From_Scratch/Content/index.html",
           "path": "../../03_Math/05_Linear_Regression_From_Scratch/Concept/01_linear_regression_intro.md"
@@ -380,6 +554,13 @@ const TREE = {
             "Concept: 01._LEARNING.MD",
             "Concept: 02_ML_Roadmap.MD"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "What_Is_ML_01.png",
+            "What_Is_ML_02.png",
+            "What_Is_ML_Page_1of2.png",
+            "What_Is_ML_Page_2of2.png"
+          ],
           "lede": "Where the rules stop being written by hand, and start being learned from examples.",
           "hasStory": true,
           "lesson": "../../04_ML/01_What_Is_ML/Content/index.html",
@@ -391,6 +572,11 @@ const TREE = {
           "status": "learning",
           "details": [
             "Concept: 03_Types_Of_Variables.MD"
+          ],
+          "notes": 2,
+          "noteFiles": [
+            "Types_Of_Variables_01.png",
+            "Types_Of_Variables_Page_1of1.png"
           ],
           "lede": "Numbers, labels and ranks — and why a model treats each one completely differently.",
           "hasStory": true,
@@ -404,6 +590,11 @@ const TREE = {
           "details": [
             "Concept: 00_strategy.md",
             "Concept: 01_data_collection.md"
+          ],
+          "notes": 2,
+          "noteFiles": [
+            "Data_Collection_01.png",
+            "Data_Collection_Page_1of1.png"
           ],
           "lede": "Where the numbers come from, and the failure hiding inside each source.",
           "hasStory": true,
@@ -419,6 +610,14 @@ const TREE = {
             "Concept: 04_Data_Cleaning.MD",
             "Concept: 05_Data_Cleaning_Practice.ipynb"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Data_Cleaning_01.png",
+            "Data_Cleaning_02.png",
+            "Data_Cleaning_Page_1of2.png",
+            "Data_Cleaning_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "Real data arrives broken. This is the work nobody photographs.",
           "hasStory": true,
           "lesson": "../../04_ML/04_Data_Cleaning/Content/index.html",
@@ -436,6 +635,16 @@ const TREE = {
             "Concept: 07_Filling_Missing_Values.ipynb",
             "Concept: 07b_Ordered_And_Wide_Fill_Practice.ipynb"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "Missing_Values_01.png",
+            "Missing_Values_02.png",
+            "Missing_Values_03.png",
+            "Missing_Values_Page_1of3.png",
+            "Missing_Values_Page_2of3.png",
+            "Missing_Values_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lede": "Blanks are not zero. What you put in their place changes the answer.",
           "hasStory": true,
           "lesson": "../../04_ML/05_Missing_Values/Content/index.html",
@@ -450,6 +659,16 @@ const TREE = {
             "Concept: 10_Label_Encoding.ipynb",
             "Concept: 11_Ordinal_Encoding.ipynb"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "Categorical_Encoding_01.png",
+            "Categorical_Encoding_02.png",
+            "Categorical_Encoding_03.png",
+            "Categorical_Encoding_Page_1of3.png",
+            "Categorical_Encoding_Page_2of3.png",
+            "Categorical_Encoding_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lede": "Models only do arithmetic. Words have to become numbers without inventing an order.",
           "hasStory": true,
           "lesson": "../../04_ML/06_Categorical_Encoding/Content/index.html",
@@ -467,6 +686,10 @@ const TREE = {
             "Reading the plot line, once, properly"
           ],
           "notes": 1,
+          "noteFiles": [
+            "21_Outlier.png"
+          ],
+          "hasCode": true,
           "lede": "One wrong row can drag an entire model off course.",
           "hasStory": true,
           "lesson": "../../04_ML/07_Outliers/Content/index.html",
@@ -480,6 +703,14 @@ const TREE = {
             "Concept: 15_Feature_Scaling.ipynb",
             "Concept: 16_Feature_Scaling_Normalization.ipynb"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Feature_Scaling_01.png",
+            "Feature_Scaling_02.png",
+            "Feature_Scaling_Page_1of2.png",
+            "Feature_Scaling_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "When one column shouts and another whispers, the model only hears the shouting.",
           "hasStory": true,
           "lesson": "../../04_ML/08_Feature_Scaling/Content/index.html",
@@ -493,6 +724,14 @@ const TREE = {
             "Concept: 17_Handling_Duploicate_Data.ipynb",
             "Concept: 18_Replace_Change_Data_Type.ipynb"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Duplicates_And_Dtypes_01.png",
+            "Duplicates_And_Dtypes_02.png",
+            "Duplicates_And_Dtypes_Page_1of2.png",
+            "Duplicates_And_Dtypes_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "The same row twice, and numbers stored as text — two quiet defects that break scoring.",
           "hasStory": true,
           "lesson": "../../04_ML/09_Duplicates_And_Dtypes/Content/index.html",
@@ -505,6 +744,12 @@ const TREE = {
           "details": [
             "Concept: 19_Function_Transformer.ipynb"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Function_Transformer_01.png",
+            "Function_Transformer_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "When the relationship is curved, reshape the column instead of abandoning the model.",
           "hasStory": true,
           "lesson": "../../04_ML/10_Function_Transformer/Content/index.html",
@@ -520,6 +765,16 @@ const TREE = {
             "Concept: 21_Feature_Selection_VarianceThreshold.ipynb",
             "Concept: 22_Forward_Backward_Practice.ipynb"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "Feature_Selection_01.png",
+            "Feature_Selection_02.png",
+            "Feature_Selection_03.png",
+            "Feature_Selection_Page_1of3.png",
+            "Feature_Selection_Page_2of3.png",
+            "Feature_Selection_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lede": "More columns is not more information. Some columns actively make the model worse.",
           "hasStory": true,
           "lesson": "../../04_ML/11_Feature_Selection/Content/index.html",
@@ -537,6 +792,12 @@ const TREE = {
             "First Pipeline + ColumnTransformer"
           ],
           "notes": 3,
+          "noteFiles": [
+            "Preprocessing_Page_1of3.png",
+            "Preprocessing_Page_2of3.png",
+            "Preprocessing_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lede": "Three scalers, two encoders, and the one rule that stops you cheating.",
           "hasStory": true,
           "lesson": "../../04_ML/12_Preprocessing/Content/index.html",
@@ -553,6 +814,14 @@ const TREE = {
             "The four-value return order",
             "Three experiments with three charts"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Train_Test_Split_01.png",
+            "Train_Test_Split_02.png",
+            "Train_Test_Split_Page_1of2.png",
+            "Train_Test_Split_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "Hiding some rows before you start is the only way to find out if the model actually learned.",
           "hasStory": true,
           "lesson": "../../04_ML/13_Train_Test_Split/Content/index.html",
@@ -569,6 +838,14 @@ const TREE = {
             "make_circles — factor · make_moons",
             "The shuffle=True column-permutation gotcha, found by the learner"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Synthetic_Datasets_01.png",
+            "Synthetic_Datasets_02.png",
+            "Synthetic_Datasets_Page_1of2.png",
+            "Synthetic_Datasets_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "Data you build yourself, where you already know the right answer.",
           "hasStory": true,
           "lesson": "../../04_ML/14_Synthetic_Datasets/Content/index.html",
@@ -585,6 +862,12 @@ const TREE = {
             "Multivariate — sns.pairplot(hue=, markers=)",
             "A real mislabelling bug kept and explained, not hidden"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "EDA_Uni_Bi_Multivariate_01.png",
+            "EDA_Uni_Bi_Multivariate_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Look at one column, then two, then all of them — before fitting anything.",
           "hasStory": true,
           "lesson": "../../04_ML/15_EDA_Uni_Bi_Multivariate/Content/index.html",
@@ -602,6 +885,16 @@ const TREE = {
             "The Normal Equation (XᵀX)⁻¹Xᵀy checked against sklearn",
             "Hand-written gradient descent reaching the same answer in 60 steps"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "Linear_Regression_01.png",
+            "Linear_Regression_02.png",
+            "Linear_Regression_03.png",
+            "Linear_Regression_Page_1of3.png",
+            "Linear_Regression_Page_2of3.png",
+            "Linear_Regression_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lesson": "../../04_ML/16_Linear_Regression/Content/index.html",
           "path": "../../04_ML/16_Linear_Regression/Concept/05_Linear_Regression.ipynb"
         },
@@ -615,6 +908,14 @@ const TREE = {
             "Coefficients as partial effects — Age moves from −61 to −20.4 once Degrees joins",
             "Why a 0.976 test R² over 2 rows is not evidence"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Multiple_Linear_Regression_01.png",
+            "Multiple_Linear_Regression_02.png",
+            "Multiple_Linear_Regression_Page_1of2.png",
+            "Multiple_Linear_Regression_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "More than one input column: the line becomes a plane, and coefficients change meaning.",
           "hasStory": true,
           "lesson": "../../04_ML/17_Multiple_Linear_Regression/Content/index.html",
@@ -629,6 +930,16 @@ const TREE = {
             "The first worked underfit / overfit comparison",
             "Reading the chart: what the curve is really doing between the points"
           ],
+          "notes": 6,
+          "noteFiles": [
+            "Polynomial_Regression_01.png",
+            "Polynomial_Regression_02.png",
+            "Polynomial_Regression_03.png",
+            "Polynomial_Regression_Page_1of3.png",
+            "Polynomial_Regression_Page_2of3.png",
+            "Polynomial_Regression_Page_3of3.png"
+          ],
+          "hasCode": true,
           "lede": "When a straight line is too simple and a wiggly curve is too eager.",
           "hasStory": true,
           "lesson": "../../04_ML/18_Polynomial_Regression/Content/index.html",
@@ -645,6 +956,12 @@ const TREE = {
             "Why a large alpha flattens the line onto mean(y_train)",
             "The alpha table from 0 to 10,000,000"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Ridge_Regression_01.png",
+            "Ridge_Regression_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Paying a penalty for large slopes, and the first hyperparameter you choose yourself.",
           "hasStory": true,
           "lesson": "../../04_ML/19_Ridge_Regression/Content/index.html",
@@ -660,6 +977,12 @@ const TREE = {
             "alpha = 9.5 is the point where the slope hits zero",
             "Common mistakes and a key takeaway"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Lasso_Regression_01.png",
+            "Lasso_Regression_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "The penalty that can push a coefficient all the way to exactly zero.",
           "hasStory": true,
           "lesson": "../../04_ML/20_Lasso_Regression/Content/index.html",
@@ -674,6 +997,12 @@ const TREE = {
             "alpha sets penalty strength, l1_ratio sets the mix",
             "Sweeping alpha from 0.01 to 100 — from plain LinearRegression to a flat mean line"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "ElasticNet_01.png",
+            "ElasticNet_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Both penalties at once, with a dial between them.",
           "hasStory": true,
           "lesson": "../../04_ML/21_ElasticNet/Content/index.html",
@@ -690,6 +1019,13 @@ const TREE = {
             "Concept: 32_Root_Mean_Squared_Error.MD",
             "Concept: 33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb"
           ],
+          "notes": 3,
+          "noteFiles": [
+            "Cost_Functions_01.png",
+            "Cost_Functions_02.png",
+            "Cost_Functions_03.png"
+          ],
+          "hasCode": true,
           "lede": "Turning \"this line is better\" into a single number a computer can minimise.",
           "hasStory": true,
           "lesson": "../../04_ML/22_Cost_Functions/Content/index.html",
@@ -706,6 +1042,12 @@ const TREE = {
             "LeavePOut(p=2) and LeaveOneOut",
             "Which one to use, and when"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Cross_Validation_01.png",
+            "Cross_Validation_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "One split can be lucky. Five splits are harder to fool.",
           "hasStory": true,
           "lesson": "../../04_ML/23_Cross_Validation/Content/index.html",
@@ -723,6 +1065,10 @@ const TREE = {
             "Handwritten note: 15_Model_Evaluation.png"
           ],
           "notes": 1,
+          "noteFiles": [
+            "15_Model_Evaluation.png"
+          ],
+          "hasCode": true,
           "lede": "Accuracy alone will let a useless model look excellent.",
           "hasStory": true,
           "lesson": "../../04_ML/24_Model_Evaluation/Content/index.html",
@@ -740,6 +1086,10 @@ const TREE = {
             "Handwritten note: 14_ROC_Curve.png"
           ],
           "notes": 1,
+          "noteFiles": [
+            "14_ROC_Curve.png"
+          ],
+          "hasCode": true,
           "lede": "A model outputs a probability. The threshold is your decision, not the model's.",
           "hasStory": true,
           "lesson": "../../04_ML/25_ROC_And_AUC/Content/index.html",
@@ -758,6 +1108,10 @@ const TREE = {
             "Handwritten note: 16_DTC.png"
           ],
           "notes": 1,
+          "noteFiles": [
+            "16_DTC.png"
+          ],
+          "hasCode": true,
           "lede": "Twenty questions, asked in the smartest possible order.",
           "hasStory": true,
           "lesson": "../../04_ML/26_Decision_Tree_Classification/Content/index.html",
@@ -775,6 +1129,10 @@ const TREE = {
             "Handwritten note: 17_DTR.png"
           ],
           "notes": 1,
+          "noteFiles": [
+            "17_DTR.png"
+          ],
+          "hasCode": true,
           "lede": "The same tree, but each leaf now answers with a number instead of a label.",
           "hasStory": true,
           "lesson": "../../04_ML/27_Decision_Tree_Regression/Content/index.html",
@@ -793,6 +1151,10 @@ const TREE = {
             "Handwritten note: 18_Naive_Bayes_Detailed_Handwritten_Notes.png"
           ],
           "notes": 1,
+          "noteFiles": [
+            "18_Naive_Bayes_Detailed_Handwritten_Notes.png"
+          ],
+          "hasCode": true,
           "lede": "Counting backwards from evidence to cause, and the shortcut in the name.",
           "hasStory": true,
           "lesson": "../../04_ML/28_Naive_Bayes/Content/index.html",
@@ -806,6 +1168,11 @@ const TREE = {
             "Concept: 25_K_Nearest_Neighbor_explained.ipynb"
           ],
           "notes": 2,
+          "noteFiles": [
+            "25_K_Nearest_01_Page.png",
+            "25_K_Nearest_02_Page.png"
+          ],
+          "hasCode": true,
           "lede": "No training at all — just ask the neighbours.",
           "hasStory": true,
           "lesson": "../../04_ML/29_K_Nearest_Neighbor/Content/index.html",
@@ -823,6 +1190,11 @@ const TREE = {
             "One caution about reading the picture"
           ],
           "notes": 2,
+          "noteFiles": [
+            "22_SVC_2D.png",
+            "23_SVC_3D.png"
+          ],
+          "hasCode": true,
           "lede": "Not just a line that separates — the line with the widest possible gap.",
           "hasStory": true,
           "lesson": "../../04_ML/30_Support_Vector_Machines/Content/index.html",
@@ -839,6 +1211,12 @@ const TREE = {
             "What .fit() actually stores, and what predict() means with no labels",
             "Where K-Means gets it wrong"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Clustering_KMeans_01.png",
+            "Clustering_KMeans_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Five thousand customers and not a single label. Find the groups anyway.",
           "hasStory": true,
           "lesson": "../../04_ML/31_Clustering_KMeans/Content/index.html",
@@ -855,9 +1233,15 @@ const TREE = {
             "Cutting the tree to get clusters",
             "hierarchical-clustering-visual-guide.html sits beside it"
           ],
+          "notes": 2,
+          "noteFiles": [
+            "Hierarchical_Clustering_01.png",
+            "Hierarchical_Clustering_Page_1of1.png"
+          ],
+          "hasCode": true,
           "lede": "Nine strangers in an empty town, shaking hands nearest-first.",
           "hasStory": true,
-          "lesson": "../../04_ML/32_Hierarchical_Clustering/Content/hierarchical-clustering-visual-guide.html",
+          "lesson": "../../04_ML/32_Hierarchical_Clustering/Content/index.html",
           "path": "../../04_ML/32_Hierarchical_Clustering/Concept/13_Hirerachical_Clustering.ipynb"
         },
         {
@@ -873,6 +1257,10 @@ const TREE = {
             "Handwritten note: 19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png"
           ],
           "notes": 1,
+          "noteFiles": [
+            "19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png"
+          ],
+          "hasCode": true,
           "lede": "The settings the model cannot learn for itself.",
           "hasStory": true,
           "lesson": "../../04_ML/33_Hyperparameter_Tuning/Content/index.html",
@@ -890,6 +1278,10 @@ const TREE = {
             "Where each one is used in real systems"
           ],
           "notes": 1,
+          "noteFiles": [
+            "20_Ensemble_Notes.png"
+          ],
+          "hasCode": true,
           "lede": "One expert can be wrong. A panel that disagrees usefully is harder to fool.",
           "hasStory": true,
           "lesson": "../../04_ML/34_Ensemble_Methods/Content/index.html",
@@ -904,6 +1296,14 @@ const TREE = {
             "The most integrated project in the archive",
             "Open gap: preprocessing is fitted before the train/test split — a real leakage defect"
           ],
+          "notes": 4,
+          "noteFiles": [
+            "Project_Employee_Attrition_01.png",
+            "Project_Employee_Attrition_02.png",
+            "Project_Employee_Attrition_Page_1of2.png",
+            "Project_Employee_Attrition_Page_2of2.png"
+          ],
+          "hasCode": true,
           "lede": "Every step so far, applied end to end on one real dataset.",
           "hasStory": true,
           "lesson": "../../04_ML/35_Project_Employee_Attrition/Content/index.html",
@@ -1190,7 +1590,7 @@ const TREE = {
       "children": [
         {
           "title": "Claude",
-          "meta": "6 files",
+          "meta": "9 files",
           "status": "learning",
           "details": [
             "README.md",
@@ -1198,7 +1598,9 @@ const TREE = {
             "home.js",
             "index.html",
             "styles.css",
-            "tree-data.js"
+            "tree-data.js",
+            "workspace.css",
+            "workspace.html"
           ],
           "path": "../../17_Learning_As_Of_Now/Claude"
         },
@@ -1246,10 +1648,13 @@ const TREE = {
         },
         {
           "title": "shared",
-          "meta": "4 files",
+          "meta": "7 files",
           "status": "learning",
           "details": [
+            "CODEX_HANDWRITTEN_NOTES_PROMPT.md",
             "build_lessons.py",
+            "build_site.py",
+            "gen_tree.py",
             "lesson.css",
             "lesson.js",
             "stories.json"

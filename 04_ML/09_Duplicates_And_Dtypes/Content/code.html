@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duplicates And Data Types — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/17_Handling_Duploicate_Data.ipynb">17_Handling_Duploicate_Data.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">data = {
+    &quot;name&quot;:  [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;a&quot;, &quot;c&quot;],
+    &quot;eng&quot;:   [8,   7,   5,   8,   8,   4],
+    &quot;hindi&quot;: [2,   3,   4,   5,   2,   6],
+}
+df = pd.DataFrame(data)
+df</pre></div><div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+0    a    8      2
+1    b    7      3
+2    c    5      4
+3    d    8      5
+4    a    8      2
+5    c    4      6</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py">df.duplicated()</pre></div><div class="out"><div class="h">Output</div><pre>0    False
+1    False
+2    False
+3    False
+4     True
+5    False
+dtype: bool</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 7</span></div><pre class="py">df.duplicated(keep=&quot;last&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>0     True
+1    False
+2    False
+3    False
+4    False
+5    False
+dtype: bool</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 9</span></div><pre class="py">df.duplicated(keep=False)</pre></div><div class="out"><div class="h">Output</div><pre>0     True
+1    False
+2    False
+3    False
+4     True
+5    False
+dtype: bool</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 11</span></div><pre class="py">df.duplicated(subset=[&quot;name&quot;, &quot;eng&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>0    False
+1    False
+2    False
+3    False
+4     True
+5    False
+dtype: bool</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 14</span></div><pre class="py">df.drop_duplicates()</pre></div><div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+0    a    8      2
+1    b    7      3
+2    c    5      4
+3    d    8      5
+5    c    4      6</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 16</span></div><pre class="py">df.drop_duplicates(keep=False)</pre></div><div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+1    b    7      3
+2    c    5      4
+3    d    8      5
+5    c    4      6</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 18</span></div><pre class="py">df.drop_duplicates(subset=[&quot;name&quot;, &quot;eng&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>  name  eng  hindi
+0    a    8      2
+1    b    7      3
+2    c    5      4
+3    d    8      5
+5    c    4      6</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 20</span></div><pre class="py">strategies = {
+    &quot;original&quot;:                          df.shape[0],
+    &quot;drop_duplicates()\n(default)&quot;:       df.drop_duplicates().shape[0],
+    &quot;drop_duplicates(\nkeep=False)&quot;:      df.drop_duplicates(keep=False).shape[0],
+    &quot;drop_duplicates(subset=\n[&#x27;name&#x27;,&#x27;eng&#x27;])&quot;: df.drop_duplicates(subset=[&quot;name&quot;, &quot;eng&quot;]).shape[0],
+}
+
+plt.figure(figsize=(8, 4.2))
+bars = plt.bar(strategies.keys(), strategies.values(),
+                color=[&quot;#52514e&quot;, &quot;#2a78d6&quot;, &quot;#d03b3b&quot;, &quot;#fab219&quot;])
+plt.ylabel(&quot;rows remaining&quot;)
+plt.title(&quot;Same 6-row DataFrame, four different dedup strategies&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width()/2, b.get_height() + 0.07,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 23</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">dataset.duplicated().sum()</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 26</span></div><pre class="py">cols_without_id = [c for c in dataset.columns if c != &quot;Loan_ID&quot;]
+dataset.duplicated(subset=cols_without_id).sum()</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 28</span></div><pre class="py">dataset.drop_duplicates(inplace=True)
+dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 31</span></div><pre class="py">glitchy = pd.concat([dataset, dataset.sample(5, random_state=42)], ignore_index=True)
+glitchy.shape</pre></div><div class="out"><div class="h">Output</div><pre>(623, 13)</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 33</span></div><pre class="py">glitchy.duplicated().sum()</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(5)</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 35</span></div><pre class="py">fig, ax = plt.subplots(figsize=(6.5, 4.2))
+counts = {&quot;before dedup&quot;: glitchy.shape[0],
+          &quot;after dedup&quot;:  glitchy.drop_duplicates().shape[0]}
+bars = ax.bar(counts.keys(), counts.values(), color=[&quot;#d03b3b&quot;, &quot;#2a78d6&quot;])
+ax.set_ylabel(&quot;rows&quot;)
+ax.set_title(&quot;Simulated scraping glitch — 5 duplicated loan applications&quot;)
+for b in bars:
+    ax.text(b.get_x() + b.get_width()/2, b.get_height() + 3,
+             str(int(b.get_height())), ha=&quot;center&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 36</span></div><pre class="py">glitchy.drop_duplicates(inplace=True)
+glitchy.shape</pre></div><div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 39</span></div><pre class="py">for col in [&quot;Gender&quot;, &quot;Married&quot;, &quot;Dependents&quot;, &quot;Education&quot;,
+            &quot;Self_Employed&quot;, &quot;Property_Area&quot;, &quot;Loan_Status&quot;]:
+    print(col, &quot;-&gt;&quot;, sorted(dataset[col].dropna().unique().tolist()))</pre></div><div class="out"><div class="h">Output</div><pre>Gender -&gt; [&#x27;Female&#x27;, &#x27;Male&#x27;]
+Married -&gt; [&#x27;No&#x27;, &#x27;Yes&#x27;]
+Dependents -&gt; [&#x27;0&#x27;, &#x27;1&#x27;, &#x27;2&#x27;, &#x27;3+&#x27;]
+Education -&gt; [&#x27;Graduate&#x27;, &#x27;Not Graduate&#x27;]
+Self_Employed -&gt; [&#x27;No&#x27;, &#x27;Yes&#x27;]
+Property_Area -&gt; [&#x27;Rural&#x27;, &#x27;Semiurban&#x27;, &#x27;Urban&#x27;]
+Loan_Status -&gt; [&#x27;N&#x27;, &#x27;Y&#x27;]</pre></div><div class="src-head">📓 <a href="../Concept/18_Replace_Change_Data_Type.ipynb">18_Replace_Change_Data_Type.ipynb</a></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 3</span></div><pre class="py">demo = pd.DataFrame({&quot;bucket&quot;: [&quot;0&quot;, &quot;1&quot;, &quot;3+&quot;]})
+demo</pre></div><div class="out"><div class="h">Output</div><pre>  bucket
+0      0
+1      1
+2     3+</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 5</span></div><pre class="py">demo[&quot;bucket&quot;].replace(&quot;3+&quot;, &quot;3&quot;, inplace=True)
+demo</pre></div><div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_35352/597682250.py:1: ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+Such inplace method never works to update the original DataFrame or Series, because the intermediate object on which we are setting values always behaves as a copy (due to Copy-on-Write).
+
+For example, when doing &#x27;df[col].method(value, inplace=True)&#x27;, try using &#x27;df.method({col: value}, inplace=True)&#x27; instead, to perform the operation inplace on the original object, or try to avoid an inplace operation using &#x27;df[col] = df[col].method(value)&#x27;.
+
+See the documentation for a more detailed explanation: https://pandas.pydata.org/pandas-docs/stable/user_guide/copy_on_write.html
+  demo[&quot;bucket&quot;].replace(&quot;3+&quot;, &quot;3&quot;, inplace=True)
+  bucket
+0      0
+1      1
+2     3+</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 7</span></div><pre class="py">demo[&quot;bucket&quot;] = demo[&quot;bucket&quot;].replace(&quot;3+&quot;, &quot;3&quot;)
+demo</pre></div><div class="out"><div class="h">Output</div><pre>  bucket
+0      0
+1      1
+2      3</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 10</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 11</span></div><pre class="py">dataset.info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 618 entries, 0 to 617
+Data columns (total 13 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Loan_ID            618 non-null    str    
+ 1   Gender             605 non-null    str    
+ 2   Married            612 non-null    str    
+ 3   Dependents         603 non-null    str    
+ 4   Education          609 non-null    str    
+ 5   Self_Employed      586 non-null    str    
+ 6   ApplicantIncome    616 non-null    float64
+ 7   CoapplicantIncome  618 non-null    int64  
+ 8   LoanAmount         596 non-null    float64
+ 9   Loan_Amount_Term   597 non-null    float64
+ 10  Credit_History     568 non-null    float64
+ 11  Property_Area      609 non-null    str    
+ 12  Loan_Status        618 non-null    str    
+dtypes: float64(4), int64(1), str(8)
+memory usage: 62.9 KB</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 13</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 14</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Dependents
+0     356
+2     108
+1      82
+3+     57
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 16</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].fillna(dataset[&quot;Dependents&quot;].mode()[0])</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 17</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Dependents
+0     371
+2     108
+1      82
+3+     57
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 19</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].replace(&quot;3+&quot;, &quot;3&quot;)</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 20</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Dependents
+0    371
+2    108
+1     82
+3     57
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 23</span></div><pre class="py">before_dtype = dataset[&quot;Dependents&quot;].dtype
+before_mem = dataset[&quot;Dependents&quot;].memory_usage(deep=True)
+before_dtype, before_mem</pre></div><div class="out"><div class="h">Output</div><pre>(&lt;StringDtype(storage=&#x27;python&#x27;, na_value=nan)&gt;, 31032)</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 24</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].astype(&quot;int64&quot;)</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 25</span></div><pre class="py">after_dtype = dataset[&quot;Dependents&quot;].dtype
+after_mem = dataset[&quot;Dependents&quot;].memory_usage(deep=True)
+after_dtype, after_mem</pre></div><div class="out"><div class="h">Output</div><pre>(dtype(&#x27;int64&#x27;), 5076)</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 27</span></div><pre class="py">dataset[&quot;Dependents&quot;].mean()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.7588996763754046)</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 29</span></div><pre class="py">fig, ax = plt.subplots(figsize=(6, 4.2))
+mem = {&quot;before\n(str)&quot;: before_mem, &quot;after\n(int64)&quot;: after_mem}
+bars = ax.bar(mem.keys(), mem.values(), color=[&quot;#d03b3b&quot;, &quot;#2a78d6&quot;])
+ax.set_ylabel(&quot;bytes (Dependents column, memory_usage(deep=True))&quot;)
+ax.set_title(&quot;Same 618 values, two storage types&quot;)
+for b in bars:
+    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + max(mem.values()) * 0.01,
+             f&quot;{int(b.get_height()):,}&quot;, ha=&quot;center&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 31</span></div><pre class="py">counts_after = dataset[&quot;Dependents&quot;].value_counts().sort_index()
+plt.figure(figsize=(6.5, 4.2))
+bars = plt.bar(counts_after.index.astype(str), counts_after.values, color=&quot;#2a78d6&quot;)
+plt.xlabel(&quot;Dependents&quot;)
+plt.ylabel(&quot;rows&quot;)
+plt.title(&quot;Dependents — cleaned &amp; numeric (618 rows, 0 missing)&quot;)
+for b in bars:
+    plt.text(b.get_x() + b.get_width() / 2, b.get_height() + 3,
+              str(int(b.get_height())), ha=&quot;center&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

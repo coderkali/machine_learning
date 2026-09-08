@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central Limit Theorem — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/07_Central_Limit_Theorem.ipynb">07_Central_Limit_Theorem.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 1</span></div><pre class="py">pop_data = [np.random.randint(10,100) for i in range(10000)]
+len(pop_data)</pre></div><div class="out"><div class="h">Output</div><pre>10000</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 2</span></div><pre class="py">np.mean(pop_data)</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(54.3919)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 3</span></div><pre class="py">pop_table = pd.DataFrame({&quot;Pop_data&quot;:pop_data})
+pop_table</pre></div><div class="out"><div class="h">Output</div><pre>      Pop_data
+0           79
+1           61
+2           40
+3           95
+4           63
+...        ...
+9995        47
+9996        65
+9997        41
+9998        89
+9999        19
+
+[10000 rows x 1 columns]</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 4</span></div><pre class="py">sns.kdeplot(x=&quot;Pop_data&quot;,data=pop_table)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 7</span></div><pre class="py">sam_mean = []
+
+for no_sample in range(50):
+    sample_data = []
+    for data in range(500):
+        sample_data.append(np.random.choice(pop_data))
+    sam_mean.append(np.mean(sample_data))</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 8</span></div><pre class="py">np.mean(sam_mean)</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(54.22713333333332)</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 9</span></div><pre class="py">sample_M  = pd.DataFrame({&quot;Sample_Mean&quot;:sam_mean})</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 10</span></div><pre class="py">sns.kdeplot(x=&quot;Sample_Mean&quot;,data=sample_M)
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

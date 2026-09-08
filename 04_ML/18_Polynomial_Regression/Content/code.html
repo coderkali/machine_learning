@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polynomial Regression — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/10_Polynomial Regression.ipynb">10_Polynomial Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+
+X = np.array([2, 3, 4, 5, 6, 7, 8, 9])
+Y = np.array([4, 6, 8, 6, 5, 4, 7, 8])
+
+plt.scatter(X, Y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x7fd5ba5b8ee0&gt;</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.3, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">X_train=X_train.reshape(-1, 1)
+X_train</pre></div><div class="out"><div class="h">Output</div><pre>array([[9],
+       [5],
+       [2],
+       [7],
+       [6]])</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 9</span></div><pre class="py">X_test=X_test.reshape(-1, 1)
+X_test</pre></div><div class="out"><div class="h">Output</div><pre>array([[8],
+       [4],
+       [3]])</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+model = LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 13</span></div><pre class="py">model.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 16</span></div><pre class="py">model.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.6690401934888458</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 18</span></div><pre class="py">y_pred = model.predict(X_test)
+y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([6.3358209 , 4.63432836, 4.20895522])</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 20</span></div><pre class="py">plt.scatter(X_test,y_test,label=&#x27;Actual&#x27;)
+plt.plot(X_test,y_pred,label=&#x27;Predicted&#x27;)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 22</span></div><pre class="py">x=X.reshape(-1, 1)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 23</span></div><pre class="py">model = LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">model.fit(x,Y)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 25</span></div><pre class="py">y_pred = model.predict(x)
+y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([5.16666667, 5.4047619 , 5.64285714, 5.88095238, 6.11904762,
+       6.35714286, 6.5952381 , 6.83333333])</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 26</span></div><pre class="py">model.score(x,Y)</pre></div><div class="out"><div class="h">Output</div><pre>0.1322751322751322</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,Y,label=&#x27;Actual&#x27;)
+plt.plot(x,y_pred,label=&#x27;Predicted&#x27;,c=&quot;red&quot;)
+plt.xlabel(&#x27;X&#x27;)
+plt.ylabel(&#x27;Y&#x27;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.preprocessing import PolynomialFeatures</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 30</span></div><pre class="py">poly = PolynomialFeatures(degree=2) 
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)
+poly_x</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 1.,  2.,  4.],
+       [ 1.,  3.,  9.],
+       [ 1.,  4., 16.],
+       [ 1.,  5., 25.],
+       [ 1.,  6., 36.],
+       [ 1.,  7., 49.],
+       [ 1.,  8., 64.],
+       [ 1.,  9., 81.]])</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 32</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>0.14417989417989396</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 35</span></div><pre class="py">poly = PolynomialFeatures(degree=3)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 36</span></div><pre class="py">poly_x = poly.fit_transform(X.reshape(-1, 1))
+poly_x</pre></div><div class="out"><div class="h">Output</div><pre>array([[  1.,   2.,   4.,   8.],
+       [  1.,   3.,   9.,  27.],
+       [  1.,   4.,  16.,  64.],
+       [  1.,   5.,  25., 125.],
+       [  1.,   6.,  36., 216.],
+       [  1.,   7.,  49., 343.],
+       [  1.,   8.,  64., 512.],
+       [  1.,   9.,  81., 729.]])</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 37</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+model1 = LinearRegression()
+model1.fit(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 38</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>0.7578162578162556</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 39</span></div><pre class="py">y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90e8111a90&gt;]</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">poly = PolynomialFeatures(degree=4)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f912b09d7c0&gt;]</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 42</span></div><pre class="py">poly = PolynomialFeatures(degree=5)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90f86152e0&gt;]</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 43</span></div><pre class="py">poly = PolynomialFeatures(degree=6)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a33c160&gt;]</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 44</span></div><pre class="py">poly = PolynomialFeatures(degree=7)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a28d520&gt;]</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 45</span></div><pre class="py">poly = PolynomialFeatures(degree=9)
+poly_x = poly.fit_transform(X.reshape(-1, 1))
+model1 = LinearRegression()
+model1.fit(poly_x, Y)
+y_pred = model1.predict(poly_x)
+plt.scatter(X, Y)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f91182f5760&gt;]</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 46</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>1.0</pre></div><div class="src-head">📓 <a href="../Concept/28_Polynomial_Regression.ipynb">28_Polynomial_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                      # pandas: load the CSV and work with it as a table (DataFrame)
+import numpy as np                                       # numpy: build the smooth grid of x-values used to draw curves
+import matplotlib.pyplot as plt                          # matplotlib: plotting
+from sklearn.linear_model import LinearRegression         # fits a straight line — used both alone and after polynomial transforms
+from sklearn.preprocessing import PolynomialFeatures      # turns one column (Level) into Level, Level², Level³, ... columns
+from sklearn.model_selection import train_test_split      # splits data into a training pool and a held-back testing pool</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/polynomial_dataset.csv&quot;)  # read the CSV file from disk into a pandas DataFrame called &quot;dataset&quot;</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 5</span></div><pre class="py">dataset  # small dataset — display every row</pre></div><div class="out"><div class="h">Output</div><pre>    Level  Salary
+0       1    1798
+1       2    3981
+2       3    7874
+3       4   12812
+4       5   17433
+5       6   23933
+6       7   32340
+7       8   40434
+8       9   49315
+9      10   60321
+10     11   71318
+11     12   83817
+12     13   97671
+13     14  111093
+14     15  126688
+15     16  143769</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 7</span></div><pre class="py">dataset.shape  # (rows, columns) — 16 job levels, 2 columns</pre></div><div class="out"><div class="h">Output</div><pre>(16, 2)</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 9</span></div><pre class="py">dataset.isnull().sum()  # count missing values per column — should be 0</pre></div><div class="out"><div class="h">Output</div><pre>Level     0
+Salary    0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 11</span></div><pre class="py">plt.figure(figsize=(6, 4))
+plt.scatter(dataset[&quot;Level&quot;], dataset[&quot;Salary&quot;], color=&quot;#0b0b0b&quot;)   # actual data — dark dots, no fit line yet
+plt.xlabel(&quot;Level&quot;)
+plt.ylabel(&quot;Salary&quot;)
+plt.title(&quot;Salary by Level (raw data)&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 13</span></div><pre class="py">x = dataset[[&quot;Level&quot;]]   # double brackets -&gt; 2-D DataFrame (1 column), the shape scikit-learn expects
+y = dataset[&quot;Salary&quot;]    # single bracket -&gt; 1-D Series, the target
+x.ndim, y.ndim           # confirm: 2 for x, 1 for y</pre></div><div class="out"><div class="h">Output</div><pre>(2, 1)</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 15</span></div><pre class="py">lin_reg = LinearRegression()   # a plain straight-line model, same class used in every regression notebook so far
+lin_reg.fit(x, y)              # fit it directly on Level -&gt; Salary, no transformation, no split — just a quick visual baseline</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 17</span></div><pre class="py">pf = PolynomialFeatures(degree=2)   # will build: [1, Level, Level^2] — 3 columns (bias column included by default)
+pf.fit(x)                            # learn how many/which power columns to build, from x&#x27;s shape
+x_poly = pf.transform(x)             # apply that transform — x_poly now has 3 columns instead of x&#x27;s 1
+x_poly.shape                         # confirm shape: (16, 3)</pre></div><div class="out"><div class="h">Output</div><pre>(16, 3)</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 19</span></div><pre class="py">x_train, x_test, y_train, y_test, idx_train, idx_test = train_test_split(
+    x_poly, y, dataset.index, test_size=0.2, random_state=42
+)   # split the polynomial-expanded columns; idx_train/idx_test carry along which original rows landed in each split
+len(x_train), len(x_test)   # 12 rows to train on, 4 held back to test on</pre></div><div class="out"><div class="h">Output</div><pre>(12, 4)</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 21</span></div><pre class="py">poly_reg = LinearRegression()      # another plain LinearRegression — the curve comes entirely from the input columns, not the model
+poly_reg.fit(x_train, y_train)     # train only on the 12 training rows</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 23</span></div><pre class="py">print(f&quot;Test R²  (degree 2, held-out 4 rows): {poly_reg.score(x_test, y_test):.4f}&quot;)
+print(f&quot;Train R² (degree 2, seen 12 rows):        {poly_reg.score(x_train, y_train):.4f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Test R²  (degree 2, held-out 4 rows): 0.9999
+Train R² (degree 2, seen 12 rows):        0.9999</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 25</span></div><pre class="py">level_grid = pd.DataFrame({&quot;Level&quot;: np.linspace(x[&quot;Level&quot;].min(), x[&quot;Level&quot;].max(), 200)})   # 200 evenly spaced Level values, as a 1-column DataFrame
+salary_curve = poly_reg.predict(pf.transform(level_grid))                                          # predicted salary at every one of those 200 points
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+axes[0].scatter(x, y, color=&quot;#0b0b0b&quot;)
+axes[0].plot(x, lin_reg.predict(x), color=&quot;#e34948&quot;, linewidth=2)
+axes[0].set_title(f&quot;Simple Linear Model (R²={lin_reg.score(x, y):.3f}, whole dataset)&quot;)
+axes[0].set_xlabel(&quot;Level&quot;)
+axes[0].set_ylabel(&quot;Salary&quot;)
+
+axes[1].scatter(dataset.loc[idx_train, &quot;Level&quot;], dataset.loc[idx_train, &quot;Salary&quot;], color=&quot;#0b0b0b&quot;, label=&quot;Train rows&quot;)
+axes[1].scatter(dataset.loc[idx_test, &quot;Level&quot;], dataset.loc[idx_test, &quot;Salary&quot;], facecolors=&quot;none&quot;, edgecolors=&quot;#e34948&quot;, s=90, linewidth=2, label=&quot;Test rows (held out)&quot;)
+axes[1].plot(level_grid, salary_curve, color=&quot;#e34948&quot;, linewidth=2)
+axes[1].set_title(f&quot;Polynomial Model, degree 2 (test R²={poly_reg.score(x_test, y_test):.3f})&quot;)
+axes[1].set_xlabel(&quot;Level&quot;)
+axes[1].set_ylabel(&quot;Salary&quot;)
+axes[1].legend()
+
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 27</span></div><pre class="py">degrees = [1, 2, 3, 4]
+colors = [&quot;#2a78d6&quot;, &quot;#eb6834&quot;, &quot;#1baf7a&quot;, &quot;#eda100&quot;]   # one fixed color per degree, in order
+
+plt.figure(figsize=(8, 6))
+plt.scatter(x, y, color=&quot;#0b0b0b&quot;, label=&quot;Actual data&quot;, zorder=5)
+
+for degree, color in zip(degrees, colors):
+    pf_d = PolynomialFeatures(degree=degree)                                        # this degree&#x27;s own transformer
+    x_deg = pf_d.fit_transform(x)
+    x_deg_train, x_deg_test, y_deg_train, y_deg_test = train_test_split(x_deg, y, test_size=0.2, random_state=42)   # same split every time (same random_state)
+    model = LinearRegression()
+    model.fit(x_deg_train, y_deg_train)                                             # fit on this degree&#x27;s training rows
+    grid_pred = model.predict(pf_d.transform(level_grid))                           # predict across the same smooth grid from Step 12
+    test_r2 = model.score(x_deg_test, y_deg_test)
+    plt.plot(level_grid, grid_pred, color=color, linewidth=2, label=f&quot;degree {degree} (test R²={test_r2:.3f})&quot;)
+
+plt.xlabel(&quot;Level&quot;)
+plt.ylabel(&quot;Salary&quot;)
+plt.title(&quot;Polynomial Fit by Degree (scored on held-out rows)&quot;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 29</span></div><pre class="py">new_level = pd.DataFrame({&quot;Level&quot;: [6.5]})                       # a level that isn&#x27;t in the original data
+
+linear_prediction = lin_reg.predict(new_level)[0]
+poly_prediction = poly_reg.predict(pf.transform(new_level))[0]
+
+print(f&quot;Simple Linear Model predicts:      ₹{linear_prediction:,.0f}&quot;)
+print(f&quot;Polynomial Model (deg 2) predicts: ₹{poly_prediction:,.0f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Simple Linear Model predicts:      ₹36,410
+Polynomial Model (deg 2) predicts: ₹27,973</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 31</span></div><pre class="py">plt.figure(figsize=(7, 5))
+plt.scatter(x, y, color=&quot;#0b0b0b&quot;, label=&quot;Actual data&quot;)
+plt.plot(level_grid, salary_curve, color=&quot;#eb6834&quot;, linewidth=2, label=&quot;Polynomial fit (degree 2)&quot;)
+plt.plot(x, lin_reg.predict(x), color=&quot;#2a78d6&quot;, linewidth=2, linestyle=&quot;--&quot;, label=&quot;Simple linear fit&quot;)
+plt.scatter([6.5], [poly_prediction], color=&quot;#eb6834&quot;, edgecolor=&quot;#0b0b0b&quot;, s=100, zorder=5, label=&quot;Polynomial prediction @ Level 6.5&quot;)
+plt.scatter([6.5], [linear_prediction], color=&quot;#2a78d6&quot;, edgecolor=&quot;#0b0b0b&quot;, s=100, zorder=5, label=&quot;Linear prediction @ Level 6.5&quot;)
+plt.xlabel(&quot;Level&quot;)
+plt.ylabel(&quot;Salary&quot;)
+plt.title(&quot;Predicting an In-Between Level (6.5)&quot;)
+plt.legend()
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

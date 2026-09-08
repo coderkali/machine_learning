@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Categorical Encoding — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/09_one_hot_encoding.ipynb">09_one_hot_encoding.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y  
+3             1.0     Semiurban           Y  
+4             0.0         Urban           N</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 7</span></div><pre class="py">dataset[&quot;Gender&quot;] = dataset[&quot;Gender&quot;].fillna(dataset[&quot;Gender&quot;].mode()[0])</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 9</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender                0
+Married               0
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 11</span></div><pre class="py">dataset[&quot;Married&quot;] = dataset[&quot;Married&quot;].fillna(dataset[&quot;Married&quot;].mode()[0])</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 13</span></div><pre class="py">en_data = dataset[[&quot;Gender&quot;,&quot;Married&quot;]]
+en_data</pre></div><div class="out"><div class="h">Output</div><pre>     Gender Married
+0      Male     Yes
+1      Male     Yes
+2    Female      No
+3      Male     Yes
+4      Male      No
+..      ...     ...
+613  Female     Yes
+614    Male     Yes
+615    Male      No
+616    Male     Yes
+617    Male     Yes
+
+[618 rows x 2 columns]</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 15</span></div><pre class="py">import matplotlib.pyplot as plt
+import seaborn as sns
+
+fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+sns.countplot(x=&quot;Gender&quot;, data=en_data, hue=&quot;Gender&quot;, legend=False, palette=&quot;Blues&quot;, ax=axes[0])
+axes[0].set_title(&quot;Gender distribution&quot;)
+sns.countplot(x=&quot;Married&quot;, data=en_data, hue=&quot;Married&quot;, legend=False, palette=&quot;Blues&quot;, ax=axes[1])
+axes[1].set_title(&quot;Married distribution&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 16</span></div><pre class="py">pd.get_dummies(en_data)</pre></div><div class="out"><div class="h">Output</div><pre>     Gender_Female  Gender_Male  Married_No  Married_Yes
+0            False         True       False         True
+1            False         True       False         True
+2             True        False        True        False
+3            False         True       False         True
+4            False         True        True        False
+..             ...          ...         ...          ...
+613           True        False       False         True
+614          False         True       False         True
+615          False         True        True        False
+616          False         True       False         True
+617          False         True       False         True
+
+[618 rows x 4 columns]</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 18</span></div><pre class="py">sample = pd.get_dummies(en_data).head(15).astype(int)
+
+plt.figure(figsize=(5, 6))
+sns.heatmap(sample, annot=True, cmap=&quot;Blues&quot;, cbar=False, linewidths=0.5, linecolor=&quot;white&quot;)
+plt.title(&quot;One-Hot Encoding — first 15 rows&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 19</span></div><pre class="py">pd.get_dummies(en_data).info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 618 entries, 0 to 617
+Data columns (total 4 columns):
+ #   Column         Non-Null Count  Dtype
+---  ------         --------------  -----
+ 0   Gender_Female  618 non-null    bool 
+ 1   Gender_Male    618 non-null    bool 
+ 2   Married_No     618 non-null    bool 
+ 3   Married_Yes    618 non-null    bool 
+dtypes: bool(4)
+memory usage: 2.5 KB</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 21</span></div><pre class="py">from sklearn.preprocessing import OneHotEncoder</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 23</span></div><pre class="py">ohe = OneHotEncoder()
+ohe.fit_transform(en_data)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Compressed Sparse Row sparse matrix of dtype &#x27;float64&#x27;
+	with 1236 stored elements and shape (618, 4)&gt;</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 25</span></div><pre class="py">ohe.fit_transform(en_data).toarray()</pre></div><div class="out"><div class="h">Output</div><pre>array([[0., 1., 0., 1.],
+       [0., 1., 0., 1.],
+       [1., 0., 1., 0.],
+       ...,
+       [0., 1., 1., 0.],
+       [0., 1., 0., 1.],
+       [0., 1., 0., 1.]], shape=(618, 4))</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 27</span></div><pre class="py">ar = ohe.fit_transform(en_data).toarray()
+pd.DataFrame(ar, columns=[&quot;Gender_Female&quot;,&quot;Gender_Male&quot;,&quot;Married_No&quot;,&quot;Married_Yes&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>     Gender_Female  Gender_Male  Married_No  Married_Yes
+0              0.0          1.0         0.0          1.0
+1              0.0          1.0         0.0          1.0
+2              1.0          0.0         1.0          0.0
+3              0.0          1.0         0.0          1.0
+4              0.0          1.0         1.0          0.0
+..             ...          ...         ...          ...
+613            1.0          0.0         0.0          1.0
+614            0.0          1.0         0.0          1.0
+615            0.0          1.0         1.0          0.0
+616            0.0          1.0         0.0          1.0
+617            0.0          1.0         0.0          1.0
+
+[618 rows x 4 columns]</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">ohe = OneHotEncoder(drop=&quot;first&quot;)
+ohe.fit_transform(en_data)
+ohe.fit_transform(en_data).toarray()</pre></div><div class="out"><div class="h">Output</div><pre>array([[1., 1.],
+       [1., 1.],
+       [0., 0.],
+       ...,
+       [1., 0.],
+       [1., 1.],
+       [1., 1.]], shape=(618, 2))</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 31</span></div><pre class="py">ar = ohe.fit_transform(en_data).toarray()
+pd.DataFrame(ar, columns=[&quot;Gender_Male&quot;,&quot;Married_Yes&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>     Gender_Male  Married_Yes
+0            1.0          1.0
+1            1.0          1.0
+2            0.0          0.0
+3            1.0          1.0
+4            1.0          0.0
+..           ...          ...
+613          0.0          1.0
+614          1.0          1.0
+615          1.0          0.0
+616          1.0          1.0
+617          1.0          1.0
+
+[618 rows x 2 columns]</pre></div><div class="src-head">📓 <a href="../Concept/10_Label_Encoding.ipynb">10_Label_Encoding.ipynb</a></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 3</span></div><pre class="py">df = pd.DataFrame({&quot;name&quot;:[&quot;Kali&quot;,&quot;Cow&quot;,&quot;Cat&quot;,&quot;dog&quot;,&quot;black&quot;]})
+df</pre></div><div class="out"><div class="h">Output</div><pre>    name
+0   Kali
+1    Cow
+2    Cat
+3    dog
+4  black</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 5</span></div><pre class="py">from sklearn.preprocessing import LabelEncoder</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 7</span></div><pre class="py">le = LabelEncoder()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 9</span></div><pre class="py">df[&quot;en_name&quot;]=le.fit_transform(df[&quot;name&quot;])
+df</pre></div><div class="out"><div class="h">Output</div><pre>    name  en_name
+0   Kali        2
+1    Cow        1
+2    Cat        0
+3    dog        4
+4  black        3</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 11</span></div><pre class="py">le.classes_</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;Cat&#x27;, &#x27;Cow&#x27;, &#x27;Kali&#x27;, &#x27;black&#x27;, &#x27;dog&#x27;], dtype=object)</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 13</span></div><pre class="py">le2 = LabelEncoder()
+le2.fit(df[&quot;name&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>LabelEncoder()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 15</span></div><pre class="py">le2.classes_</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;Cat&#x27;, &#x27;Cow&#x27;, &#x27;Kali&#x27;, &#x27;black&#x27;, &#x27;dog&#x27;], dtype=object)</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 17</span></div><pre class="py">le2.transform(df[&quot;name&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 4, 3])</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 19</span></div><pre class="py">le2.inverse_transform([0, 1, 2, 3, 4])</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;Cat&#x27;, &#x27;Cow&#x27;, &#x27;Kali&#x27;, &#x27;black&#x27;, &#x27;dog&#x27;], dtype=object)</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 22</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y  
+3             1.0     Semiurban           Y  
+4             0.0         Urban           N</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 24</span></div><pre class="py">dataset[&quot;Property_Area&quot;].unique()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;Semiurban&#x27;, &#x27;Urban&#x27;, nan, &#x27;Rural&#x27;]
+Length: 4, dtype: str</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 26</span></div><pre class="py">la = LabelEncoder()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 28</span></div><pre class="py">la.fit(dataset[&quot;Property_Area&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>LabelEncoder()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 30</span></div><pre class="py">la.classes_</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;Rural&#x27;, &#x27;Semiurban&#x27;, &#x27;Urban&#x27;, nan], dtype=object)</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 32</span></div><pre class="py">transformed = la.transform(dataset[&quot;Property_Area&quot;])
+transformed</pre></div><div class="out"><div class="h">Output</div><pre>array([1, 2, 2, 1, 2, 3, 0, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 1, 2,
+       1, 2, 1, 1, 1, 3, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 1, 0, 0, 0, 1, 2,
+       1, 1, 1, 2, 2, 2, 2, 3, 0, 2, 1, 0, 2, 1, 1, 2, 1, 0, 1, 0, 0, 2,
+       1, 1, 1, 1, 1, 0, 2, 1, 2, 1, 1, 0, 1, 1, 2, 2, 2, 0, 2, 0, 2, 1,
+       1, 1, 1, 1, 0, 1, 2, 2, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 2, 1,
+       1, 1, 2, 1, 2, 0, 2, 2, 1, 1, 2, 1, 1, 2, 1, 1, 0, 2, 2, 0, 1, 2,
+       0, 2, 0, 1, 0, 0, 2, 0, 2, 1, 1, 2, 2, 2, 2, 2, 0, 1, 0, 0, 3, 1,
+       0, 1, 1, 0, 1, 1, 0, 1, 0, 2, 2, 1, 2, 0, 2, 1, 2, 0, 1, 2, 2, 1,
+       0, 0, 2, 1, 2, 1, 1, 2, 1, 0, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 1, 2,
+       2, 2, 0, 0, 1, 2, 1, 2, 0, 2, 2, 1, 2, 1, 0, 2, 1, 1, 2, 2, 2, 2,
+       2, 0, 1, 0, 1, 3, 1, 2, 2, 1, 0, 1, 2, 0, 2, 0, 0, 0, 0, 2, 1, 1,
+       1, 2, 2, 2, 1, 1, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 1,
+       2, 2, 0, 1, 1, 1, 0, 0, 1, 1, 2, 1, 1, 2, 0, 0, 2, 0, 2, 1, 0, 2,
+       1, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 0, 2, 0, 1, 2, 0, 1, 1, 1, 1,
+       0, 1, 3, 1, 0, 0, 2, 2, 1, 1, 1, 0, 0, 1, 1, 2, 1, 2, 1, 1, 1, 1,
+       2, 2, 2, 0, 0, 2, 2, 1, 1, 2, 2, 1, 2, 2, 2, 1, 1, 2, 3, 1, 0, 0,
+       2, 0, 1, 1, 2, 2, 2, 0, 1, 1, 1, 2, 2, 1, 1, 0, 1, 1, 0, 2, 1, 1,
+       2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 0, 2, 2, 2, 2, 1, 0, 2, 1, 1, 0,
+       1, 2, 1, 0, 1, 0, 0, 2, 0, 1, 3, 1, 0, 1, 1, 2, 1, 0, 1, 2, 0, 0,
+       1, 2, </pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 34</span></div><pre class="py">dataset[&quot;Property_Area&quot;] = transformed</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 35</span></div><pre class="py">dataset[&quot;Property_Area&quot;].unique()</pre></div><div class="out"><div class="h">Output</div><pre>array([1, 2, 3, 0])</pre></div><div class="src-head">📓 <a href="../Concept/11_Ordinal_Encoding.ipynb">11_Ordinal_Encoding.ipynb</a></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 3</span></div><pre class="py">df = pd.DataFrame({&quot;Size&quot;:[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;,&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;]})
+df.head()</pre></div><div class="out"><div class="h">Output</div><pre>  Size
+0    s
+1    m
+2    l
+3   xl
+4    s</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 5</span></div><pre class="py">size_order = [&quot;s&quot;, &quot;m&quot;, &quot;l&quot;, &quot;xl&quot;]
+seq_ramp = [&quot;#86b6ef&quot;, &quot;#5598e7&quot;, &quot;#2a78d6&quot;, &quot;#1c5cab&quot;]  # sequential blue, light -&gt; dark = low -&gt; high rank
+
+counts = df[&quot;Size&quot;].value_counts().reindex(size_order)
+
+fig, ax = plt.subplots(figsize=(5, 3.5))
+ax.bar(size_order, counts.values, color=seq_ramp, width=0.6)
+ax.set_title(&quot;Size — raw counts, in real rank order&quot;)
+ax.set_xlabel(&quot;Size (s &lt; m &lt; l &lt; xl)&quot;)
+ax.set_ylabel(&quot;Count&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 7</span></div><pre class="py">ord_data = [[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;]]</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 9</span></div><pre class="py">from sklearn.preprocessing import OrdinalEncoder, LabelEncoder</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 11</span></div><pre class="py">oe = OrdinalEncoder(categories=ord_data)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 13</span></div><pre class="py">oe.fit(df[[&quot;Size&quot;]])</pre></div><div class="out"><div class="h">Output</div><pre>OrdinalEncoder(categories=[[&#x27;s&#x27;, &#x27;m&#x27;, &#x27;l&#x27;, &#x27;xl&#x27;]])</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 15</span></div><pre class="py">df[&quot;Size_En&quot;]= oe.transform(df[[&quot;Size&quot;]])
+df</pre></div><div class="out"><div class="h">Output</div><pre>  Size  Size_En
+0    s      0.0
+1    m      1.0
+2    l      2.0
+3   xl      3.0
+4    s      0.0
+5    s      0.0
+6    m      1.0
+7    l      2.0
+8   xl      3.0
+9    s      0.0</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 17</span></div><pre class="py">le_check = LabelEncoder()
+le_check.fit(df[&quot;Size&quot;])
+label_codes = le_check.transform(size_order)          # what LabelEncoder assigns to s, m, l, xl
+ordinal_codes = oe.transform(pd.DataFrame({&quot;Size&quot;: size_order}))[:, 0]  # what OrdinalEncoder assigns
+
+print(&quot;LabelEncoder classes_ (alphabetical):&quot;, le_check.classes_)
+print(&quot;LabelEncoder codes for s, m, l, xl:  &quot;, label_codes)
+print(&quot;OrdinalEncoder codes for s, m, l, xl:&quot;, ordinal_codes)</pre></div><div class="out"><div class="h">Output</div><pre>LabelEncoder classes_ (alphabetical): [&#x27;l&#x27; &#x27;m&#x27; &#x27;s&#x27; &#x27;xl&#x27;]
+LabelEncoder codes for s, m, l, xl:   [2 1 0 3]
+OrdinalEncoder codes for s, m, l, xl: [0. 1. 2. 3.]</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 19</span></div><pre class="py">x = np.arange(len(size_order))
+width = 0.35
+
+fig, ax = plt.subplots(figsize=(6, 3.5))
+ax.bar(x - width/2, label_codes, width, label=&quot;LabelEncoder (alphabetical)&quot;, color=&quot;#eb6834&quot;)
+ax.bar(x + width/2, ordinal_codes, width, label=&quot;OrdinalEncoder (categories=[...])&quot;, color=&quot;#2a78d6&quot;)
+ax.set_xticks(x)
+ax.set_xticklabels(size_order)
+ax.set_ylabel(&quot;Assigned code&quot;)
+ax.set_title(&quot;Same column, two encoders — only one is a staircase&quot;)
+ax.legend(frameon=False)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 21</span></div><pre class="py">df1 = pd.DataFrame({&quot;Size&quot;:[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;,&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;]})</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 23</span></div><pre class="py">ord_data1= {&quot;s&quot;:0,&quot;m&quot;:1,&quot;l&quot;:2,&quot;xl&quot;:3}</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 25</span></div><pre class="py">df1[&quot;Size_EN_MAP&quot;] = df1[&quot;Size&quot;].map(ord_data1)
+df1</pre></div><div class="out"><div class="h">Output</div><pre>  Size  Size_EN_MAP
+0    s            0
+1    m            1
+2    l            2
+3   xl            3
+4    s            0
+5    s            0
+6    m            1
+7    l            2
+8   xl            3
+9    s            0</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 28</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y  
+3             1.0     Semiurban           Y  
+4             0.0         Urban           N</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 30</span></div><pre class="py">dataset[&quot;Property_Area&quot;].unique()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;Semiurban&#x27;, &#x27;Urban&#x27;, nan, &#x27;Rural&#x27;]
+Length: 4, dtype: str</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 32</span></div><pre class="py">dataset[&quot;Property_Area&quot;] = dataset[&quot;Property_Area&quot;].fillna(dataset[&quot;Property_Area&quot;].mode()[0])
+dataset[&quot;Property_Area&quot;].unique()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;Semiurban&#x27;, &#x27;Urban&#x27;, &#x27;Rural&#x27;]
+Length: 3, dtype: str</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 34</span></div><pre class="py">en_data_ord = [[&quot;Rural&quot;,&quot;Semiurban&quot;,&quot;Urban&quot;]]</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 36</span></div><pre class="py">oen = OrdinalEncoder(categories=en_data_ord)
+dataset[&quot;Property_Area&quot;] = oen.fit_transform(dataset[[&quot;Property_Area&quot;]])
+dataset[&quot;Property_Area&quot;].head(10)</pre></div><div class="out"><div class="h">Output</div><pre>0    1.0
+1    2.0
+2    2.0
+3    1.0
+4    2.0
+5    1.0
+6    0.0
+7    2.0
+8    1.0
+9    1.0
+Name: Property_Area, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 39</span></div><pre class="py">dataset[&quot;Dependents&quot;].value_counts(dropna=False)</pre></div><div class="out"><div class="h">Output</div><pre>Dependents
+0      356
+2      108
+1       82
+3+      57
+NaN     15
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 41</span></div><pre class="py">dataset[&quot;Dependents&quot;] = dataset[&quot;Dependents&quot;].fillna(dataset[&quot;Dependents&quot;].mode()[0])
+dataset[&quot;Dependents&quot;].unique()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;StringArray&gt;
+[&#x27;0&#x27;, &#x27;2&#x27;, &#x27;1&#x27;, &#x27;3+&#x27;]
+Length: 4, dtype: str</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 43</span></div><pre class="py">dep_order = [[&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3+&quot;]]
+oe_dep = OrdinalEncoder(categories=dep_order)
+dataset[&quot;Dependents_En&quot;] = oe_dep.fit_transform(dataset[[&quot;Dependents&quot;]])
+dataset[[&quot;Dependents&quot;, &quot;Dependents_En&quot;]].head(10)</pre></div><div class="out"><div class="h">Output</div><pre>  Dependents  Dependents_En
+0          0            0.0
+1          0            0.0
+2          0            0.0
+3          0            0.0
+4          2            2.0
+5          0            0.0
+6          0            0.0
+7          0            0.0
+8          0            0.0
+9          0            0.0</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 45</span></div><pre class="py">dep_order_list = [&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3+&quot;]
+dep_ramp = [&quot;#86b6ef&quot;, &quot;#5598e7&quot;, &quot;#2a78d6&quot;, &quot;#1c5cab&quot;]
+dep_counts = dataset[&quot;Dependents&quot;].value_counts().reindex(dep_order_list)
+
+fig, ax = plt.subplots(figsize=(5, 3.5))
+ax.bar(dep_order_list, dep_counts.values, color=dep_ramp, width=0.6)
+ax.set_title(&quot;Dependents — raw counts, in real rank order&quot;)
+ax.set_xlabel(&quot;Dependents (0 &lt; 1 &lt; 2 &lt; 3+)&quot;)
+ax.set_ylabel(&quot;Count&quot;)
+ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

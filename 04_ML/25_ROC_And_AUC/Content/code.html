@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROC And AUC — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/14_roc.ipynb">14_roc.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn import datasets, metrics
+import pandas as pd
+from sklearn.datasets import make_classification</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">x,y = make_classification(n_classes=2,n_features=5,n_samples=1000,random_state=1)
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11fd05a90&gt;</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">X_train , X_test,Y_train, Y_test = train_test_split(x,y, test_size=0.2, random_state=1)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 5</span></div><pre class="py">c1 = LogisticRegression()
+c1.fit(X_train,Y_train)</pre></div><div class="out"><div class="h">Output</div><pre>LogisticRegression()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 7</span></div><pre class="py">proba = c1.predict_proba(X_test)      # column 0 = P(class 0), column 1 = P(class 1)
+p1 = proba[:, 1]
+
+print(&quot;first 5 probabilities of class 1:&quot;, p1[:5].round(3))
+print(&quot;predict() is just p1 &gt;= 0.5    :&quot;, (c1.predict(X_test) == (p1 &gt;= 0.5)).all())</pre></div><div class="out"><div class="h">Output</div><pre>first 5 probabilities of class 1: [0.55  0.608 0.991 0.922 0.814]
+predict() is just p1 &gt;= 0.5    : True</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 9</span></div><pre class="py">fpr, tpr, thresholds = metrics.roc_curve(Y_test, p1)
+
+plt.figure(figsize=(6, 6))
+plt.plot(fpr, tpr, marker=&quot;.&quot;, label=&quot;Logistic Regression&quot;)
+plt.plot([0, 1], [0, 1], &quot;k--&quot;, label=&quot;coin flip&quot;)
+plt.xlabel(&quot;FPR - false alarms&quot;)
+plt.ylabel(&quot;TPR - caught positives&quot;)
+plt.title(&quot;ROC curve&quot;)
+plt.legend()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">print(&quot;AUC     :&quot;, round(metrics.roc_auc_score(Y_test, p1), 3))
+print(&quot;accuracy:&quot;, round(c1.score(X_test, Y_test), 3))</pre></div><div class="out"><div class="h">Output</div><pre>AUC     : 0.912
+accuracy: 0.815</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 13</span></div><pre class="py">metrics.plot_roc_curve(c1,X_test,Y_test)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[8], line 1
+----&gt; 1 metrics.plot_roc_curve(c1,X_test,Y_test)
+
+AttributeError: module &#x27;sklearn.metrics&#x27; has no attribute &#x27;plot_roc_curve&#x27;</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 15</span></div><pre class="py">metrics.RocCurveDisplay.from_estimator(c1, X_test, Y_test)
+plt.plot([0, 1], [0, 1], &quot;k--&quot;)
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variables And Data Types — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/variables_data_types_numbers_strings.ipynb">variables_data_types_numbers_strings.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">a = 5
+a</pre></div><div class="out"><div class="h">Output</div><pre>5</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">b = &#x27;Shridhar&#x27;
+b
+a</pre></div><div class="out"><div class="h">Output</div><pre>5</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 3</span></div><pre class="py">c = &quot;Shridhar&quot;
+c</pre></div><div class="out"><div class="h">Output</div><pre>&#x27;Shridhar&#x27;</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 4</span></div><pre class="py">print(a)
+print(b)</pre></div><div class="out"><div class="h">Output</div><pre>5
+Shridhar</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 5</span></div><pre class="py">x = str(5)    
+y = int(5)    
+z = float(5)
+
+print(x)
+print(y)
+print(z)</pre></div><div class="out"><div class="h">Output</div><pre>5
+5
+5.0</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 6</span></div><pre class="py">print(type(x))
+print(type(y))
+print(type(z))</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;str&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 7</span></div><pre class="py">p = &#x27;Shridhar&#x27;
+P = &#x27;Mankar&#x27;</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 8</span></div><pre class="py">print(p)
+print(P)</pre></div><div class="out"><div class="h">Output</div><pre>Shridhar
+Mankar</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 9</span></div><pre class="py">print(p + &#x27; &#x27; + P)</pre></div><div class="out"><div class="h">Output</div><pre>Shridhar Mankar</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 10</span></div><pre class="py">print(a+y)</pre></div><div class="out"><div class="h">Output</div><pre>10</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 11</span></div><pre class="py">print(a+b)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/1083478837.py in &lt;module&gt;
+----&gt; 1 print(a+b)
+
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 12</span></div><pre class="py">variable = 5
+vari_able = 5
+_variable = 5
+Variable = 5
+VARIABLE = 5
+variable5 = 5</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 13</span></div><pre class="py">5variable = 5</pre></div><div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/3299328541.py&quot;, line 1
+    5variable = 5
+     ^
+SyntaxError: invalid syntax</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 14</span></div><pre class="py">vari-able = 5</pre></div><div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/225172146.py&quot;, line 1
+    vari-able = 5
+    ^
+SyntaxError: cannot assign to operator</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 15</span></div><pre class="py">var$able = 5</pre></div><div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/3601564415.py&quot;, line 1
+    var$able = 5
+       ^
+SyntaxError: invalid syntax</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 16</span></div><pre class="py">vari able =5</pre></div><div class="out"><div class="h">Output</div><pre>  File &quot;/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/1683983009.py&quot;, line 1
+    vari able =5
+         ^
+SyntaxError: invalid syntax</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 18</span></div><pre class="py">x1 = 5
+x2 = &#x27;shridhar&#x27;
+x3 = 5.0
+x4 = True
+x5 = 5j
+x6 = [1,2,3]
+x7 = {1,2,3}
+x8 = (1,2,3)
+x9 = {&#x27;naam&#x27; : &#x27;shridhar&#x27;, &#x27;kaam&#x27; : &#x27;Students ki help karna&#x27;}
+x10 = None</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 19</span></div><pre class="py">print(type(x1))
+print(type(x2))
+print(type(x3))
+print(type(x4))
+print(type(x5))
+print(type(x6))
+print(type(x7))
+print(type(x8))
+print(type(x9))
+print(type(x10))</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;str&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;
+&lt;class &#x27;bool&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;list&#x27;&gt;
+&lt;class &#x27;set&#x27;&gt;
+&lt;class &#x27;tuple&#x27;&gt;
+&lt;class &#x27;dict&#x27;&gt;
+&lt;class &#x27;NoneType&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 21</span></div><pre class="py">num1 = 5
+num2 = -5
+num3 = 5555555555555555555555555
+num4 = 5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 22</span></div><pre class="py">import sys
+print(sys.getsizeof(num4))
+print(sys.getsizeof(num3))
+print(sys.getsizeof(num1))</pre></div><div class="out"><div class="h">Output</div><pre>76
+36
+28</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 23</span></div><pre class="py">print(type(num1))
+print(type(num2))
+print(type(num3))</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 24</span></div><pre class="py">float1 = 5.0
+float2 = -5.5
+float3 = 123e4</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 25</span></div><pre class="py">print(type(float1))
+print(type(float2))
+print(type(float3))</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;float&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 26</span></div><pre class="py">com1 = 0+1j
+com2 = 5j
+com3 = 1+2j
+com4 = -5j</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 27</span></div><pre class="py">print(type(com1))
+print(type(com2))
+print(type(com3))
+print(type(com4))</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;
+&lt;class &#x27;complex&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 28</span></div><pre class="py">int1 = int(float1)
+int2 = int(com1)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+/var/folders/m0/4t6ggwz51774ll_46v6qgz3h0000gn/T/ipykernel_1193/1682505834.py in &lt;module&gt;
+      1 int1 = int(float1)
+----&gt; 2 int2 = int(com1)
+
+TypeError: can&#x27;t convert complex to int</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 29</span></div><pre class="py">complex1 = complex(num1)</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 30</span></div><pre class="py">complex1</pre></div><div class="out"><div class="h">Output</div><pre>(5+0j)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 32</span></div><pre class="py">X = &#x27;&#x27;&#x27;Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai&#x27;&#x27;&#x27;
+print(X)</pre></div><div class="out"><div class="h">Output</div><pre>Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 33</span></div><pre class="py">type(X)</pre></div><div class="out"><div class="h">Output</div><pre>str</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 34</span></div><pre class="py">Y = &quot;&quot;&quot;Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai&quot;&quot;&quot;
+print(Y)</pre></div><div class="out"><div class="h">Output</div><pre>Hello and welcome dosto
+to 5 minutes engineering,
+aaj ka session bada kamal ka hone wala hai</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 35</span></div><pre class="py">Z = &#x27;shridhar&#x27;
+print(Z[0])
+print(Z[1])
+print(Z[2])
+print(Z[3])
+print(Z[4])
+print(Z[5])
+print(Z[6])
+print(Z[7])</pre></div><div class="out"><div class="h">Output</div><pre>s
+h
+r
+i
+d
+h
+a
+r</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 36</span></div><pre class="py">print(len(Z))</pre></div><div class="out"><div class="h">Output</div><pre>8</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 37</span></div><pre class="py">print(len(X))</pre></div><div class="out"><div class="h">Output</div><pre>92</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 38</span></div><pre class="py">print(Z.upper())
+print(Z.title())
+print(Z.replace(&quot;shridhar&quot;, &quot;shreedhar&quot;))</pre></div><div class="out"><div class="h">Output</div><pre>SHRIDHAR
+Shridhar
+shreedhar</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 39</span></div><pre class="py">name = input(&quot;Enter name: &quot;)
+
+print(name)</pre></div><div class="out"><div class="h">Output</div><pre>Enter name: shridhar
+shridhar</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 40</span></div><pre class="py">name = &quot;Shridhar&quot;
+score = 95
+
+print(f&quot;{name} scored {score}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Shridhar scored 95</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 41</span></div><pre class="py">name = input(&quot;Enter your full name: &quot;)
+age = int(input(&quot;Enter your age: &quot;))
+course = input(&quot;Enter your course name: &quot;)
+fees = float(input(&quot;Enter course fees: &quot;))
+
+first_letter = name[0]
+last_letter = name[-1]
+
+discount = fees * 0.10
+final_fees = fees - discount
+
+print(&quot;\n----- STUDENT REPORT -----&quot;)
+
+print(f&quot;Name : {name.title()}&quot;)
+print(f&quot;Age : {age}&quot;)
+print(f&quot;Course : {course.upper()}&quot;)
+
+print(f&quot;\nFirst Letter : {first_letter}&quot;)
+print(f&quot;Last Letter : {last_letter}&quot;)
+
+print(f&quot;\nOriginal Fees : ₹{fees}&quot;)
+print(f&quot;Discount : ₹{discount}&quot;)
+print(f&quot;Final Fees : ₹{final_fees}&quot;)
+
+print(&quot;\n----- DATA TYPES -----&quot;)
+print(type(name))
+print(type(age))
+print(type(fees))
+
+print(f&quot;\nWelcome {name.title()}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Enter your full name: Shridhar Mankar
+Enter your age: 28
+Enter your course name: Ultimate AI Mastery BootCamp
+Enter course fees: 8000
+
+----- STUDENT REPORT -----
+Name : Shridhar Mankar
+Age : 28
+Course : ULTIMATE AI MASTERY BOOTCAMP
+
+First Letter : S
+Last Letter : r
+
+Original Fees : ₹8000.0
+Discount : ₹800.0
+Final Fees : ₹7200.0
+
+----- DATA TYPES -----
+&lt;class &#x27;str&#x27;&gt;
+&lt;class &#x27;int&#x27;&gt;
+&lt;class &#x27;float&#x27;&gt;
+
+Welcome Shridhar Mankar</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

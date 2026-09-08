@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paired T Test — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb">14_Hypothesis_Testing_T-Test_Paired.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
+import numpy as np
+import matplotlib.pyplot as plt
+
+Before = np.array([50, 60, 45, 65, 55, 70, 40, 75, 80, 65, 70, 60, 50, 55, 45, 75, 60, 50, 65, 70])
+After  = np.array([60, 70, 55, 75, 65, 80, 50, 85, 90, 70, 75, 65, 55, 60, 50, 80, 65, 55, 70, 75])
+
+n = len(Before)
+print(&quot;n (pairs):&quot;, n)</pre></div><div class="out"><div class="h">Output</div><pre>n (pairs): 20</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 6</span></div><pre class="py">df = n - 1          # 19
+alpha = 0.05
+
+t_critical = st.t.ppf(1 - alpha / 2, df)   # ~2.093
+print(&quot;df:&quot;, df)
+print(&quot;t_critical: +-&quot;, round(t_critical, 4))
+
+x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+# rejection regions - both tails
+x_left = np.linspace(-4, -t_critical, 100)
+x_right = np.linspace(t_critical, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.4, label=&quot;Rejection region&quot;)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.4)
+
+# acceptance region
+x_mid = np.linspace(-t_critical, t_critical, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.3, label=&quot;Acceptance region (95%)&quot;)
+
+ax.axvline(0, color=&quot;black&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0, max(y) * 1.05, &quot;H0 (tB-tA=0)&quot;, ha=&quot;center&quot;)
+ax.axvline(-t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_critical, -0.01, f&quot;-{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_critical, -0.01, f&quot;+{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.legend()
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 95% CI)&quot;)
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>df: 19
+t_critical: +- 2.093</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py">mean_before = np.mean(Before)
+mean_after  = np.mean(After)
+std_before  = np.std(Before)
+std_after   = np.std(After)
+
+t_test = (mean_after - mean_before) / np.sqrt((std_after**2) / n + (std_before**2) / n)
+
+print(&quot;mean_before:&quot;, mean_before, &quot; std_before:&quot;, round(std_before, 4))
+print(&quot;mean_after: &quot;, mean_after,  &quot; std_after: &quot;, round(std_after, 4))
+print(&quot;t_test:&quot;, t_test)</pre></div><div class="out"><div class="h">Output</div><pre>mean_before: 60.25  std_before: 11.0085
+mean_after:  67.5  std_after:  11.2361
+t_test: 2.061200527128206</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py">if abs(t_test) &gt; t_critical:
+    print(&quot;Reject H0 -&gt; H1 is right (training DOES affect typing speed)&quot;)
+else:
+    print(&quot;Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect, at alpha=0.05)&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Fail to reject H0 -&gt; H0 holds (no significant evidence of an effect, at alpha=0.05)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 11</span></div><pre class="py">x = np.linspace(-4, 4, 500)
+y = st.t.pdf(x, df)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x, y, color=&quot;teal&quot;, linewidth=2)
+
+x_left = np.linspace(-4, -t_critical, 100)
+x_right = np.linspace(t_critical, 4, 100)
+ax.fill_between(x_left, st.t.pdf(x_left, df), color=&quot;crimson&quot;, alpha=0.3)
+ax.fill_between(x_right, st.t.pdf(x_right, df), color=&quot;crimson&quot;, alpha=0.3)
+
+x_mid = np.linspace(-t_critical, t_critical, 200)
+ax.fill_between(x_mid, st.t.pdf(x_mid, df), color=&quot;seagreen&quot;, alpha=0.25)
+
+ax.axvline(-t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.axvline(t_critical, color=&quot;crimson&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.text(-t_critical, -0.01, f&quot;-{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+ax.text(t_critical, -0.01, f&quot;+{t_critical:.3f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, color=&quot;crimson&quot;)
+
+ax.axvline(t_test, color=&quot;darkorange&quot;, linewidth=2)
+ax.plot(t_test, st.t.pdf(t_test, df), &quot;o&quot;, color=&quot;darkorange&quot;, markersize=8, zorder=5)
+ax.annotate(f&quot;t_test = {t_test:.3f}\n(just inside acceptance region)&quot;,
+            xy=(t_test, st.t.pdf(t_test, df)),
+            xytext=(t_test - 3.3, max(y) * 0.55),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;darkorange&quot;),
+            color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
+
+ax.set_yticks([])
+ax.set_xlabel(&quot;t&quot;)
+ax.set_title(f&quot;Where does t_test land? (df={df}, 95% CI)&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 13</span></div><pre class="py">diffs = After - Before
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+
+# --- Slopegraph: each employee, Before -&gt; After ---
+ax = axes[0]
+for b, a in zip(Before, After):
+    color = &quot;seagreen&quot; if a &gt; b else (&quot;crimson&quot; if a &lt; b else &quot;gray&quot;)
+    ax.plot([0, 1], [b, a], color=color, alpha=0.6, linewidth=1.5)
+
+ax.plot([0, 1], [mean_before, mean_after], color=&quot;black&quot;, linewidth=3, marker=&quot;o&quot;, label=&quot;Mean&quot;)
+ax.set_xticks([0, 1])
+ax.set_xticklabels([&quot;Before&quot;, &quot;After&quot;])
+ax.set_xlim(-0.2, 1.2)
+ax.set_ylabel(&quot;Typing speed&quot;)
+ax.set_title(&quot;Each employee: Before -&gt; After&quot;)
+ax.legend()
+
+# --- Bar chart: group means +/- std, and mean gain ---
+ax = axes[1]
+bars = ax.bar([&quot;Before&quot;, &quot;After&quot;], [mean_before, mean_after],
+               yerr=[std_before, std_after], capsize=6,
+               color=[&quot;steelblue&quot;, &quot;seagreen&quot;], alpha=0.85)
+for bar, val in zip(bars, [mean_before, mean_after]):
+    ax.text(bar.get_x() + bar.get_width() / 2, val + 1.5, f&quot;{val:.2f}&quot;, ha=&quot;center&quot;, fontweight=&quot;bold&quot;)
+
+ax.set_ylabel(&quot;Mean typing speed&quot;)
+ax.set_title(f&quot;Mean gain = {mean_after - mean_before:.2f}  (n={n} employees, all improved or held steady)&quot;)
+ax.set_ylim(0, max(After) + 15)
+
+plt.tight_layout()
+plt.show()
+
+print(&quot;Employees who improved:&quot;, int(np.sum(diffs &gt; 0)), &quot;/&quot;, n)
+print(&quot;Employees who stayed the same:&quot;, int(np.sum(diffs == 0)), &quot;/&quot;, n)
+print(&quot;Employees who got worse:&quot;, int(np.sum(diffs &lt; 0)), &quot;/&quot;, n)
+print(&quot;Mean gain (After - Before):&quot;, diffs.mean())</pre></div><div class="out"><div class="h">Output</div><pre>Employees who improved: 20 / 20
+Employees who stayed the same: 0 / 20
+Employees who got worse: 0 / 20
+Mean gain (After - Before): 7.25</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 16</span></div><pre class="py">diffs = After - Before
+
+# Paired t-test, done manually (matches Step 5 formula shape, but on the differences)
+mean_d = diffs.mean()
+std_d = diffs.std(ddof=1)
+t_paired_manual = mean_d / (std_d / np.sqrt(n))
+print(&quot;Manual paired t_test:&quot;, t_paired_manual, &quot; df:&quot;, n - 1)
+
+# Cross-check both approaches against scipy.stats
+paired_result = st.ttest_rel(After, Before)
+indep_result = st.ttest_ind(After, Before)
+
+print(&quot;\nscipy paired t-test   (correct for this design):&quot;, paired_result)
+print(&quot;scipy independent t-test (what Step 5 approximates):&quot;, indep_result)</pre></div><div class="out"><div class="h">Output</div><pre>Manual paired t_test: 12.704488986340237  df: 19
+
+scipy paired t-test   (correct for this design): TtestResult(statistic=np.float64(12.704488986340237), pvalue=np.float64(9.827262801162758e-11), df=np.int64(19))
+scipy independent t-test (what Step 5 approximates): TtestResult(statistic=np.float64(2.009009764133045), pvalue=np.float64(0.05167910600233631), df=np.float64(38.0))</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

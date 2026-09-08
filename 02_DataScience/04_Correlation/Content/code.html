@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Correlation — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/06_co-relation.ipynb">06_co-relation.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 1</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/tips.csv&quot;)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 2</span></div><pre class="py">dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   total_bill   tip   sex smoker   day    time  size
+0       16.74  2.68  Male     No   Fri  Dinner     2
+1       13.09  1.18  Male     No  Thur  Dinner     4
+2       39.30  6.45  Male    Yes   Sun  Dinner     4</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>total_bill    0
+tip           0
+sex           0
+smoker        0
+day           0
+time          0
+size          0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 4</span></div><pre class="py">dataset.info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 7 columns):
+ #   Column      Non-Null Count  Dtype  
+---  ------      --------------  -----  
+ 0   total_bill  1000 non-null   float64
+ 1   tip         1000 non-null   float64
+ 2   sex         1000 non-null   str    
+ 3   smoker      1000 non-null   str    
+ 4   day         1000 non-null   str    
+ 5   time        1000 non-null   str    
+ 6   size        1000 non-null   int64  
+dtypes: float64(2), int64(1), str(4)
+memory usage: 54.8 KB</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 5</span></div><pre class="py">dataset.select_dtypes([&quot;float64&quot;,&quot;int64&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>     total_bill   tip  size
+0         16.74  2.68     2
+1         13.09  1.18     4
+2         39.30  6.45     4
+3         26.77  5.58     2
+4         20.42  2.34     2
+..          ...   ...   ...
+995       47.60  7.78     4
+996       23.37  3.64     2
+997       15.88  1.61     2
+998       41.74  5.87     4
+999       29.69  6.04     3
+
+[1000 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 6</span></div><pre class="py">data_cov = dataset.select_dtypes([&quot;float64&quot;,&quot;int64&quot;]).cov()
+data_cov</pre></div><div class="out"><div class="h">Output</div><pre>            total_bill        tip      size
+total_bill  130.715213  22.401125  9.457814
+tip          22.401125   5.348316  1.635687
+size          9.457814   1.635687  1.178089</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 7</span></div><pre class="py">data_corr= dataset.select_dtypes([&quot;float64&quot;,&quot;int64&quot;]).corr()
+data_corr</pre></div><div class="out"><div class="h">Output</div><pre>            total_bill       tip      size
+total_bill    1.000000  0.847224  0.762147
+tip           0.847224  1.000000  0.651632
+size          0.762147  0.651632  1.000000</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 8</span></div><pre class="py">plt.figure(figsize=(4,3))
+sns.heatmap(data_corr,annot=True)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 9</span></div><pre class="py">plt.figure(figsize=(4,3))
+sns.heatmap(data_cov,annot=True)
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

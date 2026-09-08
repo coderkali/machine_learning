@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Cleaning — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/05_Data_Cleaning_Practice.ipynb">05_Data_Cleaning_Practice.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(10)</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+3  LP001004    Male     Yes          0      Graduate            No   
+4  LP001005    Male      No          2      Graduate            No   
+5  LP001006  Female     Yes          0      Graduate            No   
+6  LP001007    Male      No          0      Graduate            No   
+7  LP001008     NaN     Yes          0  Not Graduate           Yes   
+8  LP001009    Male      No          0  Not Graduate            No   
+9  LP001010    Male     Yes          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+3           5069.0                  0       218.0             360.0   
+4           3002.0               2283       194.0             360.0   
+5           3918.0               1966       219.0             360.0   
+6           4255.0               2274       205.0             360.0   
+7           5890.0               2699       305.0            </pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py">dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 7</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 9</span></div><pre class="py">(dataset.isnull().sum() / dataset.shape[0]) * 100</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID              0.000000
+Gender               2.103560
+Married              0.970874
+Dependents           2.427184
+Education            1.456311
+Self_Employed        5.177994
+ApplicantIncome      0.323625
+CoapplicantIncome    0.000000
+LoanAmount           3.559871
+Loan_Amount_Term     3.398058
+Credit_History       8.090615
+Property_Area        1.456311
+Loan_Status          0.000000
+dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 11</span></div><pre class="py">(dataset.isnull().sum().sum() / (dataset.shape[0] * dataset.shape[1])) * 100</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(2.2280308688075676)</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 13</span></div><pre class="py">import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.colors import ListedColormap</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 15</span></div><pre class="py">plt.figure(figsize=(8, 6))
+sns.heatmap(
+    dataset.isnull().corr(), annot=True, fmt=&quot;.2f&quot;, cmap=&quot;coolwarm&quot;,
+    center=0, vmin=-1, vmax=1, square=True,
+    cbar_kws={&quot;label&quot;: &quot;Correlation of missingness&quot;},
+)
+plt.title(&quot;Do Columns Go Missing Together? (Nullity Correlation)&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 17</span></div><pre class="py">missing_counts = dataset.isnull().sum()
+missing_counts = missing_counts[missing_counts &gt; 0].sort_values(ascending=True)
+
+plt.figure(figsize=(8, 5))
+bars = plt.barh(missing_counts.index, missing_counts.values, color=&quot;#b33a3a&quot;)
+plt.bar_label(bars, padding=3)
+plt.xlabel(&quot;Number of missing values (out of 618 rows)&quot;)
+plt.title(&quot;Missing Values per Column&quot;)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 19</span></div><pre class="py">def flag_high_missing_columns(df, threshold=50):
+    &quot;&quot;&quot;Return columns whose missing-value percentage is &gt;= threshold, worst first.&quot;&quot;&quot;
+    missing_pct = (df.isnull().sum() / df.shape[0]) * 100
+    return missing_pct[missing_pct &gt;= threshold].sort_values(ascending=False)
+
+high_missing = flag_high_missing_columns(dataset, threshold=50)
+
+if high_missing.empty:
+    print(&quot;No column crosses the 50% threshold — nothing to ignore on this rule.&quot;)
+else:
+    print(&quot;Columns to ignore (&gt;= 50% missing):&quot;)
+    print(high_missing)</pre></div><div class="out"><div class="h">Output</div><pre>No column crosses the 50% threshold — nothing to ignore on this rule.</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 20</span></div><pre class="py">dataset_cleaned = dataset.drop(columns=high_missing.index)
+
+print(&quot;Shape before:&quot;, dataset.shape)
+print(&quot;Shape after dropping high-missing columns:&quot;, dataset_cleaned.shape)</pre></div><div class="out"><div class="h">Output</div><pre>Shape before: (618, 13)
+Shape after dropping high-missing columns: (618, 13)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">categorical_cols = dataset_cleaned.select_dtypes(include=&quot;str&quot;).columns
+
+for col in categorical_cols:
+    dataset_cleaned[col] = dataset_cleaned[col].fillna(dataset_cleaned[col].mode()[0])
+
+dataset_cleaned[categorical_cols].isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID          0
+Gender           0
+Married          0
+Dependents       0
+Education        0
+Self_Employed    0
+Property_Area    0
+Loan_Status      0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 26</span></div><pre class="py">numerical_cols = dataset_cleaned.select_dtypes(include=[&quot;int64&quot;, &quot;float64&quot;]).columns
+
+for col in numerical_cols:
+    if col == &quot;Credit_History&quot;:
+        dataset_cleaned[col] = dataset_cleaned[col].fillna(dataset_cleaned[col].mode()[0])
+    else:
+        dataset_cleaned[col] = dataset_cleaned[col].fillna(dataset_cleaned[col].median())
+
+dataset_cleaned[numerical_cols].isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>ApplicantIncome      0
+CoapplicantIncome    0
+LoanAmount           0
+Loan_Amount_Term     0
+Credit_History       0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 28</span></div><pre class="py">dataset_cleaned.isnull().sum().sum()   # 0 = fully filled</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 30</span></div><pre class="py">before_counts = dataset.isnull().sum()
+after_counts = dataset_cleaned.isnull().sum()
+cols = before_counts[before_counts &gt; 0].sort_values(ascending=False).index
+
+y = range(len(cols))
+height = 0.35
+
+plt.figure(figsize=(8, 6))
+plt.barh([i + height / 2 for i in y], before_counts[cols].values, height=height, color=&quot;#b33a3a&quot;, label=&quot;Before filling&quot;)
+plt.barh([i - height / 2 for i in y], after_counts[cols].values, height=height, color=&quot;#2f9e6f&quot;, label=&quot;After filling&quot;)
+plt.yticks(list(y), cols)
+plt.gca().invert_yaxis()
+plt.xlabel(&quot;Number of missing values&quot;)
+plt.title(&quot;Missing Values: Before vs. After Filling&quot;)
+plt.legend(frameon=False)
+plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

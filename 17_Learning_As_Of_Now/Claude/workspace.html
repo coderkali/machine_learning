@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workspace · Learning Universe</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="workspace.css">
+</head>
+<body class="ws">
+
+<header class="nav">
+  <a class="brand" href="index.html">
+    <span class="sigil"><i></i>ML</span>
+    <span class="brand-txt"><b>Learning Universe</b><small>workspace</small></span>
+  </a>
+  <nav class="nav-links">
+    <a class="nav-btn" href="index.html">Home</a>
+    <a class="nav-btn" href="index.html#map">Mind map</a>
+    <button class="nav-btn active">Workspace</button>
+  </nav>
+  <label class="search-box">
+    <span class="mag">⌕</span>
+    <input id="ws-search" type="search" placeholder="Filter topics…" autocomplete="off">
+    <kbd>/</kbd>
+  </label>
+</header>
+
+<div class="ws-shell">
+
+  <!-- ── left: explorer ── -->
+  <aside class="explorer" id="explorer">
+    <div class="exp-head">
+      <span>Explorer</span>
+      <button id="exp-collapse" title="Collapse all folders">⌄</button>
+      <button id="exp-toggle" title="Hide explorer  (⌘B)">⟨</button>
+    </div>
+    <div class="exp-tree" id="exp-tree"></div>
+  </aside>
+  <button id="exp-show" title="Show explorer  (⌘B)">⟩</button>
+  <div class="gutter" id="gutter-left" title="Drag to resize"></div>
+
+  <!-- ── right: the three panels ── -->
+  <main class="panes" id="panes">
+    <div class="empty-state" id="empty-state">
+      <h2>Pick a topic on the left</h2>
+      <p>It opens here in three panels — the written lesson, the code from your
+         notebooks, and your handwritten notes, side by side.</p>
+      <p class="tip">Drag the dividers to resize · click a panel title to collapse it
+         · press <kbd>/</kbd> to filter</p>
+    </div>
+
+    <div class="pane-row hidden" id="pane-row">
+      <section class="pane" id="pane-content">
+        <header class="pane-head"><span class="dot c1"></span>Content
+          <span class="sp"></span>
+          <a class="pane-link" id="link-content" target="_blank" title="Open full page">⤢</a>
+        </header>
+        <div class="pane-body"><iframe id="if-content" title="Lesson"></iframe></div>
+      </section>
+
+      <div class="gutter v" data-split="1"></div>
+
+      <section class="pane" id="pane-code">
+        <header class="pane-head"><span class="dot c2"></span>Code
+          <span class="sp"></span>
+          <a class="pane-link" id="link-code" target="_blank" title="Open full page">⤢</a>
+        </header>
+        <div class="pane-body"><iframe id="if-code" title="Code"></iframe>
+          <div class="pane-empty" id="no-code">No notebooks in this topic.</div>
+        </div>
+      </section>
+
+      <div class="gutter v" data-split="2"></div>
+
+      <section class="pane" id="pane-notes">
+        <header class="pane-head"><span class="dot c3"></span>Handwritten Notes
+          <span class="sp"></span><span class="cnt" id="notes-count"></span>
+        </header>
+        <div class="pane-body scroll" id="notes-body">
+          <div class="pane-empty" id="no-notes">No handwritten notes for this topic yet.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="hn-box" id="zoom"><div class="hn-bar">
+  <b id="zoom-name"></b><span id="zoom-count"></span><span class="sp"></span>
+  <button data-z="prev">← Prev</button><button data-z="next">Next →</button>
+  <button data-z="close">Close ✕</button></div>
+  <div class="hn-stage"><img id="zoom-img" alt=""></div>
+  <div class="hn-foot">← → to move · Esc to close</div>
+</div>
+
+<script src="tree-data.js"></script>
+<script src="workspace.js"></script>
+</body>
+</html>

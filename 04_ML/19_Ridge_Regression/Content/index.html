@@ -20,7 +20,7 @@
   <p class="eyebrow">Machine learning</p>
   <h1>Ridge Regression</h1>
   <p class="lede">Paying a penalty for large slopes, and the first hyperparameter you choose yourself.</p>
-  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 2 handwritten pages</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Imran's model fitted the training rows beautifully and fell apart on new ones.</strong> Its coefficients were enormous — some in the thousands.</p><p>Huge coefficients mean the line is contorting itself to pass near every point. Move one input slightly and the prediction swings wildly.</p><p><span class='beat'>The model was not learning the trend; it was chasing every wobble.</span></p><p>Ridge adds a fine for large slopes. The model now has to justify every bit of steepness against a penalty, so it settles for a calmer line that generalises better. How big the fine is, is <code>alpha</code> — the first number you set rather than learn.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Ridge minimises error + α × slope². Alpha trades fitting the data against keeping the line calm.</p></div>
@@ -499,7 +499,7 @@ is exactly what R² = 0 means.</p>
 <!-- HANDWRITTEN:START -->
 <h2 id="handwritten">✍️ Handwritten notes</h2>
 <p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
-<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Ridge_Regression_Page_1of1.png" data-name="Ridge_Regression_Page_1of1.png"><img src="../Handwritten_Notes/Ridge_Regression_Page_1of1.png" alt="Ridge_Regression_Page_1of1.png" loading="lazy"><span>Ridge Regression Page 1of1</span></button></div>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Ridge_Regression_01.png" data-name="Ridge_Regression_01.png"><img src="../Handwritten_Notes/Ridge_Regression_01.png" alt="Ridge_Regression_01.png" loading="lazy"><span>Ridge Regression 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Ridge_Regression_Page_1of1.png" data-name="Ridge_Regression_Page_1of1.png"><img src="../Handwritten_Notes/Ridge_Regression_Page_1of1.png" alt="Ridge_Regression_Page_1of1.png" loading="lazy"><span>Ridge Regression Page 1of1</span></button></div>
 <!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/07_Ridge.ipynb">07_Ridge.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>

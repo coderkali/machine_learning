@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support Vector Machines — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/22_svc_2D.ipynb">22_svc_2D.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">D1 = np.array([[-7,0],[-6,0],[-5,0],[-4,0],[4,0],[5,0],[6,0],[7,0]])</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 3</span></div><pre class="py">D2 = np.array([[-3,0],[-2,0],[-1,0],[0,0],[1,0],[2,0],[3,0]])</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 5</span></div><pre class="py"># Ramesh&#x27;s highway, drawn as a number line.
+# Then: what is the BEST cut-off that exists? Not a guessed one - search
+# every possible cut-off and keep the one that gets the most right.
+x_all = np.concatenate([D1[:, 0], D2[:, 0]])
+y_all = np.concatenate([np.zeros(len(D1)), np.ones(len(D2))])
+
+best_cut, best_correct = None, -1
+for cut in np.arange(-8, 8.5, 0.5):
+    # try the rule both ways round, so we are not accidentally handicapping it
+    for pred in (np.where(x_all &lt; cut, 1, 0), np.where(x_all &lt; cut, 0, 1)):
+        correct = (pred == y_all).sum()
+        if correct &gt; best_correct:
+            best_correct, best_cut = correct, cut
+
+plt.figure(figsize=(11, 2.6))
+plt.scatter(D1[:, 0], np.zeros(len(D1)), s=90, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+plt.scatter(D2[:, 0], np.zeros(len(D2)), s=90, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+plt.axvline(best_cut, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1.5)
+plt.text(best_cut - 0.3, 0.22, f&#x27;best possible cut-off\n(position = {best_cut})&#x27;,
+         ha=&#x27;right&#x27;, fontsize=9)
+plt.annotate(&#x27;&#x27;, xy=(7.5, -0.22), xytext=(4, -0.22),
+             arrowprops=dict(arrowstyle=&#x27;&lt;-&gt;&#x27;, color=&#x27;tab:blue&#x27;))
+plt.text(5.75, -0.38, &#x27;more non-stoppers, over here&#x27;, ha=&#x27;center&#x27;,
+         fontsize=9, color=&#x27;tab:blue&#x27;)
+plt.yticks([])
+plt.ylim(-0.55, 0.62)
+plt.xlabel(&#x27;X1&#x27;)
+plt.title(&quot;Non-stoppers lie on BOTH sides, so one cut-off can never fit&quot;)
+plt.legend(loc=&#x27;upper right&#x27;, fontsize=9)
+plt.show()
+
+print(f&#x27;Best possible cut-off: {best_correct} of {len(y_all)} correct &#x27;
+      f&#x27;({best_correct / len(y_all):.0%})&#x27;)
+print(&#x27;The failure is structural, not a tuning problem.&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>Best possible cut-off: 11 of 15 correct (73%)
+The failure is structural, not a tuning problem.</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 6</span></div><pre class="py">a,b=D1[:,0],D1[:,1]
+c,d=D2[:,0],D2[:,1]</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 7</span></div><pre class="py">#dff1 =pd.DataFrame(np.hstack([a,b]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+dff1 =pd.DataFrame(np.vstack([a,b]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+dff1[&#x27;Y&#x27;]=0
+dff1</pre></div><div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0  -7   0  0
+1  -6   0  0
+2  -5   0  0
+3  -4   0  0
+4   4   0  0
+5   5   0  0
+6   6   0  0
+7   7   0  0</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 8</span></div><pre class="py">dff2 =pd.DataFrame(np.vstack([c,d]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+dff2[&#x27;Y&#x27;]=1
+dff2</pre></div><div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0  -3   0  1
+1  -2   0  1
+2  -1   0  1
+3   0   0  1
+4   1   0  1
+5   2   0  1
+6   3   0  1</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 9</span></div><pre class="py">final = pd.concat([dff1, dff2], ignore_index=True)</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 10</span></div><pre class="py">final</pre></div><div class="out"><div class="h">Output</div><pre>    X1  X2  Y
+0   -7   0  0
+1   -6   0  0
+2   -5   0  0
+3   -4   0  0
+4    4   0  0
+5    5   0  0
+6    6   0  0
+7    7   0  0
+8   -3   0  1
+9   -2   0  1
+10  -1   0  1
+11   0   0  1
+12   1   0  1
+13   2   0  1
+14   3   0  1</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 11</span></div><pre class="py">final[&#x27;X1_Square&#x27;]= final[&#x27;X1&#x27;]**2
+final</pre></div><div class="out"><div class="h">Output</div><pre>    X1  X2  Y  X1_Square
+0   -7   0  0         49
+1   -6   0  0         36
+2   -5   0  0         25
+3   -4   0  0         16
+4    4   0  0         16
+5    5   0  0         25
+6    6   0  0         36
+7    7   0  0         49
+8   -3   0  1          9
+9   -2   0  1          4
+10  -1   0  1          1
+11   0   0  1          0
+12   1   0  1          1
+13   2   0  1          4
+14   3   0  1          9</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 14</span></div><pre class="py"># Lakshmi&#x27;s farm: the easy case, where a straight boundary already works.
+# One hyperplane, two dotted margin lines, and the support vectors holding it.
+from sklearn.svm import SVC
+
+rng = np.random.default_rng(7)
+apples = rng.normal(loc=[3.0, 7.0], scale=0.85, size=(14, 2))
+oranges = rng.normal(loc=[7.0, 3.0], scale=0.85, size=(14, 2))
+
+fruit_X = np.vstack([apples, oranges])
+fruit_y = np.r_[np.zeros(len(apples)), np.ones(len(oranges))]
+
+fruit_svc = SVC(kernel=&#x27;linear&#x27;, C=1e6).fit(fruit_X, fruit_y)
+w, b = fruit_svc.coef_[0], fruit_svc.intercept_[0]
+
+line_x = np.linspace(0, 10, 100)
+boundary = -(w[0] * line_x + b) / w[1]          # w.x + b =  0
+margin_up = -(w[0] * line_x + b - 1) / w[1]     # w.x + b = +1
+margin_dn = -(w[0] * line_x + b + 1) / w[1]     # w.x + b = -1
+
+fig, ax = plt.subplots(figsize=(8.5, 6.5))
+ax.fill_between(line_x, margin_dn, margin_up, color=&#x27;gray&#x27;, alpha=0.12)
+ax.plot(line_x, boundary, color=&#x27;black&#x27;, linewidth=2,
+        label=&#x27;hyperplane / decision boundary&#x27;)
+ax.plot(line_x, margin_up, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1,
+        label=&#x27;dotted margin lines&#x27;)
+ax.plot(line_x, margin_dn, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1)
+
+ax.scatter(apples[:, 0], apples[:, 1], s=90, marker=&#x27;o&#x27;, color=&#x27;tab:green&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;apples&#x27;)
+ax.scatter(oranges[:, 0], oranges[:, 1], s=90, marker=&#x27;^&#x27;, color=&#x27;tab:orange&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;oranges&#x27;)
+ax.scatter(fruit_svc.support_vectors_[:, 0], fruit_svc.support_vectors_[:, 1],
+           s=300, facecolors=&#x27;none&#x27;, edgecolors=&#x27;crimson&#x27;, linewidths=2.5,
+           label=&#x27;support vectors&#x27;)
+
+ax.text(0.4, 9.0, &#x27;this area:\ngrow apples&#x27;, fontsize=11, color=&#x27;tab:green&#x27;)
+ax.text(7.4, 0.6, &#x27;this area:\ngrow oranges&#x27;, fontsize=11, color=&#x27;tab:orange&#x27;)
+
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 10)
+ax.set_xlabel(&#x27;rainfall&#x27;)
+ax.set_ylabel(&#x27;temperature&#x27;)
+ax.set_title(&#x27;SVC picks the boundary with the most room on both sides&#x27;)
+ax.legend(loc=&#x27;upper center&#x27;, bbox_to_anchor=(0.5, -0.09), ncol=3, fontsize=9)
+plt.show()
+
+print(f&#x27;margin width   : {2 / np.linalg.norm(w):.2f}&#x27;)
+print(f&#x27;support vectors: {len(fruit_svc.support_vectors_)} out of {len(fruit_X)} points&#x27;)
+print(&#x27;Every other point could be moved and the boundary would not shift.&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>margin width   : 3.69
+support vectors: 2 out of 28 points
+Every other point could be moved and the boundary would not shift.</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py"># Ramesh in town: two measurements per household instead of one.
+# The households that stop form a blob around the stall, the rest form a ring.
+# Same trick as before, one size up: add X1**2 + X2**2.
+rng = np.random.default_rng(3)
+
+inner_r, inner_t = rng.uniform(0.0, 1.6, 40), rng.uniform(0, 2 * np.pi, 40)
+inner = np.c_[inner_r * np.cos(inner_t), inner_r * np.sin(inner_t)]
+
+outer_r, outer_t = rng.uniform(3.0, 4.2, 40), rng.uniform(0, 2 * np.pi, 40)
+outer = np.c_[outer_r * np.cos(outer_t), outer_r * np.sin(outer_t)]
+
+inner_z = (inner ** 2).sum(axis=1)
+outer_z = (outer ** 2).sum(axis=1)
+
+fig = plt.figure(figsize=(13, 5.5))
+
+# Left: the 2D view. Try a few straight lines - every one of them fails.
+ax1 = fig.add_subplot(1, 2, 1)
+ax1.scatter(outer[:, 0], outer[:, 1], s=55, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+ax1.scatter(inner[:, 0], inner[:, 1], s=55, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+for slope, offset in [(0.0, 0.0), (1.4, 0.0), (-0.7, 1.5)]:
+    ax1.plot([-5, 5], [-5 * slope + offset, 5 * slope + offset],
+             color=&#x27;gray&#x27;, linestyle=&#x27;--&#x27;, linewidth=1)
+ax1.set_xlim(-5, 5)
+ax1.set_ylim(-5, 5)
+ax1.set_aspect(&#x27;equal&#x27;)
+ax1.set_xlabel(&#x27;X1&#x27;)
+ax1.set_ylabel(&#x27;X2&#x27;)
+ax1.set_title(&#x27;Flat map: every straight line cuts through the ring&#x27;)
+ax1.legend(loc=&#x27;upper right&#x27;, fontsize=8)
+
+# Right: add the third axis. Now a flat plane fits in the gap.
+ax2 = fig.add_subplot(1, 2, 2, projection=&#x27;3d&#x27;)
+ax2.scatter(outer[:, 0], outer[:, 1], outer_z, s=45, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0&#x27;)
+ax2.scatter(inner[:, 0], inner[:, 1], inner_z, s=45, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1&#x27;)
+
+plane_at = (inner_z.max() + outer_z.min()) / 2
+pg = np.linspace(-5, 5, 12)
+pgx, pgy = np.meshgrid(pg, pg)
+ax2.plot_surface(pgx, pgy, np.full_like(pgx, plane_at), alpha=0.25, color=&#x27;gray&#x27;)
+
+ax2.set_xlabel(&#x27;X1&#x27;)
+ax2.set_ylabel(&#x27;X2&#x27;)
+ax2.set_box_aspect(None, zoom=0.90)
+ax2.view_init(elev=14, azim=-72)   # look almost edge-on, so the lift is visible
+ax2.set_title(&#x27;3D: the new axis  X1**2 + X2**2  lifts the ring above a flat plane&#x27;)
+ax2.legend(loc=&#x27;upper left&#x27;, fontsize=8)
+
+fig.subplots_adjust(left=0.06, right=0.97, wspace=0.02)
+plt.show()
+
+flat_2d = SVC(kernel=&#x27;linear&#x27;).fit(np.vstack([outer, inner]),
+                                   np.r_[np.zeros(40), np.ones(40)])
+lifted = SVC(kernel=&#x27;linear&#x27;, C=1e6).fit(
+    np.c_[np.vstack([outer, inner]), np.r_[outer_z, inner_z]],
+    np.r_[np.zeros(40), np.ones(40)])
+print(f&#x27;best straight line in 2D : {flat_2d.score(np.vstack([outer, inner]), np.r_[np.zeros(40), np.ones(40)]):.0%} correct&#x27;)
+print(f&#x27;flat plane in 3D         : {lifted.score(np.c_[np.vstack([outer, inner]), np.r_[outer_z, inner_z]], np.r_[np.zeros(40), np.ones(40)]):.0%} correct&#x27;)
+print(f&#x27;the plane sits at X1**2 + X2**2 = {plane_at:.2f}, in the gap between &#x27;
+      f&#x27;{inner_z.max():.2f} and {outer_z.min():.2f}&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>best straight line in 2D : 74% correct
+flat plane in 3D         : 100% correct
+the plane sits at X1**2 + X2**2 = 5.78, in the gap between 2.43 and 9.14</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 17</span></div><pre class="py"># What squaring does to Ramesh&#x27;s highway: 1D -&gt; 2D.
+# Position alone is one axis. Adding position-squared gives a second axis,
+# and every household rises onto a parabola - near ones stay low, far ones go high.
+fig, ax = plt.subplots(figsize=(9, 6))
+
+curve_x = np.linspace(-7.5, 7.5, 200)
+ax.plot(curve_x, curve_x ** 2, color=&#x27;gray&#x27;, linewidth=1, alpha=0.6,
+        label=&#x27;the lift: X1_Square = X1**2&#x27;)
+
+class_0 = final[final[&#x27;Y&#x27;] == 0]
+class_1 = final[final[&#x27;Y&#x27;] == 1]
+
+# Show each point starting on the number line and rising to where it lands.
+for frame, colour in [(class_0, &#x27;tab:blue&#x27;), (class_1, &#x27;tab:orange&#x27;)]:
+    ax.vlines(frame[&#x27;X1&#x27;], 0, frame[&#x27;X1_Square&#x27;], colors=colour,
+              alpha=0.35, linewidth=1)
+    ax.scatter(frame[&#x27;X1&#x27;], np.zeros(len(frame)), s=40, color=colour, alpha=0.5)
+
+ax.scatter(class_0[&#x27;X1&#x27;], class_0[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:blue&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+ax.scatter(class_1[&#x27;X1&#x27;], class_1[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:orange&#x27;,
+           edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+
+ax.axhline(12.5, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, linewidth=1.5)
+ax.text(-7.3, 13.8, &#x27;the empty band: nothing between 9 and 16&#x27;, fontsize=9)
+
+ax.set_xlabel(&#x27;X1   (position on the highway)&#x27;)
+ax.set_ylabel(&#x27;X1_Square   (distance from the stall)&#x27;)
+ax.set_ylim(-3, 55)
+ax.set_title(&#x27;1D to 2D: squaring lifts the far households clear of the near ones&#x27;)
+ax.legend(loc=&#x27;upper center&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 18</span></div><pre class="py"># How this plot is drawn, and why.
+#
+# It is tempting to put the class label on the Y axis. Do not. The two classes
+# then sit on separate rows automatically, so BOTH panels look separated even
+# when the feature is useless - you would be plotting the answer.
+#
+# Here the class is shown by colour only. Any separation you can see has to
+# come from the X axis alone, which is the thing being compared.
+class_0 = final[final[&#x27;Y&#x27;] == 0]
+class_1 = final[final[&#x27;Y&#x27;] == 1]
+
+fig, axes = plt.subplots(2, 1, figsize=(11, 4.0))
+
+panels = [
+    (axes[0], &#x27;X1&#x27;, &#x27;Before: non-stoppers (blue) appear on both sides of stoppers (orange)&#x27;),
+    (axes[1], &#x27;X1_Square&#x27;, &#x27;After: one cut at 12.5 separates them&#x27;),
+]
+for ax, column, title in panels:
+    ax.scatter(class_0[column], np.zeros(len(class_0)), s=90,
+               color=&#x27;tab:blue&#x27;, edgecolor=&#x27;black&#x27;)
+    ax.scatter(class_1[column], np.zeros(len(class_1)), s=90,
+               color=&#x27;tab:orange&#x27;, edgecolor=&#x27;black&#x27;)
+    ax.set_xlabel(column)
+    ax.set_title(title)
+    ax.set_yticks([])
+
+axes[1].axvline(12.5, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, label=&#x27;midpoint of the gap&#x27;)
+axes[1].legend(loc=&#x27;upper right&#x27;, fontsize=9)
+
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 20</span></div><pre class="py">from sklearn.svm import SVC
+
+X = final[[&#x27;X1&#x27;, &#x27;X1_Square&#x27;]]
+y = final[&#x27;Y&#x27;]
+
+svc_linear = SVC(kernel=&#x27;linear&#x27;, C=1e6)
+svc_linear.fit(X, y)
+
+# Build a grid so we can see the regions learned by the classifier.
+x1_grid = np.linspace(-8, 8, 300)
+x1_square_grid = np.linspace(-2, 52, 300)
+grid_x1, grid_x1_square = np.meshgrid(x1_grid, x1_square_grid)
+grid = pd.DataFrame(
+    np.c_[grid_x1.ravel(), grid_x1_square.ravel()],
+    columns=X.columns
+)
+decision_values = svc_linear.decision_function(grid).reshape(grid_x1.shape)
+
+plt.figure(figsize=(9, 6))
+plt.contourf(
+    grid_x1,
+    grid_x1_square,
+    decision_values,
+    levels=[-np.inf, 0, np.inf],
+    alpha=0.18,
+    colors=[&#x27;tab:blue&#x27;, &#x27;tab:orange&#x27;]
+)
+plt.contour(
+    grid_x1,
+    grid_x1_square,
+    decision_values,
+    levels=[-1, 0, 1],
+    colors=&#x27;black&#x27;,
+    linestyles=[&#x27;--&#x27;, &#x27;-&#x27;, &#x27;--&#x27;],
+    linewidths=[1, 2, 1]
+)
+plt.scatter(class_0[&#x27;X1&#x27;], class_0[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:blue&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 0: did not stop&#x27;)
+plt.scatter(class_1[&#x27;X1&#x27;], class_1[&#x27;X1_Square&#x27;], s=90, color=&#x27;tab:orange&#x27;,
+            edgecolor=&#x27;black&#x27;, label=&#x27;Class 1: stopped&#x27;)
+plt.scatter(
+    svc_linear.support_vectors_[:, 0],
+    svc_linear.support_vectors_[:, 1],
+    s=260,
+    facecolors=&#x27;none&#x27;,
+    edgecolors=&#x27;crimson&#x27;,
+    linewidths=2.5,
+    label=&#x27;Support vectors&#x27;
+)
+plt.xlabel(&#x27;X1&#x27;)
+plt.ylabel(&#x27;X1_Square&#x27;)
+plt.title(&#x27;Linear SVC after the transformation (axes are NOT to the same scale)&#x27;)
+plt.legend(loc=&#x27;upper center&#x27;, fontsize=9)
+plt.show()
+
+# Read the model instead of eyeballing the plot.
+w = svc_linear.coef_[0]
+b = svc_linear.intercept_[0]
+print(f&#x27;learned boundary : ({w[0]:+.3g}) * X1 + ({w[1]:+.3g}) * X1_Square + ({b:+.3g}) = 0&#x27;)
+print(f&#x27;weight on X1     : {w[0]:.2e}  -&gt; effectively zero, X1 is ignored&#x27;)
+print(f&#x27;so the boundary is the flat line  X1_Square = {-b / w[1]:.2f}&#x27;)
+print(f&#x27;margin half-width: {1 / np.linalg.norm(w):.2f} in X1_Square units &#x27;
+      f&#x27;(the band from 9 to 16)&#x27;)
+print(f&#x27;support vectors  : {len(svc_linear.support_vectors_)}&#x27;)
+print(svc_linear.support_vectors_)
+print(f&#x27;training accuracy: {svc_linear.score(X, y):.0%}&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>learned boundary : (-6.11e-17) * X1 + (-0.286) * X1_Square + (+3.57) = 0
+weight on X1     : -6.11e-17  -&gt; effectively zero, X1 is ignored
+so the boundary is the flat line  X1_Square = 12.50
+margin half-width: 3.50 in X1_Square units (the band from 9 to 16)
+support vectors  : 4
+[[-4. 16.]
+ [ 4. 16.]
+ [-3.  9.]
+ [ 3.  9.]]
+training accuracy: 100%</pre></div><div class="src-head">📓 <a href="../Concept/23_SVC_3D.ipynb">23_SVC_3D.ipynb</a></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+X1 = np.array([[1,5], [2,3],[3,7],[4,1],[5,7],[6,2],[7,6],[8,4]])</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 3</span></div><pre class="py">plt.scatter(X1[:,0],X1[:,1])
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 5</span></div><pre class="py">X2 = np.array([[3,3], [4,4],[5,5],[3,4],[4,5]])</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 7</span></div><pre class="py">plt.scatter(X2[:,0],X2[:,1])
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(X1[:,0],X1[:,1])
+plt.scatter(X2[:,0],X2[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x115c9cb90&gt;</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 11</span></div><pre class="py">x,y=X1[:,0],X1[:,1]</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 13</span></div><pre class="py">u,v=X2[:,0],X2[:,1]</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 15</span></div><pre class="py">df1 =pd.DataFrame(np.vstack([x,y]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+df1[&#x27;Y&#x27;]=0
+df1</pre></div><div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0   1   5  0
+1   2   3  0
+2   3   7  0
+3   4   1  0
+4   5   7  0
+5   6   2  0
+6   7   6  0
+7   8   4  0</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 17</span></div><pre class="py">df2 =pd.DataFrame(np.vstack([u,v]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+df2[&#x27;Y&#x27;]=1
+df2</pre></div><div class="out"><div class="h">Output</div><pre>   X1  X2  Y
+0   3   3  1
+1   4   4  1
+2   5   5  1
+3   3   4  1
+4   4   5  1</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 19</span></div><pre class="py">dff = pd.concat([df1, df2], ignore_index=True)</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 21</span></div><pre class="py">dff</pre></div><div class="out"><div class="h">Output</div><pre>    X1  X2  Y
+0    1   5  0
+1    2   3  0
+2    3   7  0
+3    4   1  0
+4    5   7  0
+5    6   2  0
+6    7   6  0
+7    8   4  0
+8    3   3  1
+9    4   4  1
+10   5   5  1
+11   3   4  1
+12   4   5  1</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 23</span></div><pre class="py">x = dff[[&#x27;X1&#x27;,&#x27;X2&#x27;]]
+y = dff[&#x27;Y&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 25</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.1, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.svm import SVC
+clff = SVC(kernel=&quot;linear&quot;)
+clff.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>SVC(kernel=&#x27;linear&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 30</span></div><pre class="py">y_pred = clff.predict(X_test)
+
+print(y_pred)
+print(clff.score(X_test, y_test))</pre></div><div class="out"><div class="h">Output</div><pre>[1 1]
+0.5</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 32</span></div><pre class="py">test_results = X_test.copy()
+test_results[&quot;actual_label&quot;] = y_test.to_numpy()
+test_results[&quot;predicted_label&quot;] = y_pred
+test_results</pre></div><div class="out"><div class="h">Output</div><pre>    X1  X2  X1_S  X2_S  X1X2  actual_label  predicted_label
+6    7   6    49    36    42             0                1
+11   3   4     9    16    12             1                1</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 33</span></div><pre class="py">from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+prediction_details = X_test.copy()
+prediction_details[&quot;actual_label&quot;] = y_test.to_numpy()
+prediction_details[&quot;predicted_label&quot;] = y_pred
+prediction_details[&quot;correct&quot;] = prediction_details[&quot;actual_label&quot;] == prediction_details[&quot;predicted_label&quot;]
+prediction_details[&quot;decision_score&quot;] = clff.decision_function(X_test)
+
+print(&quot;Number of test records:&quot;, len(X_test))
+print(&quot;Correct predictions:&quot;, prediction_details[&quot;correct&quot;].sum())
+print(&quot;Incorrect predictions:&quot;, (~prediction_details[&quot;correct&quot;]).sum())
+print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
+print(&quot;\nPrediction details:&quot;)
+display(prediction_details)
+
+print(&quot;\nConfusion matrix (rows = actual, columns = predicted):&quot;)
+print(confusion_matrix(y_test, y_pred, labels=[0, 1]))
+
+print(&quot;\nClassification report:&quot;)
+print(classification_report(y_test, y_pred, labels=[0, 1], zero_division=0))</pre></div><div class="out"><div class="h">Output</div><pre>Number of test records: 2
+Correct predictions: 1
+Incorrect predictions: 1
+Accuracy: 0.5
+
+Prediction details:
+    X1  X2  X1_S  X2_S  X1X2  actual_label  predicted_label  correct  \
+6    7   6    49    36    42             0                1    False   
+11   3   4     9    16    12             1                1     True   
+
+    decision_score  
+6         4.543249  
+11        0.141618
+
+Confusion matrix (rows = actual, columns = predicted):
+[[0 1]
+ [0 1]]
+
+Classification report:
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00         1
+           1       0.50      1.00      0.67         1
+
+    accuracy                           0.50         2
+   macro avg       0.25      0.50      0.33         2
+weighted avg       0.25      0.50      0.33         2</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 37</span></div><pre class="py">dff[&#x27;X1_S&#x27;]= dff[&#x27;X1&#x27;]**2
+dff[&#x27;X2_S&#x27;]= dff[&#x27;X2&#x27;]**2
+dff[&#x27;X1X2&#x27;] = dff[&#x27;X1&#x27;]*dff[&#x27;X2&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 39</span></div><pre class="py">dff</pre></div><div class="out"><div class="h">Output</div><pre>    X1  X2  Y  X1_S  X2_S  X1X2
+0    1   5  0     1    25     5
+1    2   3  0     4     9     6
+2    3   7  0     9    49    21
+3    4   1  0    16     1     4
+4    5   7  0    25    49    35
+5    6   2  0    36     4    12
+6    7   6  0    49    36    42
+7    8   4  0    64    16    32
+8    3   3  1     9     9     9
+9    4   4  1    16    16    16
+10   5   5  1    25    25    25
+11   3   4  1     9    16    12
+12   4   5  1    16    25    20</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 40</span></div><pre class="py">x = dff[[&#x27;X1&#x27;,&#x27;X2&#x27;,&#x27;X1_S&#x27;,&#x27;X2_S&#x27;,&#x27;X1X2&#x27;]]
+y = dff[&#x27;Y&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 42</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.1, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 44</span></div><pre class="py">from sklearn.svm import SVC
+clff = SVC(kernel=&quot;linear&quot;)
+clff.fit(X_train, y_train)
+clff.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.5</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 47</span></div><pre class="py">from sklearn.svm import SVC
+clffp = SVC(kernel=&quot;poly&quot;)
+clffp.fit(x, y)
+clffp.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>1.0</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 50</span></div><pre class="py">X_raw = dff[[&quot;X1&quot;, &quot;X2&quot;]]
+y_raw = dff[&quot;Y&quot;]
+
+X_train_raw, X_test_raw, y_train_raw, y_test_raw = train_test_split(
+    X_raw,
+    y_raw,
+    test_size=0.1,
+    random_state=0
+)
+
+svc_poly = SVC(kernel=&quot;poly&quot;, degree=2)
+svc_poly.fit(X_train_raw, y_train_raw)
+
+poly_predictions = svc_poly.predict(X_test_raw)
+poly_accuracy = svc_poly.score(X_test_raw, y_test_raw)
+
+print(&quot;Number of training records:&quot;, len(X_train_raw))
+print(&quot;Number of test records:&quot;, len(X_test_raw))
+print(&quot;Actual labels:&quot;, y_test_raw.to_numpy())
+print(&quot;Predicted labels:&quot;, poly_predictions)
+print(&quot;Accuracy:&quot;, poly_accuracy)</pre></div><div class="out"><div class="h">Output</div><pre>Number of training records: 11
+Number of test records: 2
+Actual labels: [0 1]
+Predicted labels: [1 1]
+Accuracy: 0.5</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 51</span></div><pre class="py">import plotly.express as px
+fig = px.scatter_3d(dff, x=&#x27;X1&#x27;, y=&#x27;X2&#x27;, z=&#x27;Y&#x27;,
+              color=&#x27;Y&#x27;)
+fig.show()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 54</span></div><pre class="py">fig_2d = px.scatter(
+    dff,
+    x=&quot;X1&quot;,
+    y=&quot;X2&quot;,
+    color=&quot;Y&quot;,
+    title=&quot;2D View: X1 and X2 Colored by Class&quot;
+)
+fig_2d.show()</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 57</span></div><pre class="py">fig_label_3d = px.scatter_3d(
+    dff,
+    x=&quot;X1&quot;,
+    y=&quot;X2&quot;,
+    z=&quot;Y&quot;,
+    color=&quot;Y&quot;,
+    title=&quot;3D View: X1, X2, and Target Label Y&quot;
+)
+fig_label_3d.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 60</span></div><pre class="py">fig_features_3d = px.scatter_3d(
+    dff,
+    x=&quot;X1&quot;,
+    y=&quot;X2&quot;,
+    z=&quot;X1_S&quot;,
+    color=&quot;Y&quot;,
+    hover_data=[&quot;X2_S&quot;, &quot;X1X2&quot;],
+    title=&quot;3D Feature View: X1, X2, and X1_S&quot;
+)
+fig_features_3d.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

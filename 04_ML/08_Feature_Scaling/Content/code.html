@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feature Scaling — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/15_Feature_Scaling.ipynb">15_Feature_Scaling.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler, MinMaxScaler</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 5</span></div><pre class="py">dataset[&quot;ApplicantIncome&quot;].fillna(dataset[&quot;ApplicantIncome&quot;].mean(), inplace=True)
+dataset[&quot;ApplicantIncome&quot;].isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_45413/1792826338.py:1: ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+Such inplace method never works to update the original DataFrame or Series, because the intermediate object on which we are setting values always behaves as a copy (due to Copy-on-Write).
+
+For example, when doing &#x27;df[col].method(value, inplace=True)&#x27;, try using &#x27;df.method({col: value}, inplace=True)&#x27; instead, to perform the operation inplace on the original object, or try to avoid an inplace operation using &#x27;df[col] = df[col].method(value)&#x27;.
+
+See the documentation for a more detailed explanation: https://pandas.pydata.org/pandas-docs/stable/user_guide/copy_on_write.html
+  dataset[&quot;ApplicantIncome&quot;].fillna(dataset[&quot;ApplicantIncome&quot;].mean(), inplace=True)
+np.int64(2)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 7</span></div><pre class="py">dataset.fillna({&quot;ApplicantIncome&quot;: dataset[&quot;ApplicantIncome&quot;].mean()}, inplace=True)
+dataset[&quot;ApplicantIncome&quot;].isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 9</span></div><pre class="py">dataset[&quot;ApplicantIncome&quot;].describe()</pre></div><div class="out"><div class="h">Output</div><pre>count      618.000000
+mean      4730.256494
+std       2177.405150
+min       1500.000000
+25%       3162.000000
+50%       4334.500000
+75%       5807.000000
+max      16981.000000
+Name: ApplicantIncome, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">sns.boxplot(x=dataset[&quot;ApplicantIncome&quot;], color=&quot;#d03b3b&quot;)
+plt.title(&quot;ApplicantIncome — raw&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 14</span></div><pre class="py">ss = StandardScaler()
+ss.fit(dataset[[&quot;ApplicantIncome&quot;]])
+dataset[&quot;ApplicantIncome_SS&quot;] = ss.transform(dataset[[&quot;ApplicantIncome&quot;]])
+dataset[[&quot;ApplicantIncome&quot;, &quot;ApplicantIncome_SS&quot;]].head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   ApplicantIncome  ApplicantIncome_SS
+0           1686.0           -1.399245
+1           2437.0           -1.054059
+2           8313.0            1.646752</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 17</span></div><pre class="py">dataset[&quot;ApplicantIncome_SS&quot;].describe()</pre></div><div class="out"><div class="h">Output</div><pre>count    6.180000e+02
+mean    -1.422810e-16
+std      1.000810e+00
+min     -1.484737e+00
+25%     -7.208244e-01
+50%     -1.819033e-01
+75%      4.949082e-01
+max      5.630862e+00
+Name: ApplicantIncome_SS, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 20</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.boxplot(x=dataset[&quot;ApplicantIncome&quot;], color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.boxplot(x=dataset[&quot;ApplicantIncome_SS&quot;], color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — standardized (σ units)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">def iqr_outlier_count(s):
+    q1, q3 = s.quantile(0.25), s.quantile(0.75)
+    iqr = q3 - q1
+    lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    return int(((s &lt; lo) | (s &gt; hi)).sum())
+
+print(&quot;raw outliers:     &quot;, iqr_outlier_count(dataset[&quot;ApplicantIncome&quot;]))
+print(&quot;standardized outliers:&quot;, iqr_outlier_count(dataset[&quot;ApplicantIncome_SS&quot;]))</pre></div><div class="out"><div class="h">Output</div><pre>raw outliers:      21
+standardized outliers: 21</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 25</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.histplot(dataset[&quot;ApplicantIncome&quot;], kde=True, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.histplot(dataset[&quot;ApplicantIncome_SS&quot;], kde=True, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — standardized (σ units)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 27</span></div><pre class="py">print(&quot;skew     — raw:&quot;, dataset[&quot;ApplicantIncome&quot;].skew(), &quot; scaled:&quot;, dataset[&quot;ApplicantIncome_SS&quot;].skew())
+print(&quot;kurtosis — raw:&quot;, dataset[&quot;ApplicantIncome&quot;].kurt(), &quot; scaled:&quot;, dataset[&quot;ApplicantIncome_SS&quot;].kurt())</pre></div><div class="out"><div class="h">Output</div><pre>skew     — raw: 1.5834164129556014  scaled: 1.5834164129556014
+kurtosis — raw: 4.444551633369553  scaled: 4.444551633369551</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py">scaled_2d = StandardScaler().fit_transform(dataset[[&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]])
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
+axes[0].scatter(dataset[&quot;ApplicantIncome&quot;], dataset[&quot;CoapplicantIncome&quot;], s=14, alpha=0.5, color=&quot;#d03b3b&quot;)
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+axes[0].set_xlabel(&quot;ApplicantIncome&quot;); axes[0].set_ylabel(&quot;CoapplicantIncome&quot;)
+
+axes[1].scatter(scaled_2d[:, 0], scaled_2d[:, 1], s=14, alpha=0.5, color=&quot;#2a78d6&quot;)
+axes[1].axhline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].axvline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].set_title(&quot;After — standardized&quot;)
+axes[1].set_xlabel(&quot;ApplicantIncome_SS&quot;); axes[1].set_ylabel(&quot;CoapplicantIncome_SS&quot;)
+
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 33</span></div><pre class="py">mm = MinMaxScaler()
+dataset[&quot;CoapplicantIncome_MM&quot;] = mm.fit_transform(dataset[[&quot;CoapplicantIncome&quot;]])
+dataset[[&quot;CoapplicantIncome&quot;, &quot;CoapplicantIncome_MM&quot;]].head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   CoapplicantIncome  CoapplicantIncome_MM
+0               1020              0.099145
+1               1201              0.116738
+2               1065              0.103519</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 34</span></div><pre class="py">dataset[&quot;CoapplicantIncome_MM&quot;].describe()</pre></div><div class="out"><div class="h">Output</div><pre>count    618.000000
+mean       0.134630
+std        0.156664
+min        0.000000
+25%        0.000000
+50%        0.105851
+75%        0.215567
+max        1.000000
+Name: CoapplicantIncome_MM, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 36</span></div><pre class="py">print(&quot;raw outliers:      &quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome&quot;]))
+print(&quot;min-max outliers:  &quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome_MM&quot;]))
+print()
+print(&quot;skew — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].skew(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].skew())</pre></div><div class="out"><div class="h">Output</div><pre>raw outliers:       15
+min-max outliers:   15
+
+skew — raw: 1.5399420730801827  min-max: 1.5399420730801823</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 39</span></div><pre class="py">below_tenth = (dataset[&quot;CoapplicantIncome_MM&quot;] &lt; 0.1).sum()
+print(f&quot;{below_tenth} of 618 coapplicants ({below_tenth/618:.1%}) land below 0.1 on a 0–1 scale&quot;)
+print(&quot;because a single value —&quot;, dataset[&#x27;CoapplicantIncome&#x27;].max(), &quot;— alone stretches the range up to 1.0&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>297 of 618 coapplicants (48.1%) land below 0.1 on a 0–1 scale
+because a single value — 10288 — alone stretches the range up to 1.0</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 42</span></div><pre class="py">dataset.fillna({&quot;Credit_History&quot;: dataset[&quot;Credit_History&quot;].mode()[0]}, inplace=True)
+
+a, b = dataset.iloc[1], dataset.iloc[4]
+print(&quot;applicant 1:&quot;, a[&quot;ApplicantIncome&quot;], a[&quot;Credit_History&quot;])
+print(&quot;applicant 4:&quot;, b[&quot;ApplicantIncome&quot;], b[&quot;Credit_History&quot;])
+
+income_gap2 = (a[&quot;ApplicantIncome&quot;] - b[&quot;ApplicantIncome&quot;]) ** 2
+credit_gap2 = (a[&quot;Credit_History&quot;] - b[&quot;Credit_History&quot;]) ** 2
+raw_dist = np.sqrt(income_gap2 + credit_gap2)
+print(f&quot;\nraw euclidean distance: {raw_dist:.2f}&quot;)
+print(f&quot;  ApplicantIncome&#x27;s share of that distance:  {income_gap2/(income_gap2+credit_gap2):.4%}&quot;)
+print(f&quot;  Credit_History&#x27;s share of that distance:   {credit_gap2/(income_gap2+credit_gap2):.4%}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>applicant 1: 2437.0 1.0
+applicant 4: 3002.0 0.0
+
+raw euclidean distance: 565.00
+  ApplicantIncome&#x27;s share of that distance:  99.9997%
+  Credit_History&#x27;s share of that distance:   0.0003%</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 44</span></div><pre class="py">scaled_pair = StandardScaler().fit_transform(dataset[[&quot;ApplicantIncome&quot;, &quot;Credit_History&quot;]])
+sa, sb = scaled_pair[1], scaled_pair[4]
+
+s_income_gap2 = (sa[0] - sb[0]) ** 2
+s_credit_gap2 = (sa[1] - sb[1]) ** 2
+scaled_dist = np.sqrt(s_income_gap2 + s_credit_gap2)
+print(f&quot;scaled euclidean distance: {scaled_dist:.2f}&quot;)
+print(f&quot;  ApplicantIncome&#x27;s share of that distance:  {s_income_gap2/(s_income_gap2+s_credit_gap2):.4%}&quot;)
+print(f&quot;  Credit_History&#x27;s share of that distance:   {s_credit_gap2/(s_income_gap2+s_credit_gap2):.4%}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>scaled euclidean distance: 2.81
+  ApplicantIncome&#x27;s share of that distance:  0.8548%
+  Credit_History&#x27;s share of that distance:   99.1452%</pre></div><div class="src-head">📓 <a href="../Concept/16_Feature_Scaling_Normalization.ipynb">16_Feature_Scaling_Normalization.ipynb</a></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler, StandardScaler</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
+0  LP001001    Male     Yes          0  Not Graduate            No   
+1  LP001002    Male     Yes          0  Not Graduate            No   
+2  LP001003  Female      No          0      Graduate            No   
+
+   ApplicantIncome  CoapplicantIncome  LoanAmount  Loan_Amount_Term  \
+0           1686.0               1020        80.0             360.0   
+1           2437.0               1201       122.0             360.0   
+2           8313.0               1065       319.0             360.0   
+
+   Credit_History Property_Area Loan_Status  
+0             1.0     Semiurban           Y  
+1             1.0         Urban           Y  
+2             1.0         Urban           Y</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 3</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>Loan_ID               0
+Gender               13
+Married               6
+Dependents           15
+Education             9
+Self_Employed        32
+ApplicantIncome       2
+CoapplicantIncome     0
+LoanAmount           22
+Loan_Amount_Term     21
+Credit_History       50
+Property_Area         9
+Loan_Status           0
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 5</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].describe()</pre></div><div class="out"><div class="h">Output</div><pre>count      618.000000
+mean      1385.077670
+std       1611.760337
+min          0.000000
+25%          0.000000
+50%       1089.000000
+75%       2217.750000
+max      10288.000000
+Name: CoapplicantIncome, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 6</span></div><pre class="py">sns.boxplot(x=dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;)
+plt.title(&quot;CoapplicantIncome — raw&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 9</span></div><pre class="py">mm = MinMaxScaler()
+mm.fit(dataset[[&quot;CoapplicantIncome&quot;]])
+dataset[&quot;CoapplicantIncome_MM&quot;] = mm.transform(dataset[[&quot;CoapplicantIncome&quot;]])
+dataset[[&quot;CoapplicantIncome&quot;, &quot;CoapplicantIncome_MM&quot;]].head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   CoapplicantIncome  CoapplicantIncome_MM
+0               1020              0.099145
+1               1201              0.116738
+2               1065              0.103519</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 12</span></div><pre class="py">dataset[&quot;CoapplicantIncome_MM&quot;].describe()</pre></div><div class="out"><div class="h">Output</div><pre>count    618.000000
+mean       0.134630
+std        0.156664
+min        0.000000
+25%        0.000000
+50%        0.105851
+75%        0.215567
+max        1.000000
+Name: CoapplicantIncome_MM, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 15</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.boxplot(x=dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.boxplot(x=dataset[&quot;CoapplicantIncome_MM&quot;], color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — Min-Max (0–1 range)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 16</span></div><pre class="py">def iqr_outlier_count(s):
+    q1, q3 = s.quantile(0.25), s.quantile(0.75)
+    iqr = q3 - q1
+    lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    return int(((s &lt; lo) | (s &gt; hi)).sum())
+
+print(&quot;raw outliers:    &quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome&quot;]))
+print(&quot;min-max outliers:&quot;, iqr_outlier_count(dataset[&quot;CoapplicantIncome_MM&quot;]))</pre></div><div class="out"><div class="h">Output</div><pre>raw outliers:     15
+min-max outliers: 15</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 19</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
+sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#d03b3b&quot;, ax=axes[0])
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+sns.histplot(dataset[&quot;CoapplicantIncome_MM&quot;], kde=True, color=&quot;#2a78d6&quot;, ax=axes[1])
+axes[1].set_title(&quot;After — Min-Max (0–1 range)&quot;)
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 20</span></div><pre class="py">print(&quot;skew — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].skew(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].skew())
+print(&quot;kurt — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].kurt(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].kurt())</pre></div><div class="out"><div class="h">Output</div><pre>skew — raw: 1.5399420730801827  min-max: 1.5399420730801823
+kurt — raw: 3.2518566224060375  min-max: 3.2518566224060357</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 23</span></div><pre class="py">dataset.fillna({&quot;ApplicantIncome&quot;: dataset[&quot;ApplicantIncome&quot;].mean()}, inplace=True)
+
+scaled_2d_mm = MinMaxScaler().fit_transform(dataset[[&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]])
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
+axes[0].scatter(dataset[&quot;ApplicantIncome&quot;], dataset[&quot;CoapplicantIncome&quot;], s=14, alpha=0.5, color=&quot;#d03b3b&quot;)
+axes[0].set_title(&quot;Before — raw ₹&quot;)
+axes[0].set_xlabel(&quot;ApplicantIncome&quot;); axes[0].set_ylabel(&quot;CoapplicantIncome&quot;)
+
+axes[1].scatter(scaled_2d_mm[:, 0], scaled_2d_mm[:, 1], s=14, alpha=0.5, color=&quot;#2a78d6&quot;)
+axes[1].axhline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].axvline(0, color=&quot;#52514e&quot;, linewidth=0.8)
+axes[1].axhline(1, color=&quot;#52514e&quot;, linewidth=0.8, linestyle=&quot;--&quot;)
+axes[1].axvline(1, color=&quot;#52514e&quot;, linewidth=0.8, linestyle=&quot;--&quot;)
+axes[1].set_xlim(-0.05, 1.05); axes[1].set_ylim(-0.05, 1.05)
+axes[1].set_title(&quot;After — Min-Max normalized&quot;)
+axes[1].set_xlabel(&quot;ApplicantIncome_MM&quot;); axes[1].set_ylabel(&quot;CoapplicantIncome_MM&quot;)
+
+for ax in axes:
+    ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 26</span></div><pre class="py">below_tenth = (dataset[&quot;CoapplicantIncome_MM&quot;] &lt; 0.1).sum()
+print(f&quot;{below_tenth} of 618 ({below_tenth/618:.1%}) land below 0.1 on the 0-1 scale&quot;)
+print(&quot;driven by a single value —&quot;, dataset[&quot;CoapplicantIncome&quot;].max(), &quot;— which alone defines the top of the range&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>297 of 618 (48.1%) land below 0.1 on the 0-1 scale
+driven by a single value — 10288 — which alone defines the top of the range</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

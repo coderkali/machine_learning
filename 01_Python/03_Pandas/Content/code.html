@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pandas — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/example_01.ipynb">example_01.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd
+import numpy as np
+
+np.random.seed(42)</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">s1 = pd.Series(data=[10,20,30,40,50])
+s1</pre></div><div class="out"><div class="h">Output</div><pre>0    10
+1    20
+2    30
+3    40
+4    50
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py">s2 = pd.Series(data=[100,200,300,400,500])
+s2</pre></div><div class="out"><div class="h">Output</div><pre>0    100
+1    200
+2    300
+3    400
+4    500
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 7</span></div><pre class="py">s3 = pd.Series(data=[1000,2000,3000,4000,5000],index=list(&#x27;vwxyz&#x27;))
+s3</pre></div><div class="out"><div class="h">Output</div><pre>v    1000
+w    2000
+x    3000
+y    4000
+z    5000
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py">df = pd.DataFrame({&#x27;C1&#x27;:s1,&quot;C2&quot;:s2})
+df</pre></div><div class="out"><div class="h">Output</div><pre>   C1   C2
+0  10  100
+1  20  200
+2  30  300
+3  40  400
+4  50  500</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py">df = pd.DataFrame(data=np.random.randint(1,100,size=(1000,5)),columns=list(&#x27;abcde&#x27;))
+df</pre></div><div class="out"><div class="h">Output</div><pre>      a   b   c   d   e
+0    52  93  15  72  61
+1    21  83  87  75  75
+2    88  24   3  22  53
+3     2  88  30  38   2
+4    64  60  21  33  76
+..   ..  ..  ..  ..  ..
+995  13  32  46  23  45
+996  17  85  66   6  18
+997  94  22  33  30  81
+998  32  42  78  10  36
+999  34  73  28  11  78
+
+[1000 rows x 5 columns]</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 15</span></div><pre class="py">dataset = pd.read_csv(&#x27;../Data/Car.csv&#x27;)
+dataset</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Car
+0    28   37000    0
+1    27   88000    0
+2    28   59000    0
+3    32   86000    0
+4    33  149000    1
+..  ...     ...  ...
+95   28   89000    0
+96   34   43000    0
+97   30   79000    0
+98   20   36000    0
+99   26   80000    0
+
+[100 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 16</span></div><pre class="py">dataset.info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 100 entries, 0 to 99
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype
+---  ------  --------------  -----
+ 0   Age     100 non-null    int64
+ 1   Income  100 non-null    int64
+ 2   Car     100 non-null    int64
+dtypes: int64(3)
+memory usage: 2.5 KB</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 18</span></div><pre class="py">dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Income  Car
+0   28   37000    0
+1   27   88000    0
+2   28   59000    0
+3   32   86000    0
+4   33  149000    1</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 19</span></div><pre class="py">dataset.tail()</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Car
+95   28   89000    0
+96   34   43000    0
+97   30   79000    0
+98   20   36000    0
+99   26   80000    0</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 21</span></div><pre class="py">dataset.Car.value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Car
+0    93
+1     7
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">dataset.rename(columns={&#x27;Car&#x27;:&#x27;Target&#x27;})</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+0    28   37000       0
+1    27   88000       0
+2    28   59000       0
+3    32   86000       0
+4    33  149000       1
+..  ...     ...     ...
+95   28   89000       0
+96   34   43000       0
+97   30   79000       0
+98   20   36000       0
+99   26   80000       0
+
+[100 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 25</span></div><pre class="py">dataset</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Car
+0    28   37000    0
+1    27   88000    0
+2    28   59000    0
+3    32   86000    0
+4    33  149000    1
+..  ...     ...  ...
+95   28   89000    0
+96   34   43000    0
+97   30   79000    0
+98   20   36000    0
+99   26   80000    0
+
+[100 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 27</span></div><pre class="py">dataset.rename(columns={&#x27;Car&#x27;:&#x27;Target&#x27;},inplace=True)
+dataset</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+0    28   37000       0
+1    27   88000       0
+2    28   59000       0
+3    32   86000       0
+4    33  149000       1
+..  ...     ...     ...
+95   28   89000       0
+96   34   43000       0
+97   30   79000       0
+98   20   36000       0
+99   26   80000       0
+
+[100 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 29</span></div><pre class="py">dataset.columns</pre></div><div class="out"><div class="h">Output</div><pre>Index([&#x27;Age&#x27;, &#x27;Income&#x27;, &#x27;Target&#x27;], dtype=&#x27;str&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 32</span></div><pre class="py">dataset[[&#x27;Age&#x27;,&#x27;Target&#x27;]]</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Target
+0    28       0
+1    27       0
+2    28       0
+3    32       0
+4    33       1
+..  ...     ...
+95   28       0
+96   34       0
+97   30       0
+98   20       0
+99   26       0
+
+[100 rows x 2 columns]</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 33</span></div><pre class="py">dataset[&#x27;Target&#x27;]</pre></div><div class="out"><div class="h">Output</div><pre>0     0
+1     0
+2     0
+3     0
+4     1
+     ..
+95    0
+96    0
+97    0
+98    0
+99    0
+Name: Target, Length: 100, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 35</span></div><pre class="py">dataset.loc[50]</pre></div><div class="out"><div class="h">Output</div><pre>Age          20
+Income    74000
+Target        0
+Name: 50, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 36</span></div><pre class="py">dataset.loc[50:60]</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+50   20   74000       0
+51   26   15000       0
+52   41   45000       0
+53   31   76000       0
+54   36   50000       0
+55   40   47000       0
+56   31   15000       0
+57   46   59000       0
+58   29   75000       0
+59   26   30000       0
+60   32  135000       1</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 39</span></div><pre class="py">(dataset[&#x27;Income&#x27;] &gt; 100000).head()</pre></div><div class="out"><div class="h">Output</div><pre>0    False
+1    False
+2    False
+3    False
+4     True
+Name: Income, dtype: bool</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 40</span></div><pre class="py">dataset[(dataset[&#x27;Income&#x27;]&gt;10000)]</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+0    28   37000       0
+1    27   88000       0
+2    28   59000       0
+3    32   86000       0
+4    33  149000       1
+..  ...     ...     ...
+95   28   89000       0
+96   34   43000       0
+97   30   79000       0
+98   20   36000       0
+99   26   80000       0
+
+[100 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 42</span></div><pre class="py">dataset[dataset[&#x27;Income&#x27;] &gt; 100000]</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+4    33  149000       1
+38   30  107000       1
+60   32  135000       1
+69   29  148000       1
+72   34  115000       0
+73   26  118000       0
+83   32  117000       1</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 43</span></div><pre class="py">dataset[(dataset[&#x27;Income&#x27;] &gt; 100000) &amp; (dataset[&#x27;Age&#x27;] &lt; 32)]</pre></div><div class="out"><div class="h">Output</div><pre>    Age  Income  Target
+38   30  107000       1
+69   29  148000       1
+73   26  118000       0</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 46</span></div><pre class="py">example = pd.read_csv(&#x27;../Data/abc.csv&#x27;)
+example</pre></div><div class="out"><div class="h">Output</div><pre>  iteams  price
+0      A   70.0
+1      B    NaN
+2      C   50.0
+3      D    NaN
+4      E   40.0
+5      F   32.0
+6      G   45.0
+7      H   69.0
+8      I    NaN
+9      J    NaN</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 47</span></div><pre class="py">example[&#x27;price&#x27;].notnull()</pre></div><div class="out"><div class="h">Output</div><pre>0     True
+1    False
+2     True
+3    False
+4     True
+5     True
+6     True
+7     True
+8    False
+9    False
+Name: price, dtype: bool</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 48</span></div><pre class="py">example[example[&#x27;price&#x27;].isnull()]</pre></div><div class="out"><div class="h">Output</div><pre>  iteams  price
+1      B    NaN
+3      D    NaN
+8      I    NaN
+9      J    NaN</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 50</span></div><pre class="py">example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].max())</pre></div><div class="out"><div class="h">Output</div><pre>0    70.0
+1    70.0
+2    50.0
+3    70.0
+4    40.0
+5    32.0
+6    45.0
+7    69.0
+8    70.0
+9    70.0
+Name: price, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 51</span></div><pre class="py">example</pre></div><div class="out"><div class="h">Output</div><pre>  iteams  price
+0      A   70.0
+1      B    NaN
+2      C   50.0
+3      D    NaN
+4      E   40.0
+5      F   32.0
+6      G   45.0
+7      H   69.0
+8      I    NaN
+9      J    NaN</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 53</span></div><pre class="py">example[&#x27;price&#x27;] = example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].std())
+example</pre></div><div class="out"><div class="h">Output</div><pre>  iteams      price
+0      A  70.000000
+1      B  15.517732
+2      C  50.000000
+3      D  15.517732
+4      E  40.000000
+5      F  32.000000
+6      G  45.000000
+7      H  69.000000
+8      I  15.517732
+9      J  15.517732</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 55</span></div><pre class="py">example = pd.read_csv(&#x27;../Data/abc.csv&#x27;)
+example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].min())</pre></div><div class="out"><div class="h">Output</div><pre>0    70.0
+1    32.0
+2    50.0
+3    32.0
+4    40.0
+5    32.0
+6    45.0
+7    69.0
+8    32.0
+9    32.0
+Name: price, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 56</span></div><pre class="py">example = pd.read_csv(&#x27;../Data/abc.csv&#x27;)
+example[&#x27;price&#x27;].fillna(example[&#x27;price&#x27;].max())</pre></div><div class="out"><div class="h">Output</div><pre>0    70.0
+1    70.0
+2    50.0
+3    70.0
+4    40.0
+5    32.0
+6    45.0
+7    69.0
+8    70.0
+9    70.0
+Name: price, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 59</span></div><pre class="py">df.drop([&#x27;b&#x27;],axis=&#x27;columns&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>      a   c   d   e
+0    52  15  72  61
+1    21  87  75  75
+2    88   3  22  53
+3     2  30  38   2
+4    64  21  33  76
+..   ..  ..  ..  ..
+995  13  46  23  45
+996  17  66   6  18
+997  94  33  30  81
+998  32  78  10  36
+999  34  28  11  78
+
+[1000 rows x 4 columns]</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 60</span></div><pre class="py">df</pre></div><div class="out"><div class="h">Output</div><pre>      a   b   c   d   e
+0    52  93  15  72  61
+1    21  83  87  75  75
+2    88  24   3  22  53
+3     2  88  30  38   2
+4    64  60  21  33  76
+..   ..  ..  ..  ..  ..
+995  13  32  46  23  45
+996  17  85  66   6  18
+997  94  22  33  30  81
+998  32  42  78  10  36
+999  34  73  28  11  78
+
+[1000 rows x 5 columns]</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 62</span></div><pre class="py">df.drop([&#x27;b&#x27;],axis=&#x27;columns&#x27;,inplace=True)
+df</pre></div><div class="out"><div class="h">Output</div><pre>      a   c   d   e
+0    52  15  72  61
+1    21  87  75  75
+2    88   3  22  53
+3     2  30  38   2
+4    64  21  33  76
+..   ..  ..  ..  ..
+995  13  46  23  45
+996  17  66   6  18
+997  94  33  30  81
+998  32  78  10  36
+999  34  28  11  78
+
+[1000 rows x 4 columns]</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 65</span></div><pre class="py">data1 = pd.DataFrame(data=np.random.randint(1,100,size=(100,4)),columns=list(&#x27;abcd&#x27;))
+data2 = pd.DataFrame(data=np.random.randint(1,100,size=(100,3)),columns=list(&#x27;xyz&#x27;))</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 66</span></div><pre class="py">data1,data2</pre></div><div class="out"><div class="h">Output</div><pre>(     a   b   c   d
+ 0   39  47  19  15
+ 1   28  24  72   9
+ 2   47  33  62  97
+ 3   19  67  74  40
+ 4   47  65  29  50
+ ..  ..  ..  ..  ..
+ 95  33  59  43  79
+ 96  12  40  20  94
+ 97  38   3  28  56
+ 98  90  94  13  77
+ 99  66  37  49  66
+ 
+ [100 rows x 4 columns],
+      x   y   z
+ 0   36  54  26
+ 1   75  72  40
+ 2   43  22  20
+ 3    8  29  40
+ 4   90  30  81
+ ..  ..  ..  ..
+ 95  52   9  54
+ 96   1  44  99
+ 97  75  98  80
+ 98   9  32  15
+ 99  12  97  78
+ 
+ [100 rows x 3 columns])</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 68</span></div><pre class="py">pd.concat([data1,data2])</pre></div><div class="out"><div class="h">Output</div><pre>       a     b     c     d     x     y     z
+0   39.0  47.0  19.0  15.0   NaN   NaN   NaN
+1   28.0  24.0  72.0   9.0   NaN   NaN   NaN
+2   47.0  33.0  62.0  97.0   NaN   NaN   NaN
+3   19.0  67.0  74.0  40.0   NaN   NaN   NaN
+4   47.0  65.0  29.0  50.0   NaN   NaN   NaN
+..   ...   ...   ...   ...   ...   ...   ...
+95   NaN   NaN   NaN   NaN  52.0   9.0  54.0
+96   NaN   NaN   NaN   NaN   1.0  44.0  99.0
+97   NaN   NaN   NaN   NaN  75.0  98.0  80.0
+98   NaN   NaN   NaN   NaN   9.0  32.0  15.0
+99   NaN   NaN   NaN   NaN  12.0  97.0  78.0
+
+[200 rows x 7 columns]</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 69</span></div><pre class="py">pd.concat([data1,data2]).shape</pre></div><div class="out"><div class="h">Output</div><pre>(200, 7)</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 71</span></div><pre class="py">pd.concat([data1,data2],ignore_index=True).tail()</pre></div><div class="out"><div class="h">Output</div><pre>      a   b   c   d     x     y     z
+195 NaN NaN NaN NaN  52.0   9.0  54.0
+196 NaN NaN NaN NaN   1.0  44.0  99.0
+197 NaN NaN NaN NaN  75.0  98.0  80.0
+198 NaN NaN NaN NaN   9.0  32.0  15.0
+199 NaN NaN NaN NaN  12.0  97.0  78.0</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 72</span></div><pre class="py">pd.concat([data1,data2],axis=&#x27;columns&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>     a   b   c   d   x   y   z
+0   39  47  19  15  36  54  26
+1   28  24  72   9  75  72  40
+2   47  33  62  97  43  22  20
+3   19  67  74  40   8  29  40
+4   47  65  29  50  90  30  81
+..  ..  ..  ..  ..  ..  ..  ..
+95  33  59  43  79  52   9  54
+96  12  40  20  94   1  44  99
+97  38   3  28  56  75  98  80
+98  90  94  13  77   9  32  15
+99  66  37  49  66  12  97  78
+
+[100 rows x 7 columns]</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 75</span></div><pre class="py">data3 = pd.DataFrame({
+    &#x27;id&#x27;:   [1, 2, 3, 4, 5],
+    &#x27;name&#x27;: [&#x27;Asha&#x27;, &#x27;Ravi&#x27;, &#x27;Meera&#x27;, &#x27;Kiran&#x27;, &#x27;Dev&#x27;],
+})
+
+data4 = pd.DataFrame({
+    &#x27;id&#x27;:   [2, 3, 5, 6],
+    &#x27;city&#x27;: [&#x27;Pune&#x27;, &#x27;Mumbai&#x27;, &#x27;Surat&#x27;, &#x27;Delhi&#x27;],
+})
+
+data3, data4</pre></div><div class="out"><div class="h">Output</div><pre>(   id   name
+ 0   1   Asha
+ 1   2   Ravi
+ 2   3  Meera
+ 3   4  Kiran
+ 4   5    Dev,
+    id    city
+ 0   2    Pune
+ 1   3  Mumbai
+ 2   5   Surat
+ 3   6   Delhi)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 76</span></div><pre class="py">data3.merge(data4,on=&#x27;id&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>   id   name    city
+0   2   Ravi    Pune
+1   3  Meera  Mumbai
+2   5    Dev   Surat</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 78</span></div><pre class="py">data3.merge(data4,on=&#x27;id&#x27;,how=&#x27;left&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>   id   name    city
+0   1   Asha     NaN
+1   2   Ravi    Pune
+2   3  Meera  Mumbai
+3   4  Kiran     NaN
+4   5    Dev   Surat</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 79</span></div><pre class="py">data3.merge(data4,on=&#x27;id&#x27;,how=&#x27;outer&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>   id   name    city
+0   1   Asha     NaN
+1   2   Ravi    Pune
+2   3  Meera  Mumbai
+3   4  Kiran     NaN
+4   5    Dev   Surat
+5   6    NaN   Delhi</pre></div><div class="src-head">📓 <a href="../Concept/example_02.ipynb">example_02.ipynb</a></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 4</span></div><pre class="py">s=pd.Series([10,20,30])
+print(s)
+print(&quot;---------------&quot;)
+print(s[0])
+print(&quot;---------------&quot;)
+print(s[1:])
+print(&quot;---------------&quot;)
+print(&quot;Mean&quot;,s.mean())</pre></div><div class="out"><div class="h">Output</div><pre>0    10
+1    20
+2    30
+dtype: int64
+---------------
+10
+---------------
+1    20
+2    30
+dtype: int64
+---------------
+Mean 20.0</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 6</span></div><pre class="py">df = pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;], &#x27;Age&#x27;: [20,25]})
+print(df)
+print(&quot;---------------&quot;)
+print(df.columns) # Why this hape is anot function 
+print(&quot;---------------&quot;)
+print(df.shape)
+print(&quot;---------------&quot;)
+print(df.head()) # where as head is a function 
+print(&quot;---------------&quot;)
+# explain me what is the difference between them and how many this type odf data exist</pre></div><div class="out"><div class="h">Output</div><pre>  Name  Age
+0    A   20
+1    B   25
+---------------
+Index([&#x27;Name&#x27;, &#x27;Age&#x27;], dtype=&#x27;str&#x27;)
+---------------
+(2, 2)
+---------------
+  Name  Age
+0    A   20
+1    B   25
+---------------</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 8</span></div><pre class="py">df1 = pd.read_csv(&#x27;../Data/data.csv&#x27;)
+df2 = pd.read_excel(&#x27;data.xlsx&#x27;)
+df3 = pd.read_json(&#x27;data.json&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+Cell In[7], line 1
+----&gt; 1 df1 = pd.read_csv(&#x27;../Data/data.csv&#x27;)
+      2 df2 = pd.read_excel(&#x27;data.xlsx&#x27;)
+      3 df3 = pd.read_json(&#x27;data.json&#x27;)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/io/parsers/readers.py:873, in read_csv(filepath_or_buffe</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 10</span></div><pre class="py">df.to_csv(&#x27;../Data/data.csv&#x27;)
+df.to_excel(&#x27;data.xlsx&#x27;)
+df.to_json(&#x27;data.json&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+ModuleNotFoundError                       Traceback (most recent call last)
+Cell In[8], line 2
+      1 df.to_csv(&#x27;../Data/data.csv&#x27;)
+----&gt; 2 df.to_excel(&#x27;data.xlsx&#x27;)
+      3 df.to_json(&#x27;data.json&#x27;)
+
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/core/generic.py:2312, in NDFrame.to_excel(self, excel_writer, sheet_name, na_rep</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 12</span></div><pre class="py">df=pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;],&#x27;Age&#x27;:[20,25]})
+df.info()
+print(&quot;---------------&quot;)
+print(df.shape)
+print(&quot;---------------&quot;)
+print(df.describe())</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 2 entries, 0 to 1
+Data columns (total 2 columns):
+ #   Column  Non-Null Count  Dtype
+---  ------  --------------  -----
+ 0   Name    2 non-null      str  
+ 1   Age     2 non-null      int64
+dtypes: int64(1), str(1)
+memory usage: 166.0 bytes
+---------------
+(2, 2)
+---------------
+             Age
+count   2.000000
+mean   22.500000
+std     3.535534
+min    20.000000
+25%    21.250000
+50%    22.500000
+75%    23.750000
+max    25.000000</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 14</span></div><pre class="py">df=pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;],&#x27;Age&#x27;:[20,25,30]})
+print(df.loc[0])
+print(&quot;---------------&quot;)
+print(df.loc[:,[&#x27;Name&#x27;]])
+print(&quot;---------------&quot;)
+print(df.iloc[1])
+print(&quot;---------------&quot;)
+print(df.iloc[:2])
+print(&quot;---------------&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Name     A
+Age     20
+Name: 0, dtype: object
+---------------
+  Name
+0    A
+1    B
+2    C
+---------------
+Name     B
+Age     25
+Name: 1, dtype: object
+---------------
+  Name  Age
+0    A   20
+1    B   25
+---------------</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 16</span></div><pre class="py">df.index = [101,102,103]
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>    Name  Age
+101    A   20
+102    B   25
+103    C   30</pre></div><div class="code"><div class="code-head"><span>In [53]</span><span class="cell">cell 17</span></div><pre class="py">df.loc[102]</pre></div><div class="out"><div class="h">Output</div><pre>Name     B
+Age     25
+Name: 102, dtype: object</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 18</span></div><pre class="py">df.loc[1]</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+KeyError                                  Traceback (most recent call last)
+File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/core/indexes/base.py:3641, in Index.get_loc(self, key)
+   3640 try:
+-&gt; 3641     return self._engine.get_loc(casted_key[30;4</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 19</span></div><pre class="py">df.iloc[1]</pre></div><div class="out"><div class="h">Output</div><pre>Name     B
+Age     25
+Name: 102, dtype: object</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 21</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[20,25,30,35]})
+print(df[df[&#x27;Age&#x27;]&gt;25])
+print(df[df[&#x27;Age&#x27;]==30])</pre></div><div class="out"><div class="h">Output</div><pre>   Age
+2   30
+3   35
+   Age
+2   30</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 23</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[20,25,30,35]})
+print(df.query(&#x27;Age&gt;25&#x27;))
+print(df.query(&#x27;Age==30&#x27;))</pre></div><div class="out"><div class="h">Output</div><pre>   Age
+2   30
+3   35
+   Age
+2   30</pre></div><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 25</span></div><pre class="py">df=pd.DataFrame({&#x27;A&#x27;:[1,None,3]})
+print(df.isnull())
+print(df.notnull())
+print(df.fillna(0))
+print(df.dropna())</pre></div><div class="out"><div class="h">Output</div><pre>       A
+0  False
+1   True
+2  False
+       A
+0   True
+1  False
+2   True
+     A
+0  1.0
+1  0.0
+2  3.0
+     A
+0  1.0
+2  3.0</pre></div><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 27</span></div><pre class="py">df=pd.DataFrame({&#x27;A&#x27;:[1,1,2,2]})
+print(df.duplicated())
+print(df.drop_duplicates())</pre></div><div class="out"><div class="h">Output</div><pre>0    False
+1     True
+2    False
+3     True
+dtype: bool
+   A
+0  1
+2  2</pre></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 29</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[20,25]})
+print(df.rename(columns={&#x27;Age&#x27;:&#x27;Student_Age&#x27;}))</pre></div><div class="out"><div class="h">Output</div><pre>   Student_Age
+0           20
+1           25</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 31</span></div><pre class="py">df=pd.DataFrame({&#x27;Age&#x27;:[&#x27;20&#x27;,&#x27;25&#x27;]})
+print(df.dtypes)
+df[&#x27;Age&#x27;]=df[&#x27;Age&#x27;].astype(int)
+print(df.dtypes)</pre></div><div class="out"><div class="h">Output</div><pre>Age    str
+dtype: object
+Age    int64
+dtype: object</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 33</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Mumbai&#x27;,&#x27;Pune&#x27;]})
+print(df.replace(&#x27;Pune&#x27;,&#x27;Nashik&#x27;))</pre></div><div class="out"><div class="h">Output</div><pre>     City
+0  Nashik
+1  Mumbai
+2  Nashik</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 35</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Mumbai&#x27;,&#x27;Delhi&#x27;]})
+print(pd.get_dummies(df[&#x27;City&#x27;]))</pre></div><div class="out"><div class="h">Output</div><pre>   Delhi  Mumbai   Pune
+0  False   False   True
+1  False    True  False
+2   True   False  False</pre></div><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 37</span></div><pre class="py">df=pd.DataFrame({&#x27;Marks&#x27;:[50,80,70]})
+print(df.sort_values(&#x27;Marks&#x27;))
+df[&#x27;Rank&#x27;]=df[&#x27;Marks&#x27;].rank(ascending=False)
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>   Marks
+0     50
+2     70
+1     80
+   Marks  Rank
+0     50   3.0
+1     80   1.0
+2     70   2.0</pre></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 39</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Pune&#x27;,&#x27;Mumbai&#x27;],&#x27;Sales&#x27;:[100,200,300]})
+print(df.groupby(&#x27;City&#x27;)[&#x27;Sales&#x27;].sum())
+print(df.groupby(&#x27;City&#x27;)[&#x27;Sales&#x27;].mean())</pre></div><div class="out"><div class="h">Output</div><pre>City
+Mumbai    300
+Pune      300
+Name: Sales, dtype: int64
+City
+Mumbai    300.0
+Pune      150.0
+Name: Sales, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 41</span></div><pre class="py">df=pd.DataFrame({&#x27;City&#x27;:[&#x27;Pune&#x27;,&#x27;Pune&#x27;,&#x27;Mumbai&#x27;],&#x27;Sales&#x27;:[100,200,300]})
+print(pd.pivot_table(df,values=&#x27;Sales&#x27;,index=&#x27;City&#x27;,aggfunc=&#x27;sum&#x27;))</pre></div><div class="out"><div class="h">Output</div><pre>        Sales
+City         
+Mumbai    300
+Pune      300</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 43</span></div><pre class="py">dates=pd.DataFrame({&#x27;Date&#x27;:[&#x27;2025-01-01&#x27;,&#x27;2025-02-01&#x27;]})
+dates[&#x27;Date&#x27;]=pd.to_datetime(dates[&#x27;Date&#x27;])
+print(dates[&#x27;Date&#x27;].dt.year)
+print(dates[&#x27;Date&#x27;].dt.month)</pre></div><div class="out"><div class="h">Output</div><pre>0    2025
+1    2025
+Name: Date, dtype: int32
+0    1
+1    2
+Name: Date, dtype: int32</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 45</span></div><pre class="py">s=pd.Series([&#x27;Alice&#x27;,&#x27;Bob&#x27;,&#x27;Charlie&#x27;])
+print(s.str.upper())
+print(s.str.lower())
+print(s.str.contains(&#x27;a&#x27;,case=False))
+print(s.str.len())</pre></div><div class="out"><div class="h">Output</div><pre>0      ALICE
+1        BOB
+2    CHARLIE
+dtype: str
+0      alice
+1        bob
+2    charlie
+dtype: str
+0     True
+1    False
+2     True
+dtype: bool
+0    5
+1    3
+2    7
+dtype: int64</pre></div><div class="src-head">📓 <a href="../Concept/pizza_panda.ipynb">pizza_panda.ipynb</a></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
+import numpy as np
+
+# Creating our pizza shop data
+data = {
+    &#x27;date&#x27;:     [&#x27;Mon&#x27;, &#x27;Tue&#x27;, &#x27;Wed&#x27;, &#x27;Thu&#x27;, &#x27;Fri&#x27;, &#x27;Sat&#x27;, &#x27;Sun&#x27;],
+    &#x27;pizza&#x27;:    [&#x27;Margherita&#x27;, &#x27;Pepperoni&#x27;, &#x27;Margherita&#x27;, &#x27;BBQ Chicken&#x27;, &#x27;Pepperoni&#x27;, &#x27;BBQ Chicken&#x27;, &#x27;Margherita&#x27;],
+    &#x27;price&#x27;:    [12, 15, 12, 18, 15, 18, 12],
+    &#x27;quantity&#x27;: [10, 8,  6,  12, 15, 20, 18],
+    &#x27;area&#x27;:     [&#x27;Downtown&#x27;, &#x27;Suburbs&#x27;, &#x27;Downtown&#x27;, &#x27;Suburbs&#x27;, &#x27;Downtown&#x27;, &#x27;Suburbs&#x27;, &#x27;Downtown&#x27;]
+}
+
+df = pd.DataFrame(data)
+print(df)
+# How many rows and columns?
+print(df.shape)</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+1  Tue    Pepperoni     15         8   Suburbs
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown
+(7, 5)</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 1</span></div><pre class="py"># Peek at first 5 rows
+df.head()</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+1  Tue    Pepperoni     15         8   Suburbs
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 2</span></div><pre class="py"># Peek at last 5 rows
+df.tail()</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 3</span></div><pre class="py">df.tail(3)</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 4</span></div><pre class="py"># What data types are in each column?
+df.dtypes</pre></div><div class="out"><div class="h">Output</div><pre>date          str
+pizza         str
+price       int64
+quantity    int64
+area          str
+dtype: object</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 5</span></div><pre class="py"># Full summary of your dataset in one shot
+df.info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 7 entries, 0 to 6
+Data columns (total 5 columns):
+ #   Column    Non-Null Count  Dtype
+---  ------    --------------  -----
+ 0   date      7 non-null      str  
+ 1   pizza     7 non-null      str  
+ 2   price     7 non-null      int64
+ 3   quantity  7 non-null      int64
+ 4   area      7 non-null      str  
+dtypes: int64(2), str(3)
+memory usage: 412.0 bytes</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 7</span></div><pre class="py"># Get just the pizza column
+print(df[&#x27;pizza&#x27;])</pre></div><div class="out"><div class="h">Output</div><pre>0     Margherita
+1      Pepperoni
+2     Margherita
+3    BBQ Chicken
+4      Pepperoni
+5    BBQ Chicken
+6     Margherita
+Name: pizza, dtype: str</pre></div><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 8</span></div><pre class="py"># One column — uses single brackets
+print(type(df[&#x27;pizza&#x27;]))
+
+# The full dataframe
+print(type(df))</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.Series&#x27;&gt;
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 9</span></div><pre class="py">print(df[&#x27;pizza&#x27;])
+# Multiple columns — double brackets
+print(df[[&#x27;pizza&#x27;, &#x27;price&#x27;, &#x27;quantity&#x27;]])</pre></div><div class="out"><div class="h">Output</div><pre>0     Margherita
+1      Pepperoni
+2     Margherita
+3    BBQ Chicken
+4      Pepperoni
+5    BBQ Chicken
+6     Margherita
+Name: pizza, dtype: str
+         pizza  price  quantity
+0   Margherita     12        10
+1    Pepperoni     15         8
+2   Margherita     12         6
+3  BBQ Chicken     18        12
+4    Pepperoni     15        15
+5  BBQ Chicken     18        20
+6   Margherita     12        18</pre></div><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 10</span></div><pre class="py"># This is exactly the same thing
+columns_i_want = [&#x27;pizza&#x27;, &#x27;price&#x27;, &#x27;quantity&#x27;]
+print(df[columns_i_want])</pre></div><div class="out"><div class="h">Output</div><pre>         pizza  price  quantity
+0   Margherita     12        10
+1    Pepperoni     15         8
+2   Margherita     12         6
+3  BBQ Chicken     18        12
+4    Pepperoni     15        15
+5  BBQ Chicken     18        20
+6   Margherita     12        18</pre></div><div class="code"><div class="code-head"><span>In [79]</span><span class="cell">cell 11</span></div><pre class="py">print(df[[&#x27;pizza&#x27;]])</pre></div><div class="out"><div class="h">Output</div><pre>         pizza
+0   Margherita
+1    Pepperoni
+2   Margherita
+3  BBQ Chicken
+4    Pepperoni
+5  BBQ Chicken
+6   Margherita</pre></div><div class="code"><div class="code-head"><span>In [80]</span><span class="cell">cell 12</span></div><pre class="py">print(df[&#x27;price&#x27;].mean())   # ✅ average of one column
+print(df[[&#x27;price&#x27;]].mean())  # ✅ also works but returns a DataFrame
+#df[&#x27;pizza&#x27;].mean()    # ❌ crashes — can&#x27;t average text</pre></div><div class="out"><div class="h">Output</div><pre>14.571428571428571
+price    14.571429
+dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [81]</span><span class="cell">cell 13</span></div><pre class="py"># Using the result in a calculation — Series way is cleaner
+avg = df[&#x27;price&#x27;].mean()
+print(&quot;Prices above average:&quot;, df[df[&#x27;price&#x27;] &gt; avg][&#x27;price&#x27;])</pre></div><div class="out"><div class="h">Output</div><pre>Prices above average: 1    15
+3    18
+4    15
+5    18
+Name: price, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [82]</span><span class="cell">cell 14</span></div><pre class="py">print(df[df[&quot;pizza&quot;] == &#x27;BBQ Chicken&#x27;])</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity     area
+3  Thu  BBQ Chicken     18        12  Suburbs
+5  Sat  BBQ Chicken     18        20  Suburbs</pre></div><div class="code"><div class="code-head"><span>In [83]</span><span class="cell">cell 15</span></div><pre class="py"># Plain Python way — filtering Pepperoni orders
+pepperoni_orders = []
+for i in range(len(data[&#x27;pizza&#x27;])):
+    if data[&#x27;pizza&#x27;][i] == &#x27;Pepperoni&#x27;:
+        pepperoni_orders.append({
+            &#x27;date&#x27;: data[&#x27;date&#x27;][i],
+            &#x27;pizza&#x27;: data[&#x27;pizza&#x27;][i],
+            &#x27;price&#x27;: data[&#x27;price&#x27;][i],
+            &#x27;quantity&#x27;: data[&#x27;quantity&#x27;][i],
+            &#x27;area&#x27;: data[&#x27;area&#x27;][i]
+        })
+
+for order in pepperoni_orders:
+    print(order)</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;date&#x27;: &#x27;Tue&#x27;, &#x27;pizza&#x27;: &#x27;Pepperoni&#x27;, &#x27;price&#x27;: 15, &#x27;quantity&#x27;: 8, &#x27;area&#x27;: &#x27;Suburbs&#x27;}
+{&#x27;date&#x27;: &#x27;Fri&#x27;, &#x27;pizza&#x27;: &#x27;Pepperoni&#x27;, &#x27;price&#x27;: 15, &#x27;quantity&#x27;: 15, &#x27;area&#x27;: &#x27;Downtown&#x27;}</pre></div><div class="code"><div class="code-head"><span>In [84]</span><span class="cell">cell 16</span></div><pre class="py"># Orders from Downtown only
+print(df[df[&#x27;area&#x27;] == &#x27;Downtown&#x27;])</pre></div><div class="out"><div class="h">Output</div><pre>  date       pizza  price  quantity      area
+0  Mon  Margherita     12        10  Downtown
+2  Wed  Margherita     12         6  Downtown
+4  Fri   Pepperoni     15        15  Downtown
+6  Sun  Margherita     12        18  Downtown</pre></div><div class="code"><div class="code-head"><span>In [85]</span><span class="cell">cell 17</span></div><pre class="py"># Orders where quantity is more than 10
+print(df[df[&#x27;quantity&#x27;] &gt; 10])</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div><div class="code"><div class="code-head"><span>In [86]</span><span class="cell">cell 18</span></div><pre class="py"># Orders where price is 18 AND area is Suburbs
+print(df[(df[&#x27;price&#x27;] == 18) &amp; (df[&#x27;area&#x27;] == &#x27;Suburbs&#x27;)])</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity     area
+3  Thu  BBQ Chicken     18        12  Suburbs
+5  Sat  BBQ Chicken     18        20  Suburbs</pre></div><div class="code"><div class="code-head"><span>In [87]</span><span class="cell">cell 19</span></div><pre class="py">df[&#x27;pizza&#x27;] == &#x27;Pepperoni&#x27;</pre></div><div class="out"><div class="h">Output</div><pre>0    False
+1     True
+2    False
+3    False
+4     True
+5    False
+6    False
+Name: pizza, dtype: bool</pre></div><div class="code"><div class="code-head"><span>In [88]</span><span class="cell">cell 20</span></div><pre class="py"># Step 1 — see the True/False list
+mask = df[&#x27;pizza&#x27;] == &#x27;Pepperoni&#x27;
+print(mask)
+print(&quot;---&quot;)
+
+# Step 2 — use it to filter
+print(df[mask])
+print(df[~mask])</pre></div><div class="out"><div class="h">Output</div><pre>0    False
+1     True
+2    False
+3    False
+4     True
+5    False
+6    False
+Name: pizza, dtype: bool
+---
+  date      pizza  price  quantity      area
+1  Tue  Pepperoni     15         8   Suburbs
+4  Fri  Pepperoni     15        15  Downtown
+  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown</pre></div><div class="code"><div class="code-head"><span>In [89]</span><span class="cell">cell 21</span></div><pre class="py"># Pepperoni orders from Downtown only
+print(df[(df[&#x27;pizza&#x27;] == &#x27;Pepperoni&#x27;) &amp; (df[&#x27;area&#x27;] == &#x27;Downtown&#x27;)])</pre></div><div class="out"><div class="h">Output</div><pre>  date      pizza  price  quantity      area
+4  Fri  Pepperoni     15        15  Downtown</pre></div><div class="code"><div class="code-head"><span>In [90]</span><span class="cell">cell 22</span></div><pre class="py"># Challenge 1 — Show orders where quantity is more than 10 AND price is 12
+print(df[(df[&#x27;quantity&#x27;] &gt; 10 ) &amp; (df[&#x27;price&#x27;] == 12)])
+
+# Challenge 2 — Show orders that are either Margherita OR BBQ Chicken
+print(df[(df[&#x27;pizza&#x27;] == &#x27;Margherita&#x27;) | (df[&#x27;pizza&#x27;] == &#x27;BBQ Chicken&#x27;)])
+
+# Challenge 3 — Show all orders that are NOT from Suburbs
+print(df[(df[&#x27;area&#x27;] != &#x27;Suburbs&#x27;)])</pre></div><div class="out"><div class="h">Output</div><pre>  date       pizza  price  quantity      area
+6  Sun  Margherita     12        18  Downtown
+  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+5  Sat  BBQ Chicken     18        20   Suburbs
+6  Sun   Margherita     12        18  Downtown
+  date       pizza  price  quantity      area
+0  Mon  Margherita     12        10  Downtown
+2  Wed  Margherita     12         6  Downtown
+4  Fri   Pepperoni     15        15  Downtown
+6  Sun  Margherita     12        18  Downtown</pre></div><div class="code"><div class="code-head"><span>In [91]</span><span class="cell">cell 24</span></div><pre class="py">#First — plain Python way so you feel the pain:
+
+# Plain Python — total quantity per pizza type
+pizzas = [&#x27;Margherita&#x27;, &#x27;Pepperoni&#x27;, &#x27;BBQ Chicken&#x27;]
+
+for pizza in pizzas:
+    total = 0
+    for i in range(len(data[&#x27;pizza&#x27;])):
+        if data[&#x27;pizza&#x27;][i] == pizza:
+            total += data[&#x27;quantity&#x27;][i]
+    print(pizza, &quot;:&quot;, total)</pre></div><div class="out"><div class="h">Output</div><pre>Margherita : 34
+Pepperoni : 23
+BBQ Chicken : 32</pre></div><div class="code"><div class="code-head"><span>In [92]</span><span class="cell">cell 25</span></div><pre class="py">print(df.groupby(&quot;pizza&quot;)[&quot;quantity&quot;].sum())</pre></div><div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    32
+Margherita     34
+Pepperoni      23
+Name: quantity, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [93]</span><span class="cell">cell 26</span></div><pre class="py">print(&quot;Total Quantity :: &quot;,df.groupby(&#x27;pizza&#x27;)[&#x27;quantity&#x27;].sum())
+print(&quot;\naverage quantity ::&quot; ,df.groupby(&#x27;pizza&#x27;)[&#x27;quantity&#x27;].mean()) 
+print(&quot;\nhighest price :: &quot;,df.groupby(&#x27;pizza&#x27;)[&#x27;price&#x27;].max())     
+print(&quot;\nhow many orders ::&quot;,df.groupby(&#x27;pizza&#x27;)[&#x27;quantity&#x27;].count())</pre></div><div class="out"><div class="h">Output</div><pre>Total Quantity ::  pizza
+BBQ Chicken    32
+Margherita     34
+Pepperoni      23
+Name: quantity, dtype: int64
+
+average quantity :: pizza
+BBQ Chicken    16.000000
+Margherita     11.333333
+Pepperoni      11.500000
+Name: quantity, dtype: float64
+
+highest price ::  pizza
+BBQ Chicken    18
+Margherita     12
+Pepperoni      15
+Name: price, dtype: int64
+
+how many orders :: pizza
+BBQ Chicken    2
+Margherita     3
+Pepperoni      2
+Name: quantity, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [94]</span><span class="cell">cell 27</span></div><pre class="py"># Which area — Downtown or Suburbs — generates more total revenue?
+
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>  date        pizza  price  quantity      area  revenue
+0  Mon   Margherita     12        10  Downtown      120
+1  Tue    Pepperoni     15         8   Suburbs      120
+2  Wed   Margherita     12         6  Downtown       72
+3  Thu  BBQ Chicken     18        12   Suburbs      216
+4  Fri    Pepperoni     15        15  Downtown      225
+5  Sat  BBQ Chicken     18        20   Suburbs      360
+6  Sun   Margherita     12        18  Downtown      216</pre></div><div class="code"><div class="code-head"><span>In [95]</span><span class="cell">cell 28</span></div><pre class="py"># Which area generates more total revenue?
+print(&quot;\nGenerates more total revenue ::&quot; ,df.groupby(&#x27;area&#x27;)[&#x27;revenue&#x27;].sum())</pre></div><div class="out"><div class="h">Output</div><pre>
+Generates more total revenue :: area
+Downtown    633
+Suburbs     696
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [96]</span><span class="cell">cell 29</span></div><pre class="py"># What is the total revenue AND average quantity per pizza type?
+print(df.groupby(&#x27;pizza&#x27;).agg({
+    &#x27;revenue&#x27;: &#x27;sum&#x27;,
+    &#x27;quantity&#x27;: &#x27;mean&#x27;
+}))</pre></div><div class="out"><div class="h">Output</div><pre>             revenue   quantity
+pizza                          
+BBQ Chicken      576  16.000000
+Margherita       408  11.333333
+Pepperoni        345  11.500000</pre></div><div class="code"><div class="code-head"><span>In [97]</span><span class="cell">cell 30</span></div><pre class="py">df.groupby(&#x27;pizza&#x27;).agg({
+    &#x27;revenue&#x27;: &#x27;sum&#x27;,
+    &#x27;quantity&#x27;: &#x27;mean&#x27;,
+    &#x27;price&#x27;: &#x27;max&#x27;,
+    &#x27;date&#x27;: &#x27;count&#x27;
+})</pre></div><div class="out"><div class="h">Output</div><pre>             revenue   quantity  price  date
+pizza                                       
+BBQ Chicken      576  16.000000     18     2
+Margherita       408  11.333333     12     3
+Pepperoni        345  11.500000     15     2</pre></div><div class="code"><div class="code-head"><span>In [98]</span><span class="cell">cell 31</span></div><pre class="py"># Which day of the week had the highest total revenue?
+
+df.groupby(&#x27;date&#x27;)[&quot;revenue&quot;].sum()</pre></div><div class="out"><div class="h">Output</div><pre>date
+Fri    225
+Mon    120
+Sat    360
+Sun    216
+Thu    216
+Tue    120
+Wed     72
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [99]</span><span class="cell">cell 32</span></div><pre class="py">print(df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=False))</pre></div><div class="out"><div class="h">Output</div><pre>date
+Sat    360
+Fri    225
+Sun    216
+Thu    216
+Mon    120
+Tue    120
+Wed     72
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [100]</span><span class="cell">cell 33</span></div><pre class="py">df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=True)          # sort highest to lowest</pre></div><div class="out"><div class="h">Output</div><pre>date
+Wed     72
+Mon    120
+Tue    120
+Sun    216
+Thu    216
+Fri    225
+Sat    360
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [101]</span><span class="cell">cell 34</span></div><pre class="py"># Read the csv 
+df = pd.read_csv(&#x27;../../10_Pizza_Dashboard_Lab/Data/pizza_orders.csv&#x27;)
+print(df)</pre></div><div class="out"><div class="h">Output</div><pre>   date        pizza  price  quantity      area
+0   Mon   Margherita     12        10  Downtown
+1   Tue    Pepperoni     15         8   Suburbs
+2   Wed   Margherita     12         6  Downtown
+3   Thu  BBQ Chicken     18        12   Suburbs
+4   Fri    Pepperoni     15        15  Downtown
+5   Sat  BBQ Chicken     18        20   Suburbs
+6   Sun   Margherita     12        18  Downtown
+7   Mon    Pepperoni     15         9  Downtown
+8   Tue  BBQ Chicken     18        14   Suburbs
+9   Wed   Margherita     12         7  Downtown
+10  Thu    Pepperoni     15        11   Suburbs
+11  Fri  BBQ Chicken     18        16  Downtown</pre></div><div class="code"><div class="code-head"><span>In [102]</span><span class="cell">cell 35</span></div><pre class="py">print(df.shape,&quot;\n&quot;)
+print(df.head(),&quot;\n&quot;)
+print(df.tail(),&quot;\n&quot;)
+print(df.dtypes,&quot;\n&quot;)
+df.info()</pre></div><div class="out"><div class="h">Output</div><pre>(12, 5) 
+
+  date        pizza  price  quantity      area
+0  Mon   Margherita     12        10  Downtown
+1  Tue    Pepperoni     15         8   Suburbs
+2  Wed   Margherita     12         6  Downtown
+3  Thu  BBQ Chicken     18        12   Suburbs
+4  Fri    Pepperoni     15        15  Downtown 
+
+   date        pizza  price  quantity      area
+7   Mon    Pepperoni     15         9  Downtown
+8   Tue  BBQ Chicken     18        14   Suburbs
+9   Wed   Margherita     12         7  Downtown
+10  Thu    Pepperoni     15        11   Suburbs
+11  Fri  BBQ Chicken     18        16  Downtown 
+
+date          str
+pizza         str
+price       int64
+quantity    int64
+area          str
+dtype: object 
+
+&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+RangeIndex: 12 entries, 0 to 11
+Data columns (total 5 columns):
+ #   Column    Non-Null Count  Dtype
+---  ------    --------------  -----
+ 0   date      12 non-null     str  
+ 1   pizza     12 non-null     str  
+ 2   price     12 non-null     int64
+ 3   quantity  12 non-null     int64
+ 4   area      12 non-null     str  
+dtypes: int64(2), str(3)
+memory usage: 612.0 bytes</pre></div><div class="code"><div class="code-head"><span>In [103]</span><span class="cell">cell 36</span></div><pre class="py"># Step 3 — clean and analyze
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum()</pre></div><div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    1116
+Margherita      492
+Pepperoni       645
+Name: revenue, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [104]</span><span class="cell">cell 37</span></div><pre class="py"># Question 1 — Which pizza type has highest total revenue?
+df[&#x27;revenue&#x27;] = df[&#x27;price&#x27;] * df[&#x27;quantity&#x27;]
+print(df.groupby(&#x27;pizza&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=False))    
+
+# Question 2 — Which area orders more on average (quantity)?
+print(&quot;\n&quot;,df.groupby(&#x27;area&#x27;)[&#x27;quantity&#x27;].mean().sort_values(ascending=True))   
+
+# Question 3 — What is the total revenue per day sorted highest to lowest?
+print(&quot;\n&quot;,df.groupby(&#x27;date&#x27;)[&#x27;revenue&#x27;].sum().sort_values(ascending=False))</pre></div><div class="out"><div class="h">Output</div><pre>pizza
+BBQ Chicken    1116
+Pepperoni       645
+Margherita      492
+Name: revenue, dtype: int64
+
+ area
+Downtown    11.571429
+Suburbs     13.000000
+Name: quantity, dtype: float64
+
+ date
+Fri    513
+Thu    381
+Tue    372
+Sat    360
+Mon    255
+Sun    216
+Wed    156
+Name: revenue, dtype: int64</pre></div><div class="src-head">🐍 <a href="../Concept/example_01.py">example_01.py</a></div><div class="code"><pre class="py">import pandas as pd
+
+print(&quot;**Series Of Data**\n&quot;)
+
+s = pd.Series([10,20,30,40],name= &quot;marks&quot;)
+
+print(type(s))
+print(&quot;\n----------------\n&quot;)
+print(s)
+print(&quot;\n----------------\n&quot;)
+print(s[0])
+print(&quot;\n----------------\n&quot;)
+print(s.mean())
+
+print(&quot;**Data Frame(2D Data)**\n&quot;)
+
+data = {
+    &quot;Name&quot;: [&quot;Kali&quot;,&quot;Meeta&quot;, &quot;krithvik&quot;],
+    &quot;Age&quot;: [34,33,2],
+    &quot;Score&quot;: [85,87,98]
+}
+
+data_frame = pd.DataFrame(data)
+
+print(&quot;\n----------------\n&quot;)
+
+print(data_frame)
+
+print(&quot;\n----------------\n&quot;)
+
+print(data_frame.head())
+
+print(&quot;\n----------------\n&quot;)
+
+print(data_frame.tail())
+
+
+print(&quot;\nSaving  Data Fraome to CSV \n&quot;)
+
+#data_frame.to_csv(&quot;../Data/data_sample.csv&quot;)
+
+print(&quot;\nRead Data From CSV Files \n&quot;)
+
+
+daiabetes_csv = pd.read_csv(&quot;../Data/diabetes.csv&quot;)
+print(&quot;\n----------------\n&quot;)
+print(daiabetes_csv)
+print(&quot;\n--------Shapes--------\n&quot;)
+print(daiabetes_csv.shape)
+print(&quot;\n-------Colmns---------\n&quot;)
+print(daiabetes_csv.columns)
+print(&quot;\n-------Head---------\n&quot;)
+print(daiabetes_csv.head())
+print(&quot;\n-------Tail---------\n&quot;)
+print(daiabetes_csv.tail())
+print(&quot;\n-------Info---------\n&quot;)
+print(daiabetes_csv.info())
+
+print(&quot;\n-------Selecting the data---------\n&quot;)
+#Single Columns 
+print(daiabetes_csv[&quot;Glucose&quot;])
+#Multiple Columns 
+print(daiabetes_csv[[&quot;Glucose&quot;,&quot;BloodPressure&quot;]])
+print(&quot;\n-------#row selections ---------\n&quot;)
+print(daiabetes_csv.iloc[1])
+print(&quot;\n-------#row selections with o value ---------\n&quot;)
+print(daiabetes_csv.iloc[0])
+
+
+print(&quot;\n-------Sample Data ---------\n&quot;)
+
+data = {
+    &quot;Name &quot;: [&quot;kali&quot;,&quot;Meeta&quot;,&quot;Rishi&quot;],
+    &quot;Score&quot;: [78,98,89]
+}
+
+sample_df = pd.DataFrame(data, index = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;])
+
+print(sample_df.head())
+print(sample_df.tail())
+
+print(&quot;\n----------------\n&quot;)
+print(sample_df.iloc[1])
+print(&quot;\n----------------\n&quot;)
+print(sample_df.loc[&quot;c&quot;])
+
+print(&quot;\n--------HighScore--------\n&quot;)
+high_score = sample_df[sample_df[&quot;Score&quot;] &gt; 85]
+print(high_score)
+
+print(&quot;\n--------LowScore--------\n&quot;)
+low_score = sample_df[sample_df[&quot;Score&quot;] &lt; 85]
+print(low_score)
+
+print(&quot;\n--------Adding a new Column--------\n&quot;)
+sample_df[&quot;Passed&quot;] = sample_df[&quot;Score&quot;] &gt; 70
+print(sample_df)
+print(&quot;\n--------Adding a new Column--------\n&quot;)
+sample_df[&quot;Score_Percentage&quot;] = sample_df[&quot;Score&quot;]/100 *100
+print(sample_df)
+print(&quot;\n--------Adding a new Column--------\n&quot;)
+sample_df[&quot;City&quot;] = [&quot;New York&quot;, &quot;Chicgo&quot;, &quot;Columbus&quot;]
+print(sample_df)
+
+print(&quot;\n--------Descriptive Statistsics--------\n&quot;)
+print(&quot;Avergae Score ::&quot;,sample_df[&quot;Score&quot;].mean())
+print(&quot;Max Score ::&quot;,sample_df[&quot;Score&quot;].max())
+print(&quot;Min&quot;,sample_df[&quot;Score&quot;].min())
+
+print(&quot;\n--------Describe-------\n&quot;)
+
+print(sample_df.describe())
+
+print(&quot;\n--------Handling Missing Data-------\n&quot;)
+
+df2 = pd.DataFrame({
+    &quot;Name&quot;: [&quot;kali&quot;,&quot;Meeta&quot;,&quot;Rishi&quot;,None],
+    &quot;Age&quot;: [35,None,3,10],
+    &quot;Score&quot;: [85,91,None,88]
+})
+
+print(df2.head())
+
+print(&quot;\n--------Drop The name Who is having a  NONE-------\n&quot;)
+
+df2.dropna(subset=[&quot;Name&quot;],inplace=True)
+
+print(df2.head())
+
+print(&quot;\n--------Replace with average value in NONE-------\n&quot;)
+
+df2[&quot;Age&quot;] = df2[&quot;Age&quot;].fillna(df2[&quot;Age&quot;].mean())
+df2[&quot;Score&quot;] = df2[&quot;Score&quot;].fillna(df2[&quot;Score&quot;].mean())
+
+print(df2.head())
+
+</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

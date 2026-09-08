@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hierarchical Clustering — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/13_Hirerachical_Clustering.ipynb">13_Hirerachical_Clustering.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 3</span></div><pre class="py">import matplotlib.pyplot as plt
+import numpy as np
+
+from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy.spatial.distance import pdist, squareform
+from sklearn.cluster import AgglomerativeClustering
+
+# A clean and consistent style for every chart in this lesson
+plt.style.use(&quot;seaborn-v0_8-whitegrid&quot;)
+plt.rcParams.update({&quot;figure.figsize&quot;: (9, 5.5), &quot;font.size&quot;: 11})
+
+# Each row is one observation with two features.
+points = np.array([
+    [5, 3], [10, 15], [15, 12], [24, 10], [30, 30],
+    [85, 70], [71, 80], [60, 78], [70, 55]
+])
+point_names = [f&quot;P{i}&quot; for i in range(1, len(points) + 1)]
+
+print(f&quot;Dataset shape: {points.shape[0]} points and {points.shape[1]} features&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Dataset shape: 9 points and 2 features</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 5</span></div><pre class="py">fig, ax = plt.subplots()
+ax.scatter(
+    points[:, 0], points[:, 1],
+    s=130, color=&quot;#4C78A8&quot;, edgecolor=&quot;white&quot;, linewidth=1.5
+)
+
+for name, (x, y) in zip(point_names, points):
+    ax.annotate(name, (x, y), xytext=(7, 7), textcoords=&quot;offset points&quot;)
+
+ax.set(
+    title=&quot;The original data: no cluster labels yet&quot;,
+    xlabel=&quot;Feature 1&quot;,
+    ylabel=&quot;Feature 2&quot;
+)
+ax.set_xlim(0, 95)
+ax.set_ylim(0, 90)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py"># &quot;Who is near me?&quot; -&gt; measure it with a right-angle triangle.
+p1, p2 = points[2], points[4]          # P3 and P5
+walk_across = p2[0] - p1[0]
+walk_up = p2[1] - p1[1]
+straight_line = np.hypot(walk_across, walk_up)
+
+fig, ax = plt.subplots(figsize=(9.5, 6))
+
+# The two sides you can walk, and the straight line you actually want.
+ax.plot([p1[0], p2[0]], [p1[1], p1[1]], color=&quot;#54A24B&quot;, linewidth=3)
+ax.plot([p2[0], p2[0]], [p1[1], p2[1]], color=&quot;#F58518&quot;, linewidth=3)
+ax.plot([p1[0], p2[0]], [p1[1], p2[1]], color=&quot;#E45756&quot;, linewidth=3.5, zorder=4)
+
+ax.scatter(*p1, s=260, color=&quot;#4C78A8&quot;, edgecolor=&quot;white&quot;, linewidth=2, zorder=5)
+ax.scatter(*p2, s=260, color=&quot;#4C78A8&quot;, edgecolor=&quot;white&quot;, linewidth=2, zorder=5)
+ax.annotate(&quot;P3  =  (x1, y1)&quot;, p1, xytext=(-18, -28), textcoords=&quot;offset points&quot;, fontweight=&quot;bold&quot;)
+ax.annotate(&quot;P5  =  (x2, y2)&quot;, p2, xytext=(-15, 16), textcoords=&quot;offset points&quot;, fontweight=&quot;bold&quot;)
+
+label = dict(arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.6), fontsize=10.5,
+             bbox=dict(boxstyle=&quot;round,pad=0.45&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;#B8C0CC&quot;))
+
+ax.annotate(f&quot;1. Walk across\n     x2 - x1 = {walk_across}&quot;,
+            xy=((p1[0] + p2[0]) / 2, p1[1]), xytext=(16, -60), textcoords=&quot;offset points&quot;,
+            color=&quot;#3B7A34&quot;, **label)
+ax.annotate(f&quot;2. Then walk up\n     y2 - y1 = {walk_up}&quot;,
+            xy=(p2[0], (p1[1] + p2[1]) / 2), xytext=(22, -6), textcoords=&quot;offset points&quot;,
+            color=&quot;#B35A0F&quot;, **label)
+ax.annotate(f&quot;3. But the distance we want\n     is the straight line:  {straight_line:.2f}&quot;,
+            xy=((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2), xytext=(-160, 42),
+            textcoords=&quot;offset points&quot;, color=&quot;#B03A39&quot;, **label)
+
+ax.text(0.03, 0.87, r&quot;$D=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$&quot;, transform=ax.transAxes,
+        ha=&quot;left&quot;, va=&quot;center&quot;, fontsize=15,
+        bbox=dict(boxstyle=&quot;round,pad=0.6&quot;, facecolor=&quot;#F3F6FA&quot;, edgecolor=&quot;#B8C0CC&quot;))
+
+ax.set(title=&quot;Distance = the straight line between two points&quot;,
+       xlabel=&quot;Feature 1&quot;, ylabel=&quot;Feature 2&quot;)
+ax.set_xlim(5, 45); ax.set_ylim(0, 40)
+plt.show()
+
+print(f&quot;Walk across : {walk_across}&quot;)
+print(f&quot;Walk up     : {walk_up}&quot;)
+print(f&quot;Distance D  : {straight_line:.2f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Walk across : 15
+Walk up     : 18
+Distance D  : 23.43</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py"># Calculate the straight-line (Euclidean) distance between every pair.
+distance_matrix = squareform(pdist(points, metric=&quot;euclidean&quot;))
+np.fill_diagonal(distance_matrix, np.inf)  # A point should not match with itself.
+first_i, first_j = np.unravel_index(np.argmin(distance_matrix), distance_matrix.shape)
+closest_distance = distance_matrix[first_i, first_j]
+
+fig, ax = plt.subplots()
+ax.scatter(points[:, 0], points[:, 1], s=90, color=&quot;#C7CDD4&quot;)
+ax.scatter(
+    points[[first_i, first_j], 0], points[[first_i, first_j], 1],
+    s=170, color=&quot;#F58518&quot;, edgecolor=&quot;white&quot;, linewidth=1.5,
+    label=&quot;Closest pair&quot;
+)
+ax.plot(
+    points[[first_i, first_j], 0], points[[first_i, first_j], 1],
+    linestyle=&quot;--&quot;, color=&quot;#F58518&quot;, linewidth=2
+)
+
+for name, (x, y) in zip(point_names, points):
+    ax.annotate(name, (x, y), xytext=(7, 7), textcoords=&quot;offset points&quot;)
+
+ax.set(
+    title=&quot;The first merge: join the closest two points&quot;,
+    xlabel=&quot;Feature 1&quot;, ylabel=&quot;Feature 2&quot;
+)
+ax.legend()
+plt.show()
+
+print(
+    f&quot;Closest pair: {point_names[first_i]} and {point_names[first_j]} &quot;
+    f&quot;(distance = {closest_distance:.2f})&quot;
+)</pre></div><div class="out"><div class="h">Output</div><pre>Closest pair: P2 and P3 (distance = 5.83)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 12</span></div><pre class="py">from matplotlib.patches import FancyBboxPatch
+
+trio = np.array([[2.0, 2.0], [5.0, 2.6], [4.0, 6.2]])
+trio_names = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+d_ab = np.linalg.norm(trio[0] - trio[1])
+d_ac = np.linalg.norm(trio[0] - trio[2])
+d_bc = np.linalg.norm(trio[1] - trio[2])
+
+fig, (ax_map, ax_tree) = plt.subplots(1, 2, figsize=(14, 6))
+
+# ---------- LEFT: the town map, with the two handshakes drawn as boxes ----------
+ax_map.add_patch(FancyBboxPatch(
+    (1.05, 1.15), 4.9, 2.35, boxstyle=&quot;round,pad=0.28&quot;,
+    facecolor=&quot;#FFF1E5&quot;, edgecolor=&quot;#F58518&quot;, linewidth=2.5, zorder=1))
+ax_map.add_patch(FancyBboxPatch(
+    (0.75, 0.85), 5.5, 6.1, boxstyle=&quot;round,pad=0.28&quot;,
+    facecolor=&quot;none&quot;, edgecolor=&quot;#4C78A8&quot;, linewidth=2.5, linestyle=&quot;--&quot;, zorder=1))
+
+for (x, y), name in zip(trio, trio_names):
+    ax_map.scatter(x, y, s=520, color=&quot;#3B4A5F&quot;, edgecolor=&quot;white&quot;, linewidth=2.5, zorder=6)
+    ax_map.text(x, y, name, color=&quot;white&quot;, fontsize=14, fontweight=&quot;bold&quot;,
+                ha=&quot;center&quot;, va=&quot;center&quot;, zorder=7)
+
+for (i, j), dist, name in [((0, 1), d_ab, &quot;d1&quot;), ((0, 2), d_ac, &quot;d2&quot;), ((1, 2), d_bc, &quot;d3&quot;)]:
+    strongest = name == &quot;d1&quot;
+    ax_map.plot(trio[[i, j], 0], trio[[i, j], 1],
+                linestyle=&quot;--&quot;, linewidth=3 if strongest else 1.6,
+                color=&quot;#E45756&quot; if strongest else &quot;#8995A7&quot;, zorder=3)
+    mid = trio[[i, j]].mean(axis=0)
+    ax_map.text(mid[0], mid[1] + 0.16, f&quot;{name} = {dist:.2f}&quot;,
+                ha=&quot;center&quot;, fontsize=11, fontweight=&quot;bold&quot; if strongest else &quot;normal&quot;,
+                color=&quot;#B03A39&quot; if strongest else &quot;#5F6B7C&quot;,
+                bbox=dict(boxstyle=&quot;round,pad=0.25&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;none&quot;, alpha=.85))
+
+tag = dict(arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.6), fontsize=10.5,
+           bbox=dict(boxstyle=&quot;round,pad=0.4&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;#B8C0CC&quot;))
+ax_map.annotate(&quot;d1 is the smallest,\nso A and B shake hands FIRST&quot;,
+                xy=(3.5, 2.3), xytext=(-30, -78), textcoords=&quot;offset points&quot;,
+                color=&quot;#B03A39&quot;, **tag)
+ax_map.annotate(&quot;Handshake 1\ncluster {A, B}&quot;,
+                xy=(5.9, 3.3), xytext=(24, 10), textcoords=&quot;offset points&quot;,
+                color=&quot;#B35A0F&quot;, **tag)
+ax_map.annotate(&quot;Handshake 2\nC joins them -&gt; one cluster {A, B, C}\nThe story ends here.&quot;,
+                xy=(6.2, 6.4), xytext=(-52, 30), textcoords=&quot;offset points&quot;,
+                color=&quot;#2F5D9E&quot;, **tag)
+
+ax_map.set(title=&quot;The town map: who shakes hands, and in what order&quot;,
+           xlabel=&quot;Feature 1&quot;, ylabel=&quot;Feature 2&quot;)
+ax_map.set_xlim(0, 9.4); ax_map.set_ylim(0, 8.6)
+
+# ---------- RIGHT: the same two handshakes, drawn as the diary ----------
+trio_link = linkage(trio, method=&quot;average&quot;, metric=&quot;euclidean&quot;)
+tree = dendrogram(trio_link, labels=trio_names, ax=ax_tree,
+                  above_threshold_color=&quot;#4C78A8&quot;, color_threshold=0)
+for coll in ax_tree.collections:
+    coll.set_linewidth(2.6)
+
+first_bar = min(zip(tree[&quot;dcoord&quot;], tree[&quot;icoord&quot;]), key=lambda t: max(t[0]))
+last_bar = max(zip(tree[&quot;dcoord&quot;], tree[&quot;icoord&quot;]), key=lambda t: max(t[0]))
+
+ax_tree.annotate(f&quot;Handshake 1: A + B\njoined at height {max(first_bar[0]):.2f}  (they were close)&quot;,
+                 xy=(np.mean(first_bar[1][1:3]), max(first_bar[0])),
+                 xytext=(30, -58), textcoords=&quot;offset points&quot;, color=&quot;#B35A0F&quot;, **tag)
+ax_tree.annotate(f&quot;Handshake 2: C joins\nat height {max(last_bar[0]):.2f}  (it was further away)&quot;,
+                 xy=(np.mean(last_bar[1][1:3]), max(last_bar[0])),
+                 xytext=(-70, 46), textcoords=&quot;offset points&quot;, color=&quot;#2F5D9E&quot;, **tag)
+ax_tree.annotate(&quot;One leaf = one starting point&quot;,
+                 xy=(tree[&quot;icoord&quot;][0][0], 0), xytext=(-30, 46), textcoords=&quot;offset points&quot;,
+                 color=&quot;#3B4A5F&quot;, **tag)
+
+ax_tree.set(title=&quot;The dendrogram: the same story, written as a diary&quot;,
+            xlabel=&quot;The original points&quot;, ylabel=&quot;Height = distance when they joined&quot;)
+ax_tree.set_ylim(0, max(last_bar[0]) * 1.6)
+
+fig.tight_layout()
+plt.show()
+
+print(f&quot;d1  A-B = {d_ab:.2f}   &lt;-- smallest, merged first&quot;)
+print(f&quot;d2  A-C = {d_ac:.2f}&quot;)
+print(f&quot;d3  B-C = {d_bc:.2f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>d1  A-B = 3.06   &lt;-- smallest, merged first
+d2  A-C = 4.65
+d3  B-C = 3.74</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 14</span></div><pre class="py"># Replay the story one handshake at a time.
+Z = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
+n = len(points)
+
+groups = {i: [i] for i in range(n)}
+history = []
+for step, row in enumerate(Z, start=1):
+    a, b, dist = int(row[0]), int(row[1]), row[2]
+    left, right = groups.pop(a), groups.pop(b)
+    groups[n + step - 1] = left + right
+    history.append({&quot;step&quot;: step, &quot;dist&quot;: dist, &quot;left&quot;: left, &quot;right&quot;: right,
+                    &quot;groups&quot;: [list(g) for g in groups.values()]})
+
+palette = [&quot;#4C78A8&quot;, &quot;#54A24B&quot;, &quot;#B279A2&quot;, &quot;#9D755D&quot;, &quot;#72B7B2&quot;,
+           &quot;#EECA3B&quot;, &quot;#FF9DA6&quot;, &quot;#8995A7&quot;, &quot;#5C6B7F&quot;]
+
+fig, axes = plt.subplots(2, 4, figsize=(17, 8.5))
+for ax, snap in zip(axes.ravel(), history):
+    joined = set(snap[&quot;left&quot;] + snap[&quot;right&quot;])
+
+    for members in snap[&quot;groups&quot;]:
+        colour = palette[min(members) % len(palette)]   # a group keeps its colour as it grows
+        block = points[members]
+        centre = block.mean(axis=0)
+        if len(members) &gt; 1:                       # show the group as a small star
+            for px, py in block:
+                ax.plot([px, centre[0]], [py, centre[1]], color=colour, linewidth=1.1, alpha=.55)
+        ax.scatter(block[:, 0], block[:, 1], s=95, color=colour,
+                   edgecolor=&quot;white&quot;, linewidth=1.2, zorder=4)
+
+    left_centre = points[snap[&quot;left&quot;]].mean(axis=0)      # the handshake that just happened
+    right_centre = points[snap[&quot;right&quot;]].mean(axis=0)
+    ax.plot([left_centre[0], right_centre[0]], [left_centre[1], right_centre[1]],
+            linestyle=&quot;--&quot;, color=&quot;#E45756&quot;, linewidth=2.6, zorder=6)
+    ax.scatter([left_centre[0], right_centre[0]], [left_centre[1], right_centre[1]],
+               s=140, facecolor=&quot;none&quot;, edgecolor=&quot;#E45756&quot;, linewidth=2.4, zorder=7)
+
+    ax.set_title(f&quot;Handshake {snap[&#x27;step&#x27;]}  ·  join height {snap[&#x27;dist&#x27;]:.1f}\n&quot;
+                 f&quot;{len(snap[&#x27;groups&#x27;])} group(s) left&quot;, fontsize=10.5)
+    ax.set_xlim(-8, 100); ax.set_ylim(-8, 95)
+    ax.set_xticks([]); ax.set_yticks([])
+
+first_mid = points[history[0][&quot;left&quot;] + history[0][&quot;right&quot;]].mean(axis=0)
+axes.ravel()[0].annotate(&quot;The two closest\ngroups join here&quot;,
+                         xy=tuple(first_mid), xytext=(34, 52),
+                         textcoords=&quot;offset points&quot;, fontsize=9.5, color=&quot;#B03A39&quot;,
+                         arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.5, color=&quot;#B03A39&quot;),
+                         bbox=dict(boxstyle=&quot;round,pad=0.35&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;#E45756&quot;))
+last_mid = points[history[-1][&quot;left&quot;] + history[-1][&quot;right&quot;]].mean(axis=0)
+axes.ravel()[-1].annotate(&quot;Everyone is\none group.\nStory over.&quot;,
+                          xy=tuple(last_mid), xytext=(30, -60), textcoords=&quot;offset points&quot;,
+                          fontsize=9.5, color=&quot;#2F5D9E&quot;,
+                          arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.5, color=&quot;#2F5D9E&quot;),
+                          bbox=dict(boxstyle=&quot;round,pad=0.35&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;#4C78A8&quot;))
+
+fig.suptitle(&quot;Red dashed line = the handshake that just happened.  &quot;
+             &quot;Each colour = a group that exists right now.&quot;, fontsize=13, y=1.0)
+fig.tight_layout()
+plt.show()
+
+for snap in history:
+    print(f&quot;handshake {snap[&#x27;step&#x27;]}: joined {[point_names[i] for i in snap[&#x27;left&#x27;]]} &quot;
+          f&quot;+ {[point_names[i] for i in snap[&#x27;right&#x27;]]}  at height {snap[&#x27;dist&#x27;]:.2f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>handshake 1: joined [&#x27;P2&#x27;] + [&#x27;P3&#x27;]  at height 5.83
+handshake 2: joined [&#x27;P7&#x27;] + [&#x27;P8&#x27;]  at height 11.18
+handshake 3: joined [&#x27;P4&#x27;] + [&#x27;P2&#x27;, &#x27;P3&#x27;]  at height 13.88
+handshake 4: joined [&#x27;P1&#x27;] + [&#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 17.98
+handshake 5: joined [&#x27;P6&#x27;] + [&#x27;P9&#x27;]  at height 21.21
+handshake 6: joined [&#x27;P7&#x27;, &#x27;P8&#x27;] + [&#x27;P6&#x27;, &#x27;P9&#x27;]  at height 28.85
+handshake 7: joined [&#x27;P5&#x27;] + [&#x27;P1&#x27;, &#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 32.80
+handshake 8: joined [&#x27;P7&#x27;, &#x27;P8&#x27;, &#x27;P6&#x27;, &#x27;P9&#x27;] + [&#x27;P5&#x27;, &#x27;P1&#x27;, &#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 166.17</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 17</span></div><pre class="py">from matplotlib.patches import Ellipse
+
+rng = np.random.default_rng(7)
+blob_left = rng.normal([3.0, 5.0], [0.85, 0.9], size=(6, 2))
+blob_right = rng.normal([10.5, 5.2], [0.85, 0.9], size=(6, 2))
+
+cross = np.linalg.norm(blob_left[:, None, :] - blob_right[None, :, :], axis=2)
+near_i, near_j = np.unravel_index(cross.argmin(), cross.shape)
+far_i, far_j = np.unravel_index(cross.argmax(), cross.shape)
+
+def draw_blobs(ax):
+    for blob, colour in [(blob_left, &quot;#4C78A8&quot;), (blob_right, &quot;#F58518&quot;)]:
+        centre, spread = blob.mean(axis=0), blob.std(axis=0)
+        ax.add_patch(Ellipse(centre, spread[0] * 5.2, spread[1] * 5.2, facecolor=colour,
+                             alpha=.13, edgecolor=colour, linewidth=2))
+        ax.scatter(blob[:, 0], blob[:, 1], s=70, color=colour,
+                   edgecolor=&quot;white&quot;, linewidth=1.1, zorder=4)
+    ax.set_xlim(0, 14); ax.set_ylim(1.5, 9)
+    ax.set_xticks([]); ax.set_yticks([])
+
+note = dict(fontsize=10, ha=&quot;center&quot;,
+            bbox=dict(boxstyle=&quot;round,pad=0.35&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;#B8C0CC&quot;))
+
+fig, axes = plt.subplots(2, 2, figsize=(13.5, 8))
+ax1, ax2, ax3, ax4 = axes.ravel()
+
+# --- Single: the two nearest members decide ---
+draw_blobs(ax1)
+ax1.plot([blob_left[near_i, 0], blob_right[near_j, 0]],
+         [blob_left[near_i, 1], blob_right[near_j, 1]], color=&quot;#E45756&quot;, linewidth=3, zorder=5)
+ax1.scatter([blob_left[near_i, 0], blob_right[near_j, 0]],
+            [blob_left[near_i, 1], blob_right[near_j, 1]],
+            s=190, facecolor=&quot;none&quot;, edgecolor=&quot;#E45756&quot;, linewidth=2.4, zorder=6)
+ax1.text(7, 2.4, f&quot;the NEAREST pair decides  -&gt;  {cross.min():.2f}&quot;, color=&quot;#B03A39&quot;, **note)
+ax1.set_title(&quot;Single linkage - our two closest members&quot;, fontsize=12)
+
+# --- Complete: the two farthest members decide ---
+draw_blobs(ax2)
+ax2.plot([blob_left[far_i, 0], blob_right[far_j, 0]],
+         [blob_left[far_i, 1], blob_right[far_j, 1]], color=&quot;#B279A2&quot;, linewidth=3, zorder=5)
+ax2.scatter([blob_left[far_i, 0], blob_right[far_j, 0]],
+            [blob_left[far_i, 1], blob_right[far_j, 1]],
+            s=190, facecolor=&quot;none&quot;, edgecolor=&quot;#B279A2&quot;, linewidth=2.4, zorder=6)
+ax2.text(7, 2.4, f&quot;the FARTHEST pair decides  -&gt;  {cross.max():.2f}&quot;, color=&quot;#7B4B70&quot;, **note)
+ax2.set_title(&quot;Complete linkage - our two most distant members&quot;, fontsize=12)
+
+# --- Average: every pair votes ---
+draw_blobs(ax3)
+for a in blob_left:
+    for b in blob_right:
+        ax3.plot([a[0], b[0]], [a[1], b[1]], color=&quot;#54A24B&quot;, linewidth=.6, alpha=.45, zorder=3)
+ax3.text(7, 2.4, f&quot;all {cross.size} pairs, then take the mean  -&gt;  {cross.mean():.2f}&quot;,
+         color=&quot;#3B7A34&quot;, **note)
+ax3.set_title(&quot;Average linkage - the average of every pair&quot;, fontsize=12)
+
+# --- Centroid: only the two centres matter ---
+draw_blobs(ax4)
+c_left, c_right = blob_left.mean(axis=0), blob_right.mean(axis=0)
+ax4.plot([c_left[0], c_right[0]], [c_left[1], c_right[1]],
+         color=&quot;#3B4A5F&quot;, linewidth=3, zorder=5)
+ax4.scatter([c_left[0], c_right[0]], [c_left[1], c_right[1]], marker=&quot;X&quot;, s=260,
+            color=&quot;#3B4A5F&quot;, edgecolor=&quot;white&quot;, linewidth=1.6, zorder=6)
+ax4.annotate(&quot;centre of the\nleft group&quot;, xy=tuple(c_left), xytext=(-6, -52),
+             textcoords=&quot;offset points&quot;, fontsize=9.5, ha=&quot;center&quot;,
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.4))
+ax4.annotate(&quot;centre of the\nright group&quot;, xy=tuple(c_right), xytext=(6, 40),
+             textcoords=&quot;offset points&quot;, fontsize=9.5, ha=&quot;center&quot;,
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.4))
+ax4.text(7, 2.4, f&quot;centre to centre  -&gt;  {np.linalg.norm(c_left - c_right):.2f}&quot;,
+         color=&quot;#3B4A5F&quot;, **note)
+ax4.set_title(&quot;Centroid linkage - middle of us to middle of you&quot;, fontsize=12)
+
+fig.suptitle(&quot;Same two groups, four different answers to: how far apart are you?&quot;, fontsize=14)
+fig.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 19</span></div><pre class="py"># The linkage matrix stores the complete merge history.
+linkage_matrix = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
+cut_height = 80
+
+fig, ax = plt.subplots(figsize=(11, 6))
+dendrogram(
+    linkage_matrix,
+    labels=point_names,
+    color_threshold=cut_height,
+    above_threshold_color=&quot;#9AA0A6&quot;,
+    leaf_font_size=11,
+    ax=ax
+)
+ax.axhline(
+    cut_height, color=&quot;#E45756&quot;, linestyle=&quot;--&quot;, linewidth=2,
+    label=f&quot;Cut at height {cut_height}&quot;
+)
+ax.set(
+    title=&quot;Ward dendrogram: the full joining story&quot;,
+    xlabel=&quot;Original data points&quot;,
+    ylabel=&quot;Merge distance (dissimilarity)&quot;
+)
+ax.legend(loc=&quot;upper left&quot;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 21</span></div><pre class="py">Z = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
+
+fig, ax = plt.subplots(figsize=(13, 7.5))
+tree = dendrogram(Z, labels=point_names, ax=ax, color_threshold=0,
+                  above_threshold_color=&quot;#4C78A8&quot;, leaf_font_size=12)
+for coll in ax.collections:
+    coll.set_linewidth(2.4)
+
+bars = sorted(zip(tree[&quot;dcoord&quot;], tree[&quot;icoord&quot;]), key=lambda t: max(t[0]))
+def bar_top(bar):
+    dcoord, icoord = bar
+    return float(np.mean(icoord[1:3])), float(max(dcoord))
+
+lowest_x, lowest_y = bar_top(bars[0])
+second_x, second_y = bar_top(bars[-2])
+top_x, top_y = bar_top(bars[-1])
+
+pin = dict(fontsize=10.5, arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.8, color=&quot;#3B4A5F&quot;),
+           bbox=dict(boxstyle=&quot;round,pad=0.45&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;#8995A7&quot;))
+
+ax.annotate(&quot;1. One leaf = one original point.\n     Everybody starts alone down here.&quot;,
+            xy=(tree[&quot;icoord&quot;][0][0], 0), xytext=(-24, 66), textcoords=&quot;offset points&quot;, **pin)
+ax.annotate(f&quot;2. A flat bar = one handshake.\n     P2 and P3 joined first, at height {lowest_y:.1f}.&quot;,
+            xy=(lowest_x, lowest_y), xytext=(-6, 78), textcoords=&quot;offset points&quot;, **pin)
+ax.annotate(&quot;3. A tall vertical line means\n     &#x27;still waiting, nobody near me yet&#x27;.&quot;,
+            xy=(tree[&quot;icoord&quot;][-1][0], top_y * 0.45), xytext=(30, 30),
+            textcoords=&quot;offset points&quot;, **pin)
+ax.annotate(f&quot;4. The last handshake, way up at {top_y:.0f}.\n     The two sides were very different.&quot;,
+            xy=(top_x, top_y), xytext=(-330, -34), textcoords=&quot;offset points&quot;, **pin)
+
+ax.annotate(&quot;&quot;, xy=(top_x + 20, top_y), xytext=(top_x + 20, second_y),
+            arrowprops=dict(arrowstyle=&quot;&lt;-&gt;&quot;, linewidth=2.4, color=&quot;#E45756&quot;))
+ax.text(top_x + 26, (top_y + second_y) / 2,
+        &quot;5. A LONG empty gap.\n     Nothing merged for a long time.\n&quot;
+        &quot;     This is the natural place to cut.&quot;,
+        fontsize=10.5, color=&quot;#B03A39&quot;, va=&quot;center&quot;,
+        bbox=dict(boxstyle=&quot;round,pad=0.45&quot;, facecolor=&quot;#FFF3F3&quot;, edgecolor=&quot;#E45756&quot;))
+
+ax.annotate(&quot;Height axis = how far apart two groups were\nat the moment they joined.\n&quot;
+            &quot;Low = very similar.   High = very different.&quot;,
+            xy=(0.012, 0.62), xycoords=&quot;axes fraction&quot;, fontsize=10.5, color=&quot;#2F5D9E&quot;,
+            rotation=0, bbox=dict(boxstyle=&quot;round,pad=0.45&quot;, facecolor=&quot;#EAF2FF&quot;,
+                                  edgecolor=&quot;#4C78A8&quot;))
+
+ax.set(title=&quot;How to read a dendrogram, part by part&quot;,
+       xlabel=&quot;The 9 original points&quot;, ylabel=&quot;Height (Ward merge cost)&quot;)
+ax.set_xlim(-5, 105)
+ax.set_ylim(0, top_y * 1.12)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 24</span></div><pre class="py">from scipy.cluster.hierarchy import fcluster
+
+Z = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
+cut_height = 90                      # anywhere inside the long empty gap works
+
+fig, (ax_tree, ax_map) = plt.subplots(1, 2, figsize=(15, 6.5))
+
+# ---------- LEFT: cut the diary ----------
+tree = dendrogram(Z, labels=point_names, ax=ax_tree, color_threshold=cut_height,
+                  above_threshold_color=&quot;#8995A7&quot;, leaf_font_size=11)
+for coll in ax_tree.collections:
+    coll.set_linewidth(2.4)
+ax_tree.axhline(cut_height, color=&quot;#E45756&quot;, linestyle=&quot;--&quot;, linewidth=2.6)
+
+crossings = []                       # where the scissors actually cut a branch
+for xs, ys in zip(tree[&quot;icoord&quot;], tree[&quot;dcoord&quot;]):
+    for x, low, high in [(xs[0], ys[0], ys[1]), (xs[3], ys[3], ys[2])]:
+        if low &lt; cut_height &lt; high:
+            crossings.append(x)
+for x in crossings:
+    ax_tree.scatter(x, cut_height, s=200, color=&quot;#E45756&quot;, zorder=8,
+                    edgecolor=&quot;white&quot;, linewidth=2)
+
+ax_tree.annotate(f&quot;Cut here, at height {cut_height}&quot;,
+                 xy=(3, cut_height), xytext=(6, 16), textcoords=&quot;offset points&quot;,
+                 color=&quot;#B03A39&quot;, fontsize=11, fontweight=&quot;bold&quot;)
+for n, x in enumerate(sorted(crossings), start=1):
+    ax_tree.annotate(f&quot;cut {n}&quot;, xy=(x, cut_height), xytext=(-14, -44),
+                     textcoords=&quot;offset points&quot;, fontsize=10.5, color=&quot;#B03A39&quot;,
+                     arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.6, color=&quot;#E45756&quot;),
+                     bbox=dict(boxstyle=&quot;round,pad=0.3&quot;, facecolor=&quot;white&quot;, edgecolor=&quot;#E45756&quot;))
+ax_tree.set(title=f&quot;Cut the tree -&gt; the scissors hit {len(crossings)} branches&quot;,
+            xlabel=&quot;The 9 original points&quot;, ylabel=&quot;Height (Ward merge cost)&quot;)
+ax_tree.set_ylim(0, max(max(d) for d in tree[&quot;dcoord&quot;]) * 1.1)
+
+# ---------- RIGHT: the groups that fall out ----------
+labels = fcluster(Z, t=cut_height, criterion=&quot;distance&quot;)
+
+# Borrow the exact branch colour the dendrogram used, so both panels agree.
+leaf_colour = dict(zip(tree[&quot;ivl&quot;], tree[&quot;leaves_color_list&quot;]))
+colours = {label: leaf_colour[name]
+           for name, label in zip(point_names, labels)}
+
+for label in np.unique(labels):
+    block = points[labels == label]
+    ax_map.scatter(block[:, 0], block[:, 1], s=170, color=colours[label],
+                   edgecolor=&quot;white&quot;, linewidth=1.6, zorder=4,
+                   label=f&quot;Group {label}  ({(labels == label).sum()} points)&quot;)
+    centre = block.mean(axis=0)
+    ax_map.annotate(f&quot;Group {label} = &quot; + &quot;, &quot;.join(np.array(point_names)[labels == label]),
+                    xy=tuple(centre), xytext=(0, 62 if label == 1 else -78),
+                    textcoords=&quot;offset points&quot;, ha=&quot;center&quot;, fontsize=10.5,
+                    color=colours[label],
+                    arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, linewidth=1.6, color=colours[label]),
+                    bbox=dict(boxstyle=&quot;round,pad=0.4&quot;, facecolor=&quot;white&quot;,
+                              edgecolor=colours[label]))
+
+for name, (x, y) in zip(point_names, points):
+    ax_map.annotate(name, (x, y), xytext=(8, 7), textcoords=&quot;offset points&quot;, fontsize=9.5)
+
+ax_map.set(title=f&quot;{len(crossings)} branches cut  -&gt;  {len(crossings)} groups on the map&quot;,
+           xlabel=&quot;Feature 1&quot;, ylabel=&quot;Feature 2&quot;)
+ax_map.set_xlim(-5, 105); ax_map.set_ylim(-15, 105)
+ax_map.legend(loc=&quot;lower right&quot;)
+
+fig.tight_layout()
+plt.show()
+
+print(f&quot;cut height {cut_height}  -&gt;  {len(np.unique(labels))} clusters&quot;)
+for label in np.unique(labels):
+    print(f&quot;  group {label}: {&#x27;, &#x27;.join(np.array(point_names)[labels == label])}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>cut height 90  -&gt;  2 clusters
+  group 1: P6, P7, P8, P9
+  group 2: P1, P2, P3, P4, P5</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 26</span></div><pre class="py">model = AgglomerativeClustering(n_clusters=2, linkage=&quot;ward&quot;)
+cluster_ids = model.fit_predict(points)
+
+colors = [&quot;#4C78A8&quot;, &quot;#F58518&quot;]
+fig, ax = plt.subplots(figsize=(10, 6))
+
+for cluster_id in np.unique(cluster_ids):
+    mask = cluster_ids == cluster_id
+    cluster_points = points[mask]
+    center = cluster_points.mean(axis=0)
+
+    ax.scatter(
+        cluster_points[:, 0], cluster_points[:, 1],
+        s=150, color=colors[cluster_id], edgecolor=&quot;white&quot;, linewidth=1.5,
+        label=f&quot;Cluster {cluster_id + 1}&quot;
+    )
+    ax.scatter(
+        center[0], center[1], marker=&quot;X&quot;, s=260,
+        color=colors[cluster_id], edgecolor=&quot;black&quot;, linewidth=1.2
+    )
+
+for name, (x, y) in zip(point_names, points):
+    ax.annotate(name, (x, y), xytext=(7, 7), textcoords=&quot;offset points&quot;)
+
+ax.set(
+    title=&quot;Final result: two clearly separated clusters&quot;,
+    xlabel=&quot;Feature 1&quot;, ylabel=&quot;Feature 2&quot;
+)
+ax.legend(title=&quot;Model assignment&quot;)
+plt.show()
+
+for cluster_id in np.unique(cluster_ids):
+    members = [name for name, label in zip(point_names, cluster_ids) if label == cluster_id]
+    print(f&quot;Cluster {cluster_id + 1}: {&#x27;, &#x27;.join(members)}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Cluster 1: P1, P2, P3, P4, P5
+Cluster 2: P6, P7, P8, P9</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 29</span></div><pre class="py">methods = [&quot;single&quot;, &quot;complete&quot;, &quot;average&quot;, &quot;ward&quot;]
+fig, axes = plt.subplots(2, 2, figsize=(14, 9))
+
+for ax, method in zip(axes.ravel(), methods):
+    method_matrix = linkage(points, method=method, metric=&quot;euclidean&quot;)
+    dendrogram(
+        method_matrix, labels=point_names, leaf_font_size=9,
+        above_threshold_color=&quot;#6B7280&quot;, ax=ax
+    )
+    ax.set_title(f&quot;{method.title()} linkage&quot;)
+    ax.set_xlabel(&quot;Points&quot;)
+    ax.set_ylabel(&quot;Merge distance&quot;)
+
+fig.suptitle(&quot;One dataset, four ways to define distance between groups&quot;, fontsize=15, y=1.02)
+fig.tight_layout()
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

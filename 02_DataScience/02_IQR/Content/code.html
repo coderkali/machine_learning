@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IQR — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/04_IQR.ipynb">04_IQR.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 1</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/titanic_sample_1000.csv&quot;)
+dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   PassengerId  Survived  Pclass     Sex   Age  SibSp  Parch   Fare Embarked
+0            1         1       2    male  21.0      0      0  40.82        S
+1            2         0       3    male  17.0      1      0  10.52        S
+2            3         0       3  female  23.0      1      0  12.33        S</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 2</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>PassengerId      0
+Survived         0
+Pclass           0
+Sex              0
+Age            190
+SibSp            0
+Parch            0
+Fare             0
+Embarked         3
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 3</span></div><pre class="py">dataset[&quot;Age&quot;] = dataset[&quot;Age&quot;].fillna(dataset[&quot;Age&quot;].mean())</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 4</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>PassengerId    0
+Survived       0
+Pclass         0
+Sex            0
+Age            0
+SibSp          0
+Parch          0
+Fare           0
+Embarked       3
+dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 5</span></div><pre class="py">np.percentile(dataset[&quot;Age&quot;],25), np.percentile(dataset[&quot;Age&quot;],75)</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(22.75), np.float64(35.0))</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 6</span></div><pre class="py">dataset[&quot;Age&quot;].min() , dataset[&quot;Age&quot;].max()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(1.0), np.float64(66.0))</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 7</span></div><pre class="py">np.percentile(dataset[&quot;Age&quot;],50) , dataset[&quot;Age&quot;].median()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(29.18641975308642), np.float64(29.18641975308642))</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 9</span></div><pre class="py">dataset.describe()</pre></div><div class="out"><div class="h">Output</div><pre>       PassengerId     Survived      Pclass         Age        SibSp  \
+count  1000.000000  1000.000000  1000.00000  1000.00000  1000.000000   
+mean    500.500000     0.302000     2.28400    29.18642     0.438000   
+std     288.819436     0.459355     0.84502    10.54239     0.805484   
+min       1.000000     0.000000     1.00000     1.00000     0.000000   
+25%     250.750000     0.000000     1.00000    22.75000     0.000000   
+50%     500.500000     0.000000     3.00000    29.18642     0.000000   
+75%     750.250000     1.000000     3.00000    35.00000     1.000000   
+max    1000.000000     1.000000     3.00000    66.00000     4.000000   
+
+            Parch         Fare  
+count  1000.00000  1000.000000  
+mean      0.36000    39.147900  
+std       0.73276    49.681657  
+min       0.00000     4.530000  
+25%       0.00000    10.397500  
+50%       0.00000    17.385000  
+75%       0.00000    47.207500  
+max       3.00000   512.330000</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 10</span></div><pre class="py">Q1 = dataset[&quot;Age&quot;].quantile(0.25)
+Q3 = dataset[&quot;Age&quot;].quantile(0.75)
+IQR = Q3 - Q1
+median = dataset[&quot;Age&quot;].median()
+lower_whisker = dataset[&quot;Age&quot;][dataset[&quot;Age&quot;] &gt;= Q1 - 1.5 * IQR].min()
+upper_whisker = dataset[&quot;Age&quot;][dataset[&quot;Age&quot;] &lt;= Q3 + 1.5 * IQR].max()
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.boxplot(x=&quot;Age&quot;, data=dataset, color=&quot;skyblue&quot;, ax=ax)
+
+stats = {
+    &quot;Lower\nWhisker&quot;: lower_whisker,
+    &quot;Q1&quot;: Q1,
+    &quot;Median&quot;: median,
+    &quot;Q3&quot;: Q3,
+    &quot;Upper\nWhisker&quot;: upper_whisker,
+}
+
+ax.set_ylim(-1.3, 0.6)
+for label, value in stats.items():
+    ax.axvline(value, color=&quot;gray&quot;, linestyle=&quot;--&quot;, linewidth=0.8, alpha=0.5)
+    ax.text(value, -0.55, f&quot;{label}\n{value:.1f}&quot;, ha=&quot;center&quot;, va=&quot;top&quot;, fontsize=8.5)
+
+ax.set_title(&quot;Age Distribution — Boxplot with IQR Statistics&quot;, fontsize=13)
+ax.set_xlabel(&quot;Age&quot;)
+ax.grid(axis=&quot;x&quot;, linestyle=&quot;:&quot;, alpha=0.4)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 11</span></div><pre class="py">import matplotlib.ticker as mticker
+
+Q1 = dataset[&quot;Fare&quot;].quantile(0.25)
+Q3 = dataset[&quot;Fare&quot;].quantile(0.75)
+IQR = Q3 - Q1
+median = dataset[&quot;Fare&quot;].median()
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+lower_whisker = dataset[&quot;Fare&quot;][dataset[&quot;Fare&quot;] &gt;= lower_bound].min()
+upper_whisker = dataset[&quot;Fare&quot;][dataset[&quot;Fare&quot;] &lt;= upper_bound].max()
+is_outlier = (dataset[&quot;Fare&quot;] &lt; lower_bound) | (dataset[&quot;Fare&quot;] &gt; upper_bound)
+
+rng = np.random.default_rng(42)
+y_jitter = rng.normal(0, 0.06, size=len(dataset))
+
+fig, ax = plt.subplots(figsize=(11, 5))
+
+# Shade the IQR band
+ax.axvspan(Q1, Q3, color=&quot;seagreen&quot;, alpha=0.15, zorder=0)
+
+# Jittered strip of every fare, colored by outlier status
+ax.scatter(dataset[&quot;Fare&quot;][~is_outlier], y_jitter[~is_outlier], s=14, alpha=0.4,
+           color=&quot;steelblue&quot;, label=f&quot;Normal ({(~is_outlier).sum()})&quot;, zorder=1)
+ax.scatter(dataset[&quot;Fare&quot;][is_outlier], y_jitter[is_outlier], s=28, alpha=0.75,
+           color=&quot;crimson&quot;, edgecolor=&quot;darkred&quot;, linewidth=0.3,
+           label=f&quot;Outlier ({is_outlier.sum()})&quot;, zorder=2)
+
+# Boxplot drawn on top, narrow and white so the points underneath still read
+sns.boxplot(x=dataset[&quot;Fare&quot;], ax=ax, width=0.22, color=&quot;white&quot;, linewidth=1.4,
+            fliersize=0, zorder=3)
+
+stats = {
+    &quot;Lower\nWhisker&quot;: lower_whisker,
+    &quot;Q1&quot;: Q1,
+    &quot;Median&quot;: median,
+    &quot;Q3&quot;: Q3,
+    &quot;Upper\nWhisker&quot;: upper_whisker,
+}
+for label, value in stats.items():
+    ax.axvline(value, color=&quot;gray&quot;, linestyle=&quot;--&quot;, linewidth=0.8, alpha=0.5, zorder=0)
+    ax.text(value, 0.42, f&quot;{label}\n{value:.1f}&quot;, ha=&quot;center&quot;, va=&quot;bottom&quot;, fontsize=8.5)
+
+ax.set_xscale(&quot;log&quot;)
+ax.xaxis.set_major_formatter(mticker.ScalarFormatter())
+ax.xaxis.set_minor_formatter(mticker.NullFormatter())
+
+ax.set_ylim(-0.5, 0.75)
+ax.set_yticks([])
+ax.set_xlabel(&quot;Fare (log scale)&quot;)
+ax.set_title(f&quot;Fare Distribution — {is_outlier.sum()} Outliers Flagged by IQR Rule&quot;, fontsize=13)
+ax.legend(loc=&quot;upper left&quot;, fontsize=8.5, framealpha=0.9)
+ax.grid(axis=&quot;x&quot;, which=&quot;major&quot;, linestyle=&quot;:&quot;, alpha=0.3)
+plt.tight_layout()
+plt.show()</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

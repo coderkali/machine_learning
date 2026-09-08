@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Datasets — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/02_make_*_dataset.ipynb">02_make_*_dataset.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import (make_regression, make_classification,
+                              make_blobs, make_circles, make_moons)
+
+# One colour per class label, reused by every chart in this notebook.
+CLASS_COLOURS = [&quot;#2563eb&quot;, &quot;#f59e0b&quot;, &quot;#16a34a&quot;, &quot;#db2777&quot;]
+
+
+def scatter_classes(ax, X, y, cols=(0, 1), title=&quot;&quot;, size=18):
+    &quot;&quot;&quot;Scatter two columns of X, coloured by the label in y.&quot;&quot;&quot;
+    for label in np.unique(y):
+        points = X[y == label]
+        ax.scatter(points[:, cols[0]], points[:, cols[1]], s=size, alpha=0.85,
+                   color=CLASS_COLOURS[label % len(CLASS_COLOURS)],
+                   edgecolor=&quot;white&quot;, linewidth=0.4, label=f&quot;class {label}&quot;)
+    ax.set_title(title, fontsize=10)
+
+
+# The whole family, side by side.
+fig, axes = plt.subplots(1, 5, figsize=(16, 3.2))
+
+gx, gy = make_regression(n_samples=250, n_features=1, noise=8, random_state=0)
+axes[0].scatter(gx, gy, s=10, color=&quot;#2563eb&quot;, alpha=0.7)
+axes[0].set_title(&quot;make_regression\ny = a number&quot;, fontsize=10)
+
+cx, cy = make_classification(n_samples=250, n_features=2, n_informative=2,
+                             n_redundant=0, n_clusters_per_class=1, random_state=4)
+scatter_classes(axes[1], cx, cy, title=&quot;make_classification\ny = a label&quot;)
+
+bx, by = make_blobs(n_samples=250, centers=3, n_features=2, random_state=0)
+scatter_classes(axes[2], bx, by, title=&quot;make_blobs\ny = a cluster id&quot;)
+
+rx, ry = make_circles(n_samples=250, noise=0.03, factor=0.4, random_state=1)
+scatter_classes(axes[3], rx, ry, title=&quot;make_circles\nno straight line works&quot;)
+
+mx, my = make_moons(n_samples=250, noise=0.08, random_state=10)
+scatter_classes(axes[4], mx, my, title=&quot;make_moons\nno straight line works&quot;)
+
+for ax in axes:
+    ax.set_xticks([]); ax.set_yticks([])
+
+fig.suptitle(&quot;The five generators in this notebook&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
+from sklearn.datasets import make_regression</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">x,y = make_regression(n_features=1, noise=5, n_samples=10000,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">x</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 0.58262411],
+       [-1.31093021],
+       [-0.76251627],
+       ...,
+       [-0.22425893],
+       [ 0.17581895],
+       [-0.93942432]], shape=(10000, 1))</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 7</span></div><pre class="py">y</pre></div><div class="out"><div class="h">Output</div><pre>array([  7.01315442, -17.41605545,   1.1459828 , ..., -14.37795447,
+        -4.81283115, -12.89225575], shape=(10000,))</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 8</span></div><pre class="py">print(&quot;x shape:&quot;, x.shape, &quot;-&gt; 10000 rows, 1 column  (2-D: a table)&quot;)
+print(&quot;y shape:&quot;, y.shape, &quot;     -&gt; 10000 answers     (1-D: a list)&quot;)
+print(&quot;dtypes  :&quot;, x.dtype, &quot;/&quot;, y.dtype)
+print()
+print(&quot;first 3 rows of x:&quot;, x[:3].ravel().round(3))
+print(&quot;first 3 rows of y:&quot;, y[:3].round(3))
+print()
+print(&quot;x[0]    -&gt;&quot;, x[0].round(3), &quot;  one ROW (still an array, because a row can have many columns)&quot;)
+print(&quot;x[:, 0] -&gt;&quot;, x[:5, 0].round(3), &quot;...  one COLUMN, first 5 values&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>x shape: (10000, 1) -&gt; 10000 rows, 1 column  (2-D: a table)
+y shape: (10000,)      -&gt; 10000 answers     (1-D: a list)
+dtypes  : float64 / float64
+
+first 3 rows of x: [ 0.583 -1.311 -0.763]
+first 3 rows of y: [  7.013 -17.416   1.146]
+
+x[0]    -&gt; [0.583]   one ROW (still an array, because a row can have many columns)
+x[:, 0] -&gt; [ 0.583 -1.311 -0.763  0.177 -1.307] ...  one COLUMN, first 5 values</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 12</span></div><pre class="py">plt.scatter(x,y)
+plt.xlabel(&#x27;x&#x27;)
+plt.ylabel(&#x27;y&#x27;)
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">plt.figure(figsize=(6.5, 4))
+plt.scatter(x, y, s=6, alpha=0.15, color=&quot;#2563eb&quot;)
+plt.xlabel(&quot;x  (the single input column)&quot;)
+plt.ylabel(&quot;y  (the answer)&quot;)
+plt.title(&quot;Same 10,000 points, with small markers and transparency&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 16</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=True)
+
+for ax, level in zip(axes, [0, 5, 30]):
+    nx, ny = make_regression(n_samples=400, n_features=1, noise=level, random_state=0)
+    ax.scatter(nx, ny, s=12, alpha=0.6, color=&quot;#2563eb&quot;)
+    ax.set_title(f&quot;noise={level}&quot;, fontsize=11)
+    ax.set_xlabel(&quot;x&quot;)
+
+axes[0].set_ylabel(&quot;y&quot;)
+axes[0].text(0.05, 0.9, &quot;a perfect line:\nthe formula, exactly&quot;, transform=axes[0].transAxes,
+             fontsize=9, va=&quot;top&quot;, color=&quot;#15803d&quot;)
+axes[2].text(0.05, 0.9, &quot;same line underneath,\nburied in randomness&quot;, transform=axes[2].transAxes,
+             fontsize=9, va=&quot;top&quot;, color=&quot;#b45309&quot;)
+fig.suptitle(&quot;noise is the difficulty dial&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 18</span></div><pre class="py">cx, cy, true_slope = make_regression(n_samples=300, n_features=1, noise=5,
+                                     bias=50, coef=True, random_state=0)
+
+slope = float(np.ravel(true_slope)[0])
+print(f&quot;true slope (coef) : {slope:.4f}&quot;)
+print(f&quot;true intercept    : 50   (this is the `bias` argument)&quot;)
+print(f&quot;so the hidden formula is:  y = {slope:.2f} * x + 50 + noise(sd=5)&quot;)
+
+line_x = np.linspace(cx.min(), cx.max(), 2)
+plt.figure(figsize=(6.5, 4))
+plt.scatter(cx, cy, s=14, alpha=0.5, color=&quot;#2563eb&quot;, label=&quot;generated points&quot;)
+plt.plot(line_x, slope * line_x + 50, color=&quot;#dc2626&quot;, linewidth=2.5,
+         label=f&quot;the true line: y = {slope:.1f}x + 50&quot;)
+plt.xlabel(&quot;x&quot;); plt.ylabel(&quot;y&quot;)
+plt.title(&quot;The line a model would be trying to recover&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>true slope (coef) : 62.8898
+true intercept    : 50   (this is the `bias` argument)
+so the hidden formula is:  y = 62.89 * x + 50 + noise(sd=5)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 20</span></div><pre class="py">mx, my = make_regression(n_samples=300, n_features=3, n_informative=1,
+                         noise=5, random_state=0)
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=True)
+for j, ax in enumerate(axes):
+    correlation = np.corrcoef(mx[:, j], my)[0, 1]
+    ax.scatter(mx[:, j], my, s=12, alpha=0.6, color=&quot;#2563eb&quot;)
+    ax.set_title(f&quot;column {j}   (corr with y = {correlation:+.2f})&quot;, fontsize=10)
+    ax.set_xlabel(f&quot;x[:, {j}]&quot;)
+
+axes[0].set_ylabel(&quot;y&quot;)
+fig.suptitle(&quot;3 columns, 1 informative — the other two are decoration&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()
+
+print(&quot;Only one column has a strong correlation. That is the informative one.&quot;)
+print(&quot;The other two exist so that feature-selection code has something to throw away.&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Only one column has a strong correlation. That is the informative one.
+The other two exist so that feature-selection code has something to throw away.</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 22</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 24</span></div><pre class="py">x,y = make_classification(n_classes=2,n_features=5,n_samples=500)
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11aa08050&gt;</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 27</span></div><pre class="py">x</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 0.52964955, -1.52158144, -1.00449325, -1.04583869,  0.03813919],
+       [ 0.2552979 ,  3.12979344,  0.28657108, -0.25320077, -0.06708268],
+       [ 0.15671694, -0.27410954, -0.89920602, -1.15883029,  0.01145847],
+       ...,
+       [ 1.57971092, -0.56393124, -0.80536408, -0.97274023,  0.01690147],
+       [-0.60155913, -0.91530415,  0.66398355,  1.08438733,  0.01484177],
+       [ 1.59016142,  1.94048849, -0.28352238, -0.78010965, -0.03864574]],
+      shape=(500, 5))</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 28</span></div><pre class="py">y</pre></div><div class="out"><div class="h">Output</div><pre>array([0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1,
+       1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1,
+       0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1,
+       0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+       0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1,
+       1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0,
+       1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1,
+       1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0,
+       1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,
+       1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1,
+       0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0,
+       0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0,
+       1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1,
+       1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+       0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+       1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1,
+       0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1,
+       0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1,
+       0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1,
+       0, 1, </pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 29</span></div><pre class="py">print(&quot;y contains only:&quot;, np.unique(y), &quot;  counts:&quot;, np.bincount(y))
+print(&quot;x shape:&quot;, x.shape, &quot;  y shape:&quot;, y.shape)
+print()
+
+# Why random_state matters: two calls with no seed, then two with a seed.
+a, _ = make_classification(n_classes=2, n_features=5, n_samples=5)
+b, _ = make_classification(n_classes=2, n_features=5, n_samples=5)
+print(&quot;no seed  , run 1, first row:&quot;, a[0].round(2))
+print(&quot;no seed  , run 2, first row:&quot;, b[0].round(2), &quot; &lt;- different data&quot;)
+
+c, _ = make_classification(n_classes=2, n_features=5, n_samples=5, random_state=7)
+d, _ = make_classification(n_classes=2, n_features=5, n_samples=5, random_state=7)
+print(&quot;seed = 7 , run 1, first row:&quot;, c[0].round(2))
+print(&quot;seed = 7 , run 2, first row:&quot;, d[0].round(2), &quot; &lt;- identical, every time&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>y contains only: [0 1]   counts: [249 251]
+x shape: (500, 5)   y shape: (500,)
+
+no seed  , run 1, first row: [ 1.8  -0.61 -0.31 -2.84 -1.21]
+no seed  , run 2, first row: [-0.89 -0.09 -1.04 -1.27 -1.55]  &lt;- different data
+seed = 7 , run 1, first row: [-0.55  1.05 -0.82  0.02  1.07]
+seed = 7 , run 2, first row: [-0.55  1.05 -0.82  0.02  1.07]  &lt;- identical, every time</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 31</span></div><pre class="py">demo_x, demo_y = make_classification(n_samples=500, n_features=5, n_classes=2,
+                                     n_informative=2, n_redundant=2, n_repeated=0,
+                                     n_clusters_per_class=1,
+                                     shuffle=False, random_state=1)
+
+roles = [&quot;informative&quot;, &quot;informative&quot;, &quot;redundant&quot;, &quot;redundant&quot;, &quot;useless&quot;]
+
+# 5 columns, but how many independent directions are really in there?
+print(&quot;columns in the table            :&quot;, demo_x.shape[1])
+print(&quot;independent directions (rank)   :&quot;, np.linalg.matrix_rank(demo_x))
+print(&quot;-&gt; the 2 redundant columns are mixes of the informative ones. They add nothing.&quot;)
+print()
+for j, role in enumerate(roles):
+    gap = demo_x[demo_y == 1, j].mean() - demo_x[demo_y == 0, j].mean()
+    print(f&quot;column {j}  {role:&lt;12}  distance between class means = {gap:+.2f}&quot;)
+
+fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+for ax, other in zip(axes, [1, 2, 3, 4]):
+    scatter_classes(ax, demo_x, demo_y, cols=(0, other),
+                    title=f&quot;col 0 ({roles[0]})  vs  col {other} ({roles[other]})&quot;)
+    ax.set_xlabel(&quot;x[:, 0]&quot;); ax.set_ylabel(f&quot;x[:, {other}]&quot;)
+
+axes[0].legend(fontsize=8, loc=&quot;best&quot;)
+fig.suptitle(&quot;shuffle=False, so we know what each column is&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>columns in the table            : 5
+independent directions (rank)   : 3
+-&gt; the 2 redundant columns are mixes of the informative ones. They add nothing.
+
+column 0  informative   distance between class means = +0.04
+column 1  informative   distance between class means = -2.00
+column 2  redundant     distance between class means = +1.05
+column 3  redundant     distance between class means = -0.49
+column 4  useless       distance between class means = +0.09</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">settings = [
+    (&quot;class_sep=0.5\n(classes overlap)&quot;,      dict(class_sep=0.5)),
+    (&quot;class_sep=1.0\n(the default)&quot;,          dict(class_sep=1.0)),
+    (&quot;class_sep=3.0\n(easy, almost a gift)&quot;,  dict(class_sep=3.0)),
+    (&quot;flip_y=0.30\n(30% wrong labels)&quot;,       dict(flip_y=0.30)),
+    (&quot;weights=[0.9, 0.1]\n(imbalanced)&quot;,      dict(weights=[0.9, 0.1])),
+    (&quot;n_clusters_per_class=2\n(split classes)&quot;, dict(n_clusters_per_class=2)),
+]
+
+fig, axes = plt.subplots(2, 3, figsize=(13, 7))
+for ax, (title, extra) in zip(axes.ravel(), settings):
+    options = dict(n_samples=400, n_features=2, n_informative=2, n_redundant=0,
+                   n_clusters_per_class=1, random_state=3)
+    options.update(extra)
+    kx, ky = make_classification(**options)
+    scatter_classes(ax, kx, ky, title=title)
+    ax.set_xticks([]); ax.set_yticks([])
+    ax.text(0.03, 0.03, f&quot;class counts: {np.bincount(ky)}&quot;, transform=ax.transAxes,
+            fontsize=8, color=&quot;#6b7280&quot;)
+
+axes[0, 0].legend(fontsize=8, loc=&quot;upper right&quot;)
+fig.suptitle(&quot;One knob changed per panel&quot;, fontsize=13)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 36</span></div><pre class="py">from sklearn.datasets import make_blobs</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 38</span></div><pre class="py">x, y = make_blobs(n_samples=500, centers=3, n_features=2,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 39</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11db07250&gt;</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 41</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(13, 3.8), sharex=True, sharey=True)
+
+for ax, spread in zip(axes, [0.5, 1.5, 3.0]):
+    bx, by, centres = make_blobs(n_samples=400, centers=3, n_features=2,
+                                 cluster_std=spread, random_state=0,
+                                 return_centers=True)
+    scatter_classes(ax, bx, by, title=f&quot;cluster_std={spread}&quot;)
+    ax.scatter(centres[:, 0], centres[:, 1], marker=&quot;X&quot;, s=180, c=&quot;#111827&quot;,
+               edgecolor=&quot;white&quot;, linewidth=1.5, zorder=5)
+
+axes[0].text(0.03, 0.03, &quot;tight: any algorithm finds these&quot;, transform=axes[0].transAxes,
+             fontsize=8, color=&quot;#15803d&quot;)
+axes[2].text(0.03, 0.03, &quot;merged: &#x27;how many groups?&#x27; has no clean answer&quot;,
+             transform=axes[2].transAxes, fontsize=8, color=&quot;#b45309&quot;)
+fig.suptitle(&quot;cluster_std decides whether clustering is even possible  (X = true centre)&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 43</span></div><pre class="py">chosen_centres = np.array([[0.0, 0.0],
+                           [1.5, 1.5],     # deliberately close to the first
+                           [8.0, 1.0]])    # far away
+
+hx, hy = make_blobs(n_samples=[300, 300, 60],       # different size per blob
+                    centers=chosen_centres,
+                    cluster_std=[0.6, 0.6, 1.8],    # different spread per blob
+                    random_state=0)
+
+print(&quot;rows per blob:&quot;, np.bincount(hy))
+
+fig, ax = plt.subplots(figsize=(7, 4))
+scatter_classes(ax, hx, hy, title=&quot;Centres, sizes and spreads chosen by hand&quot;)
+ax.scatter(chosen_centres[:, 0], chosen_centres[:, 1], marker=&quot;X&quot;, s=200,
+           c=&quot;#111827&quot;, edgecolor=&quot;white&quot;, linewidth=1.5, zorder=5)
+ax.legend(fontsize=8)
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>rows per blob: [300 300  60]</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 45</span></div><pre class="py">from sklearn.datasets import make_circles
+x, y = make_circles(n_samples=500,random_state=1,noise=0.03)</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 46</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11de11310&gt;</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 48</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.8))
+
+variants = [
+    (&quot;factor=0.2, noise=0.03&quot;, dict(factor=0.2, noise=0.03)),
+    (&quot;factor=0.5, noise=0.03&quot;, dict(factor=0.5, noise=0.03)),
+    (&quot;factor=0.8, noise=0.03\n(your call: the default)&quot;, dict(factor=0.8, noise=0.03)),
+    (&quot;factor=0.8, noise=0.15&quot;, dict(factor=0.8, noise=0.15)),
+]
+
+for ax, (title, extra) in zip(axes, variants):
+    rx, ry = make_circles(n_samples=400, random_state=1, **extra)
+    scatter_classes(ax, rx, ry, title=title, size=12)
+    ax.set_xticks([]); ax.set_yticks([])
+    ax.set_aspect(&quot;equal&quot;)
+
+axes[0].legend(fontsize=8, loc=&quot;upper right&quot;)
+fig.suptitle(&quot;factor sets the gap between the rings; noise blurs them&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.datasets import make_moons
+x, y = make_moons(n_samples=500,random_state=10,noise=0.1)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 51</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11df74f50&gt;</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 53</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+
+for ax, level in zip(axes, [0.0, 0.1, 0.25, 0.45]):
+    sx, sy = make_moons(n_samples=400, noise=level, random_state=10)
+    scatter_classes(ax, sx, sy, title=f&quot;noise={level}&quot;, size=12)
+    ax.set_xticks([]); ax.set_yticks([])
+
+axes[0].text(0.03, 0.03, &quot;the pure shape&quot;, transform=axes[0].transAxes,
+             fontsize=8, color=&quot;#15803d&quot;)
+axes[3].text(0.03, 0.03, &quot;the shape is gone&quot;, transform=axes[3].transAxes,
+             fontsize=8, color=&quot;#b45309&quot;)
+axes[0].legend(fontsize=8, loc=&quot;upper right&quot;)
+fig.suptitle(&quot;make_moons: noise is the only difficulty dial&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 55</span></div><pre class="py">def best_straight_line_score(X, labels, angles=180, cuts=99):
+    &quot;&quot;&quot;Brute-force the best accuracy any straight boundary could reach.&quot;&quot;&quot;
+    best = 0.0
+    for theta in np.linspace(0, np.pi, angles, endpoint=False):
+        projected = X @ np.array([np.cos(theta), np.sin(theta)])
+        for cut in np.quantile(projected, np.linspace(0.01, 0.99, cuts)):
+            side = (projected &gt; cut).astype(int)
+            best = max(best, (side == labels).mean(), (1 - side == labels).mean())
+    return best
+
+
+tests = {
+    &quot;make_blobs (2 blobs)&quot;: make_blobs(n_samples=400, centers=2, n_features=2, random_state=0),
+    &quot;make_moons  (noise=0.1)&quot;: make_moons(n_samples=400, noise=0.1, random_state=10),
+    &quot;make_circles (factor=0.5)&quot;: make_circles(n_samples=400, noise=0.03, factor=0.5, random_state=1),
+}
+
+names, scores = [], []
+for name, (tx, ty) in tests.items():
+    score = best_straight_line_score(tx, ty)
+    names.append(name); scores.append(score)
+    print(f&quot;{name:&lt;26} best possible straight line: {score:.1%}&quot;)
+
+fig, ax = plt.subplots(figsize=(7.5, 3))
+bars = ax.barh(names, scores, color=[&quot;#16a34a&quot;, &quot;#f59e0b&quot;, &quot;#dc2626&quot;])
+ax.axvline(0.5, color=&quot;#6b7280&quot;, linestyle=&quot;--&quot;, linewidth=1)
+ax.text(0.505, 2.35, &quot;coin flip&quot;, fontsize=8, color=&quot;#6b7280&quot;)
+ax.set_xlim(0, 1); ax.set_xlabel(&quot;best accuracy a straight boundary can reach&quot;)
+for bar, score in zip(bars, scores):
+    ax.text(score - 0.03, bar.get_y() + bar.get_height() / 2, f&quot;{score:.0%}&quot;,
+            va=&quot;center&quot;, ha=&quot;right&quot;, color=&quot;white&quot;, fontsize=10)
+ax.invert_yaxis()
+ax.set_title(&quot;This is why make_circles and make_moons exist&quot;)
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>make_blobs (2 blobs)       best possible straight line: 98.0%
+make_moons  (noise=0.1)    best possible straight line: 89.0%
+make_circles (factor=0.5)  best possible straight line: 66.5%</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 58</span></div><pre class="py">from sklearn.datasets import make_classification
+x,y = make_classification(n_classes=2,n_features=5,n_samples=10,random_state=1)
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e163390&gt;</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 59</span></div><pre class="py">plt.scatter(x[:,0],x[:,2],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e1f51d0&gt;</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 60</span></div><pre class="py">plt.scatter(x[:,0],x[:,3],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e24afd0&gt;</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 61</span></div><pre class="py">plt.scatter(x[:,0],x[:,4],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e2ec690&gt;</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 63</span></div><pre class="py">def column_roles(**call):
+    # Work out what each column of a make_classification call really is.
+    # Trick: generate the same seed twice - once with shuffle=False, where the
+    # column order is documented, and once as called. Shuffling moves columns
+    # around but never changes the values inside one, so sorting each column
+    # and matching the two sets recovers the mapping exactly.
+    shuffled, _ = make_classification(**call)
+    ordered, _ = make_classification(**call, shuffle=False)
+    # documented order for 5 columns with the default 2 informative + 2 redundant:
+    known = [&quot;informative&quot;, &quot;informative&quot;, &quot;redundant&quot;, &quot;redundant&quot;, &quot;useless&quot;]
+    roles = {}
+    for j in range(shuffled.shape[1]):
+        for k in range(ordered.shape[1]):
+            if np.allclose(np.sort(shuffled[:, j]), np.sort(ordered[:, k])):
+                roles[j] = known[k]
+                break
+    return roles
+
+
+call = dict(n_classes=2, n_features=5, n_samples=10, random_state=1)
+learner_x, learner_y = make_classification(**call)      # exactly your cell
+column_role = column_roles(**call)
+
+for j in range(5):
+    print(f&quot;your x[:, {j}]  is  {column_role[j]}&quot;)
+
+print()
+print(&quot;so the four charts you drew were really:&quot;)
+for other in [1, 2, 3, 4]:
+    print(f&quot;  x[:, 0] vs x[:, {other}]   -&gt;   {column_role[0]}  vs  {column_role[other]}&quot;)
+
+fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+for ax, other in zip(axes, [1, 2, 3, 4]):
+    scatter_classes(ax, learner_x, learner_y, cols=(0, other), size=90,
+                    title=f&quot;x[:,0] vs x[:,{other}]\n{column_role[0]} vs {column_role[other]}&quot;)
+    ax.set_xlabel(&quot;x[:, 0]&quot;); ax.set_ylabel(f&quot;x[:, {other}]&quot;)
+
+axes[0].legend(fontsize=8)
+fig.suptitle(&quot;Your four charts, with each column&#x27;s real job printed on top&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>your x[:, 0]  is  useless
+your x[:, 1]  is  redundant
+your x[:, 2]  is  redundant
+your x[:, 3]  is  informative
+your x[:, 4]  is  informative
+
+so the four charts you drew were really:
+  x[:, 0] vs x[:, 1]   -&gt;   useless  vs  redundant
+  x[:, 0] vs x[:, 2]   -&gt;   useless  vs  redundant
+  x[:, 0] vs x[:, 3]   -&gt;   useless  vs  informative
+  x[:, 0] vs x[:, 4]   -&gt;   useless  vs  informative</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 65</span></div><pre class="py">big_call = dict(n_classes=2, n_features=5, n_samples=500, random_state=1)
+big_x, big_y = make_classification(**big_call)
+big_role = column_roles(**big_call)
+print(&quot;with 500 rows the roles land as:&quot;, big_role)
+
+useless_col      = next(j for j, r in big_role.items() if r == &quot;useless&quot;)
+informative_cols = [j for j, r in big_role.items() if r == &quot;informative&quot;]
+
+fig, axes = plt.subplots(1, 3, figsize=(14, 4))
+
+scatter_classes(axes[0], learner_x, learner_y, cols=(0, 3), size=90,
+                title=&quot;10 rows\nuseless column on x - looks split&quot;)
+axes[0].set_xlabel(&quot;the useless column&quot;)
+axes[0].set_ylabel(&quot;an informative column&quot;)
+
+scatter_classes(axes[1], big_x, big_y, cols=(useless_col, informative_cols[0]), size=12,
+                title=&quot;500 rows\nsame kind of pair - the split is gone&quot;)
+axes[1].set_xlabel(f&quot;the useless column, x[:, {useless_col}]&quot;)
+
+scatter_classes(axes[2], big_x, big_y, cols=tuple(informative_cols), size=12,
+                title=&quot;500 rows\nboth informative columns - the real structure&quot;)
+axes[2].set_xlabel(f&quot;x[:, {informative_cols[0]}]&quot;)
+axes[2].set_ylabel(f&quot;x[:, {informative_cols[1]}]&quot;)
+
+axes[0].legend(fontsize=8)
+fig.suptitle(&quot;Ten points can look like anything. Five hundred cannot.&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()
+
+# the same brute-force straight line as before, now as a number
+pair_useless = big_x[:, [useless_col, informative_cols[0]]]
+pair_real    = big_x[:, informative_cols]
+print(f&quot;useless + informative  -&gt;  best straight line: {best_straight_line_score(pair_useless, big_y):.1%}&quot;)
+print(f&quot;both informative       -&gt;  best straight line: {best_straight_line_score(pair_real, big_y):.1%}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>with 500 rows the roles land as: {0: &#x27;informative&#x27;, 1: &#x27;redundant&#x27;, 2: &#x27;redundant&#x27;, 3: &#x27;useless&#x27;, 4: &#x27;informative&#x27;}
+useless + informative  -&gt;  best straight line: 57.2%
+both informative       -&gt;  best straight line: 94.0%</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 67</span></div><pre class="py">plt.scatter(x[:,0],x[:,5],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[38], line 1
+----&gt; 1 plt.scatter(x[:,0],x[:,5],c=y)
+
+IndexError: index 5 is out of bounds for axis 1 with size 5</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 69</span></div><pre class="py">rows, columns = learner_x.shape
+print(f&quot;the array has {rows} rows and {columns} columns&quot;)
+print(f&quot;valid column indexes: 0 .. {columns - 1}&quot;)
+
+others = [j for j in range(columns) if j != 0]
+
+fig, axes = plt.subplots(1, len(others), figsize=(3.7 * len(others), 3.6))
+for ax, other in zip(axes, others):
+    scatter_classes(ax, learner_x, learner_y, cols=(0, other), size=90,
+                    title=f&quot;x[:, 0]  vs  x[:, {other}]&quot;)
+    ax.set_xlabel(&quot;x[:, 0]&quot;); ax.set_ylabel(f&quot;x[:, {other}]&quot;)
+
+axes[0].legend(fontsize=8)
+fig.suptitle(&quot;range(x.shape[1]) — same experiment, no IndexError possible&quot;, fontsize=12)
+plt.tight_layout()
+plt.show()
+
+# The safe way to ask for a column that may not exist:
+wanted = 5
+if wanted &lt; columns:
+    print(learner_x[:, wanted])
+else:
+    print(f&quot;column {wanted} does not exist — there are only {columns} columns (0..{columns - 1})&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>the array has 10 rows and 5 columns
+valid column indexes: 0 .. 4
+column 5 does not exist — there are only 5 columns (0..4)</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>
