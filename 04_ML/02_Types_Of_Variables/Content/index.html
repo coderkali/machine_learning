@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#machine-learning-03-types-of-variables">Machine Learning — 03. Types of Variables</a><a href="#the-big-picture">The Big Picture</a><a href="#numerical-variables-discrete-vs-continuous">Numerical Variables — Discrete vs. Continuous</a><a href="#categorical-variables-ordinal-vs-nominal">Categorical Variables — Ordinal vs. Nominal</a><a href="#date-amp-time-and-mixed-variables">Date &amp;amp; Time, and Mixed Variables</a><a href="#master-reference-table">Master Reference Table</a><a href="#where-this-fits">Where This Fits</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#machine-learning-03-types-of-variables">Machine Learning — 03. Types of Variables</a><a href="#the-big-picture">The Big Picture</a><a href="#numerical-variables-discrete-vs-continuous">Numerical Variables — Discrete vs. Continuous</a><a href="#categorical-variables-ordinal-vs-nominal">Categorical Variables — Ordinal vs. Nominal</a><a href="#date-amp-time-and-mixed-variables">Date &amp;amp; Time, and Mixed Variables</a><a href="#master-reference-table">Master Reference Table</a><a href="#where-this-fits">Where This Fits</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Types Of Variables</h1>
   <p class="lede">Numbers, labels and ranks — and why a model treats each one completely differently.</p>
-  <div class="tags"><span class="tag">1 note</span></div>
+  <div class="tags"><span class="tag">1 note</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Vikram loaded his first dataset</strong> and did what felt natural: he asked for the average of every column.</p><p>Age averaged to 34 — useful. Salary to ₹52,000 — useful. Pin code to 561042 — <em>meaningless</em>. And "City" simply crashed.</p><p><span class='beat'>The computer never objected.</span> It happily added pin codes together, because to it they were just numbers. The mistake was Vikram's: he treated a label as a quantity.</p><p>So before any model, every column gets a type: numerical, categorical, or ordinal. That one decision controls which maths is legal and which encoding you must apply later.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>A column's type decides what maths you are allowed to do with it. Averaging a pin code is meaningless.</p></div>
@@ -274,7 +274,11 @@ A: Yes — continuity is a property of what the variable <em>can</em> be (any va
 in a range, including decimals), not a property of the specific sample
 you happened to collect.</p>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Types_Of_Variables_Page_1of1.png" data-name="Types_Of_Variables_Page_1of1.png"><img src="../Handwritten_Notes/Types_Of_Variables_Page_1of1.png" alt="Types_Of_Variables_Page_1of1.png" loading="lazy"><span>Types Of Variables Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/03_Types_Of_Variables.MD">03_Types_Of_Variables.MD ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

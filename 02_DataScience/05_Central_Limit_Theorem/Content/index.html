@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Data science and statistics</p>
   <h1>Central Limit Theorem</h1>
   <p class="lede">Why the bell curve keeps appearing, even when the data is nothing like a bell.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ishaan rolled one die ten thousand times and plotted the results.</strong> Flat — every face equally likely. No bell curve anywhere.</p><p>Then he rolled <em>five</em> dice at a time and plotted the average of each throw.</p><p><span class='beat'>A bell curve appeared, out of flat data.</span></p><p>That is the Central Limit Theorem, and it is why so much of statistics works: you rarely need the population to be normal, only the averages you take from it — and those become normal on their own.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Averages of samples form a normal distribution, no matter what shape the original data had.</p></div>
@@ -72,7 +72,11 @@ for no_sample in range(50):
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">sns.kdeplot(x=&quot;Sample_Mean&quot;,data=sample_M)
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/07-central-limit-theorem-c10-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Central_Limit_Theorem_Page_1of1.png" data-name="Central_Limit_Theorem_Page_1of1.png"><img src="../Handwritten_Notes/Central_Limit_Theorem_Page_1of1.png" alt="Central_Limit_Theorem_Page_1of1.png" loading="lazy"><span>Central Limit Theorem Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/07_Central_Limit_Theorem.ipynb">07_Central_Limit_Theorem.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

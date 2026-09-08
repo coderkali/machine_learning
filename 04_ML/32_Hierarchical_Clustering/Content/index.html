@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#hierarchical-clustering-a-visual-beginner-friend">Hierarchical Clustering — A Visual, Beginner-Friendl</a><a href="#what-you-will-learn">What you will learn</a><a href="#the-story-nine-strangers-in-an-empty-town">The story: nine strangers in an empty town</a><a href="#s-1-first-look-at-the-data">1. First, look at the data</a><a href="#s-2-how-agglomerative-clustering-works">2. How agglomerative clustering works</a><a href="#s-3-how-do-we-measure-the-distance-between-groups">3. How do we measure the distance between groups?</a><a href="#s-4-build-and-read-the-dendrogram">4. Build and read the dendrogram</a><a href="#s-5-fit-the-model-and-display-the-final-clusters">5. Fit the model and display the final clusters</a><a href="#s-6-optional-visual-compare-linkage-methods">6. Optional visual: compare linkage methods</a><a href="#s-7-practical-notes-for-real-datasets">7. Practical notes for real datasets</a><a href="#recap">Recap</a><a href="#the-whole-story-in-six-lines">The whole story in six lines</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#hierarchical-clustering-a-visual-beginner-friend">Hierarchical Clustering — A Visual, Beginner-Friendl</a><a href="#what-you-will-learn">What you will learn</a><a href="#the-story-nine-strangers-in-an-empty-town">The story: nine strangers in an empty town</a><a href="#s-1-first-look-at-the-data">1. First, look at the data</a><a href="#s-2-how-agglomerative-clustering-works">2. How agglomerative clustering works</a><a href="#s-3-how-do-we-measure-the-distance-between-groups">3. How do we measure the distance between groups?</a><a href="#s-4-build-and-read-the-dendrogram">4. Build and read the dendrogram</a><a href="#s-5-fit-the-model-and-display-the-final-clusters">5. Fit the model and display the final clusters</a><a href="#s-6-optional-visual-compare-linkage-methods">6. Optional visual: compare linkage methods</a><a href="#s-7-practical-notes-for-real-datasets">7. Practical notes for real datasets</a><a href="#recap">Recap</a><a href="#the-whole-story-in-six-lines">The whole story in six lines</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Hierarchical Clustering</h1>
   <p class="lede">Nine strangers in an empty town, shaking hands nearest-first.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>K-Means made the shop pick k before it had looked at anything.</strong> Four groups? Six? It was a guess made too early.</p><p>Worse, K-Means only draws round blobs. Two long curved groups get sliced straight through the middle.</p><p><span class='beat'>The number of groups should come out of the data, not go into it.</span></p><p>Hierarchical clustering never asks for k. It merges the two nearest points, then the two nearest groups, and keeps going until everything is one. The dendrogram is the diary of those merges — cut it at any height to get any number of clusters.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Repeatedly merge the two closest groups; the dendrogram records the whole history.</p></div>
@@ -780,7 +780,11 @@ plt.show()</pre></div>
 <div class="note"><div class="h">Note</div><p>If you remember only one thing: <strong>hierarchical clustering does not choose the number of clusters for you. It writes the full history, and you decide where to cut it.</strong></p>
 </div>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Hierarchical_Clustering_Page_1of1.png" data-name="Hierarchical_Clustering_Page_1of1.png"><img src="../Handwritten_Notes/Hierarchical_Clustering_Page_1of1.png" alt="Hierarchical_Clustering_Page_1of1.png" loading="lazy"><span>Hierarchical Clustering Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/13_Hirerachical_Clustering.ipynb">13_Hirerachical_Clustering.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

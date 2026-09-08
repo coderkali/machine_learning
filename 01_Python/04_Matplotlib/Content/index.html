@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#matplotlib">Matplotlib</a><a href="#files">Files</a><a href="#covered-so-far">Covered so far</a><a href="#matplotlib-chart-fundamentals">Matplotlib — Chart Fundamentals</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#s-1-setup-the-import-cells">1. Setup — the import cells</a><a href="#s-2-line-plots-and-the-format-string-shortcut">2. Line plots and the format-string shortcut</a><a href="#s-3-styling-markers-and-lines-with-keywords">3. Styling markers and lines with keywords</a><a href="#s-4-titles-axis-labels-and-grid">4. Titles, axis labels, and grid</a><a href="#s-5-subplots-several-charts-on-one-figure">5. Subplots — several charts on one figure</a><a href="#s-6-scatter-plots">6. Scatter plots</a><a href="#s-7-bar-charts">7. Bar charts</a><a href="#s-8-histogram">8. Histogram</a><a href="#s-9-pie-charts">9. Pie charts</a><a href="#s-10-annotations">10. Annotations</a><a href="#s-11-filled-areas">11. Filled areas</a><a href="#s-12-saving-to-a-file">12. Saving to a file</a><a href="#quick-reference">Quick reference</a><a href="#issues-in-this-notebook">Issues in this notebook</a><a href="#summary">Summary</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#matplotlib">Matplotlib</a><a href="#files">Files</a><a href="#covered-so-far">Covered so far</a><a href="#matplotlib-chart-fundamentals">Matplotlib — Chart Fundamentals</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#s-1-setup-the-import-cells">1. Setup — the import cells</a><a href="#s-2-line-plots-and-the-format-string-shortcut">2. Line plots and the format-string shortcut</a><a href="#s-3-styling-markers-and-lines-with-keywords">3. Styling markers and lines with keywords</a><a href="#s-4-titles-axis-labels-and-grid">4. Titles, axis labels, and grid</a><a href="#s-5-subplots-several-charts-on-one-figure">5. Subplots — several charts on one figure</a><a href="#s-6-scatter-plots">6. Scatter plots</a><a href="#s-7-bar-charts">7. Bar charts</a><a href="#s-8-histogram">8. Histogram</a><a href="#s-9-pie-charts">9. Pie charts</a><a href="#s-10-annotations">10. Annotations</a><a href="#s-11-filled-areas">11. Filled areas</a><a href="#s-12-saving-to-a-file">12. Saving to a file</a><a href="#quick-reference">Quick reference</a><a href="#issues-in-this-notebook">Issues in this notebook</a><a href="#summary">Summary</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Python and the data toolkit</p>
   <h1>Matplotlib</h1>
   <p class="lede">The plotting library everything else is built on top of.</p>
-  <div class="tags"><span class="tag">4 notebooks · 1 note</span></div>
+  <div class="tags"><span class="tag">4 notebooks · 1 note</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Arjun printed a table of 200 monthly sales figures and stared at it.</strong></p><p>He could see the numbers but not the shape — was it growing, seasonal, flat with one bad month? The table would not say.</p><p><span class='beat'>Numbers are for computing. Pictures are for noticing.</span></p><p>One line plot answered it in a second: a steady rise with a dip every December. Matplotlib is the base layer — a little verbose, but it is what Seaborn and Pandas plotting are quietly calling underneath.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>A figure holds axes; you draw onto axes. Once that is clear, every chart type is the same pattern.</p></div>
@@ -1541,7 +1541,11 @@ fig.savefig(&#x27;pizza_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x
 
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/pizza-matplotlib-2-c13-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Matplotlib_Page_1of1.png" data-name="Matplotlib_Page_1of1.png"><img src="../Handwritten_Notes/Matplotlib_Page_1of1.png" alt="Matplotlib_Page_1of1.png" loading="lazy"><span>Matplotlib Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/matplotlib_example.ipynb">matplotlib_example.ipynb ↗</a><a class="btn" href="../Concept/pizza_matplotlib.ipynb">pizza_matplotlib.ipynb ↗</a><a class="btn" href="../Concept/pizza_matplotlib_2.ipynb">pizza_matplotlib_2.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#function-transformer">Function Transformer</a><a href="#example-1-remove-outliers-first-then-transform">Example 1 — Remove Outliers First, Then Transform</a><a href="#example-2-same-log-transform-without-removing-ou">Example 2 — Same Log Transform, Without Removing Out</a><a href="#example-3-what-happens-with-square-x-2">Example 3 — What Happens With Square (x**2)?</a><a href="#example-4-is-x-x-different-from-x-2">Example 4 — Is x*x Different From x**2?</a><a href="#putting-it-all-together">Putting It All Together</a><a href="#summary">Summary</a><a href="#faq">FAQ</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#function-transformer">Function Transformer</a><a href="#example-1-remove-outliers-first-then-transform">Example 1 — Remove Outliers First, Then Transform</a><a href="#example-2-same-log-transform-without-removing-ou">Example 2 — Same Log Transform, Without Removing Out</a><a href="#example-3-what-happens-with-square-x-2">Example 3 — What Happens With Square (x**2)?</a><a href="#example-4-is-x-x-different-from-x-2">Example 4 — Is x*x Different From x**2?</a><a href="#putting-it-all-together">Putting It All Together</a><a href="#summary">Summary</a><a href="#faq">FAQ</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Function Transformer</h1>
   <p class="lede">When the relationship is curved, reshape the column instead of abandoning the model.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Priya plotted income against spending and got a banana.</strong> Most people clustered on the left, a long thin tail stretched far to the right.</p><p>A straight line through that shape fitted nobody: it sat above the crowd and below the tail.</p><p><span class='beat'>The model was not wrong — the column was the wrong shape.</span></p><p>Taking the log of income pulled the tail in and spread the crowd out. The same straight line then fitted well. FunctionTransformer applies that reshaping as a proper, reusable pipeline step.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>A log or square-root transform can straighten a skewed column so a straight-line model can use it.</p></div>
@@ -593,7 +593,11 @@ loudly, which can be an easy mistake to miss. <code>CoapplicantIncome</code> nev
 goes negative, so this notebook never hit the problem, but it's worth
 checking <code>.min()</code> on any new column before reaching for <code>log1p</code>.</p>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Function_Transformer_Page_1of1.png" data-name="Function_Transformer_Page_1of1.png"><img src="../Handwritten_Notes/Function_Transformer_Page_1of1.png" alt="Function_Transformer_Page_1of1.png" loading="lazy"><span>Function Transformer Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/19_Function_Transformer.ipynb">19_Function_Transformer.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

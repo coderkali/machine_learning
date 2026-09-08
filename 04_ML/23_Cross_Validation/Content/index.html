@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#cross-validation">Cross Validation</a><a href="#s-1-the-baseline-one-train-test-split">1. The baseline — one train_test_split</a><a href="#s-2-kfold-n-splits-5">2. KFold(n_splits=5)</a><a href="#s-3-stratifiedkfold-n-splits-5">3. StratifiedKFold(n_splits=5)</a><a href="#s-4-leavepout-p-2">4. LeavePOut(p=2)</a><a href="#s-5-leaveoneout">5. LeaveOneOut()</a><a href="#s-6-which-one-to-use">6. Which one to use</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#cross-validation">Cross Validation</a><a href="#s-1-the-baseline-one-train-test-split">1. The baseline — one train_test_split</a><a href="#s-2-kfold-n-splits-5">2. KFold(n_splits=5)</a><a href="#s-3-stratifiedkfold-n-splits-5">3. StratifiedKFold(n_splits=5)</a><a href="#s-4-leavepout-p-2">4. LeavePOut(p=2)</a><a href="#s-5-leaveoneout">5. LeaveOneOut()</a><a href="#s-6-which-one-to-use">6. Which one to use</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Cross Validation</h1>
   <p class="lede">One split can be lucky. Five splits are harder to fool.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Gautam ran train_test_split and scored 0.91. He changed random_state and got 0.78.</strong> Same data, same model.</p><p>So which number was true? Neither. Each was one hand of cards.</p><p><span class='beat'>A single split makes the score depend on who happened to land in the test set.</span></p><p>K-fold cuts the data into 5 parts and runs 5 times, each part taking a turn as the test set. Every row is tested exactly once, and the average across folds is a number that does not move when you change a seed.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>K-fold uses every row as test data exactly once, then averages — a score with far less luck in it.</p></div>
@@ -692,7 +692,11 @@ validation is that same score measured many times and averaged, and on a classif
 <code>StratifiedKFold</code> is the version to reach for, because it keeps every class present in every
 fold.</p>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Cross_Validation_Page_1of1.png" data-name="Cross_Validation_Page_1of1.png"><img src="../Handwritten_Notes/Cross_Validation_Page_1of1.png" alt="Cross_Validation_Page_1of1.png" loading="lazy"><span>Cross Validation Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/11_Corss_validation.ipynb">11_Corss_validation.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

@@ -1,39 +1,39 @@
-# Task — Generate handwritten-style revision notes for every topic
+# Task — Handwritten revision notes, take 2 (ONE topic only, then stop)
 
-You are working in the repository `/Users/kaliprasad/Documents/MACHINE_LEARNING`.
+Repository: `/Users/kaliprasad/Documents/MACHINE_LEARNING`
 
-Your job: for **every topic folder that has a `Concept/` folder but an empty
-`Handwritten_Notes/` folder**, read the material in `Concept/`, and produce
-handwritten-style revision note pages as PNG images placed inside that topic's
-`Handwritten_Notes/` folder.
+A previous attempt produced 84 pages that were **rejected**. The paper, colours and
+boxes were close, but the writing was not. Read section 3 carefully — it lists
+exactly what went wrong, with examples.
 
-Do **not** modify any notebook, note, or lesson page. You only add PNG images.
+## ⛔ Do ONE topic, then STOP
 
----
+Produce notes for **`04_ML/22_Cost_Functions` only**. Then stop and report.
+Do not touch any other topic. Approval comes first; the rest follows later.
 
-## 1. The repository layout
-
-Every topic looks like this:
+Replace the three rejected files already in that folder:
 
 ```text
-<NN>_Subject/<NN>_Topic/
-├── Concept/              ← READ THIS. Notebooks (.ipynb) and notes (.md)
-├── Content/              ← the generated lesson page. Do not edit.
-├── Data/                 ← datasets and figures. Do not edit.
-└── Handwritten_Notes/    ← WRITE YOUR PNG PAGES HERE
+04_ML/22_Cost_Functions/Handwritten_Notes/
+  Cost_Functions_Page_1of3.png   ← delete
+  Cost_Functions_Page_2of3.png   ← delete
+  Cost_Functions_Page_3of3.png   ← delete
 ```
 
-Subjects are `01_Python`, `02_DataScience`, `03_Math`, `04_ML`.
-Folders `05_*` to `14_*` are future subjects with no material yet — **skip them**.
+New names use a plain two-digit suffix:
 
-A `Handwritten_Notes/` folder that contains only a `README.md` is empty and needs
-notes. A folder that already contains `.png` files is **done — skip it**.
+```text
+Cost_Functions_01.png
+Cost_Functions_02.png
+Cost_Functions_03.png
+```
 
 ---
 
-## 2. The reference style — copy this exactly
+## 1. The reference — study these four images first
 
-Four finished pages already exist. **Open them and match their look precisely:**
+**Open and look at them before writing anything.** They are the only standard
+that matters. Your pages must be indistinguishable in style.
 
 ```text
 04_ML/12_Preprocessing/Handwritten_Notes/Preprocessing_Page_1of3.png
@@ -42,186 +42,190 @@ Four finished pages already exist. **Open them and match their look precisely:**
 04_ML/07_Outliers/Handwritten_Notes/21_Outlier.png
 ```
 
-These are the single source of truth for style. What they look like:
-
-### Page and paper
-- **1055 × 1491 px**, portrait (A4 ratio ≈ 0.71), white/off-white background.
-- **Ruled notebook paper**: faint horizontal blue-grey rules the whole way down.
-- A **vertical pink/red margin line** about 8% in from the left edge.
-- **Spiral binder holes** down the left edge — small grey circles, evenly spaced.
-- A boxed **`Page 1/3`** label in the top-right corner when a topic runs to
-  several pages.
+### Page
+1055 × 1491 px portrait. Ruled notebook paper, faint blue-grey rules top to
+bottom, a pink/red vertical margin line ~8% from the left, grey spiral binder
+holes down the left edge, boxed `Page 1/3` top-right.
 
 ### Handwriting
-- A neat, highly legible **handwriting font** throughout — not cursive, not messy.
-  Use a Google Font such as *Caveat*, *Patrick Hand*, or *Architects Daughter*,
-  and keep one font for the whole page.
-- Dark navy/near-black ink. Body text around 15–17px.
+One neat, legible handwriting font throughout (*Caveat*, *Patrick Hand* or
+similar). Dark navy ink. Body ~15–17px.
 
-### Colour system (used consistently — this is what makes it readable)
+### Colour system
 | Element | Treatment |
 |---|---|
-| Page title | Large, blue highlighter bubble behind it, underlined |
-| Section heading | Blue highlighter block, larger text |
+| Page title | Blue highlighter bubble, underlined |
+| Section heading | Blue highlighter block |
 | Sub-heading (`The idea:`, `The problem:`) | Pink/red highlighter block |
-| Key term inside a sentence | Green highlighter behind the word |
-| Formula box | White box, blue border |
-| Key point / takeaway box | Pale green fill, green border |
-| Warning / danger box | Pale pink fill, red border, with a ⚠️ |
-| Example box | Pale blue fill, blue border |
-| Checkpoint (end of page) | Blue box, `Checkpoint ✅`, one question + its answer |
+| Key term mid-sentence | Green highlighter behind the word |
+| Formula | White box, blue border |
+| Key point / takeaway | Pale green fill, green border |
+| Warning / classic mistake | Pale pink fill, red border, ⚠️ |
+| Example | Pale blue fill, blue border |
+| End of page | Blue `Checkpoint ✅` box |
 
-### Layout
-- **Two columns** for most of the page, so the page is dense but never cramped.
-- Numbered steps in **coloured circles** (①②③ style).
-- **Real tables** with ruled borders and a tinted header row.
-- **Hand-drawn-looking diagrams**: scatter plots, distribution curves, box plots,
-  tree diagrams, arrows. Draw them as inline SVG so they stay crisp.
-- Proper mathematics: real fractions, √ signs, subscripts, Σ. Not ASCII.
-- Small doodles where they help (a shopping cart, a thinking face, an order card).
+### Density — this is the part that failed
+The reference pages are **full**. Two columns, packed edge to edge, almost no
+white space. Measured ink coverage (pixels darker than 150, full resolution) is
+**8.4 – 10.1%**. The rejected pages averaged **5.6%**, and 85 of 88 were lighter
+than the lightest reference page.
+
+**A box must never be larger than the writing inside it.** If a box has room
+left, either write more or make the box smaller.
 
 ---
 
-## 3. How to produce the images
+## 2. Add the story — new requirement
 
-Build each page as an **HTML file styled to look like the reference, then render
-it to PNG at 1055 × 1491**. Suggested approach:
+Every page must **teach through a story**, the way the reference does
+("An online store usually gets 10,000 normal orders. One day, there is a strange
+order…").
 
-1. Write one HTML file per page with inline CSS and inline SVG for diagrams.
-2. Load the handwriting font from Google Fonts.
-3. Render with headless Chrome:
+Stories are already written for 41 topics in:
+
+```text
+17_Learning_As_Of_Now/shared/stories.json
+```
+
+For this topic the entry is `04_ML/22_Cost_Functions`:
+
+> **Two delivery models were compared.** Model A was off by 5 minutes on every
+> one of ten trips. Model B was perfect on nine and 50 minutes late on the tenth.
+> Total error: A = 50 minutes, B = 50 minutes. By that measure they were
+> identical. **But no customer would call them identical.** One is mildly
+> unreliable; the other ruins a delivery completely. Squaring the errors
+> separates them: MSE makes B far worse than A, because 50² dwarfs ten lots of 5².
+
+**Use this story.** Open it on page 1 in a `A story to start` box, keep the same
+characters and numbers running through every page, and let the maths resolve the
+story's problem. The reader should finish knowing why MSE exists, not just what
+its formula is.
+
+Rules for stories:
+- A named person or a concrete situation with real numbers.
+- The obvious thing they tried → why it failed → so this is the fix.
+- Reuse the story's numbers in the worked examples. Do not invent a second,
+  unrelated example.
+
+---
+
+## 3. What went wrong last time — do not repeat these
+
+Every item below is a real defect from the rejected pages.
+
+| Defect | Example from the rejected work | Rule |
+|---|---|---|
+| **Sentences cut mid-thought** | *"…measure the vertical gap between"* then nothing | Never truncate. Finish every sentence. |
+| **Orphaned fragments** | A box beginning *"smallest. Error = the vertical gap…"* | Never start a box with the tail of a sentence. |
+| **Raw markdown leaking** | `a *number*, not a category` | Render emphasis; no stray `*`, `#`, backticks. |
+| **Copy-paste instead of writing** | Whole page was code lines + printed output | Write the explanation yourself, in your own simple English. |
+| **Same sentence repeated** | One IQR sentence appeared 3× on one page | No sentence appears twice on a page. |
+| **Learner's typos copied** | `findout` instead of "find out" | Fix spelling and grammar when you rewrite. |
+| **ASCII art as a diagram** | `\| / \| rise = 86.43 ← coef_` | All diagrams are inline SVG. Never ASCII. |
+| **Unlabelled diagrams** | Box plot with no Q1 / Q3 / median labels | Every axis, series and key value is labelled. |
+| **Contents = heading dump** | IQR page listed "Find missing values, Fill missing values" | `Our Journey` is a curated list of ideas, not the notebook's headings. |
+| **Provenance clutter** | `from 04_IQR.ipynb` under every box | Never print source filenames on the page. |
+| **Half-empty boxes** | ~50% of the IQR page was blank | See the density rule above. |
+| **Weak checkpoint** | Echoed a heading and its first line | Ask a real question a learner could get wrong. |
+
+---
+
+## 4. What goes on the pages
+
+Read everything in `04_ML/22_Cost_Functions/Concept/` first:
+`29_Cost_Function.MD`, `30_Cost_Function_MSE_GradientDescent.ipynb`,
+`31_Mean_Absolute_Error.MD`, `32_Root_Mean_Squared_Error.MD`,
+`33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb`.
+
+Use **only** facts, numbers and code that appear there. Do not invent results.
+
+Suggested shape for three pages:
+
+**Page 1 — why a cost function exists**
+- `A story to start` — the two delivery models
+- `Why a cost function?` + `Our Journey (in this topic)` side by side
+- What "error" means, with the story's numbers in a small table
+- Why raw errors cancel out (+5 and −5), shown as a worked line
+- `Checkpoint ✅`
+
+**Page 2 — MAE, MSE, RMSE**
+- One block per metric: the idea in two plain sentences, the formula in a
+  bordered box with every symbol defined, then the story's ten trips carried
+  through the arithmetic to a final number
+- A comparison table: metric · what it punishes · units · outlier sensitivity
+- ⚠️ box: the classic mistake (comparing MSE across differently-scaled targets)
+- `Checkpoint ✅`
+
+**Page 3 — the cost curve and gradient descent**
+- The bowl-shaped cost curve as a **labelled SVG** — axes, the minimum marked
+- Why the bottom is flat, and what that buys you
+- The gradient-descent step, with the notebook's real iteration numbers
+- `Checkpoint ✅`
+
+Language: **simple English, short sentences.** Explain like you are reminding a
+friend the night before an exam. Prefer a concrete example over a definition.
+
+---
+
+## 5. How to build
+
+Write one HTML file per page (inline CSS, inline SVG for diagrams, Google
+handwriting font), then render:
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   --headless --disable-gpu --window-size=1055,1491 \
-  --screenshot=OUTPUT.png "file:///absolute/path/to/page.html"
+  --screenshot=OUTPUT.png "file:///absolute/path/page.html"
 ```
 
-4. Delete the temporary HTML afterwards. **Only PNGs stay in the repository.**
-
-Verify every PNG is 1055 × 1491 and that no text is clipped at the edges.
+Delete the temporary HTML afterwards. Only PNGs stay in the repository.
 
 ---
 
-## 4. What goes on the pages — the content rules
+## 6. Self-check before you report back
 
-Read the topic's `Concept/` folder first. Everything on the page must come from
-that material — **do not invent results, numbers, or code that is not there.**
+Run this. **All three pages must pass.**
 
-Each topic gets **1 to 3 pages**, depending on how much material exists:
-
-- 1 page — a short topic (one notebook, one idea)
-- 2–3 pages — a large topic (several notebooks, or many sub-methods)
-
-Structure the pages like this:
-
-**Page 1 always opens with two blocks, side by side:**
-- `Why <topic>?` — two or three lines on the problem this solves
-- `Our Journey (in this topic)` — a numbered list of what the topic covers,
-  which doubles as the contents for the remaining pages
-
-**Then, for each idea in the topic:**
-- The idea, in one or two plain sentences
-- The formula, in a bordered box, with every symbol defined underneath
-- A tiny worked example with **real numbers carried all the way through**
-- A comparison table when there are several competing methods
-- A diagram when the idea is visual
-- A warning box for the classic mistake
-
-**Every page ends with a `Checkpoint ✅` box** — one question and its answer.
-
-### Language
-- **Simple English. Short sentences.** Explain like you are reminding a friend
-  the night before an exam.
-- Prefer a concrete example over an abstract definition.
-- Keep the learner's own variable names and numbers from the notebooks.
-
----
-
-## 5. Naming and placement
-
-Save into the topic's own `Handwritten_Notes/` folder, named so they sort in
-reading order:
-
-```text
-04_ML/13_Train_Test_Split/Handwritten_Notes/
-├── Train_Test_Split_Page_1of2.png
-└── Train_Test_Split_Page_2of2.png
+```bash
+cd /Users/kaliprasad/Documents/MACHINE_LEARNING
+pizza_env/bin/python3 - <<'PY'
+from PIL import Image
+import glob
+for p in sorted(glob.glob("04_ML/22_Cost_Functions/Handwritten_Notes/*.png")):
+    im = Image.open(p).convert("L")
+    ink = sum(im.histogram()[:150]) / (im.size[0]*im.size[1])
+    ok = im.size == (1055,1491) and ink >= 0.084
+    print(f"{'PASS' if ok else 'FAIL'}  {p.split('/')[-1]}  {im.size[0]}x{im.size[1]}  ink {ink*100:.2f}%")
+PY
 ```
 
-Use `<Topic_Name>_Page_<n>of<total>.png`. For a single page, use
-`<Topic_Name>_Page_1of1.png`.
+- Size must be exactly 1055 × 1491.
+- Ink must be **≥ 8.4%** — the lightest reference page.
 
-**Delete the placeholder `README.md`** from any folder once you add real pages.
-
----
-
-## 6. Topics that still need notes
-
-These 49 topic folders have material in `Concept/` and no handwritten notes yet.
-Work through them in this order — `04_ML` first, since it is the active course.
-
-**04_ML (22)**
-`01_What_Is_ML`, `02_Types_Of_Variables`, `03_Data_Collection`, `04_Data_Cleaning`,
-`05_Missing_Values`, `06_Categorical_Encoding`, `08_Feature_Scaling`,
-`09_Duplicates_And_Dtypes`, `10_Function_Transformer`, `11_Feature_Selection`,
-`13_Train_Test_Split`, `14_Synthetic_Datasets`, `15_EDA_Uni_Bi_Multivariate`,
-`16_Linear_Regression`, `17_Multiple_Linear_Regression`, `18_Polynomial_Regression`,
-`19_Ridge_Regression`, `20_Lasso_Regression`, `21_ElasticNet`, `22_Cost_Functions`,
-`23_Cross_Validation`, `31_Clustering_KMeans`, `32_Hierarchical_Clustering`,
-`35_Project_Employee_Attrition`
-
-**02_DataScience (11)**
-`01_Measures_Of_Variability`, `02_IQR`, `03_Skewness`, `04_Correlation`,
-`05_Central_Limit_Theorem`, `06_Hypothesis_Testing_Basics`, `07_Z_Test`, `08_T_Test`,
-`09_Paired_T_Test`, `10_Chi_Square_Test`, `11_Z_Test_vs_T_Test`
-
-**01_Python (9)**
-`01_Variables_And_Data_Types`, `02_NumPy`, `03_Pandas`, `04_Matplotlib`,
-`05_Seaborn`, `06_Plotly`, `07_Streamlit`, `08_Iris_Visual_Explorer`,
-`10_Pizza_Dashboard_Lab`
-
-**03_Math (5)**
-`01_Algebra`, `02_Statistics`, `03_Linear_Algebra`, `04_Calculus`,
-`05_Linear_Regression_From_Scratch`
-
-**Already done — do not touch:**
-`04_ML/07_Outliers`, `04_ML/12_Preprocessing`, `04_ML/24_Model_Evaluation`,
-`04_ML/25_ROC_And_AUC`, `04_ML/26_Decision_Tree_Classification`,
-`04_ML/27_Decision_Tree_Regression`, `04_ML/28_Naive_Bayes`,
-`04_ML/29_K_Nearest_Neighbor`, `04_ML/30_Support_Vector_Machines`,
-`04_ML/33_Hyperparameter_Tuning`, `04_ML/34_Ensemble_Methods`
+Then read each PNG yourself and confirm:
+- [ ] The story runs through all three pages, same characters and numbers
+- [ ] No sentence is cut off; no box starts mid-sentence
+- [ ] No sentence appears twice
+- [ ] Every formula box defines its symbols
+- [ ] Every diagram is SVG and fully labelled
+- [ ] No source filenames printed anywhere
+- [ ] No box has empty space at the bottom
 
 ---
 
-## 7. When you are finished
-
-Run the site builder so the new pages appear on the website:
+## 7. Finish
 
 ```bash
 python3 17_Learning_As_Of_Now/shared/build_lessons.py
 ```
 
-This scans every `Handwritten_Notes/` folder and automatically adds a gallery
-section, a header chip, and a lightbox to that topic's lesson page. You do not
-need to edit any HTML yourself.
+This adds the gallery, header chip and lightbox to the lesson page
+automatically. Do not edit any HTML yourself.
 
-Then confirm:
+**Then stop.** Report the three filenames and the self-check output, and wait
+for approval before doing any other topic.
 
-```bash
-find 0*_* -path '*/Handwritten_Notes/*' -name '*.png' | wc -l
-grep -rl 'hn-grid' --include=index.html 0*_* | wc -l
-```
-
-The two numbers should reflect every topic you completed.
-
----
-
-## 8. Rules
-
-- **Never** edit anything in `Concept/`, `Content/`, or `Data/`.
-- **Never** invent numbers, results, or code that is not in the topic's material.
-- Keep every page to the exact reference style — a learner should not be able to
-  tell which pages were made first.
-- If a topic's `Concept/` folder is too thin to fill a page honestly, make one
-  page covering only what is genuinely there. Do not pad it.
+## Rules
+- Never edit anything in `Concept/`, `Content/` or `Data/`.
+- Never invent numbers, results or code that is not in the topic's material.
+- One topic only. Stop and wait.

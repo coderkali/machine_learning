@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#one-hot-encoding">One-Hot Encoding</a><a href="#when-to-use-one-hot-encoding">When to Use One-Hot Encoding</a><a href="#label-encoding">Label Encoding</a><a href="#same-technique-real-data">Same Technique, Real Data</a><a href="#label-encoding-vs-one-hot-encoding">Label Encoding vs. One-Hot Encoding</a><a href="#when-and-why-to-use-label-encoding">When (and Why) to Use Label Encoding</a><a href="#ordinal-encoding">Ordinal Encoding</a><a href="#real-data-two-columns-two-different-situations">Real Data — Two Columns, Two Different Situations</a><a href="#label-encoding-vs-one-hot-encoding-vs-ordinal-en">Label Encoding vs. One-Hot Encoding vs. Ordinal Enco</a><a href="#when-and-why-to-use-ordinal-encoding">When (and Why) to Use Ordinal Encoding</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#one-hot-encoding">One-Hot Encoding</a><a href="#when-to-use-one-hot-encoding">When to Use One-Hot Encoding</a><a href="#label-encoding">Label Encoding</a><a href="#same-technique-real-data">Same Technique, Real Data</a><a href="#label-encoding-vs-one-hot-encoding">Label Encoding vs. One-Hot Encoding</a><a href="#when-and-why-to-use-label-encoding">When (and Why) to Use Label Encoding</a><a href="#ordinal-encoding">Ordinal Encoding</a><a href="#real-data-two-columns-two-different-situations">Real Data — Two Columns, Two Different Situations</a><a href="#label-encoding-vs-one-hot-encoding-vs-ordinal-en">Label Encoding vs. One-Hot Encoding vs. Ordinal Enco</a><a href="#when-and-why-to-use-ordinal-encoding">When (and Why) to Use Ordinal Encoding</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Categorical Encoding</h1>
   <p class="lede">Models only do arithmetic. Words have to become numbers without inventing an order.</p>
-  <div class="tags"><span class="tag">3 notebooks</span></div>
+  <div class="tags"><span class="tag">3 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 3 handwritten pages</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Kiran had a City column: Delhi, Mumbai, Chennai.</strong> The model refused text, so he numbered them 1, 2, 3 and moved on.</p><p>The model then did what models do — arithmetic. It concluded Chennai (3) was <em>three times</em> Delhi (1), and that the average of Delhi and Chennai was Mumbai.</p><p><span class='beat'>None of that is true. He had invented an order that does not exist.</span></p><p>One-hot encoding fixes it by giving each city its own yes/no column, so no city outranks another. Ordinal encoding is only correct when the order is genuine — Small &lt; Medium &lt; Large.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>One-hot when categories are unordered; ordinal only when the order is real.</p></div>
@@ -977,7 +977,11 @@ like the one fixed above, or from skipping imputation entirely) raises
 <code>ValueError: Found unknown categories [nan]</code> at fit time.</li>
 </ul>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Categorical_Encoding_Page_1of3.png" data-name="Categorical_Encoding_Page_1of3.png"><img src="../Handwritten_Notes/Categorical_Encoding_Page_1of3.png" alt="Categorical_Encoding_Page_1of3.png" loading="lazy"><span>Categorical Encoding Page 1of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Categorical_Encoding_Page_2of3.png" data-name="Categorical_Encoding_Page_2of3.png"><img src="../Handwritten_Notes/Categorical_Encoding_Page_2of3.png" alt="Categorical_Encoding_Page_2of3.png" loading="lazy"><span>Categorical Encoding Page 2of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Categorical_Encoding_Page_3of3.png" data-name="Categorical_Encoding_Page_3of3.png"><img src="../Handwritten_Notes/Categorical_Encoding_Page_3of3.png" alt="Categorical_Encoding_Page_3of3.png" loading="lazy"><span>Categorical Encoding Page 3of3</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/09_one_hot_encoding.ipynb">09_one_hot_encoding.ipynb ↗</a><a class="btn" href="../Concept/10_Label_Encoding.ipynb">10_Label_Encoding.ipynb ↗</a><a class="btn" href="../Concept/11_Ordinal_Encoding.ipynb">11_Ordinal_Encoding.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

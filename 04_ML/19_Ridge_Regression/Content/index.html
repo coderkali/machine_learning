@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#ridge-regression">Ridge Regression</a><a href="#s-1-the-data">1. The data</a><a href="#s-2-split-the-data">2. Split the data</a><a href="#s-3-ridge-the-default-alpha-1-0">3. Ridge() — the default alpha = 1.0</a><a href="#s-4-predict-and-score">4. predict() and score()</a><a href="#s-5-the-model-is-two-numbers">5. The model is two numbers</a><a href="#s-6-draw-the-line">6. Draw the line</a><a href="#s-7-alpha-100">7. alpha = 100</a><a href="#s-8-alpha-100-000">8. alpha = 100,000</a><a href="#s-9-alpha-10-000-000-the-line-becomes-the-average">9. alpha = 10,000,000 — the line becomes the average</a><a href="#s-10-the-alpha-table">10. The alpha table</a><a href="#s-11-wrap-up">11. Wrap up</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#ridge-regression">Ridge Regression</a><a href="#s-1-the-data">1. The data</a><a href="#s-2-split-the-data">2. Split the data</a><a href="#s-3-ridge-the-default-alpha-1-0">3. Ridge() — the default alpha = 1.0</a><a href="#s-4-predict-and-score">4. predict() and score()</a><a href="#s-5-the-model-is-two-numbers">5. The model is two numbers</a><a href="#s-6-draw-the-line">6. Draw the line</a><a href="#s-7-alpha-100">7. alpha = 100</a><a href="#s-8-alpha-100-000">8. alpha = 100,000</a><a href="#s-9-alpha-10-000-000-the-line-becomes-the-average">9. alpha = 10,000,000 — the line becomes the average</a><a href="#s-10-the-alpha-table">10. The alpha table</a><a href="#s-11-wrap-up">11. Wrap up</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Ridge Regression</h1>
   <p class="lede">Paying a penalty for large slopes, and the first hyperparameter you choose yourself.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Imran's model fitted the training rows beautifully and fell apart on new ones.</strong> Its coefficients were enormous — some in the thousands.</p><p>Huge coefficients mean the line is contorting itself to pass near every point. Move one input slightly and the prediction swings wildly.</p><p><span class='beat'>The model was not learning the trend; it was chasing every wobble.</span></p><p>Ridge adds a fine for large slopes. The model now has to justify every bit of steepness against a penalty, so it settles for a calmer line that generalises better. How big the fine is, is <code>alpha</code> — the first number you set rather than learn.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Ridge minimises error + α × slope². Alpha trades fitting the data against keeping the line calm.</p></div>
@@ -496,7 +496,11 @@ small <code>alpha</code> gives you <code>LinearRegression</code>. A large <code>
 the line goes flat at the average of <code>y</code> — and a model that always predicts the average
 is exactly what R² = 0 means.</p>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Ridge_Regression_Page_1of1.png" data-name="Ridge_Regression_Page_1of1.png"><img src="../Handwritten_Notes/Ridge_Regression_Page_1of1.png" alt="Ridge_Regression_Page_1of1.png" loading="lazy"><span>Ridge Regression Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/07_Ridge.ipynb">07_Ridge.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#lasso-regression">Lasso Regression</a><a href="#s-1-lasso-the-default-alpha-1">1. Lasso() — the default alpha = 1</a><a href="#s-2-the-model-is-two-numbers">2. The model is two numbers</a><a href="#s-3-turning-alpha-up">3. Turning alpha up</a><a href="#s-4-alpha-9-5-the-slope-hits-exactly-0">4. alpha = 9.5 — the slope hits exactly 0</a><a href="#s-5-going-the-other-way">5. Going the other way</a><a href="#s-6-wrap-up">6. Wrap up</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#lasso-regression">Lasso Regression</a><a href="#s-1-lasso-the-default-alpha-1">1. Lasso() — the default alpha = 1</a><a href="#s-2-the-model-is-two-numbers">2. The model is two numbers</a><a href="#s-3-turning-alpha-up">3. Turning alpha up</a><a href="#s-4-alpha-9-5-the-slope-hits-exactly-0">4. alpha = 9.5 — the slope hits exactly 0</a><a href="#s-5-going-the-other-way">5. Going the other way</a><a href="#s-6-wrap-up">6. Wrap up</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Lasso Regression</h1>
   <p class="lede">The penalty that can push a coefficient all the way to exactly zero.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ridge shrank all of Imran's coefficients, but none reached zero.</strong> He still had 60 columns, each with a tiny non-zero weight.</p><p>He wanted to know which columns actually mattered. Ridge would not tell him — everything was slightly important.</p><p><span class='beat'>Shrinking is not the same as removing.</span></p><p>Lasso penalises the absolute slope instead of the square. That subtracts a fixed amount every step, so a weak coefficient hits exactly 0 and stays there. Lasso does not just regularise — it selects features.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>L1 subtracts a flat amount from each slope, so weak columns reach 0 and drop out entirely.</p></div>
@@ -418,7 +418,11 @@ plt.show()</pre></div>
 down. Subtraction reaches zero — so Lasso does not just shrink a useless column, it
 deletes it.</p>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Lasso_Regression_Page_1of1.png" data-name="Lasso_Regression_Page_1of1.png"><img src="../Handwritten_Notes/Lasso_Regression_Page_1of1.png" alt="Lasso_Regression_Page_1of1.png" loading="lazy"><span>Lasso Regression Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/08_Lasso.ipynb">08_Lasso.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

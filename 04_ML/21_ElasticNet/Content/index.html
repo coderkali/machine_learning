@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#elasticnet-regression">ElasticNet Regression</a><a href="#s-1-train-test-split">1. Train-Test Split</a><a href="#s-2-elasticnet-the-defaults-alpha-1-0-l1-ratio-0-5">2. ElasticNet() — the defaults alpha = 1.0, l1_ratio</a><a href="#s-3-turning-alpha-up-alpha-gt-1">3. Turning alpha up (alpha &amp;gt; 1)</a><a href="#s-4-turning-alpha-down-alpha-lt-1">4. Turning alpha down (alpha &amp;lt; 1)</a><a href="#s-5-wrap-up">5. Wrap up</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#elasticnet-regression">ElasticNet Regression</a><a href="#s-1-train-test-split">1. Train-Test Split</a><a href="#s-2-elasticnet-the-defaults-alpha-1-0-l1-ratio-0-5">2. ElasticNet() — the defaults alpha = 1.0, l1_ratio</a><a href="#s-3-turning-alpha-up-alpha-gt-1">3. Turning alpha up (alpha &amp;gt; 1)</a><a href="#s-4-turning-alpha-down-alpha-lt-1">4. Turning alpha down (alpha &amp;lt; 1)</a><a href="#s-5-wrap-up">5. Wrap up</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>ElasticNet</h1>
   <p class="lede">Both penalties at once, with a dial between them.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Imran now had two tools and a problem with each.</strong> Lasso zeroed columns — good — but when two columns were near-copies it kept one at random and threw the other away.</p><p>Ridge kept both and shared the credit — good — but never removed anything.</p><p><span class='beat'>He wanted the selection of Lasso and the stability of Ridge.</span></p><p>ElasticNet applies both penalties together. <code>l1_ratio</code> slides between them: 1.0 is pure Lasso, 0.0 is pure Ridge, and 0.5 gives selection that still handles correlated columns sensibly.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>alpha sets how strong the penalty is; l1_ratio sets how much of it behaves like Lasso.</p></div>
@@ -498,7 +498,11 @@ price of the slope, <code>l1_ratio</code> splits that price, and only the Lasso 
 coefficient to exactly 0.</p>
 </div>
 
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/ElasticNet_Page_1of1.png" data-name="ElasticNet_Page_1of1.png"><img src="../Handwritten_Notes/ElasticNet_Page_1of1.png" alt="ElasticNet_Page_1of1.png" loading="lazy"><span>ElasticNet Page 1of1</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/09_ElasticNet.ipynb">09_ElasticNet.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>
