@@ -190,8 +190,11 @@
     }).join("") || '<p style="color:var(--muted)">Nothing open right now.</p>';
 
     var subs = SUBJECTS.filter(function (s) { return s.lessons; });
+    var withNotes = LESSONS.filter(function (t) { return t.notes; }).length;
     $("lesson-filter").innerHTML =
       '<button class="pill-btn on" data-f="all">All ' + LESSONS.length + "</button>" +
+      (withNotes ? '<button class="pill-btn hn" data-f="__notes">\u270D\uFE0F Handwritten ' +
+                   withNotes + "</button>" : "") +
       subs.map(function (s) {
         return '<button class="pill-btn" data-f="' + s.name + '">' +
                s.name.replace(/^\d+\s*/, "") + " " + s.lessons + "</button>";
@@ -200,14 +203,18 @@
     function renderLessons(filter) {
       var rows = [];
       SUBJECTS.forEach(function (s) {
-        if (filter !== "all" && s.name !== filter) return;
+        if (filter !== "all" && filter !== "__notes" && s.name !== filter) return;
         s.topics.forEach(function (t) {
           if (!t.lesson) return;
+          if (filter === "__notes" && !t.notes) return;
           rows.push('<a class="les reveal' + (t.hasStory ? " story-yes" : "") +
+            (t.notes ? " has-notes" : "") +
             '" href="' + t.lesson + '">' +
             '<span class="sub">' + s.name.replace(/^\d+\s*/, "") + "</span>" +
-            "<b>" + t.title + "</b><small>" +
-            (t.lede || t.meta || "") + "</small></a>");
+            "<b>" + t.title +
+            (t.notes ? ' <span class="hn-badge" title="' + t.notes +
+                       ' handwritten pages">\u270D\uFE0F</span>' : "") +
+            "</b><small>" + (t.lede || t.meta || "") + "</small></a>");
         });
       });
       $("lesson-grid").innerHTML = rows.join("");

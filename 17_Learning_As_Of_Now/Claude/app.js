@@ -270,6 +270,10 @@
              "</small></div></div>";
       });
     }
+    if (n.notes && n.lesson)
+      h += '<a class="d-notes" href="' + esc(n.lesson) + '#handwritten">' +
+           '\u270D\uFE0F <b>' + n.notes + ' handwritten page' + (n.notes > 1 ? 's' : '') +
+           '</b><span>see the topic in your own handwriting</span></a>';
     if (n.lesson)
       h += '<a class="d-lesson" href="' + esc(n.lesson) + '">' +
            '<b>Read the illustrated lesson</b>' +

@@ -14,18 +14,18 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#14-roc-curve-and-auc">14 - ROC Curve and AUC</a><a href="#step-1-imports-and-data">Step 1 - Imports and data</a><a href="#step-2-split-then-train">Step 2 - Split, then train</a><a href="#step-3-the-model-returns-a-probability-not-a-lab">Step 3 - The model returns a probability, not a labe</a><a href="#step-4-what-the-curve-plots">Step 4 - What the curve plots</a><a href="#step-5-auc-one-number-for-the-whole-curve">Step 5 - AUC: one number for the whole curve</a><a href="#step-6-the-error-in-your-last-cell">Step 6 - The error in your last cell</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#s-14-roc-curve-and-auc">14 - ROC Curve and AUC</a><a href="#step-1-imports-and-data">Step 1 - Imports and data</a><a href="#step-2-split-then-train">Step 2 - Split, then train</a><a href="#step-3-the-model-returns-a-probability-not-a-lab">Step 3 - The model returns a probability, not a labe</a><a href="#step-4-what-the-curve-plots">Step 4 - What the curve plots</a><a href="#step-5-auc-one-number-for-the-whole-curve">Step 5 - AUC: one number for the whole curve</a><a href="#step-6-the-error-in-your-last-cell">Step 6 - The error in your last cell</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>ROC And AUC</h1>
   <p class="lede">A model outputs a probability. The threshold is your decision, not the model&#x27;s.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ayesha's classifier gave 0.5 as its cut-off: above is positive, below is negative.</strong> The default.</p><p>For fraud detection that was far too relaxed — she would rather flag ten innocent transactions than miss one real fraud. For sending marketing emails it was far too aggressive.</p><p><span class='beat'>The right threshold depends on which mistake costs more, and the model has no idea what your costs are.</span></p><p>The ROC curve plots what happens at <em>every</em> threshold at once, so you can pick with your eyes open. AUC compresses that curve into one number: the chance the model ranks a random positive above a random negative.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>ROC sweeps every threshold; AUC summarises the whole curve as one number.</p></div>
 <div class="src-head">📓 <a href="../Concept/14_roc.ipynb">14_roc.ipynb</a></div>
-<h2 id="14-roc-curve-and-auc">14 - ROC Curve and AUC</h2>
+<h2 id="s-14-roc-curve-and-auc">14 - ROC Curve and AUC</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <p><strong>What it is:</strong> a curve that shows how a classifier behaves at <strong>every</strong> cut-off,
@@ -164,6 +164,11 @@ ranking is before you pick one.</p>
 </div>
 <p>Related: the four boxes these rates come from → <a href="../../24_Model_Evaluation/Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb</a>.</p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/14_ROC_Curve.png" data-name="14_ROC_Curve.png"><img src="../Handwritten_Notes/14_ROC_Curve.png" alt="14_ROC_Curve.png" loading="lazy"><span>14 ROC Curve</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/14_roc.ipynb">14_roc.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

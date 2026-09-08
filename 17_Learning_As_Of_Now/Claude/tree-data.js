@@ -457,7 +457,7 @@ const TREE = {
         },
         {
           "title": "Outliers",
-          "meta": "4 notebooks · 4 data files",
+          "meta": "4 notebooks",
           "status": "done",
           "details": [
             "Four ways to find an outlier",
@@ -466,6 +466,7 @@ const TREE = {
             "DBSCAN — who is standing in a crowd and who is standing alone",
             "Reading the plot line, once, properly"
           ],
+          "notes": 1,
           "lede": "One wrong row can drag an entire model off course.",
           "hasStory": true,
           "lesson": "../../04_ML/07_Outliers/Content/index.html",
@@ -535,6 +536,7 @@ const TREE = {
             "A measured data-leakage demo",
             "First Pipeline + ColumnTransformer"
           ],
+          "notes": 3,
           "lede": "Three scalers, two encoders, and the one rule that stops you cheating.",
           "hasStory": true,
           "lesson": "../../04_ML/12_Preprocessing/Content/index.html",
@@ -711,7 +713,7 @@ const TREE = {
         },
         {
           "title": "Model Evaluation",
-          "meta": "1 notebook · 1 data file",
+          "meta": "1 notebook",
           "status": "done",
           "details": [
             "accuracy_score = 0.9298, and why accuracy alone lies on imbalanced classes",
@@ -720,6 +722,7 @@ const TREE = {
             "One habit to fix: the argument order accuracy_score(Y_pred, Y_test)",
             "Handwritten note: 15_Model_Evaluation.png"
           ],
+          "notes": 1,
           "lede": "Accuracy alone will let a useless model look excellent.",
           "hasStory": true,
           "lesson": "../../04_ML/24_Model_Evaluation/Content/index.html",
@@ -727,7 +730,7 @@ const TREE = {
         },
         {
           "title": "ROC And AUC",
-          "meta": "1 notebook · 1 data file",
+          "meta": "1 notebook",
           "status": "done",
           "details": [
             "The model returns a probability, not a label",
@@ -736,6 +739,7 @@ const TREE = {
             "The metrics.plot_roc_curve AttributeError kept on purpose, with RocCurveDisplay beside it",
             "Handwritten note: 14_ROC_Curve.png"
           ],
+          "notes": 1,
           "lede": "A model outputs a probability. The threshold is your decision, not the model's.",
           "hasStory": true,
           "lesson": "../../04_ML/25_ROC_And_AUC/Content/index.html",
@@ -743,7 +747,7 @@ const TREE = {
         },
         {
           "title": "Decision Tree Classification",
-          "meta": "1 notebook · 2 data files",
+          "meta": "1 notebook · 1 data file",
           "status": "done",
           "details": [
             "Entropy — putting a number on confusion",
@@ -753,6 +757,7 @@ const TREE = {
             "Handing it to DecisionTreeClassifier · exported dt.tree",
             "Handwritten note: 16_DTC.png"
           ],
+          "notes": 1,
           "lede": "Twenty questions, asked in the smartest possible order.",
           "hasStory": true,
           "lesson": "../../04_ML/26_Decision_Tree_Classification/Content/index.html",
@@ -760,7 +765,7 @@ const TREE = {
         },
         {
           "title": "Decision Tree Regression",
-          "meta": "1 notebook · 2 data files",
+          "meta": "1 notebook · 1 data file",
           "status": "done",
           "details": [
             "The new measuring tape: variance instead of entropy",
@@ -769,6 +774,7 @@ const TREE = {
             "Why score() means something completely different for a regressor",
             "Handwritten note: 17_DTR.png"
           ],
+          "notes": 1,
           "lede": "The same tree, but each leaf now answers with a number instead of a label.",
           "hasStory": true,
           "lesson": "../../04_ML/27_Decision_Tree_Regression/Content/index.html",
@@ -776,7 +782,7 @@ const TREE = {
         },
         {
           "title": "Naive Bayes",
-          "meta": "1 notebook · 1 data file",
+          "meta": "1 notebook",
           "status": "done",
           "details": [
             "Bayes theorem, and why the algorithm is called naive",
@@ -786,6 +792,7 @@ const TREE = {
             "Reading the classification report",
             "Handwritten note: 18_Naive_Bayes_Detailed_Handwritten_Notes.png"
           ],
+          "notes": 1,
           "lede": "Counting backwards from evidence to cause, and the shortcut in the name.",
           "hasStory": true,
           "lesson": "../../04_ML/28_Naive_Bayes/Content/index.html",
@@ -793,11 +800,12 @@ const TREE = {
         },
         {
           "title": "K Nearest Neighbor",
-          "meta": "1 notebook · 2 data files",
+          "meta": "1 notebook",
           "status": "learning",
           "details": [
             "Concept: 25_K_Nearest_Neighbor_explained.ipynb"
           ],
+          "notes": 2,
           "lede": "No training at all — just ask the neighbours.",
           "hasStory": true,
           "lesson": "../../04_ML/29_K_Nearest_Neighbor/Content/index.html",
@@ -805,7 +813,7 @@ const TREE = {
         },
         {
           "title": "Support Vector Machines",
-          "meta": "2 notebooks · 2 data files",
+          "meta": "2 notebooks",
           "status": "done",
           "details": [
             "Ramesh and the tea stall — fifteen records that no straight line can split",
@@ -814,6 +822,7 @@ const TREE = {
             "Doing it without building the extra columns by hand",
             "One caution about reading the picture"
           ],
+          "notes": 2,
           "lede": "Not just a line that separates — the line with the widest possible gap.",
           "hasStory": true,
           "lesson": "../../04_ML/30_Support_Vector_Machines/Content/index.html",
@@ -853,7 +862,7 @@ const TREE = {
         },
         {
           "title": "Hyperparameter Tuning",
-          "meta": "1 notebook · 1 data file",
+          "meta": "1 notebook",
           "status": "done",
           "details": [
             "Three settings, changed three ways",
@@ -863,6 +872,7 @@ const TREE = {
             "The trade-off, and the syntax in one place",
             "Handwritten note: 19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png"
           ],
+          "notes": 1,
           "lede": "The settings the model cannot learn for itself.",
           "hasStory": true,
           "lesson": "../../04_ML/33_Hyperparameter_Tuning/Content/index.html",
@@ -870,7 +880,7 @@ const TREE = {
         },
         {
           "title": "Ensemble Methods",
-          "meta": "1 notebook · 1 data file",
+          "meta": "1 notebook",
           "status": "done",
           "details": [
             "Three ways to build a panel of models",
@@ -879,6 +889,7 @@ const TREE = {
             "Gradient Boosting — boosting by chasing the leftover error",
             "Where each one is used in real systems"
           ],
+          "notes": 1,
           "lede": "One expert can be wrong. A panel that disagrees usefully is harder to fool.",
           "hasStory": true,
           "lesson": "../../04_ML/34_Ensemble_Methods/Content/index.html",

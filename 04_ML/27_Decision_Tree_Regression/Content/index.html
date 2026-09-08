@@ -14,18 +14,18 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#17-decision-tree-regression">17 - Decision Tree Regression</a><a href="#step-1-the-same-students-now-with-marks">Step 1 - The same students, now with marks</a><a href="#step-2-questions-and-answer">Step 2 - Questions and answer</a><a href="#step-3-hide-one-student-before-you-start">Step 3 - Hide one student before you start</a><a href="#step-4-the-new-measuring-tape-variance">Step 4 - The new measuring tape: variance</a><a href="#step-5-score-the-two-questions">Step 5 - Score the two questions</a><a href="#step-6-train">Step 6 - Train</a><a href="#step-7-read-the-rulebook">Step 7 - Read the rulebook</a><a href="#step-8-a-new-student-walks-in">Step 8 - A new student walks in</a><a href="#step-9-score-means-something-completely-differen">Step 9 - score means something completely different </a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#s-17-decision-tree-regression">17 - Decision Tree Regression</a><a href="#step-1-the-same-students-now-with-marks">Step 1 - The same students, now with marks</a><a href="#step-2-questions-and-answer">Step 2 - Questions and answer</a><a href="#step-3-hide-one-student-before-you-start">Step 3 - Hide one student before you start</a><a href="#step-4-the-new-measuring-tape-variance">Step 4 - The new measuring tape: variance</a><a href="#step-5-score-the-two-questions">Step 5 - Score the two questions</a><a href="#step-6-train">Step 6 - Train</a><a href="#step-7-read-the-rulebook">Step 7 - Read the rulebook</a><a href="#step-8-a-new-student-walks-in">Step 8 - A new student walks in</a><a href="#step-9-score-means-something-completely-differen">Step 9 - score means something completely different </a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Decision Tree Regression</h1>
   <p class="lede">The same tree, but each leaf now answers with a number instead of a label.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>The same teacher now had to predict exam <em>marks</em>, not just pass or fail.</strong></p><p>Entropy no longer applied — you cannot measure the "confusion" of a group of numbers the way you measure a mix of labels.</p><p><span class='beat'>She needed a new measuring tape.</span></p><p>Variance is that tape. A group where everyone scored near 70 has low variance; a group spread from 20 to 95 has high variance. The best question is the one that leaves both sides tightly grouped, and each leaf predicts the average of whoever lands in it.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Swap entropy for variance: the best split is the one that makes each side most similar.</p></div>
 <div class="src-head">📓 <a href="../Concept/17_Descison_Tree_Regression.ipynb">17_Descison_Tree_Regression.ipynb</a></div>
-<h2 id="17-decision-tree-regression">17 - Decision Tree Regression</h2>
+<h2 id="s-17-decision-tree-regression">17 - Decision Tree Regression</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <h3>The story</h3>
@@ -328,6 +328,11 @@ array([90.])</pre></div>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">dt.score(x,y)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.8596407076209728</pre></div>
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/17_DTR.png" data-name="17_DTR.png"><img src="../Handwritten_Notes/17_DTR.png" alt="17_DTR.png" loading="lazy"><span>17 DTR</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/17_Descison_Tree_Regression.ipynb">17_Descison_Tree_Regression.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

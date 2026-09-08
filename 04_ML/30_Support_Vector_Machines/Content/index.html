@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#support-vector-classification">Support Vector Classification</a><a href="#ramesh-and-the-tea-stall">Ramesh and the tea stall</a><a href="#why-it-fails">Why it fails</a><a href="#the-fix">The fix</a><a href="#step-1-ramesh-s-fifteen-records">Step 1: Ramesh&#x27;s fifteen records</a><a href="#step-2-ramesh-asks-a-better-question">Step 2: Ramesh asks a better question</a><a href="#step-3-what-is-svc-actually-looking-for">Step 3: What is SVC actually looking for?</a><a href="#step-4-when-one-new-column-is-not-enough">Step 4: When one new column is not enough</a><a href="#step-5-hand-ramesh-s-data-to-svc">Step 5: Hand Ramesh&#x27;s data to SVC</a><a href="#what-ramesh-learned">What Ramesh learned</a><a href="#svc-classification-from-a-2d-boundary-to-a-more-">SVC Classification: From a 2D Boundary to a More Fle</a><a href="#1-the-situation-a-story">1. The Situation: A Story</a><a href="#2-what-problem-are-we-solving">2. What Problem Are We Solving?</a><a href="#3-the-initial-approach">3. The Initial Approach</a><a href="#4-what-is-the-problem-with-the-initial-approach">4. What Is the Problem with the Initial Approach?</a><a href="#5-solution-a-create-better-features-manually">5. Solution A: Create Better Features Manually</a><a href="#6-solution-b-use-a-polynomial-kernel">6. Solution B: Use a Polynomial Kernel</a><a href="#7-how-the-solutions-work-in-real-life">7. How the Solutions Work in Real Life</a><a href="#8-what-the-2d-and-3d-pictures-mean">8. What the 2D and 3D Pictures Mean</a><a href="#training-and-test-records">Training and Test Records</a><a href="#understanding-y-pred">Understanding y_pred</a><a href="#explanation-of-the-latest-linear-svc-prediction">Explanation of the Latest Linear SVC Prediction</a><a href="#comparing-manual-features-with-a-polynomial-kern">Comparing Manual Features with a Polynomial Kernel</a><a href="#understanding-2d-3d-and-feature-space">Understanding 2D, 3D, and Feature Space</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#support-vector-classification">Support Vector Classification</a><a href="#ramesh-and-the-tea-stall">Ramesh and the tea stall</a><a href="#why-it-fails">Why it fails</a><a href="#the-fix">The fix</a><a href="#step-1-ramesh-s-fifteen-records">Step 1: Ramesh&#x27;s fifteen records</a><a href="#step-2-ramesh-asks-a-better-question">Step 2: Ramesh asks a better question</a><a href="#step-3-what-is-svc-actually-looking-for">Step 3: What is SVC actually looking for?</a><a href="#step-4-when-one-new-column-is-not-enough">Step 4: When one new column is not enough</a><a href="#step-5-hand-ramesh-s-data-to-svc">Step 5: Hand Ramesh&#x27;s data to SVC</a><a href="#what-ramesh-learned">What Ramesh learned</a><a href="#svc-classification-from-a-2d-boundary-to-a-more-">SVC Classification: From a 2D Boundary to a More Fle</a><a href="#s-1-the-situation-a-story">1. The Situation: A Story</a><a href="#s-2-what-problem-are-we-solving">2. What Problem Are We Solving?</a><a href="#s-3-the-initial-approach">3. The Initial Approach</a><a href="#s-4-what-is-the-problem-with-the-initial-approach">4. What Is the Problem with the Initial Approach?</a><a href="#s-5-solution-a-create-better-features-manually">5. Solution A: Create Better Features Manually</a><a href="#s-6-solution-b-use-a-polynomial-kernel">6. Solution B: Use a Polynomial Kernel</a><a href="#s-7-how-the-solutions-work-in-real-life">7. How the Solutions Work in Real Life</a><a href="#s-8-what-the-2d-and-3d-pictures-mean">8. What the 2D and 3D Pictures Mean</a><a href="#training-and-test-records">Training and Test Records</a><a href="#understanding-y-pred">Understanding y_pred</a><a href="#explanation-of-the-latest-linear-svc-prediction">Explanation of the Latest Linear SVC Prediction</a><a href="#comparing-manual-features-with-a-polynomial-kern">Comparing Manual Features with a Polynomial Kernel</a><a href="#understanding-2d-3d-and-feature-space">Understanding 2D, 3D, and Feature Space</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Support Vector Machines</h1>
   <p class="lede">Not just a line that separates — the line with the widest possible gap.</p>
-  <div class="tags"><span class="tag">2 notebooks</span></div>
+  <div class="tags"><span class="tag">2 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 2 handwritten pages</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ramesh could draw a hundred lines that separated his two groups.</strong> Every one of them was correct on the training data.</p><p>But some passed within a hair of a point. The first new customer who landed slightly to the left would be classified wrongly.</p><p><span class='beat'>Correct on today's data is not the same as safe on tomorrow's.</span></p><p>SVC picks the line with the widest empty corridor around it. And when the groups form a ring that no straight line can cut, the kernel trick lifts them into a higher dimension where a flat plane <em>can</em> separate them.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Maximise the margin. When no straight line works, add a dimension until one does.</p></div>
@@ -621,7 +621,7 @@ kernels find the pattern on their own.</p>
 
 <div class="src-head">📓 <a href="../Concept/23_SVC_3D.ipynb">23_SVC_3D.ipynb</a></div>
 <h2 id="svc-classification-from-a-2d-boundary-to-a-more-">SVC Classification: From a 2D Boundary to a More Flexible Decision Surface</h2>
-<h2 id="1-the-situation-a-story">1. The Situation: A Story</h2>
+<h2 id="s-1-the-situation-a-story">1. The Situation: A Story</h2>
 <p>Maya works on a quality-control system. Every item is measured using two values:</p>
 <ul>
 <li><code>X1</code>: the first measurement</li>
@@ -632,7 +632,7 @@ kernels find the pattern on their own.</p>
 </pre></div>
 <p>At first, Maya plots the measurements on a 2D chart. Each item becomes one point at <code>(X1, X2)</code>. The points have different labels, so Maya asks whether a line can separate the two groups.</p>
 <p>This notebook follows Maya's investigation from the first simple model to more flexible SVC approaches.</p>
-<h2 id="2-what-problem-are-we-solving">2. What Problem Are We Solving?</h2>
+<h2 id="s-2-what-problem-are-we-solving">2. What Problem Are We Solving?</h2>
 <p>This is a <strong>binary classification</strong> problem.</p>
 <p>We have:</p>
 <div class="code"><pre>Input features: X1 and X2
@@ -647,7 +647,7 @@ Possible labels: 0 or 1
 df2[&quot;Y&quot;] = 1
 </pre></div>
 <p>The combined table <code>dff</code> contains the measurements and their known answers. The model learns from the training records and is then tested on records that were kept aside.</p>
-<h2 id="3-the-initial-approach">3. The Initial Approach</h2>
+<h2 id="s-3-the-initial-approach">3. The Initial Approach</h2>
 <p>The first approach uses the original two features directly:</p>
 <div class="code"><pre class="py">x = dff[[&quot;X1&quot;, &quot;X2&quot;]]
 y = dff[&quot;Y&quot;]
@@ -668,14 +668,14 @@ y = dff[&quot;Y&quot;]
 </pre></div>
 <h3>First visualization</h3>
 <p>In a 2D chart, <code>X1</code> and <code>X2</code> are the two axes. The color shows the known class label <code>Y</code>. The model tries to find a boundary between the colored groups.</p>
-<h2 id="4-what-is-the-problem-with-the-initial-approach">4. What Is the Problem with the Initial Approach?</h2>
+<h2 id="s-4-what-is-the-problem-with-the-initial-approach">4. What Is the Problem with the Initial Approach?</h2>
 <p>The initial model uses a linear boundary:</p>
 <div class="code"><pre class="py">SVC(kernel=&quot;linear&quot;)
 </pre></div>
 <p>A linear boundary is useful when one straight line can separate the groups. But real data is often mixed, curved, or arranged in a pattern that cannot be separated well by one straight line.</p>
 <p>The problem is not that SVC failed to run. The problem is that the chosen boundary may be too simple for the shape of the data.</p>
 <p>There is another important issue in a small experiment like this: the dataset has only 13 records. With <code>test_size=0.1</code>, only 2 records are used for testing. Therefore, one correct or incorrect prediction changes the accuracy by 50 percentage points. The score helps us understand the process, but it is not a reliable real-world performance estimate.</p>
-<h2 id="5-solution-a-create-better-features-manually">5. Solution A: Create Better Features Manually</h2>
+<h2 id="s-5-solution-a-create-better-features-manually">5. Solution A: Create Better Features Manually</h2>
 <p>Maya can give the linear SVC additional information by creating polynomial features:</p>
 <div class="code"><pre class="py">dff[&quot;X1_S&quot;] = dff[&quot;X1&quot;] ** 2
 dff[&quot;X2_S&quot;] = dff[&quot;X2&quot;] ** 2
@@ -688,7 +688,7 @@ dff[&quot;X1X2&quot;] = dff[&quot;X1&quot;] * dff[&quot;X2&quot;]
 <div class="code"><pre>(X1, X2, X1_S, X2_S, X1X2) -&gt; predict Y
 </pre></div>
 <p>This is why a linear model can sometimes represent a more complicated boundary after feature engineering. The transformation is performed explicitly by us.</p>
-<h2 id="6-solution-b-use-a-polynomial-kernel">6. Solution B: Use a Polynomial Kernel</h2>
+<h2 id="s-6-solution-b-use-a-polynomial-kernel">6. Solution B: Use a Polynomial Kernel</h2>
 <p>Instead of creating the polynomial columns ourselves, Maya can give SVC the original features and ask it to calculate polynomial relationships internally:</p>
 <div class="code"><pre class="py">svc_poly = SVC(kernel=&quot;poly&quot;, degree=2)
 svc_poly.fit(X_train_raw, y_train_raw)
@@ -698,7 +698,7 @@ svc_poly.fit(X_train_raw, y_train_raw)
 Polynomial relationships: calculated internally by SVC
 </pre></div>
 <p>This is related to manual feature engineering, but the two approaches are not automatically identical. The polynomial kernel also depends on parameters such as <code>degree</code>, <code>gamma</code>, <code>coef0</code>, and <code>C</code>.</p>
-<h2 id="7-how-the-solutions-work-in-real-life">7. How the Solutions Work in Real Life</h2>
+<h2 id="s-7-how-the-solutions-work-in-real-life">7. How the Solutions Work in Real Life</h2>
 <p>Imagine a bank deciding whether a transaction is normal or suspicious.</p>
 <p>The raw features might be:</p>
 <div class="code"><pre>transaction amount
@@ -715,7 +715,7 @@ amount multiplied by transaction count
 <li>Use a polynomial kernel so the SVC calculates polynomial relationships internally.</li>
 </ol>
 <p>In a production system, the team would also use many more records, a carefully chosen validation strategy, feature scaling, monitoring, and a test set large enough to support a trustworthy accuracy estimate.</p>
-<h2 id="8-what-the-2d-and-3d-pictures-mean">8. What the 2D and 3D Pictures Mean</h2>
+<h2 id="s-8-what-the-2d-and-3d-pictures-mean">8. What the 2D and 3D Pictures Mean</h2>
 <p>A 2D plot shows two input features:</p>
 <div class="code"><pre>(X1, X2)
 </pre></div>
@@ -1294,6 +1294,11 @@ fig_features_3d.show()</pre></div>
 <h3>Why the engineered-feature 3D plot matters</h3>
 <p>This chart puts a real model input on the z-axis: <code>X1_S</code>. The <code>hover_data</code> argument keeps the other engineered values visible when a point is inspected, while <code>color=&quot;Y&quot;</code> still shows the known class. This gives an honest three-dimensional slice of the expanded feature space, even though the full manual model uses five dimensions.</p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/22_SVC_2D.png" data-name="22_SVC_2D.png"><img src="../Handwritten_Notes/22_SVC_2D.png" alt="22_SVC_2D.png" loading="lazy"><span>22 SVC 2D</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/23_SVC_3D.png" data-name="23_SVC_3D.png"><img src="../Handwritten_Notes/23_SVC_3D.png" alt="23_SVC_3D.png" loading="lazy"><span>23 SVC 3D</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/22_svc_2D.ipynb">22_svc_2D.ipynb ↗</a><a class="btn" href="../Concept/23_SVC_3D.ipynb">23_SVC_3D.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

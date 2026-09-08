@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#univariate-bivariate-and-multivariate-analysis">Univariate, Bivariate, and Multivariate Analysis</a><a href="#what-is-it">What is it?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#the-flow-of-this-notebook">The flow of this notebook</a><a href="#loading-iris">Loading Iris</a><a href="#where-do-the-numbers-0-1-and-2-come-from">Where do the numbers 0, 1, and 2 come from?</a><a href="#splitting-the-table-per-class">Splitting the table per class</a><a href="#plotting">Plotting</a><a href="#1-univariate-analysis-one-column-at-a-time">1. Univariate analysis — one column at a time</a><a href="#2-bivariate-analysis-two-columns-at-a-time">2. Bivariate analysis — two columns at a time</a><a href="#3-multivariate-analysis-every-pair-at-once">3. Multivariate analysis — every pair at once</a><a href="#what-the-three-steps-concluded">What the three steps concluded</a><a href="#common-mistakes">Common mistakes</a><a href="#interview-view">Interview view</a><a href="#key-takeaway">Key takeaway</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#univariate-bivariate-and-multivariate-analysis">Univariate, Bivariate, and Multivariate Analysis</a><a href="#what-is-it">What is it?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#the-flow-of-this-notebook">The flow of this notebook</a><a href="#loading-iris">Loading Iris</a><a href="#where-do-the-numbers-0-1-and-2-come-from">Where do the numbers 0, 1, and 2 come from?</a><a href="#splitting-the-table-per-class">Splitting the table per class</a><a href="#plotting">Plotting</a><a href="#s-1-univariate-analysis-one-column-at-a-time">1. Univariate analysis — one column at a time</a><a href="#s-2-bivariate-analysis-two-columns-at-a-time">2. Bivariate analysis — two columns at a time</a><a href="#s-3-multivariate-analysis-every-pair-at-once">3. Multivariate analysis — every pair at once</a><a href="#what-the-three-steps-concluded">What the three steps concluded</a><a href="#common-mistakes">Common mistakes</a><a href="#interview-view">Interview view</a><a href="#key-takeaway">Key takeaway</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -444,7 +444,7 @@ Name: petal length (cm), dtype: float64</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np</pre></div>
-<h2 id="1-univariate-analysis-one-column-at-a-time">1. Univariate analysis — one column at a time</h2>
+<h2 id="s-1-univariate-analysis-one-column-at-a-time">1. Univariate analysis — one column at a time</h2>
 <p><strong>Goal:</strong> look at <code>sepal length</code> on its own, and ask whether that single number can
 tell the three species apart.</p>
 <p>A single column is 1-dimensional, but a plot needs both an x and a y. The trick here
@@ -484,7 +484,7 @@ stays correct when the group size changes.</p>
 <div class="out"><div class="h">Output</div><pre>array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
        0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
        0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])</pre></div>
-<h2 id="2-bivariate-analysis-two-columns-at-a-time">2. Bivariate analysis — two columns at a time</h2>
+<h2 id="s-2-bivariate-analysis-two-columns-at-a-time">2. Bivariate analysis — two columns at a time</h2>
 <p><strong>Goal:</strong> put <code>sepal length</code> on x and <code>petal length</code> on y, then colour each point by
 its species.</p>
 <p><code>c=table['target']</code> does the colouring. Because <code>target</code> holds numbers, matplotlib
@@ -500,7 +500,7 @@ but mostly sit apart. Two columns achieved what one column could not.</p>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">plt.scatter(table[&#x27;sepal length (cm)&#x27;],table[&#x27;petal length (cm)&#x27;],c= table[&#x27;target&#x27;])</pre></div>
 <div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120cfecf0&gt;</pre></div>
 <figure class="shot"><img src="assets/04-uni-boi-multi-variate-ana-c23-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="3-multivariate-analysis-every-pair-at-once">3. Multivariate analysis — every pair at once</h2>
+<h2 id="s-3-multivariate-analysis-every-pair-at-once">3. Multivariate analysis — every pair at once</h2>
 <p><strong>Goal:</strong> stop guessing which two columns to plot, and plot <strong>all</strong> of them.</p>
 <p><code>sns.pairplot</code> builds a 4×4 grid, because the table has 4 feature columns. (<code>target</code>
 is used as the hue, so seaborn leaves it out of the grid itself.)</p>
@@ -583,6 +583,7 @@ species name.</p>
 <p>And the fastest way to find which columns matter is to let <code>sns.pairplot</code> draw every
 pair, then look for the panel where the colours stop touching.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/04_uni_boi_multi_variate_analaysis.ipynb">04_uni_boi_multi_variate_analaysis.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

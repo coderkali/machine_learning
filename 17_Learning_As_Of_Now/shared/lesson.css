@@ -181,3 +181,39 @@ pre.flow{color:#9db4d8;font-size:12.5px;background:#0a0f1a}
 
 /* long generated pages: keep images from dominating */
 .doc figure.shot img{max-height:560px;object-fit:contain}
+
+/* ───── handwritten notes gallery ───── */
+.tag.hn-jump{text-decoration:none;color:var(--amber);
+  border-color:rgba(251,191,36,.38);background:rgba(251,191,36,.10)}
+.tag.hn-jump:hover{background:rgba(251,191,36,.2)}
+
+.hn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:13px;margin:20px 0 8px}
+.hn-thumb{
+  display:block;padding:0;border:1px solid var(--line);border-radius:13px;
+  background:#0f1524;cursor:zoom-in;overflow:hidden;font:inherit;color:inherit;
+  transition:transform .16s,border-color .16s,box-shadow .16s;
+}
+.hn-thumb:hover{transform:translateY(-3px);border-color:var(--amber);
+  box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.hn-thumb img{display:block;width:100%;height:150px;object-fit:cover;
+  object-position:top center;background:#fff}
+.hn-thumb span{display:block;padding:9px 11px;font-size:11.5px;color:var(--muted);
+  text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* lightbox */
+.hn-box{position:fixed;inset:0;z-index:200;display:none;
+  background:rgba(4,7,14,.94);backdrop-filter:blur(6px)}
+.hn-box.on{display:grid;grid-template-rows:auto 1fr auto}
+.hn-bar{display:flex;align-items:center;gap:14px;padding:14px 20px;color:var(--ink2);
+  font-size:13px;border-bottom:1px solid var(--line)}
+.hn-bar .sp{flex:1}
+.hn-bar button{border:1px solid var(--line);background:#141a2b;color:var(--ink2);
+  font:inherit;font-size:13px;padding:7px 13px;border-radius:9px;cursor:pointer}
+.hn-bar button:hover{border-color:#4b5a80;color:#fff}
+.hn-stage{overflow:auto;display:grid;place-items:center;padding:22px}
+.hn-stage img{max-width:100%;border-radius:10px;background:#fff;
+  box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.hn-stage img.zoom{max-width:none;width:1400px;cursor:zoom-out}
+.hn-foot{padding:12px 20px;color:var(--dim);font-size:12px;text-align:center;
+  border-top:1px solid var(--line)}

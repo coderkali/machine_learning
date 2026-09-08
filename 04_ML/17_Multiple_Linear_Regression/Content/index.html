@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#multiple-linear-regression">Multiple Linear Regression</a><a href="#1-the-data">1. The data</a><a href="#2-look-at-one-input-at-a-time">2. Look at one input at a time</a><a href="#3-two-charts-are-not-two-models">3. Two charts are not two models</a><a href="#4-x-becomes-a-table-with-two-columns">4. X becomes a table with two columns</a><a href="#5-split-before-fitting">5. Split before fitting</a><a href="#6-fit-find-the-flat-sheet-closest-to-the-dots">6. fit() — find the flat sheet closest to the dots</a><a href="#7-predict-put-the-row-into-the-formula">7. predict() — put the row into the formula</a><a href="#8-score-r-and-why-0-976-means-little-here">8. score() — R², and why 0.976 means little here</a><a href="#9-coef-one-number-per-column">9. coef_ — one number per column</a><a href="#10-intercept-the-anchor">10. intercept_ — the anchor</a><a href="#11-proof-rebuild-predict-by-hand">11. Proof — rebuild predict() by hand</a><a href="#12-the-visual-one-line-becomes-a-plane">12. The visual — one line becomes a plane</a><a href="#13-what-quot-holding-the-other-column-fixed-quot">13. What &amp;quot;holding the other column fixed&amp;quot; </a><a href="#14-predict-every-row">14. Predict every row</a><a href="#15-sns-regplot-x-y-y-y-pred-actual-against-predi">15. sns.regplot(x=y, y=y_pred) — actual against pred</a><a href="#16-the-same-check-drawn-honestly">16. The same check, drawn honestly</a><a href="#17-wrap-up">17. Wrap up</a><a href="#27-multiple-linear-regression-hands-on-with-scik">27. Multiple Linear Regression — Hands-On with sciki</a><a href="#step-1-load-the-dataset">Step 1 — Load the dataset</a><a href="#step-2-peek-at-the-first-few-rows">Step 2 — Peek at the first few rows</a><a href="#step-3-check-the-shape">Step 3 — Check the shape</a><a href="#step-4-check-for-missing-values">Step 4 — Check for missing values</a><a href="#step-5-visualize-how-every-column-relates-to-eve">Step 5 — Visualize how every column relates to every</a><a href="#step-6-quantify-those-relationships-correlation-">Step 6 — Quantify those relationships (correlation h</a><a href="#step-7-split-into-inputs-x-and-target-y">Step 7 — Split into inputs (x) and target (y)</a><a href="#step-8-confirm-x-is-already-2-d">Step 8 — Confirm x is already 2-D</a><a href="#step-9-pull-out-y-the-target">Step 9 — Pull out y (the target)</a><a href="#step-10-sanity-check-the-shape">Step 10 — Sanity-check the shape</a><a href="#step-11-split-into-train-and-test-sets">Step 11 — Split into train and test sets</a><a href="#step-12-train-the-model">Step 12 — Train the model</a><a href="#step-13-score-the-model-on-unseen-data">Step 13 — Score the model on unseen data</a><a href="#step-14-the-general-equation">Step 14 — The general equation</a><a href="#step-15-look-at-the-learned-coefficients-the-slo">Step 15 — Look at the learned coefficients (the slop</a><a href="#step-16-look-at-the-intercept">Step 16 — Look at the intercept</a><a href="#step-17-confirm-which-coefficient-belongs-to-whi">Step 17 — Confirm which coefficient belongs to which</a><a href="#step-18-write-out-the-fitted-equation-with-real-">Step 18 — Write out the fitted equation with real nu</a><a href="#step-19-predict-on-the-test-set">Step 19 — Predict on the test set</a><a href="#step-20-visualize-actual-vs-predicted-salary">Step 20 — Visualize actual vs. predicted salary</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#multiple-linear-regression">Multiple Linear Regression</a><a href="#s-1-the-data">1. The data</a><a href="#s-2-look-at-one-input-at-a-time">2. Look at one input at a time</a><a href="#s-3-two-charts-are-not-two-models">3. Two charts are not two models</a><a href="#s-4-x-becomes-a-table-with-two-columns">4. X becomes a table with two columns</a><a href="#s-5-split-before-fitting">5. Split before fitting</a><a href="#s-6-fit-find-the-flat-sheet-closest-to-the-dots">6. fit() — find the flat sheet closest to the dots</a><a href="#s-7-predict-put-the-row-into-the-formula">7. predict() — put the row into the formula</a><a href="#s-8-score-r-and-why-0-976-means-little-here">8. score() — R², and why 0.976 means little here</a><a href="#s-9-coef-one-number-per-column">9. coef_ — one number per column</a><a href="#s-10-intercept-the-anchor">10. intercept_ — the anchor</a><a href="#s-11-proof-rebuild-predict-by-hand">11. Proof — rebuild predict() by hand</a><a href="#s-12-the-visual-one-line-becomes-a-plane">12. The visual — one line becomes a plane</a><a href="#s-13-what-quot-holding-the-other-column-fixed-quot">13. What &amp;quot;holding the other column fixed&amp;quot; </a><a href="#s-14-predict-every-row">14. Predict every row</a><a href="#s-15-sns-regplot-x-y-y-y-pred-actual-against-predi">15. sns.regplot(x=y, y=y_pred) — actual against pred</a><a href="#s-16-the-same-check-drawn-honestly">16. The same check, drawn honestly</a><a href="#s-17-wrap-up">17. Wrap up</a><a href="#s-27-multiple-linear-regression-hands-on-with-scik">27. Multiple Linear Regression — Hands-On with sciki</a><a href="#step-1-load-the-dataset">Step 1 — Load the dataset</a><a href="#step-2-peek-at-the-first-few-rows">Step 2 — Peek at the first few rows</a><a href="#step-3-check-the-shape">Step 3 — Check the shape</a><a href="#step-4-check-for-missing-values">Step 4 — Check for missing values</a><a href="#step-5-visualize-how-every-column-relates-to-eve">Step 5 — Visualize how every column relates to every</a><a href="#step-6-quantify-those-relationships-correlation-">Step 6 — Quantify those relationships (correlation h</a><a href="#step-7-split-into-inputs-x-and-target-y">Step 7 — Split into inputs (x) and target (y)</a><a href="#step-8-confirm-x-is-already-2-d">Step 8 — Confirm x is already 2-D</a><a href="#step-9-pull-out-y-the-target">Step 9 — Pull out y (the target)</a><a href="#step-10-sanity-check-the-shape">Step 10 — Sanity-check the shape</a><a href="#step-11-split-into-train-and-test-sets">Step 11 — Split into train and test sets</a><a href="#step-12-train-the-model">Step 12 — Train the model</a><a href="#step-13-score-the-model-on-unseen-data">Step 13 — Score the model on unseen data</a><a href="#step-14-the-general-equation">Step 14 — The general equation</a><a href="#step-15-look-at-the-learned-coefficients-the-slo">Step 15 — Look at the learned coefficients (the slop</a><a href="#step-16-look-at-the-intercept">Step 16 — Look at the intercept</a><a href="#step-17-confirm-which-coefficient-belongs-to-whi">Step 17 — Confirm which coefficient belongs to which</a><a href="#step-18-write-out-the-fitted-equation-with-real-">Step 18 — Write out the fitted equation with real nu</a><a href="#step-19-predict-on-the-test-set">Step 19 — Predict on the test set</a><a href="#step-20-visualize-actual-vs-predicted-salary">Step 20 — Visualize actual vs. predicted salary</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -78,7 +78,7 @@ nothing multiplies. That is what makes the model easy to read — and what makes
 when reality bends.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
-<h2 id="1-the-data">1. The data</h2>
+<h2 id="s-1-the-data">1. The data</h2>
 <p>Three columns, six rows.</p>
 <table class="tbl"><thead>
 <tr>
@@ -119,7 +119,7 @@ df.head(5)</pre></div>
 2   10        1    7000
 3   20        2    6000
 4   40        7    3500</pre></div>
-<h2 id="2-look-at-one-input-at-a-time">2. Look at one input at a time</h2>
+<h2 id="s-2-look-at-one-input-at-a-time">2. Look at one input at a time</h2>
 <p>Before fitting anything, plot each input against the target. Two inputs, two charts.</p>
 <p>Both charts slope <strong>downward</strong>: older people in this table earn less, and more degrees
 also means less income. That is odd for real life, and a good reminder that six invented
@@ -136,7 +136,7 @@ plt.xlabel(&#x27;Degrees&#x27;)
 plt.ylabel(&#x27;Income&#x27;)
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/06-multiple-linear-regressio-c06-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="3-two-charts-are-not-two-models">3. Two charts are not two models</h2>
+<h2 id="s-3-two-charts-are-not-two-models">3. Two charts are not two models</h2>
 <p>Here is the trap. It feels like you could fit a line on each chart and add them up.
 You cannot, and this is the whole idea of multiple regression.</p>
 <p><code>Age</code> and <code>Degrees</code> are <strong>not independent</strong> in this table — they move together
@@ -168,7 +168,7 @@ back the credit it was owed.</p>
 <p>That second reading is the useful one, and it exists only when the columns are fitted
 <strong>together</strong>. This is why we pass a table to <code>fit</code>, not one column at a time.</p>
 
-<h2 id="4-x-becomes-a-table-with-two-columns">4. <code>X</code> becomes a table with two columns</h2>
+<h2 id="s-4-x-becomes-a-table-with-two-columns">4. <code>X</code> becomes a table with two columns</h2>
 <div class="code"><pre class="py">x = df[[&#x27;Age&#x27;, &#x27;Degrees&#x27;]]   # double brackets -&gt; DataFrame, 2 columns
 y = df[&#x27;Income&#x27;]             # single brackets -&gt; Series, 1 column
 </pre></div>
@@ -202,7 +202,7 @@ the only link between a number and the column it belongs to.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">x = df[[&#x27;Age&#x27;, &#x27;Degrees&#x27;]]
 y = df[&#x27;Income&#x27;]</pre></div>
-<h2 id="5-split-before-fitting">5. Split before fitting</h2>
+<h2 id="s-5-split-before-fitting">5. Split before fitting</h2>
 <p><code>test_size=0.3</code> on 6 rows: <strong>4 rows to learn from, 2 rows kept hidden</strong>.</p>
 <p><code>random_state=0</code> fixes which rows go where, so this notebook gives the same numbers
 every run.</p>
@@ -221,7 +221,7 @@ X_train</pre></div>
 <div class="out"><div class="h">Output</div><pre>   Age  Degrees
 5   80        9
 2   10        1</pre></div>
-<h2 id="6-fit-find-the-flat-sheet-closest-to-the-dots">6. <code>fit()</code> — find the flat sheet closest to the dots</h2>
+<h2 id="s-6-fit-find-the-flat-sheet-closest-to-the-dots">6. <code>fit()</code> — find the flat sheet closest to the dots</h2>
 <p>With one input, <code>fit</code> looked for the best <strong>line</strong>. With two inputs, it looks for the
 best <strong>plane</strong> — a flat sheet floating over the Age–Degrees floor.</p>
 <p>&quot;Best&quot; means the same thing as before: the total of the squared vertical gaps between
@@ -247,7 +247,7 @@ descent belongs to models that have no closed-form answer.</p>
 clf = LinearRegression()</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">clf.fit(X_train, y_train)</pre></div>
 <div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
-<h2 id="7-predict-put-the-row-into-the-formula">7. <code>predict()</code> — put the row into the formula</h2>
+<h2 id="s-7-predict-put-the-row-into-the-formula">7. <code>predict()</code> — put the row into the formula</h2>
 <p>No learning happens here. Each test row is multiplied out and added up:</p>
 <div class="code"><pre>Age=80, Degrees=9 → 7111.11 - 20.37*80 - 351.85*9 = 2314.81   (real answer: 2000)
 Age=10, Degrees=1 → 7111.11 - 20.37*10 - 351.85*1 = 6555.56   (real answer: 7000)
@@ -257,7 +257,7 @@ add. Nothing else is inside <code>predict</code>.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">clf.predict(X_test)</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([2314.81481481, 6555.55555556])</pre></div>
-<h2 id="8-score-r-and-why-0-976-means-little-here">8. <code>score()</code> — R², and why 0.976 means little here</h2>
+<h2 id="s-8-score-r-and-why-0-976-means-little-here">8. <code>score()</code> — R², and why 0.976 means little here</h2>
 <p><code>score</code> returns <strong>R²</strong>: how much of the movement in <code>y</code> the model explains.
 <code>1.0</code> is perfect, <code>0.0</code> is no better than always guessing the average.</p>
 <p>We got <strong>0.976</strong> on the test rows — and this is where a beginner celebrates and a
@@ -290,7 +290,7 @@ needs enough test rows, or <code>cross_val_score</code>.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">clf.score(X_test,y_test)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.9762688614540466</pre></div>
-<h2 id="9-coef-one-number-per-column">9. <code>coef_</code> — one number per column</h2>
+<h2 id="s-9-coef-one-number-per-column">9. <code>coef_</code> — one number per column</h2>
 <div class="code"><pre>array([ -20.37037037, -351.85185185 ])
              │              │
              │              └── Degrees   (column 2)
@@ -312,7 +312,7 @@ columns fairly, scale them first (<code>StandardScaler</code>), then compare.</p
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">clf.coef_</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([ -20.37037037, -351.85185185])</pre></div>
-<h2 id="10-intercept-the-anchor">10. <code>intercept_</code> — the anchor</h2>
+<h2 id="s-10-intercept-the-anchor">10. <code>intercept_</code> — the anchor</h2>
 <p><code>7111.11</code> is the income the formula predicts when <strong>every input is 0</strong>: a person aged 0
 with 0 degrees.</p>
 <p>Nobody in the table is 0 years old. So the intercept is not a prediction about a real
@@ -341,7 +341,7 @@ the rows we actually have.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">clf.intercept_</pre></div>
 <div class="out"><div class="h">Output</div><pre>np.float64(7111.11111111111)</pre></div>
-<h2 id="11-proof-rebuild-predict-by-hand">11. Proof — rebuild <code>predict()</code> by hand</h2>
+<h2 id="s-11-proof-rebuild-predict-by-hand">11. Proof — rebuild <code>predict()</code> by hand</h2>
 <p>If the model really is <code>b0 + w1*Age + w2*Degrees</code>, then writing that out ourselves must
 give exactly the same numbers. <code>x.values @ coef_</code> is the dot product: multiply each
 column by its coefficient and add the results.</p>
@@ -366,7 +366,7 @@ by sklearn: [2314.81481481 6555.55555556]
 same? -&gt; True
 
 row 0: 7111.11 + (-20.37 * 80) + (-351.85 * 9) = 2314.81</pre></div>
-<h2 id="12-the-visual-one-line-becomes-a-plane">12. The visual — one line becomes a plane</h2>
+<h2 id="s-12-the-visual-one-line-becomes-a-plane">12. The visual — one line becomes a plane</h2>
 <p>This is the picture worth keeping. Two inputs make a floor (Age × Degrees), and the
 model is a <strong>flat sheet</strong> hovering above that floor. The red sticks are the errors: the
 vertical distance from each real person to the sheet. <code>fit()</code> chose the sheet that makes
@@ -410,7 +410,7 @@ ax.legend(loc=&quot;upper left&quot;)
 ax.view_init(22, -58)
 plt.tight_layout(); plt.show()</pre></div>
 <figure class="shot"><img src="assets/06-multiple-linear-regressio-c27-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="13-what-quot-holding-the-other-column-fixed-quot">13. What &quot;holding the other column fixed&quot; actually looks like</h2>
+<h2 id="s-13-what-quot-holding-the-other-column-fixed-quot">13. What &quot;holding the other column fixed&quot; actually looks like</h2>
 <p>Slice the plane at a fixed number of degrees and you get a <strong>line</strong>. Slice it at a
 different number of degrees and you get another line — same tilt, different height.</p>
 <ul>
@@ -452,7 +452,7 @@ for a in ax:
 
 plt.tight_layout(); plt.show()</pre></div>
 <figure class="shot"><img src="assets/06-multiple-linear-regressio-c29-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="14-predict-every-row">14. Predict every row</h2>
+<h2 id="s-14-predict-every-row">14. Predict every row</h2>
 <p>The same formula applied to all six rows, so predictions can be drawn next to the real
 values. (Rows 0–3 were used for training, so this is not a fair test — it is only for
 the picture.)</p>
@@ -461,7 +461,7 @@ the picture.)</p>
 y_pred</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([4333.33333333, 4833.33333333, 6555.55555556, 6000.        ,
        3833.33333333, 2314.81481481])</pre></div>
-<h2 id="15-sns-regplot-x-y-y-y-pred-actual-against-predi">15. <code>sns.regplot(x=y, y=y_pred)</code> — actual against predicted</h2>
+<h2 id="s-15-sns-regplot-x-y-y-y-pred-actual-against-predi">15. <code>sns.regplot(x=y, y=y_pred)</code> — actual against predicted</h2>
 <p>This chart does <strong>not</strong> show the model's plane. It puts the real income on the x-axis
 and the predicted income on the y-axis, one dot per person.</p>
 <p>A perfect model would put every dot on the 45° diagonal, because predicted would equal
@@ -475,7 +475,7 @@ that.)</p>
 sns.regplot(x=y, y=y_pred)</pre></div>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;Income&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/06-multiple-linear-regressio-c33-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="16-the-same-check-drawn-honestly">16. The same check, drawn honestly</h2>
+<h2 id="s-16-the-same-check-drawn-honestly">16. The same check, drawn honestly</h2>
 <p><code>regplot</code> draws the <em>best line through the dots</em>. What we actually want to compare
 against is the <strong>45° line where predicted = actual</strong>. Those are different lines, and the
 gap between a dot and the diagonal is the real error.</p>
@@ -501,7 +501,7 @@ ax.set_title(&quot;Actual vs Predicted  (red stick = error)&quot;)
 ax.set_xlim(lim); ax.set_ylim(lim); ax.set_aspect(&quot;equal&quot;); ax.legend(fontsize=8)
 plt.tight_layout(); plt.show()</pre></div>
 <figure class="shot"><img src="assets/06-multiple-linear-regressio-c35-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="17-wrap-up">17. Wrap up</h2>
+<h2 id="s-17-wrap-up">17. Wrap up</h2>
 <h3>The whole model in one line</h3>
 <div class="code"><pre>Income = 7111.11 + (-20.37 * Age) + (-351.85 * Degrees)
           │            │                │
@@ -570,7 +570,7 @@ coefficient, so a coefficient is a statement about <strong>the model it lives in
 about the column on its own.</p>
 
 <div class="src-head">📓 <a href="../Concept/27_Multiple_Linear_Regression.ipynb">27_Multiple_Linear_Regression.ipynb</a></div>
-<h2 id="27-multiple-linear-regression-hands-on-with-scik">27. Multiple Linear Regression — Hands-On with scikit-learn</h2>
+<h2 id="s-27-multiple-linear-regression-hands-on-with-scik">27. Multiple Linear Regression — Hands-On with scikit-learn</h2>
 <p>Multiple Linear Regression is the extension of Simple Linear Regression (see <a href="../../16_Linear_Regression/Concept/25_Simple_Linear_Regression.MD"><code>25_Simple_Linear_Regression.MD</code></a> and <a href="../../16_Linear_Regression/Concept/26_Simple_Linear_Regression.ipynb"><code>26_Simple_Linear_Regression.ipynb</code></a>) to more than one predictor. Instead of one <code>x</code> predicting <code>y</code>, we now have several input columns predicting one output column — the equation grows from <code>y = m·x + c</code> to <code>y = m1·x1 + m2·x2 + c</code>.</p>
 <p><code>../../_shared_data/regression_dataset.csv</code> has three columns — <code>Age</code>, <code>Experience</code>, <code>Salary</code> — for 1000 people. <code>Salary</code> is what we want to predict; <code>Age</code> and <code>Experience</code> are the two predictor variables.</p>
 <p>This notebook walks the full flow: load the data, look at it (a pairplot and a correlation heatmap this time, since there's more than one relationship to check), split it into inputs/target, train a <code>LinearRegression</code> model on two predictors at once, read back what it learned, and finish with two charts that show how good the fit actually is.</p>
@@ -786,6 +786,7 @@ plt.show()</pre></div>
 <p>On &quot;for complicated data, don't we need to build it from scratch?&quot; — no: <code>scikit-learn</code> and libraries like <code>XGBoost</code> handle massive real production tabular data as-is (fraud detection, credit scoring, recommendation systems all run on them). Implementing an algorithm from scratch is a one-time <em>teaching</em> exercise to build intuition for what <code>.fit()</code> is doing internally — the same reason a CS course has you implement a linked list once, even though production Java code never hand-rolls one. It's not what ships.</p>
 <p>The reasoning skill this phase is building — is this model appropriate, is this result trustworthy, why did it fail — doesn't expire when the library changes. It's the same skill that later shows up as judging RAG retrieval quality, evaluating LLM outputs, or deciding fine-tune vs. prompt in the GenAI phase of the roadmap.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/06_multiple_linear_regression.ipynb">06_multiple_linear_regression.ipynb ↗</a><a class="btn" href="../Concept/27_Multiple_Linear_Regression.ipynb">27_Multiple_Linear_Regression.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

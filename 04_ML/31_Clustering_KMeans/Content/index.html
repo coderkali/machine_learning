@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#clustering-grouping-5000-customers-nobody-labell">Clustering — grouping 5000 customers nobody labelled</a><a href="#the-story-we-will-follow">The story we will follow</a><a href="#why-this-is-different-from-everything-before">Why this is different from everything before</a><a href="#k-means-in-one-line">K-Means in one line</a><a href="#1-the-5000-customers">1. The 5000 customers</a><a href="#2-first-look">2. First look</a><a href="#3-the-algorithm-you-worked-out-by-hand">3. The algorithm you worked out by hand</a><a href="#4-your-question-clustering-only-makes-groups-so-">4. Your question: clustering only makes groups, so w</a><a href="#5-the-result-coloured">5. The result, coloured</a><a href="#6-part-two-of-the-story-where-k-means-gets-it-wr">6. Part two of the story — where K-Means gets it wro</a><a href="#7-hierarchical-clustering-a-different-way-to-gro">7. Hierarchical clustering — a different way to grou</a><a href="#8-which-one-to-use">8. Which one to use</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#clustering-grouping-5000-customers-nobody-labell">Clustering — grouping 5000 customers nobody labelled</a><a href="#the-story-we-will-follow">The story we will follow</a><a href="#why-this-is-different-from-everything-before">Why this is different from everything before</a><a href="#k-means-in-one-line">K-Means in one line</a><a href="#s-1-the-5000-customers">1. The 5000 customers</a><a href="#s-2-first-look">2. First look</a><a href="#s-3-the-algorithm-you-worked-out-by-hand">3. The algorithm you worked out by hand</a><a href="#s-4-your-question-clustering-only-makes-groups-so-">4. Your question: clustering only makes groups, so w</a><a href="#s-5-the-result-coloured">5. The result, coloured</a><a href="#s-6-part-two-of-the-story-where-k-means-gets-it-wr">6. Part two of the story — where K-Means gets it wro</a><a href="#s-7-hierarchical-clustering-a-different-way-to-gro">7. Hierarchical clustering — a different way to grou</a><a href="#s-8-which-one-to-use">8. Which one to use</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -74,7 +74,7 @@ nobody is going to fill it in by hand for 5000 rows.</p>
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt</pre></div>
-<h2 id="1-the-5000-customers">1. The 5000 customers</h2>
+<h2 id="s-1-the-5000-customers">1. The 5000 customers</h2>
 <p><code>make_blobs</code> invents the data. It is not real shop data. It is practice data built to contain
 clear groups, so we can check whether the model finds them.</p>
 <ul>
@@ -88,7 +88,7 @@ clear groups, so we can check whether the model finds them.</p>
 look at it exactly once, only to check ourselves, and never to train the model.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">x,y = make_blobs(n_features=2,n_samples=5000,centers=4)</pre></div>
-<h2 id="2-first-look">2. First look</h2>
+<h2 id="s-2-first-look">2. First look</h2>
 <p>Before any model, just plot the customers and look.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div>
@@ -112,7 +112,7 @@ plt.show()</pre></div>
 picks new positions each run because we did not fix a random seed. Sometimes two groups land
 close enough to touch, sometimes all four sit far apart. The shapes stay round either way.</p>
 
-<h2 id="3-the-algorithm-you-worked-out-by-hand">3. The algorithm you worked out by hand</h2>
+<h2 id="s-3-the-algorithm-you-worked-out-by-hand">3. The algorithm you worked out by hand</h2>
 <p><code>KMeans</code> does exactly the steps you did on paper:</p>
 <ol>
 <li>pick <code>K</code> — how many groups you want</li>
@@ -147,7 +147,7 @@ for the <strong>bend</strong> in the curve — the K after which extra groups st
 <p>That is the entire trained model. Not 5000 rows — just 8 numbers. Remember this, because the
 next section depends on it.</p>
 
-<h2 id="4-your-question-clustering-only-makes-groups-so-">4. Your question: clustering only makes groups, so what does it predict?</h2>
+<h2 id="s-4-your-question-clustering-only-makes-groups-so-">4. Your question: clustering only makes groups, so what does it predict?</h2>
 <p>Good question. The answer is that K-Means does <strong>two different jobs</strong>, and they are easy to mix
 up.</p>
 <p><strong>Job 1 — grouping.</strong> <code>.fit()</code> looks at all 5000 customers and decides who belongs with whom.
@@ -203,7 +203,7 @@ retraining, no scan of 5000 rows.</p>
 recomputes and caches 4 centroid rows. <code>.predict()</code> is the request-time lookup that compares one
 incoming row against that tiny cached table and answers in microseconds.</p>
 
-<h2 id="5-the-result-coloured">5. The result, coloured</h2>
+<h2 id="s-5-the-result-coloured">5. The result, coloured</h2>
 <p>Each customer is now painted with their group number.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">plt.scatter(x[:,0], x[:,1],c=predict)</pre></div>
@@ -235,7 +235,7 @@ returned. The model did not think about it any harder than that — nearest red 
 notebook again and the same clump may come back as a different number. There is no correct
 numbering, because nobody ever defined one.</p>
 
-<h2 id="6-part-two-of-the-story-where-k-means-gets-it-wr">6. Part two of the story — where K-Means gets it wrong</h2>
+<h2 id="s-6-part-two-of-the-story-where-k-means-gets-it-wr">6. Part two of the story — where K-Means gets it wrong</h2>
 <p>New data, new shape. <code>make_moons</code> builds two curved groups hooked into each other, like two
 hands holding on.</p>
 <p>Imagine two walking paths through a park that curve around each other. People on the same path
@@ -286,7 +286,7 @@ that question cannot describe a curve.</p>
 <p><strong>The rule to remember:</strong> K-Means works on round, separated, similar-sized groups. Long or
 curved shapes need a different method.</p>
 
-<h2 id="7-hierarchical-clustering-a-different-way-to-gro">7. Hierarchical clustering — a different way to group</h2>
+<h2 id="s-7-hierarchical-clustering-a-different-way-to-gro">7. Hierarchical clustering — a different way to group</h2>
 <p>Opposite idea. No K at the start, no centroids at all.</p>
 <h3>The story</h3>
 <p>A party begins with everyone standing alone. Two friends spot each other and stand together. A
@@ -408,7 +408,7 @@ plt.show()</pre></div>
 neighbour. <code>single</code> linkage merges on the closest pair, so the merging walks along the curve
 from one end to the other. The gap between the two moons is wider than any gap inside a moon, so
 the two moons never join.</p>
-<h2 id="8-which-one-to-use">8. Which one to use</h2>
+<h2 id="s-8-which-one-to-use">8. Which one to use</h2>
 <table class="tbl"><thead>
 <tr>
   <th></th>
@@ -454,6 +454,7 @@ distance alone. K-Means measures distance to a <strong>centre</strong>, so it ca
 because it keeps those centres it can also place new rows. Hierarchical clustering measures
 distance <strong>between points</strong>, so it can follow any shape, but it keeps nothing to reuse.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/12_clustering.ipynb">12_clustering.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

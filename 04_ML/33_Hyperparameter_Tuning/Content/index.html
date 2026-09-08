@@ -14,18 +14,18 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#19-hyperparameter-tuning">19 - Hyperparameter Tuning</a><a href="#step-1-the-three-settings-you-will-change">Step 1 - The three settings you will change</a><a href="#step-2-first-way-pick-four-by-hand">Step 2 - First way: pick four by hand</a><a href="#step-3-second-way-let-the-computer-try-all-of-th">Step 3 - Second way: let the computer try all of the</a><a href="#step-4-what-that-one-fit-really-does">Step 4 - What that one fit() really does</a><a href="#step-5-reading-the-result-book">Step 5 - Reading the result book</a><a href="#step-6-third-way-try-only-a-few-picked-at-random">Step 6 - Third way: try only a few, picked at random</a><a href="#the-syntax-in-one-place">The syntax, in one place</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#s-19-hyperparameter-tuning">19 - Hyperparameter Tuning</a><a href="#step-1-the-three-settings-you-will-change">Step 1 - The three settings you will change</a><a href="#step-2-first-way-pick-four-by-hand">Step 2 - First way: pick four by hand</a><a href="#step-3-second-way-let-the-computer-try-all-of-th">Step 3 - Second way: let the computer try all of the</a><a href="#step-4-what-that-one-fit-really-does">Step 4 - What that one fit() really does</a><a href="#step-5-reading-the-result-book">Step 5 - Reading the result book</a><a href="#step-6-third-way-try-only-a-few-picked-at-random">Step 6 - Third way: try only a few, picked at random</a><a href="#the-syntax-in-one-place">The syntax, in one place</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Hyperparameter Tuning</h1>
   <p class="lede">The settings the model cannot learn for itself.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Nisha had three settings to choose and tried them by hand.</strong> Change one, refit, note the score. Change another, refit.</p><p>Three settings with four values each is 64 combinations. By combination nine she had lost track of which numbers she had already tried.</p><p><span class='beat'>And each score came from a single split — so half the differences she was chasing were luck.</span></p><p>GridSearchCV does the whole sweep, cross-validated, in one <code>fit()</code>. RandomizedSearchCV samples a handful instead — usually finding almost as good a setting in a fraction of the time.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Grid search tries every combination with cross-validation; random search samples a few and usually gets close.</p></div>
 <div class="src-head">📓 <a href="../Concept/19_Hyperparameter_Tuning.ipynb">19_Hyperparameter_Tuning.ipynb</a></div>
-<h2 id="19-hyperparameter-tuning">19 - Hyperparameter Tuning</h2>
+<h2 id="s-19-hyperparameter-tuning">19 - Hyperparameter Tuning</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <h3>The story</h3>
@@ -607,6 +607,11 @@ rest, and a search is only a loop that tries your settings in a fair way. It
 marks each one on parts kept back from the training rows, so the real test set
 stays closed until the end.</p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png" data-name="19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png"><img src="../Handwritten_Notes/19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png" alt="19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png" loading="lazy"><span>19 Hyperparameter Tuning Detailed Handwritten Notes</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/19_Hyperparameter_Tuning.ipynb">19_Hyperparameter_Tuning.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

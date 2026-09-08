@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#numpy">NumPy</a><a href="#files">Files</a><a href="#the-two-ideas-that-carry-everything">The two ideas that carry everything</a><a href="#the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</a><a href="#covered-so-far">Covered so far</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#numpy-arrays-example-01">NumPy Arrays — Example 01</a><a href="#1-start-with-a-plain-python-list">1. Start with a plain Python list</a><a href="#2-turn-a-list-into-a-numpy-array">2. Turn a list into a NumPy array</a><a href="#3-the-short-name-np">3. The short name np</a><a href="#4-dimensions-how-many-brackets-deep-is-the-data">4. Dimensions — how many brackets deep is the data?</a><a href="#5-data-types-one-type-for-the-whole-array">5. Data types — one type for the whole array</a><a href="#6-indexing-reading-one-value">6. Indexing — reading one value</a><a href="#7-slicing-reading-many-values">7. Slicing — reading many values</a><a href="#8-looping-through-an-array">8. Looping through an array</a><a href="#9-searching-with-np-where">9. Searching with np.where()</a><a href="#10-sorting">10. Sorting</a><a href="#11-insert-and-delete">11. Insert and delete</a><a href="#12-reversing-with-np-flip">12. Reversing with np.flip()</a><a href="#13-changing-an-array-in-place">13. Changing an array in place</a><a href="#14-appending">14. Appending</a><a href="#recap">Recap</a><a href="#numpy-example-02-operations-broadcasting-and-lin">NumPy — Example 02: Operations, Broadcasting, and Li</a><a href="#the-one-idea-behind-this-whole-notebook">The one idea behind this whole notebook</a><a href="#1-import">1. Import</a><a href="#2-creating-arrays-what-np-array-accepts">2. Creating arrays — what np.array accepts</a><a href="#3-ndim-how-many-dimensions">3. ndim — how many dimensions?</a><a href="#4-shape-and-reshape-the-same-data-a-different-gr">4. shape and reshape — the same data, a different gr</a><a href="#5-dtype-the-one-type-the-array-holds">5. dtype — the one type the array holds</a><a href="#6-arithmetic-one-operator-every-element">6. Arithmetic — one operator, every element</a><a href="#7-comparisons-the-boolean-mask">7. Comparisons — the boolean mask</a><a href="#8-broadcasting-when-shapes-do-not-match">8. Broadcasting — when shapes do not match</a><a href="#9-ready-made-arrays-build-without-data">9. Ready-made arrays — build without data</a><a href="#10-arange-and-linspace-building-sequences">10. arange and linspace — building sequences</a><a href="#11-random-numbers-four-different-generators">11. Random numbers — four different generators</a><a href="#12-statistics-describing-an-array">12. Statistics — describing an array</a><a href="#13-np-info-looking-at-how-the-array-is-stored">13. np.info — looking at how the array is stored</a><a href="#14-the-dot-product-the-most-important-operation-">14. The dot product — the most important operation i</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#numpy">NumPy</a><a href="#files">Files</a><a href="#the-two-ideas-that-carry-everything">The two ideas that carry everything</a><a href="#the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</a><a href="#covered-so-far">Covered so far</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#numpy-arrays-example-01">NumPy Arrays — Example 01</a><a href="#s-1-start-with-a-plain-python-list">1. Start with a plain Python list</a><a href="#s-2-turn-a-list-into-a-numpy-array">2. Turn a list into a NumPy array</a><a href="#s-3-the-short-name-np">3. The short name np</a><a href="#s-4-dimensions-how-many-brackets-deep-is-the-data">4. Dimensions — how many brackets deep is the data?</a><a href="#s-5-data-types-one-type-for-the-whole-array">5. Data types — one type for the whole array</a><a href="#s-6-indexing-reading-one-value">6. Indexing — reading one value</a><a href="#s-7-slicing-reading-many-values">7. Slicing — reading many values</a><a href="#s-8-looping-through-an-array">8. Looping through an array</a><a href="#s-9-searching-with-np-where">9. Searching with np.where()</a><a href="#s-10-sorting">10. Sorting</a><a href="#s-11-insert-and-delete">11. Insert and delete</a><a href="#s-12-reversing-with-np-flip">12. Reversing with np.flip()</a><a href="#s-13-changing-an-array-in-place">13. Changing an array in place</a><a href="#s-14-appending">14. Appending</a><a href="#recap">Recap</a><a href="#numpy-example-02-operations-broadcasting-and-lin">NumPy — Example 02: Operations, Broadcasting, and Li</a><a href="#the-one-idea-behind-this-whole-notebook">The one idea behind this whole notebook</a><a href="#s-1-import">1. Import</a><a href="#s-2-creating-arrays-what-np-array-accepts">2. Creating arrays — what np.array accepts</a><a href="#s-3-ndim-how-many-dimensions">3. ndim — how many dimensions?</a><a href="#s-4-shape-and-reshape-the-same-data-a-different-gr">4. shape and reshape — the same data, a different gr</a><a href="#s-5-dtype-the-one-type-the-array-holds">5. dtype — the one type the array holds</a><a href="#s-6-arithmetic-one-operator-every-element">6. Arithmetic — one operator, every element</a><a href="#s-7-comparisons-the-boolean-mask">7. Comparisons — the boolean mask</a><a href="#s-8-broadcasting-when-shapes-do-not-match">8. Broadcasting — when shapes do not match</a><a href="#s-9-ready-made-arrays-build-without-data">9. Ready-made arrays — build without data</a><a href="#s-10-arange-and-linspace-building-sequences">10. arange and linspace — building sequences</a><a href="#s-11-random-numbers-four-different-generators">11. Random numbers — four different generators</a><a href="#s-12-statistics-describing-an-array">12. Statistics — describing an array</a><a href="#s-13-np-info-looking-at-how-the-array-is-stored">13. np.info — looking at how the array is stored</a><a href="#s-14-the-dot-product-the-most-important-operation-">14. The dot product — the most important operation i</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Python and the data toolkit</p>
@@ -144,7 +144,7 @@ math on the whole array in one line.</p>
 <li>Sorting, inserting, deleting, flipping, appending</li>
 </ol>
 
-<h2 id="1-start-with-a-plain-python-list">1. Start with a plain Python list</h2>
+<h2 id="s-1-start-with-a-plain-python-list">1. Start with a plain Python list</h2>
 <p>Before NumPy, this is what we had. A list can mix types and it grows freely.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">arr1 = [&#x27;pune&#x27;, &quot;mumbai&quot;, &#x27;surat&#x27;, &quot;kolkata&quot;, &#x27;bihar&#x27;, &quot;jaipur&quot;, &#x27;chennai&#x27;]
@@ -158,7 +158,7 @@ arr1[0]</pre></div>
 <p><code>type(arr1)</code> says <code>list</code>. Index <code>0</code> is the first item, not the second. That
 part is the same in NumPy.</p>
 
-<h2 id="2-turn-a-list-into-a-numpy-array">2. Turn a list into a NumPy array</h2>
+<h2 id="s-2-turn-a-list-into-a-numpy-array">2. Turn a list into a NumPy array</h2>
 <p><code>numpy.array()</code> takes a list and gives back an <code>ndarray</code> — the NumPy array
 type. The name <code>ndarray</code> means &quot;n-dimensional array&quot;.</p>
 
@@ -193,12 +193,12 @@ arr3</pre></div>
 <p>Still <code>numpy.ndarray</code>. The tuple was only the input container — once inside
 NumPy it is an array like any other.</p>
 
-<h2 id="3-the-short-name-np">3. The short name <code>np</code></h2>
+<h2 id="s-3-the-short-name-np">3. The short name <code>np</code></h2>
 <p>Nobody types <code>numpy.</code> all day. Everyone imports it as <code>np</code>. Treat this as the
 standard — every tutorial, every codebase, every StackOverflow answer uses it.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">import numpy as np</pre></div>
-<h2 id="4-dimensions-how-many-brackets-deep-is-the-data">4. Dimensions — how many brackets deep is the data?</h2>
+<h2 id="s-4-dimensions-how-many-brackets-deep-is-the-data">4. Dimensions — how many brackets deep is the data?</h2>
 <p>Dimension = how many index numbers you need to reach one value.</p>
 <table class="tbl"><thead>
 <tr>
@@ -299,7 +299,7 @@ a4b</pre></div>
 <p>Same result as writing <code>[[[[...]]]]</code> by hand — <code>ndim</code> 4, shape <code>(1, 1, 1, 4)</code>.
 Less typing and far fewer mismatched brackets.</p>
 
-<h2 id="5-data-types-one-type-for-the-whole-array">5. Data types — one type for the whole array</h2>
+<h2 id="s-5-data-types-one-type-for-the-whole-array">5. Data types — one type for the whole array</h2>
 <p>This is the biggest difference from a Python list. A list keeps each item's own
 type. An array must pick <strong>one type for everything</strong>.</p>
 <p>If you hand it mixed types, NumPy does not throw an error. It quietly promotes
@@ -352,7 +352,7 @@ amix6</pre></div>
 <p><code>1</code> and <code>2</code> are shown as <code>1.</code> and <code>2.</code> — the trailing dot means they are now
 floats, not integers. The whole array is <code>float64</code>.</p>
 
-<h2 id="6-indexing-reading-one-value">6. Indexing — reading one value</h2>
+<h2 id="s-6-indexing-reading-one-value">6. Indexing — reading one value</h2>
 <p>Give one index number per dimension. A 2-D array needs two numbers, a 3-D array
 needs three, and so on. Order goes outside-in: block, then row, then column.</p>
 
@@ -436,7 +436,7 @@ IndexError: index 1 is out of bounds for axis 2 with size 1</pre></div>
 <p>Here the first two indexes were fine. Axis 2 has size 1, so its only valid
 index is <code>0</code>.</p>
 
-<h2 id="7-slicing-reading-many-values">7. Slicing — reading many values</h2>
+<h2 id="s-7-slicing-reading-many-values">7. Slicing — reading many values</h2>
 <p>The pattern is <code>array[start : stop : step]</code>.</p>
 <ul>
 <li><code>start</code> is included</li>
@@ -476,7 +476,7 @@ stop <code>end</code>, step <code>1</code>.</p>
 Change the slice and you change the original array. A Python list slice gives
 you a fresh copy. Use <code>.copy()</code> when you really want a separate array.</p>
 
-<h2 id="8-looping-through-an-array">8. Looping through an array</h2>
+<h2 id="s-8-looping-through-an-array">8. Looping through an array</h2>
 <p>A <code>for</code> loop works exactly like it does on a list.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 95</span></div><pre class="py">for i in arr2:
@@ -490,7 +490,7 @@ you a fresh copy. Use <code>.copy()</code> when you really want a separate array
 NumPy does the whole array in one shot, in C. That is called vectorisation and
 it is the main reason NumPy exists.</p>
 
-<h2 id="9-searching-with-np-where">9. Searching with <code>np.where()</code></h2>
+<h2 id="s-9-searching-with-np-where">9. Searching with <code>np.where()</code></h2>
 <p><code>np.where(condition)</code> returns the <strong>positions</strong> where the condition is true —
 not the values themselves.</p>
 
@@ -515,7 +515,7 @@ print(x)</pre></div>
 <p><code>(array([1, 4, 7]),)</code> — the value <code>2</code> appears at indexes 1, 4 and 7. Unlike
 <code>list.index()</code>, which stops at the first hit, <code>np.where</code> finds every match.</p>
 
-<h2 id="10-sorting">10. Sorting</h2>
+<h2 id="s-10-sorting">10. Sorting</h2>
 <p><code>np.sort()</code> returns a <strong>new sorted array</strong>. The original is untouched.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 106</span></div><pre class="py">arraysort = np.array([2, 1, 5, 3, 7, 5, 9, 8, 5, 7, 3])
@@ -528,7 +528,7 @@ arraysort</pre></div>
 <p>The sorted output came back, but <code>arraysort</code> is still in its original order.
 <code>np.sort</code> is a copy-out function. To keep the result, assign it to a name.</p>
 
-<h2 id="11-insert-and-delete">11. Insert and delete</h2>
+<h2 id="s-11-insert-and-delete">11. Insert and delete</h2>
 <p><code>np.insert(array, position, value)</code> puts a value at a position.</p>
 <p>Same rule as sorting: it returns a <strong>new array</strong>. NumPy arrays are fixed size,
 so &quot;inserting&quot; really means building a fresh, bigger array behind the scenes.</p>
@@ -560,7 +560,7 @@ arrr2</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([10, 20, 30, 40, 50])</pre></div>
 <p>Indexes 0, 1 and 2 were dropped, leaving <code>[40, 50]</code>.</p>
 
-<h2 id="12-reversing-with-np-flip">12. Reversing with <code>np.flip()</code></h2>
+<h2 id="s-12-reversing-with-np-flip">12. Reversing with <code>np.flip()</code></h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 123</span></div><pre class="py">np.flip(arr2)</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([50, 40, 30, 20, 10])</pre></div>
@@ -571,7 +571,7 @@ arrr2</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 126</span></div><pre class="py">arrflip = np.flip(arr2)
 arrflip</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([50, 40, 30, 20, 10])</pre></div>
-<h2 id="13-changing-an-array-in-place">13. Changing an array in place</h2>
+<h2 id="s-13-changing-an-array-in-place">13. Changing an array in place</h2>
 <p>Everything above returned a copy. These two actually modify the array.</p>
 <p>First, plain assignment to an index.</p>
 
@@ -594,7 +594,7 @@ an integer array and you get an error, because the array's dtype is locked in.</
 <p>So: <code>np.sort(a)</code> gives a sorted copy, <code>a.sort()</code> sorts in place. Mixing them up
 (<code>a = a.sort()</code>) is a classic bug — it sets <code>a</code> to <code>None</code>.</p>
 
-<h2 id="14-appending">14. Appending</h2>
+<h2 id="s-14-appending">14. Appending</h2>
 <p><code>np.append()</code> looks like <code>list.append()</code> but behaves completely differently.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 135</span></div><pre class="py">np.append(arr2, 1000)</pre></div>
@@ -757,14 +757,14 @@ batch query; the Python <code>for</code> loop is the N+1 problem.</p>
 and <code>reshape</code>. The genuinely new material starts at <strong>section 5, arithmetic</strong>.</p>
 
 <hr />
-<h2 id="1-import">1. Import</h2>
+<h2 id="s-1-import">1. Import</h2>
 <p><code>np</code> is the universal alias. Every NumPy tutorial, book, and error message on the
 internet assumes it, so never rename it.</p>
 <p>Everything in this notebook hangs off this one import.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np</pre></div>
 <hr />
-<h2 id="2-creating-arrays-what-np-array-accepts">2. Creating arrays — what <code>np.array</code> accepts</h2>
+<h2 id="s-2-creating-arrays-what-np-array-accepts">2. Creating arrays — what <code>np.array</code> accepts</h2>
 <p><code>np.array()</code> takes a Python sequence and copies it into a packed, single-type block of
 memory.</p>
 <table class="tbl"><thead>
@@ -825,7 +825,7 @@ print(arr1,arr2,arr3,arr4)</pre></div>
 <div class="out"><div class="h">Output</div><pre>[1 2 3] [4 5 6] [[1 2]
  [3 4]] [ True False  True]</pre></div>
 <hr />
-<h2 id="3-ndim-how-many-dimensions">3. <code>ndim</code> — how many dimensions?</h2>
+<h2 id="s-3-ndim-how-many-dimensions">3. <code>ndim</code> — how many dimensions?</h2>
 <p><code>ndim</code> counts the dimensions. The quick way to read it: <strong>count the opening brackets on
 the left before the first number.</strong></p>
 <div class="code"><pre>np.array([1,2,3])              -&gt;  [1        -&gt;  ndim 1   a vector
@@ -878,7 +878,7 @@ print(np.array([[[[1]]]]).ndim)</pre></div>
 3
 4</pre></div>
 <hr />
-<h2 id="4-shape-and-reshape-the-same-data-a-different-gr">4. <code>shape</code> and <code>reshape</code> — the same data, a different grid</h2>
+<h2 id="s-4-shape-and-reshape-the-same-data-a-different-gr">4. <code>shape</code> and <code>reshape</code> — the same data, a different grid</h2>
 <p><code>shape</code> is a <strong>tuple giving the length of each dimension</strong>. <code>a = np.arange(6)</code> gives
 6 values and <code>a.shape</code> is <code>(6,)</code>. The trailing comma is Python's way of writing a
 one-item tuple — it is not a typo, and it is not a second empty dimension.</p>
@@ -950,7 +950,7 @@ Cell In[5], line 6
 
 ValueError: cannot reshape array of size 6 into shape (1,4)</pre></div>
 <hr />
-<h2 id="5-dtype-the-one-type-the-array-holds">5. <code>dtype</code> — the one type the array holds</h2>
+<h2 id="s-5-dtype-the-one-type-the-array-holds">5. <code>dtype</code> — the one type the array holds</h2>
 <p>Every array has exactly one type, and NumPy picks it from the data unless you say
 otherwise.</p>
 <table class="tbl"><thead>
@@ -1014,7 +1014,7 @@ float64
 float64
 &lt;U8</pre></div>
 <hr />
-<h2 id="6-arithmetic-one-operator-every-element">6. Arithmetic — one operator, every element</h2>
+<h2 id="s-6-arithmetic-one-operator-every-element">6. Arithmetic — one operator, every element</h2>
 <p>This is the payoff for the packed memory layout.</p>
 <div class="code"><pre class="py">a = np.array([1,2,3])
 b = np.array([4,5,6])
@@ -1072,7 +1072,7 @@ print(a/b)</pre></div>
 [ 4 10 18]
 [0.25 0.4  0.5 ]</pre></div>
 <hr />
-<h2 id="7-comparisons-the-boolean-mask">7. Comparisons — the boolean mask</h2>
+<h2 id="s-7-comparisons-the-boolean-mask">7. Comparisons — the boolean mask</h2>
 <p>A comparison is arithmetic too. It runs on every element and returns an array of <code>True</code>
 and <code>False</code>, the same shape as the input.</p>
 <div class="code"><pre>   a        =  [10   20    30  ]
@@ -1139,7 +1139,7 @@ print(a&lt;=20)</pre></div>
 [ True False  True]
 [ True  True False]</pre></div>
 <hr />
-<h2 id="8-broadcasting-when-shapes-do-not-match">8. Broadcasting — when shapes do not match</h2>
+<h2 id="s-8-broadcasting-when-shapes-do-not-match">8. Broadcasting — when shapes do not match</h2>
 <p>Section 6 needed matching shapes. Broadcasting is the set of rules that lets NumPy work
 with mismatched shapes by <strong>stretching the smaller one</strong>, without copying it.</p>
 <table class="tbl"><thead>
@@ -1222,7 +1222,7 @@ print(np.array([[1],[2],[3]])+np.array([10,20]))</pre></div>
  [12 22]
  [13 23]]</pre></div>
 <hr />
-<h2 id="9-ready-made-arrays-build-without-data">9. Ready-made arrays — build without data</h2>
+<h2 id="s-9-ready-made-arrays-build-without-data">9. Ready-made arrays — build without data</h2>
 <p>Often you need an array of the right <em>shape</em> before you have any values. These four
 builders take the shape as a tuple.</p>
 <table class="tbl"><thead>
@@ -1282,7 +1282,7 @@ print(np.eye(3))</pre></div>
  [0. 1. 0.]
  [0. 0. 1.]]</pre></div>
 <hr />
-<h2 id="10-arange-and-linspace-building-sequences">10. <code>arange</code> and <code>linspace</code> — building sequences</h2>
+<h2 id="s-10-arange-and-linspace-building-sequences">10. <code>arange</code> and <code>linspace</code> — building sequences</h2>
 <p>Both make evenly spaced numbers. They differ in <strong>which part you control</strong>.</p>
 <table class="tbl"><thead>
 <tr>
@@ -1343,7 +1343,7 @@ print(np.linspace(10,20,4))</pre></div>
 [0.   0.25 0.5  0.75 1.  ]
 [10.         13.33333333 16.66666667 20.        ]</pre></div>
 <hr />
-<h2 id="11-random-numbers-four-different-generators">11. Random numbers — four different generators</h2>
+<h2 id="s-11-random-numbers-four-different-generators">11. Random numbers — four different generators</h2>
 <p>These four are not variations on one idea. Each draws from a different distribution.</p>
 <table class="tbl"><thead>
 <tr>
@@ -1420,7 +1420,7 @@ print(np.random.choice([10,20,30],5))</pre></div>
 [ 0.85181675  0.46243431 -1.0139461 ]
 [30 10 30 30 20]</pre></div>
 <hr />
-<h2 id="12-statistics-describing-an-array">12. Statistics — describing an array</h2>
+<h2 id="s-12-statistics-describing-an-array">12. Statistics — describing an array</h2>
 <p>Seven summaries of <code>[10, 20, 30, 40]</code>.</p>
 <table class="tbl"><thead>
 <tr>
@@ -1506,7 +1506,7 @@ print(np.var(arr))</pre></div>
 11.180339887498949
 125.0</pre></div>
 <hr />
-<h2 id="13-np-info-looking-at-how-the-array-is-stored">13. <code>np.info</code> — looking at how the array is stored</h2>
+<h2 id="s-13-np-info-looking-at-how-the-array-is-stored">13. <code>np.info</code> — looking at how the array is stored</h2>
 <p><code>np.info</code> prints the array's physical layout. Most of these functions describe values;
 this one describes <strong>memory</strong>.</p>
 <table class="tbl"><thead>
@@ -1580,7 +1580,7 @@ byteswap:  False
 type: int64
 None</pre></div>
 <hr />
-<h2 id="14-the-dot-product-the-most-important-operation-">14. The dot product — the most important operation in ML</h2>
+<h2 id="s-14-the-dot-product-the-most-important-operation-">14. The dot product — the most important operation in ML</h2>
 <div class="code"><pre class="py">np.dot(a, b)    # -&gt; 32
 a @ b           # -&gt; 32   identical
 </pre></div>
@@ -1616,7 +1616,7 @@ print(a@b)</pre></div>
 <div class="out"><div class="h">Output</div><pre>32
 32</pre></div>
 <hr />
-<h2 id="15-matrix-multiplication-many-dot-products-at-on">15. Matrix multiplication — many dot products at once</h2>
+<h2 id="s-15-matrix-multiplication-many-dot-products-at-on">15. Matrix multiplication — many dot products at once</h2>
 <p>Same operator, two dimensions. <code>np.matmul(a, b)</code> and <code>a @ b</code> give the same result.</p>
 <div class="code"><pre>   a = [[1 2]        b = [[5 6]        a @ b = [[19 22]
         [3 4]]             [7 8]]               [43 50]]
@@ -1677,7 +1677,7 @@ print(a@b)</pre></div>
 [[19 22]
  [43 50]]</pre></div>
 <hr />
-<h2 id="16-sorting-and-searching">16. Sorting and searching</h2>
+<h2 id="s-16-sorting-and-searching">16. Sorting and searching</h2>
 <p>Four calls on <code>[40, 10, 30, 20]</code>.</p>
 <table class="tbl"><thead>
 <tr>
@@ -1743,7 +1743,7 @@ print(np.searchsorted(np.sort(arr),25))</pre></div>
 (array([2]),)
 2</pre></div>
 <hr />
-<h2 id="17-joining-and-splitting-arrays">17. Joining and splitting arrays</h2>
+<h2 id="s-17-joining-and-splitting-arrays">17. Joining and splitting arrays</h2>
 <div class="note"><div class="h">Note</div><p>⚠️ <strong>This cell has no saved output — run it.</strong> The behaviour below is verified in the
 same environment, but the notebook itself does not show it yet.</p>
 </div>
@@ -1806,7 +1806,7 @@ print(np.hstack((a,b)))
 arr=np.array([1,2,3,4,5,6])
 print(np.split(arr,3))</pre></div>
 <hr />
-<h2 id="18-linear-algebra-np-linalg">18. Linear algebra — <code>np.linalg</code></h2>
+<h2 id="s-18-linear-algebra-np-linalg">18. Linear algebra — <code>np.linalg</code></h2>
 <p>Three operations on <code>A = [[1,2],[3,4]]</code>. This is the module that connects NumPy to the
 maths behind ML.</p>
 <table class="tbl"><thead>
@@ -2822,6 +2822,7 @@ print(&quot;max:&quot;, round(modified_z.max(), 1),
 <div class="out"><div class="h">Output</div><pre>median: 208.0  MAD: 7.0
 modified z: [-0.3  0.2  0.7  0.  74.4 -1.3 -1.7]
 max: 74.4 -&gt; flagged at threshold 3.5? True</pre></div>
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/example_02.ipynb">example_02.ipynb ↗</a><a class="btn" href="../Concept/pizza_numpy.ipynb">pizza_numpy.ipynb ↗</a><a class="btn" href="../Concept/project_01_api_health.ipynb">project_01_api_health.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

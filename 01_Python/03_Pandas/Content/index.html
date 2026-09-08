@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#pandas">Pandas</a><a href="#files">Files</a><a href="#the-two-ideas-that-carry-everything">The two ideas that carry everything</a><a href="#the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</a><a href="#covered-so-far">Covered so far</a><a href="#known-issues-in-example-02">Known issues in example_02</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#pandas-basics-example-01">Pandas Basics — Example 01</a><a href="#1-series-one-column-with-an-index">1. Series — one column with an index</a><a href="#2-dataframe-many-series-side-by-side">2. DataFrame — many Series side by side</a><a href="#3-read-a-real-file">3. Read a real file</a><a href="#4-rename-columns-and-the-inplace-trap">4. Rename columns — and the inplace trap</a><a href="#5-pick-columns-and-rows">5. Pick columns and rows</a><a href="#6-filter-rows-with-a-condition">6. Filter rows with a condition</a><a href="#7-missing-values-find-them-and-fill-them">7. Missing values — find them and fill them</a><a href="#8-drop-a-column">8. Drop a column</a><a href="#9-stack-frames-concat-replaces-append">9. Stack frames — concat replaces append</a><a href="#10-merge-a-sql-join">10. Merge — a SQL join</a><a href="#recap">Recap</a><a href="#pandas-example-02-the-working-toolkit">Pandas — Example 02: The Working Toolkit</a><a href="#where-this-fits">Where this fits</a><a href="#1-import">1. Import</a><a href="#2-series-one-column-with-a-label-for-every-value">2. Series — one column with a label for every value</a><a href="#3-dataframe-and-your-question-why-df-columns-but">3. DataFrame — and your question: why df.columns but</a><a href="#4-reading-files-and-the-error-in-this-cell">4. Reading files — and the error in this cell</a><a href="#5-writing-files-the-cell-half-succeeded">5. Writing files — the cell half-succeeded</a><a href="#6-first-look-at-a-frame-info-shape-describe">6. First look at a frame — info, shape, describe</a><a href="#7-loc-vs-iloc-label-or-position">7. loc vs iloc — label or position</a><a href="#8-changing-the-index-the-experiment-that-proves-">8. Changing the index — the experiment that proves t</a><a href="#9-filtering-with-a-boolean-mask">9. Filtering with a boolean mask</a><a href="#10-query-the-same-filter-written-as-a-sentence">10. query — the same filter, written as a sentence</a><a href="#11-missing-values">11. Missing values</a><a href="#12-duplicates">12. Duplicates</a><a href="#13-rename-changing-a-column-name">13. rename — changing a column name</a><a href="#14-astype-changing-a-column-s-type">14. astype — changing a column&#x27;s type</a><a href="#15-replace-swapping-values">15. replace — swapping values</a><a href="#16-get-dummies-text-into-numbers">16. get_dummies — text into numbers</a><a href="#17-sort-values-and-rank">17. sort_values and rank</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#pandas">Pandas</a><a href="#files">Files</a><a href="#the-two-ideas-that-carry-everything">The two ideas that carry everything</a><a href="#the-five-gotchas-the-notebooks-verify">The five gotchas the notebooks verify</a><a href="#covered-so-far">Covered so far</a><a href="#known-issues-in-example-02">Known issues in example_02</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#pandas-basics-example-01">Pandas Basics — Example 01</a><a href="#s-1-series-one-column-with-an-index">1. Series — one column with an index</a><a href="#s-2-dataframe-many-series-side-by-side">2. DataFrame — many Series side by side</a><a href="#s-3-read-a-real-file">3. Read a real file</a><a href="#s-4-rename-columns-and-the-inplace-trap">4. Rename columns — and the inplace trap</a><a href="#s-5-pick-columns-and-rows">5. Pick columns and rows</a><a href="#s-6-filter-rows-with-a-condition">6. Filter rows with a condition</a><a href="#s-7-missing-values-find-them-and-fill-them">7. Missing values — find them and fill them</a><a href="#s-8-drop-a-column">8. Drop a column</a><a href="#s-9-stack-frames-concat-replaces-append">9. Stack frames — concat replaces append</a><a href="#s-10-merge-a-sql-join">10. Merge — a SQL join</a><a href="#recap">Recap</a><a href="#pandas-example-02-the-working-toolkit">Pandas — Example 02: The Working Toolkit</a><a href="#where-this-fits">Where this fits</a><a href="#s-1-import">1. Import</a><a href="#s-2-series-one-column-with-a-label-for-every-value">2. Series — one column with a label for every value</a><a href="#s-3-dataframe-and-your-question-why-df-columns-but">3. DataFrame — and your question: why df.columns but</a><a href="#s-4-reading-files-and-the-error-in-this-cell">4. Reading files — and the error in this cell</a><a href="#s-5-writing-files-the-cell-half-succeeded">5. Writing files — the cell half-succeeded</a><a href="#s-6-first-look-at-a-frame-info-shape-describe">6. First look at a frame — info, shape, describe</a><a href="#s-7-loc-vs-iloc-label-or-position">7. loc vs iloc — label or position</a><a href="#s-8-changing-the-index-the-experiment-that-proves-">8. Changing the index — the experiment that proves t</a><a href="#s-9-filtering-with-a-boolean-mask">9. Filtering with a boolean mask</a><a href="#s-10-query-the-same-filter-written-as-a-sentence">10. query — the same filter, written as a sentence</a><a href="#s-11-missing-values">11. Missing values</a><a href="#s-12-duplicates">12. Duplicates</a><a href="#s-13-rename-changing-a-column-name">13. rename — changing a column name</a><a href="#s-14-astype-changing-a-column-s-type">14. astype — changing a column&#x27;s type</a><a href="#s-15-replace-swapping-values">15. replace — swapping values</a><a href="#s-16-get-dummies-text-into-numbers">16. get_dummies — text into numbers</a><a href="#s-17-sort-values-and-rank">17. sort_values and rank</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Python and the data toolkit</p>
@@ -170,7 +170,7 @@ notebook prints different values and the notes below stop matching the output.</
 import numpy as np
 
 np.random.seed(42)</pre></div>
-<h2 id="1-series-one-column-with-an-index">1. Series — one column with an index</h2>
+<h2 id="s-1-series-one-column-with-an-index">1. Series — one column with an index</h2>
 <p>A Series is a single column. Two parts go with it:</p>
 <ul>
 <li>the <strong>values</strong> — the actual data</li>
@@ -211,7 +211,7 @@ turn a string into a list of single characters.</p>
 <p>The index is not just decoration. It is the key pandas uses when it lines up
 two objects — see the very next cell.</p>
 
-<h2 id="2-dataframe-many-series-side-by-side">2. DataFrame — many Series side by side</h2>
+<h2 id="s-2-dataframe-many-series-side-by-side">2. DataFrame — many Series side by side</h2>
 <p>A DataFrame is a table. Give it a dictionary and each key becomes a column
 name, each value becomes that column's data.</p>
 
@@ -255,7 +255,7 @@ integers from 1 to 99</li>
 then the last 5, and tells you the real size at the bottom:
 <code>[1000 rows x 5 columns]</code>.</p>
 
-<h2 id="3-read-a-real-file">3. Read a real file</h2>
+<h2 id="s-3-read-a-real-file">3. Read a real file</h2>
 <p><code>pd.read_csv()</code> is the door into pandas. It reads the file, guesses the column
 names from the header row, and guesses each column's dtype.</p>
 <p>This dataset is small: age, income, and whether the person bought a car.</p>
@@ -348,7 +348,7 @@ accurate and completely useless. Remember this when we reach classification.</p>
 dot form only works when the column name has no space and does not clash with
 a real method name, so <code>dataset['Car']</code> is the safer habit.</p>
 
-<h2 id="4-rename-columns-and-the-inplace-trap">4. Rename columns — and the <code>inplace</code> trap</h2>
+<h2 id="s-4-rename-columns-and-the-inplace-trap">4. Rename columns — and the <code>inplace</code> trap</h2>
 <p>This is the single most common beginner confusion in pandas, so go slowly.</p>
 <p>Most pandas methods <strong>do not change the original</strong>. They build a changed copy
 and hand it back. If you do not catch that copy in a variable, the work is
@@ -422,7 +422,7 @@ Prefer the reassign form <code>df = df.rename(...)</code> in real code.</p>
 <p><code>.columns</code> gives back the column names as an <code>Index</code> object. Handy for a quick
 check after a rename, or for looping over columns.</p>
 
-<h2 id="5-pick-columns-and-rows">5. Pick columns and rows</h2>
+<h2 id="s-5-pick-columns-and-rows">5. Pick columns and rows</h2>
 <p>Square brackets pick columns. The number of brackets decides what you get
 back.</p>
 
@@ -511,7 +511,7 @@ does stop before 60. With this default 0,1,2... index the two look identical,
 which is exactly why the difference bites people later, once the index is dates
 or IDs.</p>
 
-<h2 id="6-filter-rows-with-a-condition">6. Filter rows with a condition</h2>
+<h2 id="s-6-filter-rows-with-a-condition">6. Filter rows with a condition</h2>
 <p>A comparison on a column does not return one True/False. It returns a whole
 column of True/False, one per row — a <strong>boolean mask</strong>. Feed that mask back
 into the brackets and pandas keeps only the <code>True</code> rows.</p>
@@ -565,7 +565,7 @@ the second condition (<code>Age &lt; 32</code>) narrows it further, down to 3 ro
 <code>or</code>. And each condition needs its own brackets, because <code>&amp;</code> binds tighter than
 <code>&gt;</code> in Python. Missing brackets here is a classic error message.</p>
 
-<h2 id="7-missing-values-find-them-and-fill-them">7. Missing values — find them and fill them</h2>
+<h2 id="s-7-missing-values-find-them-and-fill-them">7. Missing values — find them and fill them</h2>
 <p>Real files have holes. Pandas shows a hole as <code>NaN</code> (&quot;not a number&quot;).</p>
 <p>One thing to know up front: a column with even one <code>NaN</code> in it becomes a
 <code>float</code> column, because <code>NaN</code> is a float value. That is why prices below print
@@ -729,7 +729,7 @@ fine as syntax practice, but do not carry it into a real project.</p>
 whole file leaks information about the test set into training. That is what
 scikit-learn's <code>SimpleImputer</code> is for, and it is coming later.</p>
 
-<h2 id="8-drop-a-column">8. Drop a column</h2>
+<h2 id="s-8-drop-a-column">8. Drop a column</h2>
 <p><code>axis='columns'</code> (or <code>axis=1</code>) means &quot;drop by column name&quot;. <code>axis='index'</code>
 (or <code>axis=0</code>, the default) means &quot;drop by row label&quot;.</p>
 
@@ -788,7 +788,7 @@ df</pre></div>
 the result back, a pandas method leaves your data untouched. When something
 &quot;did not work&quot;, check this first — it is the cause more often than not.</p>
 
-<h2 id="9-stack-frames-concat-replaces-append">9. Stack frames — <code>concat</code> replaces <code>append</code></h2>
+<h2 id="s-9-stack-frames-concat-replaces-append">9. Stack frames — <code>concat</code> replaces <code>append</code></h2>
 <p>Two frames, different column names.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 65</span></div><pre class="py">data1 = pd.DataFrame(data=np.random.randint(1,100,size=(100,4)),columns=list(&#x27;abcd&#x27;))
@@ -908,7 +908,7 @@ frames with different columns.</p>
 <p>Side-by-side concat matches on the index. It does not look at any key column —
 that job belongs to <code>merge</code>, next.</p>
 
-<h2 id="10-merge-a-sql-join">10. Merge — a SQL join</h2>
+<h2 id="s-10-merge-a-sql-join">10. Merge — a SQL join</h2>
 <h3>Why <code>data3.merge(data4, on='a')</code> failed</h3>
 <p>That was the second error:</p>
 <div class="code"><pre>KeyError: &#x27;a&#x27;
@@ -1073,14 +1073,14 @@ shows <strong><code>object</code></strong> for text columns. Both are correct �
 string dtype. Nothing about your code is wrong; the library moved.</p>
 
 <hr />
-<h2 id="1-import">1. Import</h2>
+<h2 id="s-1-import">1. Import</h2>
 <p><code>pd</code> is the universal alias, exactly like <code>np</code>. Never rename it.</p>
 <p>Pandas is built on NumPy — every numeric column is a NumPy array underneath, which is why
 everything you learned in the NumPy notebooks still applies here.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd</pre></div>
 <hr />
-<h2 id="2-series-one-column-with-a-label-for-every-value">2. Series — one column with a label for every value</h2>
+<h2 id="s-2-series-one-column-with-a-label-for-every-value">2. Series — one column with a label for every value</h2>
 <p>A Series is <strong>one column</strong>: an array of values plus an index of labels.</p>
 <div class="code"><pre>   index   values
      0       10
@@ -1156,7 +1156,7 @@ dtype: int64
 ---------------
 Mean 20.0</pre></div>
 <hr />
-<h2 id="3-dataframe-and-your-question-why-df-columns-but">3. DataFrame — and your question: why <code>df.columns</code> but <code>df.head()</code>?</h2>
+<h2 id="s-3-dataframe-and-your-question-why-df-columns-but">3. DataFrame — and your question: why <code>df.columns</code> but <code>df.head()</code>?</h2>
 <p>You asked this in the cell's comments, so this section answers it properly.</p>
 <div class="code"><pre class="py">df = pd.DataFrame({&#x27;Name&#x27;:[&#x27;A&#x27;,&#x27;B&#x27;], &#x27;Age&#x27;: [20,25]})
 </pre></div>
@@ -1303,7 +1303,7 @@ Index([&#x27;Name&#x27;, &#x27;Age&#x27;], dtype=&#x27;str&#x27;)
 1    B   25
 ---------------</pre></div>
 <hr />
-<h2 id="4-reading-files-and-the-error-in-this-cell">4. Reading files — and the error in this cell</h2>
+<h2 id="s-4-reading-files-and-the-error-in-this-cell">4. Reading files — and the error in this cell</h2>
 <div class="code"><pre class="py">df1 = pd.read_csv(&#x27;../Data/data.csv&#x27;)
 # FileNotFoundError: [Errno 2] No such file or directory: &#x27;../Data/data.csv&#x27;
 </pre></div>
@@ -1367,7 +1367,7 @@ File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/
     861 kwds_defaults = _refine_defaults_read(
     862     dialect,</pre></div>
 <hr />
-<h2 id="5-writing-files-the-cell-half-succeeded">5. Writing files — the cell half-succeeded</h2>
+<h2 id="s-5-writing-files-the-cell-half-succeeded">5. Writing files — the cell half-succeeded</h2>
 <div class="code"><pre class="py">df.to_csv(&#x27;../Data/data.csv&#x27;)      # worked
 df.to_excel(&#x27;data.xlsx&#x27;)   # ModuleNotFoundError: No module named &#x27;openpyxl&#x27;
 df.to_json(&#x27;data.json&#x27;)    # never ran
@@ -1420,7 +1420,7 @@ File ~/Documents/MACHINE_LEARNING/pizza_env/lib/python3.14/site-packages/pandas/
 
 File ~/Documents/MACHINE_LEARNING/pi</pre></div>
 <hr />
-<h2 id="6-first-look-at-a-frame-info-shape-describe">6. First look at a frame — <code>info</code>, <code>shape</code>, <code>describe</code></h2>
+<h2 id="s-6-first-look-at-a-frame-info-shape-describe">6. First look at a frame — <code>info</code>, <code>shape</code>, <code>describe</code></h2>
 <p>These three are what you run on any dataset you have not seen before, in this order.</p>
 <table class="tbl"><thead>
 <tr>
@@ -1518,7 +1518,7 @@ min    20.000000
 75%    23.750000
 max    25.000000</pre></div>
 <hr />
-<h2 id="7-loc-vs-iloc-label-or-position">7. <code>loc</code> vs <code>iloc</code> — label or position</h2>
+<h2 id="s-7-loc-vs-iloc-label-or-position">7. <code>loc</code> vs <code>iloc</code> — label or position</h2>
 <p>This is the selection pair you will use for the rest of your Pandas life.</p>
 <div class="code"><pre>   df.loc[...]   -&gt;  by LABEL      the index value, the column name
    df.iloc[...]  -&gt;  by POSITION   0, 1, 2 ... counted from the top
@@ -1603,7 +1603,7 @@ Name: 1, dtype: object
 1    B   25
 ---------------</pre></div>
 <hr />
-<h2 id="8-changing-the-index-the-experiment-that-proves-">8. Changing the index — the experiment that proves the point</h2>
+<h2 id="s-8-changing-the-index-the-experiment-that-proves-">8. Changing the index — the experiment that proves the point</h2>
 <p>These four cells are one experiment, and it is the most useful thing in the notebook.
 Section 7's labels and positions matched, so nothing could go wrong. Here they are pulled
 apart:</p>
@@ -1702,7 +1702,7 @@ File panda</pre></div>
 Age     25
 Name: 102, dtype: object</pre></div>
 <hr />
-<h2 id="9-filtering-with-a-boolean-mask">9. Filtering with a boolean mask</h2>
+<h2 id="s-9-filtering-with-a-boolean-mask">9. Filtering with a boolean mask</h2>
 <p>The NumPy mask from <code>example_02.ipynb</code>, now with column names.</p>
 <div class="code"><pre class="py">df[df[&#x27;Age&#x27;] &gt; 25]
 </pre></div>
@@ -1754,7 +1754,7 @@ print(df[df[&#x27;Age&#x27;]==30])</pre></div>
    Age
 2   30</pre></div>
 <hr />
-<h2 id="10-query-the-same-filter-written-as-a-sentence">10. <code>query</code> — the same filter, written as a sentence</h2>
+<h2 id="s-10-query-the-same-filter-written-as-a-sentence">10. <code>query</code> — the same filter, written as a sentence</h2>
 <div class="code"><pre class="py">df.query(&#x27;Age&gt;25&#x27;)          # identical result to df[df[&#x27;Age&#x27;]&gt;25]
 </pre></div>
 <p>Both cells print the same rows. <code>query</code> takes the condition as a <strong>string</strong> and lets you
@@ -1813,7 +1813,7 @@ print(df.query(&#x27;Age==30&#x27;))</pre></div>
    Age
 2   30</pre></div>
 <hr />
-<h2 id="11-missing-values">11. Missing values</h2>
+<h2 id="s-11-missing-values">11. Missing values</h2>
 <p>Real data has holes. Pandas marks them <code>NaN</code> and gives you four tools.</p>
 <table class="tbl"><thead>
 <tr>
@@ -1900,7 +1900,7 @@ print(df.dropna())</pre></div>
 0  1.0
 2  3.0</pre></div>
 <hr />
-<h2 id="12-duplicates">12. Duplicates</h2>
+<h2 id="s-12-duplicates">12. Duplicates</h2>
 <div class="code"><pre>   A = [1, 1, 2, 2]
 
    df.duplicated()        -&gt;  [False, True, False, True]
@@ -1933,7 +1933,7 @@ dtype: bool
 0  1
 2  2</pre></div>
 <hr />
-<h2 id="13-rename-changing-a-column-name">13. <code>rename</code> — changing a column name</h2>
+<h2 id="s-13-rename-changing-a-column-name">13. <code>rename</code> — changing a column name</h2>
 <div class="code"><pre class="py">df.rename(columns={&#x27;Age&#x27;:&#x27;Student_Age&#x27;})
 </pre></div>
 <p>The dictionary reads <code>{old: new}</code>. Only the keys you list change; everything else is left
@@ -1954,7 +1954,7 @@ print(df.rename(columns={&#x27;Age&#x27;:&#x27;Student_Age&#x27;}))</pre></div>
 0           20
 1           25</pre></div>
 <hr />
-<h2 id="14-astype-changing-a-column-s-type">14. <code>astype</code> — changing a column's type</h2>
+<h2 id="s-14-astype-changing-a-column-s-type">14. <code>astype</code> — changing a column's type</h2>
 <div class="code"><pre class="py">df[&#x27;Age&#x27;] = df[&#x27;Age&#x27;].astype(int)
 </pre></div>
 <p>The output is the whole lesson:</p>
@@ -1991,7 +1991,7 @@ dtype: object
 Age    int64
 dtype: object</pre></div>
 <hr />
-<h2 id="15-replace-swapping-values">15. <code>replace</code> — swapping values</h2>
+<h2 id="s-15-replace-swapping-values">15. <code>replace</code> — swapping values</h2>
 <div class="code"><pre class="py">df.replace(&#x27;Pune&#x27;,&#x27;Nashik&#x27;)       # both Pune rows become Nashik
 </pre></div>
 <p><code>rename</code> changed a <strong>column name</strong>; <code>replace</code> changes <strong>values inside the data</strong>. Easy to
@@ -2016,7 +2016,7 @@ print(df.replace(&#x27;Pune&#x27;,&#x27;Nashik&#x27;))</pre></div>
 1  Mumbai
 2  Nashik</pre></div>
 <hr />
-<h2 id="16-get-dummies-text-into-numbers">16. <code>get_dummies</code> — text into numbers</h2>
+<h2 id="s-16-get-dummies-text-into-numbers">16. <code>get_dummies</code> — text into numbers</h2>
 <div class="code"><pre class="py">pd.get_dummies(df[&#x27;City&#x27;])
 </pre></div>
 <div class="code"><pre>   City          Delhi  Mumbai   Pune
@@ -2053,7 +2053,7 @@ print(pd.get_dummies(df[&#x27;City&#x27;]))</pre></div>
 1  False    True  False
 2   True   False  False</pre></div>
 <hr />
-<h2 id="17-sort-values-and-rank">17. <code>sort_values</code> and <code>rank</code></h2>
+<h2 id="s-17-sort-values-and-rank">17. <code>sort_values</code> and <code>rank</code></h2>
 <div class="code"><pre class="py">df.sort_values(&#x27;Marks&#x27;)          # 50, 70, 80
 df[&#x27;Rank&#x27;] = df[&#x27;Marks&#x27;].rank(ascending=False)
 </pre></div>
@@ -2101,7 +2101,7 @@ print(df)</pre></div>
 1     80   1.0
 2     70   2.0</pre></div>
 <hr />
-<h2 id="18-groupby-split-apply-combine">18. <code>groupby</code> — split, apply, combine</h2>
+<h2 id="s-18-groupby-split-apply-combine">18. <code>groupby</code> — split, apply, combine</h2>
 <div class="code"><pre class="py">df.groupby(&#x27;City&#x27;)[&#x27;Sales&#x27;].sum()
 </pre></div>
 <p>Three steps, always:</p>
@@ -2151,7 +2151,7 @@ Mumbai    300.0
 Pune      150.0
 Name: Sales, dtype: float64</pre></div>
 <hr />
-<h2 id="19-pivot-table-groupby-laid-out-as-a-grid">19. <code>pivot_table</code> — groupby laid out as a grid</h2>
+<h2 id="s-19-pivot-table-groupby-laid-out-as-a-grid">19. <code>pivot_table</code> — groupby laid out as a grid</h2>
 <div class="code"><pre class="py">pd.pivot_table(df, values=&#x27;Sales&#x27;, index=&#x27;City&#x27;, aggfunc=&#x27;sum&#x27;)
 </pre></div>
 <p>The numbers are identical to section 18 — same split, same sum. Two differences:</p>
@@ -2195,7 +2195,7 @@ City
 Mumbai    300
 Pune      300</pre></div>
 <hr />
-<h2 id="20-dates-to-datetime-and-the-dt-accessor">20. Dates — <code>to_datetime</code> and the <code>.dt</code> accessor</h2>
+<h2 id="s-20-dates-to-datetime-and-the-dt-accessor">20. Dates — <code>to_datetime</code> and the <code>.dt</code> accessor</h2>
 <div class="code"><pre class="py">dates[&#x27;Date&#x27;] = pd.to_datetime(dates[&#x27;Date&#x27;])
 dates[&#x27;Date&#x27;].dt.year        # 2025, 2025
 dates[&#x27;Date&#x27;].dt.month       # 1, 2
@@ -2236,7 +2236,7 @@ Name: Date, dtype: int32
 1    2
 Name: Date, dtype: int32</pre></div>
 <hr />
-<h2 id="21-text-the-str-accessor">21. Text — the <code>.str</code> accessor</h2>
+<h2 id="s-21-text-the-str-accessor">21. Text — the <code>.str</code> accessor</h2>
 <div class="code"><pre class="py">s.str.upper()
 s.str.contains(&#x27;a&#x27;, case=False)
 s.str.len()
@@ -2854,6 +2854,7 @@ Mon    255
 Sun    216
 Wed    156
 Name: revenue, dtype: int64</pre></div>
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/example_02.ipynb">example_02.ipynb ↗</a><a class="btn" href="../Concept/pizza_panda.ipynb">pizza_panda.ipynb ↗</a><a class="btn" href="../Concept/README.md">README.md ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

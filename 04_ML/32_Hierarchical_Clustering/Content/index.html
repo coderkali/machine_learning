@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#hierarchical-clustering-a-visual-beginner-friend">Hierarchical Clustering — A Visual, Beginner-Friendl</a><a href="#what-you-will-learn">What you will learn</a><a href="#the-story-nine-strangers-in-an-empty-town">The story: nine strangers in an empty town</a><a href="#1-first-look-at-the-data">1. First, look at the data</a><a href="#2-how-agglomerative-clustering-works">2. How agglomerative clustering works</a><a href="#3-how-do-we-measure-the-distance-between-groups">3. How do we measure the distance between groups?</a><a href="#4-build-and-read-the-dendrogram">4. Build and read the dendrogram</a><a href="#5-fit-the-model-and-display-the-final-clusters">5. Fit the model and display the final clusters</a><a href="#6-optional-visual-compare-linkage-methods">6. Optional visual: compare linkage methods</a><a href="#7-practical-notes-for-real-datasets">7. Practical notes for real datasets</a><a href="#recap">Recap</a><a href="#the-whole-story-in-six-lines">The whole story in six lines</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#hierarchical-clustering-a-visual-beginner-friend">Hierarchical Clustering — A Visual, Beginner-Friendl</a><a href="#what-you-will-learn">What you will learn</a><a href="#the-story-nine-strangers-in-an-empty-town">The story: nine strangers in an empty town</a><a href="#s-1-first-look-at-the-data">1. First, look at the data</a><a href="#s-2-how-agglomerative-clustering-works">2. How agglomerative clustering works</a><a href="#s-3-how-do-we-measure-the-distance-between-groups">3. How do we measure the distance between groups?</a><a href="#s-4-build-and-read-the-dendrogram">4. Build and read the dendrogram</a><a href="#s-5-fit-the-model-and-display-the-final-clusters">5. Fit the model and display the final clusters</a><a href="#s-6-optional-visual-compare-linkage-methods">6. Optional visual: compare linkage methods</a><a href="#s-7-practical-notes-for-real-datasets">7. Practical notes for real datasets</a><a href="#recap">Recap</a><a href="#the-whole-story-in-six-lines">The whole story in six lines</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -99,7 +99,7 @@ point_names = [f&quot;P{i}&quot; for i in range(1, len(points) + 1)]
 
 print(f&quot;Dataset shape: {points.shape[0]} points and {points.shape[1]} features&quot;)</pre></div>
 <div class="out"><div class="h">Output</div><pre>Dataset shape: 9 points and 2 features</pre></div>
-<h2 id="1-first-look-at-the-data">1. First, look at the data</h2>
+<h2 id="s-1-first-look-at-the-data">1. First, look at the data</h2>
 <p>The two columns are called <strong>Feature 1</strong> and <strong>Feature 2</strong>. They could represent real measurements such as income and spending, height and weight, or any other pair of numeric features.</p>
 <p>Before using an algorithm, always plot the data. Ask: <strong>Do some points appear naturally close together?</strong></p>
 
@@ -176,7 +176,7 @@ print(f&quot;Distance D  : {straight_line:.2f}&quot;)</pre></div>
 Walk up     : 18
 Distance D  : 23.43</pre></div>
 <figure class="shot"><img src="assets/13-hirerachical-clustering-c08-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="2-how-agglomerative-clustering-works">2. How agglomerative clustering works</h2>
+<h2 id="s-2-how-agglomerative-clustering-works">2. How agglomerative clustering works</h2>
 <p><strong>Agglomerative</strong> means “building upward by joining.” The algorithm follows four repeated steps:</p>
 <ol>
 <li>Treat every point as its own cluster.</li>
@@ -399,7 +399,7 @@ handshake 6: joined [&#x27;P7&#x27;, &#x27;P8&#x27;] + [&#x27;P6&#x27;, &#x27;P9
 handshake 7: joined [&#x27;P5&#x27;] + [&#x27;P1&#x27;, &#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 32.80
 handshake 8: joined [&#x27;P7&#x27;, &#x27;P8&#x27;, &#x27;P6&#x27;, &#x27;P9&#x27;] + [&#x27;P5&#x27;, &#x27;P1&#x27;, &#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 166.17</pre></div>
 <figure class="shot"><img src="assets/13-hirerachical-clustering-c14-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="3-how-do-we-measure-the-distance-between-groups">3. How do we measure the distance between groups?</h2>
+<h2 id="s-3-how-do-we-measure-the-distance-between-groups">3. How do we measure the distance between groups?</h2>
 <p>After points begin joining, we must compare whole groups rather than individual points. The rule used for that comparison is called <strong>linkage</strong>.</p>
 <table class="tbl"><thead>
 <tr>
@@ -509,7 +509,7 @@ fig.suptitle(&quot;Same two groups, four different answers to: how far apart are
 fig.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/13-hirerachical-clustering-c17-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="4-build-and-read-the-dendrogram">4. Build and read the dendrogram</h2>
+<h2 id="s-4-build-and-read-the-dendrogram">4. Build and read the dendrogram</h2>
 <p>A dendrogram records the complete joining history. Read it from the bottom upward:</p>
 <ul>
 <li>Each label at the bottom is one original point.</li>
@@ -683,7 +683,7 @@ for label in np.unique(labels):
   group 1: P6, P7, P8, P9
   group 2: P1, P2, P3, P4, P5</pre></div>
 <figure class="shot"><img src="assets/13-hirerachical-clustering-c24-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="5-fit-the-model-and-display-the-final-clusters">5. Fit the model and display the final clusters</h2>
+<h2 id="s-5-fit-the-model-and-display-the-final-clusters">5. Fit the model and display the final clusters</h2>
 <p>The dendrogram helped us choose two groups. Now <code>AgglomerativeClustering</code> assigns a cluster number to every point.</p>
 <p>Cluster numbers are only names. “Cluster 1” is not better or more important than “Cluster 2.”</p>
 
@@ -728,7 +728,7 @@ Cluster 2: P6, P7, P8, P9</pre></div>
 <p>The model places the five lower-left points together and the four upper-right points together. This matches both the original scatter plot and the two main branches in the dendrogram.</p>
 <p>The <strong>X</strong> markers show the average position of each cluster. They are included only as a visual summary; hierarchical clustering does not work by repeatedly moving these centers like K-means does.</p>
 
-<h2 id="6-optional-visual-compare-linkage-methods">6. Optional visual: compare linkage methods</h2>
+<h2 id="s-6-optional-visual-compare-linkage-methods">6. Optional visual: compare linkage methods</h2>
 <p>The same points can produce different trees because each linkage method defines “closest groups” differently. Focus on the overall tree shape rather than memorizing every branch.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">methods = [&quot;single&quot;, &quot;complete&quot;, &quot;average&quot;, &quot;ward&quot;]
@@ -748,7 +748,7 @@ fig.suptitle(&quot;One dataset, four ways to define distance between groups&quot
 fig.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/13-hirerachical-clustering-c29-11.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="7-practical-notes-for-real-datasets">7. Practical notes for real datasets</h2>
+<h2 id="s-7-practical-notes-for-real-datasets">7. Practical notes for real datasets</h2>
 <p>Keep these three ideas in mind:</p>
 <ol>
 <li><strong>Scale numeric features first.</strong> A feature measured in thousands can dominate one measured from 0 to 10. <code>StandardScaler</code> is a common solution.</li>
@@ -780,6 +780,7 @@ plt.show()</pre></div>
 <div class="note"><div class="h">Note</div><p>If you remember only one thing: <strong>hierarchical clustering does not choose the number of clusters for you. It writes the full history, and you decide where to cut it.</strong></p>
 </div>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/13_Hirerachical_Clustering.ipynb">13_Hirerachical_Clustering.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

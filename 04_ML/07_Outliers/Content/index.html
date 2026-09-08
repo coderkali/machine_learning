@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#outliers-detecting-them-and-proving-they-matter">Outliers — Detecting Them and Proving They Matter</a><a href="#1-proving-it-first-does-one-value-really-matter-">1. Proving It First — Does One Value Really Matter T</a><a href="#2-why-this-matters-for-ml-models-not-just-arithm">2. Why This Matters for ML Models, Not Just Arithmet</a><a href="#3-detecting-outliers-the-box-plot-iqr-method">3. Detecting Outliers — the Box Plot / IQR Method</a><a href="#4-the-distribution-graph-the-same-bounds-as-a-be">4. The Distribution Graph — the Same Bounds, as a Be</a><a href="#5-iqr-vs-z-score-same-column-different-assumptio">5. IQR vs. Z-Score — Same Column, Different Assumpti</a><a href="#6-actually-removing-them">6. Actually Removing Them</a><a href="#outlier-removal-via-iqr">Outlier Removal via IQR</a><a href="#1-the-iqr-bounds">1. The IQR Bounds</a><a href="#2-filtering-and-proving-it-worked">2. Filtering — and Proving It Worked</a><a href="#3-the-impact-on-mean-and-std">3. The Impact on mean and std</a><a href="#4-removal-vs-the-alternatives">4. Removal vs. the Alternatives</a><a href="#5-cleaning-both-income-columns-together">5. Cleaning Both Income Columns Together</a><a href="#outlier-removal-via-z-score">Outlier Removal via Z-Score</a><a href="#1-two-equivalent-ways-to-apply-the-threshold">1. Two Equivalent Ways to Apply the Threshold</a><a href="#2-visualizing-the-z-score-removal">2. Visualizing the Z-Score Removal</a><a href="#3-iqr-vs-z-score-head-to-head-same-column">3. IQR vs. Z-Score, Head-to-Head, Same Column</a><a href="#4-the-final-correctly-cleaned-dataset">4. The Final, Correctly-Cleaned Dataset</a><a href="#21-outliers">21 - Outliers</a><a href="#why-are-we-learning-this">Why are we learning this?</a><a href="#first-the-words">First, the words</a><a href="#the-four-ways-we-will-do-it">The four ways we will do it</a><a href="#1-the-tools-on-the-table">1. The tools on the table</a><a href="#2-make-some-fake-data-we-can-trust">2. Make some fake data we can trust</a><a href="#why-do-we-use-x-0-and-x-1-in-a-scatter-plot">Why do we use x[:, 0] and x[:, 1] in a scatter plot?</a><a href="#3-dbscan-who-is-standing-in-a-crowd">3. DBSCAN - who is standing in a crowd?</a><a href="#4-elliptic-envelope-draw-one-oval-around-normal">4. Elliptic Envelope - draw one oval around normal</a><a href="#5-isolation-forest-how-fast-can-i-cut-you-off">5. Isolation Forest - how fast can I cut you off?</a><a href="#6-why-do-all-these-scatter-plots-look-the-same">6. Why do all these scatter plots look the same?</a><a href="#7-local-outlier-factor-strange-compared-to-your-">7. Local Outlier Factor - strange compared to your o</a><a href="#8-a-tiny-7-point-example-and-a-trap">8. A tiny 7-point example - and a trap</a><a href="#putting-the-four-side-by-side">Putting the four side by side</a><a href="#remember-this">Remember this</a><a href="#60-second-revision">60-second revision</a><a href="#test-yourself">Test yourself</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#outliers-detecting-them-and-proving-they-matter">Outliers — Detecting Them and Proving They Matter</a><a href="#s-1-proving-it-first-does-one-value-really-matter-">1. Proving It First — Does One Value Really Matter T</a><a href="#s-2-why-this-matters-for-ml-models-not-just-arithm">2. Why This Matters for ML Models, Not Just Arithmet</a><a href="#s-3-detecting-outliers-the-box-plot-iqr-method">3. Detecting Outliers — the Box Plot / IQR Method</a><a href="#s-4-the-distribution-graph-the-same-bounds-as-a-be">4. The Distribution Graph — the Same Bounds, as a Be</a><a href="#s-5-iqr-vs-z-score-same-column-different-assumptio">5. IQR vs. Z-Score — Same Column, Different Assumpti</a><a href="#s-6-actually-removing-them">6. Actually Removing Them</a><a href="#outlier-removal-via-iqr">Outlier Removal via IQR</a><a href="#s-1-the-iqr-bounds">1. The IQR Bounds</a><a href="#s-2-filtering-and-proving-it-worked">2. Filtering — and Proving It Worked</a><a href="#s-3-the-impact-on-mean-and-std">3. The Impact on mean and std</a><a href="#s-4-removal-vs-the-alternatives">4. Removal vs. the Alternatives</a><a href="#s-5-cleaning-both-income-columns-together">5. Cleaning Both Income Columns Together</a><a href="#outlier-removal-via-z-score">Outlier Removal via Z-Score</a><a href="#s-1-two-equivalent-ways-to-apply-the-threshold">1. Two Equivalent Ways to Apply the Threshold</a><a href="#s-2-visualizing-the-z-score-removal">2. Visualizing the Z-Score Removal</a><a href="#s-3-iqr-vs-z-score-head-to-head-same-column">3. IQR vs. Z-Score, Head-to-Head, Same Column</a><a href="#s-4-the-final-correctly-cleaned-dataset">4. The Final, Correctly-Cleaned Dataset</a><a href="#s-21-outliers">21 - Outliers</a><a href="#why-are-we-learning-this">Why are we learning this?</a><a href="#first-the-words">First, the words</a><a href="#the-four-ways-we-will-do-it">The four ways we will do it</a><a href="#s-1-the-tools-on-the-table">1. The tools on the table</a><a href="#s-2-make-some-fake-data-we-can-trust">2. Make some fake data we can trust</a><a href="#why-do-we-use-x-0-and-x-1-in-a-scatter-plot">Why do we use x[:, 0] and x[:, 1] in a scatter plot?</a><a href="#s-3-dbscan-who-is-standing-in-a-crowd">3. DBSCAN - who is standing in a crowd?</a><a href="#s-4-elliptic-envelope-draw-one-oval-around-normal">4. Elliptic Envelope - draw one oval around normal</a><a href="#s-5-isolation-forest-how-fast-can-i-cut-you-off">5. Isolation Forest - how fast can I cut you off?</a><a href="#s-6-why-do-all-these-scatter-plots-look-the-same">6. Why do all these scatter plots look the same?</a><a href="#s-7-local-outlier-factor-strange-compared-to-your-">7. Local Outlier Factor - strange compared to your o</a><a href="#s-8-a-tiny-7-point-example-and-a-trap">8. A tiny 7-point example - and a trap</a><a href="#putting-the-four-side-by-side">Putting the four side by side</a><a href="#remember-this">Remember this</a><a href="#s-60-second-revision">60-second revision</a><a href="#test-yourself">Test yourself</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Outliers</h1>
   <p class="lede">One wrong row can drag an entire model off course.</p>
-  <div class="tags"><span class="tag">4 notebooks</span></div>
+  <div class="tags"><span class="tag">4 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Farhan calculated the average salary on his team of ten.</strong> It came out at ₹41 lakh. Nobody on the team recognised that number.</p><p>Nine people earned between ₹8 and ₹15 lakh. The tenth was the founder, on ₹3 crore. The average described nobody at all.</p><p><span class='beat'>The mean is not robust — one extreme value pulls it anywhere.</span> The median stayed at ₹11 lakh and described the team honestly.</p><p>So outliers must be found (IQR, Z-score, DBSCAN) and then judged. A typing error gets removed. A genuine founder salary gets kept — and it tells you the mean was the wrong tool.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Find the extreme points, then judge: an error to remove, or a rare truth to keep?</p></div>
@@ -48,7 +48,7 @@ an outlier region, and what happens when real data isn't actually normal.</li>
 <li><strong>Actually removing</strong> the flagged rows.</li>
 </ol>
 
-<h2 id="1-proving-it-first-does-one-value-really-matter-">1. Proving It First — Does One Value Really Matter That Much?</h2>
+<h2 id="s-1-proving-it-first-does-one-value-really-matter-">1. Proving It First — Does One Value Really Matter That Much?</h2>
 <p>Eight ordinary, close-together numbers — nothing dramatic — then the exact
 same list with one extra value thrown in.</p>
 
@@ -117,7 +117,7 @@ triples; the median bar barely shifts. Same underlying data, wildly
 different sensitivity — which is exactly the property that makes outlier
 handling a real decision, not a formality.</p>
 
-<h2 id="2-why-this-matters-for-ml-models-not-just-arithm">2. Why This Matters for ML Models, Not Just Arithmetic</h2>
+<h2 id="s-2-why-this-matters-for-ml-models-not-just-arithm">2. Why This Matters for ML Models, Not Just Arithmetic</h2>
 <p>The toy example proved outliers distort a plain average. In an actual ML
 pipeline, that distortion shows up in more places than just <code>.mean()</code>:</p>
 <ul>
@@ -145,7 +145,7 @@ thing you're trying to find — removing them would delete the signal, not
 the noise. &quot;Detect, then decide&quot; (<code>02_ML_Roadmap.MD</code>'s phrasing) — removal
 is one option, not the automatic answer.</p>
 
-<h2 id="3-detecting-outliers-the-box-plot-iqr-method">3. Detecting Outliers — the Box Plot / IQR Method</h2>
+<h2 id="s-3-detecting-outliers-the-box-plot-iqr-method">3. Detecting Outliers — the Box Plot / IQR Method</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Part of the box plot</th>
@@ -300,7 +300,7 @@ every flagged row is a high earner. Both percentages are well above the
 <strong>~0.7%</strong> a normal distribution would predict (Section 3's table) —
 confirming numerically what the skew in <code>.describe()</code> already hinted at.</p>
 
-<h2 id="4-the-distribution-graph-the-same-bounds-as-a-be">4. The Distribution Graph — the Same Bounds, as a Bell Curve</h2>
+<h2 id="s-4-the-distribution-graph-the-same-bounds-as-a-be">4. The Distribution Graph — the Same Bounds, as a Bell Curve</h2>
 <p>The box plot and the distribution plot are two views of the same data —
 the whiskers computed above are the box plot's outlier boundary; here
 they're drawn over the actual density curve, matching the classic diagram
@@ -340,7 +340,7 @@ This is the visual version of the 3.41% vs. 0.7% gap from Section 3 — a
 symmetric normal curve would leave that red region nearly empty; this one
 clearly doesn't.</p>
 
-<h2 id="5-iqr-vs-z-score-same-column-different-assumptio">5. IQR vs. Z-Score — Same Column, Different Assumptions</h2>
+<h2 id="s-5-iqr-vs-z-score-same-column-different-assumptio">5. IQR vs. Z-Score — Same Column, Different Assumptions</h2>
 <p><code>02_ML_Roadmap.MD</code> names two detection methods: <strong>IQR</strong> (used above) and
 <strong>Z-score</strong> (<code>|z| &gt; 3</code>, i.e. more than 3 standard deviations from the mean).
 Z-score assumes the data is roughly normal — exactly the assumption Section
@@ -367,7 +367,7 @@ thrown off the same way — which is why it's generally the safer default
 for skewed real-world columns like this one, and Z-score is more
 trustworthy on data that's actually close to normal.</p>
 
-<h2 id="6-actually-removing-them">6. Actually Removing Them</h2>
+<h2 id="s-6-actually-removing-them">6. Actually Removing Them</h2>
 <p>Detection answered &quot;which rows&quot;; this is &quot;decide, then act&quot; — the removal
 half of <code>02_ML_Roadmap.MD</code>'s &quot;detect → cap/remove/transform.&quot; Filtering to
 just the rows <em>inside</em> the IQR bounds:</p>
@@ -427,7 +427,7 @@ dataset.shape</pre></div>
 <div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
 <p>618 rows, 13 columns — the baseline to measure every filter against.</p>
 
-<h2 id="1-the-iqr-bounds">1. The IQR Bounds</h2>
+<h2 id="s-1-the-iqr-bounds">1. The IQR Bounds</h2>
 <p>Same three formulas as the whiteboard, on <code>CoapplicantIncome</code> this time
 instead of <code>ApplicantIncome</code>.</p>
 
@@ -468,7 +468,7 @@ for the same reason, but a column like temperature or account balance really
 can go negative, where dropping the lower-bound check would be a genuine bug,
 not a harmless simplification).</p>
 
-<h2 id="2-filtering-and-proving-it-worked">2. Filtering — and Proving It Worked</h2>
+<h2 id="s-2-filtering-and-proving-it-worked">2. Filtering — and Proving It Worked</h2>
 <p><code>12_Outlier.ipynb</code> Section 3 already counted <strong>15</strong> <code>CoapplicantIncome</code> rows
 past <code>max_range</code>. Filtering them out and checking the shape is a number;
 looking at the box plot before and after is the visual proof.</p>
@@ -512,7 +512,7 @@ nothing beyond it survived the filter. Both curves overlaid on the same axes
 so the shortened tail is directly comparable, not just eyeballed across two
 separate plots.</p>
 
-<h2 id="3-the-impact-on-mean-and-std">3. The Impact on <code>mean</code> and <code>std</code></h2>
+<h2 id="s-3-the-impact-on-mean-and-std">3. The Impact on <code>mean</code> and <code>std</code></h2>
 <p><code>12_Outlier.ipynb</code> Section 1 proved outliers inflate the mean and (especially)
 the standard deviation, using a toy list. Same measurement, run the other
 way — on the real column, before and after removal.</p>
@@ -532,7 +532,7 @@ are identical. This is the real-data confirmation of Section 1's toy-list
 result: removing the outliers pulls both statistics back toward where the
 bulk of the data actually sits.</p>
 
-<h2 id="4-removal-vs-the-alternatives">4. Removal vs. the Alternatives</h2>
+<h2 id="s-4-removal-vs-the-alternatives">4. Removal vs. the Alternatives</h2>
 <p>Dropping rows is the most aggressive option — worth seeing it next to the
 others <code>02_ML_Roadmap.MD</code> names (cap, remove, transform):</p>
 <table class="tbl"><thead>
@@ -577,7 +577,7 @@ For a real modeling pipeline, capping or a log transform would usually be
 preferred over removal, precisely because they don't throw away the rest of
 that row's information.</p>
 
-<h2 id="5-cleaning-both-income-columns-together">5. Cleaning Both Income Columns Together</h2>
+<h2 id="s-5-cleaning-both-income-columns-together">5. Cleaning Both Income Columns Together</h2>
 <p><code>12_Outlier.ipynb</code> removed <code>ApplicantIncome</code>'s outliers; this notebook just
 removed <code>CoapplicantIncome</code>'s. A real pipeline wants both applied to the
 same final dataset — chaining the two filters.</p>
@@ -706,7 +706,7 @@ already flagged; <code>sns.histplot(..., kde=True)</code> is the current equival
 A long right tail — the same skew that made IQR and Z-score disagree on
 <code>ApplicantIncome</code> in <code>12_Outlier.ipynb</code> Section 5 is present here too.</p>
 
-<h2 id="1-two-equivalent-ways-to-apply-the-threshold">1. Two Equivalent Ways to Apply the Threshold</h2>
+<h2 id="s-1-two-equivalent-ways-to-apply-the-threshold">1. Two Equivalent Ways to Apply the Threshold</h2>
 <p><strong>Method 1 — mean ± 3×std, as explicit bounds</strong> (same shape as <code>13</code>'s
 <code>min_range</code>/<code>max_range</code>, just built from <code>mean</code>/<code>std</code> instead of <code>Q1</code>/<code>Q3</code>).</p>
 
@@ -797,7 +797,7 @@ itself was never touched. Confirmed explicitly:</p>
 <div class="out"><div class="h">Output</div><pre>np.True_</pre></div>
 <p><code>True</code> — same answer, three ways of getting there.</p>
 
-<h2 id="2-visualizing-the-z-score-removal">2. Visualizing the Z-Score Removal</h2>
+<h2 id="s-2-visualizing-the-z-score-removal">2. Visualizing the Z-Score Removal</h2>
 <p>Same before/after pair <code>13_Outlier_Removal_IQR.ipynb</code> used, on the
 Z-score-cleaned data this time, plus one new chart specific to Z-score:
 the σ-distances themselves.</p>
@@ -836,7 +836,7 @@ of a theoretical normal curve. The 8 points past <code>z = 3</code> are the red 
 notice the curve is still right-skewed even in σ units — a truly normal
 column would look symmetric here.</p>
 
-<h2 id="3-iqr-vs-z-score-head-to-head-same-column">3. IQR vs. Z-Score, Head-to-Head, Same Column</h2>
+<h2 id="s-3-iqr-vs-z-score-head-to-head-same-column">3. IQR vs. Z-Score, Head-to-Head, Same Column</h2>
 <p><code>13</code>'s IQR bound for this exact column was <strong><code>5544.4</code></strong>; Z-score's is
 <strong><code>6220.4</code></strong> — a real gap, not just rounding. Everything between those two
 numbers is flagged as an outlier by IQR but treated as normal by Z-score.</p>
@@ -901,7 +901,7 @@ extreme. This is the same story <code>12_Outlier.ipynb</code> Section 5 told on
 <code>ApplicantIncome</code> (21 vs. 8), now confirmed on a second column with the
 exact rows named.</p>
 
-<h2 id="4-the-final-correctly-cleaned-dataset">4. The Final, Correctly-Cleaned Dataset</h2>
+<h2 id="s-4-the-final-correctly-cleaned-dataset">4. The Final, Correctly-Cleaned Dataset</h2>
 <p><code>z_cleaned</code> from Section 1 is already the right result — computed without
 mutating <code>dataset</code>, with no leaked <code>z_score</code> column. Side by side with
 <code>13</code>'s IQR-cleaned shape:</p>
@@ -921,7 +921,7 @@ conclusion <code>12_Outlier.ipynb</code> reached, now backed by a dedicated,
 bug-fixed, head-to-head run on <code>CoapplicantIncome</code>.</p>
 
 <div class="src-head">📓 <a href="../Concept/21_Outliers.ipynb">21_Outliers.ipynb</a></div>
-<h2 id="21-outliers">21 - Outliers</h2>
+<h2 id="s-21-outliers">21 - Outliers</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <h2 id="why-are-we-learning-this">Why are we learning this?</h2>
@@ -998,7 +998,7 @@ completely different mental pictures:</p>
 </table>
 <p>Keep those four sentences in your head. Everything below is detail.</p>
 
-<h2 id="1-the-tools-on-the-table">1. The tools on the table</h2>
+<h2 id="s-1-the-tools-on-the-table">1. The tools on the table</h2>
 <div class="code"><pre>   DBSCAN            -&gt;  the crowd method
    EllipticEnvelope  -&gt;  the oval method
    IsolationForest   -&gt;  the random-cut method
@@ -1015,7 +1015,7 @@ from sklearn.covariance import EllipticEnvelope
 from sklearn.datasets import make_blobs
 import matplotlib.pyplot as plt
 import numpy as np</pre></div>
-<h2 id="2-make-some-fake-data-we-can-trust">2. Make some fake data we can trust</h2>
+<h2 id="s-2-make-some-fake-data-we-can-trust">2. Make some fake data we can trust</h2>
 <p>Real data is messy, and you never know the right answer. Here we <em>make</em> the
 data, so we already know what the truth is. That is the only honest way to
 judge whether an algorithm behaved sensibly.</p>
@@ -1184,7 +1184,7 @@ plt.show()</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div>
 <div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1202152b0&gt;</pre></div>
 <figure class="shot"><img src="assets/21-outliers-c09-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="3-dbscan-who-is-standing-in-a-crowd">3. DBSCAN - who is standing in a crowd?</h2>
+<h2 id="s-3-dbscan-who-is-standing-in-a-crowd">3. DBSCAN - who is standing in a crowd?</h2>
 <h3>The story</h3>
 <p>Look down at a wedding hall from the balcony.</p>
 <p>You see three tight groups of people talking. And a few people standing
@@ -1580,7 +1580,7 @@ it what &quot;near&quot; and &quot;enough&quot; mean. Those two numbers decide t
 <p>Its weak spot: one single <code>eps</code> for the entire dataset. If one group is
 tight and another is spread out, no single radius suits both.</p>
 
-<h2 id="4-elliptic-envelope-draw-one-oval-around-normal">4. Elliptic Envelope - draw one oval around normal</h2>
+<h2 id="s-4-elliptic-envelope-draw-one-oval-around-normal">4. Elliptic Envelope - draw one oval around normal</h2>
 <h3>The story</h3>
 <p>A tailor measures a thousand men for shirts: height and chest size.</p>
 <p>Plot them and you get one slanted cloud - taller men usually have a wider
@@ -1711,7 +1711,7 @@ own units</em>.</p>
 <p>Use it when normal data really is one oval blob. Do not use it for several
 separate families, or for curved shapes.</p>
 
-<h2 id="5-isolation-forest-how-fast-can-i-cut-you-off">5. Isolation Forest - how fast can I cut you off?</h2>
+<h2 id="s-5-isolation-forest-how-fast-can-i-cut-you-off">5. Isolation Forest - how fast can I cut you off?</h2>
 <h3>The story</h3>
 <p>Twenty Guess Who cards on the table. All the faces look similar - same age
 range, similar hair - except one man wearing a bright red hat.</p>
@@ -1878,7 +1878,7 @@ across it. A row just left of the line and a row just right of it are
 practically identical points. They ended up in different classes only
 because a line had to be drawn somewhere.</p>
 
-<h2 id="6-why-do-all-these-scatter-plots-look-the-same">6. Why do all these scatter plots look the same?</h2>
+<h2 id="s-6-why-do-all-these-scatter-plots-look-the-same">6. Why do all these scatter plots look the same?</h2>
 <p>You spotted this yourself, and it is a good catch. Every plot is the same
 500 dots in the same positions. Only <code>c=</code> changes.</p>
 <div class="code"><pre>   c=y             -&gt;  the truth from make_blobs        3 colours
@@ -2035,7 +2035,7 @@ Core points: 415
 Border points: 60
 Noise points: 25</pre></div>
 <figure class="shot"><img src="assets/21-outliers-c48-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="7-local-outlier-factor-strange-compared-to-your-">7. Local Outlier Factor - strange compared to your own neighbours</h2>
+<h2 id="s-7-local-outlier-factor-strange-compared-to-your-">7. Local Outlier Factor - strange compared to your own neighbours</h2>
 <h3>The story</h3>
 <p>Two people, each standing 5 metres away from anyone else.</p>
 <p>The first is in the middle of a packed festival, where everybody else is
@@ -2124,7 +2124,7 @@ other three methods would simply flag the whole village.</p>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 57</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/21-outliers-c57-14.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="8-a-tiny-7-point-example-and-a-trap">8. A tiny 7-point example - and a trap</h2>
+<h2 id="s-8-a-tiny-7-point-example-and-a-trap">8. A tiny 7-point example - and a trap</h2>
 <p>Seven points, small enough to hold in your head:</p>
 <div class="code"><pre>   A(1,5)  B(1,6)  C(1,7)  D(2,5)  E(2,6)      F(6,5)       G(9,1)
    \_________ five points, packed together ____/   far away   very far away
@@ -2404,7 +2404,7 @@ the pattern they were told to look for.</strong></p>
 <p>Four different definitions of &quot;the pattern&quot; gave four different answers on
 the very same 500 points. That definition is your choice - and that choice,
 not the algorithm, is where the real engineering work sits.</p>
-<h2 id="60-second-revision">60-second revision</h2>
+<h2 id="s-60-second-revision">60-second revision</h2>
 <ol>
 <li>Outlier = unusual, not wrong. A human still decides.</li>
 <li>Unsupervised - no answer key. That is why these methods exist at all.</li>
@@ -2426,6 +2426,11 @@ far apart. High LOF or low?</li>
 <li>Which of the four never measures a distance at all?</li>
 </ul>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/21_Outlier.png" data-name="21_Outlier.png"><img src="../Handwritten_Notes/21_Outlier.png" alt="21_Outlier.png" loading="lazy"><span>21 Outlier</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/12_Outlier.ipynb">12_Outlier.ipynb ↗</a><a class="btn" href="../Concept/13_Outlier_Removal_IQR.ipynb">13_Outlier_Removal_IQR.ipynb ↗</a><a class="btn" href="../Concept/14_Outlier_Removal_Z_Score.ipynb">14_Outlier_Removal_Z_Score.ipynb ↗</a><a class="btn" href="../Concept/21_Outliers.ipynb">21_Outliers.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

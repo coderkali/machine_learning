@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#scikit-learn-synthetic-datasets-make">scikit-learn — synthetic datasets (make_*)</a><a href="#what-is-a-synthetic-dataset">What is a synthetic dataset?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#the-family">The family</a><a href="#1-make-regression-a-straight-line-with-noise-on-">1 — make_regression: a straight line with noise on t</a><a href="#2-look-at-the-data">2 — Look at the data</a><a href="#3-make-classification-groups-instead-of-numbers">3 — make_classification: groups instead of numbers</a><a href="#4-make-blobs-round-groups-for-clustering">4 — make_blobs: round groups, for clustering</a><a href="#5-make-circles-when-a-straight-line-cannot-work">5 — make_circles: when a straight line cannot work</a><a href="#6-make-moons-two-interlocking-crescents">6 — make_moons: two interlocking crescents</a><a href="#7-your-own-experiment-plotting-column-0-against-">7 — Your own experiment: plotting column 0 against e</a><a href="#8-the-last-cell-read-the-error-before-you-run-it">8 — The last cell: read the error before you run it</a><a href="#which-generator-do-i-reach-for">Which generator do I reach for?</a><a href="#common-mistakes">Common mistakes</a><a href="#where-this-shows-up-in-real-work">Where this shows up in real work</a><a href="#interview-view">Interview view</a><a href="#what-is-not-covered-here">What is not covered here</a><a href="#key-takeaway">Key takeaway</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#scikit-learn-synthetic-datasets-make">scikit-learn — synthetic datasets (make_*)</a><a href="#what-is-a-synthetic-dataset">What is a synthetic dataset?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#the-family">The family</a><a href="#s-1-make-regression-a-straight-line-with-noise-on-">1 — make_regression: a straight line with noise on t</a><a href="#s-2-look-at-the-data">2 — Look at the data</a><a href="#s-3-make-classification-groups-instead-of-numbers">3 — make_classification: groups instead of numbers</a><a href="#s-4-make-blobs-round-groups-for-clustering">4 — make_blobs: round groups, for clustering</a><a href="#s-5-make-circles-when-a-straight-line-cannot-work">5 — make_circles: when a straight line cannot work</a><a href="#s-6-make-moons-two-interlocking-crescents">6 — make_moons: two interlocking crescents</a><a href="#s-7-your-own-experiment-plotting-column-0-against-">7 — Your own experiment: plotting column 0 against e</a><a href="#s-8-the-last-cell-read-the-error-before-you-run-it">8 — The last cell: read the error before you run it</a><a href="#which-generator-do-i-reach-for">Which generator do I reach for?</a><a href="#common-mistakes">Common mistakes</a><a href="#where-this-shows-up-in-real-work">Where this shows up in real work</a><a href="#interview-view">Interview view</a><a href="#what-is-not-covered-here">What is not covered here</a><a href="#key-takeaway">Key takeaway</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -179,7 +179,7 @@ plt.show()</pre></div>
 <figure class="shot"><img src="assets/02-make-dataset-c01-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
 from sklearn.datasets import make_regression</pre></div>
-<h2 id="1-make-regression-a-straight-line-with-noise-on-">1 — <code>make_regression</code>: a straight line with noise on top</h2>
+<h2 id="s-1-make-regression-a-straight-line-with-noise-on-">1 — <code>make_regression</code>: a straight line with noise on top</h2>
 <p><strong>Regression</strong> means the answer is a <strong>number</strong> — a price, a temperature, a
 salary. Not a category.</p>
 <p><code>make_regression</code> builds that kind of data from one formula:</p>
@@ -338,7 +338,7 @@ separates the two axes: <code>x[rows, columns]</code>. That second form is the o
 scatter plots use further down, and it is where the last cell of this notebook
 goes wrong.</p>
 
-<h2 id="2-look-at-the-data">2 — Look at the data</h2>
+<h2 id="s-2-look-at-the-data">2 — Look at the data</h2>
 <p><code>matplotlib</code> was already imported in the first cell, so this import does
 nothing new. Re-importing is harmless in Python — the module is cached after
 the first time — so leave it. It costs nothing and it makes the cell below
@@ -449,7 +449,7 @@ print(&quot;The other two exist so that feature-selection code has something to 
 <div class="out"><div class="h">Output</div><pre>Only one column has a strong correlation. That is the informative one.
 The other two exist so that feature-selection code has something to throw away.</pre></div>
 <figure class="shot"><img src="assets/02-make-dataset-c20-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="3-make-classification-groups-instead-of-numbers">3 — <code>make_classification</code>: groups instead of numbers</h2>
+<h2 id="s-3-make-classification-groups-instead-of-numbers">3 — <code>make_classification</code>: groups instead of numbers</h2>
 <p><strong>Classification</strong> means the answer is a <strong>label</strong>: fraud / not fraud,
 spam / not spam, <code>0</code> / <code>1</code>. Not a quantity.</p>
 <h3>How the data is actually built</h3>
@@ -793,7 +793,7 @@ plt.show()</pre></div>
 class is two separate patches. A model that assumes one blob per class will
 struggle, and the picture looks messier than a beginner expects.</p>
 
-<h2 id="4-make-blobs-round-groups-for-clustering">4 — <code>make_blobs</code>: round groups, for clustering</h2>
+<h2 id="s-4-make-blobs-round-groups-for-clustering">4 — <code>make_blobs</code>: round groups, for clustering</h2>
 <p><code>make_blobs</code> drops a few centre points into space and scatters normal noise
 around each one. That is the entire algorithm.</p>
 <p>The difference from <code>make_classification</code> is what <code>y</code> <strong>means</strong>:</p>
@@ -922,7 +922,7 @@ plt.tight_layout()
 plt.show()</pre></div>
 <div class="out"><div class="h">Output</div><pre>rows per blob: [300 300  60]</pre></div>
 <figure class="shot"><img src="assets/02-make-dataset-c43-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="5-make-circles-when-a-straight-line-cannot-work">5 — <code>make_circles</code>: when a straight line cannot work</h2>
+<h2 id="s-5-make-circles-when-a-straight-line-cannot-work">5 — <code>make_circles</code>: when a straight line cannot work</h2>
 <p>Everything so far could be separated, more or less, by drawing a straight line
 across the picture. <code>make_circles</code> exists to break that.</p>
 <p>One class is a ring. The other class is a smaller ring <strong>inside</strong> it. No
@@ -1000,7 +1000,7 @@ fig.suptitle(&quot;factor sets the gap between the rings; noise blurs them&quot;
 plt.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/02-make-dataset-c48-14.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="6-make-moons-two-interlocking-crescents">6 — <code>make_moons</code>: two interlocking crescents</h2>
+<h2 id="s-6-make-moons-two-interlocking-crescents">6 — <code>make_moons</code>: two interlocking crescents</h2>
 <p>Same purpose as <code>make_circles</code>, different shape. Two half-circles hooked into
 each other. Again, no straight line separates them.</p>
 <p>Moons are the picture you see in almost every tutorial on decision boundaries,
@@ -1126,7 +1126,7 @@ classes on both sides. A linear model here is close to useless.</li>
 decision tree, an SVM with an RBF kernel, or a small neural network. That is
 the whole reason these two generators are in the library.</p>
 
-<h2 id="7-your-own-experiment-plotting-column-0-against-">7 — Your own experiment: plotting column 0 against every other column</h2>
+<h2 id="s-7-your-own-experiment-plotting-column-0-against-">7 — Your own experiment: plotting column 0 against every other column</h2>
 <p>The next four cells are the most interesting thing in this notebook, because
 you found a real problem by hand.</p>
 <div class="code"><pre class="py">x, y = make_classification(n_classes=2, n_features=5, n_samples=10, random_state=1)
@@ -1289,7 +1289,7 @@ print(f&quot;both informative       -&gt;  best straight line: {best_straight_li
 useless + informative  -&gt;  best straight line: 57.2%
 both informative       -&gt;  best straight line: 94.0%</pre></div>
 <figure class="shot"><img src="assets/02-make-dataset-c65-23.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="8-the-last-cell-read-the-error-before-you-run-it">8 — The last cell: read the error before you run it</h2>
+<h2 id="s-8-the-last-cell-read-the-error-before-you-run-it">8 — The last cell: read the error before you run it</h2>
 <div class="code"><pre class="py">plt.scatter(x[:, 0], x[:, 5], c=y)
 </pre></div>
 <p>Before running: <code>x</code> has <strong>5 columns</strong>. Python counts from <strong>0</strong>. So the valid
@@ -1472,6 +1472,7 @@ ceiling from the bar chart above turn into two real scores.</p>
 already know — so always set <code>random_state</code>, always set <code>n_features</code>, and never
 assume a column's position tells you what that column is for.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/02_make_*_dataset.ipynb">02_make_*_dataset.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#project-employee-attrition-data-pipeline">Project — Employee Attrition Data Pipeline</a><a href="#why-this-dataset-is-new">Why This Dataset Is New</a><a href="#pipeline-architecture">Pipeline Architecture</a><a href="#data-dictionary-what-s-wrong-with-each-column-on">Data Dictionary — What&#x27;s Wrong With Each Column, On </a><a href="#what-the-code-notebook-does">What The Code Notebook Does</a><a href="#employee-attrition-data-pipeline">Employee Attrition — Data Pipeline</a><a href="#0-load-amp-first-look">0. Load &amp;amp; First Look</a><a href="#1-missing-values-numbers-first-06-07-08">1. Missing Values — Numbers First (06, 07, 08)</a><a href="#2-duplicate-rows-17">2. Duplicate Rows (17)</a><a href="#3-fixing-inconsistent-data-04-sub-skill-6">3. Fixing Inconsistent Data (04, Sub-Skill #6)</a><a href="#4-missing-values-categories-now-07">4. Missing Values — Categories Now (07)</a><a href="#5-fixing-values-amp-data-types-18">5. Fixing Values &amp;amp; Data Types (18)</a><a href="#6-outlier-detection-amp-removal-12-13-14">6. Outlier Detection &amp;amp; Removal (12, 13, 14)</a><a href="#7-fixing-skewed-shape-19">7. Fixing Skewed Shape (19)</a><a href="#8-feature-scaling-15-16">8. Feature Scaling (15, 16)</a><a href="#9-encoding-categorical-variables-09-10-11">9. Encoding Categorical Variables (09, 10, 11)</a><a href="#10-the-final-model-ready-table">10. The Final, Model-Ready Table</a><a href="#summary">Summary</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#project-employee-attrition-data-pipeline">Project — Employee Attrition Data Pipeline</a><a href="#why-this-dataset-is-new">Why This Dataset Is New</a><a href="#pipeline-architecture">Pipeline Architecture</a><a href="#data-dictionary-what-s-wrong-with-each-column-on">Data Dictionary — What&#x27;s Wrong With Each Column, On </a><a href="#what-the-code-notebook-does">What The Code Notebook Does</a><a href="#employee-attrition-data-pipeline">Employee Attrition — Data Pipeline</a><a href="#s-0-load-amp-first-look">0. Load &amp;amp; First Look</a><a href="#s-1-missing-values-numbers-first-06-07-08">1. Missing Values — Numbers First (06, 07, 08)</a><a href="#s-2-duplicate-rows-17">2. Duplicate Rows (17)</a><a href="#s-3-fixing-inconsistent-data-04-sub-skill-6">3. Fixing Inconsistent Data (04, Sub-Skill #6)</a><a href="#s-4-missing-values-categories-now-07">4. Missing Values — Categories Now (07)</a><a href="#s-5-fixing-values-amp-data-types-18">5. Fixing Values &amp;amp; Data Types (18)</a><a href="#s-6-outlier-detection-amp-removal-12-13-14">6. Outlier Detection &amp;amp; Removal (12, 13, 14)</a><a href="#s-7-fixing-skewed-shape-19">7. Fixing Skewed Shape (19)</a><a href="#s-8-feature-scaling-15-16">8. Feature Scaling (15, 16)</a><a href="#s-9-encoding-categorical-variables-09-10-11">9. Encoding Categorical Variables (09, 10, 11)</a><a href="#s-10-the-final-model-ready-table">10. The Final, Model-Ready Table</a><a href="#summary">Summary</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -210,7 +210,7 @@ from sklearn.preprocessing import (
     OrdinalEncoder,
     LabelEncoder,
 )</pre></div>
-<h2 id="0-load-amp-first-look">0. Load &amp; First Look</h2>
+<h2 id="s-0-load-amp-first-look">0. Load &amp; First Look</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../Data/employee_attrition_raw.csv&quot;)
 dataset.head()</pre></div>
@@ -282,7 +282,7 @@ plt.show()</pre></div>
 <code>../../_shared_data/loans.csv</code>'s <code>82%</code>/<code>18%</code> target, but still worth knowing before anyone
 trains a model on this later.</p>
 
-<h2 id="1-missing-values-numbers-first-06-07-08">1. Missing Values — Numbers First (<code>06</code>, <code>07</code>, <code>08</code>)</h2>
+<h2 id="s-1-missing-values-numbers-first-06-07-08">1. Missing Values — Numbers First (<code>06</code>, <code>07</code>, <code>08</code>)</h2>
 <p>Filling the 4 numeric columns now, with the median. The categorical
 columns wait until Section 3, on purpose — see <code>ARCHITECTURE.md</code> for
 why.</p>
@@ -335,7 +335,7 @@ dtype: int64</pre></div>
 <p>All 4 numeric columns at <code>0</code> missing now. The 6 categorical columns
 still have gaps — that's expected, come back to them in Section 3.</p>
 
-<h2 id="2-duplicate-rows-17">2. Duplicate Rows (<code>17</code>)</h2>
+<h2 id="s-2-duplicate-rows-17">2. Duplicate Rows (<code>17</code>)</h2>
 <p>Unlike <code>../../_shared_data/loans.csv</code>, this dataset actually has some.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">dataset.duplicated().sum()</pre></div>
@@ -360,7 +360,7 @@ plt.show()</pre></div>
 duplicates this time, not a simulated example like <code>17</code> had to build
 on <code>../../_shared_data/loans.csv</code>.</p>
 
-<h2 id="3-fixing-inconsistent-data-04-sub-skill-6">3. Fixing Inconsistent Data (<code>04</code>, Sub-Skill #6)</h2>
+<h2 id="s-3-fixing-inconsistent-data-04-sub-skill-6">3. Fixing Inconsistent Data (<code>04</code>, Sub-Skill #6)</h2>
 <p><code>04_Data_Cleaning.MD</code> names this as its own sub-skill, distinct from
 missing values: data that's fully <em>present</em>, just written more than
 one way. <code>Gender</code> and <code>OverTime</code> both have this problem — the exact
@@ -438,7 +438,7 @@ categories as well. <code>.str.strip()</code> removes leading/trailing spaces;
 lowercase, so <code>&quot;MALE&quot;</code>, <code>&quot;male&quot;</code>, and <code>&quot;Male &quot;</code> all land on the same
 <code>&quot;Male&quot;</code>.</p>
 
-<h2 id="4-missing-values-categories-now-07">4. Missing Values — Categories Now (<code>07</code>)</h2>
+<h2 id="s-4-missing-values-categories-now-07">4. Missing Values — Categories Now (<code>07</code>)</h2>
 <p><code>Gender</code> and <code>OverTime</code> are clean now, so it's finally safe to fill
 every remaining categorical gap with the mode — no risk of the count
 being split across casing variants anymore.</p>
@@ -453,7 +453,7 @@ dataset.isnull().sum().sum()</pre></div>
 <div class="out"><div class="h">Output</div><pre>np.int64(0)</pre></div>
 <p><code>0</code> — every gap in the dataset is filled.</p>
 
-<h2 id="5-fixing-values-amp-data-types-18">5. Fixing Values &amp; Data Types (<code>18</code>)</h2>
+<h2 id="s-5-fixing-values-amp-data-types-18">5. Fixing Values &amp; Data Types (<code>18</code>)</h2>
 <p><code>PriorCompanies</code> has the exact same shape of problem <code>18</code> fixed on
 <code>../../_shared_data/loans.csv</code>'s <code>Dependents</code>: a <code>&quot;3+&quot;</code> bucket that isn't a number yet.</p>
 
@@ -481,7 +481,7 @@ plt.show()</pre></div>
 <figure class="shot"><img src="assets/employee-attrition-pipeline-c38-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <p><code>&quot;3+&quot;</code> is gone, and the column is a plain <code>int64</code> now.</p>
 
-<h2 id="6-outlier-detection-amp-removal-12-13-14">6. Outlier Detection &amp; Removal (<code>12</code>, <code>13</code>, <code>14</code>)</h2>
+<h2 id="s-6-outlier-detection-amp-removal-12-13-14">6. Outlier Detection &amp; Removal (<code>12</code>, <code>13</code>, <code>14</code>)</h2>
 <p>Three numeric columns checked: <code>Age</code> (a few fake ages up to <code>99</code>),
 <code>MonthlyIncome</code>, and <code>DistanceFromHome</code> (both built right-skewed with
 some real extreme values).</p>
@@ -545,7 +545,7 @@ plt.suptitle(&quot;After outlier removal&quot;)
 plt.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/employee-attrition-pipeline-c47-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="7-fixing-skewed-shape-19">7. Fixing Skewed Shape (<code>19</code>)</h2>
+<h2 id="s-7-fixing-skewed-shape-19">7. Fixing Skewed Shape (<code>19</code>)</h2>
 <p>Same lesson as <code>19_Function_Transformer.ipynb</code>: right-skewed money and
 distance columns respond well to <code>log1p</code>.</p>
 
@@ -642,7 +642,7 @@ https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 <p>Both much closer to <code>0</code> — the same result <code>19</code> got on
 <code>CoapplicantIncome</code>, on two brand-new columns.</p>
 
-<h2 id="8-feature-scaling-15-16">8. Feature Scaling (<code>15</code>, <code>16</code>)</h2>
+<h2 id="s-8-feature-scaling-15-16">8. Feature Scaling (<code>15</code>, <code>16</code>)</h2>
 <p><code>StandardScaler</code> on the two <code>log1p</code> columns (roughly bell-shaped now,
 which is what standardization suits). <code>MinMaxScaler</code> on <code>Age</code> and
 <code>YearsAtCompany</code> — both naturally bounded (an age, a tenure), which is
@@ -716,7 +716,7 @@ bending the curve any further.</p>
 <p>Mean <code>≈ 0</code>, standard deviation <code>≈ 1</code> on the standardized columns; <code>0</code>
 and <code>1</code> exactly on the min-max ones — checked directly, not assumed.</p>
 
-<h2 id="9-encoding-categorical-variables-09-10-11">9. Encoding Categorical Variables (<code>09</code>, <code>10</code>, <code>11</code>)</h2>
+<h2 id="s-9-encoding-categorical-variables-09-10-11">9. Encoding Categorical Variables (<code>09</code>, <code>10</code>, <code>11</code>)</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Column(s)</th>
@@ -814,7 +814,7 @@ le.classes_</pre></div>
 <p><code>[&quot;No&quot;, &quot;Yes&quot;]</code> — alphabetical, so <code>No → 0</code>, <code>Yes → 1</code>. <code>1</code> now means
 &quot;left the company,&quot; matching the bar chart back in Section 0.</p>
 
-<h2 id="10-the-final-model-ready-table">10. The Final, Model-Ready Table</h2>
+<h2 id="s-10-the-final-model-ready-table">10. The Final, Model-Ready Table</h2>
 <p>Drop <code>EmployeeID</code> (an identifier, not a feature) and every in-between
 column that already has a cleaned replacement.</p>
 
@@ -993,6 +993,7 @@ inconsistent text, that <code>../../_shared_data/loans.csv</code> never had a re
 <code>final_dataset</code> is ready for a train/test split and a model — the
 natural next notebook, not this one.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/Employee_Attrition_Pipeline.ipynb">Employee_Attrition_Pipeline.ipynb ↗</a><a class="btn" href="../Concept/ARCHITECTURE.md">ARCHITECTURE.md ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

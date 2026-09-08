@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#feature-scaling-standardization-amp-normalizatio">Feature Scaling — Standardization &amp;amp; Normalizatio</a><a href="#0-setup-and-a-bug-worth-fixing-first">0. Setup — and a Bug Worth Fixing First</a><a href="#1-standardization-standardscaler">1. Standardization — StandardScaler</a><a href="#2-reading-describe-on-applicantincome-ss-value-b">2. Reading describe() on ApplicantIncome_SS, Value b</a><a href="#3-does-scaling-remove-outliers">3. Does Scaling Remove Outliers?</a><a href="#4-does-scaling-change-the-data-s-nature-shape">4. Does Scaling Change the Data&#x27;s Nature (Shape)?</a><a href="#5-normalization-min-max-scaling-coapplicantincom">5. Normalization — Min-Max Scaling CoapplicantIncome</a><a href="#6-standardization-vs-normalization-which-one-whe">6. Standardization vs. Normalization — Which One, Wh</a><a href="#7-why-this-actually-matters-a-distance-example">7. Why This Actually Matters — a Distance Example</a><a href="#summary">Summary</a><a href="#feature-scaling-normalization-min-max">Feature Scaling — Normalization (Min-Max)</a><a href="#1-min-max-scaling-minmaxscaler">1. Min-Max Scaling — MinMaxScaler</a><a href="#2-reading-describe-on-coapplicantincome-mm-value">2. Reading describe() on CoapplicantIncome_MM, Value</a><a href="#3-does-min-max-remove-outliers">3. Does Min-Max Remove Outliers?</a><a href="#4-does-min-max-change-the-data-s-nature-shape">4. Does Min-Max Change the Data&#x27;s Nature (Shape)?</a><a href="#5-why-the-bounded-range-matters-outlier-sensitiv">5. Why the Bounded Range Matters — Outlier Sensitivi</a><a href="#summary">Summary</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#feature-scaling-standardization-amp-normalizatio">Feature Scaling — Standardization &amp;amp; Normalizatio</a><a href="#s-0-setup-and-a-bug-worth-fixing-first">0. Setup — and a Bug Worth Fixing First</a><a href="#s-1-standardization-standardscaler">1. Standardization — StandardScaler</a><a href="#s-2-reading-describe-on-applicantincome-ss-value-b">2. Reading describe() on ApplicantIncome_SS, Value b</a><a href="#s-3-does-scaling-remove-outliers">3. Does Scaling Remove Outliers?</a><a href="#s-4-does-scaling-change-the-data-s-nature-shape">4. Does Scaling Change the Data&#x27;s Nature (Shape)?</a><a href="#s-5-normalization-min-max-scaling-coapplicantincom">5. Normalization — Min-Max Scaling CoapplicantIncome</a><a href="#s-6-standardization-vs-normalization-which-one-whe">6. Standardization vs. Normalization — Which One, Wh</a><a href="#s-7-why-this-actually-matters-a-distance-example">7. Why This Actually Matters — a Distance Example</a><a href="#summary">Summary</a><a href="#feature-scaling-normalization-min-max">Feature Scaling — Normalization (Min-Max)</a><a href="#s-1-min-max-scaling-minmaxscaler">1. Min-Max Scaling — MinMaxScaler</a><a href="#s-2-reading-describe-on-coapplicantincome-mm-value">2. Reading describe() on CoapplicantIncome_MM, Value</a><a href="#s-3-does-min-max-remove-outliers">3. Does Min-Max Remove Outliers?</a><a href="#s-4-does-min-max-change-the-data-s-nature-shape">4. Does Min-Max Change the Data&#x27;s Nature (Shape)?</a><a href="#s-5-why-the-bounded-range-matters-outlier-sensitiv">5. Why the Bounded Range Matters — Outlier Sensitivi</a><a href="#summary">Summary</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -97,7 +97,7 @@ Credit_History       50
 Property_Area         9
 Loan_Status           0
 dtype: int64</pre></div>
-<h2 id="0-setup-and-a-bug-worth-fixing-first">0. Setup — and a Bug Worth Fixing First</h2>
+<h2 id="s-0-setup-and-a-bug-worth-fixing-first">0. Setup — and a Bug Worth Fixing First</h2>
 <p><code>ApplicantIncome</code> has 2 missing values, same gap <code>12_Outlier.ipynb</code> worked
 around. Filling it the <em>obvious</em> way first, on purpose, to show why it
 silently doesn't work:</p>
@@ -150,7 +150,7 @@ plt.show()</pre></div>
 <code>Q3 + 1.5×IQR</code> rule — confirmed with numbers in Section 3, kept in mind for
 comparison after scaling.</p>
 
-<h2 id="1-standardization-standardscaler">1. Standardization — <code>StandardScaler</code></h2>
+<h2 id="s-1-standardization-standardscaler">1. Standardization — <code>StandardScaler</code></h2>
 <p><code>ss.fit(...)</code> learns two numbers from the column — <code>mean_</code> and <code>scale_</code>
 (population std, i.e. divided by <code>N</code>, not <code>N-1</code>) — and <code>ss.transform(...)</code>
 applies <code>(x − mean_) / scale_</code> to every value.</p>
@@ -168,7 +168,7 @@ dataset[[&quot;ApplicantIncome&quot;, &quot;ApplicantIncome_SS&quot;]].head(3)</
 <em>not</em> the same number <code>describe()</code> reports as <code>std</code> (<strong>2177.41</strong>) — that
 gap is the subject of Section 2's first surprise.</p>
 
-<h2 id="2-reading-describe-on-applicantincome-ss-value-b">2. Reading <code>describe()</code> on <code>ApplicantIncome_SS</code>, Value by Value</h2>
+<h2 id="s-2-reading-describe-on-applicantincome-ss-value-b">2. Reading <code>describe()</code> on <code>ApplicantIncome_SS</code>, Value by Value</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">dataset[&quot;ApplicantIncome_SS&quot;].describe()</pre></div>
 <div class="out"><div class="h">Output</div><pre>count    6.180000e+02
@@ -209,7 +209,7 @@ the boxplot flagged; scaling didn't hide it, it just re-labeled it in σ
 units instead of ₹.</li>
 </ul>
 
-<h2 id="3-does-scaling-remove-outliers">3. Does Scaling Remove Outliers?</h2>
+<h2 id="s-3-does-scaling-remove-outliers">3. Does Scaling Remove Outliers?</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
 sns.boxplot(x=dataset[&quot;ApplicantIncome&quot;], color=&quot;#d03b3b&quot;, ax=axes[0])
@@ -244,7 +244,7 @@ different units. Removing outliers is the deliberate, separate job of
 <code>12_Outlier.ipynb</code>–<code>14_Outlier_Removal_Z_Score.ipynb</code>; scaling moves
 <em>everyone</em> together and leaves who's-extreme completely untouched.</p>
 
-<h2 id="4-does-scaling-change-the-data-s-nature-shape">4. Does Scaling Change the Data's <em>Nature</em> (Shape)?</h2>
+<h2 id="s-4-does-scaling-change-the-data-s-nature-shape">4. Does Scaling Change the Data's <em>Nature</em> (Shape)?</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
 sns.histplot(dataset[&quot;ApplicantIncome&quot;], kde=True, color=&quot;#d03b3b&quot;, ax=axes[0])
@@ -306,7 +306,7 @@ which sit apart, the skew toward the top-right) is identical in both
 panels. Nothing about the data moved <em>relative to itself</em>; only where the
 axes' origin and unit-length are drawn moved.</p>
 
-<h2 id="5-normalization-min-max-scaling-coapplicantincom">5. Normalization — Min-Max Scaling <code>CoapplicantIncome</code></h2>
+<h2 id="s-5-normalization-min-max-scaling-coapplicantincom">5. Normalization — Min-Max Scaling <code>CoapplicantIncome</code></h2>
 <p><code>CoapplicantIncome</code> has 0 missing values (same reason <code>14</code> picked it) —
 no fillna detour needed. Min-Max uses <code>X_min</code>/<code>X_max</code> directly instead of
 <code>mean</code>/<code>std</code>.</p>
@@ -359,7 +359,7 @@ conclusions from Sections 3–4 hold for Normalization too: outliers aren't
 removed, shape isn't changed. Min-Max is just a different formula for the
 same kind of transform (linear, applied uniformly to every point).</p>
 
-<h2 id="6-standardization-vs-normalization-which-one-whe">6. Standardization vs. Normalization — Which One, When</h2>
+<h2 id="s-6-standardization-vs-normalization-which-one-whe">6. Standardization vs. Normalization — Which One, When</h2>
 <p>Both are linear, both preserve shape, neither removes outliers — so the
 real difference is <em>sensitivity to outliers while fitting</em>:</p>
 <ul>
@@ -388,7 +388,7 @@ reach for Min-Max specifically when an algorithm <em>needs</em> a bounded <code>
 input (e.g. some neural-net input layers), and consider handling outliers
 first if you do.</p>
 
-<h2 id="7-why-this-actually-matters-a-distance-example">7. Why This Actually Matters — a Distance Example</h2>
+<h2 id="s-7-why-this-actually-matters-a-distance-example">7. Why This Actually Matters — a Distance Example</h2>
 <p><code>02_ML_Roadmap.MD</code>'s own justification for item 5: <em>&quot;a distance-based
 algorithm would treat a ₹1,000 income difference as 'bigger' than a
 50-point credit-score difference, purely because of units.&quot;</em> Same idea,
@@ -533,7 +533,7 @@ same starting point <code>14_Outlier_Removal_Z_Score.ipynb</code> used on this e
 column. <code>min</code> is already 0 (a coapplicant with no income), which will
 matter in Section 2.</p>
 
-<h2 id="1-min-max-scaling-minmaxscaler">1. Min-Max Scaling — <code>MinMaxScaler</code></h2>
+<h2 id="s-1-min-max-scaling-minmaxscaler">1. Min-Max Scaling — <code>MinMaxScaler</code></h2>
 <p><code>mm.fit(...)</code> learns two numbers from the column — <code>data_min_</code> and
 <code>data_max_</code> — and <code>mm.transform(...)</code> applies
 <code>(x − data_min_) / (data_max_ − data_min_)</code> to every value.</p>
@@ -551,7 +551,7 @@ dataset[[&quot;CoapplicantIncome&quot;, &quot;CoapplicantIncome_MM&quot;]].head(
 = <strong>10288</strong> — literally the raw column's own min and max, nothing
 estimated or averaged.</p>
 
-<h2 id="2-reading-describe-on-coapplicantincome-mm-value">2. Reading <code>describe()</code> on <code>CoapplicantIncome_MM</code>, Value by Value</h2>
+<h2 id="s-2-reading-describe-on-coapplicantincome-mm-value">2. Reading <code>describe()</code> on <code>CoapplicantIncome_MM</code>, Value by Value</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">dataset[&quot;CoapplicantIncome_MM&quot;].describe()</pre></div>
 <div class="out"><div class="h">Output</div><pre>count    618.000000
@@ -583,7 +583,7 @@ fifth of the <code>[0, 1]</code> range; the remaining 79% of that range is claim
 by a small number of high earners.</li>
 </ul>
 
-<h2 id="3-does-min-max-remove-outliers">3. Does Min-Max Remove Outliers?</h2>
+<h2 id="s-3-does-min-max-remove-outliers">3. Does Min-Max Remove Outliers?</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
 sns.boxplot(x=dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;, ax=axes[0])
@@ -613,7 +613,7 @@ applied to every point, <code>Q1</code>/<code>Q3</code> included — so &quot;fu
 different scale. Removing outliers is still the separate, deliberate job
 of <code>12_Outlier.ipynb</code>–<code>14_Outlier_Removal_Z_Score.ipynb</code>.</p>
 
-<h2 id="4-does-min-max-change-the-data-s-nature-shape">4. Does Min-Max Change the Data's <em>Nature</em> (Shape)?</h2>
+<h2 id="s-4-does-min-max-change-the-data-s-nature-shape">4. Does Min-Max Change the Data's <em>Nature</em> (Shape)?</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
 sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#d03b3b&quot;, ax=axes[0])
@@ -671,7 +671,7 @@ same skew, same clustering, same points sitting apart from the rest — is
 still identical to the &quot;before&quot; panel; only the box it's confined to
 changed.</p>
 
-<h2 id="5-why-the-bounded-range-matters-outlier-sensitiv">5. Why the Bounded Range Matters — Outlier Sensitivity</h2>
+<h2 id="s-5-why-the-bounded-range-matters-outlier-sensitiv">5. Why the Bounded Range Matters — Outlier Sensitivity</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">below_tenth = (dataset[&quot;CoapplicantIncome_MM&quot;] &lt; 0.1).sum()
 print(f&quot;{below_tenth} of 618 ({below_tenth/618:.1%}) land below 0.1 on the 0-1 scale&quot;)
@@ -703,6 +703,7 @@ defined by the single min/max value, not an average across all points
 Standardization side of this same comparison.</li>
 </ul>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/15_Feature_Scaling.ipynb">15_Feature_Scaling.ipynb ↗</a><a class="btn" href="../Concept/16_Feature_Scaling_Normalization.ipynb">16_Feature_Scaling_Normalization.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

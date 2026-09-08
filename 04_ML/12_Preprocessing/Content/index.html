@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#preprocessing-in-scikit-learn">Preprocessing in scikit-learn</a><a href="#what-is-it">What is it?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#which-models-care">Which models care?</a><a href="#the-map-of-this-notebook">The map of this notebook</a><a href="#the-one-rule-to-hold-on-to">The one rule to hold on to</a><a href="#the-imports-one-line-at-a-time">The imports, one line at a time</a><a href="#what-this-cell-built">What this cell built</a><a href="#1-looking-at-the-data-first">1. Looking at the data first</a><a href="#what-is-a-kde-plot">What is a KDE plot?</a><a href="#what-does-quot-density-quot-on-the-y-axis-mean">What does &amp;quot;density&amp;quot; on the y-axis mean?</a><a href="#the-bar-chart-question-in-the-next-cell">The bar-chart question in the next cell</a><a href="#2-the-three-scalers">2. The three scalers</a><a href="#2-1-standardscaler-the-z-score">2.1 StandardScaler — the z-score</a><a href="#2-2-minmaxscaler-squeeze-into-a-fixed-box">2.2 MinMaxScaler — squeeze into a fixed box</a><a href="#2-3-robustscaler-the-one-that-ignores-outliers">2.3 RobustScaler — the one that ignores outliers</a><a href="#2-4-wait-the-three-cells-above-fed-each-other-do">2.4 Wait — the three cells above fed each other. Doe</a><a href="#2-5-the-fair-side-by-side-comparison">2.5 The fair side-by-side comparison</a><a href="#2-6-the-test-that-separates-the-three-scalers">2.6 The test that separates the three scalers</a><a href="#3-binarizer-turning-a-number-into-a-yes-no">3. Binarizer — turning a number into a yes/no</a><a href="#4-normalizer-the-one-that-works-on-rows">4. Normalizer — the one that works on ROWS</a><a href="#what-it-computes">What it computes</a><a href="#why-anyone-would-want-that">Why anyone would want that</a><a href="#5-encoding-turning-text-into-numbers">5. Encoding — turning text into numbers</a><a href="#5-1-labelencoder-one-number-per-label">5.1 LabelEncoder — one number per label</a><a href="#5-2-onehotencoder-and-the-problem-it-exists-to-s">5.2 OneHotEncoder — and the problem it exists to sol</a><a href="#6-when-should-i-use-which-the-decision-chart">6. When should I use which? — the decision chart</a><a href="#the-master-table">The master table</a><a href="#five-mistakes-to-avoid">Five mistakes to avoid</a><a href="#7-the-one-habit-that-matters-more-than-picking-t">7. The one habit that matters more than picking the </a><a href="#interview-view">Interview view</a><a href="#key-takeaway">Key takeaway</a><a href="#preprocessing-explained">🧹 Preprocessing — Explained</a><a href="#setup">⚙️ Setup</a><a href="#the-data-three-columns-that-can-t-see-each-other">📊 The Data — three columns that can&#x27;t see each other</a><a href="#concept-1-scaling">📏 Concept 1 — Scaling</a><a href="#concept-2-binarizer">🔲 Concept 2 — Binarizer</a><a href="#concept-3-normalizer">📐 Concept 3 — Normalizer</a><a href="#concept-4-encoders-categorical-numbers">🏷️ Concept 4 — Encoders (categorical → numbers)</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#preprocessing-in-scikit-learn">Preprocessing in scikit-learn</a><a href="#what-is-it">What is it?</a><a href="#why-do-we-need-it">Why do we need it?</a><a href="#which-models-care">Which models care?</a><a href="#the-map-of-this-notebook">The map of this notebook</a><a href="#the-one-rule-to-hold-on-to">The one rule to hold on to</a><a href="#the-imports-one-line-at-a-time">The imports, one line at a time</a><a href="#what-this-cell-built">What this cell built</a><a href="#s-1-looking-at-the-data-first">1. Looking at the data first</a><a href="#what-is-a-kde-plot">What is a KDE plot?</a><a href="#what-does-quot-density-quot-on-the-y-axis-mean">What does &amp;quot;density&amp;quot; on the y-axis mean?</a><a href="#the-bar-chart-question-in-the-next-cell">The bar-chart question in the next cell</a><a href="#s-2-the-three-scalers">2. The three scalers</a><a href="#s-2-1-standardscaler-the-z-score">2.1 StandardScaler — the z-score</a><a href="#s-2-2-minmaxscaler-squeeze-into-a-fixed-box">2.2 MinMaxScaler — squeeze into a fixed box</a><a href="#s-2-3-robustscaler-the-one-that-ignores-outliers">2.3 RobustScaler — the one that ignores outliers</a><a href="#s-2-4-wait-the-three-cells-above-fed-each-other-do">2.4 Wait — the three cells above fed each other. Doe</a><a href="#s-2-5-the-fair-side-by-side-comparison">2.5 The fair side-by-side comparison</a><a href="#s-2-6-the-test-that-separates-the-three-scalers">2.6 The test that separates the three scalers</a><a href="#s-3-binarizer-turning-a-number-into-a-yes-no">3. Binarizer — turning a number into a yes/no</a><a href="#s-4-normalizer-the-one-that-works-on-rows">4. Normalizer — the one that works on ROWS</a><a href="#what-it-computes">What it computes</a><a href="#why-anyone-would-want-that">Why anyone would want that</a><a href="#s-5-encoding-turning-text-into-numbers">5. Encoding — turning text into numbers</a><a href="#s-5-1-labelencoder-one-number-per-label">5.1 LabelEncoder — one number per label</a><a href="#s-5-2-onehotencoder-and-the-problem-it-exists-to-s">5.2 OneHotEncoder — and the problem it exists to sol</a><a href="#s-6-when-should-i-use-which-the-decision-chart">6. When should I use which? — the decision chart</a><a href="#the-master-table">The master table</a><a href="#five-mistakes-to-avoid">Five mistakes to avoid</a><a href="#s-7-the-one-habit-that-matters-more-than-picking-t">7. The one habit that matters more than picking the </a><a href="#interview-view">Interview view</a><a href="#key-takeaway">Key takeaway</a><a href="#preprocessing-explained">🧹 Preprocessing — Explained</a><a href="#setup">⚙️ Setup</a><a href="#the-data-three-columns-that-can-t-see-each-other">📊 The Data — three columns that can&#x27;t see each other</a><a href="#concept-1-scaling">📏 Concept 1 — Scaling</a><a href="#concept-2-binarizer">🔲 Concept 2 — Binarizer</a><a href="#concept-3-normalizer">📐 Concept 3 — Normalizer</a><a href="#concept-4-encoders-categorical-numbers">🏷️ Concept 4 — Encoders (categorical → numbers)</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Preprocessing</h1>
   <p class="lede">Three scalers, two encoders, and the one rule that stops you cheating.</p>
-  <div class="tags"><span class="tag">2 notebooks</span></div>
+  <div class="tags"><span class="tag">2 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 3 handwritten pages</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Manoj scaled his data, then split it into train and test.</strong> That order felt harmless — scaling is just arithmetic.</p><p>His test score came out suspiciously high. When the model met genuinely new data later, it was much worse.</p><p><span class='beat'>The scaler had computed the mean using the test rows too.</span> A little information about the test set had leaked into training, and the exam was no longer sealed.</p><p>So the rule is absolute: split first, <code>fit</code> the scaler on the training rows only, then <code>transform</code> both. A <code>Pipeline</code> makes it impossible to get wrong.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Fit every transformer on training data only. Fitting on the whole table leaks the answer.</p></div>
@@ -301,7 +301,7 @@ out of them.</p>
 </div>
 
 <hr />
-<h2 id="1-looking-at-the-data-first">1. Looking at the data first</h2>
+<h2 id="s-1-looking-at-the-data-first">1. Looking at the data first</h2>
 <h2 id="what-is-a-kde-plot">What is a KDE plot?</h2>
 <p><strong>KDE</strong> stands for <em>Kernel Density Estimate</em>. Ignore the name. In practice:</p>
 <div class="note"><div class="h">Note</div><p>A KDE plot is a <strong>histogram with the bars replaced by one smooth line</strong>.</p>
@@ -471,7 +471,7 @@ plt.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/03-preprocessing-c17-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="2-the-three-scalers">2. The three scalers</h2>
+<h2 id="s-2-the-three-scalers">2. The three scalers</h2>
 <p>All three scalers on this page have the <strong>same shape</strong>:</p>
 <div class='formula'>x&#x27; = \frac{x - \text{centre}}{\text{spread}}</div>
 
@@ -508,7 +508,7 @@ squeeze</strong> it. They only disagree about which two numbers to use:</p>
 </table>
 <p>That is the whole topic. Everything below is detail about <strong>which pair to pick</strong>.</p>
 <hr />
-<h2 id="2-1-standardscaler-the-z-score">2.1 StandardScaler — the z-score</h2>
+<h2 id="s-2-1-standardscaler-the-z-score">2.1 StandardScaler — the z-score</h2>
 <div class="note"><div class="h">Note</div><p>📘 From the whiteboard: $;z = \dfrac{x - \mu}{\sigma};$ with the boxed result
 $;\mu = 0,; \sigma \rightarrow 1$</p>
 </div>
@@ -623,7 +623,7 @@ That is why the manual line above passes <code>ddof=0</code>.</p>
 ever disagrees with sklearn by a hair, this is usually the reason.</p>
 
 <hr />
-<h2 id="2-2-minmaxscaler-squeeze-into-a-fixed-box">2.2 MinMaxScaler — squeeze into a fixed box</h2>
+<h2 id="s-2-2-minmaxscaler-squeeze-into-a-fixed-box">2.2 MinMaxScaler — squeeze into a fixed box</h2>
 <div class="note"><div class="h">Note</div><p>📘 From the whiteboard: $;x' = \dfrac{x - x_{min}}{x_{max} - x_{min}};$
 with the worked example $;5 - 2 = 3$</p>
 </div>
@@ -752,7 +752,7 @@ after MinMaxScaler
 
 whiteboard example [2, 3, 5] -&gt; [0.     0.3333 1.    ]</pre></div>
 <hr />
-<h2 id="2-3-robustscaler-the-one-that-ignores-outliers">2.3 RobustScaler — the one that ignores outliers</h2>
+<h2 id="s-2-3-robustscaler-the-one-that-ignores-outliers">2.3 RobustScaler — the one that ignores outliers</h2>
 <div class="note"><div class="h">Note</div><p>📘 From the whiteboard: labelled <strong>RS</strong>, drawn against a bell curve with the
 extreme values circled at both tails —
 $;x' = \dfrac{x - Q_2}{IQR}$</p>
@@ -894,7 +894,7 @@ manual (x - Q2) / IQR matches sklearn : True
 clean [1,2,3,4,5]        mean=    3.00  std=    1.41  median= 3.00  IQR= 2.00
 dirty [1,2,3,4,1000]     mean=  202.00  std=  399.00  median= 3.00  IQR= 2.00</pre></div>
 <hr />
-<h2 id="2-4-wait-the-three-cells-above-fed-each-other-do">2.4 Wait — the three cells above fed each other. Does that break the comparison?</h2>
+<h2 id="s-2-4-wait-the-three-cells-above-fed-each-other-do">2.4 Wait — the three cells above fed each other. Does that break the comparison?</h2>
 <p>This is worth a whole section, because the honest answer is <strong>no, and the reason is
 useful</strong>.</p>
 <h3>What actually happened</h3>
@@ -978,7 +978,7 @@ someone inserts a step in the middle.</p>
 <p>That is exactly what the next section does — three separate names, all fed from <code>raw</code>.</p>
 
 <hr />
-<h2 id="2-5-the-fair-side-by-side-comparison">2.5 The fair side-by-side comparison</h2>
+<h2 id="s-2-5-the-fair-side-by-side-comparison">2.5 The fair side-by-side comparison</h2>
 <p>Three scalers, all fed the <strong>same raw data</strong>, drawn on one page.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py"># every scaler fed from `raw` — no chaining, each result gets its own name
@@ -1149,7 +1149,7 @@ of units, like converting a price from rupees to dollars. The cheapest item is s
 the cheapest item.</p>
 
 <hr />
-<h2 id="2-6-the-test-that-separates-the-three-scalers">2.6 The test that separates the three scalers</h2>
+<h2 id="s-2-6-the-test-that-separates-the-three-scalers">2.6 The test that separates the three scalers</h2>
 <p>Everything so far ran on clean, well-behaved data, where all three scalers looked
 roughly interchangeable. Real data is not clean.</p>
 <div class="note"><div class="h">Note</div><p>📘 The whiteboard drawing of a bell curve with the tail values <strong>circled</strong> is this
@@ -1248,7 +1248,7 @@ delete it or cap it <em>before</em> scaling. <code>RobustScaler</code> only stop
 other rows.</p>
 
 <hr />
-<h2 id="3-binarizer-turning-a-number-into-a-yes-no">3. Binarizer — turning a number into a yes/no</h2>
+<h2 id="s-3-binarizer-turning-a-number-into-a-yes-no">3. Binarizer — turning a number into a yes/no</h2>
 <div class='formula'>x&#x27; = \begin{cases} 1 &amp; \text{if } x &gt; \text{threshold} \\ 0 &amp; \text{if } x \le \text{threshold} \end{cases}</div>
 
 <p>Note the boundary carefully: <strong>strictly greater than</strong> becomes 1. A value <strong>equal to</strong>
@@ -1321,7 +1321,7 @@ plt.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/03-preprocessing-c48-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="4-normalizer-the-one-that-works-on-rows">4. Normalizer — the one that works on ROWS</h2>
+<h2 id="s-4-normalizer-the-one-that-works-on-rows">4. Normalizer — the one that works on ROWS</h2>
 <p>This is the single most misread class in <code>sklearn.preprocessing</code>, so it gets stated
 loudly:</p>
 <div class="note"><div class="h">Note</div><p><strong>Every scaler so far worked down a COLUMN. <code>Normalizer</code> works across a ROW.</strong></p>
@@ -1505,7 +1505,7 @@ earning ₹600,000, because both rows point in the same direction.</p>
 uses both.</p>
 
 <hr />
-<h2 id="5-encoding-turning-text-into-numbers">5. Encoding — turning text into numbers</h2>
+<h2 id="s-5-encoding-turning-text-into-numbers">5. Encoding — turning text into numbers</h2>
 <p>Scaling fixed columns that were <em>numbers in the wrong units</em>. Encoding fixes columns
 that are <strong>not numbers at all</strong>.</p>
 <p>Every scikit-learn model multiplies its inputs by weights. <code>&quot;Mumbai&quot;</code> cannot be
@@ -1535,7 +1535,7 @@ A relative path — <code>&quot;../../../01_Python/03_Pandas/Data/encoding.csv&q
 the repository. Same idea as a classpath resource instead of <code>/home/me/config.yml</code>.</p>
 </div>
 
-<h2 id="5-1-labelencoder-one-number-per-label">5.1 LabelEncoder — one number per label</h2>
+<h2 id="s-5-1-labelencoder-one-number-per-label">5.1 LabelEncoder — one number per label</h2>
 <p><code>LabelEncoder</code> sorts the distinct labels alphabetically and hands out integers starting
 at 0:</p>
 <div class="code"><pre>   &#x27;A&#x27; → 0        &#x27;B&#x27; → 1        &#x27;C&#x27; → 2        &#x27;D&#x27; → 3
@@ -1606,7 +1606,7 @@ dff now holds:
 
 inverse_transform([0, 1, 2, 3]) -&gt; [&#x27;A&#x27; &#x27;B&#x27; &#x27;C&#x27; &#x27;D&#x27;]</pre></div>
 <hr />
-<h2 id="5-2-onehotencoder-and-the-problem-it-exists-to-s">5.2 OneHotEncoder — and the problem it exists to solve</h2>
+<h2 id="s-5-2-onehotencoder-and-the-problem-it-exists-to-s">5.2 OneHotEncoder — and the problem it exists to solve</h2>
 <h3>The problem with the numbers we just created</h3>
 <p>After <code>LabelEncoder</code>, the <code>TEAM</code> column holds <code>0, 1, 2, 3</code>. A model does not know these
 came from letters. It reads them as <strong>quantities</strong>, and quantities support arithmetic:</p>
@@ -1831,7 +1831,7 @@ started with.</p>
 object, and the closing section shows how.</p>
 
 <hr />
-<h2 id="6-when-should-i-use-which-the-decision-chart">6. When should I use which? — the decision chart</h2>
+<h2 id="s-6-when-should-i-use-which-the-decision-chart">6. When should I use which? — the decision chart</h2>
 <p>Everything above, as one picture.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 76</span></div><pre class="py">from matplotlib.patches import FancyBboxPatch
@@ -2016,7 +2016,7 @@ transform — <code>np.log1p</code>, <code>PowerTransformer</code>, <code>Quanti
 </ol>
 
 <hr />
-<h2 id="7-the-one-habit-that-matters-more-than-picking-t">7. The one habit that matters more than picking the right scaler</h2>
+<h2 id="s-7-the-one-habit-that-matters-more-than-picking-t">7. The one habit that matters more than picking the right scaler</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Split first. Fit the scaler on train only. Transform both.</strong></p>
 </div>
 <p>A scaler that computed its mean over the test rows has already seen the future.
@@ -2842,6 +2842,11 @@ print(df)</pre></div>
 <h3>🚀 Where to go next</h3>
 <p>The natural next step: bundle these steps into a <code>Pipeline</code> / <code>ColumnTransformer</code> so <code>fit</code>-on-train-only happens automatically — that's the production-grade version of everything we did by hand today.</p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Preprocessing_Page_1of3.png" data-name="Preprocessing_Page_1of3.png"><img src="../Handwritten_Notes/Preprocessing_Page_1of3.png" alt="Preprocessing_Page_1of3.png" loading="lazy"><span>Preprocessing Page 1of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Preprocessing_Page_2of3.png" data-name="Preprocessing_Page_2of3.png"><img src="../Handwritten_Notes/Preprocessing_Page_2of3.png" alt="Preprocessing_Page_2of3.png" loading="lazy"><span>Preprocessing Page 2of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Preprocessing_Page_3of3.png" data-name="Preprocessing_Page_3of3.png"><img src="../Handwritten_Notes/Preprocessing_Page_3of3.png" alt="Preprocessing_Page_3of3.png" loading="lazy"><span>Preprocessing Page 3of3</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/03_preprocessing.ipynb">03_preprocessing.ipynb ↗</a><a class="btn" href="../Concept/24_Preprocessing_Concepts.ipynb">24_Preprocessing_Concepts.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

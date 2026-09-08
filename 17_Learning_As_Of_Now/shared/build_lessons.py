@@ -27,6 +27,8 @@ class R(mistune.HTMLRenderer):
     def heading(self, text, level, **a):
         if level <= 2:
             slug = re.sub(r"[^a-z0-9]+", "-", re.sub(r"<[^>]+>", "", text).lower()).strip("-")[:48]
+            if not slug or slug[0].isdigit():
+                slug = "s-" + slug          # an id must not start with a digit
             return f'<h2 id="{slug}">{text}</h2>\n'
         return f"<h3>{text}</h3>\n"
     def block_code(self, code, info=None):
@@ -123,6 +125,31 @@ def fix_refs(page, tdir, odir):
         return pre + os.path.relpath(best, odir) + post
     return REF.sub(one, page)
 
+HN_DIR = "Handwritten_Notes"
+IMG = (".png", ".jpg", ".jpeg", ".webp")
+
+def handwritten(tdir):
+    d = os.path.join(tdir, HN_DIR)
+    if not os.path.isdir(d): return []
+    return sorted(f for f in os.listdir(d) if f.lower().endswith(IMG))
+
+def gallery_html(scans):
+    """The block injected into every lesson page, between markers."""
+    if not scans:
+        return "<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->"
+    thumbs = "".join(
+        f'<button class="hn-thumb" data-src="../{HN_DIR}/{H.escape(f)}" '
+        f'data-name="{H.escape(f)}">'
+        f'<img src="../{HN_DIR}/{H.escape(f)}" alt="{H.escape(f)}" loading="lazy">'
+        f'<span>{H.escape(os.path.splitext(f)[0].replace("_", " "))}</span></button>'
+        for f in scans)
+    return ("<!-- HANDWRITTEN:START -->\n"
+            '<h2 id="handwritten">\u270D\uFE0F Handwritten notes</h2>\n'
+            "<p>The pages written by hand while working through this topic \u2014 "
+            "the version that came before the tidy write-up. Click any page to enlarge.</p>\n"
+            f'<div class="hn-grid">{thumbs}</div>\n'
+            "<!-- HANDWRITTEN:END -->")
+
 def pretty(name):
     n = re.sub(r"^\d+[_-]", "", name).replace("_", " ")
     fix = {"Ml":"ML","Eda":"EDA","Knn":"KNN","Roc":"ROC","Auc":"AUC","Iqr":"IQR",
@@ -140,7 +167,17 @@ def build(subject, topic):
 
     dest = os.path.join(odir, "index.html")
     if os.path.exists(dest) and not FORCE:
-        if "hand-authored" in open(dest, encoding="utf-8", errors="ignore").read(400):
+        cur = open(dest, encoding="utf-8", errors="ignore").read()
+        if "hand-authored" in cur[:400]:
+            # do not regenerate the prose, but do refresh the handwritten gallery
+            blk = gallery_html(handwritten(tdir))
+            new = re.sub(r"<!-- HANDWRITTEN:START -->.*?<!-- HANDWRITTEN:END -->",
+                         lambda m: blk, cur, flags=re.S)
+            if new == cur and "HANDWRITTEN:START" not in cur:
+                new = cur.replace('<div class="foot">', blk + '\n<div class="foot">', 1)
+            if new != cur:
+                open(dest, "w", encoding="utf-8").write(new)
+                return "skipped (hand-authored, gallery refreshed)"
             return "skipped (hand-authored)"
 
     title = pretty(topic)
@@ -164,11 +201,13 @@ def build(subject, topic):
         body.append(f'<div class="src-head">📓 <a href="../Concept/{f}">{f}</a></div>')
         body.append(render_notebook(os.path.join(cdir, f), os.path.join(odir, "assets"), pre))
 
-    page = fix_refs("\n".join(body), tdir, odir)
+    scans = handwritten(tdir)
+    page = fix_refs("\n".join(body), tdir, odir) + "\n" + gallery_html(scans)
     for m in re.finditer(r'<h2 id="([^"]+)">(.*?)</h2>', page, re.S):
         t = re.sub(r"<[^>]+>", "", m.group(2)).strip()
         if t and len(toc) < 40: toc.append((m.group(1), t[:52]))
 
+    if scans: toc.append(("handwritten", "\u270D\uFE0F Handwritten notes"))
     nav = "".join(f'<a href="#{i}">{H.escape(t)}</a>' for i, t in toc)
     links = "".join(f'<a class="btn" href="../Concept/{f}">{f} ↗</a>' for f in (nbs + notes)[:4])
     counts = " · ".join(x for x in [
@@ -197,7 +236,10 @@ def build(subject, topic):
   <p class="eyebrow">{H.escape(SUBJECT_TITLE.get(subject, subject))}</p>
   <h1>{H.escape(title)}</h1>
   <p class="lede">{H.escape(story["lede"]) if story else "Everything studied in this topic, rendered from the notebooks and notes themselves."}</p>
-  <div class="tags"><span class="tag">{counts}</span></div>
+  <div class="tags"><span class="tag">{counts}</span>{
+    '<a class="tag hn-jump" href="#handwritten">\u270D\uFE0F ' + str(len(scans)) +
+    (' handwritten page' if len(scans) == 1 else ' handwritten pages') + '</a>' if scans else ''
+  }</div>
 </div>
 {page}
 <div class="foot">{links}

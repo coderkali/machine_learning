@@ -14,13 +14,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#k-nearest-neighbors-explained">K-Nearest Neighbors, Explained</a><a href="#the-story-so-far">The story so far</a><a href="#journey">Journey</a><a href="#how-to-run-this-notebook">How to run this notebook</a><a href="#setup-importing-tools">Setup: importing tools</a><a href="#the-story-drawn-before-the-algorithm">The story, drawn before the algorithm</a><a href="#1-make-a-small-classification-world">1. Make a small classification world</a><a href="#seeing-the-problem-before-naming-the-solution">Seeing the problem before naming the solution</a><a href="#2-split-the-examples-practice-data-versus-exam-d">2. Split the examples: practice data versus exam dat</a><a href="#3-create-and-train-a-knn-classifier">3. Create and train a KNN classifier</a><a href="#4-ask-who-the-neighbours-are">4. Ask who the neighbours are</a><a href="#checkpoint">Checkpoint</a><a href="#5-knn-regression-predict-a-number">5. KNN regression: predict a number</a><a href="#important-limitations">Important limitations</a><a href="#final-cheat-sheet">Final cheat sheet</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#k-nearest-neighbors-explained">K-Nearest Neighbors, Explained</a><a href="#the-story-so-far">The story so far</a><a href="#journey">Journey</a><a href="#how-to-run-this-notebook">How to run this notebook</a><a href="#setup-importing-tools">Setup: importing tools</a><a href="#the-story-drawn-before-the-algorithm">The story, drawn before the algorithm</a><a href="#s-1-make-a-small-classification-world">1. Make a small classification world</a><a href="#seeing-the-problem-before-naming-the-solution">Seeing the problem before naming the solution</a><a href="#s-2-split-the-examples-practice-data-versus-exam-d">2. Split the examples: practice data versus exam dat</a><a href="#s-3-create-and-train-a-knn-classifier">3. Create and train a KNN classifier</a><a href="#s-4-ask-who-the-neighbours-are">4. Ask who the neighbours are</a><a href="#checkpoint">Checkpoint</a><a href="#s-5-knn-regression-predict-a-number">5. KNN regression: predict a number</a><a href="#important-limitations">Important limitations</a><a href="#final-cheat-sheet">Final cheat sheet</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>K Nearest Neighbor</h1>
   <p class="lede">No training at all — just ask the neighbours.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 2 handwritten pages</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A new family moves into the street and you want to guess their income.</strong></p><p>You have no formula and no model. But you do know the five nearest houses.</p><p><span class='beat'>So you look at those five and take the average.</span> That is the entire algorithm.</p><p>KNN has no training step — it memorises the data and does all the work at prediction time. Two things decide everything: how many neighbours you ask (k), and what "near" means — which is why unscaled columns wreck it.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Store every row; to predict, find the k closest and take a vote.</p></div>
@@ -103,7 +103,7 @@ plt.show()</pre></div>
 <p>The yellow <code>X</code> is the customer we need to classify. The dashed lines show the five neighbours KNN selected; points that are far away in the upper-right are ignored for this decision. Because three selected neighbours are blue and only two are orange, the predicted class is blue.</p>
 <p>Later, <code>KNeighborsClassifier(n_neighbors=5)</code> performs this same process automatically. The hand-drawn picture comes first so that <code>n_neighbors=5</code>, distance, and majority vote have something concrete to refer to.</p>
 
-<h2 id="1-make-a-small-classification-world">1. Make a small classification world</h2>
+<h2 id="s-1-make-a-small-classification-world">1. Make a small classification world</h2>
 <p><code>make_blobs</code> creates groups of points for practice. Each row is one example. Each column is one feature. <code>y</code> is the answer attached to each row.</p>
 <p>Syntax: <code>make_blobs(n_features=2, n_samples=1000, cluster_std=2, centers=2, random_state=1)</code></p>
 <ul>
@@ -148,7 +148,7 @@ plt.show()</pre></div>
 <p>The coloured dots form two groups. The red <code>x</code> is a new point with two feature values: <code>-5</code> and <code>0</code>. KNN does not invent a formula for this point. It asks which stored dots are closest to it.</p>
 <p>Analogy: this is like routing a support ticket to the team that handled the most similar tickets. The analogy breaks down when the features use incompatible units; distance can then be misleading.</p>
 
-<h2 id="2-split-the-examples-practice-data-versus-exam-d">2. Split the examples: practice data versus exam data</h2>
+<h2 id="s-2-split-the-examples-practice-data-versus-exam-d">2. Split the examples: practice data versus exam data</h2>
 <p>Before training, we hide some rows. The training set is the examples KNN may look at. The test set is an unseen exam.</p>
 <p>Syntax: <code>train_test_split(X, y, test_size=0.3, random_state=0)</code></p>
 <ul>
@@ -165,7 +165,7 @@ print(X_train.shape, X_test.shape)
 print(y_train.shape, y_test.shape)</pre></div>
 <div class="out"><div class="h">Output</div><pre>(700, 2) (300, 2)
 (700,) (300,)</pre></div>
-<h2 id="3-create-and-train-a-knn-classifier">3. Create and train a KNN classifier</h2>
+<h2 id="s-3-create-and-train-a-knn-classifier">3. Create and train a KNN classifier</h2>
 <p><code>KNeighborsClassifier</code> is the classification version of KNN. Classification means the answer is a label such as <code>spam</code>/<code>not spam</code> or <code>0</code>/<code>1</code>.</p>
 <p><code>KNeighborsClassifier(n_neighbors=5)</code> means: when deciding a new label, inspect the five closest training rows. The number 5 is called <code>k</code>.</p>
 <p><code>.fit(X_train, y_train)</code> gives the model its reference examples. KNN is often called a lazy learner: it does very little calculation during <code>fit</code>; it keeps the training data so it can compare distances later.</p>
@@ -183,7 +183,7 @@ print(&#x27;training accuracy:&#x27;, training_accuracy)
 print(&#x27;test accuracy:&#x27;, test_accuracy)</pre></div>
 <div class="out"><div class="h">Output</div><pre>training accuracy: 0.9971428571428571
 test accuracy: 1.0</pre></div>
-<h2 id="4-ask-who-the-neighbours-are">4. Ask who the neighbours are</h2>
+<h2 id="s-4-ask-who-the-neighbours-are">4. Ask who the neighbours are</h2>
 <p><code>classifier.kneighbors([[-5, 0]])</code> finds neighbours for one new row. The outer list matters: scikit-learn expects a table with shape <code>(number_of_rows, number_of_features)</code>, so one row still needs two pairs of brackets.</p>
 <p>The result has two arrays: distances and positions. A small distance means a nearby row. A position is the row index inside the fitted training data.</p>
 
@@ -208,7 +208,7 @@ prediction: [0]</pre></div>
 </ol>
 <p><strong>Answers:</strong> 1. Test rows simulate unseen future rows. 2. One row votes, so one noisy example can control the answer. 3. The new row is unlike the stored examples, so the prediction deserves caution.</p>
 
-<h2 id="5-knn-regression-predict-a-number">5. KNN regression: predict a number</h2>
+<h2 id="s-5-knn-regression-predict-a-number">5. KNN regression: predict a number</h2>
 <p>Classification chooses a label. Regression estimates a continuous number, such as price, delivery time, or temperature.</p>
 <p><code>make_regression</code> creates numeric targets. Here <code>n_features=1</code> means each row has one input feature. <code>noise=20</code> adds realistic variation around the hidden relationship.</p>
 <p>The regression model uses the same neighbourhood idea, but averages the target values of nearby rows instead of taking a majority vote.</p>
@@ -300,6 +300,11 @@ KNN prediction: [65.36208236]</pre></div>
 </table>
 <p>If you remember only one thing: <strong>KNN predicts from nearby examples, so the meaning of near, the choice of k, and the quality of the stored examples control the answer.</strong></p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/25_K_Nearest_01_Page.png" data-name="25_K_Nearest_01_Page.png"><img src="../Handwritten_Notes/25_K_Nearest_01_Page.png" alt="25_K_Nearest_01_Page.png" loading="lazy"><span>25 K Nearest 01 Page</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/25_K_Nearest_02_Page.png" data-name="25_K_Nearest_02_Page.png"><img src="../Handwritten_Notes/25_K_Nearest_02_Page.png" alt="25_K_Nearest_02_Page.png" loading="lazy"><span>25 K Nearest 02 Page</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/25_K_Nearest_Neighbor_explained.ipynb">25_K_Nearest_Neighbor_explained.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

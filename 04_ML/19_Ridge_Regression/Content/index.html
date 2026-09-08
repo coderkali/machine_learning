@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#ridge-regression">Ridge Regression</a><a href="#1-the-data">1. The data</a><a href="#2-split-the-data">2. Split the data</a><a href="#3-ridge-the-default-alpha-1-0">3. Ridge() — the default alpha = 1.0</a><a href="#4-predict-and-score">4. predict() and score()</a><a href="#5-the-model-is-two-numbers">5. The model is two numbers</a><a href="#6-draw-the-line">6. Draw the line</a><a href="#7-alpha-100">7. alpha = 100</a><a href="#8-alpha-100-000">8. alpha = 100,000</a><a href="#9-alpha-10-000-000-the-line-becomes-the-average">9. alpha = 10,000,000 — the line becomes the average</a><a href="#10-the-alpha-table">10. The alpha table</a><a href="#11-wrap-up">11. Wrap up</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#ridge-regression">Ridge Regression</a><a href="#s-1-the-data">1. The data</a><a href="#s-2-split-the-data">2. Split the data</a><a href="#s-3-ridge-the-default-alpha-1-0">3. Ridge() — the default alpha = 1.0</a><a href="#s-4-predict-and-score">4. predict() and score()</a><a href="#s-5-the-model-is-two-numbers">5. The model is two numbers</a><a href="#s-6-draw-the-line">6. Draw the line</a><a href="#s-7-alpha-100">7. alpha = 100</a><a href="#s-8-alpha-100-000">8. alpha = 100,000</a><a href="#s-9-alpha-10-000-000-the-line-becomes-the-average">9. alpha = 10,000,000 — the line becomes the average</a><a href="#s-10-the-alpha-table">10. The alpha table</a><a href="#s-11-wrap-up">11. Wrap up</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -73,7 +73,7 @@ wins.</p>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
 x,y = make_regression(n_features=1, noise=5, n_samples=10000)
 import matplotlib.pyplot as plt</pre></div>
-<h2 id="1-the-data">1. The data</h2>
+<h2 id="s-1-the-data">1. The data</h2>
 <p><code>make_regression</code> builds a straight line and adds noise to it. One input column, one
 output number, 10,000 rows.</p>
 <p>The cell above has no <code>random_state</code>, so it draws new data on every run. The next cell
@@ -89,14 +89,14 @@ plt.xlabel(&#x27;x&#x27;)
 plt.ylabel(&#x27;y&#x27;)
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/07-ridge-c04-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="2-split-the-data">2. Split the data</h2>
+<h2 id="s-2-split-the-data">2. Split the data</h2>
 <p>8,000 rows to train on. 2,000 kept hidden for scoring.</p>
 <p>We are about to compare several models, so they all have to be judged on the same hidden
 rows.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div>
-<h2 id="3-ridge-the-default-alpha-1-0">3. <code>Ridge()</code> — the default <code>alpha = 1.0</code></h2>
+<h2 id="s-3-ridge-the-default-alpha-1-0">3. <code>Ridge()</code> — the default <code>alpha = 1.0</code></h2>
 <p>Same three steps as always. <code>Ridge()</code> with no argument means <code>alpha = 1.0</code>.</p>
 <h3>What <code>alpha</code> actually does</h3>
 <p>Ridge adds one extra cost:</p>
@@ -121,7 +121,7 @@ no underscore, while <code>coef_</code> and <code>intercept_</code> do.</li>
 reg = Ridge()
 reg.fit(X_train,y_train)</pre></div>
 <div class="out"><div class="h">Output</div><pre>Ridge()</pre></div>
-<h2 id="4-predict-and-score">4. <code>predict()</code> and <code>score()</code></h2>
+<h2 id="s-4-predict-and-score">4. <code>predict()</code> and <code>score()</code></h2>
 <p>Nothing changed here. Ridge still ends up with one slope and one intercept, so <code>predict</code>
 is still <code>m * x + c</code>.</p>
 <p><code>score</code> gives R² on the 2,000 hidden rows: <strong><code>0.9769</code></strong>. Almost perfect. On 8,000 rows an
@@ -132,7 +132,7 @@ is still <code>m * x + c</code>.</p>
        20.43818735, 43.21880194], shape=(2000,))</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">reg.score(X_test,y_test)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.9769119096071136</pre></div>
-<h2 id="5-the-model-is-two-numbers">5. The model is two numbers</h2>
+<h2 id="s-5-the-model-is-two-numbers">5. The model is two numbers</h2>
 <table class="tbl"><thead>
 <tr>
   <th></th>
@@ -161,7 +161,7 @@ us <code>0.004</code>.</p>
 <div class="out"><div class="h">Output</div><pre>array([31.98504656])</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">reg.intercept_</pre></div>
 <div class="out"><div class="h">Output</div><pre>np.float64(0.0666527917276602)</pre></div>
-<h2 id="6-draw-the-line">6. Draw the line</h2>
+<h2 id="s-6-draw-the-line">6. Draw the line</h2>
 <p><code>reg.predict(x)</code> runs the formula on all 10,000 rows, so the orange dots draw the model
 right across the picture.</p>
 <p>The orange dots form a straight line. The blue cloud is the real noisy data. The line
@@ -175,7 +175,7 @@ plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/07-ridge-c17-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="7-alpha-100">7. <code>alpha = 100</code></h2>
+<h2 id="s-7-alpha-100">7. <code>alpha = 100</code></h2>
 <p>Same code, one argument changed. The score barely moves (<code>0.976912</code> → <code>0.976598</code>) and
 <code>coef_</code> drops from <code>31.985</code> to <code>31.598</code>.</p>
 <h3>The one formula worth knowing</h3>
@@ -252,7 +252,7 @@ plt.show()</pre></div>
 <figure class="shot"><img src="assets/07-ridge-c22-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">reg.coef_</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([31.59789266])</pre></div>
-<h2 id="8-alpha-100-000">8. <code>alpha = 100,000</code></h2>
+<h2 id="s-8-alpha-100-000">8. <code>alpha = 100,000</code></h2>
 <p>Now <code>alpha</code> is much bigger than <code>S</code>, so the penalty wins:</p>
 <div class="code"><pre>   8078.97 / (8078.97 + 100000)  =  0.0748
    31.989 x 0.0748               =  2.39
@@ -275,7 +275,7 @@ plt.show()</pre></div>
 <figure class="shot"><img src="assets/07-ridge-c27-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">reg.coef_</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([2.39119767])</pre></div>
-<h2 id="9-alpha-10-000-000-the-line-becomes-the-average">9. <code>alpha = 10,000,000</code> — the line becomes the average</h2>
+<h2 id="s-9-alpha-10-000-000-the-line-becomes-the-average">9. <code>alpha = 10,000,000</code> — the line becomes the average</h2>
 <p>Shrink factor <code>0.0008</code>. The slope is <code>0.026</code>, which is zero for any real purpose. R² is
 <code>0.0015</code>.</p>
 <p>Two things meet here:</p>
@@ -307,7 +307,7 @@ plt.show()</pre></div>
 <figure class="shot"><img src="assets/07-ridge-c31-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">reg.coef_</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([0.02582296])</pre></div>
-<h2 id="10-the-alpha-table">10. The alpha table</h2>
+<h2 id="s-10-the-alpha-table">10. The alpha table</h2>
 <p>Every value of <code>alpha</code> side by side, all fitted on the same split. The <code>formula</code> column
 is the shrink factor from section 7 applied to the unpenalised slope, so it shows that
 the formula and sklearn agree.</p>
@@ -454,7 +454,7 @@ of ten — <code>0.1, 1, 10, 100, 1000</code> — never <code>1, 2, 3, 4</code>.
 average of <code>y</code> as the slope disappears.</li>
 </ol>
 
-<h2 id="11-wrap-up">11. Wrap up</h2>
+<h2 id="s-11-wrap-up">11. Wrap up</h2>
 <h3>Ridge in three lines</h3>
 <div class="code"><pre>cost       =  error  +  alpha x slope x slope
 new slope  =  old slope x S/(S + alpha)          S = spread of x on the train rows
@@ -496,6 +496,7 @@ small <code>alpha</code> gives you <code>LinearRegression</code>. A large <code>
 the line goes flat at the average of <code>y</code> — and a model that always predicts the average
 is exactly what R² = 0 means.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/07_Ridge.ipynb">07_Ridge.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

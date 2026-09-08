@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#plotly">Plotly</a><a href="#files">Files</a><a href="#the-one-pattern">The one pattern</a><a href="#the-trap-worth-knowing-before-you-start">The trap worth knowing before you start</a><a href="#covered-so-far">Covered so far</a><a href="#common-mistakes-this-notebook-fixes">Common mistakes this notebook fixes</a><a href="#key-takeaway">Key takeaway</a><a href="#how-a-3d-scatter-turns-three-numbers-into-one-pi">How a 3D Scatter Turns Three Numbers Into One Pixel</a><a href="#1-the-problem-in-one-line">1. The problem in one line</a><a href="#2-the-four-steps">2. The four steps</a><a href="#3-step-1-model-from-centimetres-to-a-box-around-">3. Step 1 — model: from centimetres to a box around </a><a href="#4-step-2-view-put-the-camera-at-the-origin">4. Step 2 — view: put the camera at the origin</a><a href="#5-step-3-projection-the-divide">5. Step 3 — projection: the divide</a><a href="#6-step-4-viewport-ndc-to-pixels">6. Step 4 — viewport: NDC to pixels</a><a href="#7-what-it-costs-measured-not-asserted">7. What it costs — measured, not asserted</a><a href="#8-why-rotating-is-not-just-nice-it-is-the-fix">8. Why rotating is not just nice, it is the fix</a><a href="#9-the-alternatives-that-do-not-lose-anything">9. The alternatives that do not lose anything</a><a href="#10-reproduce-the-numbers-yourself">10. Reproduce the numbers yourself</a><a href="#interview-view">Interview view</a><a href="#plotly-interactive-charts-drawn-in-the-browser">Plotly — Interactive Charts Drawn in the Browser</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#1-setup-install-and-import">1. Setup — install and import</a><a href="#2-built-in-datasets-px-data">2. Built-in datasets — px.data</a><a href="#3-line-charts-px-line">3. Line charts — px.line</a><a href="#4-scatter-and-the-visual-channels">4. Scatter and the visual channels</a><a href="#5-bars-and-the-one-thing-plotly-does-not-do">5. Bars — and the one thing plotly does not do</a><a href="#6-box-and-violin-one-distribution-per-category">6. Box and violin — one distribution per category</a><a href="#7-pie-two-different-ways-to-feed-the-same-chart">7. Pie — two different ways to feed the same chart</a><a href="#8-area-a-line-with-the-region-below-it-filled">8. Area — a line with the region below it filled</a><a href="#9-3d-scatter-how-three-numbers-become-one-pixel">9. 3D scatter — how three numbers become one pixel</a><a href="#10-sunburst-nesting-instead-of-a-third-axis">10. Sunburst — nesting instead of a third axis</a><a href="#11-wrapping-up">11. Wrapping up</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#plotly">Plotly</a><a href="#files">Files</a><a href="#the-one-pattern">The one pattern</a><a href="#the-trap-worth-knowing-before-you-start">The trap worth knowing before you start</a><a href="#covered-so-far">Covered so far</a><a href="#common-mistakes-this-notebook-fixes">Common mistakes this notebook fixes</a><a href="#key-takeaway">Key takeaway</a><a href="#how-a-3d-scatter-turns-three-numbers-into-one-pi">How a 3D Scatter Turns Three Numbers Into One Pixel</a><a href="#s-1-the-problem-in-one-line">1. The problem in one line</a><a href="#s-2-the-four-steps">2. The four steps</a><a href="#s-3-step-1-model-from-centimetres-to-a-box-around-">3. Step 1 — model: from centimetres to a box around </a><a href="#s-4-step-2-view-put-the-camera-at-the-origin">4. Step 2 — view: put the camera at the origin</a><a href="#s-5-step-3-projection-the-divide">5. Step 3 — projection: the divide</a><a href="#s-6-step-4-viewport-ndc-to-pixels">6. Step 4 — viewport: NDC to pixels</a><a href="#s-7-what-it-costs-measured-not-asserted">7. What it costs — measured, not asserted</a><a href="#s-8-why-rotating-is-not-just-nice-it-is-the-fix">8. Why rotating is not just nice, it is the fix</a><a href="#s-9-the-alternatives-that-do-not-lose-anything">9. The alternatives that do not lose anything</a><a href="#s-10-reproduce-the-numbers-yourself">10. Reproduce the numbers yourself</a><a href="#interview-view">Interview view</a><a href="#plotly-interactive-charts-drawn-in-the-browser">Plotly — Interactive Charts Drawn in the Browser</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#s-1-setup-install-and-import">1. Setup — install and import</a><a href="#s-2-built-in-datasets-px-data">2. Built-in datasets — px.data</a><a href="#s-3-line-charts-px-line">3. Line charts — px.line</a><a href="#s-4-scatter-and-the-visual-channels">4. Scatter and the visual channels</a><a href="#s-5-bars-and-the-one-thing-plotly-does-not-do">5. Bars — and the one thing plotly does not do</a><a href="#s-6-box-and-violin-one-distribution-per-category">6. Box and violin — one distribution per category</a><a href="#s-7-pie-two-different-ways-to-feed-the-same-chart">7. Pie — two different ways to feed the same chart</a><a href="#s-8-area-a-line-with-the-region-below-it-filled">8. Area — a line with the region below it filled</a><a href="#s-9-3d-scatter-how-three-numbers-become-one-pixel">9. 3D scatter — how three numbers become one pixel</a><a href="#s-10-sunburst-nesting-instead-of-a-third-axis">10. Sunburst — nesting instead of a third axis</a><a href="#s-11-wrapping-up">11. Wrapping up</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Python and the data toolkit</p>
@@ -120,11 +120,11 @@ mislead you, rather than just being told that it can.</p>
 <code>plotly/package_data/plotly.min.js</code> and the real <code>px.data.iris()</code> values. Source
 snippets are quoted from that file.</p>
 <hr />
-<h2 id="1-the-problem-in-one-line">1. The problem in one line</h2>
+<h2 id="s-1-the-problem-in-one-line">1. The problem in one line</h2>
 <p>A screen pixel has <strong>two</strong> coordinates. <code>px.scatter_3d</code> is handed <strong>three</strong>. So one
 number cannot survive as a position. The question is not <em>whether</em> something is lost —
 it is <em>what</em> is lost, and what that costs you when you read the chart.</p>
-<h2 id="2-the-four-steps">2. The four steps</h2>
+<h2 id="s-2-the-four-steps">2. The four steps</h2>
 <div class="code"><pre>   DATA            WORLD             CAMERA            NDC            SCREEN
    (5.1,3.5,1.4)   (-0.25,          (0.23,            (0.15,         (403, 354)
     centimetres     0.08,            -0.46,            -0.42)         pixels
@@ -139,7 +139,7 @@ loss happens in one place: the divide inside step 3.</strong></p>
 <div class="code"><pre class="py">iris.iloc[0]     # sepal_length 5.1, sepal_width 3.5, petal_length 1.4, species setosa
 </pre></div>
 <hr />
-<h2 id="3-step-1-model-from-centimetres-to-a-box-around-">3. Step 1 — model: from centimetres to a box around the origin</h2>
+<h2 id="s-3-step-1-model-from-centimetres-to-a-box-around-">3. Step 1 — model: from centimetres to a box around the origin</h2>
 <h3>3.1 Why anything has to happen at all</h3>
 <p>The three chosen columns do not share a range:</p>
 <table class="tbl"><thead>
@@ -293,7 +293,7 @@ nothing on screen tells you.</p>
 fig.update_layout(scene_aspectmode=&quot;cube&quot;)    # always a cube, never proportional
 </pre></div>
 <hr />
-<h2 id="4-step-2-view-put-the-camera-at-the-origin">4. Step 2 — view: put the camera at the origin</h2>
+<h2 id="s-4-step-2-view-put-the-camera-at-the-origin">4. Step 2 — view: put the camera at the origin</h2>
 <p>Nothing is lost here. The whole world is rotated and shifted so that the camera sits at
 the origin looking down its own −Z axis. It is a change of address, not of shape.</p>
 <p>Plotly's defaults, straight from the attribute table in <code>plotly.min.js</code>:</p>
@@ -360,7 +360,7 @@ back?</em></p>
 the camera. Depth has become an explicit number. It is the last moment it exists as a
 position.</p>
 <hr />
-<h2 id="5-step-3-projection-the-divide">5. Step 3 — projection: the divide</h2>
+<h2 id="s-5-step-3-projection-the-divide">5. Step 3 — projection: the divide</h2>
 <p>The perspective matrix (gl-matrix's <code>perspective</code>, <code>fovy = π/4</code>, <code>near = 0.01</code>,
 <code>far = 1000</code>) is:</p>
 <div class="code"><pre>   focal = 1 / tan(fov / 2) = 1 / tan(22.5 deg) = 2.4142
@@ -400,7 +400,7 @@ lines stay parallel and distances along an axis stay comparable — but you lose
 depth cue entirely, so it usually looks flatter and more confusing, not less.</p>
 </div>
 <hr />
-<h2 id="6-step-4-viewport-ndc-to-pixels">6. Step 4 — viewport: NDC to pixels</h2>
+<h2 id="s-6-step-4-viewport-ndc-to-pixels">6. Step 4 — viewport: NDC to pixels</h2>
 <p>Plain arithmetic on a 700 × 500 canvas. Note the flip: NDC counts up, screen pixels
 count down.</p>
 <div class="code"><pre>   px = (ndc_x + 1) / 2 x width  = (0.1523 + 1) / 2 x 700 = 403.3
@@ -409,7 +409,7 @@ count down.</p>
 <div class="code"><pre>   iris row 0  (5.1, 3.5, 1.4)  -&gt;  pixel (403, 354)
 </pre></div>
 <hr />
-<h2 id="7-what-it-costs-measured-not-asserted">7. What it costs — measured, not asserted</h2>
+<h2 id="s-7-what-it-costs-measured-not-asserted">7. What it costs — measured, not asserted</h2>
 <p>Run the projection over all 150 iris rows with the default camera and look for
 collisions:</p>
 <div class="code"><pre>   A   sepal_length 6.3, sepal_width 3.3, petal_length 4.7  -&gt;  (344.6, 212.7)  depth 2.011
@@ -446,7 +446,7 @@ at roughly twice the scale of the back.</p>
 <p>None of this is a plotly defect. It is what projection <em>is</em>. Every 3D renderer ever
 written — games, CAD, film — does the same divide.</p>
 <hr />
-<h2 id="8-why-rotating-is-not-just-nice-it-is-the-fix">8. Why rotating is not just nice, it is the fix</h2>
+<h2 id="s-8-why-rotating-is-not-just-nice-it-is-the-fix">8. Why rotating is not just nice, it is the fix</h2>
 <p>Rotating the chart changes <code>eye</code>. A new <code>eye</code> gives a new <code>lookAt</code> matrix, a new depth
 per point, and therefore a <strong>different set of collisions</strong>. The pair that overlapped
 above will separate from almost any other angle.</p>
@@ -483,7 +483,7 @@ above will separate from almost any other angle.</p>
 <div class="code"><pre class="py">fig.update_layout(scene_camera=dict(eye=dict(x=2, y=0, z=0.3)))
 </pre></div>
 <hr />
-<h2 id="9-the-alternatives-that-do-not-lose-anything">9. The alternatives that do not lose anything</h2>
+<h2 id="s-9-the-alternatives-that-do-not-lose-anything">9. The alternatives that do not lose anything</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Want to show</th>
@@ -520,7 +520,7 @@ above will separate from almost any other angle.</p>
 <p>The petal columns separate the species nearly completely. No dimension is projected
 away, no point hides behind another, and the axes still carry centimetres.</p>
 <hr />
-<h2 id="10-reproduce-the-numbers-yourself">10. Reproduce the numbers yourself</h2>
+<h2 id="s-10-reproduce-the-numbers-yourself">10. Reproduce the numbers yourself</h2>
 <p>Every figure in this note comes from the script below. Run it and change the camera
 <code>eye</code> to watch the collisions move.</p>
 <div class="code"><pre class="py">import numpy as np, plotly.express as px
@@ -662,7 +662,7 @@ workflow, not a workaround.</p>
 the browser draws.</p>
 
 <hr />
-<h2 id="1-setup-install-and-import">1. Setup — install and import</h2>
+<h2 id="s-1-setup-install-and-import">1. Setup — install and import</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Cell</th>
@@ -730,7 +730,7 @@ Note: you may need to restart the kernel to use updated packages.</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">import plotly.express as px
 import plotly.graph_objects as go</pre></div>
 <hr />
-<h2 id="2-built-in-datasets-px-data">2. Built-in datasets — <code>px.data</code></h2>
+<h2 id="s-2-built-in-datasets-px-data">2. Built-in datasets — <code>px.data</code></h2>
 <p>The sample datasets are <strong>not</strong> top-level functions. They live in a submodule called
 <code>px.data</code>:</p>
 <div class="code"><pre>plotly.express         -&gt;  the plotting calls      px.line, px.bar, px.scatter_3d
@@ -813,7 +813,7 @@ df.head()</pre></div>
 699   India      Asia  1967   47.193  506000000  700.770611       IND      356
 700   India      Asia  1972   50.651  567000000  724.032527       IND      356</pre></div>
 <hr />
-<h2 id="3-line-charts-px-line">3. Line charts — <code>px.line</code></h2>
+<h2 id="s-3-line-charts-px-line">3. Line charts — <code>px.line</code></h2>
 <p>India's life expectancy: <strong>12 points, 1952 → 2007, 37.4 → 64.7 years</strong>. A near-straight
 climb, so every visual change you see below comes from the argument, not the data.</p>
 <table class="tbl"><thead>
@@ -889,7 +889,7 @@ fig.show()</pre></div>
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="4-scatter-and-the-visual-channels">4. Scatter and the visual channels</h2>
+<h2 id="s-4-scatter-and-the-visual-channels">4. Scatter and the visual channels</h2>
 <p>Same core idea as seaborn's semantics: <strong>map a column onto a visual property</strong>.</p>
 <div class="code"><pre>       DATA COLUMN            ARGUMENT          VISUAL CHANNEL
        -----------            --------          --------------
@@ -979,7 +979,7 @@ fig.show()</pre></div>
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="5-bars-and-the-one-thing-plotly-does-not-do">5. Bars — and the one thing plotly does <em>not</em> do</h2>
+<h2 id="s-5-bars-and-the-one-thing-plotly-does-not-do">5. Bars — and the one thing plotly does <em>not</em> do</h2>
 <p>Read this section slowly. The chart below looks like the seaborn bar chart you already
 know, and it means something completely different.</p>
 <div class="code"><pre class="py">px.bar(tips, x=&quot;day&quot;, y=&quot;total_bill&quot;)
@@ -1106,7 +1106,7 @@ fig.show()</pre></div>
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="6-box-and-violin-one-distribution-per-category">6. Box and violin — one distribution per category</h2>
+<h2 id="s-6-box-and-violin-one-distribution-per-category">6. Box and violin — one distribution per category</h2>
 <p>The bar chart above collapsed 244 bills into 4 numbers. These two charts keep the spread.</p>
 <table class="tbl"><thead>
 <tr>
@@ -1210,7 +1210,7 @@ fig.show()</pre></div>
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="7-pie-two-different-ways-to-feed-the-same-chart">7. Pie — two different ways to feed the same chart</h2>
+<h2 id="s-7-pie-two-different-ways-to-feed-the-same-chart">7. Pie — two different ways to feed the same chart</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Cell</th>
@@ -1273,7 +1273,7 @@ fig.show()</pre></div>
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="8-area-a-line-with-the-region-below-it-filled">8. Area — a line with the region below it filled</h2>
+<h2 id="s-8-area-a-line-with-the-region-below-it-filled">8. Area — a line with the region below it filled</h2>
 <div class="code"><pre class="py">px.area(df, x=&quot;year&quot;, y=&quot;lifeExp&quot;)
 </pre></div>
 <p>Verified in the JSON: the trace's <code>fill</code> is not set, but <code>stackgroup = &quot;1&quot;</code>. That single
@@ -1323,7 +1323,7 @@ line.</p>
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="9-3d-scatter-how-three-numbers-become-one-pixel">9. 3D scatter — how three numbers become one pixel</h2>
+<h2 id="s-9-3d-scatter-how-three-numbers-become-one-pixel">9. 3D scatter — how three numbers become one pixel</h2>
 <div class="code"><pre class="py">iris = px.data.iris()
 px.scatter_3d(iris, x=&quot;sepal_length&quot;, y=&quot;sepal_width&quot;, z=&quot;petal_length&quot;, color=&quot;species&quot;)
 </pre></div>
@@ -1487,7 +1487,7 @@ fig = px.scatter_3d(
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="10-sunburst-nesting-instead-of-a-third-axis">10. Sunburst — nesting instead of a third axis</h2>
+<h2 id="s-10-sunburst-nesting-instead-of-a-third-axis">10. Sunburst — nesting instead of a third axis</h2>
 <div class="code"><pre class="py">px.sunburst(tips, path=[&quot;sex&quot;, &quot;day&quot;])
 </pre></div>
 <p>The 3D chart used a third axis and paid for it. A sunburst carries a second (and third,
@@ -1595,7 +1595,7 @@ is projected away, and nothing hides behind anything else.</p>
 )
 fig.show()</pre></div>
 <hr />
-<h2 id="11-wrapping-up">11. Wrapping up</h2>
+<h2 id="s-11-wrapping-up">11. Wrapping up</h2>
 <h3>The three libraries, side by side</h3>
 <table class="tbl"><thead>
 <tr>
@@ -1677,6 +1677,7 @@ the 3D chart and decide honestly which one you would put in a report.</li>
 browser draws it — so plotly gives you interactivity for free, but never gives you
 statistics for free.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/README.md">README.md ↗</a><a class="btn" href="../Concept/concept_3d_projection.md">concept_3d_projection.md ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#phase-3-topic-2-data-cleaning-missing-values-amp">Phase 3, Topic 2 — Data Cleaning: Missing Values &amp;am</a><a href="#the-story">The Story</a><a href="#problem-1-missing-value-imputation">Problem 1: Missing Value — Imputation</a><a href="#problem-2-outlier-iqr-method">Problem 2: Outlier — IQR Method</a><a href="#visual">Visual</a><a href="#clarifying-questions-asked-during-this-topic">Clarifying Questions Asked During This Topic</a><a href="#visual-walkthrough">Visual Walkthrough</a><a href="#key-takeaways">Key Takeaways</a><a href="#genai-rag-bridge">GenAI / RAG Bridge</a><a href="#faq">FAQ</a><a href="#interview-questions-amp-answers">Interview Questions &amp;amp; Answers</a><a href="#status">Status</a><a href="#machine-learning-04-data-cleaning">Machine Learning — 04. Data Cleaning</a><a href="#what-is-data-cleaning">What Is Data Cleaning?</a><a href="#the-raw-cleaned-example-from-the-slide">The Raw → Cleaned Example (from the slide)</a><a href="#the-6-sub-skills-of-data-cleaning">The 6 Sub-Skills of Data Cleaning</a><a href="#new-ground-handling-duplicates">New Ground: Handling Duplicates</a><a href="#new-ground-dealing-with-inconsistent-data">New Ground: Dealing with Inconsistent Data</a><a href="#where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a><a href="#data-cleaning-practice-loan-dataset">Data Cleaning Practice — Loan Dataset</a><a href="#1-load-the-dataset">1. Load the dataset</a><a href="#2-shape-how-many-rows-and-columns">2. Shape — how many rows and columns?</a><a href="#3-which-columns-have-missing-values-and-how-many">3. Which columns have missing values, and how many?</a><a href="#4-missing-values-as-a-percentage-of-each-column">4. Missing values as a percentage of each column</a><a href="#5-overall-what-of-the-entire-dataset-is-missing">5. Overall — what % of the entire dataset is missing</a><a href="#6-visualize-the-missing-values">6. Visualize the missing values</a><a href="#7-the-50-rule-when-a-column-isn-t-worth-saving">7. The 50% Rule — when a column isn&#x27;t worth saving</a><a href="#reading-the-result">Reading the result</a><a href="#8-filling-the-missing-values">8. Filling the Missing Values</a><a href="#reading-the-result-section-8">Reading the result (Section 8)</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#phase-3-topic-2-data-cleaning-missing-values-amp">Phase 3, Topic 2 — Data Cleaning: Missing Values &amp;am</a><a href="#the-story">The Story</a><a href="#problem-1-missing-value-imputation">Problem 1: Missing Value — Imputation</a><a href="#problem-2-outlier-iqr-method">Problem 2: Outlier — IQR Method</a><a href="#visual">Visual</a><a href="#clarifying-questions-asked-during-this-topic">Clarifying Questions Asked During This Topic</a><a href="#visual-walkthrough">Visual Walkthrough</a><a href="#key-takeaways">Key Takeaways</a><a href="#genai-rag-bridge">GenAI / RAG Bridge</a><a href="#faq">FAQ</a><a href="#interview-questions-amp-answers">Interview Questions &amp;amp; Answers</a><a href="#status">Status</a><a href="#machine-learning-04-data-cleaning">Machine Learning — 04. Data Cleaning</a><a href="#what-is-data-cleaning">What Is Data Cleaning?</a><a href="#the-raw-cleaned-example-from-the-slide">The Raw → Cleaned Example (from the slide)</a><a href="#the-6-sub-skills-of-data-cleaning">The 6 Sub-Skills of Data Cleaning</a><a href="#new-ground-handling-duplicates">New Ground: Handling Duplicates</a><a href="#new-ground-dealing-with-inconsistent-data">New Ground: Dealing with Inconsistent Data</a><a href="#where-this-fits-in-your-roadmap">Where This Fits in Your Roadmap</a><a href="#faq-common-mix-ups">FAQ — Common Mix-Ups</a><a href="#interview-style-q-amp-a">Interview-Style Q&amp;amp;A</a><a href="#data-cleaning-practice-loan-dataset">Data Cleaning Practice — Loan Dataset</a><a href="#s-1-load-the-dataset">1. Load the dataset</a><a href="#s-2-shape-how-many-rows-and-columns">2. Shape — how many rows and columns?</a><a href="#s-3-which-columns-have-missing-values-and-how-many">3. Which columns have missing values, and how many?</a><a href="#s-4-missing-values-as-a-percentage-of-each-column">4. Missing values as a percentage of each column</a><a href="#s-5-overall-what-of-the-entire-dataset-is-missing">5. Overall — what % of the entire dataset is missing</a><a href="#s-6-visualize-the-missing-values">6. Visualize the missing values</a><a href="#s-7-the-50-rule-when-a-column-isn-t-worth-saving">7. The 50% Rule — when a column isn&#x27;t worth saving</a><a href="#reading-the-result">Reading the result</a><a href="#s-8-filling-the-missing-values">8. Filling the Missing Values</a><a href="#reading-the-result-section-8">Reading the result (Section 8)</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -480,7 +480,7 @@ synonym categories that all mean the same thing (<code>&quot;N/A&quot;</code>, <
 <p>Goal for this notebook: <strong>find out where the missing values are</strong>, before deciding what to do about them.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div>
-<h2 id="1-load-the-dataset">1. Load the dataset</h2>
+<h2 id="s-1-load-the-dataset">1. Load the dataset</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
 dataset.head(10)</pre></div>
@@ -519,11 +519,11 @@ dataset.head(10)</pre></div>
 7             1.0         Urban           Y  
 8             1.0     Semiurban           Y  
 9             1.0     Semiurban           Y</pre></div>
-<h2 id="2-shape-how-many-rows-and-columns">2. Shape — how many rows and columns?</h2>
+<h2 id="s-2-shape-how-many-rows-and-columns">2. Shape — how many rows and columns?</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.shape</pre></div>
 <div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div>
-<h2 id="3-which-columns-have-missing-values-and-how-many">3. Which columns have missing values, and how many?</h2>
+<h2 id="s-3-which-columns-have-missing-values-and-how-many">3. Which columns have missing values, and how many?</h2>
 <p><code>isnull()</code> marks every cell <code>True</code>/<code>False</code>, <code>.sum()</code> adds those up per column.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">dataset.isnull().sum()</pre></div>
@@ -541,7 +541,7 @@ Credit_History       50
 Property_Area         9
 Loan_Status           0
 dtype: int64</pre></div>
-<h2 id="4-missing-values-as-a-percentage-of-each-column">4. Missing values as a percentage of each column</h2>
+<h2 id="s-4-missing-values-as-a-percentage-of-each-column">4. Missing values as a percentage of each column</h2>
 <p>Raw counts are hard to compare across columns of different sizes — percentage puts every column on the same scale.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">(dataset.isnull().sum() / dataset.shape[0]) * 100</pre></div>
@@ -559,12 +559,12 @@ Credit_History       8.090615
 Property_Area        1.456311
 Loan_Status          0.000000
 dtype: float64</pre></div>
-<h2 id="5-overall-what-of-the-entire-dataset-is-missing">5. Overall — what % of the <em>entire</em> dataset is missing?</h2>
+<h2 id="s-5-overall-what-of-the-entire-dataset-is-missing">5. Overall — what % of the <em>entire</em> dataset is missing?</h2>
 <p><code>dataset.shape[0] * dataset.shape[1]</code> is the total number of cells (rows × columns); <code>.isnull().sum().sum()</code> is the total number of missing cells across every column.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">(dataset.isnull().sum().sum() / (dataset.shape[0] * dataset.shape[1])) * 100</pre></div>
 <div class="out"><div class="h">Output</div><pre>np.float64(2.2280308688075676)</pre></div>
-<h2 id="6-visualize-the-missing-values">6. Visualize the missing values</h2>
+<h2 id="s-6-visualize-the-missing-values">6. Visualize the missing values</h2>
 <p>Numbers tell you <em>how much</em> is missing; a picture tells you <em>where</em> — whether the gaps are scattered randomly or clustered in specific rows or columns. Two views below: a full heatmap of every cell, and a bar chart ranking the columns that actually have gaps.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">import matplotlib.pyplot as plt
@@ -598,7 +598,7 @@ plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/05-data-cleaning-practice-c17-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="7-the-50-rule-when-a-column-isn-t-worth-saving">7. The 50% Rule — when a column isn't worth saving</h2>
+<h2 id="s-7-the-50-rule-when-a-column-isn-t-worth-saving">7. The 50% Rule — when a column isn't worth saving</h2>
 <p>Imputing a column that's more than half missing means inventing more data than you actually observed — past a certain point, dropping the column outright is more honest than filling it. Common rule of thumb: if a column is <strong>≥ 50% missing, ignore (drop) it</strong> rather than impute it.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">def flag_high_missing_columns(df, threshold=50):
@@ -633,7 +633,7 @@ Shape after dropping high-missing columns: (618, 13)</pre></div>
 </ul>
 <p><strong>Next up:</strong> deciding <em>how</em> to fill each of these in — drop, mean/median (numeric), mode (categorical), or a model-based imputer — which is where <code>04_Data_Cleaning.MD</code>'s Handling Missing Data section picks back up.</p>
 
-<h2 id="8-filling-the-missing-values">8. Filling the Missing Values</h2>
+<h2 id="s-8-filling-the-missing-values">8. Filling the Missing Values</h2>
 <p>Full walkthrough in <code>07_Filling_Missing_Values.MD</code> — this is that note's code, run for real against <code>dataset_cleaned</code> (the column-checked dataframe from Section 7). Categorical columns get their mode; numerical columns get their median, except <code>Credit_History</code>, which is a 0/1 flag stored as a number, not a real continuous quantity — it gets mode too.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">categorical_cols = dataset_cleaned.select_dtypes(include=&quot;str&quot;).columns
@@ -701,6 +701,7 @@ plt.show()</pre></div>
 <li>This <code>dataset_cleaned</code> dataframe is what would move on to Feature Engineering next (<code>02_ML_Roadmap.MD</code> Topic 3) — encoding the categorical columns and scaling the numerical ones.</li>
 </ul>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/05_Data_Cleaning_Practice.ipynb">05_Data_Cleaning_Practice.ipynb ↗</a><a class="btn" href="../Concept/02_data_cleaning.md">02_data_cleaning.md ↗</a><a class="btn" href="../Concept/04_Data_Cleaning.MD">04_Data_Cleaning.MD ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

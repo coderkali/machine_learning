@@ -14,18 +14,18 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#15-model-evaluation">15 - Model Evaluation</a><a href="#step-1-load-the-data">Step 1 - Load the data</a><a href="#step-2-split-before-you-measure">Step 2 - Split before you measure</a><a href="#step-3-train-a-model">Step 3 - Train a model</a><a href="#step-4-the-first-number">Step 4 - The first number</a><a href="#step-5-predictions-and-accuracy-by-hand">Step 5 - Predictions and accuracy by hand</a><a href="#step-6-confusion-matrix">Step 6 - Confusion matrix</a><a href="#step-7-the-same-matrix-as-a-picture">Step 7 - The same matrix as a picture</a><a href="#step-8-precision-recall-f1">Step 8 - Precision, Recall, F1</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#s-15-model-evaluation">15 - Model Evaluation</a><a href="#step-1-load-the-data">Step 1 - Load the data</a><a href="#step-2-split-before-you-measure">Step 2 - Split before you measure</a><a href="#step-3-train-a-model">Step 3 - Train a model</a><a href="#step-4-the-first-number">Step 4 - The first number</a><a href="#step-5-predictions-and-accuracy-by-hand">Step 5 - Predictions and accuracy by hand</a><a href="#step-6-confusion-matrix">Step 6 - Confusion matrix</a><a href="#step-7-the-same-matrix-as-a-picture">Step 7 - The same matrix as a picture</a><a href="#step-8-precision-recall-f1">Step 8 - Precision, Recall, F1</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Model Evaluation</h1>
   <p class="lede">Accuracy alone will let a useless model look excellent.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A cancer screening model reported 97% accuracy.</strong> The team celebrated.</p><p>Then someone checked the data: 97% of the scans were healthy. A model that answered "healthy" every single time — never detecting anything — would also score 97%.</p><p><span class='beat'>The model had learned nothing and the metric could not tell.</span></p><p>The confusion matrix splits the errors apart: missed cancers versus false alarms. Recall asks how many real cases you caught; precision asks how often your alarm was right. On imbalanced data those two numbers are the truth and accuracy is decoration.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>The confusion matrix separates the two kinds of mistake; precision and recall price them differently.</p></div>
 <div class="src-head">📓 <a href="../Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb</a></div>
-<h2 id="15-model-evaluation">15 - Model Evaluation</h2>
+<h2 id="s-15-model-evaluation">15 - Model Evaluation</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <p><strong>What it is:</strong> checking how good a trained model is, using data it has never seen.</p>
@@ -267,6 +267,11 @@ Accuracy tells you <em>how often</em> the model is wrong. The confusion matrix t
 <p>Next step: these metrics use a fixed 0.50 cut-off. The ROC curve checks
 <strong>every</strong> cut-off at once → <a href="../../25_ROC_And_AUC/Concept/14_roc.ipynb">14_roc.ipynb</a>.</p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/15_Model_Evaluation.png" data-name="15_Model_Evaluation.png"><img src="../Handwritten_Notes/15_Model_Evaluation.png" alt="15_Model_Evaluation.png" loading="lazy"><span>15 Model Evaluation</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

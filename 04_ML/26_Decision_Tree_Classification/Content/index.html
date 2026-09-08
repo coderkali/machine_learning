@@ -14,18 +14,18 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#16-decision-tree-classification">16 - Decision Tree Classification</a><a href="#step-1-the-problem-you-are-confused">Step 1 - The problem: you are confused</a><a href="#step-2-entropy-putting-a-number-on-confusion">Step 2 - Entropy: putting a number on confusion</a><a href="#step-3-ask-the-first-question-quot-did-you-watch">Step 3 - Ask the first question: &amp;quot;did you watch</a><a href="#step-4-one-number-for-both-rooms">Step 4 - One number for both rooms</a><a href="#step-5-information-gain-was-the-question-worth-a">Step 5 - Information gain: was the question worth as</a><a href="#step-6-give-the-other-question-a-fair-chance">Step 6 - Give the other question a fair chance</a><a href="#step-7-pick-the-winner">Step 7 - Pick the winner</a><a href="#step-8-hand-it-over-to-scikit-learn">Step 8 - Hand it over to scikit-learn</a><a href="#step-9-separate-the-questions-from-the-answer">Step 9 - Separate the questions from the answer</a><a href="#step-10-train">Step 10 - Train</a><a href="#step-11-read-the-rulebook-it-wrote">Step 11 - Read the rulebook it wrote</a><a href="#step-12-a-new-student-walks-in">Step 12 - A new student walks in</a><a href="#step-13-how-good-is-it-honestly">Step 13 - How good is it, honestly?</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#s-16-decision-tree-classification">16 - Decision Tree Classification</a><a href="#step-1-the-problem-you-are-confused">Step 1 - The problem: you are confused</a><a href="#step-2-entropy-putting-a-number-on-confusion">Step 2 - Entropy: putting a number on confusion</a><a href="#step-3-ask-the-first-question-quot-did-you-watch">Step 3 - Ask the first question: &amp;quot;did you watch</a><a href="#step-4-one-number-for-both-rooms">Step 4 - One number for both rooms</a><a href="#step-5-information-gain-was-the-question-worth-a">Step 5 - Information gain: was the question worth as</a><a href="#step-6-give-the-other-question-a-fair-chance">Step 6 - Give the other question a fair chance</a><a href="#step-7-pick-the-winner">Step 7 - Pick the winner</a><a href="#step-8-hand-it-over-to-scikit-learn">Step 8 - Hand it over to scikit-learn</a><a href="#step-9-separate-the-questions-from-the-answer">Step 9 - Separate the questions from the answer</a><a href="#step-10-train">Step 10 - Train</a><a href="#step-11-read-the-rulebook-it-wrote">Step 11 - Read the rulebook it wrote</a><a href="#step-12-a-new-student-walks-in">Step 12 - A new student walks in</a><a href="#step-13-how-good-is-it-honestly">Step 13 - How good is it, honestly?</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Decision Tree Classification</h1>
   <p class="lede">Twenty questions, asked in the smartest possible order.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A teacher had to guess which students would pass.</strong> She could ask each student one question at a time.</p><p>Her first attempt asked whatever came to mind — favourite colour, bus route. After five questions she knew nothing useful.</p><p><span class='beat'>The questions were not wrong; the <em>order</em> was.</span> A good question splits a confused group into two clearer groups.</p><p>A decision tree scores every possible question by how much confusion it removes — that is information gain — and always asks the best one first. Then it repeats inside each half.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Entropy measures confusion. The best question is the one that removes the most of it.</p></div>
 <div class="src-head">📓 <a href="../Concept/16_Descison_Tree_Classfication.ipynb">16_Descison_Tree_Classfication.ipynb</a></div>
-<h2 id="16-decision-tree-classification">16 - Decision Tree Classification</h2>
+<h2 id="s-16-decision-tree-classification">16 - Decision Tree Classification</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <h3>The story</h3>
@@ -477,6 +477,11 @@ array([1])</pre></div>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 45</span></div><pre class="py">dt.score(x,y)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.9</pre></div>
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/16_DTC.png" data-name="16_DTC.png"><img src="../Handwritten_Notes/16_DTC.png" alt="16_DTC.png" loading="lazy"><span>16 DTC</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/16_Descison_Tree_Classfication.ipynb">16_Descison_Tree_Classfication.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

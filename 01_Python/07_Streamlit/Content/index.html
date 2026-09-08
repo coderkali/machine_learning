@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#streamlit">Streamlit</a><a href="#files">Files</a><a href="#run-it-locally">Run it locally</a><a href="#the-mental-model-the-one-thing-to-get-right">The mental model — the one thing to get right</a><a href="#covered-so-far">Covered so far</a><a href="#verified-behaviour">Verified behaviour</a><a href="#deploying-it">Deploying it</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#sales-analysis-project-code-review-and-walkthrou">Sales Analysis Project — Code Review and Walkthrough</a><a href="#1-what-the-app-does">1. What the app does</a><a href="#2-verified-run-what-actually-happens">2. Verified run — what actually happens</a><a href="#3-issue-1-the-dashboard-vanishes-the-button-re-r">3. Issue 1 — the dashboard vanishes (the button re-r</a><a href="#4-issue-2-raising-minimum-sales-crashes-the-app">4. Issue 2 — raising Minimum Sales crashes the app</a><a href="#5-issue-3-a-deprecated-argument-that-is-already-">5. Issue 3 — a deprecated argument that is already p</a><a href="#6-design-observations-not-bugs-but-worth-decidin">6. Design observations — not bugs, but worth decidin</a><a href="#7-fix-priority">7. Fix priority</a><a href="#8-what-this-app-demonstrates-you-can-already-do">8. What this app demonstrates you can already do</a><a href="#9-try-it-in-this-order">9. Try it in this order</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#streamlit">Streamlit</a><a href="#files">Files</a><a href="#run-it-locally">Run it locally</a><a href="#the-mental-model-the-one-thing-to-get-right">The mental model — the one thing to get right</a><a href="#covered-so-far">Covered so far</a><a href="#verified-behaviour">Verified behaviour</a><a href="#deploying-it">Deploying it</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#sales-analysis-project-code-review-and-walkthrou">Sales Analysis Project — Code Review and Walkthrough</a><a href="#s-1-what-the-app-does">1. What the app does</a><a href="#s-2-verified-run-what-actually-happens">2. Verified run — what actually happens</a><a href="#s-3-issue-1-the-dashboard-vanishes-the-button-re-r">3. Issue 1 — the dashboard vanishes (the button re-r</a><a href="#s-4-issue-2-raising-minimum-sales-crashes-the-app">4. Issue 2 — raising Minimum Sales crashes the app</a><a href="#s-5-issue-3-a-deprecated-argument-that-is-already-">5. Issue 3 — a deprecated argument that is already p</a><a href="#s-6-design-observations-not-bugs-but-worth-decidin">6. Design observations — not bugs, but worth decidin</a><a href="#s-7-fix-priority">7. Fix priority</a><a href="#s-8-what-this-app-demonstrates-you-can-already-do">8. What this app demonstrates you can already do</a><a href="#s-9-try-it-in-this-order">9. Try it in this order</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Python and the data toolkit</p>
@@ -287,7 +287,7 @@ applied to your file.</p>
 claims come from running the app through <code>streamlit.testing.v1.AppTest</code>, not from reading
 it.</p>
 <hr />
-<h2 id="1-what-the-app-does">1. What the app does</h2>
+<h2 id="s-1-what-the-app-does">1. What the app does</h2>
 <p>A synthetic sales dashboard. You set four bounds in the sidebar, click a button, and the
 app invents twelve months of data and describes it six ways.</p>
 <div class="code"><pre>   SIDEBAR                    BUTTON            BODY
@@ -324,7 +324,7 @@ app invents twelve months of data and describes it six ways.</p>
 <code>randint</code> being exclusive at the top, and <code>select_dtypes(include=np.number)</code> correctly
 keeps the <code>Month</code> string column out of the correlation. Those are not beginner instincts.</p>
 <hr />
-<h2 id="2-verified-run-what-actually-happens">2. Verified run — what actually happens</h2>
+<h2 id="s-2-verified-run-what-actually-happens">2. Verified run — what actually happens</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Step</th>
@@ -352,7 +352,7 @@ keeps the <code>Month</code> string column out of the correlation. Those are not
 </table>
 <p>The first two rows are your app working. The last two are the two bugs.</p>
 <hr />
-<h2 id="3-issue-1-the-dashboard-vanishes-the-button-re-r">3. Issue 1 — the dashboard vanishes (the button re-run trap)</h2>
+<h2 id="s-3-issue-1-the-dashboard-vanishes-the-button-re-r">3. Issue 1 — the dashboard vanishes (the button re-run trap)</h2>
 <h3>What happens</h3>
 <div class="code"><pre>   click &quot;Generate Dataset&quot;
         -&gt; re-run: button returns True   -&gt; dashboard renders
@@ -395,7 +395,7 @@ if st.session_state.get(&quot;show_dashboard&quot;):   # &lt;- was: if generate_
 together and only then applied.</p>
 </div>
 <hr />
-<h2 id="4-issue-2-raising-minimum-sales-crashes-the-app">4. Issue 2 — raising Minimum Sales crashes the app</h2>
+<h2 id="s-4-issue-2-raising-minimum-sales-crashes-the-app">4. Issue 2 — raising Minimum Sales crashes the app</h2>
 <h3>What happens</h3>
 <p>Set <strong>Minimum Sales</strong> to <code>25000</code> and the app dies:</p>
 <div class="code"><pre>streamlit.errors.StreamlitValueBelowMinError:
@@ -439,7 +439,7 @@ cannot invert, and removes the whole class of bug:</p>
 </pre></div>
 </div>
 <hr />
-<h2 id="5-issue-3-a-deprecated-argument-that-is-already-">5. Issue 3 — a deprecated argument that is already past its removal date</h2>
+<h2 id="s-5-issue-3-a-deprecated-argument-that-is-already-">5. Issue 3 — a deprecated argument that is already past its removal date</h2>
 <div class="code"><pre class="py">st.plotly_chart(fig, use_container_width=True)
 </pre></div>
 <p>Running the app prints:</p>
@@ -451,7 +451,7 @@ cannot invert, and removes the whole class of bug:</p>
 </pre></div>
 <p>Same change as in <a href="../Content/app.py"><code>app.py</code></a>. Worth grepping for whenever you upgrade Streamlit.</p>
 <hr />
-<h2 id="6-design-observations-not-bugs-but-worth-decidin">6. Design observations — not bugs, but worth deciding on</h2>
+<h2 id="s-6-design-observations-not-bugs-but-worth-decidin">6. Design observations — not bugs, but worth deciding on</h2>
 <h3>6.1 &quot;Generate Dataset&quot; does not generate a new dataset</h3>
 <div class="code"><pre class="py">np.random.seed(10)
 </pre></div>
@@ -525,7 +525,7 @@ comparison — you can see the same data through all three in one screen. For a 
 pick one: plotly, since Streamlit renders it interactively and it is the only one of the
 three the user can hover and zoom.</p>
 <hr />
-<h2 id="7-fix-priority">7. Fix priority</h2>
+<h2 id="s-7-fix-priority">7. Fix priority</h2>
 <table class="tbl"><thead>
 <tr>
   <th>#</th>
@@ -575,7 +575,7 @@ three the user can hover and zoom.</p>
 </table>
 <p>Issues 1 and 2 are the ones a user would hit in the first thirty seconds.</p>
 <hr />
-<h2 id="8-what-this-app-demonstrates-you-can-already-do">8. What this app demonstrates you can already do</h2>
+<h2 id="s-8-what-this-app-demonstrates-you-can-already-do">8. What this app demonstrates you can already do</h2>
 <ul>
 <li>Sidebar inputs with explicit <code>key</code>s, and coupled bounds (<code>min_value=min_sales</code>) — the
 right instinct, executed one step short</li>
@@ -590,7 +590,7 @@ beginners usually miss</li>
 it returns it, and what survives to the next run. Both real bugs come from that single
 idea, which is why it is worth fixing them yourself rather than reading a patched file.</p>
 <hr />
-<h2 id="9-try-it-in-this-order">9. Try it in this order</h2>
+<h2 id="s-9-try-it-in-this-order">9. Try it in this order</h2>
 <ol>
 <li>Reproduce issue 1: click Generate, then change any sidebar number. Watch the dashboard
 disappear. Sit with <em>why</em> before fixing it.</li>
@@ -605,6 +605,7 @@ line and both conflicting numbers.</li>
 <p><strong>If you remember only one thing:</strong> <code>st.button</code> is true for exactly one re-run. Anything
 you want to keep on screen after that has to live in <code>st.session_state</code>.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/README.md">README.md ↗</a><a class="btn" href="../Concept/sales_analysis_explained.md">sales_analysis_explained.md ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

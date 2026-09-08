@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#lasso-regression">Lasso Regression</a><a href="#1-lasso-the-default-alpha-1">1. Lasso() — the default alpha = 1</a><a href="#2-the-model-is-two-numbers">2. The model is two numbers</a><a href="#3-turning-alpha-up">3. Turning alpha up</a><a href="#4-alpha-9-5-the-slope-hits-exactly-0">4. alpha = 9.5 — the slope hits exactly 0</a><a href="#5-going-the-other-way">5. Going the other way</a><a href="#6-wrap-up">6. Wrap up</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#lasso-regression">Lasso Regression</a><a href="#s-1-lasso-the-default-alpha-1">1. Lasso() — the default alpha = 1</a><a href="#s-2-the-model-is-two-numbers">2. The model is two numbers</a><a href="#s-3-turning-alpha-up">3. Turning alpha up</a><a href="#s-4-alpha-9-5-the-slope-hits-exactly-0">4. alpha = 9.5 — the slope hits exactly 0</a><a href="#s-5-going-the-other-way">5. Going the other way</a><a href="#s-6-wrap-up">6. Wrap up</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -58,7 +58,7 @@ plt.show()</pre></div>
 <figure class="shot"><img src="assets/08-lasso-c01-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div>
-<h2 id="1-lasso-the-default-alpha-1">1. <code>Lasso()</code> — the default <code>alpha = 1</code></h2>
+<h2 id="s-1-lasso-the-default-alpha-1">1. <code>Lasso()</code> — the default <code>alpha = 1</code></h2>
 <p>Same three steps as always: <code>fit</code>, <code>predict</code>, <code>score</code>. <code>Lasso()</code> with no argument means
 <code>alpha = 1.0</code>.</p>
 <p>R² on the 2,000 hidden rows is <strong><code>0.8928</code></strong>.</p>
@@ -72,7 +72,7 @@ reg.fit(X_train,y_train)</pre></div>
         -6.30319338, -11.00609585], shape=(2000,))</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">reg.score(X_test, y_test)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.8927723012288187</pre></div>
-<h2 id="2-the-model-is-two-numbers">2. The model is two numbers</h2>
+<h2 id="s-2-the-model-is-two-numbers">2. The model is two numbers</h2>
 <table class="tbl"><thead>
 <tr>
   <th></th>
@@ -118,7 +118,7 @@ plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/08-lasso-c11-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="3-turning-alpha-up">3. Turning <code>alpha</code> up</h2>
+<h2 id="s-3-turning-alpha-up">3. Turning <code>alpha</code> up</h2>
 <p>The next cells are the same code with a bigger <code>alpha</code>. Each step is plain subtraction:</p>
 <div class="code"><pre>   alpha = 1  -&gt;  9.5503 - 1 x 1.0181  =  8.5322
    alpha = 2  -&gt;  9.5503 - 2 x 1.0181  =  7.5140
@@ -188,7 +188,7 @@ plt.show()</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.06999477356708794
 [0.38704078]</pre></div>
 <figure class="shot"><img src="assets/08-lasso-c19-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="4-alpha-9-5-the-slope-hits-exactly-0">4. <code>alpha = 9.5</code> — the slope hits exactly 0</h2>
+<h2 id="s-4-alpha-9-5-the-slope-hits-exactly-0">4. <code>alpha = 9.5</code> — the slope hits exactly 0</h2>
 <p>The formula would go negative here, so Lasso stops at 0:</p>
 <div class="code"><pre>   9.5503 - 9.5 x 1.0181  =  -0.12   -&gt;   0
 
@@ -217,7 +217,7 @@ plt.show()</pre></div>
 <div class="out"><div class="h">Output</div><pre>-0.0022122517482792148
 [0.]</pre></div>
 <figure class="shot"><img src="assets/08-lasso-c21-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="5-going-the-other-way">5. Going the other way</h2>
+<h2 id="s-5-going-the-other-way">5. Going the other way</h2>
 <p>A small <code>alpha</code> is a small price, so the slope stays where linear regression put it.</p>
 <table class="tbl"><thead>
 <tr>
@@ -297,7 +297,7 @@ plt.show()</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.9020778196008511
 [9.55022052]</pre></div>
 <figure class="shot"><img src="assets/08-lasso-c25-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<h2 id="6-wrap-up">6. Wrap up</h2>
+<h2 id="s-6-wrap-up">6. Wrap up</h2>
 <h3>The whole notebook in one table</h3>
 <table class="tbl"><thead>
 <tr>
@@ -418,6 +418,7 @@ plt.show()</pre></div>
 down. Subtraction reaches zero — so Lasso does not just shrink a useless column, it
 deletes it.</p>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/08_Lasso.ipynb">08_Lasso.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#seaborn">Seaborn</a><a href="#files">Files</a><a href="#the-one-pattern">The one pattern</a><a href="#covered-so-far">Covered so far</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#seaborn-statistical-charts-on-top-of-matplotlib">Seaborn — Statistical Charts on Top of Matplotlib</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#1-setup-the-import-cells">1. Setup — the import cells</a><a href="#2-your-first-plots-arrays-vs-dataframe">2. Your first plots — arrays vs DataFrame</a><a href="#3-built-in-datasets-sns-load-dataset">3. Built-in datasets — sns.load_dataset</a><a href="#4-relational-plots-and-the-three-semantic-channe">4. Relational plots and the three semantic channels</a><a href="#5-distributions-histplot-and-kdeplot">5. Distributions — histplot and kdeplot</a><a href="#6-pairplot-every-numeric-pair-at-once">6. pairplot — every numeric pair at once</a><a href="#7-violinplot-distribution-per-category">7. violinplot — distribution per category</a><a href="#8-countplot-bars-of-quot-how-many-rows-quot">8. countplot — bars of &amp;quot;how many rows&amp;quot;</a><a href="#9-barplot-and-the-statistics-hiding-inside-it">9. barplot — and the statistics hiding inside it</a><a href="#10-boxplot-the-five-number-summary">10. boxplot — the five-number summary</a><a href="#11-countplot-variants-orientation-and-real-group">11. countplot variants — orientation and real groupi</a><a href="#12-facetgrid-small-multiples">12. FacetGrid — small multiples</a><a href="#13-stripplot-every-single-row-as-a-dot">13. stripplot — every single row as a dot</a><a href="#14-swarmplot-jitter-done-deliberately">14. swarmplot — jitter done deliberately</a><a href="#15-regplot-scatter-plus-a-fitted-line">15. regplot — scatter plus a fitted line</a><a href="#16-themes-set-theme-style">16. Themes — set_theme(style=...)</a><a href="#17-palettes-width-and-the-dodge-trap">17. Palettes, width, and the dodge trap</a><a href="#closing-what-this-notebook-establishes">Closing — what this notebook establishes</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#seaborn">Seaborn</a><a href="#files">Files</a><a href="#the-one-pattern">The one pattern</a><a href="#covered-so-far">Covered so far</a><a href="#version-note">Version note</a><a href="#key-takeaway">Key takeaway</a><a href="#seaborn-statistical-charts-on-top-of-matplotlib">Seaborn — Statistical Charts on Top of Matplotlib</a><a href="#the-mental-model-read-this-first">The mental model — read this first</a><a href="#s-1-setup-the-import-cells">1. Setup — the import cells</a><a href="#s-2-your-first-plots-arrays-vs-dataframe">2. Your first plots — arrays vs DataFrame</a><a href="#s-3-built-in-datasets-sns-load-dataset">3. Built-in datasets — sns.load_dataset</a><a href="#s-4-relational-plots-and-the-three-semantic-channe">4. Relational plots and the three semantic channels</a><a href="#s-5-distributions-histplot-and-kdeplot">5. Distributions — histplot and kdeplot</a><a href="#s-6-pairplot-every-numeric-pair-at-once">6. pairplot — every numeric pair at once</a><a href="#s-7-violinplot-distribution-per-category">7. violinplot — distribution per category</a><a href="#s-8-countplot-bars-of-quot-how-many-rows-quot">8. countplot — bars of &amp;quot;how many rows&amp;quot;</a><a href="#s-9-barplot-and-the-statistics-hiding-inside-it">9. barplot — and the statistics hiding inside it</a><a href="#s-10-boxplot-the-five-number-summary">10. boxplot — the five-number summary</a><a href="#s-11-countplot-variants-orientation-and-real-group">11. countplot variants — orientation and real groupi</a><a href="#s-12-facetgrid-small-multiples">12. FacetGrid — small multiples</a><a href="#s-13-stripplot-every-single-row-as-a-dot">13. stripplot — every single row as a dot</a><a href="#s-14-swarmplot-jitter-done-deliberately">14. swarmplot — jitter done deliberately</a><a href="#s-15-regplot-scatter-plus-a-fitted-line">15. regplot — scatter plus a fitted line</a><a href="#s-16-themes-set-theme-style">16. Themes — set_theme(style=...)</a><a href="#s-17-palettes-width-and-the-dodge-trap">17. Palettes, width, and the dodge trap</a><a href="#closing-what-this-notebook-establishes">Closing — what this notebook establishes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Python and the data toolkit</p>
@@ -181,7 +181,7 @@ result set.</p>
 cannot be placed inside a subplot. That is why <code>pairplot</code> in this notebook always lands
 on its own canvas.</p>
 <hr />
-<h2 id="1-setup-the-import-cells">1. Setup — the import cells</h2>
+<h2 id="s-1-setup-the-import-cells">1. Setup — the import cells</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Cell</th>
@@ -216,7 +216,7 @@ import pandas as pd</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">print(sns.__version__)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.13.2</pre></div>
 <hr />
-<h2 id="2-your-first-plots-arrays-vs-dataframe">2. Your first plots — arrays vs DataFrame</h2>
+<h2 id="s-2-your-first-plots-arrays-vs-dataframe">2. Your first plots — arrays vs DataFrame</h2>
 <p>The next three cells build the same straight line twice, through two different doors.</p>
 <div class="code"><pre class="py">x = np.array([1,2,3,4,5,6,7,8,9,10])
 y = np.array([2,4,6,8,10,12,14,16,18,20])
@@ -276,7 +276,7 @@ sns.lineplot(x=&#x27;x&#x27;, y=&#x27;y&#x27;, data=df)</pre></div>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;x&#x27;, ylabel=&#x27;y&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c06-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="3-built-in-datasets-sns-load-dataset">3. Built-in datasets — <code>sns.load_dataset</code></h2>
+<h2 id="s-3-built-in-datasets-sns-load-dataset">3. Built-in datasets — <code>sns.load_dataset</code></h2>
 <p><code>sns.load_dataset(&quot;iris&quot;)</code> downloads a small, well-known CSV from the seaborn-data
 repository and returns it as a DataFrame. Three datasets are used in this notebook:</p>
 <table class="tbl"><thead>
@@ -332,7 +332,7 @@ print(data)</pre></div>
 
 [150 rows x 5 columns]</pre></div>
 <hr />
-<h2 id="4-relational-plots-and-the-three-semantic-channe">4. Relational plots and the three semantic channels</h2>
+<h2 id="s-4-relational-plots-and-the-three-semantic-channe">4. Relational plots and the three semantic channels</h2>
 <p>This is the core idea of seaborn. You <strong>map a column onto a visual property</strong>:</p>
 <div class="code"><pre>       DATA COLUMN                VISUAL CHANNEL
        -----------                --------------
@@ -440,7 +440,7 @@ memory usage: 6.0 KB
 &lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;petal_length&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c13-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="5-distributions-histplot-and-kdeplot">5. Distributions — <code>histplot</code> and <code>kdeplot</code></h2>
+<h2 id="s-5-distributions-histplot-and-kdeplot">5. Distributions — <code>histplot</code> and <code>kdeplot</code></h2>
 <p>The plots above compare <strong>two</strong> variables. These four cells describe <strong>one</strong> variable:
 where are the values concentrated?</p>
 <div class="code"><pre>raw values                histplot                    kdeplot
@@ -539,7 +539,7 @@ right answer for exploration.</p>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sepal_length&#x27;, ylabel=&#x27;Density&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c18-10.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="6-pairplot-every-numeric-pair-at-once">6. <code>pairplot</code> — every numeric pair at once</h2>
+<h2 id="s-6-pairplot-every-numeric-pair-at-once">6. <code>pairplot</code> — every numeric pair at once</h2>
 <div class="code"><pre class="py">sns.pairplot(data, hue=&quot;species&quot;, markers=[&quot;o&quot;, &quot;s&quot;, &quot;D&quot;])
 </pre></div>
 <p>One line, and seaborn draws a <strong>4 × 4 grid</strong> — verified — because <code>iris</code> has 4 numeric
@@ -598,7 +598,7 @@ classes appear immediately, before you write any model code.</p>
 <div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.PairGrid at 0x1185f06e0&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c20-11.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="7-violinplot-distribution-per-category">7. <code>violinplot</code> — distribution per category</h2>
+<h2 id="s-7-violinplot-distribution-per-category">7. <code>violinplot</code> — distribution per category</h2>
 <div class="code"><pre class="py">sns.violinplot(x=&quot;species&quot;, y=&quot;sepal_length&quot;, data=data,
                hue=&quot;species&quot;, palette=[&quot;orange&quot;, &quot;skyblue&quot;, &quot;lightgreen&quot;],
                legend=False)
@@ -667,7 +667,7 @@ matters, not just its middle and spread.</p>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;species&#x27;, ylabel=&#x27;sepal_length&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c22-12.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="8-countplot-bars-of-quot-how-many-rows-quot">8. <code>countplot</code> — bars of &quot;how many rows&quot;</h2>
+<h2 id="s-8-countplot-bars-of-quot-how-many-rows-quot">8. <code>countplot</code> — bars of &quot;how many rows&quot;</h2>
 <div class="code"><pre class="py">sns.countplot(x=&#x27;species&#x27;, hue=&quot;species&quot;, data=data)
 </pre></div>
 <p><code>countplot</code> is the only categorical plot with <strong>no <code>y</code></strong>. You give it one column and it
@@ -690,7 +690,7 @@ wrong one silently answers a different question.</p>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;species&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c24-13.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="9-barplot-and-the-statistics-hiding-inside-it">9. <code>barplot</code> — and the statistics hiding inside it</h2>
+<h2 id="s-9-barplot-and-the-statistics-hiding-inside-it">9. <code>barplot</code> — and the statistics hiding inside it</h2>
 <p>Now the <code>titanic</code> dataset: 891 rows × 15 columns.</p>
 <table class="tbl"><thead>
 <tr>
@@ -820,7 +820,7 @@ print(titanic)</pre></div>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;class&#x27;, ylabel=&#x27;fare&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c28-15.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="10-boxplot-the-five-number-summary">10. <code>boxplot</code> — the five-number summary</h2>
+<h2 id="s-10-boxplot-the-five-number-summary">10. <code>boxplot</code> — the five-number summary</h2>
 <p>The <code>tips</code> dataset: 244 rows × 7 columns (<code>total_bill</code>, <code>tip</code>, <code>sex</code>, <code>smoker</code>, <code>day</code>,
 <code>time</code>, <code>size</code>). <code>day</code> is a <strong>categorical</strong> column with a fixed order — <code>Thur, Fri, Sat, Sun</code> — which is why seaborn puts the days in calendar order without being asked.</p>
 <div class="code"><pre class="py">sns.boxplot(x=&quot;day&quot;, y=&quot;total_bill&quot;, data=tips, hue=&quot;time&quot;)
@@ -892,7 +892,7 @@ print(tips)</pre></div>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;day&#x27;, ylabel=&#x27;total_bill&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c31-16.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="11-countplot-variants-orientation-and-real-group">11. <code>countplot</code> variants — orientation and real grouping</h2>
+<h2 id="s-11-countplot-variants-orientation-and-real-group">11. <code>countplot</code> variants — orientation and real grouping</h2>
 <p>Three cells, three lessons.</p>
 <table class="tbl"><thead>
 <tr>
@@ -944,7 +944,7 @@ carry.</p>
 <div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;sex&#x27;, ylabel=&#x27;count&#x27;&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c35-19.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="12-facetgrid-small-multiples">12. <code>FacetGrid</code> — small multiples</h2>
+<h2 id="s-12-facetgrid-small-multiples">12. <code>FacetGrid</code> — small multiples</h2>
 <div class="code"><pre class="py">abc = sns.FacetGrid(tips, row=&#x27;smoker&#x27;, col=&#x27;time&#x27;)
 abc.map(plt.hist, &#x27;tip&#x27;, color=&#x27;gold&#x27;)
 </pre></div>
@@ -1014,7 +1014,7 @@ abc.map(plt.scatter,&#x27;total_bill&#x27;, &#x27;tip&#x27;,color =&#x27;gold&#x
 <div class="out"><div class="h">Output</div><pre>&lt;seaborn.axisgrid.FacetGrid at 0x11979d590&gt;</pre></div>
 <figure class="shot"><img src="assets/example-01-c38-21.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="13-stripplot-every-single-row-as-a-dot">13. <code>stripplot</code> — every single row as a dot</h2>
+<h2 id="s-13-stripplot-every-single-row-as-a-dot">13. <code>stripplot</code> — every single row as a dot</h2>
 <p>The setup cell re-imports <code>matplotlib.pyplot as plt</code> and reloads <code>tips</code>. Harmless
 repetition; it makes this part of the notebook runnable on its own.</p>
 <p>Bars and boxes <strong>summarise</strong>. A strip plot shows you <strong>every observation</strong>.</p>
@@ -1114,7 +1114,7 @@ plt.show()</pre></div>
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/example-01-c43-24.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="14-swarmplot-jitter-done-deliberately">14. <code>swarmplot</code> — jitter done deliberately</h2>
+<h2 id="s-14-swarmplot-jitter-done-deliberately">14. <code>swarmplot</code> — jitter done deliberately</h2>
 <p>A swarm plot answers the same question as a strip plot but arranges the dots <strong>so that
 none of them overlap</strong>.</p>
 <div class="code"><pre>stripplot (random jitter)        swarmplot (computed positions)
@@ -1213,7 +1213,7 @@ plt.show()</pre></div>
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/example-01-c47-27.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="15-regplot-scatter-plus-a-fitted-line">15. <code>regplot</code> — scatter plus a fitted line</h2>
+<h2 id="s-15-regplot-scatter-plus-a-fitted-line">15. <code>regplot</code> — scatter plus a fitted line</h2>
 <table class="tbl"><thead>
 <tr>
   <th>Cell</th>
@@ -1286,7 +1286,7 @@ plt.show()</pre></div>
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/example-01-c50-29.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="16-themes-set-theme-style">16. Themes — <code>set_theme(style=...)</code></h2>
+<h2 id="s-16-themes-set-theme-style">16. Themes — <code>set_theme(style=...)</code></h2>
 <p>Three cells plot the <strong>identical</strong> four-point line. Only the theme changes, which is what
 makes the comparison clean.</p>
 <p>Verified style settings:</p>
@@ -1372,7 +1372,7 @@ sns.lineplot(
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/example-01-c54-32.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <hr />
-<h2 id="17-palettes-width-and-the-dodge-trap">17. Palettes, <code>width</code>, and the <code>dodge</code> trap</h2>
+<h2 id="s-17-palettes-width-and-the-dodge-trap">17. Palettes, <code>width</code>, and the <code>dodge</code> trap</h2>
 <p><code>set_palette</code> is global in exactly the same way <code>set_theme</code> is: it changes the default
 colour cycle for every chart that follows. Verified — <code>deep</code>, <code>pastel</code> and <code>bright</code> all
 contain <strong>10 colours</strong>; they differ in saturation and lightness:</p>
@@ -1664,6 +1664,7 @@ plt.tight_layout()
 plt.show()</pre></div>
 <figure class="shot"><img src="assets/pizza-seaborn-c13-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">fig.savefig(&#x27;pizza_final_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)</pre></div>
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/example_01.ipynb">example_01.ipynb ↗</a><a class="btn" href="../Concept/pizza_seaborn.ipynb">pizza_seaborn.ipynb ↗</a><a class="btn" href="../Concept/README.md">README.md ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

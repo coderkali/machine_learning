@@ -14,7 +14,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#handling-duplicate-data">Handling Duplicate Data</a><a href="#1-the-mechanics-a-small-controlled-example">1. The Mechanics — A Small, Controlled Example</a><a href="#2-checking-shared-data-loans-csv-for-real-duplic">2. Checking ../../_shared_data/loans.csv for Real Du</a><a href="#3-seeing-it-actually-remove-something">3. Seeing It Actually Remove Something</a><a href="#4-near-duplicates-a-quick-sanity-check">4. Near-Duplicates — A Quick Sanity Check</a><a href="#summary">Summary</a><a href="#replace-amp-change-data-type">Replace &amp;amp; Change Data Type</a><a href="#1-the-copy-on-write-trap-a-controlled-repro">1. The Copy-on-Write Trap — A Controlled Repro</a><a href="#2-real-data-shared-data-loans-csv-s-dependents-c">2. Real Data — ../../_shared_data/loans.csv&#x27;s Depend</a><a href="#3-changing-the-dtype">3. Changing the Dtype</a><a href="#summary">Summary</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#handling-duplicate-data">Handling Duplicate Data</a><a href="#s-1-the-mechanics-a-small-controlled-example">1. The Mechanics — A Small, Controlled Example</a><a href="#s-2-checking-shared-data-loans-csv-for-real-duplic">2. Checking ../../_shared_data/loans.csv for Real Du</a><a href="#s-3-seeing-it-actually-remove-something">3. Seeing It Actually Remove Something</a><a href="#s-4-near-duplicates-a-quick-sanity-check">4. Near-Duplicates — A Quick Sanity Check</a><a href="#summary">Summary</a><a href="#replace-amp-change-data-type">Replace &amp;amp; Change Data Type</a><a href="#s-1-the-copy-on-write-trap-a-controlled-repro">1. The Copy-on-Write Trap — A Controlled Repro</a><a href="#s-2-real-data-shared-data-loans-csv-s-dependents-c">2. Real Data — ../../_shared_data/loans.csv&#x27;s Depend</a><a href="#s-3-changing-the-dtype">3. Changing the Dtype</a><a href="#summary">Summary</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -56,7 +56,7 @@ Section 3 sanity-checks for near-duplicates too.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
 import matplotlib.pyplot as plt</pre></div>
-<h2 id="1-the-mechanics-a-small-controlled-example">1. The Mechanics — A Small, Controlled Example</h2>
+<h2 id="s-1-the-mechanics-a-small-controlled-example">1. The Mechanics — A Small, Controlled Example</h2>
 <p>Six students, two subjects. Two rows (<code>0</code> and <code>4</code>) are planted as <strong>exact</strong>
 duplicates — same name, same marks in both subjects. Two more (<code>2</code> and <code>5</code>)
 share a name and an <code>eng</code> score but differ in <code>hindi</code> — a <strong>partial</strong>
@@ -203,7 +203,7 @@ plt.show()</pre></div>
 isn't one fixed operation, it's a decision about which columns define &quot;the
 same row&quot; and which copy (if any) is worth keeping.</p>
 
-<h2 id="2-checking-shared-data-loans-csv-for-real-duplic">2. Checking <code>../../_shared_data/loans.csv</code> for Real Duplicates</h2>
+<h2 id="s-2-checking-shared-data-loans-csv-for-real-duplic">2. Checking <code>../../_shared_data/loans.csv</code> for Real Duplicates</h2>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
 dataset.shape</pre></div>
@@ -235,7 +235,7 @@ pattern <code>15_Feature_Scaling.ipynb</code> found silently broken under pandas
 Copy-on-Write — that bug was specific to mutating a <em>column selection</em>,
 not the DataFrame itself.</p>
 
-<h2 id="3-seeing-it-actually-remove-something">3. Seeing It Actually Remove Something</h2>
+<h2 id="s-3-seeing-it-actually-remove-something">3. Seeing It Actually Remove Something</h2>
 <p><code>../../_shared_data/loans.csv</code> has no real duplicates to demonstrate on, so — the way
 <code>04_Data_Cleaning.MD</code> frames it (&quot;two identical loan applications from a
 scraping glitch&quot;) — deliberately re-introduce a few, and confirm
@@ -273,7 +273,7 @@ glitchy.shape</pre></div>
 <code>drop_duplicates()</code> removed precisely the 5 artificial repeats and no real
 row got caught in the crossfire.</p>
 
-<h2 id="4-near-duplicates-a-quick-sanity-check">4. Near-Duplicates — A Quick Sanity Check</h2>
+<h2 id="s-4-near-duplicates-a-quick-sanity-check">4. Near-Duplicates — A Quick Sanity Check</h2>
 <p><code>duplicated()</code> only catches <strong>exact</strong> string matches. <code>04_Data_Cleaning.MD</code>'s
 <code>&quot;Apple&quot;</code> vs <code>&quot;APPLE &quot;</code> example would sail straight through it — two rows
 that are the same real category, spelled differently, are just two
@@ -357,7 +357,7 @@ reproduces that bug on purpose before Section 2 touches the real data.</p>
 
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
 import matplotlib.pyplot as plt</pre></div>
-<h2 id="1-the-copy-on-write-trap-a-controlled-repro">1. The Copy-on-Write Trap — A Controlled Repro</h2>
+<h2 id="s-1-the-copy-on-write-trap-a-controlled-repro">1. The Copy-on-Write Trap — A Controlled Repro</h2>
 <p>Before touching <code>../../_shared_data/loans.csv</code>, reproduce the actual bug on a throwaway
 3-row DataFrame: does <code>.replace(..., inplace=True)</code> on a <em>column
 selection</em> (<code>df[&quot;col&quot;]</code>) really leave the DataFrame unchanged? Small
@@ -406,7 +406,7 @@ demo</pre></div>
 <code>&quot;3+&quot;</code> is actually gone this time. That's the pattern used on the real
 column below.</p>
 
-<h2 id="2-real-data-shared-data-loans-csv-s-dependents-c">2. Real Data — <code>../../_shared_data/loans.csv</code>'s <code>Dependents</code> Column</h2>
+<h2 id="s-2-real-data-shared-data-loans-csv-s-dependents-c">2. Real Data — <code>../../_shared_data/loans.csv</code>'s <code>Dependents</code> Column</h2>
 <p>Load, check dtype, check for missing values, check the categories
 actually present — same order as the toy example, on the real
 column.</p>
@@ -512,7 +512,7 @@ rather than chaining <code>inplace=True</code>, per the repro in Section 1. Ever
 value in the column is now a plain digit string (<code>&quot;0&quot;</code>–<code>&quot;3&quot;</code>), and there
 are no more missing rows — ready for <code>astype()</code>.</p>
 
-<h2 id="3-changing-the-dtype">3. Changing the Dtype</h2>
+<h2 id="s-3-changing-the-dtype">3. Changing the Dtype</h2>
 <p>Values are numeric-looking now (<code>&quot;0&quot;</code>, <code>&quot;1&quot;</code>, <code>&quot;2&quot;</code>, <code>&quot;3&quot;</code>), but the
 column is still text — <code>astype(&quot;int64&quot;)</code> is the step that actually
 changes storage type. Worth checking what that buys beyond &quot;the
@@ -603,6 +603,7 @@ numeric methods only work on a genuinely numeric dtype, not a string
 that merely <em>looks</em> numeric.</li>
 </ul>
 
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/17_Handling_Duploicate_Data.ipynb">17_Handling_Duploicate_Data.ipynb ↗</a><a class="btn" href="../Concept/18_Replace_Change_Data_Type.ipynb">18_Replace_Change_Data_Type.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

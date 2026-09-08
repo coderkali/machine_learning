@@ -14,18 +14,18 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#20-ensemble-methods">20 - Ensemble Methods</a><a href="#1-random-forest-the-bagging-family">1. Random Forest - the bagging family</a><a href="#2-adaboost-the-boosting-family">2. AdaBoost - the boosting family</a><a href="#3-gradient-boosting-boosting-by-chasing-the-left">3. Gradient Boosting - boosting by chasing the lefto</a><a href="#4-voting-classifier-a-panel-of-different-experts">4. Voting Classifier - a panel of different experts</a><a href="#5-random-forest-regressor-the-same-forest-for-nu">5. Random Forest Regressor - the same forest, for nu</a><a href="#putting-it-together">Putting it together</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#s-20-ensemble-methods">20 - Ensemble Methods</a><a href="#s-1-random-forest-the-bagging-family">1. Random Forest - the bagging family</a><a href="#s-2-adaboost-the-boosting-family">2. AdaBoost - the boosting family</a><a href="#s-3-gradient-boosting-boosting-by-chasing-the-left">3. Gradient Boosting - boosting by chasing the lefto</a><a href="#s-4-voting-classifier-a-panel-of-different-experts">4. Voting Classifier - a panel of different experts</a><a href="#s-5-random-forest-regressor-the-same-forest-for-nu">5. Random Forest Regressor - the same forest, for nu</a><a href="#putting-it-together">Putting it together</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Ensemble Methods</h1>
   <p class="lede">One expert can be wrong. A panel that disagrees usefully is harder to fool.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>A single deep decision tree memorised the training data perfectly and failed on new rows.</strong></p><p>Nisha's instinct was to prune it. But a shallow tree was too simple to be useful.</p><p><span class='beat'>One tree is either too eager or too dull. The fix is not a better tree — it is more of them.</span></p><p>Random Forest grows hundreds of trees on different random slices and averages the vote, so individual mistakes cancel out. Boosting goes the other way: each new tree is built specifically to correct what the previous ones got wrong.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Bagging averages many independent models; boosting builds each new one to fix the last one's mistakes.</p></div>
 <div class="src-head">📓 <a href="../Concept/20_Ensemble_methods.ipynb">20_Ensemble_methods.ipynb</a></div>
-<h2 id="20-ensemble-methods">20 - Ensemble Methods</h2>
+<h2 id="s-20-ensemble-methods">20 - Ensemble Methods</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <h3>The story</h3>
@@ -126,7 +126,7 @@ read every score below.</p>
 y = iris.target</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.30, random_state = 0)</pre></div>
-<h2 id="1-random-forest-the-bagging-family">1. Random Forest - the bagging family</h2>
+<h2 id="s-1-random-forest-the-bagging-family">1. Random Forest - the bagging family</h2>
 <h3>Why it exists</h3>
 <p>A single decision tree memorises. Let it run free and it keeps splitting
 until every leaf is pure. It looks brilliant on the data it saw, then trips
@@ -171,7 +171,7 @@ classifier.fit(X_train, y_train)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.9777777777777777</pre></div>
 <p><code>0.9777</code> means <strong>44 correct out of 45</strong>. One flower wrong.</p>
 
-<h2 id="2-adaboost-the-boosting-family">2. AdaBoost - the boosting family</h2>
+<h2 id="s-2-adaboost-the-boosting-family">2. AdaBoost - the boosting family</h2>
 <h3>Why it exists</h3>
 <p>The forest builds all its trees at once, and no tree knows what the others
 got wrong. Nobody is working on the hard cases.</p>
@@ -221,7 +221,7 @@ from sklearn.tree import DecisionTreeClassifier</pre></div>
 data every decent model lands in the same place. Ensembles show their real
 gap on messy data.</p>
 
-<h2 id="3-gradient-boosting-boosting-by-chasing-the-left">3. Gradient Boosting - boosting by chasing the leftover</h2>
+<h2 id="s-3-gradient-boosting-boosting-by-chasing-the-left">3. Gradient Boosting - boosting by chasing the leftover</h2>
 <h3>Why it exists</h3>
 <p>AdaBoost fixes mistakes by making rows heavier.</p>
 <p>Gradient Boosting fixes them a different way: each new tree predicts the
@@ -256,7 +256,7 @@ more sensitive to its settings.</p>
 <div class="out"><div class="h">Output</div><pre>GradientBoostingClassifier(learning_rate=0.01)</pre></div>
 <div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">clf.score(X_test,y_test)</pre></div>
 <div class="out"><div class="h">Output</div><pre>0.9777777777777777</pre></div>
-<h2 id="4-voting-classifier-a-panel-of-different-experts">4. Voting Classifier - a panel of different experts</h2>
+<h2 id="s-4-voting-classifier-a-panel-of-different-experts">4. Voting Classifier - a panel of different experts</h2>
 <p>Forest and boosting both build <strong>one kind of model, many times</strong>.</p>
 <p>Voting is different. You choose several <strong>different algorithms</strong> yourself
 and let them vote.</p>
@@ -459,7 +459,7 @@ VotingClassifier(estimators=[(&#x27;m1&#x27;, RandomForestClassifier(n_estimator
 <p>The soft <code>transform()</code> output is wider: <strong>15 columns = 5 models x 3
 classes</strong>. Read each row in groups of three, exactly like the table above.</p>
 
-<h2 id="5-random-forest-regressor-the-same-forest-for-nu">5. Random Forest Regressor - the same forest, for numbers</h2>
+<h2 id="s-5-random-forest-regressor-the-same-forest-for-nu">5. Random Forest Regressor - the same forest, for numbers</h2>
 <p>Everything above predicted a class, so voting made sense. For a number
 there is nothing to vote on, so the forest <strong>averages</strong> instead.</p>
 <div class="code"><pre>   classification  -&gt;  100 trees, the majority class wins
@@ -574,6 +574,11 @@ every model misses that same one.</p>
 A crowd cancels out unstable guesses. A chain keeps fixing what is still
 wrong. Both beat one model, for two completely different reasons.</p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/20_Ensemble_Notes.png" data-name="20_Ensemble_Notes.png"><img src="../Handwritten_Notes/20_Ensemble_Notes.png" alt="20_Ensemble_Notes.png" loading="lazy"><span>20 Ensemble Notes</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/20_Ensemble_methods.ipynb">20_Ensemble_methods.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

@@ -14,18 +14,18 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#18-naive-bayes">18 - Naive Bayes</a><a href="#step-1-fourteen-students-one-column-of-marks">Step 1 - Fourteen students, one column of marks</a><a href="#step-2-gaussiannb-draw-one-bell-curve-per-class">Step 2 - GaussianNB: draw one bell curve per class</a><a href="#step-3-a-student-scored-74">Step 3 - A student scored 74</a><a href="#step-4-now-a-student-scored-99">Step 4 - Now a student scored 99</a><a href="#step-5-a-real-dataset-iris">Step 5 - A real dataset: iris</a><a href="#step-6-questions-and-answer">Step 6 - Questions and answer</a><a href="#step-7-hide-20-of-the-flowers">Step 7 - Hide 20% of the flowers</a><a href="#step-8-train">Step 8 - Train</a><a href="#step-9-read-the-report-card">Step 9 - Read the report card</a><a href="#step-10-the-first-failure-multinomialnb">Step 10 - The first failure: MultinomialNB</a><a href="#step-11-the-second-failure-bernoullinb">Step 11 - The second failure: BernoulliNB</a><a href="#step-12-change-the-data-not-the-model">Step 12 - Change the data, not the model</a><a href="#step-13-bernoulli-but-with-a-threshold-you-chose">Step 13 - Bernoulli, but with a threshold you chose</a><a href="#step-14-multinomialnb-refuses-to-start">Step 14 - MultinomialNB refuses to start</a><a href="#step-15-pre-processing-give-the-model-numbers-it">Step 15 - Pre-processing: give the model numbers it </a><a href="#step-16-split-again">Step 16 - Split again</a><a href="#step-17-the-same-model-now-it-runs">Step 17 - The same model, now it runs</a><a href="#which-naive-bayes-do-i-pick">Which Naive Bayes do I pick?</a><a href="#can-we-increase-the-model-s-accuracy">Can we increase the model&#x27;s accuracy?</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#s-18-naive-bayes">18 - Naive Bayes</a><a href="#step-1-fourteen-students-one-column-of-marks">Step 1 - Fourteen students, one column of marks</a><a href="#step-2-gaussiannb-draw-one-bell-curve-per-class">Step 2 - GaussianNB: draw one bell curve per class</a><a href="#step-3-a-student-scored-74">Step 3 - A student scored 74</a><a href="#step-4-now-a-student-scored-99">Step 4 - Now a student scored 99</a><a href="#step-5-a-real-dataset-iris">Step 5 - A real dataset: iris</a><a href="#step-6-questions-and-answer">Step 6 - Questions and answer</a><a href="#step-7-hide-20-of-the-flowers">Step 7 - Hide 20% of the flowers</a><a href="#step-8-train">Step 8 - Train</a><a href="#step-9-read-the-report-card">Step 9 - Read the report card</a><a href="#step-10-the-first-failure-multinomialnb">Step 10 - The first failure: MultinomialNB</a><a href="#step-11-the-second-failure-bernoullinb">Step 11 - The second failure: BernoulliNB</a><a href="#step-12-change-the-data-not-the-model">Step 12 - Change the data, not the model</a><a href="#step-13-bernoulli-but-with-a-threshold-you-chose">Step 13 - Bernoulli, but with a threshold you chose</a><a href="#step-14-multinomialnb-refuses-to-start">Step 14 - MultinomialNB refuses to start</a><a href="#step-15-pre-processing-give-the-model-numbers-it">Step 15 - Pre-processing: give the model numbers it </a><a href="#step-16-split-again">Step 16 - Split again</a><a href="#step-17-the-same-model-now-it-runs">Step 17 - The same model, now it runs</a><a href="#which-naive-bayes-do-i-pick">Which Naive Bayes do I pick?</a><a href="#can-we-increase-the-model-s-accuracy">Can we increase the model&#x27;s accuracy?</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Naive Bayes</h1>
   <p class="lede">Counting backwards from evidence to cause, and the shortcut in the name.</p>
-  <div class="tags"><span class="tag">1 notebook</span></div>
+  <div class="tags"><span class="tag">1 notebook</span><a class="tag hn-jump" href="#handwritten">✍️ 1 handwritten page</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>You know what car owners do for a living.</strong> You counted it door to door: of the 3 car-owning houses, 1 has a job and 2 run a business.</p><p>A new family moves in. You know they have a business. You want their vehicle — the question pointing the <em>other</em> way.</p><p><span class='beat'>You have P(job | car). You need P(car | job).</span> They are not the same number, and swapping them by accident is one of the oldest mistakes in probability.</p><p>Bayes theorem is the exact rule for turning one into the other. "Naive" is the shortcut: assume the columns do not affect each other. It is usually false and works surprisingly well anyway.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Bayes flips a conditional you can count into the one you actually want.</p></div>
 <div class="src-head">📓 <a href="../Concept/18_Naive_Bayers.ipynb">18_Naive_Bayers.ipynb</a></div>
-<h2 id="18-naive-bayes">18 - Naive Bayes</h2>
+<h2 id="s-18-naive-bayes">18 - Naive Bayes</h2>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong></p>
 </div>
 <h3>The story</h3>
@@ -610,6 +610,11 @@ need both, and this notebook failed once in each way before getting both right.<
 handing a model a shape of number it was not built for: centimetres to a
 counter, positives-only to negative data, a threshold in the wrong place.</p>
 
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/18_Naive_Bayes_Detailed_Handwritten_Notes.png" data-name="18_Naive_Bayes_Detailed_Handwritten_Notes.png"><img src="../Handwritten_Notes/18_Naive_Bayes_Detailed_Handwritten_Notes.png" alt="18_Naive_Bayes_Detailed_Handwritten_Notes.png" loading="lazy"><span>18 Naive Bayes Detailed Handwritten Notes</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/18_Naive_Bayers.ipynb">18_Naive_Bayers.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>
