@@ -40,21 +40,12 @@
   }
   var COUNT = tally(TREE, { total: 0 });
 
-  /* ─────────── 2. header donut ─────────── */
-  (function donut() {
-    var C = 99.9, off = 0, order = ["done", "learning", "archive", "todo"];
-    order.forEach(function (k) {
-      var pct = (COUNT[k] || 0) / COUNT.total * C;
-      var el = document.querySelector(".seg-" + k);
-      el.setAttribute("stroke-dasharray", pct.toFixed(2) + " " + (C - pct).toFixed(2));
-      el.setAttribute("stroke-dashoffset", (-off).toFixed(2));
-      off += pct;
-    });
-    $("donutNum").textContent = COUNT.total;
-    $("tagline").textContent =
-      COUNT.done + " done · " + COUNT.learning + " learning · " +
-      COUNT.archive + " archive · " + COUNT.todo + " not started";
-    $("search").placeholder = "Search " + COUNT.total + " topics…";
+  /* ─────────── 2. header ─────────── */
+  /* The landing page owns the headline numbers now (see home.js); the map only
+     needs the search placeholder. Guarded so a missing element cannot kill boot. */
+  (function header() {
+    var s = $("search");
+    if (s) s.placeholder = "Search " + COUNT.total + " topics…";
   })();
 
   /* ─────────── 3. helpers ─────────── */
@@ -621,21 +612,70 @@
     });
   }
 
-  /* ─────────── 12. view switch ─────────── */
-  document.querySelectorAll(".view-btn").forEach(function (b) {
-    b.addEventListener("click", function () {
-      document.querySelectorAll(".view-btn").forEach(function (x) { x.classList.remove("active"); });
-      b.classList.add("active");
-      var read = b.dataset.view === "read";
-      if (read && !readBuilt) { buildReader(); paintReader(searchEl.value.trim().toLowerCase()); }
-      $("view-map").classList.toggle("hidden", read);
-      $("view-read").classList.toggle("hidden", !read);
-      document.body.classList.toggle("reading", read);
-      if (!read) { window.scrollTo(0, 0); }
+  /* ─────────── 12. view switch (home · map · library) ─────────── */
+  var mapReady = false;
+  function show(name) {
+    document.querySelectorAll(".nav-btn").forEach(function (x) {
+      x.classList.toggle("active", x.dataset.view === name);
     });
+    ["home", "map", "read"].forEach(function (v) {
+      var el = $("view-" + v);
+      if (el) el.classList.toggle("hidden", v !== name);
+    });
+    document.body.classList.toggle("mapview", name === "map");
+    if (name === "read" && !readBuilt) {
+      buildReader(); paintReader(searchEl.value.trim().toLowerCase());
+    }
+    if (name === "map" && !mapReady) {      // the canvas had no size while hidden
+      mapReady = true;
+      setTimeout(function () { render(); fit(); }, 0);
+    }
+    if (name !== "map") window.scrollTo(0, 0);
+    try { localStorage.setItem("lu-view", name); } catch (e) {}
+  }
+  document.querySelectorAll(".nav-btn").forEach(function (b) {
+    b.addEventListener("click", function () { show(b.dataset.view); });
+  });
+  /* Open the map on a particular node: expand its ancestors, select it, centre it. */
+  function focus(title) {
+    var n = null;
+    for (var i = 0; i < ALL.length; i++) {
+      if (ALL[i].title === title) { n = ALL[i]; break; }
+    }
+    if (!n) return false;
+    var p = n.parent; while (p) { p._open = true; p = p.parent; }
+    n._open = true;
+    show("map");
+    setTimeout(function () {
+      render(n);
+      scale = 0.9;              // land at a readable zoom, not wherever we were
+      select(n);
+      centerOn(n);
+      // nudge left so the subject sits beside its children, not under the drawer
+      px -= NODE_W * scale * 0.55;
+      apply();
+    }, 30);
+    return true;
+  }
+  window.LU = { show: show, focus: focus };
+
+  /* home search: filter the lesson cards in place */
+  searchEl.addEventListener("input", function () {
+    if (!$("view-home") || $("view-home").classList.contains("hidden")) return;
+    var q = searchEl.value.trim().toLowerCase();
+    var shown = 0;
+    document.querySelectorAll("#lesson-grid .les, #current-grid .mini").forEach(function (c) {
+      var on = !q || c.textContent.toLowerCase().indexOf(q) >= 0;
+      c.style.display = on ? "" : "none";
+      if (on && c.classList.contains("les")) shown++;
+    });
+    document.querySelectorAll("#subject-grid .subj").forEach(function (c) {
+      c.style.display = !q || c.textContent.toLowerCase().indexOf(q) >= 0 ? "" : "none";
+    });
+    hitsEl.textContent = q ? shown + " lessons" : "";
   });
 
   /* ─────────── go ─────────── */
   render();
-  setTimeout(fit, 60);
+  show("home");
 })();

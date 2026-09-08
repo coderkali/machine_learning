@@ -33,6 +33,8 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "lede": "Arrays that do arithmetic on a million numbers without a single loop.",
+          "hasStory": true,
           "lesson": "../../01_Python/02_NumPy/Content/index.html",
           "path": "../../01_Python/02_NumPy/Concept/example_01.ipynb"
         },
@@ -44,6 +46,8 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "lede": "A spreadsheet you can program: labelled columns, grouping, joining and reshaping.",
+          "hasStory": true,
           "lesson": "../../01_Python/03_Pandas/Content/index.html",
           "path": "../../01_Python/03_Pandas/Concept/example_01.ipynb"
         },
@@ -55,6 +59,8 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "lede": "The plotting library everything else is built on top of.",
+          "hasStory": true,
           "lesson": "../../01_Python/04_Matplotlib/Content/index.html",
           "path": "../../01_Python/04_Matplotlib/Concept/example_01.ipynb"
         },
@@ -66,6 +72,8 @@ const TREE = {
             "Concept: README.md",
             "Concept: sales_analysis_explained.md"
           ],
+          "lede": "Statistical charts in one line, with the defaults already sensible.",
+          "hasStory": true,
           "lesson": "../../01_Python/05_Seaborn/Content/index.html",
           "path": "../../01_Python/05_Seaborn/Concept/example_01.ipynb"
         },
@@ -143,6 +151,8 @@ const TREE = {
             "Concept: 02_MeasureMent_Of_Variability.ipynb",
             "Concept: 03_standard_deviation.ipynb"
           ],
+          "lede": "Two datasets can share an average and describe completely different worlds.",
+          "hasStory": true,
           "lesson": "../../02_DataScience/01_Measures_Of_Variability/Content/index.html",
           "path": "../../02_DataScience/01_Measures_Of_Variability/Concept/02_MeasureMent_Of_Variability.ipynb"
         },
@@ -183,6 +193,8 @@ const TREE = {
           "details": [
             "Concept: 07_Central_Limit_Theorem.ipynb"
           ],
+          "lede": "Why the bell curve keeps appearing, even when the data is nothing like a bell.",
+          "hasStory": true,
           "lesson": "../../02_DataScience/05_Central_Limit_Theorem/Content/index.html",
           "path": "../../02_DataScience/05_Central_Limit_Theorem/Concept/07_Central_Limit_Theorem.ipynb"
         },
@@ -194,6 +206,8 @@ const TREE = {
             "Concept: 08_Hypothesis_Testing.ipynb",
             "Concept: 08_Hypothesis_Testing_1.ipynb"
           ],
+          "lede": "Telling a real effect apart from a run of good luck.",
+          "hasStory": true,
           "lesson": "../../02_DataScience/06_Hypothesis_Testing_Basics/Content/index.html",
           "path": "../../02_DataScience/06_Hypothesis_Testing_Basics/Concept/08_Hypothesis_Testing.ipynb"
         },
@@ -366,6 +380,8 @@ const TREE = {
             "Concept: 01._LEARNING.MD",
             "Concept: 02_ML_Roadmap.MD"
           ],
+          "lede": "Where the rules stop being written by hand, and start being learned from examples.",
+          "hasStory": true,
           "lesson": "../../04_ML/01_What_Is_ML/Content/index.html",
           "path": "../../04_ML/01_What_Is_ML/Concept/01._LEARNING.MD"
         },
@@ -376,6 +392,8 @@ const TREE = {
           "details": [
             "Concept: 03_Types_Of_Variables.MD"
           ],
+          "lede": "Numbers, labels and ranks — and why a model treats each one completely differently.",
+          "hasStory": true,
           "lesson": "../../04_ML/02_Types_Of_Variables/Content/index.html",
           "path": "../../04_ML/02_Types_Of_Variables/Concept/03_Types_Of_Variables.MD"
         },
@@ -387,6 +405,8 @@ const TREE = {
             "Concept: 00_strategy.md",
             "Concept: 01_data_collection.md"
           ],
+          "lede": "Where the numbers come from, and the failure hiding inside each source.",
+          "hasStory": true,
           "lesson": "../../04_ML/03_Data_Collection/Content/index.html",
           "path": "../../04_ML/03_Data_Collection/Concept/00_strategy.md"
         },
@@ -399,6 +419,8 @@ const TREE = {
             "Concept: 04_Data_Cleaning.MD",
             "Concept: 05_Data_Cleaning_Practice.ipynb"
           ],
+          "lede": "Real data arrives broken. This is the work nobody photographs.",
+          "hasStory": true,
           "lesson": "../../04_ML/04_Data_Cleaning/Content/index.html",
           "path": "../../04_ML/04_Data_Cleaning/Concept/05_Data_Cleaning_Practice.ipynb"
         },
@@ -414,6 +436,8 @@ const TREE = {
             "Concept: 07_Filling_Missing_Values.ipynb",
             "Concept: 07b_Ordered_And_Wide_Fill_Practice.ipynb"
           ],
+          "lede": "Blanks are not zero. What you put in their place changes the answer.",
+          "hasStory": true,
           "lesson": "../../04_ML/05_Missing_Values/Content/index.html",
           "path": "../../04_ML/05_Missing_Values/Concept/06_Dropping_Missing_Values.ipynb"
         },
@@ -426,6 +450,8 @@ const TREE = {
             "Concept: 10_Label_Encoding.ipynb",
             "Concept: 11_Ordinal_Encoding.ipynb"
           ],
+          "lede": "Models only do arithmetic. Words have to become numbers without inventing an order.",
+          "hasStory": true,
           "lesson": "../../04_ML/06_Categorical_Encoding/Content/index.html",
           "path": "../../04_ML/06_Categorical_Encoding/Concept/09_one_hot_encoding.ipynb"
         },
@@ -440,6 +466,8 @@ const TREE = {
             "DBSCAN — who is standing in a crowd and who is standing alone",
             "Reading the plot line, once, properly"
           ],
+          "lede": "One wrong row can drag an entire model off course.",
+          "hasStory": true,
           "lesson": "../../04_ML/07_Outliers/Content/index.html",
           "path": "../../04_ML/07_Outliers/Concept/12_Outlier.ipynb"
         },
@@ -451,6 +479,8 @@ const TREE = {
             "Concept: 15_Feature_Scaling.ipynb",
             "Concept: 16_Feature_Scaling_Normalization.ipynb"
           ],
+          "lede": "When one column shouts and another whispers, the model only hears the shouting.",
+          "hasStory": true,
           "lesson": "../../04_ML/08_Feature_Scaling/Content/index.html",
           "path": "../../04_ML/08_Feature_Scaling/Concept/15_Feature_Scaling.ipynb"
         },
@@ -462,6 +492,8 @@ const TREE = {
             "Concept: 17_Handling_Duploicate_Data.ipynb",
             "Concept: 18_Replace_Change_Data_Type.ipynb"
           ],
+          "lede": "The same row twice, and numbers stored as text — two quiet defects that break scoring.",
+          "hasStory": true,
           "lesson": "../../04_ML/09_Duplicates_And_Dtypes/Content/index.html",
           "path": "../../04_ML/09_Duplicates_And_Dtypes/Concept/17_Handling_Duploicate_Data.ipynb"
         },
@@ -472,6 +504,8 @@ const TREE = {
           "details": [
             "Concept: 19_Function_Transformer.ipynb"
           ],
+          "lede": "When the relationship is curved, reshape the column instead of abandoning the model.",
+          "hasStory": true,
           "lesson": "../../04_ML/10_Function_Transformer/Content/index.html",
           "path": "../../04_ML/10_Function_Transformer/Concept/19_Function_Transformer.ipynb"
         },
@@ -485,6 +519,8 @@ const TREE = {
             "Concept: 21_Feature_Selection_VarianceThreshold.ipynb",
             "Concept: 22_Forward_Backward_Practice.ipynb"
           ],
+          "lede": "More columns is not more information. Some columns actively make the model worse.",
+          "hasStory": true,
           "lesson": "../../04_ML/11_Feature_Selection/Content/index.html",
           "path": "../../04_ML/11_Feature_Selection/Concept/20_Feature_Selection_techniques.ipynb"
         },
@@ -499,6 +535,8 @@ const TREE = {
             "A measured data-leakage demo",
             "First Pipeline + ColumnTransformer"
           ],
+          "lede": "Three scalers, two encoders, and the one rule that stops you cheating.",
+          "hasStory": true,
           "lesson": "../../04_ML/12_Preprocessing/Content/index.html",
           "path": "../../04_ML/12_Preprocessing/Concept/03_preprocessing.ipynb"
         },
@@ -513,6 +551,8 @@ const TREE = {
             "The four-value return order",
             "Three experiments with three charts"
           ],
+          "lede": "Hiding some rows before you start is the only way to find out if the model actually learned.",
+          "hasStory": true,
           "lesson": "../../04_ML/13_Train_Test_Split/Content/index.html",
           "path": "../../04_ML/13_Train_Test_Split/Concept/01_train_test_split_data.ipynb"
         },
@@ -527,6 +567,8 @@ const TREE = {
             "make_circles — factor · make_moons",
             "The shuffle=True column-permutation gotcha, found by the learner"
           ],
+          "lede": "Data you build yourself, where you already know the right answer.",
+          "hasStory": true,
           "lesson": "../../04_ML/14_Synthetic_Datasets/Content/index.html",
           "path": "../../04_ML/14_Synthetic_Datasets/Concept/02_make_*_dataset.ipynb"
         },
@@ -541,6 +583,8 @@ const TREE = {
             "Multivariate — sns.pairplot(hue=, markers=)",
             "A real mislabelling bug kept and explained, not hidden"
           ],
+          "lede": "Look at one column, then two, then all of them — before fitting anything.",
+          "hasStory": true,
           "lesson": "../../04_ML/15_EDA_Uni_Bi_Multivariate/Content/index.html",
           "path": "../../04_ML/15_EDA_Uni_Bi_Multivariate/Concept/04_uni_boi_multi_variate_analaysis.ipynb"
         },
@@ -569,6 +613,8 @@ const TREE = {
             "Coefficients as partial effects — Age moves from −61 to −20.4 once Degrees joins",
             "Why a 0.976 test R² over 2 rows is not evidence"
           ],
+          "lede": "More than one input column: the line becomes a plane, and coefficients change meaning.",
+          "hasStory": true,
           "lesson": "../../04_ML/17_Multiple_Linear_Regression/Content/index.html",
           "path": "../../04_ML/17_Multiple_Linear_Regression/Concept/06_multiple_linear_regression.ipynb"
         },
@@ -581,6 +627,8 @@ const TREE = {
             "The first worked underfit / overfit comparison",
             "Reading the chart: what the curve is really doing between the points"
           ],
+          "lede": "When a straight line is too simple and a wiggly curve is too eager.",
+          "hasStory": true,
           "lesson": "../../04_ML/18_Polynomial_Regression/Content/index.html",
           "path": "../../04_ML/18_Polynomial_Regression/Concept/10_Polynomial Regression.ipynb"
         },
@@ -595,6 +643,8 @@ const TREE = {
             "Why a large alpha flattens the line onto mean(y_train)",
             "The alpha table from 0 to 10,000,000"
           ],
+          "lede": "Paying a penalty for large slopes, and the first hyperparameter you choose yourself.",
+          "hasStory": true,
           "lesson": "../../04_ML/19_Ridge_Regression/Content/index.html",
           "path": "../../04_ML/19_Ridge_Regression/Concept/07_Ridge.ipynb"
         },
@@ -608,6 +658,8 @@ const TREE = {
             "alpha = 9.5 is the point where the slope hits zero",
             "Common mistakes and a key takeaway"
           ],
+          "lede": "The penalty that can push a coefficient all the way to exactly zero.",
+          "hasStory": true,
           "lesson": "../../04_ML/20_Lasso_Regression/Content/index.html",
           "path": "../../04_ML/20_Lasso_Regression/Concept/08_Lasso.ipynb"
         },
@@ -620,6 +672,8 @@ const TREE = {
             "alpha sets penalty strength, l1_ratio sets the mix",
             "Sweeping alpha from 0.01 to 100 — from plain LinearRegression to a flat mean line"
           ],
+          "lede": "Both penalties at once, with a dial between them.",
+          "hasStory": true,
           "lesson": "../../04_ML/21_ElasticNet/Content/index.html",
           "path": "../../04_ML/21_ElasticNet/Concept/09_ElasticNet.ipynb"
         },
@@ -634,6 +688,8 @@ const TREE = {
             "Concept: 32_Root_Mean_Squared_Error.MD",
             "Concept: 33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb"
           ],
+          "lede": "Turning \"this line is better\" into a single number a computer can minimise.",
+          "hasStory": true,
           "lesson": "../../04_ML/22_Cost_Functions/Content/index.html",
           "path": "../../04_ML/22_Cost_Functions/Concept/30_Cost_Function_MSE_GradientDescent.ipynb"
         },
@@ -648,6 +704,8 @@ const TREE = {
             "LeavePOut(p=2) and LeaveOneOut",
             "Which one to use, and when"
           ],
+          "lede": "One split can be lucky. Five splits are harder to fool.",
+          "hasStory": true,
           "lesson": "../../04_ML/23_Cross_Validation/Content/index.html",
           "path": "../../04_ML/23_Cross_Validation/Concept/11_Corss_validation.ipynb"
         },
@@ -662,6 +720,8 @@ const TREE = {
             "One habit to fix: the argument order accuracy_score(Y_pred, Y_test)",
             "Handwritten note: 15_Model_Evaluation.png"
           ],
+          "lede": "Accuracy alone will let a useless model look excellent.",
+          "hasStory": true,
           "lesson": "../../04_ML/24_Model_Evaluation/Content/index.html",
           "path": "../../04_ML/24_Model_Evaluation/Concept/15_Model_Evaluation.ipynb"
         },
@@ -676,6 +736,8 @@ const TREE = {
             "The metrics.plot_roc_curve AttributeError kept on purpose, with RocCurveDisplay beside it",
             "Handwritten note: 14_ROC_Curve.png"
           ],
+          "lede": "A model outputs a probability. The threshold is your decision, not the model's.",
+          "hasStory": true,
           "lesson": "../../04_ML/25_ROC_And_AUC/Content/index.html",
           "path": "../../04_ML/25_ROC_And_AUC/Concept/14_roc.ipynb"
         },
@@ -691,6 +753,8 @@ const TREE = {
             "Handing it to DecisionTreeClassifier · exported dt.tree",
             "Handwritten note: 16_DTC.png"
           ],
+          "lede": "Twenty questions, asked in the smartest possible order.",
+          "hasStory": true,
           "lesson": "../../04_ML/26_Decision_Tree_Classification/Content/index.html",
           "path": "../../04_ML/26_Decision_Tree_Classification/Concept/16_Descison_Tree_Classfication.ipynb"
         },
@@ -705,6 +769,8 @@ const TREE = {
             "Why score() means something completely different for a regressor",
             "Handwritten note: 17_DTR.png"
           ],
+          "lede": "The same tree, but each leaf now answers with a number instead of a label.",
+          "hasStory": true,
           "lesson": "../../04_ML/27_Decision_Tree_Regression/Content/index.html",
           "path": "../../04_ML/27_Decision_Tree_Regression/Concept/17_Descison_Tree_Regression.ipynb"
         },
@@ -720,6 +786,8 @@ const TREE = {
             "Reading the classification report",
             "Handwritten note: 18_Naive_Bayes_Detailed_Handwritten_Notes.png"
           ],
+          "lede": "Counting backwards from evidence to cause, and the shortcut in the name.",
+          "hasStory": true,
           "lesson": "../../04_ML/28_Naive_Bayes/Content/index.html",
           "path": "../../04_ML/28_Naive_Bayes/Concept/18_Naive_Bayers.ipynb"
         },
@@ -730,6 +798,8 @@ const TREE = {
           "details": [
             "Concept: 25_K_Nearest_Neighbor_explained.ipynb"
           ],
+          "lede": "No training at all — just ask the neighbours.",
+          "hasStory": true,
           "lesson": "../../04_ML/29_K_Nearest_Neighbor/Content/index.html",
           "path": "../../04_ML/29_K_Nearest_Neighbor/Concept/25_K_Nearest_Neighbor_explained.ipynb"
         },
@@ -744,6 +814,8 @@ const TREE = {
             "Doing it without building the extra columns by hand",
             "One caution about reading the picture"
           ],
+          "lede": "Not just a line that separates — the line with the widest possible gap.",
+          "hasStory": true,
           "lesson": "../../04_ML/30_Support_Vector_Machines/Content/index.html",
           "path": "../../04_ML/30_Support_Vector_Machines/Concept/22_svc_2D.ipynb"
         },
@@ -758,6 +830,8 @@ const TREE = {
             "What .fit() actually stores, and what predict() means with no labels",
             "Where K-Means gets it wrong"
           ],
+          "lede": "Five thousand customers and not a single label. Find the groups anyway.",
+          "hasStory": true,
           "lesson": "../../04_ML/31_Clustering_KMeans/Content/index.html",
           "path": "../../04_ML/31_Clustering_KMeans/Concept/12_clustering.ipynb"
         },
@@ -772,6 +846,8 @@ const TREE = {
             "Cutting the tree to get clusters",
             "hierarchical-clustering-visual-guide.html sits beside it"
           ],
+          "lede": "Nine strangers in an empty town, shaking hands nearest-first.",
+          "hasStory": true,
           "lesson": "../../04_ML/32_Hierarchical_Clustering/Content/hierarchical-clustering-visual-guide.html",
           "path": "../../04_ML/32_Hierarchical_Clustering/Concept/13_Hirerachical_Clustering.ipynb"
         },
@@ -787,6 +863,8 @@ const TREE = {
             "The trade-off, and the syntax in one place",
             "Handwritten note: 19_Hyperparameter_Tuning_Detailed_Handwritten_Notes.png"
           ],
+          "lede": "The settings the model cannot learn for itself.",
+          "hasStory": true,
           "lesson": "../../04_ML/33_Hyperparameter_Tuning/Content/index.html",
           "path": "../../04_ML/33_Hyperparameter_Tuning/Concept/19_Hyperparameter_Tuning.ipynb"
         },
@@ -801,6 +879,8 @@ const TREE = {
             "Gradient Boosting — boosting by chasing the leftover error",
             "Where each one is used in real systems"
           ],
+          "lede": "One expert can be wrong. A panel that disagrees usefully is harder to fool.",
+          "hasStory": true,
           "lesson": "../../04_ML/34_Ensemble_Methods/Content/index.html",
           "path": "../../04_ML/34_Ensemble_Methods/Concept/20_Ensemble_methods.ipynb"
         },
@@ -813,6 +893,8 @@ const TREE = {
             "The most integrated project in the archive",
             "Open gap: preprocessing is fitted before the train/test split — a real leakage defect"
           ],
+          "lede": "Every step so far, applied end to end on one real dataset.",
+          "hasStory": true,
           "lesson": "../../04_ML/35_Project_Employee_Attrition/Content/index.html",
           "path": "../../04_ML/35_Project_Employee_Attrition/Concept/Employee_Attrition_Pipeline.ipynb"
         },
@@ -1097,11 +1179,12 @@ const TREE = {
       "children": [
         {
           "title": "Claude",
-          "meta": "5 files",
+          "meta": "6 files",
           "status": "learning",
           "details": [
             "README.md",
             "app.js",
+            "home.js",
             "index.html",
             "styles.css",
             "tree-data.js"

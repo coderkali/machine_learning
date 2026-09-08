@@ -3,80 +3,138 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Learning Universe — AI/ML</title>
+<title>Learning Universe · My AI/ML Knowledge System</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header class="hud">
-  <div class="hud-left">
-    <svg class="donut" viewBox="0 0 42 42" aria-hidden="true">
-      <circle class="ring-bg" cx="21" cy="21" r="15.9"></circle>
-      <circle class="ring seg-done"     cx="21" cy="21" r="15.9"></circle>
-      <circle class="ring seg-learning" cx="21" cy="21" r="15.9"></circle>
-      <circle class="ring seg-archive"  cx="21" cy="21" r="15.9"></circle>
-      <circle class="ring seg-todo"     cx="21" cy="21" r="15.9"></circle>
-      <text class="donut-num" x="21" y="22.6" id="donutNum">0</text>
-    </svg>
-    <div class="titles">
-      <h1>My Learning Universe</h1>
-      <p id="tagline">Every topic in this repository, mapped.</p>
-    </div>
-  </div>
+<div class="aura aura-a" aria-hidden="true"></div>
+<div class="aura aura-b" aria-hidden="true"></div>
 
-  <div class="hud-right">
-    <div class="views" role="tablist">
-      <button class="view-btn active" data-view="map"  role="tab">🌌 Map</button>
-      <button class="view-btn"        data-view="read" role="tab">📖 Deep dive</button>
-    </div>
-    <div class="search-wrap">
-      <input type="search" id="search" placeholder="Search 72 topics…" autocomplete="off">
-      <span id="hits" class="hits"></span>
-    </div>
-  </div>
+<header class="nav">
+  <a class="brand" href="#top">
+    <span class="sigil"><i></i>ML</span>
+    <span class="brand-txt"><b>Learning Universe</b><small>my AI/ML knowledge system</small></span>
+  </a>
+  <nav class="nav-links">
+    <button class="nav-btn active" data-view="home">Home</button>
+    <button class="nav-btn" data-view="map">Mind map</button>
+    <button class="nav-btn" data-view="read">Library</button>
+  </nav>
+  <label class="search-box">
+    <span class="mag">⌕</span>
+    <input id="search" type="search" placeholder="Search topics…" autocomplete="off">
+    <kbd>/</kbd>
+  </label>
+  <span id="hits" class="hits"></span>
 </header>
 
-<!-- ══════════════ MAP VIEW ══════════════ -->
-<section id="view-map" class="view">
+<!-- ═══════════════ HOME ═══════════════ -->
+<section id="view-home" class="view" data-view="home">
+  <div id="top" class="hero">
+    <div class="hero-copy">
+      <p class="live"><i></i> Repository intelligence · <span id="today"></span></p>
+      <h1>Everything I have learned,<br><em>as one living system.</em></h1>
+      <p class="hero-sub">Every topic in this repository — the notebooks, the notes, the
+         figures — rendered as illustrated lessons and connected on one map. Nothing here
+         is a plan. It is all evidence that already exists on disk.</p>
+      <div class="hero-cta">
+        <button class="cta" data-goto="map">Open the mind map <span>→</span></button>
+        <button class="cta ghost" id="surprise">Surprise me <span>↗</span></button>
+      </div>
+      <div class="hero-legend">
+        <span><i class="dot s-done"></i> Done</span>
+        <span><i class="dot s-learning"></i> Learning</span>
+        <span><i class="dot s-archive"></i> Prior work</span>
+        <span><i class="dot s-todo"></i> Not started</span>
+      </div>
+    </div>
+
+    <div class="hero-viz">
+      <svg id="wheel" viewBox="0 0 420 420" aria-label="Every subject, sized by how many topics it holds"></svg>
+      <div class="wheel-core">
+        <small>TOPICS</small><strong id="wheel-total">0</strong>
+        <span id="wheel-label">17 subjects</span>
+      </div>
+      <div class="chip chip-a"><small>LESSON PAGES</small><strong id="chip-lessons">0</strong></div>
+      <div class="chip chip-b"><small>NOTEBOOKS</small><strong id="chip-nb">0</strong></div>
+    </div>
+  </div>
+
+  <section class="strip" id="stats"></section>
+
+  <section class="block" id="subjects">
+    <header class="block-head">
+      <div><span class="num">01</span>
+        <div><p class="eyebrow">The shape of it</p><h2>Every subject</h2></div></div>
+      <p>Seventeen folders, from Python foundations to system design. The bar shows what
+         is finished, what is in progress, and what is still prior-work evidence.</p>
+    </header>
+    <div id="subject-grid" class="subject-grid"></div>
+  </section>
+
+  <section class="block" id="current">
+    <header class="block-head">
+      <div><span class="num">02</span>
+        <div><p class="eyebrow">Pick up where you stopped</p><h2>Currently learning</h2></div></div>
+      <p>Topics with real work in them that is not finished — the open threads.</p>
+    </header>
+    <div id="current-grid" class="card-grid"></div>
+  </section>
+
+  <section class="block" id="lessons">
+    <header class="block-head">
+      <div><span class="num">03</span>
+        <div><p class="eyebrow">Read it properly</p><h2>Illustrated lessons</h2></div></div>
+      <p>Each one opens with the problem that made someone invent the idea, then the
+         concept, the figures, and the code explained. The raw notebook is always one
+         click away.</p>
+    </header>
+    <div class="lesson-filter" id="lesson-filter"></div>
+    <div id="lesson-grid" class="lesson-grid"></div>
+  </section>
+
+  <footer class="foot-bar">
+    <span>Generated from the folders on disk · <span id="foot-count"></span></span>
+    <a href="../../README.md">Repository README ↗</a>
+  </footer>
+</section>
+
+<!-- ═══════════════ MIND MAP ═══════════════ -->
+<section id="view-map" class="view hidden" data-view="map">
   <div class="viewport" id="viewport">
     <div class="canvas" id="canvas">
       <svg class="edges" id="edges"></svg>
       <div class="nodes" id="nodes"></div>
     </div>
-
     <div class="controls">
-      <button class="ctl" id="expandAll" title="Open every branch">⤢ Open everything</button>
-      <button class="ctl" id="collapseAll" title="Back to the three branches">⤡ Collapse</button>
+      <button class="ctl" id="expandAll">⤢ Open everything</button>
+      <button class="ctl" id="collapseAll">⤡ Collapse</button>
       <span class="ctl-sep"></span>
-      <button class="ctl sq" id="zoomOut" title="Zoom out">−</button>
-      <button class="ctl sq" id="zoomIn"  title="Zoom in">+</button>
-      <button class="ctl" id="fit" title="Fit to screen">⤾ Fit</button>
+      <button class="ctl sq" id="zoomOut">−</button>
+      <button class="ctl sq" id="zoomIn">+</button>
+      <button class="ctl" id="fit">⤾ Fit</button>
     </div>
-
     <div class="legend">
-      <span class="lg done">Done</span>
-      <span class="lg learning">Learning</span>
-      <span class="lg archive">Archive</span>
-      <span class="lg todo">Not started</span>
+      <span class="lg done">Done</span><span class="lg learning">Learning</span>
+      <span class="lg archive">Archive</span><span class="lg todo">Not started</span>
     </div>
-
     <p class="hint">drag or scroll to move · ⌘/ctrl + scroll to zoom · click a node to open it</p>
   </div>
-
-  <!-- detail drawer -->
   <aside class="drawer" id="drawer">
     <button class="drawer-close" id="drawerClose" aria-label="Close">×</button>
     <div class="drawer-body" id="drawerBody"></div>
   </aside>
 </section>
 
-<!-- ══════════════ READING VIEW ══════════════ -->
-<section id="view-read" class="view hidden">
+<!-- ═══════════════ LIBRARY ═══════════════ -->
+<section id="view-read" class="view hidden" data-view="read">
   <nav class="toc" id="toc"></nav>
   <div class="reader" id="reader"></div>
 </section>
 
 <script src="tree-data.js"></script>
 <script src="app.js"></script>
+<script src="home.js"></script>
 </body>
 </html>
