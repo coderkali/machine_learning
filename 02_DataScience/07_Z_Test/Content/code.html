@@ -4,7 +4,8 @@
 <title>Z Test — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/11_Hypothesis_Testing_Z-Test.ipynb">11_Hypothesis_Testing_Z-Test.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import scipy.stats as st
 import numpy as np
@@ -34,7 +35,7 @@ ax.text(z_crit, -0.02, &quot;+1.96&quot;, ha=&quot;center&quot;, va=&quot;top&qu
 
 ax.legend()
 ax.set_title(&quot;Z-Test Decision Boundary (Two-Tailed, 95% CI)&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py">mu = 168
+plt.show()</pre></div><figure class="shot"><img src="assets/11-hypothesis-testing-z-test-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py">mu = 168
 sigma = 3.9
 n = 36
 x_bar = 169.5
@@ -92,7 +93,7 @@ ax.annotate(f&quot;z_test = {z_test:.2f}\n(in rejection region)&quot;,
             color=&quot;darkorange&quot;, fontweight=&quot;bold&quot;)
 
 ax.set_title(&quot;Where does z_test = 2.31 actually land?&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 13</span></div><pre class="py">alpha = 0.05
+plt.show()</pre></div><figure class="shot"><img src="assets/11-hypothesis-testing-z-test-c10-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 13</span></div><pre class="py">alpha = 0.05
 
 z_two = st.norm.ppf(1 - alpha / 2)   # 1.96 -&gt; split between both tails
 z_one = st.norm.ppf(1 - alpha)       # 1.645 -&gt; all alpha in one tail
@@ -128,5 +129,5 @@ for ax in axes:
     ax.axhline(0, color=&quot;black&quot;, linewidth=0.8)
 
 plt.tight_layout()
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/11-hypothesis-testing-z-test-c13-3.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

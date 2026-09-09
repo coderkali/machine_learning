@@ -4,7 +4,8 @@
 <title>Naive Bayes — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/18_Naive_Bayers.ipynb">18_Naive_Bayers.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
 import numpy as np
@@ -33,7 +34,7 @@ plt.title(&quot;What GaussianNB learned: one bell curve per class&quot;)
 plt.xlabel(&quot;mark&quot;)
 plt.ylabel(&quot;probability density&quot;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py">from sklearn.datasets import load_iris
+plt.show()</pre></div><figure class="shot"><img src="assets/18-naive-bayers-c10-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py">from sklearn.datasets import load_iris
 iris = load_iris()
 table = pd.DataFrame(iris.data,columns=iris.feature_names)
 table.head()</pre></div><div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
@@ -65,7 +66,7 @@ y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([2, 1, 
 classifier2 = MultinomialNB()
 classifier2.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>MultinomialNB()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 25</span></div><pre class="py">classifier2.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.5666666666666667</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.naive_bayes import BernoulliNB
 classifier3 = BernoulliNB()
-classifier3.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>BernoulliNB()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">classifier3.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.2</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 31</span></div><pre class="py">from matplotlib import pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 32</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">x,y = make_classification(n_samples=5000, n_features=2, n_redundant=0)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 34</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11fbfd310&gt;</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 37</span></div><pre class="py">from sklearn.model_selection import train_test_split
+classifier3.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>BernoulliNB()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">classifier3.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.2</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 31</span></div><pre class="py">from matplotlib import pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 32</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">x,y = make_classification(n_samples=5000, n_features=2, n_redundant=0)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 34</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11fbfd310&gt;</pre></div><figure class="shot"><img src="assets/18-naive-bayers-c34-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 37</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 39</span></div><pre class="py">classifier2 = MultinomialNB()
 classifier3 = BernoulliNB(binarize=0.5)</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 40</span></div><pre class="py">classifier3.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>BernoulliNB(binarize=0.5)</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">classifier3.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.817</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 43</span></div><pre class="py">classifier2.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
 ValueError                                Traceback (most recent call last)
@@ -86,7 +87,7 @@ plt.title(&quot;red zone = negative values, %.0f%% of the data\nMultinomialNB wi
           % (100 * (x &lt; 0).mean()))
 plt.xlabel(&quot;feature 1&quot;)
 plt.ylabel(&quot;feature 2&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 47</span></div><pre class="py">from sklearn.preprocessing import MinMaxScaler</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 48</span></div><pre class="py">scalar = MinMaxScaler()
+plt.show()</pre></div><figure class="shot"><img src="assets/18-naive-bayers-c45-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 47</span></div><pre class="py">from sklearn.preprocessing import MinMaxScaler</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 48</span></div><pre class="py">scalar = MinMaxScaler()
 x = scalar.fit_transform(x)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 50</span></div><pre class="py">fig, ax = plt.subplots(1, 2, figsize=(11, 4.5))
 
 ax[0].scatter(x_before[:, 0], x_before[:, 1], c=y, s=6)
@@ -100,7 +101,7 @@ ax[1].set_title(&quot;after MinMaxScaler:  %.2f to %.2f&quot; % (x.min(), x.max(
 for a in ax:
     a.set_xlabel(&quot;feature 1&quot;)
     a.set_ylabel(&quot;feature 2&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 52</span></div><pre class="py">from sklearn.model_selection import train_test_split
+plt.show()</pre></div><figure class="shot"><img src="assets/18-naive-bayers-c50-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 52</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 0)</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 53</span></div><pre class="py">classifier2 = MultinomialNB()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 55</span></div><pre class="py">classifier2.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
 ValueError                                Traceback (most recent call last)
 Cell In[64], line 1

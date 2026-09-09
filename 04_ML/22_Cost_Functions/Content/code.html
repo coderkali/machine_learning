@@ -4,7 +4,8 @@
 <title>Cost Functions — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/30_Cost_Function_MSE_GradientDescent.ipynb">30_Cost_Function_MSE_GradientDescent.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 3</span></div><pre class="py">import pandas as pd    # pandas: load the CSV and work with it as a table
 import numpy as np     # numpy: arrays, sums, means -- all the math below
@@ -24,7 +25,7 @@ plt.scatter(x, y, color=&quot;#2f6fed&quot;, edgecolor=&quot;white&quot;, s=60)
 plt.xlabel(&quot;cgpa (x)&quot;)
 plt.ylabel(&quot;package, LPA (y)&quot;)
 plt.title(&quot;Raw data — no line drawn yet&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py">def predict(x, m, c):
+plt.show()</pre></div><figure class="shot"><img src="assets/30-cost-function-mse-gradien-c07-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py">def predict(x, m, c):
     return m * x + c   # the whole model: multiply slope by x, then shift by intercept</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 12</span></div><pre class="py">m_bad, c_bad = 0.1, 0.5            # a careless guess -- too flat, shifted up
 m_decent, c_decent = 0.59, -1.23  # close to the true best-fit line (checked later in Step 9)
 
@@ -45,7 +46,7 @@ plt.xlabel(&quot;cgpa (x)&quot;)
 plt.ylabel(&quot;package, LPA (y)&quot;)
 plt.title(&quot;Bad line vs. decent line — orange bars are the errors&quot;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 17</span></div><pre class="py">def mean_squared_error(y_actual, y_predicted):
+plt.show()</pre></div><figure class="shot"><img src="assets/30-cost-function-mse-gradien-c14-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 17</span></div><pre class="py">def mean_squared_error(y_actual, y_predicted):
     errors = y_actual - y_predicted   # actual minus predicted, one number per row
     squared_errors = errors ** 2      # square each one -- negatives become positive, big misses grow fast
     return np.mean(squared_errors)    # average across every row -- the formula&#x27;s (1/n) x sum</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 19</span></div><pre class="py">mse_bad = mean_squared_error(y, y_hat_bad)
@@ -69,7 +70,7 @@ plt.xlabel(&quot;candidate slope, m (c held fixed)&quot;)
 plt.ylabel(&quot;MSE — J(m)&quot;)
 plt.title(&quot;The cost bowl — real computed numbers, not a sketch&quot;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 34</span></div><pre class="py">def gradients(x, y, m, c):
+plt.show()</pre></div><figure class="shot"><img src="assets/30-cost-function-mse-gradien-c31-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 34</span></div><pre class="py">def gradients(x, y, m, c):
     y_hat = predict(x, m, c)                     # current line&#x27;s prediction for every row
     error = y - y_hat                            # how far off each prediction is (signed, not squared)
     dL_dm = -(2 / len(x)) * np.sum(x * error)     # dL/dm from the formula above
@@ -119,12 +120,12 @@ plt.xlabel(&quot;cgpa (x)&quot;)
 plt.ylabel(&quot;package, LPA (y)&quot;)
 plt.title(&quot;Gradient Descent redrawing the line, epoch by epoch&quot;)
 plt.legend(fontsize=8, loc=&quot;upper left&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 51</span></div><pre class="py">plt.figure(figsize=(7, 5))
+plt.show()</pre></div><figure class="shot"><img src="assets/30-cost-function-mse-gradien-c49-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 51</span></div><pre class="py">plt.figure(figsize=(7, 5))
 plt.plot(range(len(cost_history)), cost_history, color=&quot;#2f6fed&quot;)
 plt.xlabel(&quot;epoch&quot;)
 plt.ylabel(&quot;MSE&quot;)
 plt.title(&quot;Cost falling as Gradient Descent walks down the bowl from Step 5&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 54</span></div><pre class="py">from sklearn.linear_model import LinearRegression   # scikit-learn&#x27;s Simple Linear Regression, same as 26
+plt.show()</pre></div><figure class="shot"><img src="assets/30-cost-function-mse-gradien-c51-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 54</span></div><pre class="py">from sklearn.linear_model import LinearRegression   # scikit-learn&#x27;s Simple Linear Regression, same as 26
 
 x_2d = dataset[[&quot;cgpa&quot;]]     # scikit-learn wants features as a 2-D table, even with just 1 column
 y_1d = dataset[&quot;package&quot;]    # target stays 1-D
@@ -174,7 +175,7 @@ plt.title(&quot;One outlier out of 101 rows — MSE vs. MAE reaction&quot;)
 plt.axhline(1, color=&quot;#8a8f98&quot;, linewidth=1)
 for i, v in enumerate(outlier_comparison[&quot;growth factor&quot;]):
     plt.text(i, v + 0.3, f&quot;×{v:.1f}&quot;, ha=&quot;center&quot;)
-plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb">33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb</a></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd    # pandas: load the CSV and work with it as a table
+plt.show()</pre></div><figure class="shot"><img src="assets/30-cost-function-mse-gradien-c65-6.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb">33_Cost_Functions_MAE_MSE_RMSE_Practical.ipynb</a></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd    # pandas: load the CSV and work with it as a table
 import numpy as np     # numpy: arrays, sums, means -- all the math below
 import matplotlib.pyplot as plt   # matplotlib: charts, once we get to them
 

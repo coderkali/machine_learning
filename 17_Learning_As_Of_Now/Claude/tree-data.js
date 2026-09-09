@@ -1310,6 +1310,51 @@ const TREE = {
           "path": "../../04_ML/35_Project_Employee_Attrition/Concept/Employee_Attrition_Pipeline.ipynb"
         },
         {
+          "title": "Linear Discriminant Analysis",
+          "meta": "2 notebooks",
+          "status": "learning",
+          "details": [
+            "Concept: LDA_explained.ipynb"
+          ],
+          "notes": 9,
+          "noteFiles": [
+            "Linear_Discriminant_Analysis_01.png",
+            "Linear_Discriminant_Analysis_02.png",
+            "Linear_Discriminant_Analysis_03.png",
+            "Linear_Discriminant_Analysis_v2_01.png",
+            "Linear_Discriminant_Analysis_v2_02.png",
+            "Linear_Discriminant_Analysis_v2_03.png",
+            "Linear_Discriminant_Analysis_v2_04.png",
+            "Linear_Discriminant_Analysis_v2_05.png",
+            "Linear_Discriminant_Analysis_v2_06.png"
+          ],
+          "hasCode": true,
+          "lede": "Squashing many columns down to one number that still keeps the classes apart.",
+          "hasStory": true,
+          "lesson": "../../04_ML/36_Linear_Discriminant_Analysis/Content/index.html",
+          "path": "../../04_ML/36_Linear_Discriminant_Analysis/Concept/34_LDA_explained.ipynb"
+        },
+        {
+          "title": "Model Persistence",
+          "meta": "2 notebooks · 1 data file",
+          "status": "learning",
+          "details": [
+            "Concept: 36_Model_Persistence_explained.ipynb",
+            "Concept: 37_Joblib_And_Pickle.ipynb"
+          ],
+          "notes": 3,
+          "noteFiles": [
+            "Model_Persistence_01.png",
+            "Model_Persistence_02.png",
+            "Model_Persistence_03.png"
+          ],
+          "hasCode": true,
+          "lede": "Freezing a trained model into a file, so the exact model answers tomorrow's request.",
+          "hasStory": true,
+          "lesson": "../../04_ML/37_Model_Persistence/Content/index.html",
+          "path": "../../04_ML/37_Model_Persistence/Concept/36_Model_Persistence_explained.ipynb"
+        },
+        {
           "title": "shared data",
           "meta": "9 files",
           "status": "learning",
@@ -1590,17 +1635,17 @@ const TREE = {
       "children": [
         {
           "title": "Claude",
-          "meta": "9 files",
+          "meta": "13 files",
           "status": "learning",
           "details": [
             "README.md",
             "app.js",
             "home.js",
             "index.html",
-            "styles.css",
-            "tree-data.js",
-            "workspace.css",
-            "workspace.html"
+            "journey-data.js",
+            "journey.css",
+            "journey.html",
+            "journey.js"
           ],
           "path": "../../17_Learning_As_Of_Now/Claude"
         },
@@ -1648,10 +1693,11 @@ const TREE = {
         },
         {
           "title": "shared",
-          "meta": "7 files",
+          "meta": "8 files",
           "status": "learning",
           "details": [
             "CODEX_HANDWRITTEN_NOTES_PROMPT.md",
+            "NEXT_CHAT_PROMPTS.md",
             "build_lessons.py",
             "build_site.py",
             "gen_tree.py",

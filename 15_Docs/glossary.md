@@ -151,6 +151,18 @@ The two usual ways to punish large coefficients. **L2** adds `α·Σw²` and is 
 **L1** adds `α·Σ|w|` and is what `Lasso` uses: it can set coefficients to exactly 0,
 which makes it a feature-selection tool as well. `ElasticNet` mixes the two.
 
+### Linear Discriminant Analysis (LDA)
+
+A supervised way to cut many columns down to a few. It looks for the direction
+that pushes the **class centres** as far apart as possible while keeping each
+class **tight** around its own centre, then projects every point onto it:
+`w = S_w⁻¹(μ₂ − μ₁)` and `z = wᵀx`, where `S_w` is the within-class scatter.
+With `C` classes it can return at most `C − 1` directions, so a two-class
+problem always collapses to a single number. Unlike **PCA** it uses the labels,
+which is why PCA can hand back a blurred pile where LDA separates cleanly.
+It also works as a classifier, and assumes each class is a roughly Gaussian
+blob with the same spread.
+
 ### Large language model (LLM)
 
 A neural network trained on large amounts of text and other data to understand
@@ -209,6 +221,18 @@ data and both scores are low together; a large `alpha` in the Ridge notebook pro
 it on purpose.
 
 ## P
+
+### Pickle, joblib, and model persistence
+
+**Persistence** is saving a fitted model to a file so the *same* model — not a
+retrained one — answers later. `fit()` only fills in an object's learned
+attributes (`coef_`, `theta_`), so saving means serialising those numbers.
+**`pickle`** is Python's standard serialiser; **`joblib`** writes a pickle too,
+adding `compress=` and `mmap_mode=` for large NumPy arrays. Three things to
+remember: save the whole **`Pipeline`**, because a scaler left behind fails
+silently; the file stores an *import path*, not scikit-learn's code, so versions
+must match; and **loading a pickle runs code**, so never load one you did not
+create.
 
 ### Prompt
 

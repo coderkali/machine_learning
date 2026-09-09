@@ -60,7 +60,20 @@ notes  = sum(len(re.findall(r'"([^"]+)"', m.group(1)))
              for m in re.finditer(r'"noteFiles":\s*\[([^\]]*)\]', tree))
 codes  = len(re.findall(r'"hasCode":\s*true', tree))
 
+# every ML topic is a step of the pipeline, so it must appear on the Journey page
+jd = open(os.path.join(HUB, "journey-data.js"), encoding="utf-8").read()
+mapped = set(re.findall(r'"(\d\d_[A-Za-z_]+/\d\d_[A-Za-z0-9_]+)"', jd))
+ml_topics = {m for m in
+             (re.match(r"(\d\d_[^/]+/\d\d_[^/]+)", p.replace("../../", "")).group(1)
+              for p in lessons)
+             if m.startswith("04_ML/")}
+unmapped = sorted(ml_topics - mapped)
+
 print(f"   {topics} lessons · {codes} code views · {notes} handwritten pages")
+if unmapped:
+    print("\n\033[33m   NOT ON THE JOURNEY PAGE\033[0m")
+    for m in unmapped:
+        print(f"     - {m}   → add it to a stage in 17_Learning_As_Of_Now/Claude/journey-data.js")
 if problems:
     print("\n\033[31m   PROBLEMS\033[0m")
     for p in problems[:15]: print("     - " + p)

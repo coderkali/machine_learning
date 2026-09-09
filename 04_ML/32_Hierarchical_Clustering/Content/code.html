@@ -4,7 +4,8 @@
 <title>Hierarchical Clustering — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/13_Hirerachical_Clustering.ipynb">13_Hirerachical_Clustering.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 3</span></div><pre class="py">import matplotlib.pyplot as plt
 import numpy as np
@@ -40,7 +41,7 @@ ax.set(
 )
 ax.set_xlim(0, 95)
 ax.set_ylim(0, 90)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py"># &quot;Who is near me?&quot; -&gt; measure it with a right-angle triangle.
+plt.show()</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py"># &quot;Who is near me?&quot; -&gt; measure it with a right-angle triangle.
 p1, p2 = points[2], points[4]          # P3 and P5
 walk_across = p2[0] - p1[0]
 walk_up = p2[1] - p1[1]
@@ -84,7 +85,7 @@ print(f&quot;Walk across : {walk_across}&quot;)
 print(f&quot;Walk up     : {walk_up}&quot;)
 print(f&quot;Distance D  : {straight_line:.2f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Walk across : 15
 Walk up     : 18
-Distance D  : 23.43</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py"># Calculate the straight-line (Euclidean) distance between every pair.
+Distance D  : 23.43</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c08-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py"># Calculate the straight-line (Euclidean) distance between every pair.
 distance_matrix = squareform(pdist(points, metric=&quot;euclidean&quot;))
 np.fill_diagonal(distance_matrix, np.inf)  # A point should not match with itself.
 first_i, first_j = np.unravel_index(np.argmin(distance_matrix), distance_matrix.shape)
@@ -115,7 +116,7 @@ plt.show()
 print(
     f&quot;Closest pair: {point_names[first_i]} and {point_names[first_j]} &quot;
     f&quot;(distance = {closest_distance:.2f})&quot;
-)</pre></div><div class="out"><div class="h">Output</div><pre>Closest pair: P2 and P3 (distance = 5.83)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 12</span></div><pre class="py">from matplotlib.patches import FancyBboxPatch
+)</pre></div><div class="out"><div class="h">Output</div><pre>Closest pair: P2 and P3 (distance = 5.83)</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c10-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 12</span></div><pre class="py">from matplotlib.patches import FancyBboxPatch
 
 trio = np.array([[2.0, 2.0], [5.0, 2.6], [4.0, 6.2]])
 trio_names = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
@@ -196,7 +197,7 @@ print(f&quot;d1  A-B = {d_ab:.2f}   &lt;-- smallest, merged first&quot;)
 print(f&quot;d2  A-C = {d_ac:.2f}&quot;)
 print(f&quot;d3  B-C = {d_bc:.2f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>d1  A-B = 3.06   &lt;-- smallest, merged first
 d2  A-C = 4.65
-d3  B-C = 3.74</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 14</span></div><pre class="py"># Replay the story one handshake at a time.
+d3  B-C = 3.74</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c12-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 14</span></div><pre class="py"># Replay the story one handshake at a time.
 Z = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
 n = len(points)
 
@@ -265,7 +266,7 @@ handshake 4: joined [&#x27;P1&#x27;] + [&#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3
 handshake 5: joined [&#x27;P6&#x27;] + [&#x27;P9&#x27;]  at height 21.21
 handshake 6: joined [&#x27;P7&#x27;, &#x27;P8&#x27;] + [&#x27;P6&#x27;, &#x27;P9&#x27;]  at height 28.85
 handshake 7: joined [&#x27;P5&#x27;] + [&#x27;P1&#x27;, &#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 32.80
-handshake 8: joined [&#x27;P7&#x27;, &#x27;P8&#x27;, &#x27;P6&#x27;, &#x27;P9&#x27;] + [&#x27;P5&#x27;, &#x27;P1&#x27;, &#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 166.17</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 17</span></div><pre class="py">from matplotlib.patches import Ellipse
+handshake 8: joined [&#x27;P7&#x27;, &#x27;P8&#x27;, &#x27;P6&#x27;, &#x27;P9&#x27;] + [&#x27;P5&#x27;, &#x27;P1&#x27;, &#x27;P4&#x27;, &#x27;P2&#x27;, &#x27;P3&#x27;]  at height 166.17</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c14-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 17</span></div><pre class="py">from matplotlib.patches import Ellipse
 
 rng = np.random.default_rng(7)
 blob_left = rng.normal([3.0, 5.0], [0.85, 0.9], size=(6, 2))
@@ -339,7 +340,7 @@ ax4.set_title(&quot;Centroid linkage - middle of us to middle of you&quot;, font
 
 fig.suptitle(&quot;Same two groups, four different answers to: how far apart are you?&quot;, fontsize=14)
 fig.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 19</span></div><pre class="py"># The linkage matrix stores the complete merge history.
+plt.show()</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c17-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 19</span></div><pre class="py"># The linkage matrix stores the complete merge history.
 linkage_matrix = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
 cut_height = 80
 
@@ -362,7 +363,7 @@ ax.set(
     ylabel=&quot;Merge distance (dissimilarity)&quot;
 )
 ax.legend(loc=&quot;upper left&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 21</span></div><pre class="py">Z = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
+plt.show()</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c19-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 21</span></div><pre class="py">Z = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
 
 fig, ax = plt.subplots(figsize=(13, 7.5))
 tree = dendrogram(Z, labels=point_names, ax=ax, color_threshold=0,
@@ -410,7 +411,7 @@ ax.set(title=&quot;How to read a dendrogram, part by part&quot;,
        xlabel=&quot;The 9 original points&quot;, ylabel=&quot;Height (Ward merge cost)&quot;)
 ax.set_xlim(-5, 105)
 ax.set_ylim(0, top_y * 1.12)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 24</span></div><pre class="py">from scipy.cluster.hierarchy import fcluster
+plt.show()</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c21-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 24</span></div><pre class="py">from scipy.cluster.hierarchy import fcluster
 
 Z = linkage(points, method=&quot;ward&quot;, metric=&quot;euclidean&quot;)
 cut_height = 90                      # anywhere inside the long empty gap works
@@ -482,7 +483,7 @@ print(f&quot;cut height {cut_height}  -&gt;  {len(np.unique(labels))} clusters&q
 for label in np.unique(labels):
     print(f&quot;  group {label}: {&#x27;, &#x27;.join(np.array(point_names)[labels == label])}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>cut height 90  -&gt;  2 clusters
   group 1: P6, P7, P8, P9
-  group 2: P1, P2, P3, P4, P5</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 26</span></div><pre class="py">model = AgglomerativeClustering(n_clusters=2, linkage=&quot;ward&quot;)
+  group 2: P1, P2, P3, P4, P5</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c24-9.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 26</span></div><pre class="py">model = AgglomerativeClustering(n_clusters=2, linkage=&quot;ward&quot;)
 cluster_ids = model.fit_predict(points)
 
 colors = [&quot;#4C78A8&quot;, &quot;#F58518&quot;]
@@ -516,7 +517,7 @@ plt.show()
 for cluster_id in np.unique(cluster_ids):
     members = [name for name, label in zip(point_names, cluster_ids) if label == cluster_id]
     print(f&quot;Cluster {cluster_id + 1}: {&#x27;, &#x27;.join(members)}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Cluster 1: P1, P2, P3, P4, P5
-Cluster 2: P6, P7, P8, P9</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 29</span></div><pre class="py">methods = [&quot;single&quot;, &quot;complete&quot;, &quot;average&quot;, &quot;ward&quot;]
+Cluster 2: P6, P7, P8, P9</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c26-10.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 29</span></div><pre class="py">methods = [&quot;single&quot;, &quot;complete&quot;, &quot;average&quot;, &quot;ward&quot;]
 fig, axes = plt.subplots(2, 2, figsize=(14, 9))
 
 for ax, method in zip(axes.ravel(), methods):
@@ -531,5 +532,5 @@ for ax, method in zip(axes.ravel(), methods):
 
 fig.suptitle(&quot;One dataset, four ways to define distance between groups&quot;, fontsize=15, y=1.02)
 fig.tight_layout()
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/13-hirerachical-clustering-c29-11.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

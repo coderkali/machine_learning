@@ -339,6 +339,26 @@
    "This project is where the pieces have to hold together as one pipeline, and where the review queue still records a real leakage defect worth fixing."
   ]
  },
+ "04_ML/36_Linear_Discriminant_Analysis": {
+  "lede": "Squashing many columns down to one number that still keeps the classes apart.",
+  "idea": "Find the direction where the class centres are far apart and each class stays tight, then project every point onto it.",
+  "story": [
+   "<strong>Meera reads biopsy slides, and every slide arrives as thirty numbers.</strong> Radius, texture, concavity, twenty-seven more. She has to answer one word: malignant or benign.",
+   "She plotted one column at a time. The two histograms sat on top of each other — no single measurement cut the groups apart. So she reached for PCA, which turns thirty columns into one or two.",
+   "<span class='beat'>PCA handed back a blurred pile, because nobody had told it the labels exist.</span> PCA keeps the direction where the data is most spread out, and the biggest spread in biopsies is big tumours against small ones — not malignant against benign. It optimised the wrong thing.",
+   "LDA asks the question she actually meant: which single direction pulls the two class centres furthest apart while keeping each class tight around its own centre? Project onto that line and thirty numbers become one, with the two groups sitting at opposite ends of it."
+  ]
+ },
+ "04_ML/37_Model_Persistence": {
+  "lede": "Freezing a trained model into a file, so the exact model answers tomorrow's request.",
+  "idea": "fit() fills an object with learned numbers; saving serialises those numbers, so the file is the model.",
+  "story": [
+   "<strong>Ravi trained a classifier on Friday and shut the laptop.</strong> On Monday the kernel was dead and the model was gone — it had only ever been a variable in memory.",
+   "So he retrained at the top of every run. On a hundred rows nobody notices. Then the real model was a forest on half a million rows: four minutes to fit, and his API spent four minutes retraining on every restart.",
+   "<span class='beat'>The quieter problem was worse.</span> Every retrain produced a slightly different model, because new rows had arrived. When a customer asked why they had been rejected last Tuesday, the model that made that decision no longer existed anywhere.",
+   "The fix is to freeze the fitted object into a file and load that exact file whenever a prediction is needed. Save the whole pipeline, not just the estimator, load it once at startup, and never load a pickle you did not create — reading one runs code."
+  ]
+ },
  "01_Python/02_NumPy": {
   "lede": "Arrays that do arithmetic on a million numbers without a single loop.",
   "idea": "A NumPy array is one typed block of memory, so operations run in compiled code, not Python loops.",

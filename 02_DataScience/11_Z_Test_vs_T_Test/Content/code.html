@@ -4,7 +4,8 @@
 <title>Z Test vs T Test — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/Z-Test vs T-Test.ipynb">Z-Test vs T-Test.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 3</span></div><pre class="py">import numpy as np
 import scipy.stats as st
@@ -18,7 +19,7 @@ for df_, style in [(2, &quot;:&quot;), (5, &quot;--&quot;), (29, &quot;-.&quot;)
 
 ax.set_title(&quot;Z-distribution vs T-distribution at different sample sizes&quot;)
 ax.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148     # sample mean
+plt.show()</pre></div><figure class="shot"><img src="assets/z-test-vs-t-test-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148     # sample mean
 mu = 150        # population mean (claimed)
 n = 25          # sample size
 

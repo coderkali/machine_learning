@@ -4,7 +4,8 @@
 <title>Outliers — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/12_Outlier.ipynb">12_Outlier.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">l = [5,6,7,5,4,6,7,5]
 sum(l)/len(l)</pre></div><div class="out"><div class="h">Output</div><pre>5.625</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">l_with_outlier = l + [100]
@@ -32,7 +33,7 @@ ax.set_title(&quot;One extra value moves the mean a lot, the median barely at al
 ax.legend(frameon=False)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 14</span></div><pre class="py">import pandas as pd
+plt.show()</pre></div><figure class="shot"><img src="assets/12-outlier-c10-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 14</span></div><pre class="py">import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 15</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
 dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
@@ -86,8 +87,8 @@ min          0.000000
 50%          1.000000  
 75%          1.000000  
 max          1.000000</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 20</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot;,data=dataset)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">sns.boxplot(x=&quot;ApplicantIncome&quot;,data=dataset)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">for col in [&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]:
+plt.show()</pre></div><figure class="shot"><img src="assets/12-outlier-c20-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">sns.boxplot(x=&quot;ApplicantIncome&quot;,data=dataset)
+plt.show()</pre></div><figure class="shot"><img src="assets/12-outlier-c22-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">for col in [&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]:
     s = dataset[col].dropna()
     Q1, Q3 = s.quantile(0.25), s.quantile(0.75)
     IQR = Q3 - Q1
@@ -115,7 +116,7 @@ ax.set_xlabel(&quot;ApplicantIncome&quot;)
 ax.legend(frameon=False)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py">mean, std = s.mean(), s.std()
+plt.show()</pre></div><figure class="shot"><img src="assets/12-outlier-c27-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py">mean, std = s.mean(), s.std()
 z_scores = (s - mean) / std
 iqr_outliers = (s &lt; lower_bound) | (s &gt; upper_bound)
 z_outliers = z_scores.abs() &gt; 3
@@ -150,7 +151,7 @@ axes[1].set_title(f&quot;After  (n={new_dataset.shape[0]})&quot;)
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 18</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
+plt.show()</pre></div><figure class="shot"><img src="assets/13-outlier-removal-iqr-c16-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 18</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
 sns.kdeplot(dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;, fill=True, alpha=0.25, label=f&quot;Before (n={dataset.shape[0]})&quot;, ax=ax)
 sns.kdeplot(new_dataset[&quot;CoapplicantIncome&quot;], color=&quot;#2a78d6&quot;, fill=True, alpha=0.35, label=f&quot;After (n={new_dataset.shape[0]})&quot;, ax=ax)
 ax.axvline(max_range, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
@@ -159,7 +160,7 @@ ax.set_title(&quot;CoapplicantIncome distribution — before vs. after removal&q
 ax.legend(frameon=False)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 21</span></div><pre class="py">before_mean, before_std = dataset[&quot;CoapplicantIncome&quot;].mean(), dataset[&quot;CoapplicantIncome&quot;].std()
+plt.show()</pre></div><figure class="shot"><img src="assets/13-outlier-removal-iqr-c18-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 21</span></div><pre class="py">before_mean, before_std = dataset[&quot;CoapplicantIncome&quot;].mean(), dataset[&quot;CoapplicantIncome&quot;].std()
 after_mean, after_std = new_dataset[&quot;CoapplicantIncome&quot;].mean(), new_dataset[&quot;CoapplicantIncome&quot;].std()
 
 print(f&quot;mean:  {before_mean:.1f} -&gt; {after_mean:.1f}  ({100*(after_mean-before_mean)/before_mean:+.1f}%)&quot;)
@@ -224,12 +225,12 @@ min          0.000000
 50%          1.000000  
 75%          1.000000  
 max          1.000000</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 6</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot;, data=dataset)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 8</span></div><pre class="py">sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#2a78d6&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 11</span></div><pre class="py">min_range = dataset[&quot;CoapplicantIncome&quot;].mean() - (3*dataset[&quot;CoapplicantIncome&quot;].std())
+plt.show()</pre></div><figure class="shot"><img src="assets/14-outlier-removal-z-score-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 8</span></div><pre class="py">sns.histplot(dataset[&quot;CoapplicantIncome&quot;], kde=True, color=&quot;#2a78d6&quot;)
+plt.show()</pre></div><figure class="shot"><img src="assets/14-outlier-removal-z-score-c08-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 11</span></div><pre class="py">min_range = dataset[&quot;CoapplicantIncome&quot;].mean() - (3*dataset[&quot;CoapplicantIncome&quot;].std())
 max_range = dataset[&quot;CoapplicantIncome&quot;].mean() + (3*dataset[&quot;CoapplicantIncome&quot;].std())
 min_range, max_range</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(-3450.2033416842687), np.float64(6220.358681490095))</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 13</span></div><pre class="py">new_data = dataset[dataset[&quot;CoapplicantIncome&quot;]&lt;=max_range]
 new_data.shape</pre></div><div class="out"><div class="h">Output</div><pre>(610, 13)</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 15</span></div><pre class="py">sns.boxplot(x=&quot;CoapplicantIncome&quot; ,data= new_data)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 18</span></div><pre class="py">z_score = (dataset[&quot;CoapplicantIncome&quot;] - dataset[&quot;CoapplicantIncome&quot;].mean()) / (dataset[&quot;CoapplicantIncome&quot;].std())
+plt.show()</pre></div><figure class="shot"><img src="assets/14-outlier-removal-z-score-c15-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 18</span></div><pre class="py">z_score = (dataset[&quot;CoapplicantIncome&quot;] - dataset[&quot;CoapplicantIncome&quot;].mean()) / (dataset[&quot;CoapplicantIncome&quot;].std())
 z_score.head()</pre></div><div class="out"><div class="h">Output</div><pre>0   -0.226509
 1   -0.114209
 2   -0.198589
@@ -244,7 +245,7 @@ axes[1].set_title(f&quot;After — Z-score  (n={z_cleaned.shape[0]})&quot;)
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 32</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
+plt.show()</pre></div><figure class="shot"><img src="assets/14-outlier-removal-z-score-c30-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 32</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 4))
 sns.histplot(z_score, kde=True, color=&quot;#2a78d6&quot;, alpha=0.35, ax=ax)
 ax.axvspan(3, z_score.max(), color=&quot;#d03b3b&quot;, alpha=0.18, label=&quot;z &gt; 3 (flagged)&quot;)
 ax.axvline(3, color=&quot;#52514e&quot;, linestyle=&quot;--&quot;, linewidth=0.9)
@@ -254,7 +255,7 @@ ax.set_xlabel(&quot;z-score&quot;)
 ax.legend(frameon=False)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 35</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
+plt.show()</pre></div><figure class="shot"><img src="assets/14-outlier-removal-z-score-c32-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 35</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
 q3 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.75)
 iqr_bound = q3 + 1.5 * (q3 - q1)
 
@@ -286,7 +287,7 @@ ax.set_title(&quot;Why the two methods disagree — the gap between their bounds
 ax.legend(frameon=False, fontsize=8.5)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 42</span></div><pre class="py">print(&quot;Original:            &quot;, dataset.shape)
+plt.show()</pre></div><figure class="shot"><img src="assets/14-outlier-removal-z-score-c39-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 42</span></div><pre class="py">print(&quot;Original:            &quot;, dataset.shape)
 print(&quot;IQR-cleaned (13):     &quot;, (dataset[dataset[&quot;CoapplicantIncome&quot;] &lt;= iqr_bound]).shape)
 print(&quot;Z-score-cleaned (14): &quot;, z_cleaned.shape)</pre></div><div class="out"><div class="h">Output</div><pre>Original:             (618, 13)
 IQR-cleaned (13):      (603, 13)
@@ -338,7 +339,7 @@ for axis, std_value in zip(axes, std_values):
 axes[0].set_ylabel(&#x27;feature 1&#x27;)
 figure.suptitle(&#x27;The spread changes; rows, features, and groups stay the same&#x27;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1202152b0&gt;</pre></div><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 12</span></div><pre class="py"># How DBSCAN measures. It is plain distance and counting - nothing else.
+plt.show()</pre></div><figure class="shot"><img src="assets/21-outliers-c07-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1202152b0&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c09-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [52]</span><span class="cell">cell 12</span></div><pre class="py"># How DBSCAN measures. It is plain distance and counting - nothing else.
 import math
 
 eps = 1.5
@@ -438,7 +439,7 @@ axis.set_ylabel(&#x27;feature 2&#x27;)
 axis.set_aspect(&#x27;equal&#x27;)
 axis.grid(alpha=0.2)
 axis.legend(loc=&#x27;upper left&#x27;, fontsize=10)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 16</span></div><pre class="py"># Does sklearn agree with the hand working?
+plt.show()</pre></div><figure class="shot"><img src="assets/21-outliers-c14-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 16</span></div><pre class="py"># Does sklearn agree with the hand working?
 check = DBSCAN(eps=eps, min_samples=min_pts).fit(np.array(points))
 
 print(&#x27;point order              :&#x27;, names)
@@ -447,7 +448,7 @@ print(&#x27;sklearn core points      :&#x27;, [names[i] for i in check.core_samp
 print(&#x27;my hand answer           :&#x27;, [kind[n] for n in names])</pre></div><div class="out"><div class="h">Output</div><pre>point order              : [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;, &#x27;F&#x27;]
 sklearn labels_          : [ 0  0  0  0  0 -1]
 sklearn core points      : [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;]
-my hand answer           : [&#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;border&#x27;, &#x27;noise&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 18</span></div><pre class="py">db = DBSCAN(eps=0.3,min_samples=10).fit(x)</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 20</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120478b90&gt;</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 21</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=db.labels_)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1204d25d0&gt;</pre></div><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 23</span></div><pre class="py"># Teaching experiment: separate names preserve your original x, y, and db.
+my hand answer           : [&#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;core&#x27;, &#x27;border&#x27;, &#x27;noise&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 18</span></div><pre class="py">db = DBSCAN(eps=0.3,min_samples=10).fit(x)</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 20</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120478b90&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c20-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 21</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=db.labels_)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x1204d25d0&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c21-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [58]</span><span class="cell">cell 23</span></div><pre class="py"># Teaching experiment: separate names preserve your original x, y, and db.
 lesson_db_x = x.copy()
 lesson_fig, lesson_axes = plt.subplots(1, 3, figsize=(14, 4), sharex=True, sharey=True)
 for lesson_axis, lesson_eps in zip(lesson_axes, [0.15, 0.3, 0.6]):
@@ -463,8 +464,8 @@ for lesson_axis, lesson_eps in zip(lesson_axes, [0.15, 0.3, 0.6]):
     lesson_axis.legend(fontsize=8)
 lesson_axes[0].set_ylabel(&#x27;feature 2&#x27;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 26</span></div><pre class="py">x,y = make_blobs(n_samples=2000, centers=2, cluster_std=0.9,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12071d450&gt;</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 29</span></div><pre class="py">ee = EllipticEnvelope(contamination=0.1)
-ee.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>EllipticEnvelope()</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 30</span></div><pre class="py">prediction = ee.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 31</span></div><pre class="py">plt.scatter(x[:,0],x[:,1], c= prediction)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12076b4d0&gt;</pre></div><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 33</span></div><pre class="py"># Use your already-fitted ee and its current two-cloud x.
+plt.show()</pre></div><figure class="shot"><img src="assets/21-outliers-c23-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [59]</span><span class="cell">cell 26</span></div><pre class="py">x,y = make_blobs(n_samples=2000, centers=2, cluster_std=0.9,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12071d450&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c27-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 29</span></div><pre class="py">ee = EllipticEnvelope(contamination=0.1)
+ee.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>EllipticEnvelope()</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 30</span></div><pre class="py">prediction = ee.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 31</span></div><pre class="py">plt.scatter(x[:,0],x[:,1], c= prediction)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x12076b4d0&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c31-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 33</span></div><pre class="py"># Use your already-fitted ee and its current two-cloud x.
 lesson_ee_flags = ee.predict(x) == -1
 lesson_gx, lesson_gy = np.meshgrid(
     np.linspace(x[:, 0].min() - 1, x[:, 0].max() + 1, 180),
@@ -483,7 +484,7 @@ plt.xlabel(&#x27;feature 1&#x27;)
 plt.ylabel(&#x27;feature 2&#x27;)
 plt.legend()
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 36</span></div><pre class="py">x,y = make_blobs(n_samples=500, centers=3, cluster_std=0.4,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 38</span></div><pre class="py">iso = IsolationForest()</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 39</span></div><pre class="py">iso.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>IsolationForest()</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 40</span></div><pre class="py">pred = iso.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 41</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120ab8b90&gt;</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 43</span></div><pre class="py"># Reproducible score experiment on the same three-cloud data.
+plt.show()</pre></div><figure class="shot"><img src="assets/21-outliers-c33-9.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 36</span></div><pre class="py">x,y = make_blobs(n_samples=500, centers=3, cluster_std=0.4,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 38</span></div><pre class="py">iso = IsolationForest()</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 39</span></div><pre class="py">iso.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>IsolationForest()</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 40</span></div><pre class="py">pred = iso.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 41</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120ab8b90&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c41-10.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 43</span></div><pre class="py"># Reproducible score experiment on the same three-cloud data.
 lesson_iso = IsolationForest(random_state=0).fit(x)
 lesson_raw = lesson_iso.score_samples(x)
 lesson_decision = lesson_iso.decision_function(x)
@@ -505,7 +506,7 @@ plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>score off
 row | score_samples | decision score | predicted label
 442 |        -0.645 |         -0.145 | -1
 415 |        -0.470 |          0.030 | +1
-181 |        -0.425 |          0.075 | +1</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 48</span></div><pre class="py"># Visualize DBSCAN&#x27;s discovered clusters and point types
+181 |        -0.425 |          0.075 | +1</pre></div><figure class="shot"><img src="assets/21-outliers-c43-11.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 48</span></div><pre class="py"># Visualize DBSCAN&#x27;s discovered clusters and point types
 from matplotlib.lines import Line2D
 
 # Use the three-cluster data for a clear DBSCAN example.
@@ -574,15 +575,15 @@ print(f&quot;Border points: {border_mask.sum()}&quot;)
 print(f&quot;Noise points: {noise_mask.sum()}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Clusters found: 3
 Core points: 415
 Border points: 60
-Noise points: 25</pre></div><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.neighbors import LocalOutlierFactor</pre></div><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 52</span></div><pre class="py">clf = LocalOutlierFactor(n_neighbors=3)
-clf.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>LocalOutlierFactor(n_neighbors=3)</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 53</span></div><pre class="py">pred = clf.fit_predict(x)</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 54</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120da7c50&gt;</pre></div><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 56</span></div><pre class="py">x = np.array([[1,5],[1,6],[1,7],[2,5],[2,6],[6,5],[9,1]])</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 57</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 59</span></div><pre class="py">X = x[:,0]
+Noise points: 25</pre></div><figure class="shot"><img src="assets/21-outliers-c48-12.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.neighbors import LocalOutlierFactor</pre></div><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 52</span></div><pre class="py">clf = LocalOutlierFactor(n_neighbors=3)
+clf.fit(x)</pre></div><div class="out"><div class="h">Output</div><pre>LocalOutlierFactor(n_neighbors=3)</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 53</span></div><pre class="py">pred = clf.fit_predict(x)</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 54</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120da7c50&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c54-13.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 56</span></div><pre class="py">x = np.array([[1,5],[1,6],[1,7],[2,5],[2,6],[6,5],[9,1]])</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 57</span></div><pre class="py">plt.scatter(x[:,0],x[:,1])
+plt.show()</pre></div><figure class="shot"><img src="assets/21-outliers-c57-14.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 59</span></div><pre class="py">X = x[:,0]
 y = x[:,1]
 
 X = X.reshape(-1,1)
 clf = LocalOutlierFactor(n_neighbors=3)
 clf.fit(X)</pre></div><div class="out"><div class="h">Output</div><pre>LocalOutlierFactor(n_neighbors=3)</pre></div><div class="code"><div class="code-head"><span>In [79]</span><span class="cell">cell 60</span></div><pre class="py">pred = clf.fit_predict(X)
-plt.scatter(X, y,c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120efc190&gt;</pre></div><div class="code"><div class="code-head"><span>In [80]</span><span class="cell">cell 62</span></div><pre class="py"># Compare without overwriting your original X, y, clf, or pred.
+plt.scatter(X, y,c=pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x120efc190&gt;</pre></div><figure class="shot"><img src="assets/21-outliers-c60-15.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [80]</span><span class="cell">cell 62</span></div><pre class="py"># Compare without overwriting your original X, y, clf, or pred.
 lesson_small = x.copy()
 lesson_inputs = [lesson_small[:, [0]], lesson_small]
 lesson_titles = [&#x27;LOF sees feature 1 only&#x27;, &#x27;LOF sees both features&#x27;]
@@ -628,7 +629,7 @@ C   |        1.073 | +1
 D   |        1.032 | +1
 E   |        0.898 | +1
 F   |        3.316 | -1
-G   |        4.139 | -1</pre></div><div class="code"><div class="code-head"><span>In [81]</span><span class="cell">cell 64</span></div><pre class="py">print(&#x27;k | positive LOF for F | positive LOF for G | rows flagged&#x27;)
+G   |        4.139 | -1</pre></div><figure class="shot"><img src="assets/21-outliers-c62-16.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [81]</span><span class="cell">cell 64</span></div><pre class="py">print(&#x27;k | positive LOF for F | positive LOF for G | rows flagged&#x27;)
 for lesson_k in [2, 3, 6]:
     lesson_k_model = LocalOutlierFactor(n_neighbors=lesson_k)
     lesson_k_labels = lesson_k_model.fit_predict(lesson_small)

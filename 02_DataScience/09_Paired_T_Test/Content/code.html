@@ -4,7 +4,8 @@
 <title>Paired T Test — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/14_Hypothesis_Testing_T-Test_Paired.ipynb">14_Hypothesis_Testing_T-Test_Paired.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
 import numpy as np
@@ -49,7 +50,7 @@ ax.set_yticks([])
 ax.set_xlabel(&quot;t&quot;)
 ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 95% CI)&quot;)
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>df: 19
-t_critical: +- 2.093</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py">mean_before = np.mean(Before)
+t_critical: +- 2.093</pre></div><figure class="shot"><img src="assets/14-hypothesis-testing-t-test-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py">mean_before = np.mean(Before)
 mean_after  = np.mean(After)
 std_before  = np.std(Before)
 std_after   = np.std(After)
@@ -93,7 +94,7 @@ ax.annotate(f&quot;t_test = {t_test:.3f}\n(just inside acceptance region)&quot;,
 ax.set_yticks([])
 ax.set_xlabel(&quot;t&quot;)
 ax.set_title(f&quot;Where does t_test land? (df={df}, 95% CI)&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 13</span></div><pre class="py">diffs = After - Before
+plt.show()</pre></div><figure class="shot"><img src="assets/14-hypothesis-testing-t-test-c11-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 13</span></div><pre class="py">diffs = After - Before
 
 fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
@@ -132,7 +133,7 @@ print(&quot;Employees who got worse:&quot;, int(np.sum(diffs &lt; 0)), &quot;/&q
 print(&quot;Mean gain (After - Before):&quot;, diffs.mean())</pre></div><div class="out"><div class="h">Output</div><pre>Employees who improved: 20 / 20
 Employees who stayed the same: 0 / 20
 Employees who got worse: 0 / 20
-Mean gain (After - Before): 7.25</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 16</span></div><pre class="py">diffs = After - Before
+Mean gain (After - Before): 7.25</pre></div><figure class="shot"><img src="assets/14-hypothesis-testing-t-test-c13-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 16</span></div><pre class="py">diffs = After - Before
 
 # Paired t-test, done manually (matches Step 5 formula shape, but on the differences)
 mean_d = diffs.mean()

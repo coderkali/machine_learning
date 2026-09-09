@@ -4,7 +4,8 @@
 <title>Project Employee Attrition — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/Employee_Attrition_Pipeline.ipynb">Employee_Attrition_Pipeline.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
 import numpy as np
@@ -69,7 +70,7 @@ for b in bars:
               str(int(b.get_height())), ha=&quot;center&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>EmployeeID            0
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c08-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">dataset.isnull().sum()</pre></div><div class="out"><div class="h">Output</div><pre>EmployeeID            0
 Age                  21
 Gender               14
 Department            7
@@ -94,7 +95,7 @@ for b in bars:
               str(int(b.get_height())), ha=&quot;center&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">num_median_cols = [&quot;Age&quot;, &quot;YearsAtCompany&quot;, &quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c12-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">num_median_cols = [&quot;Age&quot;, &quot;YearsAtCompany&quot;, &quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
 
 for c in num_median_cols:
     dataset[c] = dataset[c].fillna(dataset[c].median())
@@ -115,7 +116,7 @@ for b in bars:
               str(int(b.get_height())), ha=&quot;center&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 22</span></div><pre class="py">dataset[&quot;Gender&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Gender
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c19-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 22</span></div><pre class="py">dataset[&quot;Gender&quot;].value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>Gender
 Male       356
 Female     229
 Male        23
@@ -155,7 +156,7 @@ axes[1].set_title(f&quot;Gender — after cleaning ({len(clean_gender)} categori
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 33</span></div><pre class="py">cat_mode_cols = [&quot;Gender&quot;, &quot;Department&quot;, &quot;Education&quot;,
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c30-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 33</span></div><pre class="py">cat_mode_cols = [&quot;Gender&quot;, &quot;Department&quot;, &quot;Education&quot;,
                  &quot;PriorCompanies&quot;, &quot;OverTime&quot;, &quot;PerformanceRating&quot;]
 
 for c in cat_mode_cols:
@@ -177,7 +178,7 @@ for b in bars:
               str(int(b.get_height())), ha=&quot;center&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">outlier_cols = [&quot;Age&quot;, &quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c38-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">outlier_cols = [&quot;Age&quot;, &quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
 
 fig, axes = plt.subplots(1, 3, figsize=(13, 4))
 for ax, c in zip(axes, outlier_cols):
@@ -185,7 +186,7 @@ for ax, c in zip(axes, outlier_cols):
     ax.set_title(c)
 plt.suptitle(&quot;Before outlier removal&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 42</span></div><pre class="py">iqr_bounds = {}
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c41-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 42</span></div><pre class="py">iqr_bounds = {}
 for c in outlier_cols:
     q1, q3 = dataset[c].quantile(0.25), dataset[c].quantile(0.75)
     iqr = q3 - q1
@@ -213,7 +214,7 @@ for ax, c in zip(axes, outlier_cols):
     ax.set_title(c)
 plt.suptitle(&quot;After outlier removal&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 49</span></div><pre class="py">skew_cols = [&quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c47-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 49</span></div><pre class="py">skew_cols = [&quot;MonthlyIncome&quot;, &quot;DistanceFromHome&quot;]
 skew_before = {c: dataset[c].skew() for c in skew_cols}
 skew_before</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;MonthlyIncome&#x27;: np.float64(0.6832499144477358),
  &#x27;DistanceFromHome&#x27;: np.float64(1.0946791576029027)}</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 50</span></div><pre class="py">log_ft = FunctionTransformer(func=np.log1p)
@@ -262,7 +263,7 @@ https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 Please adapt your code to use either `displot` (a figure-level function with
 similar flexibility) or `histplot` (an axes-level function for histograms).
 
-For a guide to upd</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 54</span></div><pre class="py">log_cols = [c + &quot;_log&quot; for c in skew_cols]
+For a guide to upd</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c51-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 54</span></div><pre class="py">log_cols = [c + &quot;_log&quot; for c in skew_cols]
 scaled_cols = [c + &quot;_scaled&quot; for c in skew_cols]
 
 scaler = StandardScaler()
@@ -314,7 +315,7 @@ similar flexibility) or `histplot` (an axes-level function for histograms).
 For a guide to updating your code to use the new functions, please see
 https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 
-  sns.distplot(dataset[&quot;MonthlyIncome_scaled&quot;], ax=axes[1], color=&quot;#2f9e6f&quot;)</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 60</span></div><pre class="py">nominal_cols = [&quot;Gender&quot;, &quot;OverTime&quot;, &quot;Department&quot;]
+  sns.distplot(dataset[&quot;MonthlyIncome_scaled&quot;], ax=axes[1], color=&quot;#2f9e6f&quot;)</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c56-9.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 60</span></div><pre class="py">nominal_cols = [&quot;Gender&quot;, &quot;OverTime&quot;, &quot;Department&quot;]
 
 ohe = OneHotEncoder(drop=&quot;first&quot;, sparse_output=False)
 ohe_array = ohe.fit_transform(dataset[nominal_cols])
@@ -332,7 +333,7 @@ plt.figure(figsize=(8, 5))
 sns.heatmap(sample, annot=True, cmap=&quot;Blues&quot;, cbar=False, linewidths=0.5, linecolor=&quot;white&quot;)
 plt.title(&quot;One-Hot Encoded Columns — first 12 rows&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 63</span></div><pre class="py">oe_edu = OrdinalEncoder(categories=[[&quot;High School&quot;, &quot;Bachelors&quot;, &quot;Masters&quot;, &quot;PhD&quot;]])
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c61-10.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 63</span></div><pre class="py">oe_edu = OrdinalEncoder(categories=[[&quot;High School&quot;, &quot;Bachelors&quot;, &quot;Masters&quot;, &quot;PhD&quot;]])
 dataset[&quot;Education_ord&quot;] = oe_edu.fit_transform(dataset[[&quot;Education&quot;]]).astype(int)
 
 oe_perf = OrdinalEncoder(categories=[[&quot;Low&quot;, &quot;Medium&quot;, &quot;High&quot;, &quot;Excellent&quot;]])
@@ -415,12 +416,12 @@ for b in bars:
               str(int(b.get_height())), ha=&quot;center&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 73</span></div><pre class="py">plt.figure(figsize=(10, 8))
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c72-11.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 73</span></div><pre class="py">plt.figure(figsize=(10, 8))
 sns.heatmap(final_dataset.corr(), annot=True, fmt=&quot;.2f&quot;, cmap=&quot;coolwarm&quot;,
             center=0, linewidths=0.5)
 plt.title(&quot;Correlation — final feature set&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 74</span></div><pre class="py">final_dataset.corr()[&quot;Attrition&quot;].sort_values(ascending=False)</pre></div><div class="out"><div class="h">Output</div><pre>Attrition                  1.000000
+plt.show()</pre></div><figure class="shot"><img src="assets/employee-attrition-pipeline-c73-12.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 74</span></div><pre class="py">final_dataset.corr()[&quot;Attrition&quot;].sort_values(ascending=False)</pre></div><div class="out"><div class="h">Output</div><pre>Attrition                  1.000000
 OverTime_Yes               0.361770
 Department_HR              0.086736
 Age_scaled                 0.064836

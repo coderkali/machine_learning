@@ -4,7 +4,8 @@
 <title>Feature Scaling — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/15_Feature_Scaling.ipynb">15_Feature_Scaling.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
 import numpy as np
@@ -56,7 +57,7 @@ min       1500.000000
 max      16981.000000
 Name: ApplicantIncome, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">sns.boxplot(x=dataset[&quot;ApplicantIncome&quot;], color=&quot;#d03b3b&quot;)
 plt.title(&quot;ApplicantIncome — raw&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 14</span></div><pre class="py">ss = StandardScaler()
+plt.show()</pre></div><figure class="shot"><img src="assets/15-feature-scaling-c11-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 14</span></div><pre class="py">ss = StandardScaler()
 ss.fit(dataset[[&quot;ApplicantIncome&quot;]])
 dataset[&quot;ApplicantIncome_SS&quot;] = ss.transform(dataset[[&quot;ApplicantIncome&quot;]])
 dataset[[&quot;ApplicantIncome&quot;, &quot;ApplicantIncome_SS&quot;]].head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   ApplicantIncome  ApplicantIncome_SS
@@ -78,7 +79,7 @@ axes[1].set_title(&quot;After — standardized (σ units)&quot;)
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">def iqr_outlier_count(s):
+plt.show()</pre></div><figure class="shot"><img src="assets/15-feature-scaling-c20-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">def iqr_outlier_count(s):
     q1, q3 = s.quantile(0.25), s.quantile(0.75)
     iqr = q3 - q1
     lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
@@ -94,7 +95,7 @@ axes[1].set_title(&quot;After — standardized (σ units)&quot;)
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 27</span></div><pre class="py">print(&quot;skew     — raw:&quot;, dataset[&quot;ApplicantIncome&quot;].skew(), &quot; scaled:&quot;, dataset[&quot;ApplicantIncome_SS&quot;].skew())
+plt.show()</pre></div><figure class="shot"><img src="assets/15-feature-scaling-c25-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 27</span></div><pre class="py">print(&quot;skew     — raw:&quot;, dataset[&quot;ApplicantIncome&quot;].skew(), &quot; scaled:&quot;, dataset[&quot;ApplicantIncome_SS&quot;].skew())
 print(&quot;kurtosis — raw:&quot;, dataset[&quot;ApplicantIncome&quot;].kurt(), &quot; scaled:&quot;, dataset[&quot;ApplicantIncome_SS&quot;].kurt())</pre></div><div class="out"><div class="h">Output</div><pre>skew     — raw: 1.5834164129556014  scaled: 1.5834164129556014
 kurtosis — raw: 4.444551633369553  scaled: 4.444551633369551</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py">scaled_2d = StandardScaler().fit_transform(dataset[[&quot;ApplicantIncome&quot;, &quot;CoapplicantIncome&quot;]])
 
@@ -112,7 +113,7 @@ axes[1].set_xlabel(&quot;ApplicantIncome_SS&quot;); axes[1].set_ylabel(&quot;Coa
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 33</span></div><pre class="py">mm = MinMaxScaler()
+plt.show()</pre></div><figure class="shot"><img src="assets/15-feature-scaling-c30-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 33</span></div><pre class="py">mm = MinMaxScaler()
 dataset[&quot;CoapplicantIncome_MM&quot;] = mm.fit_transform(dataset[[&quot;CoapplicantIncome&quot;]])
 dataset[[&quot;CoapplicantIncome&quot;, &quot;CoapplicantIncome_MM&quot;]].head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   CoapplicantIncome  CoapplicantIncome_MM
 0               1020              0.099145
@@ -201,7 +202,7 @@ min          0.000000
 max      10288.000000
 Name: CoapplicantIncome, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 6</span></div><pre class="py">sns.boxplot(x=dataset[&quot;CoapplicantIncome&quot;], color=&quot;#d03b3b&quot;)
 plt.title(&quot;CoapplicantIncome — raw&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 9</span></div><pre class="py">mm = MinMaxScaler()
+plt.show()</pre></div><figure class="shot"><img src="assets/16-feature-scaling-normaliza-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 9</span></div><pre class="py">mm = MinMaxScaler()
 mm.fit(dataset[[&quot;CoapplicantIncome&quot;]])
 dataset[&quot;CoapplicantIncome_MM&quot;] = mm.transform(dataset[[&quot;CoapplicantIncome&quot;]])
 dataset[[&quot;CoapplicantIncome&quot;, &quot;CoapplicantIncome_MM&quot;]].head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   CoapplicantIncome  CoapplicantIncome_MM
@@ -223,7 +224,7 @@ axes[1].set_title(&quot;After — Min-Max (0–1 range)&quot;)
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 16</span></div><pre class="py">def iqr_outlier_count(s):
+plt.show()</pre></div><figure class="shot"><img src="assets/16-feature-scaling-normaliza-c15-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 16</span></div><pre class="py">def iqr_outlier_count(s):
     q1, q3 = s.quantile(0.25), s.quantile(0.75)
     iqr = q3 - q1
     lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
@@ -239,7 +240,7 @@ axes[1].set_title(&quot;After — Min-Max (0–1 range)&quot;)
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 20</span></div><pre class="py">print(&quot;skew — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].skew(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].skew())
+plt.show()</pre></div><figure class="shot"><img src="assets/16-feature-scaling-normaliza-c19-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 20</span></div><pre class="py">print(&quot;skew — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].skew(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].skew())
 print(&quot;kurt — raw:&quot;, dataset[&quot;CoapplicantIncome&quot;].kurt(), &quot; min-max:&quot;, dataset[&quot;CoapplicantIncome_MM&quot;].kurt())</pre></div><div class="out"><div class="h">Output</div><pre>skew — raw: 1.5399420730801827  min-max: 1.5399420730801823
 kurt — raw: 3.2518566224060375  min-max: 3.2518566224060357</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 23</span></div><pre class="py">dataset.fillna({&quot;ApplicantIncome&quot;: dataset[&quot;ApplicantIncome&quot;].mean()}, inplace=True)
 
@@ -262,7 +263,7 @@ axes[1].set_xlabel(&quot;ApplicantIncome_MM&quot;); axes[1].set_ylabel(&quot;Coa
 for ax in axes:
     ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 26</span></div><pre class="py">below_tenth = (dataset[&quot;CoapplicantIncome_MM&quot;] &lt; 0.1).sum()
+plt.show()</pre></div><figure class="shot"><img src="assets/16-feature-scaling-normaliza-c23-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 26</span></div><pre class="py">below_tenth = (dataset[&quot;CoapplicantIncome_MM&quot;] &lt; 0.1).sum()
 print(f&quot;{below_tenth} of 618 ({below_tenth/618:.1%}) land below 0.1 on the 0-1 scale&quot;)
 print(&quot;driven by a single value —&quot;, dataset[&quot;CoapplicantIncome&quot;].max(), &quot;— which alone defines the top of the range&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>297 of 618 (48.1%) land below 0.1 on the 0-1 scale
 driven by a single value — 10288 — which alone defines the top of the range</pre></div>

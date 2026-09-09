@@ -4,7 +4,8 @@
 <title>Ensemble Methods — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/20_Ensemble_methods.ipynb">20_Ensemble_methods.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import pandas as pd
 from sklearn.datasets import load_iris
@@ -148,7 +149,7 @@ import matplotlib.pyplot as plt
 plt.scatter(x,y,s=2)
 plt.xlabel(&#x27;x&#x27;)
 plt.ylabel(&#x27;y&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 40</span></div><pre class="py">from sklearn.ensemble import RandomForestRegressor
+plt.show()</pre></div><figure class="shot"><img src="assets/20-ensemble-methods-c39-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 40</span></div><pre class="py">from sklearn.ensemble import RandomForestRegressor
 reg = RandomForestRegressor(n_estimators=100)
 reg.fit(x, y)</pre></div><div class="out"><div class="h">Output</div><pre>RandomForestRegressor()</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 41</span></div><pre class="py">reg.score(x, y)</pre></div><div class="out"><div class="h">Output</div><pre>0.9911716974219119</pre></div>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

@@ -219,6 +219,12 @@ It regenerates every `Content/index.html` and `Content/code.html`, rebuilds
 source file or scan it references is missing. Run it after **any** change to a
 `Concept/`, `Data/` or `Handwritten_Notes/` folder. It is idempotent.
 
+If the topic is an ML pipeline step, also add it to a stage in
+[`17_Learning_As_Of_Now/Claude/journey-data.js`](./17_Learning_As_Of_Now/Claude/journey-data.js)
+so it appears on the Journey tree. `build_site.py` warns about any `04_ML/` topic
+that is missing from it. Foundation subjects (Python, statistics, maths) are
+prerequisites rather than pipeline stages and are deliberately left off.
+
 Never hand-edit `tree-data.js` or a generated `Content/index.html` — the next
 build overwrites them. To change a lesson's wording, change the notebook, the
 note, or `stories.json`. A page whose first lines contain `hand-authored` is
@@ -252,9 +258,14 @@ these or copy them to a temporary directory:
 | `lesson.css`, `lesson.js` | shared styling, highlighting, notes lightbox |
 | `CODEX_HANDWRITTEN_NOTES_PROMPT.md` | the spec for generating note pages |
 
-The website itself is `17_Learning_As_Of_Now/Claude/` — `index.html` (home, map
-and library) and `workspace.html` (the three-pane Content / Code / Handwritten
-Notes reader).
+The website itself is `17_Learning_As_Of_Now/Claude/`:
+
+| Page | What it is |
+|---|---|
+| `index.html` | home, the mind map, and the lesson library |
+| `workspace.html` | three-pane reader — Content, Code, Handwritten Notes |
+| `journey.html` | the ML pipeline as a vertical tree, ticked as topics are learned |
+| `journey-data.js` | the hand-maintained stage → topic mapping behind it |
 
 ## Topic documentation
 

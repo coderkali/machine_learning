@@ -1,0 +1,131 @@
+/* ══════════════════════════════════════════════════
+   The ML journey — a vertical tree with live ticks
+   ══════════════════════════════════════════════════ */
+.jrn{max-width:1080px;margin:0 auto;padding:30px 24px 120px}
+
+/* ── hero ── */
+.jhero{display:flex;gap:40px;align-items:center;justify-content:space-between;
+  padding:20px 0 44px;flex-wrap:wrap}
+.jhero-txt{flex:1;min-width:300px}
+.jhero h1{margin:8px 0 14px;font-size:46px;line-height:1.05;letter-spacing:-.035em;
+  background:linear-gradient(96deg,#e8ecf7,#7dd3fc 48%,#a78bfa);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.jhero .lede{max-width:52ch;font-size:16.5px;color:var(--ink2);margin:0 0 18px;line-height:1.6}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.tk{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
+  font-size:10px;font-weight:700;flex:none}
+.tk.done{background:rgba(52,211,153,.18);color:#34d399;border:1px solid #34d399}
+.tk.learning{background:rgba(251,191,36,.18);color:#fbbf24;border:1px solid #fbbf24}
+.tk.todo{background:#131b2c;color:#5b6784;border:1px solid #2c3852}
+
+/* progress ring */
+.jhero-ring{position:relative;width:170px;height:170px;flex:none}
+.jhero-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.jhero-ring circle{fill:none;stroke-width:9;stroke-linecap:round}
+.ring-bg{stroke:#161f33}
+.ring-fg{stroke:url(#g);stroke:#34d399;transition:stroke-dasharray 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring-mid b{display:block;font-size:31px;letter-spacing:-.03em}
+.ring-mid small{color:var(--dim);font-size:10.5px}
+
+/* sticky phase jump in the header */
+.jnav{display:flex;gap:6px;margin-left:auto}
+.jnav a{font-size:11.5px;color:var(--muted);text-decoration:none;padding:5px 11px;
+  border:1px solid var(--line);border-radius:20px;white-space:nowrap}
+.jnav a:hover{color:#fff;border-color:var(--cyan)}
+@media (max-width:1080px){.jnav{display:none}}
+
+/* ══ the tree ══ */
+.tree{position:relative}
+
+/* phase banner */
+.phase{margin:0 0 6px;padding:26px 0 10px;scroll-margin-top:78px}
+.phase-bar{display:flex;align-items:center;gap:14px;padding:15px 20px;border-radius:15px;
+  border:1px solid var(--line);position:relative;overflow:hidden}
+.phase-bar::before{content:"";position:absolute;inset:0;opacity:.14}
+.p1 .phase-bar::before{background:linear-gradient(100deg,#38bdf8,transparent 65%)}
+.p2 .phase-bar::before{background:linear-gradient(100deg,#a78bfa,transparent 65%)}
+.p3 .phase-bar::before{background:linear-gradient(100deg,#34d399,transparent 65%)}
+.phase-bar > *{position:relative}
+.pnum{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  font-size:16px;font-weight:800;flex:none;background:#0d1424;border:1px solid var(--line)}
+.p1 .pnum{color:#7dd3fc;border-color:#2a4d68}
+.p2 .pnum{color:#c4b5fd;border-color:#453a6b}
+.p3 .pnum{color:#6ee7b7;border-color:#255c48}
+.phase-bar h2{margin:0;font-size:19px;letter-spacing:-.02em}
+.phase-bar .sdlc{font-size:11.5px;color:var(--muted);margin-top:2px;display:block}
+.phase-bar .pstat{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+.phase-bar .pstat b{color:var(--ink)}
+
+/* ── the spine ── */
+.stages{position:relative;padding-left:34px}
+.stages::before{content:"";position:absolute;left:15px;top:6px;bottom:26px;width:2px;
+  background:linear-gradient(180deg,var(--line),var(--line));border-radius:2px}
+.p1 .stages::before{background:linear-gradient(180deg,#38bdf8,#2a4d68)}
+.p2 .stages::before{background:linear-gradient(180deg,#a78bfa,#453a6b)}
+.p3 .stages::before{background:linear-gradient(180deg,#34d399,#255c48)}
+
+/* a stage sits on the spine */
+.stage{position:relative;padding:16px 0 6px}
+.stage::before{                       /* the node */
+  content:"";position:absolute;left:-26px;top:22px;width:16px;height:16px;border-radius:50%;
+  background:#0b1120;border:3px solid var(--line);z-index:2}
+.stage.ok::before{border-color:#34d399;background:#0f2a20;
+  box-shadow:0 0 0 4px rgba(52,211,153,.14)}
+.stage.part::before{border-color:#fbbf24;background:#2a2211;
+  box-shadow:0 0 0 4px rgba(251,191,36,.13)}
+.stage::after{                        /* the branch out to the card */
+  content:"";position:absolute;left:-10px;top:29px;width:16px;height:2px;background:var(--line)}
+.stage.ok::after{background:#34d399}
+.stage.part::after{background:#fbbf24}
+
+.st-head{display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none;
+  padding:6px 12px;border-radius:11px;transition:background .15s}
+.st-head:hover{background:#121a2c}
+.st-ic{font-size:17px;flex:none}
+.st-head h3{margin:0;font-size:15.5px;letter-spacing:-.01em}
+.st-count{font-size:11.5px;color:var(--dim);margin-left:auto;white-space:nowrap}
+.st-count b{color:#34d399}
+.st-tw{color:var(--dim);font-size:10px;transition:transform .2s;flex:none}
+.stage.open .st-tw{transform:rotate(90deg)}
+
+/* the sub-branch: topics */
+.st-body{display:none;padding:4px 0 10px 14px;margin-left:12px;
+  border-left:1px dashed #2b3752}
+.stage.open .st-body{display:block}
+.st-what{color:var(--ink2);font-size:13.6px;margin:6px 0 10px;max-width:78ch}
+.st-ask{border-left:3px solid var(--cyan);background:rgba(56,189,248,.07);
+  padding:9px 14px;border-radius:0 9px 9px 0;font-size:13px;color:#bae6fd;margin:0 0 14px;
+  max-width:78ch}
+.st-ask b{display:block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:#7dd3fc;margin-bottom:3px}
+
+.leaf{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:5px;
+  min-height:0;line-height:1.4;
+  border:1px solid var(--line);border-radius:10px;background:#111828;
+  font-size:13px;color:var(--ink2);text-decoration:none;position:relative;
+  transition:border-color .15s,transform .15s,background .15s}
+a.leaf:hover{border-color:var(--cyan);color:#fff;transform:translateX(3px);background:#16203a}
+.leaf::before{                        /* twig off the dashed branch */
+  content:"";position:absolute;left:-15px;top:50%;width:14px;height:1px;
+  background:#2b3752}
+.leaf .tk{flex:none}
+.leaf .leaf-sub{margin-left:auto;font-size:10.5px;color:var(--dim);white-space:nowrap;
+  background:none;border:0;padding:0;text-transform:none;letter-spacing:0}
+.leaf.todo{border-style:dashed;color:var(--dim);background:transparent}
+
+/* "you are here" */
+.here{display:inline-flex;align-items:center;gap:7px;margin-left:10px;font-size:10.5px;
+  color:#0b1120;background:#fbbf24;padding:2px 9px;border-radius:20px;font-weight:700;
+  letter-spacing:.04em}
+
+.jfoot{margin-top:50px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--dim);font-size:12.5px;text-align:center}
+
+@media (max-width:760px){
+  .jhero h1{font-size:33px}
+  .jhero-ring{width:130px;height:130px}
+  .stages{padding-left:26px}
+  .leaf .leaf-sub{display:none}
+}

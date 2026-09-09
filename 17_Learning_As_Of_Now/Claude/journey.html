@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The ML Journey · Learning Universe</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="journey.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="index.html">
+    <span class="sigil"><i></i>ML</span>
+    <span class="brand-txt"><b>Learning Universe</b><small>the ML journey</small></span>
+  </a>
+  <nav class="nav-links">
+    <a class="nav-btn" href="index.html">Home</a>
+    <a class="nav-btn" href="index.html#map">Mind map</a>
+    <a class="nav-btn" href="workspace.html">Workspace</a>
+    <button class="nav-btn active">Journey</button>
+  </nav>
+  <div class="jnav" id="jnav"></div>
+</header>
+
+<main class="jrn">
+
+  <section class="jhero">
+    <div class="jhero-txt">
+      <p class="eyebrow">What comes when</p>
+      <h1>The machine&nbsp;learning<br>journey</h1>
+      <p class="lede">One route, top to bottom. Every stage branches into the topics
+        that belong to it, ticked off as you learn them.</p>
+      <div class="legend">
+        <span><i class="tk done">✓</i> completed</span>
+        <span><i class="tk learning">◐</i> studied, checkpoint open</span>
+        <span><i class="tk todo">○</i> not started</span>
+      </div>
+    </div>
+    <div class="jhero-ring">
+      <svg viewBox="0 0 120 120">
+        <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+        <circle class="ring-fg" cx="60" cy="60" r="52" id="ring"></circle>
+      </svg>
+      <div class="ring-mid"><b id="pct">0%</b><small>of the journey</small></div>
+    </div>
+  </section>
+
+  <div class="tree" id="tree"></div>
+
+  <p class="jfoot">The tree is generated from the repository. A topic appears ticked
+     the moment its lesson page exists — nothing here is decorative.</p>
+</main>
+
+<script src="tree-data.js"></script>
+<script src="journey-data.js"></script>
+<script src="journey.js"></script>
+</body>
+</html>

@@ -4,7 +4,8 @@
 <title>T Test — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/09_Hypothesis_Testing_T-Test.ipynb">09_Hypothesis_Testing_T-Test.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import scipy.stats as st
 import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 5</span></div><pre class="py">import matplotlib.pyplot as plt
@@ -36,7 +37,7 @@ ax.text(t_crit - 0.3, 0.02, &quot;α = 0.05&quot;, color=&quot;navy&quot;)
 ax.set_yticks([])
 ax.set_xlabel(&quot;t&quot;)
 ax.set_title(&quot;One-Tailed T-Test (left-tailed), df = 24&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148
+plt.show()</pre></div><figure class="shot"><img src="assets/09-hypothesis-testing-t-test-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">x_bar = 148
 p_u = 150
 s_std = 5
 n = 25
@@ -93,7 +94,7 @@ ax.text(t_crit + 0.3, 0.02, &quot;\u03b1/2 = 0.025&quot;, color=&quot;crimson&qu
 ax.set_yticks([])
 ax.set_xlabel(&quot;t&quot;)
 ax.set_title(&quot;Two-Tailed T-Test, df = 38&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 5</span></div><pre class="py">x_bar_A = 80
+plt.show()</pre></div><figure class="shot"><img src="assets/10-hypothesis-testing-t-test-c03-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 5</span></div><pre class="py">x_bar_A = 80
 s_A = 5
 n_A = 20
 
@@ -154,7 +155,7 @@ ax.legend()
 ax.set_yticks([])
 ax.set_xlabel(&quot;t&quot;)
 ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 95% CI)&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
+plt.show()</pre></div><figure class="shot"><img src="assets/12-hypothesis-testing-t-test-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
 mu = 100
 S = 20
 n = 30
@@ -205,7 +206,7 @@ ax.annotate(f&quot;t_test = {t_test:.2f}\n(deep in rejection region)&quot;,
 ax.set_yticks([])
 ax.set_xlabel(&quot;t&quot;)
 ax.set_title(&quot;Where does t_test land? (df=29, 95% CI)&quot;)
-plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/13_Hypothesis_Testing_T-Test_80.ipynb">13_Hypothesis_Testing_T-Test_80.ipynb</a></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
+plt.show()</pre></div><figure class="shot"><img src="assets/12-hypothesis-testing-t-test-c12-2.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/13_Hypothesis_Testing_T-Test_80.ipynb">13_Hypothesis_Testing_T-Test_80.ipynb</a></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 4</span></div><pre class="py">import scipy.stats as st
 import numpy as np
 import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 6</span></div><pre class="py">df = 29
 alpha = 0.20
@@ -239,7 +240,7 @@ ax.legend()
 ax.set_yticks([])
 ax.set_xlabel(&quot;t&quot;)
 ax.set_title(f&quot;T-Test Decision Boundary (Two-Tailed, df={df}, 80% CI)&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
+plt.show()</pre></div><figure class="shot"><img src="assets/13-hypothesis-testing-t-test-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 8</span></div><pre class="py">x_bar = 140
 mu = 100
 S = 20
 n = 30
@@ -297,5 +298,5 @@ for label, a in alphas.items():
     decision = &quot;Reject H0&quot; if abs(t_test_val) &gt; t_c else &quot;Fail to reject H0&quot;
     print(f&quot;{label:&lt;10}{a:&lt;10}{t_c:&lt;14.4f}{t_test_val:&lt;10.4f}{decision}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>CI        alpha     t_critical    t_test    Decision
 95% CI    0.05      2.0452        10.9545   Reject H0
-80% CI    0.2       1.3114        10.9545   Reject H0</pre></div>
+80% CI    0.2       1.3114        10.9545   Reject H0</pre></div><figure class="shot"><img src="assets/13-hypothesis-testing-t-test-c12-2.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

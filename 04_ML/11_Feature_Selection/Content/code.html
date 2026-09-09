@@ -4,7 +4,8 @@
 <title>Feature Selection — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/20_Feature_Selection_techniques.ipynb">20_Feature_Selection_techniques.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
 import numpy as np
@@ -145,7 +146,7 @@ for spine in [&quot;top&quot;, &quot;right&quot;]:
 ax.legend(frameon=False)
 
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 44</span></div><pre class="py">final_forward_model = DecisionTreeClassifier(max_depth=4, random_state=42)
+plt.show()</pre></div><figure class="shot"><img src="assets/20-feature-selection-techniq-c41-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 44</span></div><pre class="py">final_forward_model = DecisionTreeClassifier(max_depth=4, random_state=42)
 final_forward_model.fit(X_train[forward_features], y_train)
 forward_test_accuracy = accuracy_score(
     y_test, final_forward_model.predict(X_test[forward_features])
@@ -182,7 +183,7 @@ for bar, value in zip(bars, [baseline_accuracy, forward_test_accuracy]):
             f&quot;{value:.1%}&quot;, ha=&quot;center&quot;, fontsize=10, color=&quot;#0b0b0b&quot;)
 
 plt.tight_layout()
-plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/21_Feature_Selection_VarianceThreshold.ipynb">21_Feature_Selection_VarianceThreshold.ipynb</a></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+plt.show()</pre></div><figure class="shot"><img src="assets/20-feature-selection-techniq-c49-2.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/21_Feature_Selection_VarianceThreshold.ipynb">21_Feature_Selection_VarianceThreshold.ipynb</a></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
 from sklearn.feature_selection import VarianceThreshold</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 2</span></div><pre class="py">data = pd.DataFrame({&quot;A&quot;:[1,2,4,1,2,4],
                       &quot;B&quot;:[4,5,6,7,8,9],
                       &quot;C&quot;:[0,0,0,0,0,0],

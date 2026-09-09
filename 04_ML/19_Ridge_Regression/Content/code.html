@@ -4,7 +4,8 @@
 <title>Ridge Regression — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/07_Ridge.ipynb">07_Ridge.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
 x,y = make_regression(n_features=1, noise=5, n_samples=10000)
@@ -14,7 +15,7 @@ x, y = make_regression(n_features=1, noise=5, n_samples=10000, random_state=42)
 print(&quot;x:&quot;, x.shape, &quot; y:&quot;, y.shape)</pre></div><div class="out"><div class="h">Output</div><pre>x: (10000, 1)  y: (10000,)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">plt.scatter(x,y,s=5)
 plt.xlabel(&#x27;x&#x27;)
 plt.ylabel(&#x27;y&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
+plt.show()</pre></div><figure class="shot"><img src="assets/07-ridge-c04-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.linear_model import Ridge
 reg = Ridge()
 reg.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>Ridge()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 10</span></div><pre class="py">reg.predict(X_test)</pre></div><div class="out"><div class="h">Output</div><pre>array([26.7963039 ,  0.51790922, -2.20125853, ..., 17.8376875 ,
@@ -23,7 +24,7 @@ plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.linear_model import Ridge
+plt.show()</pre></div><figure class="shot"><img src="assets/07-ridge-c17-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 19</span></div><pre class="py">from sklearn.linear_model import Ridge
 reg = Ridge(alpha=100)
 reg.fit(X_train,y_train)
 reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9765976836816457</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 21</span></div><pre class="py">y_pred = reg.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 22</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
@@ -31,14 +32,14 @@ plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 23</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([31.59789266])</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 25</span></div><pre class="py">reg = Ridge(alpha=100000)
+plt.show()</pre></div><figure class="shot"><img src="assets/07-ridge-c22-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 23</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([31.59789266])</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 25</span></div><pre class="py">reg = Ridge(alpha=100000)
 reg.fit(X_train,y_train)
 reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.13955010448963978</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 26</span></div><pre class="py">y_pred = reg.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
 plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 28</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([2.39119767])</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 30</span></div><pre class="py">reg = Ridge(alpha=10000000)
+plt.show()</pre></div><figure class="shot"><img src="assets/07-ridge-c27-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 28</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([2.39119767])</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 30</span></div><pre class="py">reg = Ridge(alpha=10000000)
 reg.fit(X_train,y_train)
 reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.0014861178826479637</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 31</span></div><pre class="py">y_pred = reg.predict(x)
 plt.scatter(x,y,label=&#x27;Actual&#x27;,s=2)
@@ -46,7 +47,7 @@ plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=2)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 32</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([0.02582296])</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 34</span></div><pre class="py">import numpy as np
+plt.show()</pre></div><figure class="shot"><img src="assets/07-ridge-c31-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 32</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([0.02582296])</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 34</span></div><pre class="py">import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression, Ridge
 

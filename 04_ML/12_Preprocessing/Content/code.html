@@ -4,7 +4,8 @@
 <title>Preprocessing — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/03_preprocessing.ipynb">03_preprocessing.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import numpy as np
 import pandas as pd
@@ -40,7 +41,7 @@ min       -7.20     -6.00    -24.56
 25%       -1.36      2.98     -8.32
 50%        0.01      5.01     -5.02
 75%        1.37      7.05     -1.53
-max        7.22     15.88     14.02</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 8</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py"># proof that a KDE is just a smoothed histogram.
+max        7.22     15.88     14.02</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 8</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/03-preprocessing-c08-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 10</span></div><pre class="py"># proof that a KDE is just a smoothed histogram.
 # `density=True` makes the histogram use the same y-axis scale as the KDE line.
 fig, axes = plt.subplots(1, 3, figsize=(13, 4))
 colors = {&quot;A&quot;: &quot;#2f6fed&quot;, &quot;B&quot;: &quot;#b3781f&quot;, &quot;C&quot;: &quot;#7a3f66&quot;}
@@ -58,7 +59,7 @@ axes[0].set_ylabel(&quot;density&quot;)
 fig.suptitle(&quot;A KDE is the smooth line drawn over the histogram bars&quot;,
              fontsize=13, fontweight=&quot;bold&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py"># the &quot;before&quot; picture, annotated the way it would be drawn on a whiteboard
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c10-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 12</span></div><pre class="py"># the &quot;before&quot; picture, annotated the way it would be drawn on a whiteboard
 fig, ax = plt.subplots(figsize=(12, 6))
 raw.plot.kde(ax=ax, color=[&quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;], lw=2.4)
 
@@ -94,7 +95,7 @@ ax.set_xlabel(&quot;value&quot;)
 ax.set_ylabel(&quot;density&quot;)
 ax.grid(alpha=0.25)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 15</span></div><pre class="py">df.plot.bar() # What is this plot and why it takes time for 24 sec to render</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 17</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c12-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 15</span></div><pre class="py">df.plot.bar() # What is this plot and why it takes time for 24 sec to render</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><figure class="shot"><img src="assets/03-preprocessing-c15-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 17</span></div><pre class="py">fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
 
 # left: a bar chart used properly — few rows, so each bar is readable
 raw.head(15).plot.bar(ax=axes[0], color=[&quot;#2f6fed&quot;, &quot;#b3781f&quot;, &quot;#7a3f66&quot;], width=0.8)
@@ -110,11 +111,11 @@ axes[1].set_title(&quot;plot.hist() on all 10,000 rows — instant, and informat
 axes[1].grid(axis=&quot;y&quot;, alpha=0.25)
 
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 19</span></div><pre class="py">scaler = StandardScaler() 
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c17-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 19</span></div><pre class="py">scaler = StandardScaler() 
 scaled = scaler.fit_transform(df)
 
 df = pd.DataFrame(scaled,columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])
-df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 21</span></div><pre class="py"># what did .fit() actually store?
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/03-preprocessing-c19-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 21</span></div><pre class="py"># what did .fit() actually store?
 scaler_demo = StandardScaler().fit(raw)
 
 print(&quot;mean_   (the μ it subtracts) :&quot;, scaler_demo.mean_.round(4))
@@ -146,7 +147,7 @@ after StandardScaler
 mm_scaled = minimax.fit_transform(df)
 
 df = pd.DataFrame(mm_scaled,columns=[&quot;A&quot;,&#x27;B&#x27;,&quot;C&quot;])
-df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 26</span></div><pre class="py"># what did .fit() actually store?
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/03-preprocessing-c24-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 26</span></div><pre class="py"># what did .fit() actually store?
 mm_demo = MinMaxScaler().fit(raw)
 
 print(&quot;data_min_ :&quot;, mm_demo.data_min_.round(3))
@@ -180,7 +181,7 @@ after MinMaxScaler
 whiteboard example [2, 3, 5] -&gt; [0.     0.3333 1.    ]</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 28</span></div><pre class="py">rscaler = RobustScaler()
 robust = rscaler.fit_transform(df)
 df = pd.DataFrame(robust, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])
-df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py"># what did .fit() actually store?
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/03-preprocessing-c28-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 30</span></div><pre class="py"># what did .fit() actually store?
 rs_demo = RobustScaler().fit(raw)
 
 print(&quot;center_ (the median Q2 it subtracts) :&quot;, rs_demo.center_.round(4))
@@ -256,7 +257,7 @@ for ax, (name, d) in zip(axes.ravel(), views.items()):
 fig.suptitle(&quot;Same 10,000 rows, three scalers — the SHAPE never changes, only the ruler&quot;,
              fontsize=14, fontweight=&quot;bold&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 37</span></div><pre class="py"># the same four panels, as a table
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c35-9.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 37</span></div><pre class="py"># the same four panels, as a table
 rows = []
 for name, d in views.items():
     rows.append({
@@ -305,7 +306,7 @@ for ax, (name, v, formula, c) in zip(axes, rulers):
 fig.suptitle(&quot;Five values, four rulers — the dots never change their ORDER or their SPACING RATIO&quot;,
              fontsize=13, fontweight=&quot;bold&quot;)
 fig.subplots_adjust(left=0.20, top=0.90, hspace=0.55)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 43</span></div><pre class="py"># 10,000 good rows, then the same rows with 3 absurd values bolted on
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c40-10.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 43</span></div><pre class="py"># 10,000 good rows, then the same rows with 3 absurd values bolted on
 clean_data = raw[[&quot;A&quot;]].values                                   # real range is about -7 .. +7
 dirty_data = np.vstack([clean_data, [[150.], [160.], [170.]]])   # 3 nonsense readings
 
@@ -348,7 +349,7 @@ pd.DataFrame(summary).set_index(&quot;scaler&quot;)</pre></div><div class="out">
 scaler                                           
 StandardScaler        5.055       2.958      1.7x
 MinMaxScaler          0.702       0.057     12.3x
-RobustScaler          3.710       3.709      1.0x</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 46</span></div><pre class="py">binary = Binarizer(threshold=5)
+RobustScaler          3.710       3.709      1.0x</pre></div><figure class="shot"><img src="assets/03-preprocessing-c43-11.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 46</span></div><pre class="py">binary = Binarizer(threshold=5)
 
 a = np.array([[ 30, 10,  22],
               [ 20,  2,  10],
@@ -386,7 +387,7 @@ ax.set_ylabel(&quot;output&quot;)
 ax.set_title(&quot;Binarizer(threshold=5) — one step, nothing else&quot;, fontweight=&quot;bold&quot;, fontsize=12)
 ax.grid(alpha=0.25)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 50</span></div><pre class="py">X = [[5, 2, 3],
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c48-12.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 50</span></div><pre class="py">X = [[5, 2, 3],
      [2, 4, 10],
      [6, 8, 6]]
 
@@ -428,7 +429,7 @@ axes[1].set_xlim(-0.1, 1.6);  axes[1].set_ylim(-0.1, 1.25)
 fig.suptitle(&quot;Normalizer keeps each row&#x27;s DIRECTION and throws away its SIZE&quot;,
              fontsize=13, fontweight=&quot;bold&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 59</span></div><pre class="py">dff = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/encoding.csv&quot;)
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c56-13.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 59</span></div><pre class="py">dff = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/encoding.csv&quot;)
 dff</pre></div><div class="out"><div class="h">Output</div><pre>  TEAM  YEAR
 0    A  2000
 1    B  2002
@@ -564,7 +565,7 @@ ax.text(1.5, 4.15, &quot;NO invented order — the distance between any two team
         bbox=dict(boxstyle=&quot;round,pad=0.4&quot;, fc=&quot;#eaf7f1&quot;, ec=&quot;#2f9e6f&quot;))
 
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 71</span></div><pre class="py">abc = df1.join(enc_df1)
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c70-14.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 71</span></div><pre class="py">abc = df1.join(enc_df1)
 abc</pre></div><div class="out"><div class="h">Output</div><pre>   TEAM  YEAR    0    1    2    3
 0     0  2000  1.0  0.0  0.0  0.0
 1     1  2002  0.0  1.0  0.0  0.0
@@ -642,7 +643,7 @@ box(60, 4, 112, 6,
     &quot;Tree models — DecisionTree, RandomForest, XGBoost — need NO scaling at all. Encoding is still required.&quot;,
     fc=&quot;#f4f5f7&quot;, ec=GREY, fs=11, bold=True)
 
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 79</span></div><pre class="py">from sklearn.model_selection import train_test_split
+plt.show()</pre></div><figure class="shot"><img src="assets/03-preprocessing-c76-15.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 79</span></div><pre class="py">from sklearn.model_selection import train_test_split
 
 X_train, X_test = train_test_split(raw, test_size=0.2, random_state=42)
 
@@ -738,10 +739,10 @@ df</pre></div><div class="out"><div class="h">Output</div><pre>             A   
 9998  0.595445  5.982577 -11.128039
 9999  0.122246  9.105143  -6.612080
 
-[10000 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 6</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 9</span></div><pre class="py">scaler = StandardScaler()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 10</span></div><pre class="py">scaled = scaler.fit_transform(df)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 11</span></div><pre class="py">df = pd.DataFrame(scaled, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 13</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 14</span></div><pre class="py">minmax = MinMaxScaler()
+[10000 rows x 3 columns]</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 6</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/24-preprocessing-concepts-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 9</span></div><pre class="py">scaler = StandardScaler()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 10</span></div><pre class="py">scaled = scaler.fit_transform(df)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 11</span></div><pre class="py">df = pd.DataFrame(scaled, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 13</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/24-preprocessing-concepts-c13-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 14</span></div><pre class="py">minmax = MinMaxScaler()
 mm_scaled = minmax.fit_transform(df)</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 15</span></div><pre class="py">df = pd.DataFrame(mm_scaled,columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])
-df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 16</span></div><pre class="py">rscaler = RobustScaler()</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 17</span></div><pre class="py">robust = rscaler.fit_transform(df)
-df = pd.DataFrame(robust, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 18</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 20</span></div><pre class="py"># Rebuild the RAW data (same seed -&gt; identical values), then add ONE outlier to column C.
+df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/24-preprocessing-concepts-c15-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 16</span></div><pre class="py">rscaler = RobustScaler()</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 17</span></div><pre class="py">robust = rscaler.fit_transform(df)
+df = pd.DataFrame(robust, columns=[&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;])</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 18</span></div><pre class="py">df.plot.kde()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: ylabel=&#x27;Density&#x27;&gt;</pre></div><figure class="shot"><img src="assets/24-preprocessing-concepts-c18-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 20</span></div><pre class="py"># Rebuild the RAW data (same seed -&gt; identical values), then add ONE outlier to column C.
 np.random.seed(5)
 df_raw = pd.DataFrame({
     &#x27;A&#x27;: np.random.normal(0, 2, 10000),
@@ -760,7 +761,7 @@ pd.DataFrame(RobustScaler().fit_transform(df_raw), columns=[&#x27;A&#x27;,&#x27;
 for ax in axes:
     ax.legend(fontsize=8)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 23</span></div><pre class="py">binary = Binarizer(threshold=5)
+plt.show()</pre></div><figure class="shot"><img src="assets/24-preprocessing-concepts-c20-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 23</span></div><pre class="py">binary = Binarizer(threshold=5)
 
 a = np.array([[ 30, 10,  22],
               [ 20,  2,  10],

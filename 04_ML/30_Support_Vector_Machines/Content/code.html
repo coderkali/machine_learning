@@ -4,7 +4,8 @@
 <title>Support Vector Machines — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/22_svc_2D.ipynb">22_svc_2D.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
 import numpy as np
@@ -44,7 +45,7 @@ plt.show()
 print(f&#x27;Best possible cut-off: {best_correct} of {len(y_all)} correct &#x27;
       f&#x27;({best_correct / len(y_all):.0%})&#x27;)
 print(&#x27;The failure is structural, not a tuning problem.&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>Best possible cut-off: 11 of 15 correct (73%)
-The failure is structural, not a tuning problem.</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 6</span></div><pre class="py">a,b=D1[:,0],D1[:,1]
+The failure is structural, not a tuning problem.</pre></div><figure class="shot"><img src="assets/22-svc-2d-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 6</span></div><pre class="py">a,b=D1[:,0],D1[:,1]
 c,d=D2[:,0],D2[:,1]</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 7</span></div><pre class="py">#dff1 =pd.DataFrame(np.hstack([a,b]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
 dff1 =pd.DataFrame(np.vstack([a,b]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
 dff1[&#x27;Y&#x27;]=0
@@ -146,7 +147,7 @@ print(f&#x27;margin width   : {2 / np.linalg.norm(w):.2f}&#x27;)
 print(f&#x27;support vectors: {len(fruit_svc.support_vectors_)} out of {len(fruit_X)} points&#x27;)
 print(&#x27;Every other point could be moved and the boundary would not shift.&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>margin width   : 3.69
 support vectors: 2 out of 28 points
-Every other point could be moved and the boundary would not shift.</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py"># Ramesh in town: two measurements per household instead of one.
+Every other point could be moved and the boundary would not shift.</pre></div><figure class="shot"><img src="assets/22-svc-2d-c14-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py"># Ramesh in town: two measurements per household instead of one.
 # The households that stop form a blob around the stall, the rest form a ring.
 # Same trick as before, one size up: add X1**2 + X2**2.
 rng = np.random.default_rng(3)
@@ -211,7 +212,7 @@ print(f&#x27;flat plane in 3D         : {lifted.score(np.c_[np.vstack([outer, in
 print(f&#x27;the plane sits at X1**2 + X2**2 = {plane_at:.2f}, in the gap between &#x27;
       f&#x27;{inner_z.max():.2f} and {outer_z.min():.2f}&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>best straight line in 2D : 74% correct
 flat plane in 3D         : 100% correct
-the plane sits at X1**2 + X2**2 = 5.78, in the gap between 2.43 and 9.14</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 17</span></div><pre class="py"># What squaring does to Ramesh&#x27;s highway: 1D -&gt; 2D.
+the plane sits at X1**2 + X2**2 = 5.78, in the gap between 2.43 and 9.14</pre></div><figure class="shot"><img src="assets/22-svc-2d-c16-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 17</span></div><pre class="py"># What squaring does to Ramesh&#x27;s highway: 1D -&gt; 2D.
 # Position alone is one axis. Adding position-squared gives a second axis,
 # and every household rises onto a parabola - near ones stay low, far ones go high.
 fig, ax = plt.subplots(figsize=(9, 6))
@@ -242,7 +243,7 @@ ax.set_ylabel(&#x27;X1_Square   (distance from the stall)&#x27;)
 ax.set_ylim(-3, 55)
 ax.set_title(&#x27;1D to 2D: squaring lifts the far households clear of the near ones&#x27;)
 ax.legend(loc=&#x27;upper center&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 18</span></div><pre class="py"># How this plot is drawn, and why.
+plt.show()</pre></div><figure class="shot"><img src="assets/22-svc-2d-c17-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 18</span></div><pre class="py"># How this plot is drawn, and why.
 #
 # It is tempting to put the class label on the Y axis. Do not. The two classes
 # then sit on separate rows automatically, so BOTH panels look separated even
@@ -272,7 +273,7 @@ axes[1].axvline(12.5, color=&#x27;black&#x27;, linestyle=&#x27;--&#x27;, label=&
 axes[1].legend(loc=&#x27;upper right&#x27;, fontsize=9)
 
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 20</span></div><pre class="py">from sklearn.svm import SVC
+plt.show()</pre></div><figure class="shot"><img src="assets/22-svc-2d-c18-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 20</span></div><pre class="py">from sklearn.svm import SVC
 
 X = final[[&#x27;X1&#x27;, &#x27;X1_Square&#x27;]]
 y = final[&#x27;Y&#x27;]
@@ -346,13 +347,13 @@ support vectors  : 4
  [ 4. 16.]
  [-3.  9.]
  [ 3.  9.]]
-training accuracy: 100%</pre></div><div class="src-head">📓 <a href="../Concept/23_SVC_3D.ipynb">23_SVC_3D.ipynb</a></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
+training accuracy: 100%</pre></div><figure class="shot"><img src="assets/22-svc-2d-c20-6.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/23_SVC_3D.ipynb">23_SVC_3D.ipynb</a></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 X1 = np.array([[1,5], [2,3],[3,7],[4,1],[5,7],[6,2],[7,6],[8,4]])</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 3</span></div><pre class="py">plt.scatter(X1[:,0],X1[:,1])
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 5</span></div><pre class="py">X2 = np.array([[3,3], [4,4],[5,5],[3,4],[4,5]])</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 7</span></div><pre class="py">plt.scatter(X2[:,0],X2[:,1])
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(X1[:,0],X1[:,1])
-plt.scatter(X2[:,0],X2[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x115c9cb90&gt;</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 11</span></div><pre class="py">x,y=X1[:,0],X1[:,1]</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 13</span></div><pre class="py">u,v=X2[:,0],X2[:,1]</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 15</span></div><pre class="py">df1 =pd.DataFrame(np.vstack([x,y]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
+plt.show()</pre></div><figure class="shot"><img src="assets/23-svc-3d-c03-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 5</span></div><pre class="py">X2 = np.array([[3,3], [4,4],[5,5],[3,4],[4,5]])</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 7</span></div><pre class="py">plt.scatter(X2[:,0],X2[:,1])
+plt.show()</pre></div><figure class="shot"><img src="assets/23-svc-3d-c07-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 9</span></div><pre class="py">plt.scatter(X1[:,0],X1[:,1])
+plt.scatter(X2[:,0],X2[:,1])</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x115c9cb90&gt;</pre></div><figure class="shot"><img src="assets/23-svc-3d-c09-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 11</span></div><pre class="py">x,y=X1[:,0],X1[:,1]</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 13</span></div><pre class="py">u,v=X2[:,0],X2[:,1]</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 15</span></div><pre class="py">df1 =pd.DataFrame(np.vstack([x,y]).T,columns=[&#x27;X1&#x27;,&#x27;X2&#x27;])
 df1[&#x27;Y&#x27;]=0
 df1</pre></div><div class="out"><div class="h">Output</div><pre>   X1  X2  Y
 0   1   5  0

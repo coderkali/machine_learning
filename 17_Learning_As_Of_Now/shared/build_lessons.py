@@ -56,6 +56,17 @@ def render_md(src):
     return MD(src)
 
 # ── notebook → sections ─────────────────────────────────────────────────────
+def asset_prefix(nb_name):
+    """The filename stem every plot pulled out of this notebook is saved under."""
+    return re.sub(r"[^a-z0-9]+", "-", os.path.splitext(nb_name)[0].lower()).strip("-")[:28]
+
+def save_plot(assets_dir, fn, b64):
+    """Write one notebook plot into Content/assets/, and hand back its filename."""
+    os.makedirs(assets_dir, exist_ok=True)
+    with open(os.path.join(assets_dir, fn), "wb") as fh:
+        fh.write(base64.b64decode(b64))
+    return fn
+
 def render_notebook(path, assets_dir, prefix):
     nb = json.load(open(path, encoding="utf-8"))
     out, n_img = [], 0
@@ -75,11 +86,8 @@ def render_notebook(path, assets_dir, prefix):
             d = o.get("data", {})
             if "image/png" in d:
                 n_img += 1
-                fn = f"{prefix}-c{i:02d}-{n_img}.png"
-                os.makedirs(assets_dir, exist_ok=True)
-                with open(os.path.join(assets_dir, fn), "wb") as fh:
-                    fh.write(base64.b64decode(d["image/png"]))
-                imgs.append(fn)
+                imgs.append(save_plot(assets_dir, f"{prefix}-c{i:02d}-{n_img}.png",
+                                      d["image/png"]))
             elif "text/plain" in d and "image/png" not in d:
                 texts.append("".join(d["text/plain"]))
             if o.get("output_type") == "error":
@@ -157,8 +165,11 @@ def build_code_page(subject, topic, tdir, odir, title):
     pys = sorted(f for f in os.listdir(cdir) if f.endswith(".py"))
     if not nbs and not pys: return False
     out, n = [], 0
+    adir = os.path.join(odir, "assets")
     for f in nbs:
         nb = json.load(open(os.path.join(cdir, f), encoding="utf-8"))
+        # same prefix and counter as the lesson page, so both point at one set of files
+        prefix, n_img = asset_prefix(f), 0
         out.append(f'<div class="src-head">\U0001F4D3 <a href="../Concept/{H.escape(f)}">'
                    f'{H.escape(f)}</a></div>')
         for i, c in enumerate(nb.get("cells", [])):
@@ -166,11 +177,15 @@ def build_code_page(subject, topic, tdir, odir, title):
             src = "".join(c.get("source", "")).rstrip()
             if not src.strip(): continue
             n += 1
-            texts = []
+            texts, imgs = [], []
             for o in c.get("outputs", []):
                 if o.get("output_type") == "stream": texts.append("".join(o.get("text", "")))
                 d = o.get("data", {})
-                if "text/plain" in d and "image/png" not in d: texts.append("".join(d["text/plain"]))
+                if "image/png" in d:
+                    n_img += 1
+                    imgs.append(save_plot(adir, f"{prefix}-c{i:02d}-{n_img}.png",
+                                          d["image/png"]))
+                elif "text/plain" in d: texts.append("".join(d["text/plain"]))
                 if o.get("output_type") == "error":
                     texts.append("\n".join(o.get("traceback", []))[:600])
             blob = "\n".join(t.rstrip() for t in texts if t.strip())[:1400]
@@ -180,6 +195,9 @@ def build_code_page(subject, topic, tdir, odir, title):
             if blob:
                 out.append('<div class="out"><div class="h">Output</div>'
                            f'<pre>{H.escape(re.sub(chr(27) + r"[[0-9;]*m", "", blob))}</pre></div>')
+            for fn in imgs:
+                out.append(f'<figure class="shot"><img src="assets/{fn}" '
+                           'alt="plot produced by this cell"></figure>')
     for f in pys:
         src = open(os.path.join(cdir, f), encoding="utf-8", errors="ignore").read()
         out.append(f'<div class="src-head">\U0001F40D <a href="../Concept/{H.escape(f)}">'
@@ -192,7 +210,8 @@ def build_code_page(subject, topic, tdir, odir, title):
 <title>{H.escape(title)} — code</title>
 <link rel="stylesheet" href="../../../{SHARED}/lesson.css">
 <style>body{{background:#0a0f1a}} .wrap{{padding:16px 18px 60px;max-width:none}}
-.doc{{max-width:none}} .code{{margin:12px 0}}</style>
+.doc{{max-width:none}} .code{{margin:12px 0}}
+.doc figure.shot{{max-width:820px;margin:12px 0}}</style>
 </head><body><div class="wrap"><main class="doc">
 {''.join(out)}
 </main></div><script src="../../../{SHARED}/lesson.js"></script></body></html>
@@ -248,7 +267,7 @@ def build(subject, topic):
         body.append(f'<div class="src-head">📝 <a href="../Concept/{f}">{f}</a></div>')
         body.append(render_md(src))
     for f in nbs:
-        pre = re.sub(r"[^a-z0-9]+", "-", os.path.splitext(f)[0].lower()).strip("-")[:28]
+        pre = asset_prefix(f)
         body.append(f'<div class="src-head">📓 <a href="../Concept/{f}">{f}</a></div>')
         body.append(render_notebook(os.path.join(cdir, f), os.path.join(odir, "assets"), pre))
 

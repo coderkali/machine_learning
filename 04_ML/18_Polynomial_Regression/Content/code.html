@@ -4,7 +4,8 @@
 <title>Polynomial Regression — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/10_Polynomial Regression.ipynb">10_Polynomial Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import matplotlib.pyplot as plt
 import numpy as np
@@ -12,7 +13,7 @@ import numpy as np
 X = np.array([2, 3, 4, 5, 6, 7, 8, 9])
 Y = np.array([4, 6, 8, 6, 5, 4, 7, 8])
 
-plt.scatter(X, Y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x7fd5ba5b8ee0&gt;</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+plt.scatter(X, Y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x7fd5ba5b8ee0&gt;</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c01-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.3, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">X_train=X_train.reshape(-1, 1)
 X_train</pre></div><div class="out"><div class="h">Output</div><pre>array([[9],
        [5],
@@ -28,14 +29,14 @@ plt.plot(X_test,y_pred,label=&#x27;Predicted&#x27;)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 22</span></div><pre class="py">x=X.reshape(-1, 1)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 23</span></div><pre class="py">model = LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">model.fit(x,Y)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 25</span></div><pre class="py">y_pred = model.predict(x)
+plt.show()</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c20-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 22</span></div><pre class="py">x=X.reshape(-1, 1)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 23</span></div><pre class="py">model = LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 24</span></div><pre class="py">model.fit(x,Y)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 25</span></div><pre class="py">y_pred = model.predict(x)
 y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([5.16666667, 5.4047619 , 5.64285714, 5.88095238, 6.11904762,
        6.35714286, 6.5952381 , 6.83333333])</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 26</span></div><pre class="py">model.score(x,Y)</pre></div><div class="out"><div class="h">Output</div><pre>0.1322751322751322</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,Y,label=&#x27;Actual&#x27;)
 plt.plot(x,y_pred,label=&#x27;Predicted&#x27;,c=&quot;red&quot;)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.preprocessing import PolynomialFeatures</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 30</span></div><pre class="py">poly = PolynomialFeatures(degree=2) 
+plt.show()</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c27-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.preprocessing import PolynomialFeatures</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 30</span></div><pre class="py">poly = PolynomialFeatures(degree=2) 
 poly_x = poly.fit_transform(X.reshape(-1, 1))
 model1 = LinearRegression()
 model1.fit(poly_x, Y)
@@ -49,7 +50,7 @@ poly_x</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 1., 
        [ 1.,  6., 36.],
        [ 1.,  7., 49.],
        [ 1.,  8., 64.],
-       [ 1.,  9., 81.]])</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 32</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>0.14417989417989396</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 35</span></div><pre class="py">poly = PolynomialFeatures(degree=3)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 36</span></div><pre class="py">poly_x = poly.fit_transform(X.reshape(-1, 1))
+       [ 1.,  9., 81.]])</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c30-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 32</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>0.14417989417989396</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 35</span></div><pre class="py">poly = PolynomialFeatures(degree=3)</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 36</span></div><pre class="py">poly_x = poly.fit_transform(X.reshape(-1, 1))
 poly_x</pre></div><div class="out"><div class="h">Output</div><pre>array([[  1.,   2.,   4.,   8.],
        [  1.,   3.,   9.,  27.],
        [  1.,   4.,  16.,  64.],
@@ -61,37 +62,37 @@ poly_x</pre></div><div class="out"><div class="h">Output</div><pre>array([[  1.,
 model1 = LinearRegression()
 model1.fit(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 38</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>0.7578162578162556</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 39</span></div><pre class="py">y_pred = model1.predict(poly_x)
 plt.scatter(X, Y)
-plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90e8111a90&gt;]</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">poly = PolynomialFeatures(degree=4)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90e8111a90&gt;]</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c39-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 41</span></div><pre class="py">poly = PolynomialFeatures(degree=4)
 poly_x = poly.fit_transform(X.reshape(-1, 1))
 model1 = LinearRegression()
 model1.fit(poly_x, Y)
 y_pred = model1.predict(poly_x)
 plt.scatter(X, Y)
-plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f912b09d7c0&gt;]</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 42</span></div><pre class="py">poly = PolynomialFeatures(degree=5)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f912b09d7c0&gt;]</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c41-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 42</span></div><pre class="py">poly = PolynomialFeatures(degree=5)
 poly_x = poly.fit_transform(X.reshape(-1, 1))
 model1 = LinearRegression()
 model1.fit(poly_x, Y)
 y_pred = model1.predict(poly_x)
 plt.scatter(X, Y)
-plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90f86152e0&gt;]</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 43</span></div><pre class="py">poly = PolynomialFeatures(degree=6)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f90f86152e0&gt;]</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c42-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 43</span></div><pre class="py">poly = PolynomialFeatures(degree=6)
 poly_x = poly.fit_transform(X.reshape(-1, 1))
 model1 = LinearRegression()
 model1.fit(poly_x, Y)
 y_pred = model1.predict(poly_x)
 plt.scatter(X, Y)
-plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a33c160&gt;]</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 44</span></div><pre class="py">poly = PolynomialFeatures(degree=7)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a33c160&gt;]</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c43-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 44</span></div><pre class="py">poly = PolynomialFeatures(degree=7)
 poly_x = poly.fit_transform(X.reshape(-1, 1))
 model1 = LinearRegression()
 model1.fit(poly_x, Y)
 y_pred = model1.predict(poly_x)
 plt.scatter(X, Y)
-plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a28d520&gt;]</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 45</span></div><pre class="py">poly = PolynomialFeatures(degree=9)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f910a28d520&gt;]</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c44-9.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 45</span></div><pre class="py">poly = PolynomialFeatures(degree=9)
 poly_x = poly.fit_transform(X.reshape(-1, 1))
 model1 = LinearRegression()
 model1.fit(poly_x, Y)
 y_pred = model1.predict(poly_x)
 plt.scatter(X, Y)
-plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f91182f5760&gt;]</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 46</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>1.0</pre></div><div class="src-head">📓 <a href="../Concept/28_Polynomial_Regression.ipynb">28_Polynomial_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                      # pandas: load the CSV and work with it as a table (DataFrame)
+plt.plot(X, y_pred, c=&#x27;red&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>[&lt;matplotlib.lines.Line2D at 0x7f91182f5760&gt;]</pre></div><figure class="shot"><img src="assets/10-polynomial-regression-c45-10.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 46</span></div><pre class="py">model1.score(poly_x, Y)</pre></div><div class="out"><div class="h">Output</div><pre>1.0</pre></div><div class="src-head">📓 <a href="../Concept/28_Polynomial_Regression.ipynb">28_Polynomial_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                      # pandas: load the CSV and work with it as a table (DataFrame)
 import numpy as np                                       # numpy: build the smooth grid of x-values used to draw curves
 import matplotlib.pyplot as plt                          # matplotlib: plotting
 from sklearn.linear_model import LinearRegression         # fits a straight line — used both alone and after polynomial transforms
@@ -119,7 +120,7 @@ plt.scatter(dataset[&quot;Level&quot;], dataset[&quot;Salary&quot;], color=&quot
 plt.xlabel(&quot;Level&quot;)
 plt.ylabel(&quot;Salary&quot;)
 plt.title(&quot;Salary by Level (raw data)&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 13</span></div><pre class="py">x = dataset[[&quot;Level&quot;]]   # double brackets -&gt; 2-D DataFrame (1 column), the shape scikit-learn expects
+plt.show()</pre></div><figure class="shot"><img src="assets/28-polynomial-regression-c11-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 13</span></div><pre class="py">x = dataset[[&quot;Level&quot;]]   # double brackets -&gt; 2-D DataFrame (1 column), the shape scikit-learn expects
 y = dataset[&quot;Salary&quot;]    # single bracket -&gt; 1-D Series, the target
 x.ndim, y.ndim           # confirm: 2 for x, 1 for y</pre></div><div class="out"><div class="h">Output</div><pre>(2, 1)</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 15</span></div><pre class="py">lin_reg = LinearRegression()   # a plain straight-line model, same class used in every regression notebook so far
 lin_reg.fit(x, y)              # fit it directly on Level -&gt; Salary, no transformation, no split — just a quick visual baseline</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 17</span></div><pre class="py">pf = PolynomialFeatures(degree=2)   # will build: [1, Level, Level^2] — 3 columns (bias column included by default)
@@ -151,7 +152,7 @@ axes[1].set_ylabel(&quot;Salary&quot;)
 axes[1].legend()
 
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 27</span></div><pre class="py">degrees = [1, 2, 3, 4]
+plt.show()</pre></div><figure class="shot"><img src="assets/28-polynomial-regression-c25-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 27</span></div><pre class="py">degrees = [1, 2, 3, 4]
 colors = [&quot;#2a78d6&quot;, &quot;#eb6834&quot;, &quot;#1baf7a&quot;, &quot;#eda100&quot;]   # one fixed color per degree, in order
 
 plt.figure(figsize=(8, 6))
@@ -171,7 +172,7 @@ plt.xlabel(&quot;Level&quot;)
 plt.ylabel(&quot;Salary&quot;)
 plt.title(&quot;Polynomial Fit by Degree (scored on held-out rows)&quot;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 29</span></div><pre class="py">new_level = pd.DataFrame({&quot;Level&quot;: [6.5]})                       # a level that isn&#x27;t in the original data
+plt.show()</pre></div><figure class="shot"><img src="assets/28-polynomial-regression-c27-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 29</span></div><pre class="py">new_level = pd.DataFrame({&quot;Level&quot;: [6.5]})                       # a level that isn&#x27;t in the original data
 
 linear_prediction = lin_reg.predict(new_level)[0]
 poly_prediction = poly_reg.predict(pf.transform(new_level))[0]
@@ -188,5 +189,5 @@ plt.xlabel(&quot;Level&quot;)
 plt.ylabel(&quot;Salary&quot;)
 plt.title(&quot;Predicting an In-Between Level (6.5)&quot;)
 plt.legend()
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/28-polynomial-regression-c31-4.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

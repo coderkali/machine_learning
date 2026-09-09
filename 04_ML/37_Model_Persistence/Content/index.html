@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Persistence — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Model Persistence</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#saving-a-trained-model-joblib-and-pickle">Saving a trained model — joblib and pickle</a><a href="#the-story">The story</a><a href="#what-is-actually-being-saved">What is actually being saved</a><a href="#setup">Setup</a><a href="#the-model-from-the-session">The model from the session</a><a href="#the-whole-model-printed">The whole model, printed</a><a href="#save-it-load-it-check-it">Save it, load it, check it</a><a href="#joblib-or-pickle">joblib or pickle?</a><a href="#trap-1-saving-the-model-but-not-the-preparation">Trap 1 — saving the model but not the preparation</a><a href="#trap-2-the-file-does-not-contain-scikit-learn">Trap 2 — the file does not contain scikit-learn</a><a href="#trap-3-never-load-a-pickle-you-did-not-create">Trap 3 — never load a pickle you did not create</a><a href="#putting-it-in-a-service">Putting it in a service</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#saving-a-trained-model-the-session-notebook">Saving a trained model — the session notebook</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Model Persistence</h1>
+  <p class="lede">Freezing a trained model into a file, so the exact model answers tomorrow&#x27;s request.</p>
+  <div class="tags"><span class="tag">2 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 3 handwritten pages</a></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ravi trained a classifier on Friday and shut the laptop.</strong> On Monday the kernel was dead and the model was gone — it had only ever been a variable in memory.</p><p>So he retrained at the top of every run. On a hundred rows nobody notices. Then the real model was a forest on half a million rows: four minutes to fit, and his API spent four minutes retraining on every restart.</p><p><span class='beat'>The quieter problem was worse.</span> Every retrain produced a slightly different model, because new rows had arrived. When a customer asked why they had been rejected last Tuesday, the model that made that decision no longer existed anywhere.</p><p>The fix is to freeze the fitted object into a file and load that exact file whenever a prediction is needed. Save the whole pipeline, not just the estimator, load it once at startup, and never load a pickle you did not create — reading one runs code.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>fit() fills an object with learned numbers; saving serialises those numbers, so the file is the model.</p></div>
+<div class="src-head">📓 <a href="../Concept/36_Model_Persistence_explained.ipynb">36_Model_Persistence_explained.ipynb</a></div>
+<h2 id="saving-a-trained-model-joblib-and-pickle">Saving a trained model — joblib and pickle</h2>
+<h2 id="the-story">The story</h2>
+<p>Ravi trained a classifier on Friday. It scored well, he was pleased, and he shut
+the laptop.</p>
+<p>On Monday the kernel was dead and the model was gone. <code>classifier</code> had only ever
+been a variable in memory. The notebook still held the <em>code</em> that built it, but
+not the thing itself.</p>
+<p><strong>So he retrained at the top of every run.</strong> For a hundred rows that costs
+milliseconds and nobody notices. Then the real model arrived: a forest on half a
+million rows, four minutes to fit. His API now spent four minutes retraining on
+every restart, and every deploy was four minutes of failing requests.</p>
+<p><strong>The worse problem was quieter.</strong> Each retrain produced a <em>slightly different</em>
+model — new rows had arrived, and the fit is not identical. When a customer asked
+why they had been rejected last Tuesday, Ravi could not answer, because the model
+that made that decision no longer existed anywhere.</p>
+<p>What he needed was to <strong>freeze the fitted object into a file</strong>. Train once, save
+the result, and load that exact file whenever a prediction is needed. The file
+<em>is</em> the model.</p>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 21.</p>
+</div>
+
+<h2 id="what-is-actually-being-saved">What is actually being saved</h2>
+<p>This is the part that makes the rest obvious.</p>
+<p><code>fit()</code> does not change your code. It fills in <strong>attributes on the object</strong>, and
+scikit-learn marks every learned attribute with a trailing underscore:
+<code>theta_</code>, <code>coef_</code>, <code>classes_</code>. Those numbers <em>are</em> the model. Everything else —
+how to multiply them, how to compare them — already lives in the scikit-learn
+library on the machine.</p>
+<p>So saving a model means <strong>serialising an object's learned numbers to bytes</strong>, and
+loading means rebuilding the object from those bytes.</p>
+<p>If you have written Java, this is exactly <code>Serializable</code> plus
+<code>ObjectOutputStream</code>: the field values travel, the class does not. And it comes
+with the same warning attached, which we get to at the end.</p>
+
+<h2 id="setup">Setup</h2>
+<p><code>pickle</code> is in the standard library. <code>joblib</code> arrives with scikit-learn, so
+there is nothing new to install.</p>
+<p>Every file written below goes to a <strong>temporary folder</strong>, so this notebook leaves
+nothing behind in the repository. In your own work the path would be a real one
+like <code>models/churn_v3.joblib</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">import os, pickle, time, tempfile
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import joblib
+import sklearn
+
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import make_classification
+
+TMP = tempfile.mkdtemp(prefix=&quot;saved_models_&quot;)   # nothing is written into the repo
+
+C1, C2 = &quot;#e4572e&quot;, &quot;#1f7a8c&quot;
+plt.rcParams.update({&quot;figure.dpi&quot;: 110, &quot;axes.grid&quot;: True, &quot;grid.alpha&quot;: .25,
+                     &quot;axes.spines.top&quot;: False, &quot;axes.spines.right&quot;: False,
+                     &quot;font.size&quot;: 10})
+
+print(&quot;scikit-learn&quot;, sklearn.__version__, &quot;| joblib&quot;, joblib.__version__)
+print(&quot;writing models to&quot;, TMP)</pre></div>
+<div class="out"><div class="h">Output</div><pre>scikit-learn 1.8.0 | joblib 1.5.3
+writing models to /var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/saved_models_aiwsdpvg</pre></div>
+<h2 id="the-model-from-the-session">The model from the session</h2>
+<p>Same car data as the class notebook: <code>Age</code> and <code>Income</code> in, &quot;did they buy the
+car&quot; out.</p>
+<p>One honest note before the scores appear — 93 of the 100 rows are class 0. A
+model that always answered &quot;no&quot; would already look about 93% right, so accuracy
+here is not the interesting part. <strong>What matters in this lesson is only that the
+saved model behaves identically to the original.</strong></p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">cars = pd.read_csv(&quot;../Data/Car.csv&quot;)
+X, y = cars[[&quot;Age&quot;, &quot;Income&quot;]], cars[&quot;Car&quot;]
+
+print(&quot;rows:&quot;, len(cars), &quot;| class balance:&quot;, y.value_counts().to_dict())
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=0)
+
+model = GaussianNB().fit(X_train, y_train)
+print(&quot;accuracy on held-out rows:&quot;, round(model.score(X_test, y_test), 4))</pre></div>
+<div class="out"><div class="h">Output</div><pre>rows: 100 | class balance: {0: 93, 1: 7}
+accuracy on held-out rows: 0.95</pre></div>
+<h2 id="the-whole-model-printed">The whole model, printed</h2>
+<p>Here is the claim from earlier, made concrete. A fitted <code>GaussianNB</code> on two
+columns is <strong>one mean and one variance per column per class</strong>, plus how common
+each class was. Ten numbers. That is the entire thing.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">print(&quot;classes_     :&quot;, model.classes_)
+print(&quot;class_prior_ :&quot;, model.class_prior_.round(3))
+print(&quot;\ntheta_ (mean of each column, per class)&quot;)
+print(pd.DataFrame(model.theta_, index=model.classes_, columns=X.columns).round(1))
+print(&quot;\nvar_ (variance of each column, per class)&quot;)
+print(pd.DataFrame(model.var_, index=model.classes_, columns=X.columns).round(1))
+
+n_numbers = model.theta_.size + model.var_.size + model.class_prior_.size
+print(&quot;\nlearned numbers in total:&quot;, n_numbers)</pre></div>
+<div class="out"><div class="h">Output</div><pre>classes_     : [0 1]
+class_prior_ : [0.912 0.088]
+
+theta_ (mean of each column, per class)
+    Age    Income
+0  30.0   58123.3
+1  30.7  121714.3
+
+var_ (variance of each column, per class)
+    Age       Income
+0  51.4  524793020.2
+1   4.8  426204082.5
+
+learned numbers in total: 10</pre></div>
+<h2 id="save-it-load-it-check-it">Save it, load it, check it</h2>
+<p>Two lines to write, one to read. <code>joblib.dump</code> takes the object and a path.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">path = os.path.join(TMP, &quot;car_model.joblib&quot;)
+
+joblib.dump(model, path)                 # write
+loaded = joblib.load(path)               # read back into a new object
+
+before = model.predict(X_test)
+after  = loaded.predict(X_test)
+
+print(&quot;file:&quot;, os.path.basename(path), &quot;|&quot;, os.path.getsize(path), &quot;bytes&quot;)
+print(&quot;same object in memory? &quot;, loaded is model)
+print(&quot;identical predictions? &quot;, np.array_equal(before, after))
+print(&quot;identical learned numbers?&quot;, np.array_equal(model.theta_, loaded.theta_))</pre></div>
+<div class="out"><div class="h">Output</div><pre>file: car_model.joblib | 1111 bytes
+same object in memory?  False
+identical predictions?  True
+identical learned numbers? True</pre></div>
+<p><code>loaded is model</code> is <code>False</code> — it is a genuinely new object, rebuilt from bytes.
+Every prediction it makes is identical, because every learned number came back
+unchanged.</p>
+<p>The picture below is the same statement drawn out: the boundary the original
+model draws, and the boundary the reloaded model draws.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">def boundary(ax, clf, title):
+    xx, yy = np.meshgrid(np.linspace(X[&quot;Age&quot;].min() - 3, X[&quot;Age&quot;].max() + 3, 300),
+                         np.linspace(X[&quot;Income&quot;].min() - 5000, X[&quot;Income&quot;].max() + 5000, 300))
+    grid = pd.DataFrame(np.c_[xx.ravel(), yy.ravel()], columns=[&quot;Age&quot;, &quot;Income&quot;])
+    zz = clf.predict(grid).reshape(xx.shape)
+    ax.contourf(xx, yy, zz, alpha=.15, colors=[C2, C1], levels=[-.5, .5, 1.5])
+    ax.scatter(*X[y == 0].T.values, s=18, c=C2, label=&quot;did not buy&quot;)
+    ax.scatter(*X[y == 1].T.values, s=38, c=C1, label=&quot;bought&quot;)
+    ax.set(title=title, xlabel=&quot;Age&quot;, ylabel=&quot;Income&quot;)
+
+fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2), sharey=True)
+boundary(axes[0], model,  &quot;the model that was trained&quot;)
+boundary(axes[1], loaded, &quot;the model read back from the file&quot;)
+axes[0].legend(fontsize=8.5, loc=&quot;upper left&quot;)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/36-model-persistence-explain-c11-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Two drawings of the same line, because it <em>is</em> the same line. That is the whole
+promise of saving a model.</p>
+<h2 id="joblib-or-pickle">joblib or pickle?</h2>
+<p>Both exist, the class notebook used both, and the difference is smaller than it
+looks: <strong>joblib writes a pickle.</strong> Same protocol underneath — it only handles
+large NumPy arrays its own way, and adds a couple of options pickle has no word
+for.</p>
+<p>The usual advice is &quot;joblib is faster for scikit-learn&quot;. Rather than repeat it,
+measure it on this machine.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">X_big, y_big = make_classification(n_samples=20_000, n_features=20, random_state=0)
+big = RandomForestClassifier(n_estimators=120, random_state=0).fit(X_big, y_big)
+
+# three ways to write the same object, each a (save, load) pair
+ways = {
+  &quot;pickle&quot;:            (lambda o, p: pickle.dump(o, open(p, &quot;wb&quot;)),
+                        lambda p: pickle.load(open(p, &quot;rb&quot;))),
+  &quot;joblib&quot;:            (lambda o, p: joblib.dump(o, p),
+                        joblib.load),
+  &quot;joblib compress=3&quot;: (lambda o, p: joblib.dump(o, p, compress=3),
+                        joblib.load),
+}
+
+def measure(obj, tag, way):
+    save, load = ways[way]
+    p = os.path.join(TMP, f&quot;{tag}.{way.split()[0]}{&#x27;z&#x27; if &#x27;compress&#x27; in way else &#x27;&#x27;}&quot;)
+    t0 = time.perf_counter(); save(obj, p)
+    t1 = time.perf_counter(); back = load(p)
+    t2 = time.perf_counter()
+    assert back is not obj                       # rebuilt, not handed back
+    return {&quot;mb&quot;: os.path.getsize(p) / 1024**2,
+            &quot;save_ms&quot;: (t1 - t0) * 1000, &quot;load_ms&quot;: (t2 - t1) * 1000}
+
+results = {(tag, way): measure(obj, tag, way)
+           for tag, obj in [(&quot;small&quot;, model), (&quot;big&quot;, big)]
+           for way in ways}
+
+print(f&quot;{&#x27;model&#x27;:8s}{&#x27;way&#x27;:20s}{&#x27;size (MB)&#x27;:&gt;11s}{&#x27;save (ms)&#x27;:&gt;11s}{&#x27;load (ms)&#x27;:&gt;11s}&quot;)
+for (tag, way), r in results.items():
+    print(f&quot;{tag:8s}{way:20s}{r[&#x27;mb&#x27;]:11.3f}{r[&#x27;save_ms&#x27;]:11.1f}{r[&#x27;load_ms&#x27;]:11.1f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>model   way                   size (MB)  save (ms)  load (ms)
+small   pickle                    0.001        0.3        0.3
+small   joblib                    0.001        0.4        0.2
+small   joblib compress=3         0.001        0.3        0.2
+big     pickle                   25.373        5.8        6.0
+big     joblib                   25.384       13.5       13.8
+big     joblib compress=3         5.409      139.8       29.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">tags = [&quot;small&quot;, &quot;big&quot;]
+fig, axes = plt.subplots(1, 3, figsize=(11.5, 3.8))
+cols = {&quot;pickle&quot;: C1, &quot;joblib&quot;: C2, &quot;joblib compress=3&quot;: &quot;#3a7d44&quot;}
+for ax, field, label in zip(axes, [&quot;mb&quot;, &quot;save_ms&quot;, &quot;load_ms&quot;],
+                            [&quot;file size (MB)&quot;, &quot;save time (ms)&quot;, &quot;load time (ms)&quot;]):
+    xs = np.arange(len(tags))
+    for k, (way, col) in enumerate(cols.items()):
+        ax.bar(xs + (k - 1) * .28, [results[(t, way)][field] for t in tags],
+               .26, color=col, label=way)
+    ax.set(title=label, xticks=xs, yscale=&quot;log&quot;)
+    ax.set_xticklabels([&quot;small\nGaussianNB&quot;, &quot;big\nRandomForest&quot;], fontsize=9)
+    ax.grid(axis=&quot;x&quot;, visible=False)
+axes[0].legend(fontsize=8)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/36-model-persistence-explain-c14-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Read the bars on a log scale — the two models are orders of magnitude apart.</p>
+<p><strong>The received wisdom did not survive the measurement.</strong> Plain <code>joblib</code> and plain
+<code>pickle</code> produce a file of the same size, and joblib is not the faster of the
+two here. That is not a bug in either one: modern pickle (protocol 5) grew the
+efficient array handling that joblib was invented to provide.</p>
+<p>What joblib still gives you, and pickle has no word for:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Option</th>
+  <th>What it does</th>
+  <th>The cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>compress=3</code></td>
+  <td>roughly <strong>5× smaller</strong> on disk</td>
+  <td>saving gets much slower, loading somewhat slower</td>
+</tr>
+<tr>
+  <td><code>mmap_mode=&quot;r&quot;</code></td>
+  <td>maps big arrays straight off disk instead of copying them into memory</td>
+  <td>read-only, and only helps arrays</td>
+</tr>
+</tbody>
+</table>
+<p><code>mmap_mode</code> is the one that matters in a service. Four API workers loading the
+same 200 MB model normally hold four copies; memory-mapped, they share one.</p>
+<p><strong>So: use <code>joblib</code> for scikit-learn models</strong> — it is what the documentation
+says, and those two options are there when you need them. Just do not expect it
+to be faster, because on this machine it is not. Keep <code>pickle</code> for ordinary
+Python objects with no arrays in them: a settings dict, a label mapping.</p>
+
+<h2 id="trap-1-saving-the-model-but-not-the-preparation">Trap 1 — saving the model but not the preparation</h2>
+<p>This is the one that actually breaks in production, and it is silent.</p>
+<p>A model almost never sees raw columns. Something scales them first. If you save
+only the estimator, the scaler stays behind in the dead kernel — and at serving
+time raw values get fed to a model that was trained on scaled ones.</p>
+<p>Nothing raises. The predictions are simply wrong. Here it is, measured.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py"># a model that genuinely depends on scaling: Income is ~1000x larger than Age,
+# so an unscaled distance is really &quot;distance in Income&quot;
+Xa, Xb, ya, yb = train_test_split(X, y, test_size=0.2, random_state=0)
+
+scaler = StandardScaler().fit(Xa)
+knn    = KNeighborsClassifier(n_neighbors=5).fit(scaler.transform(Xa), ya)
+
+# the wrong way: only the estimator was saved, so raw columns reach it
+joblib.dump(knn, os.path.join(TMP, &quot;knn_only.joblib&quot;))
+knn_only = joblib.load(os.path.join(TMP, &quot;knn_only.joblib&quot;))
+wrong = knn_only.predict(Xb.values)   # .values: it was fitted on a bare array
+
+# the right way: the whole pipeline is one object, so the scaler travels with it
+pipe = Pipeline([(&quot;scale&quot;, StandardScaler()), (&quot;knn&quot;, KNeighborsClassifier(n_neighbors=5))]).fit(Xa, ya)
+joblib.dump(pipe, os.path.join(TMP, &quot;pipeline.joblib&quot;))
+right = joblib.load(os.path.join(TMP, &quot;pipeline.joblib&quot;)).predict(Xb)
+
+print(&quot;model only, fed raw columns :&quot;, (wrong == yb).mean().round(4), &quot;accuracy&quot;)
+print(&quot;whole pipeline saved        :&quot;, (right == yb).mean().round(4), &quot;accuracy&quot;)
+print(&quot;\npredictions that differ between the two:&quot;, int((wrong != right).sum()), &quot;of&quot;, len(yb))</pre></div>
+<div class="out"><div class="h">Output</div><pre>model only, fed raw columns : 0.0 accuracy
+whole pipeline saved        : 0.95 accuracy
+
+predictions that differ between the two: 19 of 20</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">rows = [(&quot;what actually happened&quot;, np.asarray(yb)),
+        (&quot;whole pipeline saved&quot;,   right),
+        (&quot;model only, raw columns&quot;, wrong)]
+
+fig, ax = plt.subplots(figsize=(9.6, 2.6))
+for r, (label, vals) in enumerate(rows):
+    for i, v in enumerate(vals):
+        ax.add_patch(plt.Rectangle((i, -r), .9, .9, color=C1 if v else C2))
+    ax.text(-.4, -r + .45, label, ha=&quot;right&quot;, va=&quot;center&quot;, fontsize=9.5)
+    if r:                                   # mark every square that is wrong
+        for i, (v, t) in enumerate(zip(vals, np.asarray(yb))):
+            if v != t:
+                ax.text(i + .45, -r + .45, &quot;x&quot;, ha=&quot;center&quot;, va=&quot;center&quot;,
+                        color=&quot;w&quot;, fontsize=11, fontweight=&quot;bold&quot;)
+ax.set(xlim=(-6.5, len(right)), ylim=(-2.2, 1.1), xticks=[], yticks=[],
+       title=&quot;Each square is one held-out customer  ·  orange = bought, blue = did not&quot;)
+ax.grid(False)
+for sp in ax.spines.values(): sp.set_visible(False)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/36-model-persistence-explain-c18-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>No exception, no warning — two different answers from what looks like the same
+model. The fix is a rule, not a check:</p>
+<p><strong>Save the <code>Pipeline</code>, not the estimator.</strong> Whatever had to happen to the data
+before <code>fit</code> must be inside the object you serialise, so it happens again before
+<code>predict</code>.</p>
+<h2 id="trap-2-the-file-does-not-contain-scikit-learn">Trap 2 — the file does not contain scikit-learn</h2>
+<p>A pickle stores your object's <em>numbers</em> and a <strong>reference to its class</strong> — the
+import path, written as plain text in the file. It does not store the class's
+code.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">raw = pickle.dumps(model)
+print(&quot;bytes on disk:&quot;, len(raw))
+print(&quot;class paths written into the file:&quot;)
+for token in [b&quot;sklearn.naive_bayes&quot;, b&quot;GaussianNB&quot;, b&quot;numpy&quot;]:
+    print(f&quot;   {token.decode():22s} present: {token in raw}&quot;)
+
+print(&quot;\nsaved with scikit-learn&quot;, sklearn.__version__,
+      &quot;\nload it where that version differs and the rebuild may fail, or quietly differ&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>bytes on disk: 757
+class paths written into the file:
+   sklearn.naive_bayes    present: True
+   GaussianNB             present: True
+   numpy                  present: True
+
+saved with scikit-learn 1.8.0 
+load it where that version differs and the rebuild may fail, or quietly differ</pre></div>
+<p><code>sklearn.naive_bayes</code> is sitting in the file as text. On load, Python imports
+that module <em>from the machine doing the loading</em> and rebuilds the object with
+whatever the class looks like there.</p>
+<p>So a saved model is only meaningful next to the versions it was born with.
+Write them down beside the file:</p>
+<ul>
+<li>pin <code>scikit-learn</code>, <code>numpy</code> and <code>joblib</code> in the environment that serves it;</li>
+<li>save the version string with the model — a small dict works:
+<code>joblib.dump({&quot;model&quot;: pipe, &quot;sklearn&quot;: sklearn.__version__}, path)</code>;</li>
+<li>treat a model file as a build artefact, not as source. It belongs in artefact
+storage, not in git.</li>
+</ul>
+<h2 id="trap-3-never-load-a-pickle-you-did-not-create">Trap 3 — never load a pickle you did not create</h2>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor
+curriculum.</em></p>
+</div>
+<p>Loading a pickle <strong>runs code</strong>. The format is allowed to say &quot;to rebuild me, call
+this function with these arguments&quot;, and <code>load</code> obeys without asking.</p>
+<p>Here is a harmless object that proves it. Nothing malicious happens — it prints a
+line — but the same mechanism would run any command.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">class Harmless:
+    &#x27;&#x27;&#x27;A deliberately benign demonstration: it prints when it is unpickled.&#x27;&#x27;&#x27;
+    def __reduce__(self):
+        # &quot;to rebuild me, call print(...)&quot; — load() will do exactly that
+        return (print, (&quot;[!] this line was executed by pickle.load, not by me&quot;,))
+
+payload = pickle.dumps(Harmless())          # pretend this arrived from outside
+
+print(&quot;about to load a file we did not create...&quot;)
+pickle.loads(payload)                        # loads() is load() without the file
+print(&quot;...and the load did that on its own.&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>about to load a file we did not create...
+[!] this line was executed by pickle.load, not by me
+...and the load did that on its own.</pre></div>
+<p>An uploaded <code>.pkl</code> is executable input. Treat it exactly like an uploaded <code>.sh</code>.</p>
+<p>For a service this means: <strong>never</strong> unpickle a file a user supplied, load models
+only from storage you control, and check the artefact's checksum before loading
+it. If you truly must accept a model from outside, use a format that carries data
+only — ONNX, or the safetensors format — rather than pickle.</p>
+<h2 id="putting-it-in-a-service">Putting it in a service</h2>
+<p>The class notebook ended on <code>pip install flask fastapi</code>, which is exactly where
+this goes next. The whole point of the file is the line that loads it:</p>
+<div class="code"><pre class="py">from fastapi import FastAPI
+import joblib, pandas as pd
+
+app = FastAPI()
+model = joblib.load(&quot;models/car_v1.joblib&quot;)   # once, at startup — not per request
+
+@app.post(&quot;/predict&quot;)
+def predict(age: int, income: int):
+    row = pd.DataFrame([{&quot;Age&quot;: age, &quot;Income&quot;: income}])
+    return {&quot;buys&quot;: int(model.predict(row)[0])}
+</pre></div>
+<p>Two details carry all the weight:</p>
+<ol>
+<li><strong><code>joblib.load</code> sits at module level.</strong> Loading inside the handler would pay
+the disk read and the rebuild on every request. Ravi's four-minute retrain was
+the extreme version of the same mistake.</li>
+<li><strong>The loaded object is a <code>Pipeline</code>,</strong> so the raw <code>Age</code> and <code>Income</code> coming off
+the request get scaled exactly as they were in training, by the same fitted
+scaler.</li>
+</ol>
+<p>For a backend engineer the shape is familiar: the model file is a read-only
+dependency loaded at boot, versioned and rolled out like any other artefact — not
+something rebuilt per request.</p>
+
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li><strong>Saving the estimator instead of the pipeline.</strong> The scaler or encoder is
+left behind and predictions go quietly wrong.</li>
+<li><strong>Loading the model inside the request handler.</strong> Correct answers, needless
+latency on every call.</li>
+<li><strong>Committing model files to git.</strong> They are large binaries that change on
+every retrain; they belong in artefact storage with a version tag.</li>
+<li><strong>Assuming a <code>.pkl</code> is portable.</strong> It carries import paths, not code. A
+different scikit-learn version can refuse it or rebuild it differently.</li>
+<li><strong>Unpickling a file from outside your system.</strong> That is remote code
+execution, not deserialisation.</li>
+</ol>
+
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> <code>fit()</code> produces an object full of learned
+numbers, and <code>joblib.dump</code> freezes that object into a file so the <em>exact</em> model —
+not a retrained cousin — answers tomorrow's request.</p>
+<p>Save the whole pipeline, load it once at startup, pin the versions beside it, and
+never load a pickle you did not create.</p>
+
+<div class="src-head">📓 <a href="../Concept/37_Joblib_And_Pickle.ipynb">37_Joblib_And_Pickle.ipynb</a></div>
+<h2 id="saving-a-trained-model-the-session-notebook">Saving a trained model — the session notebook</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 21.</p>
+</div>
+<p>The notebook worked through in class, kept as it was written. Two models are
+trained (<code>GaussianNB</code> on the car data, then on iris), and the second one is
+written to disk and read back twice: once with <code>joblib</code>, once with <code>pickle</code>.</p>
+<p>The dataset path is the one change made here: the class copy pointed at
+<code>/Users/shridharmankar/Car.csv</code>, which only exists on the instructor's machine.
+It now reads <a href="../Data/Car.csv"><code>../Data/Car.csv</code></a>, the same file, stored beside this notebook.</p>
+<p>Why any of this works, what actually goes into the file, and the two traps that
+bite in production are in
+<a href="../Concept/36_Model_Persistence_explained.ipynb"><code>36_Model_Persistence_explained.ipynb</code></a>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+dataset = pd.read_csv(&#x27;../Data/Car.csv&#x27;)
+X = dataset[[&#x27;Age&#x27;,&#x27;Income&#x27;]]
+y = dataset[[&#x27;Car&#x27;]]
+dataset.head(10)</pre></div>
+<div class="out"><div class="h">Output</div><pre>   Age  Income  Car
+0   28   37000    0
+1   27   88000    0
+2   28   59000    0
+3   32   86000    0
+4   33  149000    1
+5   19   21000    0
+6   21   72000    0
+7   26   35000    0
+8   27   89000    0
+9   26   86000    0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 0)
+print(X_train)
+print(y_train)
+print(X_test)
+print(y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>    Age  Income
+43   35   59000
+62   25   90000
+3    32   86000
+71   21   88000
+45   34   25000
+..  ...     ...
+96   34   43000
+67   22   55000
+64   35   38000
+47   27   96000
+44   30   89000
+
+[80 rows x 2 columns]
+    Car
+43    0
+62    0
+3     0
+71    0
+45    0
+..  ...
+96    0
+67    0
+64    0
+47    1
+44    0
+
+[80 rows x 1 columns]
+    Age  Income
+26   39   61000
+86   31   66000
+2    28   59000
+55   40   47000
+75   34   72000
+93   29   43000
+16   40   57000
+73   26  118000
+54   36   50000
+95   28   89000
+53   31   76000
+92   19   26000
+78   25   22000
+13   38   61000
+7    26   35000
+30   26   84000
+22   37   72000
+24   35   53000
+33   30   87000
+8    27   89000
+    Car
+26    0
+86    0
+2     0
+55    0
+75    0
+93    0
+16    0
+73    0
+54    0
+95    0
+53    0
+92    0
+78    0
+13    0
+7     0
+30    0
+22    0
+24    0
+33    0
+8     0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">from sklearn.naive_bayes import GaussianNB
+classifier = GaussianNB()
+classifier.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>/opt/anaconda3/lib/python3.9/site-packages/sklearn/utils/validation.py:993: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  y = column_or_1d(y, warn=True)
+GaussianNB()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">y_pred=classifier.predict(X_test)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">classifier.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.95</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">import pandas as pd
+from sklearn.datasets import load_iris
+iris = load_iris()
+table = pd.DataFrame(iris.data,columns=iris.feature_names)
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+0                5.1               3.5                1.4               0.2
+1                4.9               3.0                1.4               0.2
+2                4.7               3.2                1.3               0.2
+3                4.6               3.1                1.5               0.2
+4                5.0               3.6                1.4               0.2</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">table[&#x27;target&#x27;] = iris.target
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)  \
+0                5.1               3.5                1.4               0.2   
+1                4.9               3.0                1.4               0.2   
+2                4.7               3.2                1.3               0.2   
+3                4.6               3.1                1.5               0.2   
+4                5.0               3.6                1.4               0.2   
+
+   target  
+0       0  
+1       0  
+2       0  
+3       0  
+4       0</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">X = table.drop([&#x27;target&#x27;], axis=&#x27;columns&#x27;)
+y = iris.target</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 0)
+print(X_train)
+print(y_train)
+print(X_test)
+print(y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>     sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+137                6.4               3.1                5.5               1.8
+84                 5.4               3.0                4.5               1.5
+27                 5.2               3.5                1.5               0.2
+127                6.1               3.0                4.9               1.8
+132                6.4               2.8                5.6               2.2
+..                 ...               ...                ...               ...
+9                  4.9               3.1                1.5               0.1
+103                6.3               2.9                5.6               1.8
+67                 5.8               2.7                4.1               1.0
+117                7.7               3.8                6.7               2.2
+47                 4.6               3.2                1.4               0.2
+
+[120 rows x 4 columns]
+[2 1 0 2 2 1 0 1 1 1 2 0 2 0 0 1 2 2 2 2 1 2 1 1 2 2 2 2 1 2 1 0 2 1 1 1 1
+ 2 0 0 2 1 0 0 1 0 2 1 0 1 2 1 0 2 2 2 2 0 0 2 2 0 2 0 2 2 0 0 2 0 0 0 1 2
+ 2 0 0 0 1 1 0 0 1 0 2 1 2 1 0 2 0 2 0 0 2 0 2 1 1 1 2 2 1 1 0 1 2 2 0 1 1
+ 1 1 0 0 0 2 1 2 0]
+     sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+114                5.8               2.8                5.1               2.4
+62                 6.0               2.2                4.0               1.0
+33                 5.5               4.2                1.4               0.2
+107                7.3               2.9                6.3               1.8
+7                  5.0               3.4                1.5               0.2
+100                6.3               3.3                6.0               2.5
+40                 5.0               3.5                1.3               0.3
+86                 6.7               3.1                4.7               1.5
+76                 6.8               2.8                4.8               1.4
+71                 6.1               2.8                4.0               1.3
+134                6.1               2.6                5.6               1.4
+51                 6.4               3.2                4.5               1.5
+73                 6.1               2.8                4.7               1.2
+54                 6.5               2.8                4.6               1.5
+63                 6.1               2.9                4.7               1.4
+37                 4.9               3.6                1.4               0.1
+78                 6.0               2.9                4.5          </pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.naive_bayes import GaussianNB
+classifier1 = GaussianNB()
+classifier1.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>GaussianNB()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">y_pred=classifier1.predict(X_test)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 2, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 2, 1,
+       0, 0, 2, 0, 0, 1, 1, 0])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">classifier1.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9666666666666667</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">import joblib</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">joblib.dump(classifier1, &#x27;model1&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>[&#x27;model1&#x27;]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">model1 = joblib.load(&#x27;model1&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">y_pred=model1.predict(X_test)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 2, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 2, 1,
+       0, 0, 2, 0, 0, 1, 1, 0])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">import pickle
+pickle.dump(classifier1, open(&#x27;model.pkl&#x27;,&#x27;wb&#x27;))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">model2 = pickle.load(open(&#x27;model.pkl&#x27;,&#x27;rb&#x27;))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">y_pred=model2.predict(X_test)
+y_pred</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([2, 1, 0, 2, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 2, 1,
+       0, 0, 2, 0, 0, 1, 1, 0])</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">pip install flask fastapi</pre></div>
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Model_Persistence_01.png" data-name="Model_Persistence_01.png"><img src="../Handwritten_Notes/Model_Persistence_01.png" alt="Model_Persistence_01.png" loading="lazy"><span>Model Persistence 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Model_Persistence_02.png" data-name="Model_Persistence_02.png"><img src="../Handwritten_Notes/Model_Persistence_02.png" alt="Model_Persistence_02.png" loading="lazy"><span>Model Persistence 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Model_Persistence_03.png" data-name="Model_Persistence_03.png"><img src="../Handwritten_Notes/Model_Persistence_03.png" alt="Model_Persistence_03.png" loading="lazy"><span>Model Persistence 03</span></button></div>
+<!-- HANDWRITTEN:END -->
+<div class="foot"><a class="btn" href="../Concept/36_Model_Persistence_explained.ipynb">36_Model_Persistence_explained.ipynb ↗</a><a class="btn" href="../Concept/37_Joblib_And_Pickle.ipynb">37_Joblib_And_Pickle.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

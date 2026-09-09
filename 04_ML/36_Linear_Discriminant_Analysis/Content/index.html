@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Discriminant Analysis — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Linear Discriminant Analysis</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#linear-discriminant-analysis-one-number-instead-">Linear Discriminant Analysis — one number instead of</a><a href="#the-story">The story</a><a href="#what-lda-actually-does">What LDA actually does</a><a href="#setup">Setup</a><a href="#first-four-points-meera-can-check-by-hand">First, four points Meera can check by hand</a><a href="#step-i-the-centre-of-each-class">Step I — the centre of each class</a><a href="#step-ii-how-spread-out-is-each-class">Step II — how spread out is each class?</a><a href="#why-the-scatter-has-to-be-in-the-formula">Why the scatter has to be in the formula</a><a href="#step-iii-the-direction">Step III — the direction</a><a href="#step-iv-project-the-points-onto-the-line">Step IV — project the points onto the line</a><a href="#does-the-library-agree">Does the library agree?</a><a href="#why-not-pca">Why not PCA?</a><a href="#now-the-real-thing-thirty-columns-of-biopsy-data">Now the real thing: thirty columns of biopsy data</a><a href="#lda-is-also-a-classifier">LDA is also a classifier</a><a href="#how-many-directions-can-lda-give-you">How many directions can LDA give you?</a><a href="#where-lda-breaks">Where LDA breaks</a><a href="#where-this-shows-up-in-a-real-system">Where this shows up in a real system</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#lda-on-the-breast-cancer-data-the-session-notebo">LDA on the breast-cancer data — the session notebook</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Linear Discriminant Analysis</h1>
+  <p class="lede">Squashing many columns down to one number that still keeps the classes apart.</p>
+  <div class="tags"><span class="tag">2 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 9 handwritten pages</a></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Meera reads biopsy slides, and every slide arrives as thirty numbers.</strong> Radius, texture, concavity, twenty-seven more. She has to answer one word: malignant or benign.</p><p>She plotted one column at a time. The two histograms sat on top of each other — no single measurement cut the groups apart. So she reached for PCA, which turns thirty columns into one or two.</p><p><span class='beat'>PCA handed back a blurred pile, because nobody had told it the labels exist.</span> PCA keeps the direction where the data is most spread out, and the biggest spread in biopsies is big tumours against small ones — not malignant against benign. It optimised the wrong thing.</p><p>LDA asks the question she actually meant: which single direction pulls the two class centres furthest apart while keeping each class tight around its own centre? Project onto that line and thirty numbers become one, with the two groups sitting at opposite ends of it.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Find the direction where the class centres are far apart and each class stays tight, then project every point onto it.</p></div>
+<div class="src-head">📓 <a href="../Concept/34_LDA_explained.ipynb">34_LDA_explained.ipynb</a></div>
+<h2 id="linear-discriminant-analysis-one-number-instead-">Linear Discriminant Analysis — one number instead of thirty</h2>
+<h2 id="the-story">The story</h2>
+<p>Meera reads biopsy slides in a pathology lab. Every slide comes back from the
+imaging machine as <strong>thirty numbers</strong>: mean radius, mean texture, worst
+concavity, and twenty-seven more. Her job is one word: <strong>malignant</strong> or
+<strong>benign</strong>.</p>
+<p>Thirty numbers is too many to look at. So she tried the obvious thing first.</p>
+<p><strong>She plotted one column at a time.</strong> Mean texture for malignant, mean texture
+for benign. The two histograms sat almost on top of each other. She tried
+another column. Same. A few columns were better than the rest, but none of them
+cut the two groups apart on their own.</p>
+<p><strong>Then she tried PCA.</strong> PCA takes thirty columns and hands back one or two.
+That is exactly the shape she wanted — and the answer was still a mess. PCA
+never looked at the labels. It found the direction where the biopsies are <em>most
+spread out</em>, and in this data the biggest spread is &quot;big tumours vs small
+tumours&quot;, not &quot;malignant vs benign&quot;. PCA optimised the wrong thing.</p>
+<p>Meera does not want the direction with the most spread. She wants the direction
+where <strong>the two groups sit furthest apart</strong>. That direction is what Linear
+Discriminant Analysis finds.</p>
+
+<h2 id="what-lda-actually-does">What LDA actually does</h2>
+<p>LDA looks for a single direction — call it <strong>w</strong> — and squashes every point onto
+it. One point, thirty numbers, becomes one point, one number:</p>
+<div class='formula'>z = wᵀx      (one number per biopsy)</div>
+
+<p>Any direction can do that. LDA picks the one that makes the two class centres
+land far apart, <strong>while each class stays tight around its own centre</strong>.</p>
+<p>Both halves matter, and this is the whole idea:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>What it means</th>
+  <th>LDA wants it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Between-class distance</td>
+  <td>how far apart the two class centres are after projecting</td>
+  <td>large</td>
+</tr>
+<tr>
+  <td>Within-class scatter</td>
+  <td>how spread out each class is around its own centre after projecting</td>
+  <td>small</td>
+</tr>
+</tbody>
+</table>
+<p>A direction that pushes the centres far apart is useless if it also smears each
+class over the whole line. LDA maximises the ratio of the two.</p>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 21.</p>
+</div>
+
+<h2 id="setup">Setup</h2>
+<p>Four tools, and nothing else:</p>
+<ul>
+<li><code>numpy</code> — for the matrix work, so LDA is not a black box.</li>
+<li><code>matplotlib</code> — every figure below.</li>
+<li><code>sklearn.datasets</code> — the real breast-cancer data Meera works with.</li>
+<li><code>LinearDiscriminantAnalysis</code> — the library version, which we check our own
+arithmetic against.</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_breast_cancer, load_wine, make_moons
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+np.random.seed(42)
+
+# one palette for the whole notebook, so the same class is the same colour everywhere
+C1, C2 = &quot;#e4572e&quot;, &quot;#1f7a8c&quot;      # class 1 / class 2
+GREY   = &quot;#8d99ae&quot;
+
+plt.rcParams.update({&quot;figure.dpi&quot;: 110, &quot;axes.grid&quot;: True,
+                     &quot;grid.alpha&quot;: .25, &quot;axes.spines.top&quot;: False,
+                     &quot;axes.spines.right&quot;: False, &quot;font.size&quot;: 10})
+print(&quot;ready&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>ready</pre></div>
+<h2 id="first-four-points-meera-can-check-by-hand">First, four points Meera can check by hand</h2>
+<p>Thirty columns is impossible to follow with a pencil. Two columns and four
+points is not. So before touching the real data, we do the whole method by hand
+on a toy set:</p>
+<ul>
+<li><strong>Class 1</strong>: x₁ = (2, 3), x₂ = (3, 4)</li>
+<li><strong>Class 2</strong>: x₃ = (6, 7), x₄ = (7, 10)</li>
+</ul>
+<p>Every number that comes out of the next few cells is a number you can check on
+paper.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">X_toy = np.array([[2., 3.],
+                  [3., 4.],
+                  [6., 7.],
+                  [7., 10.]])
+y_toy = np.array([0, 0, 1, 1])          # 0 -&gt; class 1, 1 -&gt; class 2
+
+fig, ax = plt.subplots(figsize=(5.6, 4.6))
+ax.scatter(*X_toy[y_toy == 0].T, s=130, c=C1, label=&quot;Class 1&quot;, zorder=3)
+ax.scatter(*X_toy[y_toy == 1].T, s=130, c=C2, label=&quot;Class 2&quot;, zorder=3)
+for (px, py), name in zip(X_toy, [&quot;x₁&quot;, &quot;x₂&quot;, &quot;x₃&quot;, &quot;x₄&quot;]):
+    ax.annotate(f&quot;{name} = ({px:g}, {py:g})&quot;, (px, py),
+                textcoords=&quot;offset points&quot;, xytext=(10, -4), fontsize=10)
+ax.set(xlabel=&quot;feature 1&quot;, ylabel=&quot;feature 2&quot;,
+       title=&quot;The four points, before anything is done to them&quot;,
+       xlim=(0, 9.5), ylim=(1, 12))
+ax.legend(loc=&quot;upper left&quot;)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c05-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="step-i-the-centre-of-each-class">Step I — the centre of each class</h2>
+<p>Start with the plain average of each class. Nothing clever yet.</p>
+<div class='formula'>μ_c = (1/n_c) · Σ x      for the points x in class c</div>
+
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">mu1 = X_toy[y_toy == 0].mean(axis=0)
+mu2 = X_toy[y_toy == 1].mean(axis=0)
+
+print(&quot;mu1 (class 1) =&quot;, mu1)     # (2+3)/2 , (3+4)/2
+print(&quot;mu2 (class 2) =&quot;, mu2)     # (6+7)/2 , (7+10)/2
+print(&quot;mean difference (mu2 - mu1) =&quot;, mu2 - mu1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>mu1 (class 1) = [2.5 3.5]
+mu2 (class 2) = [6.5 8.5]
+mean difference (mu2 - mu1) = [4. 5.]</pre></div>
+<h2 id="step-ii-how-spread-out-is-each-class">Step II — how spread out is each class?</h2>
+<p>Now measure how much each class wobbles around its own centre. For one class:</p>
+<div class='formula'>S_c = Σ (x − μ_c)(x − μ_c)ᵀ</div>
+
+<p>Read it left to right: take a point, subtract its class centre, and multiply
+that little column vector by its own transpose. A 2×1 times a 1×2 gives a 2×2
+matrix. Add up one such matrix per point.</p>
+<p>That matrix is the <strong>scatter</strong> of the class: how far its points sit from its
+centre, and in which direction they lean.</p>
+<p>Adding the two class scatters together gives the <strong>within-class scatter</strong>:</p>
+<div class='formula'>S_w = S₁ + S₂</div>
+
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">def scatter_matrix(points, mu):
+    &#x27;&#x27;&#x27;Sum of (x - mu)(x - mu)^T over the rows of `points`.&#x27;&#x27;&#x27;
+    S = np.zeros((points.shape[1], points.shape[1]))
+    for x in points:
+        d = (x - mu).reshape(-1, 1)      # column vector, shape (2, 1)
+        S += d @ d.T                     # (2,1) @ (1,2) -&gt; (2,2)
+    return S
+
+S1 = scatter_matrix(X_toy[y_toy == 0], mu1)
+S2 = scatter_matrix(X_toy[y_toy == 1], mu2)
+Sw = S1 + S2
+
+print(&quot;S1 =\n&quot;, S1)
+print(&quot;\nS2 =\n&quot;, S2)
+print(&quot;\nSw = S1 + S2 =\n&quot;, Sw)</pre></div>
+<div class="out"><div class="h">Output</div><pre>S1 =
+ [[0.5 0.5]
+ [0.5 0.5]]
+
+S2 =
+ [[0.5 1.5]
+ [1.5 4.5]]
+
+Sw = S1 + S2 =
+ [[1. 2.]
+ [2. 5.]]</pre></div>
+<p>Those are the same three matrices you get on paper:</p>
+<div class='formula'>S₁ = [[0.5, 0.5], [0.5, 0.5]]      S₂ = [[0.5, 1.5], [1.5, 4.5]]      S_w = [[1, 2], [2, 5]]</div>
+
+<p>S₂ is the bigger of the two, and it leans hard along feature 2 — class 2's points
+are (6, 7) and (7, 10), so they differ by 1 across and 3 up. The scatter matrix
+records that lean. LDA is about to use it.</p>
+
+<h2 id="why-the-scatter-has-to-be-in-the-formula">Why the scatter has to be in the formula</h2>
+<p>The obvious guess for the best direction is the straight line between the two
+centres, μ₂ − μ₁. It is wrong often enough to matter, and here is the picture
+that shows why.</p>
+<p>Below are two classes that overlap when you project them onto the line joining
+their centres — because both classes are stretched in almost that same
+direction. Dividing the mean difference by the within-class scatter turns the
+direction to something that separates them cleanly.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py"># Two classes shaped like long thin cigars, both leaning the same way.
+# Sigma is built from its own axes: long (variance 16) along [1,1],
+# thin (variance 0.25) along [1,-1].
+e_long, e_thin = np.array([1, 1]) / np.sqrt(2), np.array([1, -1]) / np.sqrt(2)
+cov = 16 * np.outer(e_long, e_long) + 0.25 * np.outer(e_thin, e_thin)
+
+# the centres are 5 apart along the long axis and 2.2 apart along the thin one
+m_a = np.array([0.0, 0.0])
+m_b = 5.0 * e_long + 2.2 * e_thin
+
+rng = np.random.RandomState(0)
+A = rng.multivariate_normal(m_a, cov, 300)
+B = rng.multivariate_normal(m_b, cov, 300)
+Xd = np.vstack([A, B]);  yd = np.r_[np.zeros(300), np.ones(300)]
+
+mean_dir = m_b - m_a                                # the naive guess
+Sw_d     = scatter_matrix(A, A.mean(0)) + scatter_matrix(B, B.mean(0))
+lda_dir  = np.linalg.inv(Sw_d) @ mean_dir           # the LDA answer
+
+unit = lambda v: v / np.linalg.norm(v)
+
+def separation(direction):
+    &#x27;&#x27;&#x27;Gap between the two centres after projecting, measured in class-widths.&#x27;&#x27;&#x27;
+    a, b = A @ unit(direction), B @ unit(direction)
+    return abs(a.mean() - b.mean()) / np.sqrt((a.var() + b.var()) / 2)
+
+print(&quot;mean-difference direction :&quot;, unit(mean_dir).round(3),
+      &quot; gap =&quot;, round(separation(mean_dir), 2), &quot;class-widths&quot;)
+print(&quot;LDA direction             :&quot;, unit(lda_dir).round(3),
+      &quot; gap =&quot;, round(separation(lda_dir), 2), &quot;class-widths&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>mean-difference direction : [0.932 0.362]  gap = 1.38 class-widths
+LDA direction             : [ 0.732 -0.682]  gap = 4.64 class-widths</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">fig = plt.figure(figsize=(11, 4.8))
+gs  = fig.add_gridspec(2, 2, width_ratios=[1.15, 1], hspace=.75)
+ax  = fig.add_subplot(gs[:, 0])
+
+# left: the cloud, with both candidate directions drawn through it
+ax.scatter(*A.T, s=9, c=C1, alpha=.45, label=&quot;Class 1&quot;)
+ax.scatter(*B.T, s=9, c=C2, alpha=.45, label=&quot;Class 2&quot;)
+mid = (m_a + m_b) / 2
+for d, col, lab in [(mean_dir, GREY, &quot;line between the centres&quot;),
+                    (lda_dir, &quot;#1b1b1e&quot;, &quot;LDA direction w&quot;)]:
+    u = unit(d) * 9
+    ax.plot([mid[0] - u[0], mid[0] + u[0]], [mid[1] - u[1], mid[1] + u[1]],
+            color=col, lw=2.4, label=lab)
+ax.set(title=&quot;Same two classes, two candidate directions&quot;,
+       xlabel=&quot;feature 1&quot;, ylabel=&quot;feature 2&quot;)
+ax.legend(fontsize=8.5, loc=&quot;upper left&quot;)
+
+# right: what each direction does once the points are squashed onto it
+for row, (d, lab) in enumerate([(mean_dir, &quot;onto the line between the centres&quot;),
+                                (lda_dir, &quot;onto the LDA direction w&quot;)]):
+    axh = fig.add_subplot(gs[row, 1])
+    a, b = A @ unit(d), B @ unit(d)
+    both = np.r_[a, b]
+    a, b = (a - both.mean()) / both.std(), (b - both.mean()) / both.std()
+    axh.hist(a, bins=45, color=C1, alpha=.7, label=&quot;Class 1&quot;)
+    axh.hist(b, bins=45, color=C2, alpha=.7, label=&quot;Class 2&quot;)
+    axh.set(title=lab, yticks=[], xlim=(-3.4, 3.4))
+    axh.title.set_size(10)
+    if row == 0:
+        axh.legend(fontsize=8, loc=&quot;upper right&quot;)
+    else:
+        axh.set_xlabel(&quot;position along the direction&quot;)
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_25352/4146027685.py:33: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c13-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The top row is the naive direction: the two classes bleed into each other. The
+bottom row is LDA: two clean humps. Same points, same labels — only the
+direction changed.</p>
+<p>That is what dividing by S_w buys you.</p>
+
+<h2 id="step-iii-the-direction">Step III — the direction</h2>
+<p>With the mean difference and the within-class scatter in hand, the direction is
+one line of arithmetic:</p>
+<div class='formula'>w = S_w⁻¹ (μ₂ − μ₁)</div>
+
+<p>Back to the four toy points. S_w = [[1, 2], [2, 5]], so its determinant is
+1·5 − 2·2 = 1, and the inverse is [[5, −2], [−2, 1]]. The mean difference is
+(4, 5).</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">Sw_inv = np.linalg.inv(Sw)
+w = Sw_inv @ (mu2 - mu1)
+
+print(&quot;Sw inverse =\n&quot;, Sw_inv)
+print(&quot;\nw = Sw_inv @ (mu2 - mu1) =&quot;, w)        # [5*4 + (-2)*5 , -2*4 + 1*5]</pre></div>
+<div class="out"><div class="h">Output</div><pre>Sw inverse =
+ [[ 5. -2.]
+ [-2.  1.]]
+
+w = Sw_inv @ (mu2 - mu1) = [10. -3.]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">u = w / np.linalg.norm(w)          # unit vector along the LDA direction
+c = X_toy.mean(axis=0)             # a point to hang the line on
+
+fig, ax = plt.subplots(figsize=(6.4, 5.4))
+
+# the LDA axis itself
+line = np.array([c - u * 6, c + u * 6])
+ax.plot(*line.T, color=&quot;#1b1b1e&quot;, lw=2.2, zorder=1, label=&quot;the LDA direction w = (10, −3)&quot;)
+
+# drop every point onto that axis, at a right angle
+for (px, py), cls in zip(X_toy, y_toy):
+    foot = c + ((np.array([px, py]) - c) @ u) * u
+    col = C1 if cls == 0 else C2
+    ax.plot([px, foot[0]], [py, foot[1]], color=col, lw=1, ls=&quot;:&quot;, zorder=2)
+    ax.scatter(*foot, s=55, c=col, edgecolor=&quot;w&quot;, lw=1.2, zorder=4)
+
+ax.scatter(*X_toy[y_toy == 0].T, s=130, c=C1, label=&quot;Class 1&quot;, zorder=3)
+ax.scatter(*X_toy[y_toy == 1].T, s=130, c=C2, label=&quot;Class 2&quot;, zorder=3)
+ax.scatter(*mu1, s=200, marker=&quot;X&quot;, c=C1, edgecolor=&quot;w&quot;, lw=1.6, zorder=5)
+ax.scatter(*mu2, s=200, marker=&quot;X&quot;, c=C2, edgecolor=&quot;w&quot;, lw=1.6, zorder=5)
+ax.annotate(&quot;μ₁ = (2.5, 3.5)&quot;, mu1, textcoords=&quot;offset points&quot;, xytext=(-30, -22),
+            color=C1, zorder=6)
+ax.annotate(&quot;μ₂ = (6.5, 8.5)&quot;, mu2, textcoords=&quot;offset points&quot;, xytext=(12, 2),
+            color=C2, zorder=6)
+
+ax.set(xlabel=&quot;feature 1&quot;, ylabel=&quot;feature 2&quot;, xlim=(-1, 11), ylim=(0, 12),
+       title=&quot;Every point dropped onto the LDA direction&quot;)
+ax.set_aspect(&quot;equal&quot;, adjustable=&quot;box&quot;)
+ax.legend(loc=&quot;upper left&quot;, fontsize=9)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c17-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>w comes out as <strong>(10, −3)</strong>.</p>
+<p>Notice it does not point from μ₁ to μ₂ — that would be (4, 5), up and to the
+right. It points down and to the right. S_w⁻¹ turned it, because class 2 is
+stretched upwards and LDA refuses to trust a direction that runs along a class's
+own spread.</p>
+
+<h2 id="step-iv-project-the-points-onto-the-line">Step IV — project the points onto the line</h2>
+<p>Now use w on each point. This is the whole of &quot;reduce the dimensions&quot;: a dot
+product.</p>
+<div class='formula'>z = wᵀx = 10·(feature 1) − 3·(feature 2)</div>
+
+<p>For x₁ = (2, 3) that is 10·2 − 3·3 = 20 − 9 = <strong>11</strong>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">z = X_toy @ w
+
+for (px, py), zi, cls in zip(X_toy, z, y_toy):
+    print(f&quot;({px:g}, {py:g})  -&gt;  10*{px:g} - 3*{py:g} = {zi:6.1f}   class {cls + 1}&quot;)
+
+print(&quot;\nclass 1 centre on the line:&quot;, (mu1 @ w))
+print(&quot;class 2 centre on the line:&quot;, (mu2 @ w))</pre></div>
+<div class="out"><div class="h">Output</div><pre>(2, 3)  -&gt;  10*2 - 3*3 =   11.0   class 1
+(3, 4)  -&gt;  10*3 - 3*4 =   18.0   class 1
+(6, 7)  -&gt;  10*6 - 3*7 =   39.0   class 2
+(7, 10)  -&gt;  10*7 - 3*10 =   40.0   class 2
+
+class 1 centre on the line: 14.5
+class 2 centre on the line: 39.5</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 21</span></div><pre class="py">fig, ax = plt.subplots(figsize=(9, 2.6))
+ax.scatter(z[y_toy == 0], [0, 0], s=150, c=C1, zorder=3, label=&quot;Class 1&quot;)
+ax.scatter(z[y_toy == 1], [0, 0], s=150, c=C2, zorder=3, label=&quot;Class 2&quot;)
+for zi in z:
+    ax.annotate(f&quot;{zi:g}&quot;, (zi, 0), textcoords=&quot;offset points&quot;, xytext=(0, 14),
+                ha=&quot;center&quot;, fontsize=10)
+
+z1c, z2c = mu1 @ w, mu2 @ w
+for zc, col, lab in [(z1c, C1, f&quot;class 1 centre = {z1c:g}&quot;), (z2c, C2, f&quot;class 2 centre = {z2c:g}&quot;)]:
+    ax.axvline(zc, color=col, ls=&quot;--&quot;, lw=1.6)
+    ax.annotate(lab, (zc, -.55), ha=&quot;center&quot;, fontsize=9, color=col)
+
+ax.axvspan(z.min() - 4, z.max() + 4, color=&quot;#f6f7f9&quot;, zorder=0)
+ax.set(title=&quot;After projection: one number per point, and a wide gap in the middle&quot;,
+       xlabel=&quot;z = wᵀx&quot;, yticks=[], ylim=(-.8, .8), xlim=(5, 46))
+ax.grid(False)
+ax.legend(loc=&quot;upper center&quot;, ncol=2, fontsize=9)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c21-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Two dimensions became one, and the two classes did not smear together — they
+ended up at <strong>14.5</strong> and <strong>39.5</strong>, with nothing in between. Anything below about
+25 is class 1, anything above is class 2. That single threshold is the classifier.</p>
+
+<h2 id="does-the-library-agree">Does the library agree?</h2>
+<p>The hand arithmetic is only worth trusting if scikit-learn lands on the same
+line. It scales <code>w</code> differently — the length of the vector is arbitrary, only its
+direction carries meaning — so compare the directions, not the raw numbers.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">lda_toy = LinearDiscriminantAnalysis(n_components=1).fit(X_toy, y_toy)
+
+ours    = w / np.linalg.norm(w)
+theirs  = lda_toy.scalings_[:, 0] / np.linalg.norm(lda_toy.scalings_[:, 0])
+
+print(&quot;our direction     :&quot;, ours.round(4))
+print(&quot;sklearn direction :&quot;, theirs.round(4))
+print(&quot;\nsame line?&quot;, np.allclose(np.abs(ours @ theirs), 1.0))</pre></div>
+<div class="out"><div class="h">Output</div><pre>our direction     : [ 0.9578 -0.2873]
+sklearn direction : [ 0.9578 -0.2873]
+
+same line? True</pre></div>
+<h2 id="why-not-pca">Why not PCA?</h2>
+<p>This is the failure Meera hit at the start, made visible. Both PCA and LDA take
+many columns and hand back fewer. The difference is what they optimise:</p>
+<table class="tbl"><thead>
+<tr>
+  <th></th>
+  <th>Uses the labels?</th>
+  <th>Keeps the direction of…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>PCA</td>
+  <td>no</td>
+  <td>the <strong>most spread</strong> in the data</td>
+</tr>
+<tr>
+  <td>LDA</td>
+  <td>yes</td>
+  <td>the <strong>best separation</strong> between the classes</td>
+</tr>
+</tbody>
+</table>
+<p>When the biggest spread happens to run along the split, PCA looks fine. When it
+does not, PCA throws the answer away.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 26</span></div><pre class="py">pca_dir = PCA(n_components=1).fit(Xd).components_[0]
+
+fig = plt.figure(figsize=(11, 4.8))
+gs  = fig.add_gridspec(2, 2, width_ratios=[1.15, 1], hspace=.75)
+ax  = fig.add_subplot(gs[:, 0])
+
+ax.scatter(*A.T, s=9, c=C1, alpha=.45, label=&quot;Class 1&quot;)
+ax.scatter(*B.T, s=9, c=C2, alpha=.45, label=&quot;Class 2&quot;)
+for d, col, lab in [(pca_dir, &quot;#b118c8&quot;, &quot;PCA direction&quot;),
+                    (lda_dir, &quot;#1b1b1e&quot;, &quot;LDA direction&quot;)]:
+    u = unit(d) * 9
+    ax.plot([mid[0] - u[0], mid[0] + u[0]], [mid[1] - u[1], mid[1] + u[1]],
+            color=col, lw=2.4, label=lab)
+ax.set(title=&quot;PCA follows the spread, LDA follows the split&quot;,
+       xlabel=&quot;feature 1&quot;, ylabel=&quot;feature 2&quot;)
+ax.legend(fontsize=8.5, loc=&quot;upper left&quot;)
+
+for row, (d, lab) in enumerate([(pca_dir, &quot;the one number PCA gives back&quot;),
+                                (lda_dir, &quot;the one number LDA gives back&quot;)]):
+    axh = fig.add_subplot(gs[row, 1])
+    a, b = A @ unit(d), B @ unit(d)
+    both = np.r_[a, b]
+    a, b = (a - both.mean()) / both.std(), (b - both.mean()) / both.std()
+    axh.hist(a, bins=45, color=C1, alpha=.7, label=&quot;Class 1&quot;)
+    axh.hist(b, bins=45, color=C2, alpha=.7, label=&quot;Class 2&quot;)
+    axh.set(title=lab, yticks=[], xlim=(-3.4, 3.4))
+    axh.title.set_size(10)
+    if row == 0:
+        axh.legend(fontsize=8, loc=&quot;upper right&quot;)
+    else:
+        axh.set_xlabel(&quot;projected value&quot;)
+plt.tight_layout()
+plt.show()
+
+print(&quot;PCA direction: gap =&quot;, round(separation(pca_dir), 2), &quot;class-widths&quot;)
+print(&quot;LDA direction: gap =&quot;, round(separation(lda_dir), 2), &quot;class-widths&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_25352/1331884518.py:32: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+PCA direction: gap = 1.2 class-widths
+LDA direction: gap = 4.64 class-widths</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c26-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Same data, same one dimension kept. PCA hands back a single blurred pile. LDA
+hands back two humps you can cut with one threshold.</p>
+<p>PCA is not broken — it is answering a different question. It is unsupervised, so
+it has no idea the labels exist.</p>
+
+<h2 id="now-the-real-thing-thirty-columns-of-biopsy-data">Now the real thing: thirty columns of biopsy data</h2>
+<p>This is Meera's actual problem. 569 biopsies, 30 measurements each, and one
+label: malignant or benign.</p>
+<p>First, the failure that started the story — a single raw column.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 29</span></div><pre class="py">data = load_breast_cancer()
+X, y = data.data, data.target          # y: 0 = malignant, 1 = benign
+
+print(&quot;X shape:&quot;, X.shape, &quot; -&gt; 569 biopsies, 30 measurements each&quot;)
+print(&quot;classes:&quot;, {n: int(c) for n, c in zip(data.target_names, np.bincount(y))})
+
+col = list(data.feature_names).index(&quot;mean texture&quot;)
+fig, ax = plt.subplots(figsize=(7.6, 3.4))
+ax.hist(X[y == 0, col], bins=40, color=C1, alpha=.65, label=&quot;malignant&quot;)
+ax.hist(X[y == 1, col], bins=40, color=C2, alpha=.65, label=&quot;benign&quot;)
+ax.set(title=&quot;One raw column on its own: &#x27;mean texture&#x27;&quot;,
+       xlabel=&quot;mean texture&quot;, ylabel=&quot;count&quot;)
+ax.legend()
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>X shape: (569, 30)  -&gt; 569 biopsies, 30 measurements each
+classes: {np.str_(&#x27;malignant&#x27;): 212, np.str_(&#x27;benign&#x27;): 357}</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c29-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The two histograms sit on top of each other. No threshold on this column
+separates the two groups — pick any cut and a large slice of both classes lands
+on the wrong side.</p>
+<p>Now hand all thirty columns to LDA and ask for <strong>one</strong> number back.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">lda = LinearDiscriminantAnalysis(n_components=1)
+X_lda = lda.fit_transform(X, y)          # (569, 30) -&gt; (569, 1)
+
+malignant_centre = X_lda[y == 0].mean()
+benign_centre    = X_lda[y == 1].mean()
+
+print(&quot;X_lda shape:&quot;, X_lda.shape)
+print(&quot;malignant centre:&quot;, round(malignant_centre, 3))
+print(&quot;benign centre   :&quot;, round(benign_centre, 3))</pre></div>
+<div class="out"><div class="h">Output</div><pre>X_lda shape: (569, 1)
+malignant centre: -2.4
+benign centre   : 1.425</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">threshold = (malignant_centre + benign_centre) / 2
+
+fig, ax = plt.subplots(figsize=(8.4, 3.8))
+ax.hist(X_lda[y == 0], bins=45, color=C1, alpha=.7, label=&quot;malignant&quot;)
+ax.hist(X_lda[y == 1], bins=45, color=C2, alpha=.7, label=&quot;benign&quot;)
+ax.axvline(threshold, color=&quot;#1b1b1e&quot;, ls=&quot;--&quot;, lw=1.8)
+ax.annotate(f&quot;threshold ≈ {threshold:.2f}&quot;, (threshold, ax.get_ylim()[1] * .88),
+            xytext=(12, 0), textcoords=&quot;offset points&quot;, fontsize=9.5)
+ax.set(title=&quot;Thirty columns squashed into one LDA number&quot;,
+       xlabel=&quot;LDA component (z = wᵀx)&quot;, ylabel=&quot;count&quot;)
+ax.legend()
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c32-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>That is the payoff. The same 569 biopsies that overlapped on every raw column
+now sit in two piles with a gap between them, on a single axis. The overlap that
+remains — the handful of points either side of the dashed line — is the genuinely
+hard cases, not an artefact of looking at the wrong column.</p>
+
+<h2 id="lda-is-also-a-classifier">LDA is also a classifier</h2>
+<p>Everything so far treated LDA as a way to reduce dimensions. But once you have
+the direction and the two centres, classifying is just &quot;which centre is this
+point closer to&quot;. <code>sklearn</code> gives you <code>.predict()</code> for free.</p>
+<p>One rule matters here: <strong>split first, fit second.</strong> LDA learns the class means
+and the scatter from the data. Fitting it on everything and then scoring on the
+same rows leaks the test set into the model and reports a number you cannot
+trust in production.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, stratify=y, random_state=42)
+
+clf = LinearDiscriminantAnalysis().fit(X_train, y_train)   # fit on train only
+pred = clf.predict(X_test)
+
+print(&quot;test accuracy:&quot;, round(accuracy_score(y_test, pred), 4))
+print(&quot;\nconfusion matrix (rows = truth, cols = predicted)&quot;)
+print(&quot;                 malignant  benign&quot;)
+cm = confusion_matrix(y_test, pred)
+for name, row in zip([&quot;malignant&quot;, &quot;benign   &quot;], cm):
+    print(f&quot;      {name}   {row[0]:8d}{row[1]:8d}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>test accuracy: 0.951
+
+confusion matrix (rows = truth, cols = predicted)
+                 malignant  benign
+      malignant         47       6
+      benign             1      89</pre></div>
+<p>About 95% on held-out biopsies, from a model that is one vector of thirty
+numbers and a threshold.</p>
+<h2 id="how-many-directions-can-lda-give-you">How many directions can LDA give you?</h2>
+<p>This is the one hard limit to remember. With <strong>C</strong> classes, LDA can produce at
+most <strong>C − 1</strong> directions.</p>
+<p>Two classes give one direction — that is why every projection above was a single
+number, and why <code>n_components=1</code> was the only choice for the breast-cancer data.
+Three classes give two, which is enough for a scatter plot.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 37</span></div><pre class="py">wine = load_wine()
+Xw, yw = wine.data, wine.target
+print(&quot;wine:&quot;, Xw.shape, &quot;with&quot;, len(np.unique(yw)), &quot;classes -&gt; at most 2 LDA directions&quot;)
+
+Xw_lda = LinearDiscriminantAnalysis(n_components=2).fit_transform(Xw, yw)
+Xw_pca = PCA(n_components=2).fit_transform(Xw)
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
+for ax, Z, title in [(axes[0], Xw_pca, &quot;PCA: 13 columns -&gt; 2&quot;),
+                     (axes[1], Xw_lda, &quot;LDA: 13 columns -&gt; 2&quot;)]:
+    for k, col in zip(range(3), [C1, C2, &quot;#3a7d44&quot;]):
+        ax.scatter(*Z[yw == k].T, s=18, c=col, alpha=.75, label=wine.target_names[k])
+    ax.set(title=title, xlabel=&quot;component 1&quot;, ylabel=&quot;component 2&quot;)
+    ax.legend(fontsize=8.5)
+plt.tight_layout()
+plt.show()</pre></div>
+<div class="out"><div class="h">Output</div><pre>wine: (178, 13) with 3 classes -&gt; at most 2 LDA directions</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c37-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Same thirteen wine columns, same two dimensions kept. PCA's three varieties
+touch; LDA's sit in three separate islands, because LDA was told the labels and
+went looking for the split.</p>
+<h2 id="where-lda-breaks">Where LDA breaks</h2>
+<p>LDA draws <strong>one straight line</strong>. It assumes each class is a roughly Gaussian
+blob and that all classes have the <strong>same</strong> spread. When the real boundary
+curves, no straight line will do, and LDA fails in a very obvious way.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 39</span></div><pre class="py">Xm, ym = make_moons(n_samples=400, noise=.18, random_state=42)
+moon_clf = LinearDiscriminantAnalysis().fit(Xm, ym)
+
+xx, yy = np.meshgrid(np.linspace(Xm[:, 0].min() - .5, Xm[:, 0].max() + .5, 300),
+                     np.linspace(Xm[:, 1].min() - .5, Xm[:, 1].max() + .5, 300))
+zz = moon_clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+
+fig, ax = plt.subplots(figsize=(6.2, 4.4))
+ax.contourf(xx, yy, zz, alpha=.16, colors=[C1, C2], levels=[-.5, .5, 1.5])
+ax.scatter(*Xm[ym == 0].T, s=16, c=C1, label=&quot;class 0&quot;)
+ax.scatter(*Xm[ym == 1].T, s=16, c=C2, label=&quot;class 1&quot;)
+ax.set(title=f&quot;Two moons: LDA&#x27;s straight cut, accuracy = {moon_clf.score(Xm, ym):.2f}&quot;,
+       xlabel=&quot;feature 1&quot;, ylabel=&quot;feature 2&quot;)
+ax.legend(loc=&quot;upper right&quot;, fontsize=9)
+plt.tight_layout()
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/34-lda-explained-c39-9.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>84% on data where a curved boundary gets close to 100%. The straight cut
+slices through both moons because a straight cut is all LDA has.</p>
+<p>This is not a bug to fix. It is the trade you accept: LDA is fast, needs almost
+no tuning, and gives a direction you can read and explain — as long as the split
+really is roughly linear.</p>
+
+<h2 id="where-this-shows-up-in-a-real-system">Where this shows up in a real system</h2>
+<div class="note"><div class="h">Note</div><p>💡 <strong>Engineering Extension</strong> — <em>Recommended Extension - Not part of instructor
+curriculum.</em></p>
+</div>
+<p>The trained model here is genuinely small: one vector of 30 floats, plus a
+threshold. Scoring a biopsy is <code>sum(w[i] * x[i])</code> — a dot product, microseconds,
+no framework needed at request time.</p>
+<p>That has a few practical consequences worth knowing from a services background:</p>
+<ul>
+<li><strong>Serving is trivial.</strong> The whole model fits in a config row. There is no
+reason to stand up a model server for it; the scoring code is a few lines in
+whatever service already holds the features.</li>
+<li><strong>It is a feature step, not only a model.</strong> LDA's usual production job is to
+sit inside a <code>Pipeline</code> and hand its one or two columns to a heavier model
+downstream. That keeps the fitting inside cross-validation, where it belongs.</li>
+<li><strong>The weights are readable.</strong> Thirty coefficients you can sort and inspect
+make a far easier conversation with a domain expert than a tree ensemble.</li>
+<li><strong>It drifts loudly.</strong> The model is class means and scatter. If the incoming
+population shifts, the projected values slide off the threshold, which is one
+cheap number to monitor.</li>
+</ul>
+
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li><strong>Reaching for PCA when the labels exist.</strong> PCA optimises spread, not
+separation. If you have labels and you want separation, LDA is the tool.</li>
+<li><strong>Fitting LDA before the train/test split.</strong> The class means and the scatter
+are learned from data. Fit them on the training rows only, inside a
+<code>Pipeline</code>.</li>
+<li><strong>Asking for more components than C − 1.</strong> Two classes give exactly one
+direction, no matter how many columns went in.</li>
+<li><strong>Using it when one class is far more spread out than the other.</strong> LDA pools
+the scatter into a single S_w. When that assumption is badly wrong, use
+<code>QuadraticDiscriminantAnalysis</code>, which gives each class its own.</li>
+</ol>
+
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> LDA finds the single direction where the
+class centres are far apart <em>and</em> each class stays tight, then squashes every
+point onto it — <code>w = S_w⁻¹ (μ₂ − μ₁)</code>, and <code>z = wᵀx</code>.</p>
+<p>PCA asks &quot;where is the data most spread out?&quot; LDA asks &quot;where are the classes
+most separated?&quot; When you have labels, the second question is usually the one
+you meant.</p>
+
+<div class="src-head">📓 <a href="../Concept/35_LDA_Breast_Cancer.ipynb">35_LDA_Breast_Cancer.ipynb</a></div>
+<h2 id="lda-on-the-breast-cancer-data-the-session-notebo">LDA on the breast-cancer data — the session notebook</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 21.</p>
+</div>
+<p>This is the notebook worked through in class, kept exactly as it was written.
+Thirty measurements per biopsy go in, one number comes out, and the two classes
+land on opposite ends of that number.</p>
+<p>The step-by-step explanation of <em>why</em> this works — the class means, the
+within-class scatter and the direction <code>w</code> — is in
+<a href="../Concept/34_LDA_explained.ipynb"><code>34_LDA_explained.ipynb</code></a>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import load_breast_cancer
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+import matplotlib.pyplot as plt
+
+data = load_breast_cancer()
+data</pre></div>
+<div class="out"><div class="h">Output</div><pre>{&#x27;data&#x27;: array([[1.799e+01, 1.038e+01, 1.228e+02, ..., 2.654e-01, 4.601e-01,
+         1.189e-01],
+        [2.057e+01, 1.777e+01, 1.329e+02, ..., 1.860e-01, 2.750e-01,
+         8.902e-02],
+        [1.969e+01, 2.125e+01, 1.300e+02, ..., 2.430e-01, 3.613e-01,
+         8.758e-02],
+        ...,
+        [1.660e+01, 2.808e+01, 1.083e+02, ..., 1.418e-01, 2.218e-01,
+         7.820e-02],
+        [2.060e+01, 2.933e+01, 1.401e+02, ..., 2.650e-01, 4.087e-01,
+         1.240e-01],
+        [7.760e+00, 2.454e+01, 4.792e+01, ..., 0.000e+00, 2.871e-01,
+         7.039e-02]]),
+ &#x27;target&#x27;: array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+        0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0,
+        1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0,
+        1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0,
+        0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1,
+        1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0,
+        0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0,
+        1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1,
+        1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0,
+        0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0,
+        1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1,
+        1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1,
+        1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+        1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1,
+        1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1,
+        1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1]),
+ &#x27;frame&#x27;: None,
+ &#x27;target_names&#x27;: array([&#x27;malignant&#x27;, &#x27;benign&#x27;], dtype=&#x27;&lt;U9&#x27;),
+ &#x27;DESCR&#x27;: &#x27;.. _breast_cancer_dat</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">X = data.data
+y = data.target
+
+lda = LinearDiscriminantAnalysis(n_components=1)
+
+X_lda = lda.fit_transform(X, y)
+X_lda</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 3.32392717e+00],
+       [ 2.31910801e+00],
+       [ 3.74742484e+00],
+       [ 4.04854946e+00],
+       [ 2.28115767e+00],
+       [ 1.61150348e+00],
+       [ 2.35653128e+00],
+       [ 1.28122316e+00],
+       [ 1.60828074e+00],
+       [ 3.86266690e+00],
+       [ 8.64980964e-01],
+       [ 2.39981887e+00],
+       [ 1.32670638e+00],
+       [ 4.20145181e-01],
+       [ 1.25084871e+00],
+       [ 3.06625368e+00],
+       [ 2.11049829e+00],
+       [ 3.17780841e+00],
+       [ 3.43796946e+00],
+       [-2.23125867e-01],
+       [-1.97973275e+00],
+       [-2.46635453e+00],
+       [ 1.79100127e+00],
+       [ 3.02554197e+00],
+       [ 3.87178737e+00],
+       [ 3.99524140e+00],
+       [ 2.74537482e+00],
+       [ 2.57652189e+00],
+       [ 3.07566630e+00],
+       [ 8.02258881e-01],
+       [ 3.41613522e+00],
+       [ 2.67943316e+00],
+       [ 3.63987363e+00],
+       [ 3.07550539e+00],
+       [ 2.68840028e+00],
+       [ 2.57312945e+00],
+       [ 1.07380321e+00],
+       [-1.87492316e+00],
+       [-4.90632982e-01],
+       [ 9.39621143e-01],
+       [-2.32245369e-01],
+       [ 2.90130296e-01],
+       [ 4.10554121e+00],
+       [ 1.46251896e+00],
+       [ 1.41036456e+00],
+       [ 3.44544604e+00],
+       [-3.27853344e+00],
+       [ 2.17816685e+00],
+       [-1.29143024e+00],
+       [-3.01628230e-01],
+       [-1.62796296e+00],
+       [-1.48830672e+00],
+       [-1.48280073e+00],
+       [ 1.45951018e+00],
+       [ 9.10778815e-01],
+       [-9.82044019e-01],
+       [ 3.13734003e+00],
+       [ 1.98133858e+00],
+       [-1.62708153e+00],
+       [-2.61236500e+00],
+       [-2.36846010e+00],
+       [-2.59329164e+00],
+       [ 2.45106183e+00],
+       [-2.34513269e+00],
+       [ 2.52007465e+00],
+       [ 1.44030488e+00],
+       [-1.74906617e+00],
+       [-1.34490018e+00],
+       [-1.18122253e+00],
+       [-1.53320482e+00],
+       [ 2.46577406e+00],
+       [-3.07777448e+00],
+       [ 3.70043921e+00],
+       [ 1.04662975e-01],
+       [-1.22621663e+00],
+       [ 2.18019556e+00],
+       [-1.15935804e+00],
+       [ 2.00180599e+00],
+       [ 4.05003808e+00],
+       [-1.50764827e+00],
+       [-8.64627083e-01],
+       [ 1.13512727e+00],
+       [ 4.76077510e+00],
+       [ 2.10113195e+00],
+       [-9.28378662e-01],
+       [ 3.31833913e+00],
+       [ 6.02588153e-01],
+       [ 4.50871123e+00],
+       [-1.46051925e-01],
+       [-1.79833480e-01],
+       [-7.20022125e-01],
+       [ 6.42615223e-01],
+       [-4.91547269e-01],
+       [-1.09179675e+00],
+       [ 1.89175663e+00],
+       [ 3.09969764e+00],
+       [-1.69675838e+00],
+       [-1.96092680e+00],
+       [-1.34222363e+00],
+       [ 7.30049465e-01],
+</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">malignant_center = X_lda[y == 0].mean()
+benign_center = X_lda[y == 1].mean()
+
+print(&quot;Malignant Center:&quot;, malignant_center)
+print(&quot;Benign Center:&quot;, benign_center)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Malignant Center: 2.3995016738952684
+Benign Center: -1.4249141592879508</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">plt.figure(figsize=(8,4))
+
+plt.scatter(X_lda[y==0],[0]*sum(y==0),label=&quot;Malignant&quot;)
+plt.scatter(X_lda[y==1],[1]*sum(y==1),label=&quot;Benign&quot;)
+
+plt.yticks([0,1],[&quot;Malignant&quot;,&quot;Benign&quot;])
+plt.xlabel(&quot;LDA Component&quot;)
+plt.title(&quot;LDA Projection&quot;)
+plt.legend()
+
+plt.show()</pre></div>
+<figure class="shot"><img src="assets/35-lda-breast-cancer-c04-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_01.png" data-name="Linear_Discriminant_Analysis_01.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_01.png" alt="Linear_Discriminant_Analysis_01.png" loading="lazy"><span>Linear Discriminant Analysis 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_02.png" data-name="Linear_Discriminant_Analysis_02.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_02.png" alt="Linear_Discriminant_Analysis_02.png" loading="lazy"><span>Linear Discriminant Analysis 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_03.png" data-name="Linear_Discriminant_Analysis_03.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_03.png" alt="Linear_Discriminant_Analysis_03.png" loading="lazy"><span>Linear Discriminant Analysis 03</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_01.png" data-name="Linear_Discriminant_Analysis_v2_01.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_01.png" alt="Linear_Discriminant_Analysis_v2_01.png" loading="lazy"><span>Linear Discriminant Analysis v2 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_02.png" data-name="Linear_Discriminant_Analysis_v2_02.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_02.png" alt="Linear_Discriminant_Analysis_v2_02.png" loading="lazy"><span>Linear Discriminant Analysis v2 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_03.png" data-name="Linear_Discriminant_Analysis_v2_03.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_03.png" alt="Linear_Discriminant_Analysis_v2_03.png" loading="lazy"><span>Linear Discriminant Analysis v2 03</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_04.png" data-name="Linear_Discriminant_Analysis_v2_04.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_04.png" alt="Linear_Discriminant_Analysis_v2_04.png" loading="lazy"><span>Linear Discriminant Analysis v2 04</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_05.png" data-name="Linear_Discriminant_Analysis_v2_05.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_05.png" alt="Linear_Discriminant_Analysis_v2_05.png" loading="lazy"><span>Linear Discriminant Analysis v2 05</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_06.png" data-name="Linear_Discriminant_Analysis_v2_06.png"><img src="../Handwritten_Notes/Linear_Discriminant_Analysis_v2_06.png" alt="Linear_Discriminant_Analysis_v2_06.png" loading="lazy"><span>Linear Discriminant Analysis v2 06</span></button></div>
+<!-- HANDWRITTEN:END -->
+<div class="foot"><a class="btn" href="../Concept/34_LDA_explained.ipynb">34_LDA_explained.ipynb ↗</a><a class="btn" href="../Concept/35_LDA_Breast_Cancer.ipynb">35_LDA_Breast_Cancer.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

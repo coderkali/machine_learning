@@ -4,7 +4,8 @@
 <title>Synthetic Datasets — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/02_make_*_dataset.ipynb">02_make_*_dataset.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import numpy as np
 import matplotlib.pyplot as plt
@@ -50,7 +51,7 @@ for ax in axes:
 
 fig.suptitle(&quot;The five generators in this notebook&quot;, fontsize=12)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c01-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">import matplotlib.pyplot as plt
 from sklearn.datasets import make_regression</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">x,y = make_regression(n_features=1, noise=5, n_samples=10000,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">x</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 0.58262411],
        [-1.31093021],
        [-0.76251627],
@@ -77,13 +78,13 @@ x[0]    -&gt; [0.583]   one ROW (still an array, because a row can have many col
 x[:, 0] -&gt; [ 0.583 -1.311 -0.763  0.177 -1.307] ...  one COLUMN, first 5 values</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 11</span></div><pre class="py">import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 12</span></div><pre class="py">plt.scatter(x,y)
 plt.xlabel(&#x27;x&#x27;)
 plt.ylabel(&#x27;y&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">plt.figure(figsize=(6.5, 4))
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c12-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">plt.figure(figsize=(6.5, 4))
 plt.scatter(x, y, s=6, alpha=0.15, color=&quot;#2563eb&quot;)
 plt.xlabel(&quot;x  (the single input column)&quot;)
 plt.ylabel(&quot;y  (the answer)&quot;)
 plt.title(&quot;Same 10,000 points, with small markers and transparency&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 16</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=True)
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c14-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 16</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=True)
 
 for ax, level in zip(axes, [0, 5, 30]):
     nx, ny = make_regression(n_samples=400, n_features=1, noise=level, random_state=0)
@@ -98,7 +99,7 @@ axes[2].text(0.05, 0.9, &quot;same line underneath,\nburied in randomness&quot;,
              fontsize=9, va=&quot;top&quot;, color=&quot;#b45309&quot;)
 fig.suptitle(&quot;noise is the difficulty dial&quot;, fontsize=12)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 18</span></div><pre class="py">cx, cy, true_slope = make_regression(n_samples=300, n_features=1, noise=5,
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c16-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 18</span></div><pre class="py">cx, cy, true_slope = make_regression(n_samples=300, n_features=1, noise=5,
                                      bias=50, coef=True, random_state=0)
 
 slope = float(np.ravel(true_slope)[0])
@@ -117,7 +118,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>true slope (coef) : 62.8898
 true intercept    : 50   (this is the `bias` argument)
-so the hidden formula is:  y = 62.89 * x + 50 + noise(sd=5)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 20</span></div><pre class="py">mx, my = make_regression(n_samples=300, n_features=3, n_informative=1,
+so the hidden formula is:  y = 62.89 * x + 50 + noise(sd=5)</pre></div><figure class="shot"><img src="assets/02-make-dataset-c18-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 20</span></div><pre class="py">mx, my = make_regression(n_samples=300, n_features=3, n_informative=1,
                          noise=5, random_state=0)
 
 fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=True)
@@ -134,8 +135,8 @@ plt.show()
 
 print(&quot;Only one column has a strong correlation. That is the informative one.&quot;)
 print(&quot;The other two exist so that feature-selection code has something to throw away.&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>Only one column has a strong correlation. That is the informative one.
-The other two exist so that feature-selection code has something to throw away.</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 22</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 24</span></div><pre class="py">x,y = make_classification(n_classes=2,n_features=5,n_samples=500)
-plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11aa08050&gt;</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 27</span></div><pre class="py">x</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 0.52964955, -1.52158144, -1.00449325, -1.04583869,  0.03813919],
+The other two exist so that feature-selection code has something to throw away.</pre></div><figure class="shot"><img src="assets/02-make-dataset-c20-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 22</span></div><pre class="py">from sklearn.datasets import make_classification</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 24</span></div><pre class="py">x,y = make_classification(n_classes=2,n_features=5,n_samples=500)
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11aa08050&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c24-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 27</span></div><pre class="py">x</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 0.52964955, -1.52158144, -1.00449325, -1.04583869,  0.03813919],
        [ 0.2552979 ,  3.12979344,  0.28657108, -0.25320077, -0.06708268],
        [ 0.15671694, -0.27410954, -0.89920602, -1.15883029,  0.01145847],
        ...,
@@ -213,7 +214,7 @@ column 0  informative   distance between class means = +0.04
 column 1  informative   distance between class means = -2.00
 column 2  redundant     distance between class means = +1.05
 column 3  redundant     distance between class means = -0.49
-column 4  useless       distance between class means = +0.09</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">settings = [
+column 4  useless       distance between class means = +0.09</pre></div><figure class="shot"><img src="assets/02-make-dataset-c31-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 33</span></div><pre class="py">settings = [
     (&quot;class_sep=0.5\n(classes overlap)&quot;,      dict(class_sep=0.5)),
     (&quot;class_sep=1.0\n(the default)&quot;,          dict(class_sep=1.0)),
     (&quot;class_sep=3.0\n(easy, almost a gift)&quot;,  dict(class_sep=3.0)),
@@ -236,7 +237,7 @@ for ax, (title, extra) in zip(axes.ravel(), settings):
 axes[0, 0].legend(fontsize=8, loc=&quot;upper right&quot;)
 fig.suptitle(&quot;One knob changed per panel&quot;, fontsize=13)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 36</span></div><pre class="py">from sklearn.datasets import make_blobs</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 38</span></div><pre class="py">x, y = make_blobs(n_samples=500, centers=3, n_features=2,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 39</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11db07250&gt;</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 41</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(13, 3.8), sharex=True, sharey=True)
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c33-9.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 36</span></div><pre class="py">from sklearn.datasets import make_blobs</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 38</span></div><pre class="py">x, y = make_blobs(n_samples=500, centers=3, n_features=2,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 39</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11db07250&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c39-10.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 41</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(13, 3.8), sharex=True, sharey=True)
 
 for ax, spread in zip(axes, [0.5, 1.5, 3.0]):
     bx, by, centres = make_blobs(n_samples=400, centers=3, n_features=2,
@@ -252,7 +253,7 @@ axes[2].text(0.03, 0.03, &quot;merged: &#x27;how many groups?&#x27; has no clean
              transform=axes[2].transAxes, fontsize=8, color=&quot;#b45309&quot;)
 fig.suptitle(&quot;cluster_std decides whether clustering is even possible  (X = true centre)&quot;, fontsize=12)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 43</span></div><pre class="py">chosen_centres = np.array([[0.0, 0.0],
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c41-11.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 43</span></div><pre class="py">chosen_centres = np.array([[0.0, 0.0],
                            [1.5, 1.5],     # deliberately close to the first
                            [8.0, 1.0]])    # far away
 
@@ -269,8 +270,8 @@ ax.scatter(chosen_centres[:, 0], chosen_centres[:, 1], marker=&quot;X&quot;, s=2
            c=&quot;#111827&quot;, edgecolor=&quot;white&quot;, linewidth=1.5, zorder=5)
 ax.legend(fontsize=8)
 plt.tight_layout()
-plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>rows per blob: [300 300  60]</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 45</span></div><pre class="py">from sklearn.datasets import make_circles
-x, y = make_circles(n_samples=500,random_state=1,noise=0.03)</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 46</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11de11310&gt;</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 48</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.8))
+plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>rows per blob: [300 300  60]</pre></div><figure class="shot"><img src="assets/02-make-dataset-c43-12.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 45</span></div><pre class="py">from sklearn.datasets import make_circles
+x, y = make_circles(n_samples=500,random_state=1,noise=0.03)</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 46</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11de11310&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c46-13.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 48</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.8))
 
 variants = [
     (&quot;factor=0.2, noise=0.03&quot;, dict(factor=0.2, noise=0.03)),
@@ -288,8 +289,8 @@ for ax, (title, extra) in zip(axes, variants):
 axes[0].legend(fontsize=8, loc=&quot;upper right&quot;)
 fig.suptitle(&quot;factor sets the gap between the rings; noise blurs them&quot;, fontsize=12)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.datasets import make_moons
-x, y = make_moons(n_samples=500,random_state=10,noise=0.1)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 51</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11df74f50&gt;</pre></div><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 53</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c48-14.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 50</span></div><pre class="py">from sklearn.datasets import make_moons
+x, y = make_moons(n_samples=500,random_state=10,noise=0.1)</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 51</span></div><pre class="py">plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11df74f50&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c51-15.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [30]</span><span class="cell">cell 53</span></div><pre class="py">fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
 
 for ax, level in zip(axes, [0.0, 0.1, 0.25, 0.45]):
     sx, sy = make_moons(n_samples=400, noise=level, random_state=10)
@@ -303,7 +304,7 @@ axes[3].text(0.03, 0.03, &quot;the shape is gone&quot;, transform=axes[3].transA
 axes[0].legend(fontsize=8, loc=&quot;upper right&quot;)
 fig.suptitle(&quot;make_moons: noise is the only difficulty dial&quot;, fontsize=12)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 55</span></div><pre class="py">def best_straight_line_score(X, labels, angles=180, cuts=99):
+plt.show()</pre></div><figure class="shot"><img src="assets/02-make-dataset-c53-16.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 55</span></div><pre class="py">def best_straight_line_score(X, labels, angles=180, cuts=99):
     &quot;&quot;&quot;Brute-force the best accuracy any straight boundary could reach.&quot;&quot;&quot;
     best = 0.0
     for theta in np.linspace(0, np.pi, angles, endpoint=False):
@@ -339,9 +340,9 @@ ax.set_title(&quot;This is why make_circles and make_moons exist&quot;)
 plt.tight_layout()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>make_blobs (2 blobs)       best possible straight line: 98.0%
 make_moons  (noise=0.1)    best possible straight line: 89.0%
-make_circles (factor=0.5)  best possible straight line: 66.5%</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 58</span></div><pre class="py">from sklearn.datasets import make_classification
+make_circles (factor=0.5)  best possible straight line: 66.5%</pre></div><figure class="shot"><img src="assets/02-make-dataset-c55-17.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 58</span></div><pre class="py">from sklearn.datasets import make_classification
 x,y = make_classification(n_classes=2,n_features=5,n_samples=10,random_state=1)
-plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e163390&gt;</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 59</span></div><pre class="py">plt.scatter(x[:,0],x[:,2],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e1f51d0&gt;</pre></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 60</span></div><pre class="py">plt.scatter(x[:,0],x[:,3],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e24afd0&gt;</pre></div><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 61</span></div><pre class="py">plt.scatter(x[:,0],x[:,4],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e2ec690&gt;</pre></div><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 63</span></div><pre class="py">def column_roles(**call):
+plt.scatter(x[:,0],x[:,1],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e163390&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c58-18.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 59</span></div><pre class="py">plt.scatter(x[:,0],x[:,2],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e1f51d0&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c59-19.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 60</span></div><pre class="py">plt.scatter(x[:,0],x[:,3],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e24afd0&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c60-20.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [35]</span><span class="cell">cell 61</span></div><pre class="py">plt.scatter(x[:,0],x[:,4],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x11e2ec690&gt;</pre></div><figure class="shot"><img src="assets/02-make-dataset-c61-21.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [36]</span><span class="cell">cell 63</span></div><pre class="py">def column_roles(**call):
     # Work out what each column of a make_classification call really is.
     # Trick: generate the same seed twice - once with shuffle=False, where the
     # column order is documented, and once as called. Shuffling moves columns
@@ -391,7 +392,7 @@ so the four charts you drew were really:
   x[:, 0] vs x[:, 1]   -&gt;   useless  vs  redundant
   x[:, 0] vs x[:, 2]   -&gt;   useless  vs  redundant
   x[:, 0] vs x[:, 3]   -&gt;   useless  vs  informative
-  x[:, 0] vs x[:, 4]   -&gt;   useless  vs  informative</pre></div><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 65</span></div><pre class="py">big_call = dict(n_classes=2, n_features=5, n_samples=500, random_state=1)
+  x[:, 0] vs x[:, 4]   -&gt;   useless  vs  informative</pre></div><figure class="shot"><img src="assets/02-make-dataset-c63-22.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [37]</span><span class="cell">cell 65</span></div><pre class="py">big_call = dict(n_classes=2, n_features=5, n_samples=500, random_state=1)
 big_x, big_y = make_classification(**big_call)
 big_role = column_roles(**big_call)
 print(&quot;with 500 rows the roles land as:&quot;, big_role)
@@ -426,7 +427,7 @@ pair_real    = big_x[:, informative_cols]
 print(f&quot;useless + informative  -&gt;  best straight line: {best_straight_line_score(pair_useless, big_y):.1%}&quot;)
 print(f&quot;both informative       -&gt;  best straight line: {best_straight_line_score(pair_real, big_y):.1%}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>with 500 rows the roles land as: {0: &#x27;informative&#x27;, 1: &#x27;redundant&#x27;, 2: &#x27;redundant&#x27;, 3: &#x27;useless&#x27;, 4: &#x27;informative&#x27;}
 useless + informative  -&gt;  best straight line: 57.2%
-both informative       -&gt;  best straight line: 94.0%</pre></div><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 67</span></div><pre class="py">plt.scatter(x[:,0],x[:,5],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
+both informative       -&gt;  best straight line: 94.0%</pre></div><figure class="shot"><img src="assets/02-make-dataset-c65-23.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [38]</span><span class="cell">cell 67</span></div><pre class="py">plt.scatter(x[:,0],x[:,5],c=y)</pre></div><div class="out"><div class="h">Output</div><pre>---------------------------------------------------------------------------
 IndexError                                Traceback (most recent call last)
 Cell In[38], line 1
 ----&gt; 1 plt.scatter(x[:,0],x[:,5],c=y)
@@ -455,5 +456,5 @@ if wanted &lt; columns:
 else:
     print(f&quot;column {wanted} does not exist — there are only {columns} columns (0..{columns - 1})&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>the array has 10 rows and 5 columns
 valid column indexes: 0 .. 4
-column 5 does not exist — there are only 5 columns (0..4)</pre></div>
+column 5 does not exist — there are only 5 columns (0..4)</pre></div><figure class="shot"><img src="assets/02-make-dataset-c69-24.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

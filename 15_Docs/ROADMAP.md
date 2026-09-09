@@ -30,8 +30,13 @@ simple and multiple linear regression, `coef_`/`intercept_` solved by hand,
 first worked underfit/overfit comparison. **Cross-validation** replaces the single
 lucky split with K folds. Unsupervised learning has started: **K-Means** with the
 elbow method and **hierarchical clustering** with dendrograms and linkage, plus a
-standalone visual guide. Still open: classification, trees and ensembles, metrics
-beyond `.score()`, `GridSearchCV`, and persistence. M03
+standalone visual guide. **Linear Discriminant Analysis** (Session 21) adds
+supervised dimensionality reduction: thirty breast-cancer columns projected onto
+one axis that keeps the two classes apart, with the `S_w⁻¹(μ₂ − μ₁)` derivation
+worked by hand first. **Model persistence** (Session 21) closes the loop: a fitted
+model written to disk with `joblib` and `pickle` and loaded back, with the whole
+`Pipeline` saved rather than the estimator alone. Still open: classification,
+trees and ensembles, metrics beyond `.score()`, and `GridSearchCV`. M03
 [NumPy](../01_Python/02_NumPy/Concept/README.md) and
 [Pandas](../01_Python/03_Pandas/Concept/README.md), plus Matplotlib,
 Seaborn, Plotly, and Streamlit, also remain in progress.

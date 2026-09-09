@@ -4,7 +4,8 @@
 <title>Linear Regression — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/05_Linear_Regression.ipynb">05_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
 x,y = make_regression(n_features=1, noise=5, n_samples=10000,random_state=1)
@@ -12,7 +13,7 @@ import matplotlib.pyplot as plt
 plt.scatter(x,y)
 plt.xlabel(&#x27;x&#x27;)
 plt.ylabel(&#x27;y&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+plt.show()</pre></div><figure class="shot"><img src="assets/05-linear-regression-c01-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train,X_test,y_train,y_test = train_test_split(x,y,test_size=0.2, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.linear_model import LinearRegression
 regressor = LinearRegression()
 regressor.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 8</span></div><pre class="py">X_test</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 1.24445906],
@@ -58,7 +59,7 @@ plt.annotate(f&quot;coef_ = {m:.2f}\n(rise for a run of 1)&quot;,
 
 plt.xlabel(&quot;x&quot;); plt.ylabel(&quot;y&quot;); plt.legend(loc=&quot;upper left&quot;)
 plt.title(&quot;intercept_ places the line, coef_ tilts it&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">xs = np.linspace(-3, 3, 50)
+plt.show()</pre></div><figure class="shot"><img src="assets/05-linear-regression-c20-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 22</span></div><pre class="py">xs = np.linspace(-3, 3, 50)
 fig, ax = plt.subplots(1, 2, figsize=(11, 4))
 
 for slope in [20, 86, 160]:                      # intercept fixed
@@ -74,14 +75,14 @@ for a in ax:
     a.axvline(0, color=&quot;grey&quot;, lw=0.8)
     a.set_xlabel(&quot;x&quot;); a.set_ylabel(&quot;y&quot;); a.legend(fontsize=8)
 
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 25</span></div><pre class="py">y_pred = regressor.predict(x)
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/05-linear-regression-c22-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 25</span></div><pre class="py">y_pred = regressor.predict(x)
 y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([ 130.08472986,  -44.53477921, -167.86426893, ..., -142.37365931,
          13.8749839 ,  -72.20838078], shape=(10000,))</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 27</span></div><pre class="py">plt.scatter(x,y,label=&quot;Actual&quot;)
 plt.scatter(x,y_pred,label=&quot;Predicted&quot;)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 31</span></div><pre class="py">def cost(m_try, c_try):
+plt.show()</pre></div><figure class="shot"><img src="assets/05-linear-regression-c27-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 31</span></div><pre class="py">def cost(m_try, c_try):
     # average squared vertical gap over the 8000 training rows
     predicted = m_try * X_train.ravel() + c_try
     return ((y_train - predicted) ** 2).mean()
@@ -116,7 +117,7 @@ ax[1].set_xlabel(&quot;intercept_&quot;)
 
 for a in ax:
     a.set_ylabel(&quot;cost (mean squared gap)&quot;)
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 35</span></div><pre class="py">xt = X_train.ravel()
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/05-linear-regression-c33-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 35</span></div><pre class="py">xt = X_train.ravel()
 yt = y_train
 
 m_hand = ((xt - xt.mean()) * (yt - yt.mean())).sum() / ((xt - xt.mean()) ** 2).sum()
@@ -195,7 +196,7 @@ ax[1].set_yscale(&quot;log&quot;)
 ax[1].set_xlabel(&quot;step&quot;); ax[1].set_ylabel(&quot;cost (log scale)&quot;)
 ax[1].set_title(&quot;cost drops fast, then flattens - it has arrived&quot;)
 
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 46</span></div><pre class="py">X_dup = np.c_[X_train, X_train]      # column 2 is an exact copy of column 1
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/05-linear-regression-c43-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 46</span></div><pre class="py">X_dup = np.c_[X_train, X_train]      # column 2 is an exact copy of column 1
 
 dup_model = LinearRegression().fit(X_dup, y_train)
 print(&quot;coefficients :&quot;, dup_model.coef_, &quot;-&gt; they add up to&quot;, dup_model.coef_.sum())
@@ -223,7 +224,7 @@ plt.scatter(x, y, s=80)
 plt.xlabel(&quot;x  (years)&quot;)
 plt.ylabel(&quot;y  (salary)&quot;)
 plt.grid(alpha=0.3)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 5</span></div><pre class="py">x_bar = x.mean()
+plt.show()</pre></div><figure class="shot"><img src="assets/05a-coef-and-intercept-by-ha-c02-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 5</span></div><pre class="py">x_bar = x.mean()
 y_bar = y.mean()
 
 print(&quot;average x =&quot;, x_bar)
@@ -282,7 +283,7 @@ ax.text(5.5, 26.5, &quot;many years,\nlow salary&quot;, fontsize=8, color=&quot;
 ax.set_xlim(0.2, 6.1); ax.set_ylim(24, 68)
 ax.set_xlabel(&quot;x  (years)&quot;); ax.set_ylabel(&quot;y  (salary)&quot;)
 ax.set_title(&quot;TOP = total shaded area = 32 + 11 + 0 + 9 + 28 = 80&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 23</span></div><pre class="py">fig, ax = plt.subplots(figsize=(10, 3.2))
+plt.show()</pre></div><figure class="shot"><img src="assets/05a-coef-and-intercept-by-ha-c20-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [31]</span><span class="cell">cell 23</span></div><pre class="py">fig, ax = plt.subplots(figsize=(10, 3.2))
 
 slots = [0, 2.8, 5.6, 8.4, 11.2]          # one slot per person, spaced out
 names = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;]
@@ -303,7 +304,7 @@ for slot, name, d, s in zip(slots, names, x_diff, squares):
 ax.set_xlim(-1.8, 13); ax.set_ylim(-1.0, 2.6)
 ax.set_aspect(&quot;equal&quot;); ax.axis(&quot;off&quot;)
 ax.set_title(&quot;BOTTOM = total area of these squares = 4 + 1 + 0 + 1 + 4 = 10&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 26</span></div><pre class="py">fig, ax = plt.subplots(figsize=(10, 2.4))
+plt.show()</pre></div><figure class="shot"><img src="assets/05a-coef-and-intercept-by-ha-c23-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [32]</span><span class="cell">cell 26</span></div><pre class="py">fig, ax = plt.subplots(figsize=(10, 2.4))
 
 for k in range(10):
     ax.add_patch(plt.Rectangle((k * 8, 0), 8, 1, facecolor=&quot;seagreen&quot;,
@@ -315,7 +316,7 @@ ax.annotate(&quot;cut into BOTTOM = 10 equal pieces   →   each piece is 8   �
             xy=(40, -0.55), ha=&quot;center&quot;, fontsize=11)
 
 ax.set_xlim(-3, 83); ax.set_ylim(-1.1, 2.0); ax.axis(&quot;off&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 29</span></div><pre class="py">line_x = np.linspace(-0.2, 6, 50)
+plt.show()</pre></div><figure class="shot"><img src="assets/05a-coef-and-intercept-by-ha-c26-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [33]</span><span class="cell">cell 29</span></div><pre class="py">line_x = np.linspace(-0.2, 6, 50)
 
 fig, ax = plt.subplots(figsize=(8.5, 6))
 ax.plot(line_x, m * line_x + c, color=&quot;crimson&quot;, lw=2, label=f&quot;y = {m:.0f}x + {c:.0f}&quot;)
@@ -341,7 +342,7 @@ ax.set_xlim(-0.5, 6); ax.set_ylim(20, 68)
 ax.set_xlabel(&quot;x  (years)&quot;); ax.set_ylabel(&quot;y  (salary)&quot;)
 ax.legend(loc=&quot;lower right&quot;, fontsize=9); ax.grid(alpha=0.25)
 ax.set_title(&quot;intercept_ = walk from the average point back to x = 0&quot;)
-plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/26_Simple_Linear_Regression.ipynb">26_Simple_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                     # pandas: load the CSV and work with it as a table (DataFrame)
+plt.show()</pre></div><figure class="shot"><img src="assets/05a-coef-and-intercept-by-ha-c29-5.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/26_Simple_Linear_Regression.ipynb">26_Simple_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [34]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                     # pandas: load the CSV and work with it as a table (DataFrame)
 import seaborn as sns                                    # seaborn: nicer statistical plots, built on top of matplotlib
 import matplotlib.pyplot as plt                          # matplotlib: base plotting library, used here for fine control (labels, legends, saving files)
 from sklearn.model_selection import train_test_split     # splits our data into a training pool and a held-back testing pool
@@ -376,7 +377,7 @@ y                          # display it</pre></div><div class="out"><div class="
 99    3.06
 Name: package, Length: 100, dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 18</span></div><pre class="py">plt.figure(figsize=(5,3))                              # open a new, fairly small figure to draw on
 sns.scatterplot(x=&quot;cgpa&quot;, y=&quot;package&quot;, data=dataset)    # one dot per student: cgpa on the x-axis, package on the y-axis
-plt.show()                                              # render the plot</pre></div><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 21</span></div><pre class="py">x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)  # 80 rows go to *_train, 20 rows go to *_test</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 23</span></div><pre class="py">lr = LinearRegression()          # create a fresh, untrained Simple Linear Regression model
+plt.show()                                              # render the plot</pre></div><figure class="shot"><img src="assets/26-simple-linear-regression-c18-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [44]</span><span class="cell">cell 21</span></div><pre class="py">x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)  # 80 rows go to *_train, 20 rows go to *_test</pre></div><div class="code"><div class="code-head"><span>In [45]</span><span class="cell">cell 23</span></div><pre class="py">lr = LinearRegression()          # create a fresh, untrained Simple Linear Regression model
 lr.fit(x_train, y_train)         # train it on the 80 training rows — this is where sklearn works out the best m (slope) and c (intercept)</pre></div><div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 25</span></div><pre class="py"># row 0 in the CSV: cgpa=6.89, package=3.26 (actual) — let&#x27;s see what the model predicts for that same cgpa
 new_row = pd.DataFrame([[6.89]], columns=[&quot;cgpa&quot;])   # wrap the new cgpa value in a DataFrame with the matching column name
 lr.predict(new_row)                                   # ask the trained model to predict the package for cgpa=6.89</pre></div><div class="out"><div class="h">Output</div><pre>array([2.83654417])</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 28</span></div><pre class="py">lr.score(x_test, y_test) * 100  # R² score on the 20 held-back test rows, as a percentage-style number</pre></div><div class="out"><div class="h">Output</div><pre>68.79138403839303</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 31</span></div><pre class="py">lr.coef_  # the slope, m — an array because sklearn supports many features at once; here there&#x27;s only one value, for &quot;cgpa&quot;. Positive → the line rises left to right.</pre></div><div class="out"><div class="h">Output</div><pre>array([0.58176641])</pre></div><div class="code"><div class="code-head"><span>In [49]</span><span class="cell">cell 32</span></div><pre class="py">lr.intercept_  # the intercept, c — a single number here. Negative → the line crosses the y-axis below zero (it dips below the x-axis before turning positive).</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(-1.1718264038996313)</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 34</span></div><pre class="py"># y = 0.58176641 * x + (-1.1718264038996313)  &lt;- this run&#x27;s fitted line, shown for reference only; the next cell reads these numbers from the model itself instead of retyping them</pre></div><div class="code"><div class="code-head"><span>In [51]</span><span class="cell">cell 36</span></div><pre class="py">m = lr.coef_[0]                     # pull the slope straight out of the trained model, instead of retyping the printed number
@@ -390,7 +391,7 @@ plt.ylabel(&quot;Package (LPA)&quot;)                                           
 plt.title(&quot;CGPA vs Package — Actual Data vs Fitted Regression Line&quot;)       # title the chart
 plt.legend()                                                               # this now works: it reads the labels above automatically, no args needed
 plt.savefig(&quot;predict.jpg&quot;)                                                 # save a copy of the chart to disk, as before
-plt.show()                                                                 # render it</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 43</span></div><pre class="py">plt.figure(figsize=(6,4))                                                   # new figure for this visualization
+plt.show()                                                                 # render it</pre></div><figure class="shot"><img src="assets/26-simple-linear-regression-c41-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 43</span></div><pre class="py">plt.figure(figsize=(6,4))                                                   # new figure for this visualization
 sns.scatterplot(x=&quot;cgpa&quot;, y=&quot;package&quot;, data=dataset, label=&quot;Actual data&quot;)   # the real data points again
 plt.plot(dataset[&quot;cgpa&quot;], y_prd, c=&quot;red&quot;, label=&quot;Predicted line&quot;)           # the fitted line again
 plt.vlines(dataset[&quot;cgpa&quot;], y, y_prd, colors=&quot;gray&quot;, linestyles=&quot;dashed&quot;, alpha=0.6, label=&quot;Residual&quot;)  # one dashed line per student, from actual y down/up to predicted y
@@ -398,7 +399,7 @@ plt.xlabel(&quot;CGPA&quot;)
 plt.ylabel(&quot;Package (LPA)&quot;)
 plt.title(&quot;Residuals — the Gap Between Actual and Predicted Package&quot;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 45</span></div><pre class="py">residuals = y - y_prd                                            # actual minus predicted, for every student — positive means the model under-predicted, negative means it over-predicted
+plt.show()</pre></div><figure class="shot"><img src="assets/26-simple-linear-regression-c43-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [55]</span><span class="cell">cell 45</span></div><pre class="py">residuals = y - y_prd                                            # actual minus predicted, for every student — positive means the model under-predicted, negative means it over-predicted
 
 plt.figure(figsize=(6,4))
 sns.scatterplot(x=y_prd, y=residuals)                             # predicted package on x, residual on y
@@ -406,12 +407,12 @@ plt.axhline(0, color=&quot;red&quot;, linestyle=&quot;--&quot;)                 
 plt.xlabel(&quot;Predicted Package&quot;)
 plt.ylabel(&quot;Residual (Actual − Predicted)&quot;)
 plt.title(&quot;Residuals vs Predicted Values&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 47</span></div><pre class="py">plt.figure(figsize=(5,3))
+plt.show()</pre></div><figure class="shot"><img src="assets/26-simple-linear-regression-c45-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 47</span></div><pre class="py">plt.figure(figsize=(5,3))
 sns.histplot(residuals, kde=True, color=&quot;teal&quot;)   # bar-chart of how often each residual size occurs, plus a smoothed curve (kde) over it
 plt.axvline(0, color=&quot;red&quot;, linestyle=&quot;--&quot;)        # mark residual=0 for reference
 plt.xlabel(&quot;Residual (Actual − Predicted)&quot;)
 plt.title(&quot;Distribution of Residuals&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 49</span></div><pre class="py">plt.figure(figsize=(5,5))
+plt.show()</pre></div><figure class="shot"><img src="assets/26-simple-linear-regression-c47-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 49</span></div><pre class="py">plt.figure(figsize=(5,5))
 sns.scatterplot(x=y, y=y_prd)                                       # actual package on x, predicted package on y
 lims = [min(y.min(), y_prd.min()), max(y.max(), y_prd.max())]        # shared axis limits, so the diagonal line spans the full plot
 plt.plot(lims, lims, color=&quot;red&quot;, linestyle=&quot;--&quot;, label=&quot;Perfect prediction (actual = predicted)&quot;)  # the y = x reference line
@@ -419,5 +420,5 @@ plt.xlabel(&quot;Actual Package&quot;)
 plt.ylabel(&quot;Predicted Package&quot;)
 plt.title(&quot;Actual vs Predicted Package&quot;)
 plt.legend()
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/26-simple-linear-regression-c49-6.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

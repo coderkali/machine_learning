@@ -4,7 +4,8 @@
 <title>Multiple Linear Regression — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/06_multiple_linear_regression.ipynb">06_multiple_linear_regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">df  = pd.read_csv(&quot;../../../01_Python/03_Pandas/Data/age2.csv&quot;)
 df.head(5)</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Degrees  Income
@@ -16,10 +17,10 @@ df.head(5)</pre></div><div class="out"><div class="h">Output</div><pre>   Age  D
 plt.scatter(df[&#x27;Age&#x27;],df[&#x27;Income&#x27;])
 plt.xlabel(&#x27;Age&#x27;)
 plt.ylabel(&#x27;Income&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">plt.scatter(df[&#x27;Degrees&#x27;],df[&#x27;Income&#x27;])
+plt.show()</pre></div><figure class="shot"><img src="assets/06-multiple-linear-regressio-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">plt.scatter(df[&#x27;Degrees&#x27;],df[&#x27;Income&#x27;])
 plt.xlabel(&#x27;Degrees&#x27;)
 plt.ylabel(&#x27;Income&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 9</span></div><pre class="py">x = df[[&#x27;Age&#x27;, &#x27;Degrees&#x27;]]
+plt.show()</pre></div><figure class="shot"><img src="assets/06-multiple-linear-regressio-c06-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 9</span></div><pre class="py">x = df[[&#x27;Age&#x27;, &#x27;Degrees&#x27;]]
 y = df[&#x27;Income&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train,X_test,y_train,y_test = train_test_split(x,y,test_size=0.3,random_state=0)
 X_train</pre></div><div class="out"><div class="h">Output</div><pre>   Age  Degrees
@@ -79,7 +80,7 @@ ax.set_xlabel(&quot;Age&quot;); ax.set_ylabel(&quot;Degrees&quot;); ax.set_zlabe
 ax.set_title(f&quot;Two inputs -&gt; the model is a PLANE\nIncome = {b0:.2f} + ({w1:.2f} * Age) + ({w2:.2f} * Degrees)&quot;)
 ax.legend(loc=&quot;upper left&quot;)
 ax.view_init(22, -58)
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.linear_model import LinearRegression
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/06-multiple-linear-regressio-c27-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 29</span></div><pre class="py">from sklearn.linear_model import LinearRegression
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -107,10 +108,10 @@ ax[1].set_title(&quot;same column, different coefficient&quot;)
 for a in ax:
     a.set_xlabel(&quot;Age&quot;); a.set_ylabel(&quot;Income&quot;); a.legend(fontsize=8)
 
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 31</span></div><pre class="py">y_pred = clf.predict(x)
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/06-multiple-linear-regressio-c29-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 31</span></div><pre class="py">y_pred = clf.predict(x)
 y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([4333.33333333, 4833.33333333, 6555.55555556, 6000.        ,
        3833.33333333, 2314.81481481])</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 33</span></div><pre class="py">import seaborn as sns
-sns.regplot(x=y, y=y_pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;Income&#x27;&gt;</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 35</span></div><pre class="py">import matplotlib.pyplot as plt
+sns.regplot(x=y, y=y_pred)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: xlabel=&#x27;Income&#x27;&gt;</pre></div><figure class="shot"><img src="assets/06-multiple-linear-regressio-c33-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 35</span></div><pre class="py">import matplotlib.pyplot as plt
 
 y_pred = clf.predict(x)
 
@@ -129,7 +130,7 @@ for actual, pred in zip(y, y_pred):
 ax.set_xlabel(&quot;Actual Income&quot;); ax.set_ylabel(&quot;Predicted Income&quot;)
 ax.set_title(&quot;Actual vs Predicted  (red stick = error)&quot;)
 ax.set_xlim(lim); ax.set_ylim(lim); ax.set_aspect(&quot;equal&quot;); ax.legend(fontsize=8)
-plt.tight_layout(); plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/27_Multiple_Linear_Regression.ipynb">27_Multiple_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                   # pandas: load the CSV and work with it as a table (DataFrame)
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/06-multiple-linear-regressio-c35-6.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/27_Multiple_Linear_Regression.ipynb">27_Multiple_Linear_Regression.ipynb</a></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd                                   # pandas: load the CSV and work with it as a table (DataFrame)
 import seaborn as sns                                  # seaborn: nicer statistical plots (pairplot, heatmap), built on matplotlib
 import matplotlib.pyplot as plt                        # matplotlib: base plotting library, used for titles/labels/showing figures
 from sklearn.model_selection import train_test_split   # splits our data into a training pool and a held-back testing pool
@@ -140,7 +141,7 @@ from sklearn.linear_model import LinearRegression      # the model class — now
 Experience    0
 Salary        0
 dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 11</span></div><pre class="py">sns.pairplot(data=dataset)   # scatter every column against every other column, histogram on the diagonal
-plt.show()                   # render the grid of plots</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 13</span></div><pre class="py">sns.heatmap(data=dataset.corr(), annot=True)   # dataset.corr() computes the correlation table; heatmap colors + prints each value</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 15</span></div><pre class="py">x = dataset.iloc[:, :-1]   # every row, every column except the last (&quot;Salary&quot;) — this is now a 2-column table
+plt.show()                   # render the grid of plots</pre></div><figure class="shot"><img src="assets/27-multiple-linear-regressio-c11-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 13</span></div><pre class="py">sns.heatmap(data=dataset.corr(), annot=True)   # dataset.corr() computes the correlation table; heatmap colors + prints each value</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><figure class="shot"><img src="assets/27-multiple-linear-regressio-c13-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 15</span></div><pre class="py">x = dataset.iloc[:, :-1]   # every row, every column except the last (&quot;Salary&quot;) — this is now a 2-column table
 x                          # display it, to see what we just built</pre></div><div class="out"><div class="h">Output</div><pre>     Age  Experience
 0     25           4
 1     52          23
@@ -195,10 +196,10 @@ plt.xlabel(&quot;Actual Salary&quot;)
 plt.ylabel(&quot;Predicted Salary&quot;)
 plt.title(&quot;Actual vs Predicted Salary (Test Set)&quot;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 43</span></div><pre class="py">plt.figure(figsize=(5, 4))
+plt.show()</pre></div><figure class="shot"><img src="assets/27-multiple-linear-regressio-c41-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 43</span></div><pre class="py">plt.figure(figsize=(5, 4))
 plt.bar(x.columns, lr.coef_, color=[&quot;#2a78d6&quot;, &quot;#eb6834&quot;])   # one bar per predictor, height = its fitted slope
 plt.axhline(0, color=&quot;#c3c2b7&quot;, linewidth=1)                 # baseline for reference
 plt.ylabel(&quot;Coefficient (₹ change in Salary per +1 unit)&quot;)
 plt.title(&quot;Fitted Coefficients by Predictor&quot;)
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/27-multiple-linear-regressio-c43-4.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

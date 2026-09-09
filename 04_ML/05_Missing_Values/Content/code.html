@@ -4,7 +4,8 @@
 <title>Missing Values — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/06_Dropping_Missing_Values.ipynb">06_Dropping_Missing_Values.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
 dataset.shape</pre></div><div class="out"><div class="h">Output</div><pre>(618, 13)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">dataset.isnull().head()</pre></div><div class="out"><div class="h">Output</div><pre>   Loan_ID  Gender  Married  Dependents  Education  Self_Employed  \
@@ -505,7 +506,7 @@ ax.set_title(&quot;LoanAmount: Before vs. After Mean Imputation&quot;)
 ax.legend(frameon=False)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [84]</span><span class="cell">cell 26</span></div><pre class="py">si_credit = SimpleImputer(strategy=&quot;mean&quot;)
+plt.show()</pre></div><figure class="shot"><img src="assets/08-finding-missing-values-sc-c23-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [84]</span><span class="cell">cell 26</span></div><pre class="py">si_credit = SimpleImputer(strategy=&quot;mean&quot;)
 credit_filled = si_credit.fit_transform(dataset[[&quot;Credit_History&quot;]])
 credit_series = pd.Series(credit_filled.ravel())
 credit_series.value_counts().sort_index()</pre></div><div class="out"><div class="h">Output</div><pre>0.000000     93
@@ -521,7 +522,7 @@ plt.title(&quot;Credit_History After Mean-Filling&quot;)
 plt.ylabel(&quot;Count&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [86]</span><span class="cell">cell 30</span></div><pre class="py">strategies_to_compare = [&quot;mean&quot;, &quot;median&quot;, &quot;most_frequent&quot;]
+plt.show()</pre></div><figure class="shot"><img src="assets/08-finding-missing-values-sc-c27-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [86]</span><span class="cell">cell 30</span></div><pre class="py">strategies_to_compare = [&quot;mean&quot;, &quot;median&quot;, &quot;most_frequent&quot;]
 fill_values = {}
 
 for strat in strategies_to_compare:
@@ -544,5 +545,5 @@ plt.ylabel(&quot;Fill value used for LoanAmount&quot;)
 plt.title(&quot;Same Missing Value, Four Different Fill Strategies&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/08-finding-missing-values-sc-c31-3.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

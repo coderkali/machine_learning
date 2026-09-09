@@ -4,7 +4,8 @@
 <title>Function Transformer — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/19_Function_Transformer.ipynb">19_Function_Transformer.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd 
 import seaborn as sns
@@ -33,7 +34,7 @@ similar flexibility) or `histplot` (an axes-level function for histograms).
 For a guide to updating your code to use the new functions, please see
 https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 
-  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 6</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(1.5399420730801827)</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 9</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
+  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])</pre></div><figure class="shot"><img src="assets/19-function-transformer-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 6</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(1.5399420730801827)</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 9</span></div><pre class="py">q1 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.25)
 q3 = dataset[&quot;CoapplicantIncome&quot;].quantile(0.75)
 iqr = q3-q1
 iqr</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(2217.75)</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 10</span></div><pre class="py">min_r = q1-(1.5*iqr)
@@ -68,7 +69,7 @@ similar flexibility) or `histplot` (an axes-level function for histograms).
 For a guide to updating your code to use the new functions, please see
 https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 
-  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.9655444212412013)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 18</span></div><pre class="py">from sklearn.preprocessing import FunctionTransformer</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 20</span></div><pre class="py">ft = FunctionTransformer(func=np.log1p)
+  sns.distplot(dataset[&quot;CoapplicantIncome&quot;])</pre></div><figure class="shot"><img src="assets/19-function-transformer-c15-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.9655444212412013)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 18</span></div><pre class="py">from sklearn.preprocessing import FunctionTransformer</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 20</span></div><pre class="py">ft = FunctionTransformer(func=np.log1p)
 ft.fit(dataset[&quot;CoapplicantIncome&quot;])</pre></div><div class="out"><div class="h">Output</div><pre>FunctionTransformer(func=&lt;ufunc &#x27;log1p&#x27;&gt;)</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 21</span></div><pre class="py">dataset[&quot;CoapplicantIncome_tf&quot;]=ft.transform(dataset[&quot;CoapplicantIncome&quot;])</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 22</span></div><pre class="py">plt.figure(figsize=(10,4))
 plt.subplot(1,2,1)
 sns.distplot(dataset[&quot;CoapplicantIncome&quot;])
@@ -99,7 +100,7 @@ similar flexibility) or `histplot` (an axes-level function for histograms).
 For a guide to updating your code to use the new functions, please see
 https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 
-  sns.distplot(dataset[&quot;CoapplicantIncome_tf&quot;])</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 23</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew(), dataset[&quot;CoapplicantIncome_tf&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.9655444212412013), np.float64(-0.32165545273566626))</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 26</span></div><pre class="py">dataset_raw = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
+  sns.distplot(dataset[&quot;CoapplicantIncome_tf&quot;])</pre></div><figure class="shot"><img src="assets/19-function-transformer-c22-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 23</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew(), dataset[&quot;CoapplicantIncome_tf&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.9655444212412013), np.float64(-0.32165545273566626))</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 26</span></div><pre class="py">dataset_raw = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
 dataset_raw[&quot;CoapplicantIncome&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(1.5399420730801827)</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 28</span></div><pre class="py">ft2 = FunctionTransformer(func=np.log1p)
 ft2.fit(dataset_raw[[&quot;CoapplicantIncome&quot;]])
 
@@ -133,7 +134,7 @@ similar flexibility) or `histplot` (an axes-level function for histograms).
 For a guide to updating your code to use the new functions, please see
 https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 
-  sns.distplot(dataset_raw[&quot;CoapplicantIncome_tf&quot;])</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 30</span></div><pre class="py">dataset_raw[&quot;CoapplicantIncome&quot;].skew(), dataset_raw[&quot;CoapplicantIncome_tf&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(1.5399420730801827), np.float64(-0.3558417035137675))</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 33</span></div><pre class="py">ft3 = FunctionTransformer(func=lambda x: x**2)
+  sns.distplot(dataset_raw[&quot;CoapplicantIncome_tf&quot;])</pre></div><figure class="shot"><img src="assets/19-function-transformer-c29-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 30</span></div><pre class="py">dataset_raw[&quot;CoapplicantIncome&quot;].skew(), dataset_raw[&quot;CoapplicantIncome_tf&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(1.5399420730801827), np.float64(-0.3558417035137675))</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 33</span></div><pre class="py">ft3 = FunctionTransformer(func=lambda x: x**2)
 ft3.fit(dataset[[&quot;CoapplicantIncome&quot;]])
 
 dataset[&quot;CoapplicantIncome_sq&quot;] = ft3.transform(dataset[&quot;CoapplicantIncome&quot;])</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 34</span></div><pre class="py">plt.figure(figsize=(10, 4))
@@ -166,7 +167,7 @@ similar flexibility) or `histplot` (an axes-level function for histograms).
 For a guide to updating your code to use the new functions, please see
 https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 
-  sns.distplot(dataset[&quot;CoapplicantIncome_sq&quot;])</pre></div><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 35</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].max(), dataset[&quot;CoapplicantIncome_sq&quot;].max()</pre></div><div class="out"><div class="h">Output</div><pre>(np.int64(5521), np.int64(30481441))</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 36</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew(), dataset[&quot;CoapplicantIncome_sq&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.9655444212412013), np.float64(2.6205982156525023))</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 39</span></div><pre class="py">ft3b = FunctionTransformer(func=lambda x: x * x)
+  sns.distplot(dataset[&quot;CoapplicantIncome_sq&quot;])</pre></div><figure class="shot"><img src="assets/19-function-transformer-c34-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [24]</span><span class="cell">cell 35</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].max(), dataset[&quot;CoapplicantIncome_sq&quot;].max()</pre></div><div class="out"><div class="h">Output</div><pre>(np.int64(5521), np.int64(30481441))</pre></div><div class="code"><div class="code-head"><span>In [25]</span><span class="cell">cell 36</span></div><pre class="py">dataset[&quot;CoapplicantIncome&quot;].skew(), dataset[&quot;CoapplicantIncome_sq&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>(np.float64(0.9655444212412013), np.float64(2.6205982156525023))</pre></div><div class="code"><div class="code-head"><span>In [26]</span><span class="cell">cell 39</span></div><pre class="py">ft3b = FunctionTransformer(func=lambda x: x * x)
 ft3b.fit(dataset[[&quot;CoapplicantIncome&quot;]])
 
 dataset[&quot;CoapplicantIncome_mul&quot;] = ft3b.transform(dataset[&quot;CoapplicantIncome&quot;])</pre></div><div class="code"><div class="code-head"><span>In [27]</span><span class="cell">cell 40</span></div><pre class="py">(dataset[&quot;CoapplicantIncome_sq&quot;] == dataset[&quot;CoapplicantIncome_mul&quot;]).all()</pre></div><div class="out"><div class="h">Output</div><pre>np.True_</pre></div><div class="code"><div class="code-head"><span>In [28]</span><span class="cell">cell 43</span></div><pre class="py">fig, axes = plt.subplots(1, 3, figsize=(16, 4))
@@ -211,7 +212,7 @@ https://gist.github.com/mwaskom/de44147ed2974457ad6372750bbe5751
 `distplot` is a deprecated function and will be removed in seaborn v0.14.0.
 
 Please adapt your code to use either `displot` (a figure-level function with
-similar flexibility) or `histplot` (an axes-level function for histo</pre></div><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 45</span></div><pre class="py">skew_values = {
+similar flexibility) or `histplot` (an axes-level function for histo</pre></div><figure class="shot"><img src="assets/19-function-transformer-c43-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [29]</span><span class="cell">cell 45</span></div><pre class="py">skew_values = {
     &quot;raw&quot;: dataset_raw[&quot;CoapplicantIncome&quot;].skew(),
     &quot;raw\n+ log1p&quot;: dataset_raw[&quot;CoapplicantIncome_tf&quot;].skew(),
     &quot;outliers\nremoved&quot;: dataset[&quot;CoapplicantIncome&quot;].skew(),
@@ -231,5 +232,5 @@ for b in bars:
               f&quot;{y:.2f}&quot;, ha=&quot;center&quot;)
 plt.gca().spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/19-function-transformer-c45-7.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

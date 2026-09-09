@@ -4,7 +4,8 @@
 <title>ElasticNet — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/09_ElasticNet.ipynb">09_ElasticNet.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
 x,y = make_regression(n_features=1, noise=5, n_samples=10000,random_state=2)
@@ -12,7 +13,7 @@ import matplotlib.pyplot as plt
 plt.scatter(x,y,s=3)
 plt.xlabel(&#x27;x&#x27;)
 plt.ylabel(&#x27;y&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">from sklearn.model_selection import train_test_split
+plt.show()</pre></div><figure class="shot"><img src="assets/09-elasticnet-c01-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 5</span></div><pre class="py">from sklearn.linear_model import ElasticNet
 reg = ElasticNet()
 reg.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>ElasticNet()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 6</span></div><pre class="py">reg.predict(X_test)</pre></div><div class="out"><div class="h">Output</div><pre>array([-22.9719679 , -13.3175701 ,  44.55955866, ...,  -2.75752941,
@@ -21,7 +22,7 @@ plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 14</span></div><pre class="py">reg = ElasticNet(alpha=2)
+plt.show()</pre></div><figure class="shot"><img src="assets/09-elasticnet-c12-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 14</span></div><pre class="py">reg = ElasticNet(alpha=2)
 reg.fit(X_train,y_train)
 reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.7066712129632455</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 15</span></div><pre class="py">y_pred = reg.predict(x)
 print(reg.coef_)</pre></div><div class="out"><div class="h">Output</div><pre>[13.67875302]</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 16</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
@@ -29,7 +30,7 @@ plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 17</span></div><pre class="py">reg = ElasticNet(alpha=5)
+plt.show()</pre></div><figure class="shot"><img src="assets/09-elasticnet-c16-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 17</span></div><pre class="py">reg = ElasticNet(alpha=5)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -41,7 +42,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.4373105641354814
-[7.39533623]</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 18</span></div><pre class="py">reg = ElasticNet(alpha=20)
+[7.39533623]</pre></div><figure class="shot"><img src="assets/09-elasticnet-c17-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 18</span></div><pre class="py">reg = ElasticNet(alpha=20)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -53,7 +54,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.11031911092000335
-[1.6734099]</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 19</span></div><pre class="py">reg = ElasticNet(alpha=100)
+[1.6734099]</pre></div><figure class="shot"><img src="assets/09-elasticnet-c18-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 19</span></div><pre class="py">reg = ElasticNet(alpha=100)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -65,7 +66,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>-3.0155503971895925e-05
-[0.]</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 21</span></div><pre class="py">reg = ElasticNet(alpha=0.2)
+[0.]</pre></div><figure class="shot"><img src="assets/09-elasticnet-c19-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 21</span></div><pre class="py">reg = ElasticNet(alpha=0.2)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -77,7 +78,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.9599038182793258
-[25.643339]</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 22</span></div><pre class="py">reg = ElasticNet(alpha=0.1)
+[25.643339]</pre></div><figure class="shot"><img src="assets/09-elasticnet-c21-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 22</span></div><pre class="py">reg = ElasticNet(alpha=0.1)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -89,7 +90,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.9667684007017164
-[26.90705662]</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 23</span></div><pre class="py">reg = ElasticNet(alpha=0.01)
+[26.90705662]</pre></div><figure class="shot"><img src="assets/09-elasticnet-c22-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 23</span></div><pre class="py">reg = ElasticNet(alpha=0.01)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -101,5 +102,5 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.9698159687440311
-[28.15146906]</pre></div>
+[28.15146906]</pre></div><figure class="shot"><img src="assets/09-elasticnet-c23-9.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

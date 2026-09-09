@@ -4,7 +4,8 @@
 <title>Lasso Regression — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/08_Lasso.ipynb">08_Lasso.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import make_regression
 x,y = make_regression(n_features=1, noise=3, n_samples=10000,random_state=0)
@@ -12,7 +13,7 @@ import matplotlib.pyplot as plt
 plt.scatter(x,y,s=3)
 plt.xlabel(&#x27;x&#x27;)
 plt.ylabel(&#x27;y&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">from sklearn.model_selection import train_test_split
+plt.show()</pre></div><figure class="shot"><img src="assets/08-lasso-c01-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 2</span></div><pre class="py">from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.linear_model import Lasso
 reg = Lasso()
 reg.fit(X_train,y_train)</pre></div><div class="out"><div class="h">Output</div><pre>Lasso()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 5</span></div><pre class="py">reg.predict(X_test)</pre></div><div class="out"><div class="h">Output</div><pre>array([  9.16411693,   4.79860515,   5.84348151, ...,   1.69826474,
@@ -21,14 +22,14 @@ plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 13</span></div><pre class="py">reg = Lasso(alpha=2)
+plt.show()</pre></div><figure class="shot"><img src="assets/08-lasso-c11-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 13</span></div><pre class="py">reg = Lasso(alpha=2)
 reg.fit(X_train,y_train)
 reg.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.8626798290552528</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 14</span></div><pre class="py">reg.coef_</pre></div><div class="out"><div class="h">Output</div><pre>array([7.51403754])</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 15</span></div><pre class="py">y_pred = reg.predict(x)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 16</span></div><pre class="py">plt.scatter(x,y,label=&#x27;Actual&#x27;,s=3)
 plt.scatter(x,y_pred,label=&#x27;Predicted&#x27;,s=3)
 plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 17</span></div><pre class="py">reg = Lasso(alpha=5)
+plt.show()</pre></div><figure class="shot"><img src="assets/08-lasso-c16-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 17</span></div><pre class="py">reg = Lasso(alpha=5)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -40,7 +41,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.6476800374760114
-[4.45961036]</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 18</span></div><pre class="py">reg = Lasso(alpha=7)
+[4.45961036]</pre></div><figure class="shot"><img src="assets/08-lasso-c17-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 18</span></div><pre class="py">reg = Lasso(alpha=7)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -52,7 +53,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.4004115305410644
-[2.42332557]</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 19</span></div><pre class="py">reg = Lasso(alpha=9)
+[2.42332557]</pre></div><figure class="shot"><img src="assets/08-lasso-c18-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 19</span></div><pre class="py">reg = Lasso(alpha=9)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -64,7 +65,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.06999477356708794
-[0.38704078]</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 21</span></div><pre class="py">reg = Lasso(alpha=9.5)
+[0.38704078]</pre></div><figure class="shot"><img src="assets/08-lasso-c19-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 21</span></div><pre class="py">reg = Lasso(alpha=9.5)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -76,7 +77,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>-0.0022122517482792148
-[0.]</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 23</span></div><pre class="py">reg = Lasso(alpha=0.1)
+[0.]</pre></div><figure class="shot"><img src="assets/08-lasso-c21-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 23</span></div><pre class="py">reg = Lasso(alpha=0.1)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -88,7 +89,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.9020825877391855
-[9.44850809]</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 24</span></div><pre class="py">reg = Lasso(alpha=0.001)
+[9.44850809]</pre></div><figure class="shot"><img src="assets/08-lasso-c23-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 24</span></div><pre class="py">reg = Lasso(alpha=0.001)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -100,7 +101,7 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.9020787886206871
-[9.54930419]</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 25</span></div><pre class="py">reg = Lasso(alpha=0.0001)
+[9.54930419]</pre></div><figure class="shot"><img src="assets/08-lasso-c24-9.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 25</span></div><pre class="py">reg = Lasso(alpha=0.0001)
 reg.fit(X_train,y_train)
 print(reg.score(X_test, y_test))
 print(reg.coef_)
@@ -112,5 +113,5 @@ plt.xlabel(&#x27;X&#x27;)
 plt.ylabel(&#x27;Y&#x27;)
 plt.legend()
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>0.9020778196008511
-[9.55022052]</pre></div>
+[9.55022052]</pre></div><figure class="shot"><img src="assets/08-lasso-c25-10.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

@@ -4,7 +4,8 @@
 <title>Model Evaluation — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/15_Model_Evaluation.ipynb">15_Model_Evaluation.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import load_breast_cancer
 from sklearn import metrics</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">data = load_breast_cancer()
@@ -54,7 +55,7 @@ Y_pred</pre></div><div class="out"><div class="h">Output</div><pre>array([0, 1, 
        1, 0, 0, 1])</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 12</span></div><pre class="py">metrics.accuracy_score(Y_pred,Y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9298245614035088</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 14</span></div><pre class="py">confusion_matrix = metrics.confusion_matrix(Y_test,Y_pred)
 confusion_matrix</pre></div><div class="out"><div class="h">Output</div><pre>array([[43,  4],
        [ 4, 63]])</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 16</span></div><pre class="py">cm = metrics.ConfusionMatrixDisplay(confusion_matrix= confusion_matrix, display_labels=classfier1.classes_)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 17</span></div><pre class="py">import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 18</span></div><pre class="py">cm.plot()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 20</span></div><pre class="py">print(metrics.classification_report(Y_test, Y_pred, target_names=data.target_names, digits=3))</pre></div><div class="out"><div class="h">Output</div><pre>              precision    recall  f1-score   support
+plt.show()</pre></div><figure class="shot"><img src="assets/15-model-evaluation-c18-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 20</span></div><pre class="py">print(metrics.classification_report(Y_test, Y_pred, target_names=data.target_names, digits=3))</pre></div><div class="out"><div class="h">Output</div><pre>              precision    recall  f1-score   support
 
    malignant      0.915     0.915     0.915        47
       benign      0.940     0.940     0.940        67

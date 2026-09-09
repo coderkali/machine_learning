@@ -4,7 +4,8 @@
 <title>Iris Visual Explorer — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/iris_dataset_explained.ipynb">iris_dataset_explained.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import seaborn as sns
 import pandas as pd
@@ -74,7 +75,7 @@ draw(0.0, m[&quot;sepal_width&quot;], m[&quot;sepal_length&quot;], SEPAL_C, &quo
 draw(5.2, m[&quot;petal_width&quot;], m[&quot;petal_length&quot;], PETAL_C, &quot;PETAL&quot;, &quot;petal_width&quot;, &quot;petal_length&quot;)
 ax2.set_xlim(-2.6, 7.4); ax2.set_ylim(-1.9, 7.2)
 
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py">from matplotlib.patches import Ellipse, FancyBboxPatch
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 8</span></div><pre class="py">from matplotlib.patches import Ellipse, FancyBboxPatch
 
 means = iris.groupby(&quot;species&quot;)[FEATURES].mean()
 
@@ -142,7 +143,7 @@ ax.text(20, TABLE_Y - 9.2,
         &quot;Petals (solid) grow sharply across species; sepals (faded) barely move.&quot;,
         ha=&quot;center&quot;, va=&quot;top&quot;, fontsize=11, color=&quot;#444&quot;)
 ax.set_xlim(-16, 50); ax.set_ylim(TABLE_Y - 13, 44)
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 11</span></div><pre class="py">print(&quot;rows, columns :&quot;, iris.shape)
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c08-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 11</span></div><pre class="py">print(&quot;rows, columns :&quot;, iris.shape)
 print(&quot;missing values:&quot;, iris.isnull().sum().sum())
 print(&quot;duplicate rows:&quot;, iris.duplicated().sum())
 print()
@@ -177,7 +178,7 @@ ax.set_title(&quot;50 of each species — a perfectly balanced dataset&quot;, fo
 sns.despine(left=True); plt.tight_layout(); plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>species
 setosa        50
 versicolor    50
-virginica     50</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 18</span></div><pre class="py">iris.describe().round(2)</pre></div><div class="out"><div class="h">Output</div><pre>       sepal_length  sepal_width  petal_length  petal_width
+virginica     50</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c15-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 18</span></div><pre class="py">iris.describe().round(2)</pre></div><div class="out"><div class="h">Output</div><pre>       sepal_length  sepal_width  petal_length  petal_width
 count        150.00       150.00        150.00       150.00
 mean           5.84         3.06          3.76         1.20
 std            0.83         0.44          1.77         0.76
@@ -192,7 +193,7 @@ sns.boxplot(data=long, x=&quot;cm&quot;, y=&quot;measurement&quot;, color=&quot;
             width=.6, fliersize=3, ax=ax)
 ax.set_xlabel(&quot;centimetres&quot;); ax.set_ylabel(&quot;&quot;)
 ax.set_title(&quot;All 4 measurements on one scale (all 150 flowers together)&quot;, fontsize=11)
-sns.despine(left=True); plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 22</span></div><pre class="py">means = iris.groupby(&quot;species&quot;)[
+sns.despine(left=True); plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c19-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 22</span></div><pre class="py">means = iris.groupby(&quot;species&quot;)[
     [&quot;sepal_length&quot;, &quot;sepal_width&quot;, &quot;petal_length&quot;, &quot;petal_width&quot;]
 ].mean().round(2).loc[SPECIES_ORDER]
 means</pre></div><div class="out"><div class="h">Output</div><pre>            sepal_length  sepal_width  petal_length  petal_width
@@ -208,7 +209,7 @@ for container in ax.containers:
 ax.set_ylim(0, 7.2); ax.set_xlabel(&quot;&quot;); ax.set_ylabel(&quot;average cm&quot;)
 ax.set_title(&quot;Average of each measurement, per species&quot;, fontsize=11)
 ax.legend(title=&quot;species&quot;, frameon=False)
-sns.despine(); plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 26</span></div><pre class="py">features = FEATURES
+sns.despine(); plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c23-5.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 26</span></div><pre class="py">features = FEATURES
 
 fig, axes = plt.subplots(2, 2, figsize=(11, 6.6))
 for ax, feat in zip(axes.flat, features):
@@ -222,19 +223,19 @@ for ax, feat in zip(axes.flat, features):
         sns.move_legend(ax, &quot;upper right&quot;, frameon=False, title=&quot;species&quot;)
 sns.despine(left=True)
 fig.suptitle(&quot;Where each species sits on each measurement&quot;, fontsize=12, y=1.0)
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 29</span></div><pre class="py">g = sns.pairplot(iris, hue=&quot;species&quot;, hue_order=SPECIES_ORDER,
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c26-6.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 29</span></div><pre class="py">g = sns.pairplot(iris, hue=&quot;species&quot;, hue_order=SPECIES_ORDER,
                  palette=SPECIES_COLORS, diag_kind=&quot;kde&quot;,
                  plot_kws=dict(s=28, alpha=.75, edgecolor=&quot;white&quot;, linewidth=.4),
                  height=1.9)
 g.figure.suptitle(&quot;Every feature against every other feature&quot;, y=1.02, fontsize=12)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 32</span></div><pre class="py">corr = iris[features].corr()
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c29-7.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 32</span></div><pre class="py">corr = iris[features].corr()
 
 fig, ax = plt.subplots(figsize=(6.2, 5))
 sns.heatmap(corr, annot=True, fmt=&quot;.2f&quot;, cmap=&quot;RdBu_r&quot;, center=0,
             vmin=-1, vmax=1, square=True, linewidths=2, linecolor=&quot;white&quot;,
             cbar_kws=dict(label=&quot;correlation&quot;, shrink=.8), ax=ax)
 ax.set_title(&quot;How the 4 measurements move together&quot;, fontsize=11, pad=12)
-plt.tight_layout(); plt.show()</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 35</span></div><pre class="py"># A hand-written decision tree, straight off the petal charts.
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c32-8.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 35</span></div><pre class="py"># A hand-written decision tree, straight off the petal charts.
 prediction = np.where(iris.petal_length &lt; 2.5, &quot;setosa&quot;,
              np.where(iris.petal_width  &lt; 1.75, &quot;versicolor&quot;, &quot;virginica&quot;))
 
@@ -267,7 +268,7 @@ ax.set_ylim(0, 2.8)
 ax.set_xlabel(&quot;petal_length (cm)&quot;); ax.set_ylabel(&quot;petal_width (cm)&quot;)
 ax.set_title(&quot;Two straight lines get 96% of the flowers right&quot;, fontsize=11)
 ax.legend(title=&quot;species&quot;, frameon=False, loc=&quot;lower right&quot;)
-sns.despine(); plt.tight_layout(); plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/iris_exploartion_dashboard.ipynb">iris_exploartion_dashboard.ipynb</a></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+sns.despine(); plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/iris-dataset-explained-c36-9.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/iris_exploartion_dashboard.ipynb">iris_exploartion_dashboard.ipynb</a></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -347,7 +348,7 @@ plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>         
 sepal_length          1.00        -0.12          0.87         0.82
 sepal_width          -0.12         1.00         -0.43        -0.37
 petal_length          0.87        -0.43          1.00         0.96
-petal_width           0.82        -0.37          0.96         1.00</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 3</span></div><pre class="py">fig.savefig(&#x27;iris_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)</pre></div><div class="src-head">📓 <a href="../Concept/iris_exploration.ipynb">iris_exploration.ipynb</a></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 0</span></div><pre class="py">#150 flowers, 3 species, each species has distinctly different petal sizes — and that difference is what makes them identifiable.
+petal_width           0.82        -0.37          0.96         1.00</pre></div><figure class="shot"><img src="assets/iris-exploartion-dashboard-c02-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 3</span></div><pre class="py">fig.savefig(&#x27;iris_dashboard.png&#x27;, dpi=150, bbox_inches=&#x27;tight&#x27;)</pre></div><div class="src-head">📓 <a href="../Concept/iris_exploration.ipynb">iris_exploration.ipynb</a></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 0</span></div><pre class="py">#150 flowers, 3 species, each species has distinctly different petal sizes — and that difference is what makes them identifiable.
 #Flowers 1-50 → Setosa → tiny petals (~1.5cm)
 #Flowers 51-100 → Versicolor → medium petals (~4.3cm)
 #Flowers 101-150 → Virginica → large petals (~5.5cm)</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 1</span></div><pre class="py"># Sepal vs Petal — simple story
@@ -680,7 +681,7 @@ ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
 ax.set_ylabel(&#x27;Number of Flowers&#x27;)
 ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
 
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 4</span></div><pre class="py"># Count frequency of each petal length value
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-2-c03-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [50]</span><span class="cell">cell 4</span></div><pre class="py"># Count frequency of each petal length value
 print(df[&#x27;petal_length&#x27;].value_counts().sort_index())</pre></div><div class="out"><div class="h">Output</div><pre>petal_length
 1.0     1
 1.1     1
@@ -768,7 +769,7 @@ ax.set_ylabel(&#x27;Number of Flowers&#x27;)
 ax.legend()
 ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
 
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 8</span></div><pre class="py"># These are ALL values going into the histogram
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-2-c07-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [54]</span><span class="cell">cell 8</span></div><pre class="py"># These are ALL values going into the histogram
 print(&quot;Total values passed to histogram:&quot;, len(df[&#x27;petal_length&#x27;]))
 print(&quot;First 10 values:&quot;)
 print(df[&#x27;petal_length&#x27;].head(10).values)</pre></div><div class="out"><div class="h">Output</div><pre>Total values passed to histogram: 150
@@ -784,7 +785,7 @@ ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
 ax.set_ylabel(&#x27;Number of Flowers&#x27;)
 ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
 
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 12</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-2-c09-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [56]</span><span class="cell">cell 12</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
 
 ax.hist(df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;], 
         bins=20, alpha=0.7, label=&#x27;Setosa&#x27;, 
@@ -804,7 +805,7 @@ ax.set_ylabel(&#x27;Number of Flowers&#x27;)
 ax.legend()
 ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
 
-plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/iris_exploration_3.ipynb">iris_exploration_3.ipynb</a></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-2-c12-4.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/iris_exploration_3.ipynb">iris_exploration_3.ipynb</a></div><div class="code"><div class="code-head"><span>In [57]</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -847,7 +848,7 @@ ax.set_ylabel(&#x27;Petal Length (cm)&#x27;)
 ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;--&#x27;, alpha=0.5)
 
 plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>/var/folders/07/ymtnct793nj_13sf3p9t0lqh0000gn/T/ipykernel_23508/2813677711.py:8: MatplotlibDeprecationWarning: The &#x27;labels&#x27; parameter of boxplot() has been renamed &#x27;tick_labels&#x27; since Matplotlib 3.9; support for the old name will be dropped in 3.11.
-  ax.boxplot([setosa_petals, versicolor_petals, virginica_petals],</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 6</span></div><pre class="py"># Find Setosa outliers in petal_length
+  ax.boxplot([setosa_petals, versicolor_petals, virginica_petals],</pre></div><figure class="shot"><img src="assets/iris-exploration-3-c04-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 6</span></div><pre class="py"># Find Setosa outliers in petal_length
 Q1 = df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;].quantile(0.25)
 Q3 = df[df[&#x27;species&#x27;]==&#x27;setosa&#x27;][&#x27;petal_length&#x27;].quantile(0.75)
 IQR = Q3 - Q1
@@ -915,7 +916,7 @@ for measurement, pos in zip(measurements, positions):
     ax.legend(fontsize=8)
 
 plt.tight_layout()
-plt.show()</pre></div><div class="src-head">📓 <a href="../Concept/iris_exploration_5.ipynb">iris_exploration_5.ipynb</a></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-4-c03-1.png" alt="plot produced by this cell"></figure><div class="src-head">📓 <a href="../Concept/iris_exploration_5.ipynb">iris_exploration_5.ipynb</a></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 0</span></div><pre class="py">import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -946,7 +947,7 @@ ax.set_xlabel(&#x27;Petal Length (cm)&#x27;)
 ax.set_ylabel(&#x27;Petal Width (cm)&#x27;)
 ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
 
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 6</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-5-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 6</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 5))
 
 colors = {&#x27;setosa&#x27;: &#x27;steelblue&#x27;, &#x27;versicolor&#x27;: &#x27;tomato&#x27;, &#x27;virginica&#x27;: &#x27;green&#x27;}
 
@@ -962,7 +963,7 @@ ax.set_ylabel(&#x27;Petal Width (cm)&#x27;)
 ax.legend()
 ax.grid(linestyle=&#x27;--&#x27;, alpha=0.5)
 
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 8</span></div><pre class="py">sns.pairplot(df, hue=&#x27;species&#x27;, 
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-5-c06-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 8</span></div><pre class="py">sns.pairplot(df, hue=&#x27;species&#x27;, 
              palette={&#x27;setosa&#x27;: &#x27;steelblue&#x27;, 
                       &#x27;versicolor&#x27;: &#x27;tomato&#x27;, 
                       &#x27;virginica&#x27;: &#x27;green&#x27;})
@@ -970,7 +971,7 @@ plt.show()</pre></div><div class="code"><div class="code-head"><span>In [69]</sp
 plt.suptitle(&#x27;Pair Plot — All Measurements vs All Measurements&#x27;, 
              y=1.02, fontsize=14, fontweight=&#x27;bold&#x27;)
 
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 9</span></div><pre class="py">import pandas as pd
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-5-c08-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 9</span></div><pre class="py">import pandas as pd
 import seaborn as sns
 
 # Simple 3 column dataset
@@ -981,7 +982,7 @@ simple_data = pd.DataFrame({
 })
 
 sns.pairplot(simple_data)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 11</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 6))
+plt.show()</pre></div><figure class="shot"><img src="assets/iris-exploration-5-c09-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 11</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8, 6))
 
 # Calculate correlation between all measurements
 correlation = df.drop(&#x27;species&#x27;, axis=1).corr()
@@ -999,5 +1000,5 @@ plt.show()</pre></div><div class="out"><div class="h">Output</div><pre>         
 sepal_length          1.00        -0.12          0.87         0.82
 sepal_width          -0.12         1.00         -0.43        -0.37
 petal_length          0.87        -0.43          1.00         0.96
-petal_width           0.82        -0.37          0.96         1.00</pre></div>
+petal_width           0.82        -0.37          0.96         1.00</pre></div><figure class="shot"><img src="assets/iris-exploration-5-c11-5.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

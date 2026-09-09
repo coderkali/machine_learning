@@ -4,7 +4,8 @@
 <title>Skewness — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/05_skewness.ipynb">05_skewness.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
 import numpy as np
@@ -14,7 +15,7 @@ dataset.head(3)</pre></div><div class="out"><div class="h">Output</div><pre>   P
 0            1         1       2    male  21.0      0      0  40.82        S
 1            2         0       3    male  17.0      1      0  10.52        S
 2            3         0       3  female  23.0      1      0  12.33        S</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 2</span></div><pre class="py">sns.histplot(x=&quot;Age&quot;,data=dataset)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 4</span></div><pre class="py">dataset[&quot;Age&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.27395018147395495)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 5</span></div><pre class="py">dataset[&quot;Age&quot;].mean()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(29.18641975308642)</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 6</span></div><pre class="py">dataset[&quot;Age&quot;].median()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(29.0)</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 7</span></div><pre class="py">dataset[&quot;Age&quot;].mode()[0]</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(22.0)</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 9</span></div><pre class="py">data = np.random.normal(0,100,100)
+plt.show()</pre></div><figure class="shot"><img src="assets/05-skewness-c02-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 4</span></div><pre class="py">dataset[&quot;Age&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.27395018147395495)</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 5</span></div><pre class="py">dataset[&quot;Age&quot;].mean()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(29.18641975308642)</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 6</span></div><pre class="py">dataset[&quot;Age&quot;].median()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(29.0)</pre></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 7</span></div><pre class="py">dataset[&quot;Age&quot;].mode()[0]</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(22.0)</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 9</span></div><pre class="py">data = np.random.normal(0,100,100)
 data</pre></div><div class="out"><div class="h">Output</div><pre>array([  18.95289683, -144.31288137,  -30.35287403,  -69.51891164,
        -158.63354263,  -32.26305218,  -71.70460909, -148.93120103,
          67.90666673, -142.15635513, -128.1456843 ,  -38.43734711,
@@ -40,8 +41,8 @@ df[&quot;x&quot;].skew()</pre></div><div class="out"><div class="h">Output</div>
  np.float64(6.0),
  0    6
  Name: x, dtype: int64)</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 13</span></div><pre class="py">sns.histplot(x=&quot;x&quot;,data=df)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 15</span></div><pre class="py">data1 = [2,3,3,4,4,4,5,5,5,5,6,6,6,6,6,7,7,7,7,8,8,8,9,9,10]
+plt.show()</pre></div><figure class="shot"><img src="assets/05-skewness-c13-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 15</span></div><pre class="py">data1 = [2,3,3,4,4,4,5,5,5,5,6,6,6,6,6,7,7,7,7,8,8,8,9,9,10]
 df = pd.DataFrame({&quot;x&quot;:data1})
 df[&quot;x&quot;].skew()</pre></div><div class="out"><div class="h">Output</div><pre>np.float64(0.0)</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 16</span></div><pre class="py">sns.histplot(x=&quot;x&quot;,data=df,bins=[2,3,4,5,6,7,8,9,10,11])
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/05-skewness-c16-3.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

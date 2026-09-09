@@ -4,7 +4,8 @@
 <title>Correlation — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/06_co-relation.ipynb">06_co-relation.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 0</span></div><pre class="py">import pandas as pd
 import numpy as np
@@ -55,7 +56,7 @@ total_bill    1.000000  0.847224  0.762147
 tip           0.847224  1.000000  0.651632
 size          0.762147  0.651632  1.000000</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 8</span></div><pre class="py">plt.figure(figsize=(4,3))
 sns.heatmap(data_corr,annot=True)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 9</span></div><pre class="py">plt.figure(figsize=(4,3))
+plt.show()</pre></div><figure class="shot"><img src="assets/06-co-relation-c08-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 9</span></div><pre class="py">plt.figure(figsize=(4,3))
 sns.heatmap(data_cov,annot=True)
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/06-co-relation-c09-2.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

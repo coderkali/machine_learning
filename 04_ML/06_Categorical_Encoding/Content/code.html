@@ -4,7 +4,8 @@
 <title>Categorical Encoding — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/09_one_hot_encoding.ipynb">09_one_hot_encoding.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 3</span></div><pre class="py">dataset = pd.read_csv(&quot;../../_shared_data/loans.csv&quot;)
 dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>    Loan_ID  Gender Married Dependents     Education Self_Employed  \
@@ -75,7 +76,7 @@ axes[0].set_title(&quot;Gender distribution&quot;)
 sns.countplot(x=&quot;Married&quot;, data=en_data, hue=&quot;Married&quot;, legend=False, palette=&quot;Blues&quot;, ax=axes[1])
 axes[1].set_title(&quot;Married distribution&quot;)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 16</span></div><pre class="py">pd.get_dummies(en_data)</pre></div><div class="out"><div class="h">Output</div><pre>     Gender_Female  Gender_Male  Married_No  Married_Yes
+plt.show()</pre></div><figure class="shot"><img src="assets/09-one-hot-encoding-c15-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 16</span></div><pre class="py">pd.get_dummies(en_data)</pre></div><div class="out"><div class="h">Output</div><pre>     Gender_Female  Gender_Male  Married_No  Married_Yes
 0            False         True       False         True
 1            False         True       False         True
 2             True        False        True        False
@@ -93,7 +94,7 @@ plt.show()</pre></div><div class="code"><div class="code-head"><span>In [9]</spa
 plt.figure(figsize=(5, 6))
 sns.heatmap(sample, annot=True, cmap=&quot;Blues&quot;, cbar=False, linewidths=0.5, linecolor=&quot;white&quot;)
 plt.title(&quot;One-Hot Encoding — first 15 rows&quot;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 19</span></div><pre class="py">pd.get_dummies(en_data).info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
+plt.show()</pre></div><figure class="shot"><img src="assets/09-one-hot-encoding-c18-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 19</span></div><pre class="py">pd.get_dummies(en_data).info()</pre></div><div class="out"><div class="h">Output</div><pre>&lt;class &#x27;pandas.DataFrame&#x27;&gt;
 RangeIndex: 618 entries, 0 to 617
 Data columns (total 4 columns):
  #   Column         Non-Null Count  Dtype
@@ -222,7 +223,7 @@ ax.set_xlabel(&quot;Size (s &lt; m &lt; l &lt; xl)&quot;)
 ax.set_ylabel(&quot;Count&quot;)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 7</span></div><pre class="py">ord_data = [[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;]]</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 9</span></div><pre class="py">from sklearn.preprocessing import OrdinalEncoder, LabelEncoder</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 11</span></div><pre class="py">oe = OrdinalEncoder(categories=ord_data)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 13</span></div><pre class="py">oe.fit(df[[&quot;Size&quot;]])</pre></div><div class="out"><div class="h">Output</div><pre>OrdinalEncoder(categories=[[&#x27;s&#x27;, &#x27;m&#x27;, &#x27;l&#x27;, &#x27;xl&#x27;]])</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 15</span></div><pre class="py">df[&quot;Size_En&quot;]= oe.transform(df[[&quot;Size&quot;]])
+plt.show()</pre></div><figure class="shot"><img src="assets/11-ordinal-encoding-c05-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [39]</span><span class="cell">cell 7</span></div><pre class="py">ord_data = [[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;]]</pre></div><div class="code"><div class="code-head"><span>In [40]</span><span class="cell">cell 9</span></div><pre class="py">from sklearn.preprocessing import OrdinalEncoder, LabelEncoder</pre></div><div class="code"><div class="code-head"><span>In [41]</span><span class="cell">cell 11</span></div><pre class="py">oe = OrdinalEncoder(categories=ord_data)</pre></div><div class="code"><div class="code-head"><span>In [42]</span><span class="cell">cell 13</span></div><pre class="py">oe.fit(df[[&quot;Size&quot;]])</pre></div><div class="out"><div class="h">Output</div><pre>OrdinalEncoder(categories=[[&#x27;s&#x27;, &#x27;m&#x27;, &#x27;l&#x27;, &#x27;xl&#x27;]])</pre></div><div class="code"><div class="code-head"><span>In [43]</span><span class="cell">cell 15</span></div><pre class="py">df[&quot;Size_En&quot;]= oe.transform(df[[&quot;Size&quot;]])
 df</pre></div><div class="out"><div class="h">Output</div><pre>  Size  Size_En
 0    s      0.0
 1    m      1.0
@@ -255,7 +256,7 @@ ax.set_title(&quot;Same column, two encoders — only one is a staircase&quot;)
 ax.legend(frameon=False)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 21</span></div><pre class="py">df1 = pd.DataFrame({&quot;Size&quot;:[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;,&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;]})</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 23</span></div><pre class="py">ord_data1= {&quot;s&quot;:0,&quot;m&quot;:1,&quot;l&quot;:2,&quot;xl&quot;:3}</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 25</span></div><pre class="py">df1[&quot;Size_EN_MAP&quot;] = df1[&quot;Size&quot;].map(ord_data1)
+plt.show()</pre></div><figure class="shot"><img src="assets/11-ordinal-encoding-c19-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [46]</span><span class="cell">cell 21</span></div><pre class="py">df1 = pd.DataFrame({&quot;Size&quot;:[&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;,&quot;s&quot;,&quot;m&quot;,&quot;l&quot;,&quot;xl&quot;,&quot;s&quot;]})</pre></div><div class="code"><div class="code-head"><span>In [47]</span><span class="cell">cell 23</span></div><pre class="py">ord_data1= {&quot;s&quot;:0,&quot;m&quot;:1,&quot;l&quot;:2,&quot;xl&quot;:3}</pre></div><div class="code"><div class="code-head"><span>In [48]</span><span class="cell">cell 25</span></div><pre class="py">df1[&quot;Size_EN_MAP&quot;] = df1[&quot;Size&quot;].map(ord_data1)
 df1</pre></div><div class="out"><div class="h">Output</div><pre>  Size  Size_EN_MAP
 0    s            0
 1    m            1
@@ -336,5 +337,5 @@ ax.set_xlabel(&quot;Dependents (0 &lt; 1 &lt; 2 &lt; 3+)&quot;)
 ax.set_ylabel(&quot;Count&quot;)
 ax.spines[[&quot;top&quot;, &quot;right&quot;]].set_visible(False)
 plt.tight_layout()
-plt.show()</pre></div>
+plt.show()</pre></div><figure class="shot"><img src="assets/11-ordinal-encoding-c45-3.png" alt="plot produced by this cell"></figure>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

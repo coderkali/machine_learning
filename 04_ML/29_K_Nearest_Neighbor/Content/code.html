@@ -4,7 +4,8 @@
 <title>K Nearest Neighbor — code</title>
 <link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
 <style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
-.doc{max-width:none} .code{margin:12px 0}</style>
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
 </head><body><div class="wrap"><main class="doc">
 <div class="src-head">📓 <a href="../Concept/25_K_Nearest_Neighbor_explained.ipynb">25_K_Nearest_Neighbor_explained.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.datasets import make_blobs, make_regression
@@ -48,7 +49,7 @@ plt.xlim(0, 8.5)
 plt.ylim(0, 7.2)
 plt.grid(alpha=0.2)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 9</span></div><pre class="py">X, y = make_blobs(
+plt.show()</pre></div><figure class="shot"><img src="assets/25-k-nearest-neighbor-explai-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 9</span></div><pre class="py">X, y = make_blobs(
     n_features=2,
     n_samples=1000,
     cluster_std=2,
@@ -67,7 +68,7 @@ plt.xlabel(&#x27;feature 1&#x27;)
 plt.ylabel(&#x27;feature 2&#x27;)
 plt.title(&#x27;Customer examples and one new customer&#x27;)
 plt.legend()
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 15</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+plt.show()</pre></div><figure class="shot"><img src="assets/25-k-nearest-neighbor-explai-c12-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 15</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3, random_state=0
 )
 print(X_train.shape, X_test.shape)
@@ -91,7 +92,7 @@ plt.scatter(X_reg, y_reg, s=3)
 plt.xlabel(&#x27;input feature&#x27;)
 plt.ylabel(&#x27;numeric target&#x27;)
 plt.title(&#x27;Examples for KNN regression&#x27;)
-plt.show()</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 27</span></div><pre class="py">regressor = KNeighborsRegressor(n_neighbors=3)
+plt.show()</pre></div><figure class="shot"><img src="assets/25-k-nearest-neighbor-explai-c25-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 27</span></div><pre class="py">regressor = KNeighborsRegressor(n_neighbors=3)
 regressor.fit(X_reg, y_reg)
 print(&#x27;training R^2:&#x27;, regressor.score(X_reg, y_reg))
 distances, positions = regressor.kneighbors([[1]])
