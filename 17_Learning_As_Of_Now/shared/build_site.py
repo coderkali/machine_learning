@@ -63,17 +63,54 @@ codes  = len(re.findall(r'"hasCode":\s*true', tree))
 # every ML topic is a step of the pipeline, so it must appear on the Journey page
 jd = open(os.path.join(HUB, "journey-data.js"), encoding="utf-8").read()
 mapped = set(re.findall(r'"(\d\d_[A-Za-z_]+/\d\d_[A-Za-z0-9_]+)"', jd))
+studied_topics = {re.match(r"(\d\d_[^/]+/\d\d_[^/]+)", p.replace("../../", "")).group(1)
+                  for p in lessons}
 ml_topics = {m for m in
              (re.match(r"(\d\d_[^/]+/\d\d_[^/]+)", p.replace("../../", "")).group(1)
               for p in lessons)
              if m.startswith("04_ML/")}
 unmapped = sorted(ml_topics - mapped)
 
+# every topic the "When to Use What" page links to must exist, and every
+# topic that is really a choice should have a card there
+cd = open(os.path.join(HUB, "chooser-data.js"), encoding="utf-8").read()
+excluded  = set(re.findall(r'"(\d\d_[A-Za-z_]+/\d\d_[A-Za-z0-9_]+)":\s*"', cd))
+referenced = set(re.findall(r'"(\d\d_[A-Za-z_]+/\d\d_[A-Za-z0-9_]+)"', cd)) - excluded
+for f in sorted(referenced | excluded):
+    if not os.path.isdir(f):
+        problems.append(f"chooser-data.js points at a folder that does not exist: {f}")
+
+# the drawn flowcharts: every leaf must name a real option, every decision
+# must have a tree, or the page silently loses a branch
+head, _, flows = cd.partition("const FLOWS = {")
+opt_names = set(re.findall(r'^\s*\{ name: "((?:[^"\\]|\\.)*)"', head, re.M))
+job_ids   = re.findall(r'^\s*\{ id: "(\w+)", name:', head, re.M)
+tree_ids  = set(re.findall(r"^(\w+): \{", flows, re.M))
+leaves    = re.findall(r'pick: "((?:[^"\\]|\\.)*)"', flows) + \
+            [x for m in re.findall(r"seq: \[([^\]]*)\]", flows)
+               for x in re.findall(r'"((?:[^"\\]|\\.)*)"', m)]
+for leaf in sorted(set(leaves) - opt_names):
+    problems.append(f'chooser-data.js: flowchart leaf "{leaf}" is not a technique on the page')
+for j in [j for j in job_ids if j not in tree_ids]:
+    problems.append(f'chooser-data.js: decision "{j}" has no flowchart in FLOWS')
+for t in sorted(tree_ids - set(job_ids)):
+    problems.append(f'chooser-data.js: FLOWS."{t}" has no matching decision')
+
+# ML and statistics topics are decisions; Python and maths are prerequisites
+DECIDING = ("04_ML/", "02_DataScience/")
+uncarded = sorted({t for t in studied_topics if t.startswith(DECIDING)}
+                  - referenced - excluded)
+
 print(f"   {topics} lessons · {codes} code views · {notes} handwritten pages")
 if unmapped:
     print("\n\033[33m   NOT ON THE JOURNEY PAGE\033[0m")
     for m in unmapped:
         print(f"     - {m}   → add it to a stage in 17_Learning_As_Of_Now/Claude/journey-data.js")
+if uncarded:
+    print("\n\033[33m   NOT ON THE WHEN-TO-USE-WHAT PAGE\033[0m")
+    for m in uncarded:
+        print(f"     - {m}   → add a card in 17_Learning_As_Of_Now/Claude/chooser-data.js,")
+        print( "                  or name it in NOT_A_CHOICE there, with the reason")
 if problems:
     print("\n\033[31m   PROBLEMS\033[0m")
     for p in problems[:15]: print("     - " + p)

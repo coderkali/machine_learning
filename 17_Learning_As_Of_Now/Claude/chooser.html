@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When to Use What · Learning Universe</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="chooser.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="index.html">
+    <span class="sigil"><i></i>ML</span>
+    <span class="brand-txt"><b>Learning Universe</b><small>when to use what</small></span>
+  </a>
+  <nav class="nav-links">
+    <a class="nav-btn" href="index.html">Home</a>
+    <a class="nav-btn" href="index.html#map">Mind map</a>
+    <a class="nav-btn" href="workspace.html">Workspace</a>
+    <a class="nav-btn" href="journey.html">Journey</a>
+    <button class="nav-btn active">When to Use What</button>
+  </nav>
+</header>
+
+<main class="fx">
+
+  <!-- ── left: the decisions ──────────────────────────────────── -->
+  <aside class="rail">
+    <label class="rsearch">
+      <span class="mag">⌕</span>
+      <input id="q" type="search" placeholder="find a technique…" autocomplete="off">
+      <kbd>/</kbd>
+    </label>
+    <nav id="rail" class="raillist"></nav>
+    <button class="stackbtn" id="stackbtn">
+      <span>Your stack</span><b id="stackn">0</b>
+    </button>
+  </aside>
+
+  <!-- ── centre: the drawn flowchart ──────────────────────────── -->
+  <section class="stage">
+    <div class="stagetop">
+      <div class="sttitle">
+        <span class="eyebrow" id="spname"></span>
+        <h1 id="jname"></h1>
+        <p class="jq" id="jq"></p>
+      </div>
+      <div class="pager">
+        <button id="prev" title="previous decision (←)">◀</button>
+        <span id="pos"></span>
+        <button id="next" title="next decision (→)">▶</button>
+      </div>
+    </div>
+
+    <div class="wrap" id="wrap">
+      <div class="fit" id="fit">
+        <div class="canvas" id="canvas">
+          <svg class="wires" id="wires"></svg>
+          <div class="nodes" id="nodes"></div>
+          <div class="elabels" id="elabels"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <p id="hint">Click down the branches. The path lights up as you go, and the box you land on is your answer.</p>
+      <button class="reset" id="reset">start this one again</button>
+    </div>
+  </section>
+
+  <!-- ── right: slides in when you land on a technique ────────── -->
+  <aside class="panel" id="panel"></aside>
+
+</main>
+
+<script src="tree-data.js"></script>
+<script src="chooser-data.js"></script>
+<script src="chooser.js"></script>
+</body>
+</html>

@@ -1635,17 +1635,17 @@ const TREE = {
       "children": [
         {
           "title": "Claude",
-          "meta": "13 files",
+          "meta": "17 files",
           "status": "learning",
           "details": [
             "README.md",
             "app.js",
+            "chooser-data.js",
+            "chooser.css",
+            "chooser.html",
+            "chooser.js",
             "home.js",
-            "index.html",
-            "journey-data.js",
-            "journey.css",
-            "journey.html",
-            "journey.js"
+            "index.html"
           ],
           "path": "../../17_Learning_As_Of_Now/Claude"
         },

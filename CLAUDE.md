@@ -225,6 +225,18 @@ so it appears on the Journey tree. `build_site.py` warns about any `04_ML/` topi
 that is missing from it. Foundation subjects (Python, statistics, maths) are
 prerequisites rather than pipeline stages and are deliberately left off.
 
+If the topic is a technique you have to **choose between** — a scaler, an
+encoder, a model, a metric, a statistical test — also add a card to
+[`17_Learning_As_Of_Now/Claude/chooser-data.js`](./17_Learning_As_Of_Now/Claude/chooser-data.js)
+so it appears on the When to Use What page. That means two things: a card
+(`name`, `use`, `avoid`, `code`, `topic`) in `SPACES`, and a leaf for it in
+that decision's tree in `FLOWS` at the bottom of the same file — the tree is
+what gets drawn, so a card with no leaf is invisible. `build_site.py` fails on
+a leaf that names no card, on a decision with no tree, and on a topic path
+that does not exist; it warns about any `04_ML/` or `02_DataScience/` topic
+that is neither carded nor named in `NOT_A_CHOICE`. Journey answers *what
+order*; this page answers *which one, and why*.
+
 Never hand-edit `tree-data.js` or a generated `Content/index.html` — the next
 build overwrites them. To change a lesson's wording, change the notebook, the
 note, or `stories.json`. A page whose first lines contain `hand-authored` is
@@ -266,6 +278,8 @@ The website itself is `17_Learning_As_Of_Now/Claude/`:
 | `workspace.html` | three-pane reader — Content, Code, Handwritten Notes |
 | `journey.html` | the ML pipeline as a vertical tree, ticked as topics are learned |
 | `journey-data.js` | the hand-maintained stage → topic mapping behind it |
+| `chooser.html` | **When to Use What** — each decision drawn as a flowchart you click down; the box you land on opens its card and is recorded in "your stack" |
+| `chooser-data.js` | the hand-written technique cards, and the `FLOWS` decision tree per decision |
 
 ## Topic documentation
 

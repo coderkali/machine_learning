@@ -638,7 +638,9 @@
     try { localStorage.setItem("lu-view", name); } catch (e) {}
   }
   document.querySelectorAll(".nav-btn").forEach(function (b) {
-    b.addEventListener("click", function () { show(b.dataset.view); });
+    /* the Workspace / Journey / When-to-Use-What buttons are plain links:
+       they carry no data-view, so let them navigate instead of switching view */
+    b.addEventListener("click", function () { if (b.dataset.view) show(b.dataset.view); });
   });
   /* Open the map on a particular node: expand its ancestors, select it, centre it. */
   function focus(title) {
