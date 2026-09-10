@@ -681,6 +681,10 @@
     hitsEl.textContent = q ? shown + " lessons" : "";
   });
 
+  /* The map reads its branch colours out of the stylesheet at draw time, so a
+     theme switch has to redraw it — nothing else on the page caches colour. */
+  window.addEventListener("themechange", function () { render(); });
+
   /* ─────────── go ─────────── */
   render();
   show("home");

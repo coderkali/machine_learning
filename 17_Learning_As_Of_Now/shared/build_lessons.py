@@ -208,6 +208,8 @@ def build_code_page(subject, topic, tdir, odir, title):
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{H.escape(title)} — code</title>
+<link rel="stylesheet" href="../../../{SHARED}/theme.css">
+<script src="../../../{SHARED}/theme.js"></script>
 <link rel="stylesheet" href="../../../{SHARED}/lesson.css">
 <style>body{{background:#0a0f1a}} .wrap{{padding:16px 18px 60px;max-width:none}}
 .doc{{max-width:none}} .code{{margin:12px 0}}
@@ -290,6 +292,8 @@ def build(subject, topic):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{H.escape(title)} — Lesson</title>
+<link rel="stylesheet" href="../../../{SHARED}/theme.css">
+<script src="../../../{SHARED}/theme.js"></script>
 <link rel="stylesheet" href="../../../{SHARED}/lesson.css">
 </head>
 <body>

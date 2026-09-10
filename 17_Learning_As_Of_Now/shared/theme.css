@@ -1,0 +1,193 @@
+/* ══════════════════════════════════════════════════════════════════════
+   The palette for the whole site — every page and every lesson page.
+
+   One token set, two values each: the dark theme this site was built in,
+   and a light theme. Nothing else in any stylesheet holds a raw colour, so
+   flipping data-theme on <html> re-skins everything at once.
+
+   Names describe the ROLE, not the colour: --card is a card in both themes
+   (near-black in dark, white in light). Levels run from the page backdrop
+   outward, so --line2 is always a stronger border than --line, whichever
+   direction that happens to be.
+
+   Set by shared/theme.js before the first paint. Never hard-code a colour
+   in a stylesheet again — add a token here instead.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── dark: the default, and what the site was designed in ── */
+:root{
+  --bg:#080b14;
+  --sunken:#0b1120;
+  --bg2:#0d1424;
+  --panel:#111828;
+  --card:#141a2b;
+  --card2:#141d31;
+  --card3:#1b2338;
+  --line0:#212c45;
+  --line:#26304a;
+  --line2:#2b3752;
+  --line3:#333e5c;
+  --line4:#3d4d73;
+  --edge:#4b5a80;
+  --dim:#5b6784;
+  --dim2:#6b7896;
+  --muted:#8791ab;
+  --muted2:#93a0bd;
+  --ink3:#b3bdd6;
+  --ink2:#c5cee2;
+  --ink2b:#cbd5f5;
+  --ink:#e8ecf7;
+  --ink-hi:#ffffff;
+  --cyan-bg:#0d1b2b;
+  --cyan-line:#24405c;
+  --cyan:#38bdf8;
+  --cyan-soft:#7dd3fc;
+  --cyan-hi:#bae6fd;
+  --green-bg:#101d18;
+  --green-bg2:#15301f;
+  --green-line:#245c46;
+  --green:#34d399;
+  --green-soft:#6ee7b7;
+  --green-hi:#d1fae5;
+  --green-dim:#3f7f63;
+  --amber-bg:#2a2211;
+  --amber-line:#6b5420;
+  --amber:#fbbf24;
+  --amber-hi:#fde68a;
+  --violet-bg:#221d3d;
+  --violet-line:#453a6b;
+  --violet:#a78bfa;
+  --violet-hi:#c4b5fd;
+  --rose-line:#6b2f3f;
+  --rose:#fb7185;
+  --rose-hi:#fda4af;
+  --teal:#2dd4bf;
+  --pink:#f472b6;
+  --green-out:#8fd6a8;
+  --blue:#3b82f6;
+  --blue-soft:#818cf8;
+  --grad-a:#0e7490;
+  --grad-b:#4c1d95;
+  --syn-kw:#c792ea;
+  --syn-str:#9ece6a;
+  --syn-num:#ffb86c;
+  --syn-fn:#82aaff;
+  --syn-self:#f78c6c;
+  --syn-com:#5b6784;
+  --veil-bar:rgba(8,11,20,.82);
+  --veil-chip:rgba(16,22,38,.92);
+  --veil-card:rgba(20,26,43,.6);
+  --veil-modal:rgba(4,7,14,.94);
+  --cyan-rgb:56,189,248;
+  --green-rgb:52,211,153;
+  --amber-rgb:251,191,36;
+  --violet-rgb:167,139,250;
+  --blue-rgb:96,165,250;
+  --dim-rgb:91,103,132;
+  --shadow:rgba(0,0,0,.45);
+  --shadow-sm:rgba(0,0,0,.30);
+}
+
+/* ── light ── */
+:root[data-theme="light"]{
+  --bg:#eef1f7;
+  --sunken:#f1f4fa;
+  --bg2:#f7f9fc;
+  --panel:#ffffff;
+  --card:#ffffff;
+  --card2:#f5f8fd;
+  --card3:#e9f0f9;
+  --line0:#e6ebf4;
+  --line:#dde4ef;
+  --line2:#d2dbe9;
+  --line3:#c2cddf;
+  --line4:#adbbd2;
+  --edge:#93a3c0;
+  --dim:#7d8aa4;
+  --dim2:#6e7c95;
+  --muted:#5d6b85;
+  --muted2:#4f5d76;
+  --ink3:#3d4a62;
+  --ink2:#2f3b52;
+  --ink2b:#27324a;
+  --ink:#17203a;
+  --ink-hi:#0a1224;
+  --cyan-bg:#e4f3fe;
+  --cyan-line:#a8d8f5;
+  --cyan:#0284c7;
+  --cyan-soft:#0369a1;
+  --cyan-hi:#075985;
+  --green-bg:#e6f7ef;
+  --green-bg2:#d3f0e0;
+  --green-line:#8fdcbb;
+  --green:#0d9668;
+  --green-soft:#047857;
+  --green-hi:#065f46;
+  --green-dim:#6f9c86;
+  --amber-bg:#fdf3dc;
+  --amber-line:#eccd85;
+  --amber:#c2870b;
+  --amber-hi:#8a5a08;
+  --violet-bg:#f0ecfd;
+  --violet-line:#cbbdf7;
+  --violet:#7c3aed;
+  --violet-hi:#5b21b6;
+  --rose-line:#f6c2ca;
+  --rose:#dc2626;
+  --rose-hi:#b91c1c;
+  --teal:#0d9488;
+  --pink:#c2258a;
+  --green-out:#2f7d55;
+  --blue:#2563eb;
+  --blue-soft:#4f46e5;
+  --grad-a:#0284c7;
+  --grad-b:#6d28d9;
+  --syn-kw:#8250df;
+  --syn-str:#0a7d33;
+  --syn-num:#953800;
+  --syn-fn:#0550ae;
+  --syn-self:#cf222e;
+  --syn-com:#6e7781;
+  --veil-bar:rgba(255,255,255,.86);
+  --veil-chip:rgba(255,255,255,.93);
+  --veil-card:rgba(255,255,255,.72);
+  --veil-modal:rgba(15,23,42,.90);
+  --cyan-rgb:2,132,199;
+  --green-rgb:13,150,104;
+  --amber-rgb:194,135,11;
+  --violet-rgb:124,58,237;
+  --blue-rgb:37,99,235;
+  --dim-rgb:125,138,164;
+  --shadow:rgba(20,35,70,.14);
+  --shadow-sm:rgba(20,35,70,.10);
+}
+
+/* aliases kept so older rules keep working */
+:root{
+  --done:var(--green); --learning:var(--amber);
+  --archive:var(--violet); --todo:var(--dim);
+  --h0:var(--cyan); --h1:var(--violet); --h2:var(--teal);
+  --node-w:248px; --node-h:64px;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{ color-scheme:light; }
+
+/* ── the toggle, added to every nav by shared/theme.js ── */
+.theme-toggle{
+  display:inline-grid !important;place-items:center;
+  width:31px;height:31px;min-width:31px;flex:none;box-sizing:border-box;
+  border-radius:9px;border:1px solid var(--line);background:var(--panel);
+  color:var(--muted);cursor:pointer;padding:0;margin-left:4px;
+  transition:color .15s,border-color .15s,background .15s}
+.theme-toggle:hover{color:var(--ink);border-color:var(--cyan);background:var(--card2)}
+.theme-toggle:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.theme-toggle svg{width:16px;height:16px;display:block;
+  fill:none;stroke:currentColor;stroke-width:1.9}
+.theme-toggle svg circle{fill:currentColor;stroke:none}
+.theme-toggle svg path[d^="M20.5"]{fill:currentColor;stroke:none}
+
+/* ease between the palettes instead of snapping */
+@media (prefers-reduced-motion:no-preference){
+  body,.nav,.card,.panel,.rail,.stage,.opt,.leaf,.node,.bar{
+    transition:background-color .22s ease,border-color .22s ease,color .22s ease}
+}

@@ -24,6 +24,14 @@ data. `Ridge`'s `alpha` is a dial you can turn along this axis: raising it makes
 model stiffer. The Ridge notebook shows the stiff end — a large `alpha` on clean data
 flattens the line until it only predicts the average.
 
+### Breakdown point
+
+The fraction of the rows that has to be wrong before a fitting method can be
+pushed anywhere at all. `LinearRegression` has a breakdown point of **0%** — one
+row, moved far enough, moves the line without limit. `TheilSenRegressor` is
+about 29% and `RANSACRegressor` up to about 50%. Past 50% nothing helps, because
+the broken rows are then the majority. See **Robust regression**.
+
 ### Broadcasting
 
 The rule that lets an operation combine arrays of different shapes by stretching
@@ -247,6 +255,16 @@ target the model explains. `1.0` is a perfect fit and `0.0` is no better than
 always guessing the average; it can go negative for a model that is worse than
 that. It says nothing about whether the test set was large enough to trust.
 
+### RANSAC (RANdom SAmple Consensus)
+
+A robust fitting method that votes instead of averaging. It repeatedly picks the
+smallest number of rows that define the model (2 for a straight line), fits on
+just those, and counts how many other rows fall within `residual_threshold` of
+the result. The candidate with the most agreement wins, and the model is refitted
+on that winning **inlier** set alone. `inlier_mask_` then tells you which rows it
+believed, which makes it an outlier detector as well as a regressor. See
+**Robust regression**, **Breakdown point**.
+
 ### Regression
 
 A supervised learning task that predicts a number, such as price or delivery
@@ -265,6 +283,17 @@ begin with. See **Ridge**, **L1 and L2 penalties**.
 The gap between one real value and the value the model predicted for it
 (`actual − predicted`). Residuals are what least squares squares and adds up,
 and plotting them is the fastest way to see where a model is wrong.
+
+### Robust regression
+
+Fitting a line that belongs to the majority of the rows rather than to the worst
+ones. Ordinary least squares **squares** every error, so a row that misses by 100
+counts as much as a hundred rows missing by 10, and a handful of broken rows can
+own the fit. The three robust answers in scikit-learn are `RANSACRegressor`
+(vote, then discard the losers), `HuberRegressor` (keep every row but cap what a
+far row can charge, squared inside `epsilon` and straight-line outside), and
+`TheilSenRegressor` (the median of the slope through every pair of rows). All
+three assume the good data is the crowd. See **Breakdown point**, **RANSAC**.
 
 ### Retrieval-augmented generation (RAG)
 

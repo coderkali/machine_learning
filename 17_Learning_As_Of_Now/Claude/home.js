@@ -3,7 +3,7 @@
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
-  var HUE = ["#38bdf8", "#a78bfa", "#2dd4bf", "#f472b6", "#fbbf24", "#818cf8"];
+  var HUE = ["var(--cyan)", "var(--violet)", "var(--teal)", "var(--pink)", "var(--amber)", "var(--blue-soft)"];
 
   /* ── shape the data ── */
   function leaves(n, out) {
@@ -65,8 +65,8 @@
       });
       a += span;
     });
-    html += '<circle cx="210" cy="210" r="97" fill="none" stroke="#1d2942"/>' +
-            '<circle cx="210" cy="210" r="188" fill="none" stroke="#161f36" stroke-dasharray="2 6"/>';
+    html += '<circle cx="210" cy="210" r="97" fill="none" stroke="var(--line0)"/>' +
+            '<circle cx="210" cy="210" r="188" fill="none" stroke="var(--card2)" stroke-dasharray="2 6"/>';
     svg.innerHTML = html;
 
     svg.querySelectorAll("path").forEach(function (p) {

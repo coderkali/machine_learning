@@ -14,13 +14,13 @@ Name the files so they sort in reading order, for example
 
 ## Complete high-resolution note set (v2)
 
-The six `Linear_Discriminant_Analysis_v2_*.png` pages form a complete sequence:
+The six `Linear_Discriminant_Analysis_v2_*.png` pages form a teacher-led sequence:
 
-1. LDA intuition and PCA comparison
-2. Fisher's criterion and scatter matrices
-3. Two-class worked calculation
-4. Projection, classification, and component limit
-5. Assumptions, failure modes, and LDA vs QDA
-6. Breast-cancer dataset workflow in scikit-learn
+1. Why LDA is needed and the problem it solves
+2. When to choose LDA, PCA, QDA, or a nonlinear model
+3. How LDA chooses a useful projection direction
+4. A complete two-class calculation with the reason for each step
+5. The correct leakage-safe training and model-selection process
+6. A breast-cancer walkthrough and deployment decision checklist
 
 Each v2 page is a 2048 x 3072 PNG.

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robust Regression — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/theme.css">
+<script src="../../../17_Learning_As_Of_Now/shared/theme.js"></script>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Robust Regression</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#robust-regression-fitting-a-line-that-ignores-th">Robust regression — fitting a line that ignores the </a><a href="#the-story">The story</a><a href="#setup">Setup</a><a href="#farhan-s-data">Farhan&#x27;s data</a><a href="#why-the-square-is-the-problem">Why the square is the problem</a><a href="#breakdown-point">Breakdown point</a><a href="#ransac-in-words">RANSAC, in words</a><a href="#huber-one-fit-no-voting">Huber — one fit, no voting</a><a href="#theil-sen-the-median-of-every-slope">Theil–Sen — the median of every slope</a><a href="#all-four-on-farhan-s-problem">All four, on Farhan&#x27;s problem</a><a href="#where-each-one-breaks">Where each one breaks</a><a href="#common-mistakes">Common mistakes</a><a href="#where-this-shows-up-in-real-systems">Where this shows up in real systems</a><a href="#key-takeaway">Key takeaway</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Robust Regression</h1>
+  <p class="lede">Fitting a line that belongs to the majority of the rows, not to the broken ones.</p>
+  <div class="tags"><span class="tag">2 notebooks</span></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Farhan wanted a line from parcel weight to delivery cost</strong>, so his counter could quote a price before anything was weighed twice. He fitted LinearRegression on a year of records.</p><p>The line came out too high for every small parcel and almost flat, so a 5 kg box and a 20 kg box were quoted nearly the same price.</p><p><span class='beat'>One counter terminal had a fault.</span> When a card payment timed out it still wrote a row, with the amount stuck at ₹600. Fifteen rows in every hundred were that ₹600, at every weight — and because the error is squared, those rows counted for more than all the honest ones together.</p><p>He deleted them by hand. Next month the fault came back on another terminal with a different amount. What he needed was not a cleaner spreadsheet but a fitting method that finds what the majority of rows agree on: RANSAC votes and discards, Huber caps what one row can charge, Theil–Sen takes the median of every pair's slope.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Least squares squares the error, so the most wrong row has the most influence — reverse that and the line comes back.</p></div>
+<div class="src-head">📓 <a href="../Concept/38_Robust_Regression_explained.ipynb">38_Robust_Regression_explained.ipynb</a></div>
+<h2 id="robust-regression-fitting-a-line-that-ignores-th">Robust regression — fitting a line that ignores the broken rows</h2>
+<h2 id="the-story">The story</h2>
+<p>Farhan runs a courier desk. Every parcel gets weighed, and the billing system
+records what the customer paid. He wanted the obvious thing: <strong>a line from
+parcel weight to delivery cost</strong>, so a quote could be given at the counter
+before anything was weighed twice.</p>
+<p>He fitted <code>LinearRegression</code> on a year of records. The line came out wrong —
+too high for every small parcel, and almost flat, so a 5 kg box and a 20 kg box
+were quoted nearly the same price.</p>
+<p><strong>Here is why it failed.</strong> One of the counter terminals had a fault. When a card
+payment timed out, it still wrote a row, and it wrote the amount as a fixed
+₹600. About fifteen rows in every hundred were that ₹600, scattered across
+every weight. They were not expensive parcels. They were not parcels at all.</p>
+<p><strong>He deleted them by hand</strong>, refitted, and the line was fine. Next month the
+fault came back on a different terminal with a different fixed amount, and he
+was back to reading rows one by one.</p>
+<p>What Farhan actually needed was not a cleaner spreadsheet. He needed a fitting
+method that <strong>finds the pattern the majority of the rows agree on, and refuses
+to be moved by the minority</strong> — whatever shape this month's fault takes. That
+method is robust regression.</p>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 22.</p>
+</div>
+
+<h2 id="setup">Setup</h2>
+<p>Nothing new to install. <code>RANSACRegressor</code>, <code>HuberRegressor</code> and
+<code>TheilSenRegressor</code> all live in <code>sklearn.linear_model</code>, next to
+<code>LinearRegression</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import make_regression
+from sklearn.linear_model import (LinearRegression, RANSACRegressor,
+                                  HuberRegressor, TheilSenRegressor)
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+
+OK, BAD, OLS = &quot;#1f7a8c&quot;, &quot;#e4572e&quot;, &quot;#222222&quot;
+plt.rcParams.update({&quot;figure.dpi&quot;: 110, &quot;axes.grid&quot;: True, &quot;grid.alpha&quot;: .25,
+                     &quot;axes.spines.top&quot;: False, &quot;axes.spines.right&quot;: False,
+                     &quot;font.size&quot;: 10})
+rng = np.random.default_rng(7)</pre></div>
+<h2 id="farhan-s-data">Farhan's data</h2>
+<p>The class notebook built this with <code>make_regression</code> and then overwrote the
+first slice of <code>y</code> with a constant. Same thing here, smaller so every plot
+redraws quickly.</p>
+<ul>
+<li><strong>1 600 honest rows</strong> — cost really does rise with weight, plus ordinary noise</li>
+<li><strong>240 broken rows</strong> (15%) — the terminal wrote a flat ₹600 regardless of weight</li>
+</ul>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">n, frac_bad = 1600, 0.15
+n_bad = int(n * frac_bad)
+
+weight, cost, TRUE_SLOPE = make_regression(
+    n_samples=n, n_features=1, noise=10, random_state=0, coef=True)
+TRUE_SLOPE = float(TRUE_SLOPE)                           # the honest relationship
+
+bad = np.zeros(n, dtype=bool)
+bad[:n_bad] = True                                       # the faulty terminal&#x27;s rows
+cost[bad] = 600 + rng.normal(size=n_bad)                 # a flat amount, every time
+
+print(f&quot;rows            : {n}&quot;)
+print(f&quot;broken rows     : {bad.sum()}  ({bad.mean():.0%})&quot;)
+print(f&quot;true slope      : {TRUE_SLOPE:.1f} rupees per unit of weight&quot;)
+print(f&quot;cost range, good: {cost[~bad].min():.0f} to {cost[~bad].max():.0f}&quot;)
+print(f&quot;cost range, bad : {cost[bad].min():.0f} to {cost[bad].max():.0f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>rows            : 1600
+broken rows     : 240  (15%)
+true slope      : 34.4 rupees per unit of weight
+cost range, good: -108 to 111
+cost range, bad : 597 to 602</pre></div>
+<p>Now fit the ordinary line on everything, the way Farhan did, and draw it against
+the line the honest rows actually describe.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">ols = LinearRegression().fit(weight, cost)
+truth = LinearRegression().fit(weight[~bad], cost[~bad])   # what he should have got
+
+grid = np.linspace(weight.min(), weight.max(), 200).reshape(-1, 1)
+
+fig, ax = plt.subplots(figsize=(8.2, 4.6))
+ax.scatter(weight[~bad], cost[~bad], s=8, c=OK,  label=&quot;honest rows&quot;)
+ax.scatter(weight[bad],  cost[bad],  s=8, c=BAD, label=&quot;the faulty terminal (₹600)&quot;)
+ax.plot(grid, truth.predict(grid), c=OK,  lw=2.5, ls=&quot;--&quot;, label=&quot;the real relationship&quot;)
+ax.plot(grid, ols.predict(grid),   c=OLS, lw=2.5, label=&quot;LinearRegression on all rows&quot;)
+ax.set(title=&quot;Farhan&#x27;s quote line, dragged upwards by 15% of the rows&quot;,
+       xlabel=&quot;parcel weight&quot;, ylabel=&quot;delivery cost (₹)&quot;)
+ax.legend(fontsize=8.5)
+plt.tight_layout(); plt.show()
+
+print(f&quot;slope wanted : {truth.coef_[0]:8.1f}&quot;)
+print(f&quot;slope fitted : {ols.coef_[0]:8.1f}   ({ols.coef_[0] / truth.coef_[0]:.0%} of it)&quot;)
+print(f&quot;intercept    : {truth.intercept_:8.1f}  -&gt;  {ols.intercept_:.1f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>slope wanted :     34.2
+slope fitted :     19.8   (58% of it)
+intercept    :      0.1  -&gt;  90.4</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The black line sits above almost every real parcel and it has lost most of its
+tilt. Fifteen rows in a hundred did that.</p>
+<h2 id="why-the-square-is-the-problem">Why the square is the problem</h2>
+<p><code>LinearRegression</code> picks the line with the smallest <strong>sum of squared</strong> errors.
+The square is what makes it fragile.</p>
+<p>A row that misses by 10 contributes 100. A row that misses by 100 contributes
+<strong>10 000</strong> — the same as one hundred ordinary rows put together. So the fit has
+no choice: moving towards the far-away rows saves more than staying with the
+crowd.</p>
+<p>The three curves below are three ways of charging for the same mistake.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">e = np.linspace(-6, 6, 400)
+eps = 1.35                                   # sklearn&#x27;s default for Huber
+huber = np.where(np.abs(e) &lt;= eps, .5 * e**2, eps * (np.abs(e) - .5 * eps))
+
+fig, ax = plt.subplots(figsize=(7.4, 4.0))
+ax.plot(e, .5 * e**2,      c=OLS, lw=2.2, label=&quot;squared  (LinearRegression)&quot;)
+ax.plot(e, np.abs(e),      c=OK,  lw=2.2, label=&quot;absolute (Theil–Sen, median-like)&quot;)
+ax.plot(e, huber,          c=BAD, lw=2.6, ls=&quot;--&quot;, label=&quot;Huber (squared inside, straight outside)&quot;)
+ax.axvspan(-eps, eps, color=BAD, alpha=.07)
+ax.annotate(&quot;inside ε: behaves like ordinary least squares&quot;, xy=(0, 7.5),
+            ha=&quot;center&quot;, fontsize=8.5, color=BAD)
+ax.set(title=&quot;How much does one wrong row cost the fit?&quot;,
+       xlabel=&quot;how far the row misses by&quot;, ylabel=&quot;penalty charged&quot;, ylim=(0, 9))
+ax.legend(fontsize=8.5)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c08-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Read the right-hand edge. The squared curve is still climbing steeply, so a row
+far out there keeps buying influence. The other two flatten into straight lines:
+past a point, being wrong by 50 costs barely more than being wrong by 40, and a
+broken row stops being worth chasing.</p>
+<p>That single change is what &quot;robust&quot; means here.</p>
+<h2 id="breakdown-point">Breakdown point</h2>
+<p>The standard way to compare these methods is the <strong>breakdown point</strong>: the
+fraction of the data that has to be corrupted before the fit can be pushed
+anywhere at all.</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Method</th>
+  <th>Breakdown point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>LinearRegression</code></td>
+  <td><strong>0%</strong> — one row, moved far enough, moves the line</td>
+</tr>
+<tr>
+  <td><code>HuberRegressor</code></td>
+  <td>0% in theory, but influence grows very slowly</td>
+</tr>
+<tr>
+  <td><code>TheilSenRegressor</code></td>
+  <td>about 29%</td>
+</tr>
+<tr>
+  <td><code>RANSACRegressor</code></td>
+  <td>up to about 50%</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;0% for ordinary least squares&quot; sounds like an exaggeration. It is not. Take
+the clean data, pick <strong>one</strong> row, and drag it upwards.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">Xc, yc = weight[~bad][:150], cost[~bad][:150]     # 150 honest rows, nothing wrong with them
+victim = np.abs(Xc.ravel()).argmax()              # the heaviest parcel: it has the most pull
+
+lifts = np.linspace(0, 3000, 25)
+slope_ols, slope_ran = [], []
+for lift in lifts:
+    y1 = yc.copy()
+    y1[victim] += lift                            # one single row, pulled away
+    slope_ols.append(LinearRegression().fit(Xc, y1).coef_[0])
+    slope_ran.append(RANSACRegressor(random_state=0).fit(Xc, y1).estimator_.coef_[0])
+
+fig, ax = plt.subplots(figsize=(7.6, 4.0))
+ax.axhline(TRUE_SLOPE, c=&quot;grey&quot;, ls=&quot;:&quot;, lw=1.6, label=f&quot;the true slope ({TRUE_SLOPE:.0f})&quot;)
+ax.plot(lifts, slope_ols, c=OLS, lw=2.2, marker=&quot;o&quot;, ms=3, label=&quot;LinearRegression&quot;)
+ax.plot(lifts, slope_ran, c=OK,  lw=2.2, marker=&quot;o&quot;, ms=3, label=&quot;RANSAC&quot;)
+ax.set(title=&quot;One row out of 150, pulled further and further away&quot;,
+       xlabel=&quot;how far that single row is lifted (₹)&quot;, ylabel=&quot;fitted slope&quot;)
+ax.legend(fontsize=8.5)
+plt.tight_layout(); plt.show()
+
+print(f&quot;OLS slope    : {slope_ols[0]:6.1f}  -&gt;  {slope_ols[-1]:6.1f}&quot;
+      f&quot;   ({slope_ols[-1] / slope_ols[0]:.1f}x, and still climbing)&quot;)
+print(f&quot;RANSAC slope : {slope_ran[0]:6.1f}  -&gt;  {slope_ran[-1]:6.1f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>OLS slope    :   32.9  -&gt;    95.3   (2.9x, and still climbing)
+RANSAC slope :   33.0  -&gt;    33.2</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c10-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>One row out of 150, and the ordinary slope walks away from the truth in a
+straight line. It never settles, because there is no limit — keep lifting and it
+keeps following. RANSAC is a flat line, because after the first few hundred
+rupees that row stops being counted at all.</p>
+<p>The row that was moved is the <strong>heaviest parcel</strong>, the one furthest out along
+the x axis. That is deliberate: a far-out x has more leverage, so it swings the
+line hardest. A row can be dangerous by being extreme in the target, in an
+input, or in both.</p>
+<h2 id="ransac-in-words">RANSAC, in words</h2>
+<p><strong>RA</strong>ndom <strong>SA</strong>mple <strong>C</strong>onsensus. The idea is closer to voting than to
+fitting, and it is worth knowing before reading the sklearn call.</p>
+<div class="code"><pre>repeat many times:
+    1. pick the smallest number of rows that define a line   (2 rows)
+    2. fit a line through just those rows
+    3. measure every other row&#x27;s distance to that line
+    4. rows closer than a threshold are its inliers — count them
+keep the line with the most inliers
+refit properly, on that winning inlier set only
+</pre></div>
+<p>Nothing here tries to please the broken rows. A candidate line is only ever
+scored by <strong>how many rows agree with it</strong>, and a broken row that disagrees
+contributes zero — not a large penalty, zero. That is why 15% of the data
+cannot buy anything.</p>
+<p>The picture below is step 1 to 4, done three times by hand.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">thr = 30                                        # a row within ₹30 counts as agreeing
+good_rows, bad_rows = np.where(~bad)[0], np.where(bad)[0]
+
+draws = [(np.array([bad_rows[0], good_rows[-1]]), &quot;one broken row, one honest row&quot;),
+         (np.array([bad_rows[1], bad_rows[9]]),   &quot;two broken rows&quot;),
+         (np.array([good_rows[0], good_rows[5]]), &quot;two honest rows&quot;)]
+
+fig, axes = plt.subplots(1, 3, figsize=(12.4, 4.1), sharey=True)
+for ax, (pair, what) in zip(axes, draws):
+    m, c0 = np.polyfit(weight[pair].ravel(), cost[pair], 1)
+    resid = np.abs(cost - (m * weight.ravel() + c0))
+    inlier = resid &lt; thr
+
+    ax.scatter(weight[~inlier], cost[~inlier], s=6, c=&quot;#cccccc&quot;)
+    ax.scatter(weight[inlier],  cost[inlier],  s=6, c=OK)
+    ax.plot(grid, m * grid.ravel() + c0, c=BAD, lw=2)
+    ax.fill_between(grid.ravel(), m * grid.ravel() + c0 - thr,
+                    m * grid.ravel() + c0 + thr, color=BAD, alpha=.12)
+    ax.scatter(weight[pair], cost[pair], s=90, facecolor=&quot;none&quot;,
+               edgecolor=BAD, lw=1.8, zorder=5)
+    ax.set(title=f&quot;{what}\n{inlier.sum()} of {n} rows agree&quot;,
+           xlabel=&quot;parcel weight&quot;, ylim=(-350, 750))
+
+axes[0].set_ylabel(&quot;delivery cost (₹)&quot;)
+fig.suptitle(&quot;Three pairs of rows, and how many rows vote for the line through each&quot;, y=1.04)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c12-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Two circled rows, one line through them, a band of width <code>threshold</code> around it,
+and a count of everything inside the band.</p>
+<p>The middle panel is the one to look at. A pair of broken rows produces a
+perfectly reasonable-looking flat line — and it collects only the other broken
+rows, because nothing else in the data is flat. The fault cannot win a vote it
+is outnumbered in. The right-hand panel, two ordinary rows, collects almost
+everything.</p>
+<p>sklearn runs this loop for you.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">ran = RANSACRegressor(random_state=0).fit(weight, cost)
+
+inlier = ran.inlier_mask_
+print(f&quot;trials run           : {ran.n_trials_}&quot;)
+mad = np.median(np.abs(cost - np.median(cost)))   # the default threshold sklearn uses
+print(f&quot;threshold used       : {mad:.1f}   (median absolute deviation of y)&quot;)
+print(f&quot;rows kept as inliers : {inlier.sum()} of {n}&quot;)
+print(f&quot;broken rows kept     : {(inlier &amp; bad).sum()} of {bad.sum()}&quot;)
+print()
+print(f&quot;true slope   : {TRUE_SLOPE:8.1f}&quot;)
+print(f&quot;RANSAC slope : {ran.estimator_.coef_[0]:8.1f}&quot;)
+print(f&quot;OLS slope    : {ols.coef_[0]:8.1f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>trials run           : 4
+threshold used       : 29.4   (median absolute deviation of y)
+rows kept as inliers : 1353 of 1600
+broken rows kept     : 0 of 240
+
+true slope   :     34.4
+RANSAC slope :     34.0
+OLS slope    :     19.8</pre></div>
+<p><code>inlier_mask_</code> is the useful part and it is easy to miss. RANSAC does not just
+give a better line — it hands back <strong>which rows it believed</strong>, as a boolean
+array. That is a free outlier detector, and Farhan can send exactly those rows
+to whoever owns the terminal.</p>
+<p>It is not free of cost, though. Look at the last number printed below: a few
+perfectly honest rows sat outside the band and were discarded with the rest.
+That is the trade you accept — RANSAC would rather lose a good row than keep a
+bad one.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8.2, 4.6))
+ax.scatter(weight[inlier],  cost[inlier],  s=8, c=OK,  label=f&quot;RANSAC kept these ({inlier.sum()})&quot;)
+ax.scatter(weight[~inlier], cost[~inlier], s=8, c=BAD, label=f&quot;RANSAC ignored these ({(~inlier).sum()})&quot;)
+ax.plot(grid, ran.predict(grid),   c=OK,  lw=2.5, label=&quot;RANSAC line&quot;)
+ax.plot(grid, ols.predict(grid),   c=OLS, lw=2.5, label=&quot;LinearRegression line&quot;)
+ax.set(title=&quot;The rows RANSAC voted out are exactly the faulty terminal&#x27;s rows&quot;,
+       xlabel=&quot;parcel weight&quot;, ylabel=&quot;delivery cost (₹)&quot;)
+ax.legend(fontsize=8.5)
+plt.tight_layout(); plt.show()
+
+print(f&quot;broken rows correctly rejected : {(~inlier &amp; bad).sum() / bad.sum():.1%}&quot;)
+print(f&quot;honest rows thrown out too     : {(~inlier &amp; ~bad).sum()}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>broken rows correctly rejected : 100.0%
+honest rows thrown out too     : 7</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c16-5.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="huber-one-fit-no-voting">Huber — one fit, no voting</h2>
+<p>RANSAC throws rows away. <code>HuberRegressor</code> keeps every row but <strong>caps what a far
+row can charge</strong>, using the dashed curve from the loss plot: squared inside
+<code>epsilon</code> standard deviations, straight-line outside.</p>
+<p><code>epsilon</code> is the knob. Smaller means more suspicious; 1.35 is the default and is
+a good starting point.</p>
+<p>Huber needs its inputs scaled sensibly, because <code>epsilon</code> is measured in the
+model's own error units. Here the data is already on a reasonable scale.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">hub = HuberRegressor(epsilon=1.35).fit(weight, cost)
+
+print(f&quot;slope        : {hub.coef_[0]:8.1f}   (true {TRUE_SLOPE:.1f})&quot;)
+print(f&quot;rows Huber down-weighted as outliers : {hub.outliers_.sum()} of {n}&quot;)
+
+for eps in [1.05, 1.35, 2.0, 5.0]:
+    h = HuberRegressor(epsilon=eps, max_iter=500).fit(weight, cost)
+    print(f&quot;epsilon={eps:&lt;5} slope={h.coef_[0]:8.1f}   down-weighted={h.outliers_.sum():4d}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>slope        :     33.9   (true 34.4)
+rows Huber down-weighted as outliers : 584 of 1600
+epsilon=1.05  slope=    33.9   down-weighted=1362
+epsilon=1.35  slope=    33.9   down-weighted= 584
+epsilon=2.0   slope=    33.4   down-weighted= 245
+epsilon=5.0   slope=    19.8   down-weighted=   0</pre></div>
+<p>Watch the last column as <code>epsilon</code> grows. At 5.0 hardly anything is treated as
+an outlier and the slope slides back towards the broken OLS answer — because a
+large enough <code>epsilon</code> <em>is</em> ordinary least squares.</p>
+<h2 id="theil-sen-the-median-of-every-slope">Theil–Sen — the median of every slope</h2>
+<p>The third method is the most direct of the three, and it needs no threshold at
+all.</p>
+<p>Take every pair of rows. Each pair defines a slope. You now have a large pile of
+slopes: a pair of honest rows gives roughly the right one, a pair that touches a
+₹600 row gives nonsense. <strong>Take the median of the pile.</strong></p>
+<p>A median only asks which value is in the middle. It never asks how far away the
+ends are, so the nonsense slopes cannot pull it. It is the mean-versus-median
+argument you already know from a skewed column, moved up one level — from a
+column of numbers to a line.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">ts = TheilSenRegressor(random_state=0, max_subpopulation=5000).fit(weight, cost)
+print(f&quot;pairs sampled : {ts.n_subpopulation_}&quot;)
+print(f&quot;slope         : {ts.coef_[0]:8.1f}   (true {TRUE_SLOPE:.1f})&quot;)
+
+# the pile of pair-slopes it is taking the median of
+idx = rng.choice(n, size=(6000, 2))
+idx = idx[idx[:, 0] != idx[:, 1]]
+dx = weight[idx[:, 1], 0] - weight[idx[:, 0], 0]
+keep = np.abs(dx) &gt; .05
+idx, dx = idx[keep], dx[keep]
+slopes = (cost[idx[:, 1]] - cost[idx[:, 0]]) / dx
+touched = bad[idx].any(axis=1)                # did this pair include a broken row?
+
+LO, HI = -250, 350
+bins = np.linspace(LO, HI, 120)
+off = ((slopes &lt; LO) | (slopes &gt; HI))
+
+fig, ax = plt.subplots(figsize=(7.8, 4.2))
+ax.hist([slopes[~touched &amp; ~off], slopes[touched &amp; ~off]],
+        bins=bins, stacked=True, color=[OK, BAD], edgecolor=&quot;none&quot;,
+        label=[f&quot;both rows honest ({(~touched).mean():.0%} of pairs)&quot;,
+               f&quot;one row from the fault ({touched.mean():.0%} of pairs)&quot;])
+ax.annotate(f&quot;{off.sum()} further pairs fall off this axis altogether\n&quot;
+            f&quot;{(off &amp; touched).mean() / off.mean():.0%} of them touched the fault&quot;,
+            xy=(-240, ax.get_ylim()[1] * .6), fontsize=8.5, color=BAD)
+ax.axvline(np.median(slopes), c=OLS, lw=2.4,
+           label=f&quot;median of the whole pile = {np.median(slopes):.0f}&quot;)
+ax.axvline(TRUE_SLOPE, c=&quot;grey&quot;, lw=1.8, ls=&quot;--&quot;, label=f&quot;true slope = {TRUE_SLOPE:.0f}&quot;)
+ax.set(title=&quot;One slope per pair of rows — Theil–Sen keeps the middle one&quot;,
+       xlabel=&quot;slope of the line through a pair of rows&quot;, ylabel=&quot;how many pairs&quot;)
+ax.legend(fontsize=8.5)
+plt.tight_layout(); plt.show()
+
+print(f&quot;honest pairs         : {(~touched).mean():.1%}&quot;)
+print(f&quot;median of honest only: {np.median(slopes[~touched]):.1f}&quot;)
+print(f&quot;median of everything : {np.median(slopes):.1f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>pairs sampled : 5000
+slope         :     34.7   (true 34.4)
+honest pairs         : 72.4%
+median of honest only: 34.1
+median of everything : 33.3</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c20-6.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The teal peak is narrow and sits on the true slope. The orange is a smear with
+no shape at all, plus a spike at zero — that spike is pairs where <em>both</em> rows
+came from the fault, so both sat at ₹600 and the line through them is flat.</p>
+<p>Because teal is still the majority of the pile, the middle value falls inside it
+and the median lands on the truth.</p>
+<p>Now read the two percentages, because together they explain Theil–Sen's limit.
+15% of <em>rows</em> are broken, but over a quarter of <em>pairs</em> are spoiled — a pair is
+ruined if <strong>either</strong> of its rows is bad. Push the contamination further and the
+smear becomes the majority, the middle value moves into it, and the method
+fails. That is roughly where the 29% in the table comes from.</p>
+<h2 id="all-four-on-farhan-s-problem">All four, on Farhan's problem</h2>
+<p>The honest test is the one that matters: split the data the way the class
+notebook did, fit on the training half, then <strong>score only on the honest test
+rows</strong> — because those are the parcels the counter will actually quote.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 22</span></div><pre class="py">Xtr, Xte, ytr, yte, btr, bte = train_test_split(
+    weight, cost, bad, test_size=.2, random_state=0)
+
+models = {
+    &quot;LinearRegression&quot;: LinearRegression(),
+    &quot;RANSAC&quot;:           RANSACRegressor(random_state=0),
+    &quot;Huber&quot;:            HuberRegressor(epsilon=1.35),
+    &quot;Theil–Sen&quot;:        TheilSenRegressor(random_state=0, max_subpopulation=5000),
+}
+
+rows = {}
+for name, m in models.items():
+    m.fit(Xtr, ytr)
+    slope = (m.estimator_ if name == &quot;RANSAC&quot; else m).coef_[0]
+    err = mean_absolute_error(yte[~bte], m.predict(Xte[~bte]))   # honest rows only
+    rows[name] = (slope, err)
+    print(f&quot;{name:18s} slope={slope:7.1f}   avg error on honest parcels = ₹{err:.1f}&quot;)
+
+print(f&quot;\n{&#x27;true slope&#x27;:18s} slope={TRUE_SLOPE:7.1f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression   slope=   24.4   avg error on honest parcels = ₹87.5
+RANSAC             slope=   35.3   avg error on honest parcels = ₹7.8
+Huber              slope=   34.0   avg error on honest parcels = ₹8.0
+Theil–Sen          slope=   34.2   avg error on honest parcels = ₹7.9
+
+true slope         slope=   34.4</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">fig, (a1, a2) = plt.subplots(1, 2, figsize=(12.2, 4.4),
+                             gridspec_kw={&quot;width_ratios&quot;: [1.5, 1]})
+
+a1.scatter(weight[~bad], cost[~bad], s=6, c=&quot;#cfd8dc&quot;)
+a1.scatter(weight[bad],  cost[bad],  s=6, c=&quot;#f6c1b3&quot;)
+colors = {&quot;LinearRegression&quot;: OLS, &quot;RANSAC&quot;: OK, &quot;Huber&quot;: BAD, &quot;Theil–Sen&quot;: &quot;#6a4c93&quot;}
+styles = {&quot;LinearRegression&quot;: &quot;-&quot;, &quot;RANSAC&quot;: &quot;-&quot;, &quot;Huber&quot;: &quot;--&quot;, &quot;Theil–Sen&quot;: &quot;:&quot;}
+for name, m in models.items():
+    a1.plot(grid, m.predict(grid), c=colors[name], lw=2.4, ls=styles[name], label=name)
+a1.set(title=&quot;Four lines through the same contaminated data&quot;,
+       xlabel=&quot;parcel weight&quot;, ylabel=&quot;delivery cost (₹)&quot;)
+a1.legend(fontsize=8.5)
+
+names = list(rows)
+a2.barh(names, [rows[k][1] for k in names],
+        color=[colors[k] for k in names], height=.55)
+for i, k in enumerate(names):
+    a2.text(rows[k][1] + 2, i, f&quot;₹{rows[k][1]:.0f}&quot;, va=&quot;center&quot;, fontsize=9)
+a2.invert_yaxis()
+a2.set(title=&quot;Average quote error on honest parcels&quot;, xlabel=&quot;₹ (lower is better)&quot;)
+a2.grid(axis=&quot;y&quot;, visible=False)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c23-7.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Three lines lie almost on top of each other, and one does not.</p>
+<h2 id="where-each-one-breaks">Where each one breaks</h2>
+<p>Robust does not mean invincible. Sweep the contamination from nothing up to more
+than half the data and the differences appear.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 25</span></div><pre class="py">X0, y_clean, TRUE0 = make_regression(n_samples=600, n_features=1, noise=10,
+                                     random_state=1, coef=True)
+TRUE0 = float(TRUE0)
+
+fracs = np.arange(0, .61, .05)
+curves = {k: [] for k in [&quot;LinearRegression&quot;, &quot;RANSAC&quot;, &quot;Huber&quot;, &quot;Theil–Sen&quot;]}
+
+for f in fracs:
+    y0 = y_clean.copy()
+    k = int(600 * f)
+    if k: y0[:k] = 600 + rng.normal(size=k)      # the same fault, spreading
+    fit = {&quot;LinearRegression&quot;: LinearRegression(),
+           &quot;RANSAC&quot;: RANSACRegressor(random_state=0),
+           &quot;Huber&quot;: HuberRegressor(epsilon=1.35, max_iter=1000),
+           &quot;Theil–Sen&quot;: TheilSenRegressor(random_state=0, max_subpopulation=3000)}
+    for name, m in fit.items():
+        m.fit(X0, y0)
+        s = (m.estimator_ if name == &quot;RANSAC&quot; else m).coef_[0]
+        curves[name].append(abs(s - TRUE0) / TRUE0 * 100)
+
+fig, ax = plt.subplots(figsize=(7.8, 4.3))
+for name, v in curves.items():
+    ax.plot(fracs * 100, v, lw=2.2, marker=&quot;o&quot;, ms=3.5,
+            c=colors[name], ls=styles[name], label=name)
+ax.axvline(29, c=&quot;grey&quot;, ls=&quot;:&quot;, lw=1.4)
+ax.axvline(50, c=&quot;grey&quot;, ls=&quot;:&quot;, lw=1.4)
+ax.text(29.6, 88, &quot;Theil–Sen&#x27;s limit ≈29%&quot;, fontsize=8, color=&quot;grey&quot;)
+ax.text(50.6, 78, &quot;RANSAC&#x27;s limit ≈50%&quot;, fontsize=8, color=&quot;grey&quot;)
+ax.set(title=&quot;How wrong is the slope as more rows go bad?&quot;,
+       xlabel=&quot;% of rows written by the faulty terminal&quot;,
+       ylabel=&quot;slope error (%)&quot;, ylim=(-3, 100))
+ax.legend(fontsize=8.5)
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/38-robust-regression-explain-c25-8.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>Read it left to right:</p>
+<ul>
+<li><strong><code>LinearRegression</code></strong> starts drifting at the very first broken row and never
+stops. There is no safe amount of contamination for it.</li>
+<li><strong>Huber</strong> holds flat for a long way and then bends. It softens far-away rows,
+it does not remove them, so enough of them eventually win.</li>
+<li><strong>Theil–Sen</strong> holds further than its quoted 29%. That figure is a worst-case
+guarantee against contamination placed as badly as possible; a fault that
+writes one flat value is not the worst case.</li>
+<li><strong>RANSAC</strong> is flat right up to 50%, then snaps. Past half the rows, the
+majority <em>is</em> the fault, and no method can know that the majority is wrong.</li>
+</ul>
+<p>That last point is the honest limit of all of this: <strong>robust regression assumes
+the good data is the crowd.</strong> If your fault is the crowd, nothing here saves
+you — only knowing your data does.</p>
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li><strong>Using it to skip data cleaning.</strong> These methods survive a fault; they do
+not tell you the terminal is broken. Read <code>inlier_mask_</code> and go fix the
+source.</li>
+<li><strong>Leaving <code>residual_threshold</code> at the default when y is skewed.</strong> The default
+is the median absolute deviation of <code>y</code>. On a heavily skewed target it can be
+far too wide, and the broken rows are quietly kept.</li>
+<li><strong>Forgetting <code>random_state</code>.</strong> RANSAC and Theil–Sen sample. Without a seed
+the line moves between runs, and nobody can reproduce your number.</li>
+<li><strong>Scoring on the dirty test set.</strong> If the test rows contain the same fault,
+the dishonest model looks better. Score on rows you trust.</li>
+<li><strong>Using Theil–Sen on wide data.</strong> It samples pairs and the cost grows fast
+with the number of columns. It is a small-data method.</li>
+<li><strong>Plotting predictions with <code>plt.plot</code> on unsorted x.</strong> A straight line
+survives it, anything else draws as a scribble. Sort x first, or use a
+<code>linspace</code> grid as every plot above does.</li>
+</ol>
+<h2 id="where-this-shows-up-in-real-systems">Where this shows up in real systems</h2>
+<p>Anywhere a number arrives from something that can fail while still reporting:</p>
+<ul>
+<li>a sensor that returns its maximum reading when the cable is loose</li>
+<li>a payment or logging path that writes a default on timeout, exactly like
+Farhan's terminal</li>
+<li>scraped prices where a failed parse becomes <code>0</code></li>
+<li>latency metrics where a restart writes one enormous value</li>
+</ul>
+<p>The engineering habit that matches this is the one you already apply to a
+monitoring dashboard: <strong>quote the p50, not the mean</strong>, because one bad node
+should not decide the graph. RANSAC, Huber and Theil–Sen are that same instinct,
+applied to a line instead of to a single column.</p>
+<p>It is also the same idea as <code>RobustScaler</code> from feature scaling — median and IQR
+instead of mean and standard deviation. Once you notice it, robustness is nearly
+always &quot;replace a mean with a median, or cap what one row can contribute&quot;.</p>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p><strong>If you remember only one thing:</strong> ordinary least squares squares the error, so
+the row that is most wrong has the most influence — reverse that, and the line
+belongs to the majority again. Reach for <code>RANSACRegressor</code> when you can afford
+to discard rows and you want to know which ones, and <code>HuberRegressor</code> when you
+want every row kept but tamed.</p>
+
+<div class="src-head">📓 <a href="../Concept/39_Robust_Regression_RANSAC.ipynb">39_Robust_Regression_RANSAC.ipynb</a></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 0</span></div><pre class="py">from sklearn.datasets import make_regression
+import numpy as np
+from sklearn.linear_model import LinearRegression,RANSACRegressor
+import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">x, y = make_regression(n_samples=200000, n_features=1,noise=10,random_state=0)
+outliers = 30000
+np.random.seed(2)
+y[:outliers] = 600 + np.random.normal(size=(outliers))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">sample = np.random.normal(size=(outliers))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">len(sample)</pre></div>
+<div class="out"><div class="h">Output</div><pre>30000</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">plt.scatter(x,y,s=3)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.collections.PathCollection at 0x7fac800287f0&gt;</pre></div>
+<figure class="shot"><img src="assets/39-robust-regression-ransac-c04-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">lr = LinearRegression()
+lr.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>LinearRegression()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">rr = RANSACRegressor()
+rr.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>RANSACRegressor()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">rr_pred = rr.predict(X_test)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">lr_pred = lr.predict(X_test)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">plt.scatter(X_test, y_test, label=&#x27;Actual data&#x27;,c=&quot;green&quot;,s=2)
+plt.plot(X_test,rr_pred,label=&#x27;RANSACRegressor&#x27;,c=&quot;red&quot;)
+plt.plot(X_test,lr_pred, label=&#x27;LinearRegression&#x27;,c=&quot;black&quot;)
+plt.legend()</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;matplotlib.legend.Legend at 0x7fac882034f0&gt;</pre></div>
+<figure class="shot"><img src="assets/39-robust-regression-ransac-c10-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<div class="foot"><a class="btn" href="../Concept/38_Robust_Regression_explained.ipynb">38_Robust_Regression_explained.ipynb ↗</a><a class="btn" href="../Concept/39_Robust_Regression_RANSAC.ipynb">39_Robust_Regression_RANSAC.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

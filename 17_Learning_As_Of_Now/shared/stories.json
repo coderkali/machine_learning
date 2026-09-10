@@ -428,5 +428,15 @@
    "<span class='beat'>The question is not \"is the new number bigger?\" It is \"is it bigger than luck can explain?\"</span>",
    "Hypothesis testing assumes there is no real difference, then computes how often chance alone would produce a gap this large. If that is rare enough, the difference is worth believing."
   ]
+ },
+ "04_ML/38_Robust_Regression": {
+  "lede": "Fitting a line that belongs to the majority of the rows, not to the broken ones.",
+  "idea": "Least squares squares the error, so the most wrong row has the most influence — reverse that and the line comes back.",
+  "story": [
+   "<strong>Farhan wanted a line from parcel weight to delivery cost</strong>, so his counter could quote a price before anything was weighed twice. He fitted LinearRegression on a year of records.",
+   "The line came out too high for every small parcel and almost flat, so a 5 kg box and a 20 kg box were quoted nearly the same price.",
+   "<span class='beat'>One counter terminal had a fault.</span> When a card payment timed out it still wrote a row, with the amount stuck at ₹600. Fifteen rows in every hundred were that ₹600, at every weight — and because the error is squared, those rows counted for more than all the honest ones together.",
+   "He deleted them by hand. Next month the fault came back on another terminal with a different amount. What he needed was not a cleaner spreadsheet but a fitting method that finds what the majority of rows agree on: RANSAC votes and discards, Huber caps what one row can charge, Theil–Sen takes the median of every pair's slope."
+  ]
  }
 }

@@ -71,7 +71,7 @@ const PHASES = [
                  "04_ML/26_Decision_Tree_Classification", "04_ML/27_Decision_Tree_Regression",
                  "04_ML/28_Naive_Bayes", "04_ML/29_K_Nearest_Neighbor",
                  "04_ML/30_Support_Vector_Machines", "04_ML/31_Clustering_KMeans",
-                 "04_ML/32_Hierarchical_Clustering"] },
+                 "04_ML/32_Hierarchical_Clustering", "04_ML/38_Robust_Regression"] },
       { id: "train", name: "Training", icon: "⚙️",
         what: "fit() turns thousands of rows into a handful of learned numbers.",
         ask: "What did fit actually store? Anything with a trailing underscore.",

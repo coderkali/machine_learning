@@ -35,7 +35,11 @@ supervised dimensionality reduction: thirty breast-cancer columns projected onto
 one axis that keeps the two classes apart, with the `S_w⁻¹(μ₂ − μ₁)` derivation
 worked by hand first. **Model persistence** (Session 21) closes the loop: a fitted
 model written to disk with `joblib` and `pickle` and loaded back, with the whole
-`Pipeline` saved rather than the estimator alone. Still open: classification,
+`Pipeline` saved rather than the estimator alone. **Robust regression**
+(Session 22) returns to the linear family with the failure least squares cannot
+survive: because the error is squared, a handful of broken rows own the fit, so
+`RANSACRegressor` votes and discards them, `HuberRegressor` caps what one row can
+charge, and `TheilSenRegressor` takes the median of every pair's slope. Still open: classification,
 trees and ensembles, metrics beyond `.score()`, and `GridSearchCV`. M03
 [NumPy](../01_Python/02_NumPy/Concept/README.md) and
 [Pandas](../01_Python/03_Pandas/Concept/README.md), plus Matplotlib,

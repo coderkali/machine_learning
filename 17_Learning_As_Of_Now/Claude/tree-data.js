@@ -1355,6 +1355,20 @@ const TREE = {
           "path": "../../04_ML/37_Model_Persistence/Concept/36_Model_Persistence_explained.ipynb"
         },
         {
+          "title": "Robust Regression",
+          "meta": "2 notebooks",
+          "status": "learning",
+          "details": [
+            "Concept: 38_Robust_Regression_explained.ipynb",
+            "Concept: 39_Robust_Regression_RANSAC.ipynb"
+          ],
+          "hasCode": true,
+          "lede": "Fitting a line that belongs to the majority of the rows, not to the broken ones.",
+          "hasStory": true,
+          "lesson": "../../04_ML/38_Robust_Regression/Content/index.html",
+          "path": "../../04_ML/38_Robust_Regression/Concept/38_Robust_Regression_explained.ipynb"
+        },
+        {
           "title": "shared data",
           "meta": "9 files",
           "status": "learning",
@@ -1693,7 +1707,7 @@ const TREE = {
         },
         {
           "title": "shared",
-          "meta": "8 files",
+          "meta": "10 files",
           "status": "learning",
           "details": [
             "CODEX_HANDWRITTEN_NOTES_PROMPT.md",

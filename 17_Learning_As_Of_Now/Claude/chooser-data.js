@@ -173,11 +173,13 @@ const SPACES = [
           },
 
         { name: "Keep them, use a model that does not care",
-          topic: "04_ML/27_Decision_Tree_Regression", also: ["04_ML/34_Ensemble_Methods"],
+          topic: "04_ML/27_Decision_Tree_Regression",
+          also: ["04_ML/34_Ensemble_Methods", "04_ML/38_Robust_Regression"],
           code: "DecisionTreeRegressor()   # splits, never averages distance",
           use: ["The extremes are real and you refuse to fake them",
-                "A tree or a forest splits on order, so one huge value changes nothing"],
-          avoid: ["You have already committed to a linear model, which they will drag"],
+                "A tree or a forest splits on order, so one huge value changes nothing",
+                "You need a straight line anyway — then use a robust fitter instead of dropping rows"],
+          avoid: ["You have already committed to plain LinearRegression, which they will drag"],
           }
       ] },
 
@@ -386,6 +388,37 @@ const SPACES = [
           use: ["Many columns AND groups of columns that duplicate each other",
                 "alpha sets how hard the penalty bites; l1_ratio sets how Lasso-like it behaves"],
           avoid: ["A small, clean set of columns — you are tuning two knobs for nothing"],
+          },
+
+        { name: "RANSACRegressor", topic: "04_ML/38_Robust_Regression",
+          also: ["04_ML/07_Outliers"],
+          code: "RANSACRegressor(random_state=0).fit(X_train, y_train)",
+          use: ["Some rows are plainly wrong — a sensor default, a failed parse, a stuck amount",
+                "It votes: fit on 2 rows, count who agrees, keep the line with the most agreement",
+                "inlier_mask_ hands you exactly which rows it rejected, so you can go fix the source",
+                "Survives up to about half the rows being broken"],
+          avoid: ["More than half the data is bad — then the fault is the majority and nothing can help",
+                  "You cannot afford to discard rows; use HuberRegressor instead",
+                  "A skewed target left on the default residual_threshold, which is then far too wide"],
+          },
+
+        { name: "HuberRegressor", topic: "04_ML/38_Robust_Regression",
+          code: "HuberRegressor(epsilon=1.35).fit(X_train, y_train)",
+          use: ["Extreme rows are real and you want every row kept, only tamed",
+                "Squared loss near zero, straight-line loss past epsilon — so one far row stops buying influence",
+                "One deterministic fit, no sampling and no threshold to choose"],
+          avoid: ["Heavy contamination — it down-weights outliers, it does not remove them, so enough of them still win",
+                  "Unscaled columns: epsilon is measured in the model's own error units",
+                  "A large epsilon, which is just LinearRegression again"],
+          },
+
+        { name: "TheilSenRegressor", topic: "04_ML/38_Robust_Regression",
+          code: "TheilSenRegressor(random_state=0).fit(X_train, y_train)",
+          use: ["A small dataset with one or two columns, and no threshold you want to justify",
+                "The median of the slope through every pair of rows — a median cannot be dragged",
+                "Safe up to roughly 29% of rows being wrong"],
+          avoid: ["Many rows or many columns — it works through pairs, so the cost grows fast",
+                  "You need the rejected rows named; it never labels anything as an outlier"],
           },
 
         { name: "DecisionTreeRegressor", topic: "04_ML/27_Decision_Tree_Regression",
@@ -954,6 +987,12 @@ reg: {
   q: "Is the relationship a straight line?",
   a: [
     { label: "yes, roughly", to: {
+      q: "Are some y values plainly wrong — a sensor default, a stuck amount, a failed parse?",
+      a: [
+        { label: "yes, and I want to know which rows", to: { pick: "RANSACRegressor" } },
+        { label: "yes, but keep every row, just tamed", to: { pick: "HuberRegressor" } },
+        { label: "yes, and it is a small table", to: { pick: "TheilSenRegressor" } },
+        { label: "no, the target column is trustworthy", to: {
       q: "Are there many columns, or do they repeat each other?",
       a: [
         { label: "no, a small clean set", to: { pick: "LinearRegression" } },
@@ -964,6 +1003,7 @@ reg: {
             { label: "no, keep them all, just calmer", to: { pick: "Ridge" } },
             { label: "both — and they come in groups", to: { pick: "ElasticNet" } }
           ] } }
+      ] } }
       ] } },
     { label: "no, it bends", to: {
       q: "One clear curve, or steps and regions?",

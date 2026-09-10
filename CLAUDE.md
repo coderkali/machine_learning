@@ -268,7 +268,33 @@ these or copy them to a temporary directory:
 | `gen_tree.py` | folder structure → `Claude/tree-data.js` |
 | `stories.json` | the hand-written story per topic |
 | `lesson.css`, `lesson.js` | shared styling, highlighting, notes lightbox |
+| `theme.css` | **the whole site's palette** — every colour, dark and light |
+| `theme.js` | applies the saved theme before first paint, and adds the toggle |
 | `CODEX_HANDWRITTEN_NOTES_PROMPT.md` | the spec for generating note pages |
+
+### Colour and the dark/light toggle
+
+Every page — the four map pages and all 64 generated lesson pages — carries a
+dark/light toggle in its nav bar. The rule that keeps it working:
+
+**No stylesheet may contain a raw colour.** `shared/theme.css` holds the whole
+palette as ~70 tokens, each with a dark value and a light one, and every other
+sheet refers to them (`var(--card)`, `var(--ink)`, `rgba(var(--cyan-rgb),.12)`).
+Flipping `data-theme` on `<html>` re-skins the site in one step. If you need a
+colour that does not exist yet, add a token with both values — never a literal.
+
+Token names describe the **role**, not the colour: `--card` is a card in both
+themes, near-black in dark and white in light. Levels run outward from the page
+backdrop, so `--line2` is always a stronger border than `--line`, whichever
+direction that happens to be in the current theme.
+
+`shared/theme.js` runs in `<head>`, before the first paint, so the page never
+flashes the wrong theme. It stores the choice in `localStorage` under
+`lu-theme`, shared by every page even when opened as local files, and follows
+the operating system until the reader picks for themselves. It injects its own
+toggle button, so no page carries that markup. Anything that reads a colour
+from the stylesheet at draw time — currently only the canvas mind map in
+`app.js` — must listen for the `themechange` event and redraw.
 
 The website itself is `17_Learning_As_Of_Now/Claude/`:
 
