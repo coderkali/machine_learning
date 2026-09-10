@@ -25,56 +25,75 @@
   </nav>
 </header>
 
-<main class="fx">
+<!-- ══ SCREEN 1 · the arena ═══════════════════════════════════════════ -->
+<main class="screen arena" id="arena">
 
-  <!-- ── left: the decisions ──────────────────────────────────── -->
-  <aside class="rail">
-    <label class="rsearch">
-      <span class="mag">⌕</span>
-      <input id="q" type="search" placeholder="find a technique…" autocomplete="off">
-      <kbd>/</kbd>
-    </label>
-    <nav id="rail" class="raillist"></nav>
-    <button class="stackbtn" id="stackbtn">
-      <span>Your stack</span><b id="stackn">0</b>
-    </button>
-  </aside>
+  <section class="wtop">
+    <p class="hero-eye" id="heroEye"></p>
+    <h1 class="hero-h">Which one,<br><em>and why.</em></h1>
+    <p class="hero-p">
+      Journey answers <b>what order</b>. This page answers the question you
+      actually have at 2&nbsp;a.m. with a half-written notebook open —
+      <b>which one of these do I reach for, right here, and what do I say when
+      someone asks me why.</b>
+    </p>
 
-  <!-- ── centre: the drawn flowchart ──────────────────────────── -->
-  <section class="stage">
-    <div class="stagetop">
-      <div class="sttitle">
-        <span class="eyebrow" id="spname"></span>
-        <h1 id="jname"></h1>
-        <p class="jq" id="jq"></p>
-      </div>
-      <div class="pager">
-        <button id="prev" title="previous decision (←)">◀</button>
-        <span id="pos"></span>
-        <button id="next" title="next decision (→)">▶</button>
-      </div>
+    <div class="hero-tools">
+      <label class="find">
+        <span class="find-i">⌕</span>
+        <input id="q" type="search" placeholder="name a technique — median, one-hot, ROC, PCA…"
+               autocomplete="off" spellcheck="false">
+        <kbd>/</kbd>
+      </label>
+      <button class="stackbtn" id="stackbtn">
+        <span class="sdot"></span>Your stack<b id="stackn">0</b>
+      </button>
     </div>
-
-    <div class="wrap" id="wrap">
-      <div class="fit" id="fit">
-        <div class="canvas" id="canvas">
-          <svg class="wires" id="wires"></svg>
-          <div class="nodes" id="nodes"></div>
-          <div class="elabels" id="elabels"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="foot">
-      <p id="hint">Click down the branches. The path lights up as you go, and the box you land on is your answer.</p>
-      <button class="reset" id="reset">start this one again</button>
-    </div>
+    <p class="findmsg" id="findmsg" hidden></p>
   </section>
 
-  <!-- ── right: slides in when you land on a technique ────────── -->
-  <aside class="panel" id="panel"></aside>
+  <div class="bands" id="bands"></div>
 
+  <footer class="afoot">
+    <p>Every card here is a technique actually studied in this repository.
+       A missing card means the topic has not been learned yet — that is the
+       honest answer, not a gap.</p>
+  </footer>
 </main>
+
+<!-- ══ SCREEN 2/3 · one decision, then the verdict ════════════════════ -->
+<main class="screen play" id="play" hidden>
+
+  <div class="playbar">
+    <button class="pb-back" id="back">
+      <span>←</span> all decisions
+    </button>
+    <div class="pb-mid">
+      <span class="pb-name" id="pbName"></span>
+      <div class="pb-track"><i id="pbFill"></i></div>
+      <span class="pb-step" id="pbStep"></span>
+    </div>
+    <div class="pb-pager">
+      <button id="prev" title="previous decision  (←)">◀</button>
+      <button id="next" title="next decision  (→)">▶</button>
+    </div>
+  </div>
+
+  <div class="crumbs" id="crumbs"></div>
+
+  <div class="playbody" id="playbody"></div>
+</main>
+
+<!-- ══ your stack ═════════════════════════════════════════════════════ -->
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Your stack">
+    <div class="sheet-head">
+      <h2>Your stack</h2>
+      <button class="sheet-x" id="modalx" title="close  (Esc)">✕</button>
+    </div>
+    <div class="sheet-body" id="sheetbody"></div>
+  </div>
+</div>
 
 <script src="tree-data.js"></script>
 <script src="chooser-data.js"></script>
