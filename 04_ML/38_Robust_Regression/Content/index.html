@@ -16,13 +16,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#robust-regression-fitting-a-line-that-ignores-th">Robust regression — fitting a line that ignores the </a><a href="#the-story">The story</a><a href="#setup">Setup</a><a href="#farhan-s-data">Farhan&#x27;s data</a><a href="#why-the-square-is-the-problem">Why the square is the problem</a><a href="#breakdown-point">Breakdown point</a><a href="#ransac-in-words">RANSAC, in words</a><a href="#huber-one-fit-no-voting">Huber — one fit, no voting</a><a href="#theil-sen-the-median-of-every-slope">Theil–Sen — the median of every slope</a><a href="#all-four-on-farhan-s-problem">All four, on Farhan&#x27;s problem</a><a href="#where-each-one-breaks">Where each one breaks</a><a href="#common-mistakes">Common mistakes</a><a href="#where-this-shows-up-in-real-systems">Where this shows up in real systems</a><a href="#key-takeaway">Key takeaway</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#robust-regression-fitting-a-line-that-ignores-th">Robust regression — fitting a line that ignores the </a><a href="#the-story">The story</a><a href="#what-this-story-is-actually-saying-in-plain-word">What this story is actually saying, in plain words</a><a href="#setup">Setup</a><a href="#farhan-s-data">Farhan&#x27;s data</a><a href="#why-the-square-is-the-problem">Why the square is the problem</a><a href="#breakdown-point">Breakdown point</a><a href="#ransac-in-words">RANSAC, in words</a><a href="#huber-one-fit-no-voting">Huber — one fit, no voting</a><a href="#theil-sen-the-median-of-every-slope">Theil–Sen — the median of every slope</a><a href="#all-four-on-farhan-s-problem">All four, on Farhan&#x27;s problem</a><a href="#where-each-one-breaks">Where each one breaks</a><a href="#common-mistakes">Common mistakes</a><a href="#where-this-shows-up-in-real-systems">Where this shows up in real systems</a><a href="#key-takeaway">Key takeaway</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Robust Regression</h1>
   <p class="lede">Fitting a line that belongs to the majority of the rows, not to the broken ones.</p>
-  <div class="tags"><span class="tag">2 notebooks</span></div>
+  <div class="tags"><span class="tag">2 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 3 handwritten pages</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Farhan wanted a line from parcel weight to delivery cost</strong>, so his counter could quote a price before anything was weighed twice. He fitted LinearRegression on a year of records.</p><p>The line came out too high for every small parcel and almost flat, so a 5 kg box and a 20 kg box were quoted nearly the same price.</p><p><span class='beat'>One counter terminal had a fault.</span> When a card payment timed out it still wrote a row, with the amount stuck at ₹600. Fifteen rows in every hundred were that ₹600, at every weight — and because the error is squared, those rows counted for more than all the honest ones together.</p><p>He deleted them by hand. Next month the fault came back on another terminal with a different amount. What he needed was not a cleaner spreadsheet but a fitting method that finds what the majority of rows agree on: RANSAC votes and discards, Huber caps what one row can charge, Theil–Sen takes the median of every pair's slope.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Least squares squares the error, so the most wrong row has the most influence — reverse that and the line comes back.</p></div>
@@ -47,6 +47,37 @@ was back to reading rows one by one.</p>
 method that <strong>finds the pattern the majority of the rows agree on, and refuses
 to be moved by the minority</strong> — whatever shape this month's fault takes. That
 method is robust regression.</p>
+<h2 id="what-this-story-is-actually-saying-in-plain-word">What this story is actually saying, in plain words</h2>
+<ol>
+<li><p><strong>Two kinds of rows are mixed in one table, and nothing marks which is which.</strong></p>
+<ul>
+<li>~85% are real parcels: heavier box → higher price, plus normal small noise.</li>
+<li>~15% are fault rows: the terminal gave up and just wrote ₹600, no matter
+if the box was 2 kg or 20 kg.</li>
+</ul>
+</li>
+<li><p><strong><code>LinearRegression</code> trusts every row equally.</strong> It has no idea some rows are
+fake. It tries to draw one line that keeps <em>all</em> rows happy — real and fake.
+The fake ₹600 rows (cheap price on heavy boxes) pull the line down and flatten
+it, so it stops matching the real parcels properly.</p>
+</li>
+<li><p><strong>Deleting the bad rows by hand only worked because he knew the fault value
+was ₹600 this time.</strong> It is not a real fix — it is a one-time patch.</p>
+</li>
+<li><p><strong>Next month the fault changed shape</strong> (a different terminal, a different
+fixed number, e.g. ₹450). His hand-made rule (&quot;delete rows = ₹600&quot;) no longer
+catches anything. He is stuck manually checking rows again, forever.</p>
+</li>
+<li><p><strong>The real requirement:</strong> a method that looks at the data and figures out on
+its own <em>&quot;most rows agree on this pattern, a few don't — ignore the few&quot;</em> —
+without being told in advance what the bad rows look like.</p>
+</li>
+<li><p><strong>That method is robust regression.</strong> <code>RANSACRegressor</code>, <code>HuberRegressor</code>,
+and <code>TheilSenRegressor</code> all do this: they fit the line the majority agrees on
+and stay stable even if a chunk of rows is corrupted, whatever form that
+corruption takes.</p>
+</li>
+</ol>
 <div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 22.</p>
 </div>
 
@@ -587,7 +618,11 @@ plt.plot(X_test,lr_pred, label=&#x27;LinearRegression&#x27;,c=&quot;black&quot;)
 plt.legend()</pre></div>
 <div class="out"><div class="h">Output</div><pre>&lt;matplotlib.legend.Legend at 0x7fac882034f0&gt;</pre></div>
 <figure class="shot"><img src="assets/39-robust-regression-ransac-c10-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
-<!-- HANDWRITTEN:START --><!-- HANDWRITTEN:END -->
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Robust_Regression_01.png" data-name="Robust_Regression_01.png"><img src="../Handwritten_Notes/Robust_Regression_01.png" alt="Robust_Regression_01.png" loading="lazy"><span>Robust Regression 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Robust_Regression_02.png" data-name="Robust_Regression_02.png"><img src="../Handwritten_Notes/Robust_Regression_02.png" alt="Robust_Regression_02.png" loading="lazy"><span>Robust Regression 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Robust_Regression_03.png" data-name="Robust_Regression_03.png"><img src="../Handwritten_Notes/Robust_Regression_03.png" alt="Robust_Regression_03.png" loading="lazy"><span>Robust Regression 03</span></button></div>
+<!-- HANDWRITTEN:END -->
 <div class="foot"><a class="btn" href="../Concept/38_Robust_Regression_explained.ipynb">38_Robust_Regression_explained.ipynb ↗</a><a class="btn" href="../Concept/39_Robust_Regression_RANSAC.ipynb">39_Robust_Regression_RANSAC.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>

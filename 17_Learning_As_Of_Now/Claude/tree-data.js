@@ -1362,11 +1362,61 @@ const TREE = {
             "Concept: 38_Robust_Regression_explained.ipynb",
             "Concept: 39_Robust_Regression_RANSAC.ipynb"
           ],
+          "notes": 3,
+          "noteFiles": [
+            "Robust_Regression_01.png",
+            "Robust_Regression_02.png",
+            "Robust_Regression_03.png"
+          ],
           "hasCode": true,
           "lede": "Fitting a line that belongs to the majority of the rows, not to the broken ones.",
           "hasStory": true,
           "lesson": "../../04_ML/38_Robust_Regression/Content/index.html",
           "path": "../../04_ML/38_Robust_Regression/Concept/38_Robust_Regression_explained.ipynb"
+        },
+        {
+          "title": "PCA",
+          "meta": "2 notebooks · 1 data file",
+          "status": "learning",
+          "details": [
+            "Concept: 40_PCA_explained.ipynb",
+            "Concept: 41_PCA_Diabetes_SVC.ipynb"
+          ],
+          "notes": 5,
+          "noteFiles": [
+            "PCA_01.png",
+            "PCA_02.png",
+            "PCA_03.png",
+            "PCA_04.png",
+            "PCA_05.png"
+          ],
+          "hasCode": true,
+          "lede": "Replacing many columns with a few blends of them, ordered by how much spread each one carries.",
+          "hasStory": true,
+          "lesson": "../../04_ML/39_PCA/Content/index.html",
+          "path": "../../04_ML/39_PCA/Concept/40_PCA_explained.ipynb"
+        },
+        {
+          "title": "Logistic Regression",
+          "meta": "2 notebooks · 2 data files",
+          "status": "learning",
+          "details": [
+            "Concept: 42_Logistic_Regression_explained.ipynb",
+            "Concept: 43_Logistic_Regression_Spam.ipynb"
+          ],
+          "notes": 5,
+          "noteFiles": [
+            "Logistic_Regression_01.png",
+            "Logistic_Regression_02.png",
+            "Logistic_Regression_03.png",
+            "Logistic_Regression_04.png",
+            "Logistic_Regression_05.png"
+          ],
+          "hasCode": true,
+          "lede": "A straight line whose output is bent into a probability, so it can answer yes or no.",
+          "hasStory": true,
+          "lesson": "../../04_ML/40_Logistic_Regression/Content/index.html",
+          "path": "../../04_ML/40_Logistic_Regression/Concept/42_Logistic_Regression_explained.ipynb"
         },
         {
           "title": "shared data",
@@ -1707,17 +1757,17 @@ const TREE = {
         },
         {
           "title": "shared",
-          "meta": "10 files",
+          "meta": "12 files",
           "status": "learning",
           "details": [
             "CODEX_HANDWRITTEN_NOTES_PROMPT.md",
+            "CODEX_HANDWRITTEN_NOTES_PROMPT_V3.md",
             "NEXT_CHAT_PROMPTS.md",
+            "build_lessons.cpython-314.pyc",
             "build_lessons.py",
             "build_site.py",
             "gen_tree.py",
-            "lesson.css",
-            "lesson.js",
-            "stories.json"
+            "lesson.css"
           ],
           "path": "../../17_Learning_As_Of_Now/shared"
         }

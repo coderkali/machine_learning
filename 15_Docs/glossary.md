@@ -171,6 +171,18 @@ which is why PCA can hand back a blurred pile where LDA separates cleanly.
 It also works as a classifier, and assumes each class is a roughly Gaussian
 blob with the same spread.
 
+### Logistic regression
+
+A **classifier**, in spite of the name. It computes the same weighted sum a
+linear regression does — `z = w·x + b`, which can be any number — and then bends
+it through the **sigmoid**, `1 / (1 + e⁻ᶻ)`, so the output is always between 0
+and 1 and can be read as a probability. The decision boundary is still straight;
+only the output is curved. `predict()` is just `predict_proba() > 0.5`, so the
+threshold is a decision you own and can change without refitting. It is fitted
+against **log loss**, which punishes confident mistakes and barely notices a
+correct answer that was only just correct — the reason obvious rows stop
+dragging the boundary the way they do under least squares.
+
 ### Large language model (LLM)
 
 A neural network trained on large amounts of text and other data to understand
@@ -241,6 +253,22 @@ remember: save the whole **`Pipeline`**, because a scaler left behind fails
 silently; the file stores an *import path*, not scikit-learn's code, so versions
 must match; and **loading a pickle runs code**, so never load one you did not
 create.
+
+### Principal Component Analysis (PCA)
+
+An unsupervised way to cut many columns down to a few. It finds the direction
+along which the rows are most spread out, then the direction of largest
+*remaining* spread at right angles to it, and so on, and uses those directions
+as the new axes. Each component is a weighted blend of **every** original
+column, so nothing is deleted — the overlap between columns is folded together.
+`explained_variance_ratio_` says how much of the total spread each one caught;
+`PCA(0.90)` keeps enough components to reach 90% of it, `PCA(n_components=6)`
+keeps exactly six. Two consequences worth remembering: it never looks at `y`, so
+the spread it maximises is not necessarily the spread that separates your
+classes (that is **LDA**'s job), and because a component mixes every column, it
+narrows what the model reads and never what you have to measure. **Scale first** —
+variance has units, so without scaling the column with the biggest unit becomes
+component 1 on its own.
 
 ### Prompt
 
@@ -316,6 +344,13 @@ intercept is not penalised it settles at `mean(y)`, which is the model R² calls
 `0.0`.
 
 ## S
+
+### Sigmoid
+
+The curve `1 / (1 + e⁻ᶻ)`. It takes any number and returns one between 0 and 1,
+never reaching either end: `z = 0` gives exactly `0.5`, large positive `z`
+approaches 1, large negative approaches 0. It is what turns the linear score
+inside **logistic regression** into a probability.
 
 ### scikit-learn
 

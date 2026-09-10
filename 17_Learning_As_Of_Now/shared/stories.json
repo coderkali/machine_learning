@@ -438,5 +438,25 @@
    "<span class='beat'>One counter terminal had a fault.</span> When a card payment timed out it still wrote a row, with the amount stuck at ₹600. Fifteen rows in every hundred were that ₹600, at every weight — and because the error is squared, those rows counted for more than all the honest ones together.",
    "He deleted them by hand. Next month the fault came back on another terminal with a different amount. What he needed was not a cleaner spreadsheet but a fitting method that finds what the majority of rows agree on: RANSAC votes and discards, Huber caps what one row can charge, Theil–Sen takes the median of every pair's slope."
   ]
+ },
+ "04_ML/39_PCA": {
+  "lede": "Replacing many columns with a few blends of them, ordered by how much spread each one carries.",
+  "idea": "PCA does not choose between your columns — it folds them into a shorter set of new ones, so scale first and read the count off the cumulative-variance curve.",
+  "story": [
+   "<strong>Ritu screens patients at a clinic, and every patient leaves eight numbers behind</strong> — glucose, blood pressure, BMI, insulin, age and three more. An SVC on all eight flagged who needed a follow-up blood test, and scored 79%.",
+   "Then she was told the panel would keep growing, so she wanted to know how many columns' worth of information was really in there. She dropped the ones that looked least useful — insulin is blank half the time, skin thickness looks like a stand-in for BMI — and the score fell every time.",
+   "<span class='beat'>Nothing in the panel was redundant enough to delete.</span> Each column carried a small, partly-overlapping piece of the signal, and deleting a column deleted its piece. The mistake was in the word <em>drop</em>: she was only ever choosing among the eight columns she was handed.",
+   "PCA builds new columns instead — each a weighted blend of all eight, ordered by how much of the spread it captures. Six of them hold 89.7% of it and score the same as the full panel. Nothing was thrown away; the overlap was folded together. And because a component mixes every column, it narrows what the model reads, never what you have to measure."
+  ]
+ },
+ "04_ML/40_Logistic_Regression": {
+  "lede": "A straight line whose output is bent into a probability, so it can answer yes or no.",
+  "idea": "Logistic regression is a linear model wrapped in a sigmoid — the boundary stays straight, but the output is a real probability you can threshold wherever you like.",
+  "story": [
+   "<strong>Arjun runs the mail gateway, and ten thousand messages are already labelled SPAM or NOT SPAM</strong>, each boiled down to four numbers: links, words, special characters, and whether a listed spam word appears. He had just learned LinearRegression, so he turned the label into 0 and 1 and fitted a line.",
+   "With a 0.5 cut it was right about 95% of the time. Then the mail team asked for the thing a filter actually needs — a confidence score, so borderline messages could go to a review queue instead of being junked.",
+   "<span class='beat'>He printed the raw predictions: 1.162, −0.509, 0.87.</span> Out of 2 000 test messages, 441 came back outside 0 to 1. No message is 116% spam. There was no confidence to report, and clipping the values just piled everything onto 0 and 1, hiding the borderline cases he was looking for.",
+   "A line has no ceiling and no floor, and least squares charges it for the distance to 0 or 1 even on rows it already has right. Logistic regression keeps the same weighted sum and bends its output through a sigmoid that can never leave 0 to 1 — so every message gets a genuine probability, obvious spam stops dragging the boundary, and the threshold becomes a dial Arjun can turn without refitting anything."
+  ]
  }
 }

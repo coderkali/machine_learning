@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logistic Regression — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/theme.css">
+<script src="../../../17_Learning_As_Of_Now/shared/theme.js"></script>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/42_Logistic_Regression_explained.ipynb">42_Logistic_Regression_explained.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import (confusion_matrix, classification_report,
+                             accuracy_score)
+
+SPAM, HAM, LINE = &quot;#e4572e&quot;, &quot;#1f7a8c&quot;, &quot;#888888&quot;
+plt.rcParams.update({&quot;figure.dpi&quot;: 110, &quot;axes.grid&quot;: True, &quot;grid.alpha&quot;: .25,
+                     &quot;axes.spines.top&quot;: False, &quot;axes.spines.right&quot;: False,
+                     &quot;font.size&quot;: 10})
+
+dataset = pd.read_csv(&quot;../Data/spam_detection.csv&quot;)
+print(dataset.shape)
+print(dataset.label.value_counts())
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>(10000, 5)
+label
+NOT SPAM    7000
+SPAM        3000
+Name: count, dtype: int64
+   num_links  num_words  num_special_chars  has_spammy_keywords     label
+0          4         39                 15                    1  NOT SPAM
+1          1         72                  4                    1  NOT SPAM
+2          3        164                  5                    1  NOT SPAM
+3          3         63                  5                    1  NOT SPAM
+4          1        122                  1                    0  NOT SPAM</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">le = LabelEncoder()
+dataset[&quot;label&quot;] = le.fit_transform(dataset[&quot;label&quot;])
+print(dict(zip(le.classes_, le.transform(le.classes_))))
+
+x = dataset[[&quot;num_links&quot;, &quot;num_words&quot;, &quot;num_special_chars&quot;, &quot;has_spammy_keywords&quot;]]
+y = dataset[&quot;label&quot;]                      # a Series, not a DataFrame — see the note below
+dataset.head()</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;NOT SPAM&#x27;: np.int64(0), &#x27;SPAM&#x27;: np.int64(1)}
+   num_links  num_words  num_special_chars  has_spammy_keywords  label
+0          4         39                 15                    1      0
+1          1         72                  4                    1      0
+2          3        164                  5                    1      0
+3          3         63                  5                    1      0
+4          1        122                  1                    0      0</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 7</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    x, y, train_size=0.8, random_state=1)
+
+lin = LinearRegression().fit(X_train, y_train)
+log = LogisticRegression().fit(X_train, y_train)
+
+raw  = lin.predict(X_test)                   # &quot;0/1&quot; predicted as a plain number
+out  = (raw &lt; 0) | (raw &gt; 1)                 # …except when it is not
+z    = log.decision_function(X_test)         # the linear part of logistic regression
+prob = log.predict_proba(X_test)[:, 1]       # the same thing, through the sigmoid
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.0, 4.4))
+
+ax1.hist(raw[~out], bins=45, color=HAM,  label=&quot;a usable number&quot;)
+ax1.hist(raw[out],  bins=45, color=SPAM, label=f&quot;impossible: {out.sum()} of {len(raw)}&quot;)
+for v, name in ((0, &quot;0&quot;), (1, &quot;1&quot;)):
+    ax1.axvline(v, c=LINE, ls=&quot;--&quot;, lw=1.6)
+    ax1.text(v, -4.5, name, color=LINE, fontsize=10, ha=&quot;center&quot;)
+ax1.set(title=&quot;LinearRegression on a 0/1 label&quot;,
+        xlabel=&quot;what the line predicted&quot;, ylabel=&quot;messages&quot;)
+ax1.legend(fontsize=8.5, loc=&quot;upper right&quot;)
+
+zoom = 14                                    # z runs to ±36; the bend all happens here
+curve_z = np.linspace(-zoom, zoom, 400)
+rng = np.random.default_rng(0)
+for cls, colour, name in [(0, HAM, &quot;not spam (0)&quot;), (1, SPAM, &quot;spam (1)&quot;)]:
+    m = y_test.values == cls
+    ax2.scatter(np.clip(z[m], -zoom, zoom), prob[m] + rng.uniform(-.025, .025, m.sum()),
+                s=10, c=colour, alpha=.35, label=name, zorder=2)
+ax2.plot(curve_z, 1 / (1 + np.exp(-curve_z)), c=&quot;#222222&quot;, lw=2.4, zorder=3)
+ax2.axhline(0.5, c=LINE, ls=&quot;:&quot;, lw=1.2)
+ax2.axvline(0.0, c=LINE, ls=&quot;:&quot;, lw=1.2)
+ax2.annotate(&quot;z = 0  -&gt;  P = 0.5\nthe decision boundary&quot;, xy=(0, .5), xytext=(-13, .62),
+             fontsize=8.5, color=&quot;#444444&quot;,
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=LINE, lw=1.1))
+ax2.set(title=f&quot;LogisticRegression — the same score, squashed (z clipped at ±{zoom})&quot;,
+        xlabel=&quot;z, the weighted sum of the four columns&quot;, ylabel=&quot;P(spam)&quot;,
+        ylim=(-.1, 1.1), xlim=(-zoom - .5, zoom + .5))
+ax2.legend(fontsize=8.5, loc=&quot;center right&quot;)
+
+plt.tight_layout(); plt.show()
+
+print(f&quot;line: predictions run from {raw.min():.3f} to {raw.max():.3f}&quot;
+      f&quot;   ({out.sum()} of {len(raw)} outside 0-1)&quot;)
+print(f&quot;sigmoid: {prob.min():.3f} to {prob.max():.3f}   (0 to 1, always)&quot;)
+print(f&quot;z runs from {z.min():.1f} to {z.max():.1f} — any number at all&quot;)
+print(f&quot;messages with |z| &lt; 4 (the uncertain middle): {(np.abs(z) &lt; 4).sum()} of {len(z)}&quot;)
+print()
+print(f&quot;accuracy, line with a 0.5 cut : {((raw &gt;= .5).astype(int) == y_test).mean():.4f}&quot;)
+print(f&quot;accuracy, logistic regression : {log.score(X_test, y_test):.4f}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>line: predictions run from -0.509 to 1.162   (441 of 2000 outside 0-1)
+sigmoid: 0.000 to 1.000   (0 to 1, always)
+z runs from -36.0 to 23.0 — any number at all
+messages with |z| &lt; 4 (the uncertain middle): 429 of 2000
+
+accuracy, line with a 0.5 cut : 0.9530
+accuracy, logistic regression : 0.9595</pre></div><figure class="shot"><img src="assets/42-logistic-regression-expla-c07-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 10</span></div><pre class="py">print(f&quot;train rows {len(X_train)}   test rows {len(X_test)}&quot;)
+print(f&quot;accuracy on the test set : {log.score(X_test, y_test):.4f}&quot;)
+print(f&quot;intercept (b)            : {log.intercept_[0]:.2f}&quot;)
+
+weights = pd.DataFrame({
+    &quot;column&quot;: x.columns,
+    &quot;weight (w)&quot;: log.coef_[0].round(3),
+    &quot;odds x per unit&quot;: np.exp(log.coef_[0]).round(2),
+    &quot;column sd&quot;: x.std().values.round(1),
+    &quot;w x sd&quot;: (log.coef_[0] * x.std().values).round(2),
+}).set_index(&quot;column&quot;)
+weights</pre></div><div class="out"><div class="h">Output</div><pre>train rows 8000   test rows 2000
+accuracy on the test set : 0.9595
+intercept (b)            : -38.97
+                     weight (w)  odds x per unit  column sd  w x sd
+column                                                             
+num_links                 0.667             1.95        1.4    0.94
+num_words                 0.187             1.21       56.7   10.58
+num_special_chars         1.089             2.97        5.8    6.27
+has_spammy_keywords       1.826             6.21        0.5    0.91</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 13</span></div><pre class="py">y_pred = log.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+labels = [&quot;not spam&quot;, &quot;spam&quot;]
+
+fig, ax = plt.subplots(figsize=(5.6, 4.8))
+ax.imshow(cm, cmap=&quot;Blues&quot;, vmin=0, vmax=cm.max())
+for i in range(2):
+    for j in range(2):
+        ax.text(j, i, f&quot;{cm[i, j]}&quot;, ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=17,
+                color=&quot;white&quot; if cm[i, j] &gt; cm.max() * .55 else &quot;#222&quot;)
+ax.set(xticks=[0, 1], yticks=[0, 1], xticklabels=labels, yticklabels=labels,
+       xlabel=&quot;what the model said&quot;, ylabel=&quot;what it actually was&quot;,
+       title=&quot;Confusion matrix, 2 000 held-out messages&quot;)
+ax.grid(False)
+plt.tight_layout(); plt.show()
+
+tn, fp, fn, tp = cm.ravel()
+always_ham = accuracy_score(y_test, np.zeros_like(y_test))
+print(f&#x27;always answer &quot;not spam&quot; : {always_ham:.4f}&#x27;)
+print(f&quot;this model               : {accuracy_score(y_test, y_pred):.4f}&quot;)
+print()
+print(f&quot;spam that got through (false negative) : {fn}&quot;)
+print(f&quot;real mail junked        (false positive) : {fp}&quot;)
+print()
+print(classification_report(y_test, y_pred, target_names=labels))</pre></div><div class="out"><div class="h">Output</div><pre>always answer &quot;not spam&quot; : 0.6980
+this model               : 0.9595
+
+spam that got through (false negative) : 40
+real mail junked        (false positive) : 41
+
+              precision    recall  f1-score   support
+
+    not spam       0.97      0.97      0.97      1396
+        spam       0.93      0.93      0.93       604
+
+    accuracy                           0.96      2000
+   macro avg       0.95      0.95      0.95      2000
+weighted avg       0.96      0.96      0.96      2000</pre></div><figure class="shot"><img src="assets/42-logistic-regression-expla-c13-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 15</span></div><pre class="py">proba = log.predict_proba(X_test)[:, 1]
+
+print(&quot;threshold   spam caught   real mail junked&quot;)
+for t in (0.30, 0.50, 0.70, 0.90):
+    pred = (proba &gt;= t).astype(int)
+    c = confusion_matrix(y_test, pred)
+    print(f&quot;   {t:.2f}        {c[1, 1]:4d} / {c[1].sum()}        {c[0, 1]:4d}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>threshold   spam caught   real mail junked
+   0.30         579 / 604          66
+   0.50         564 / 604          41
+   0.70         534 / 604          24
+   0.90         483 / 604           4</pre></div><div class="src-head">📓 <a href="../Concept/43_Logistic_Regression_Spam.ipynb">43_Logistic_Regression_Spam.ipynb</a></div><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np</pre></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&#x27;../Data/spam_detection.csv&#x27;)
+dataset</pre></div><div class="out"><div class="h">Output</div><pre>      num_links  num_words  num_special_chars  has_spammy_keywords     label
+0             4         39                 15                    1  NOT SPAM
+1             1         72                  4                    1  NOT SPAM
+2             3        164                  5                    1  NOT SPAM
+3             3         63                  5                    1  NOT SPAM
+4             1        122                  1                    0  NOT SPAM
+...         ...        ...                ...                  ...       ...
+9995          5         15                  1                    0  NOT SPAM
+9996          1         68                 14                    1  NOT SPAM
+9997          2        184                  7                    1      SPAM
+9998          3        132                 12                    1      SPAM
+9999          1         10                  2                    1  NOT SPAM
+
+[10000 rows x 5 columns]</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 3</span></div><pre class="py">dataset.label.value_counts()</pre></div><div class="out"><div class="h">Output</div><pre>label
+NOT SPAM    7000
+SPAM        3000
+Name: count, dtype: int64</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+dataset.label = le.fit_transform(dataset.label)
+dataset</pre></div><div class="out"><div class="h">Output</div><pre>      num_links  num_words  num_special_chars  has_spammy_keywords  label
+0             4         39                 15                    1      0
+1             1         72                  4                    1      0
+2             3        164                  5                    1      0
+3             3         63                  5                    1      0
+4             1        122                  1                    0      0
+...         ...        ...                ...                  ...    ...
+9995          5         15                  1                    0      0
+9996          1         68                 14                    1      0
+9997          2        184                  7                    1      1
+9998          3        132                 12                    1      1
+9999          1         10                  2                    1      0
+
+[10000 rows x 5 columns]</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 5</span></div><pre class="py">dataset.columns</pre></div><div class="out"><div class="h">Output</div><pre>Index([&#x27;num_links&#x27;, &#x27;num_words&#x27;, &#x27;num_special_chars&#x27;, &#x27;has_spammy_keywords&#x27;,
+       &#x27;label&#x27;],
+      dtype=&#x27;str&#x27;)</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 6</span></div><pre class="py">x = dataset[[&#x27;num_links&#x27;, &#x27;num_words&#x27;, &#x27;num_special_chars&#x27;, &#x27;has_spammy_keywords&#x27;]]
+y = dataset[[&#x27;label&#x27;]]</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 7</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x,y,train_size=0.8,random_state=1)</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 9</span></div><pre class="py">model.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/.venv/lib/python3.14/site-packages/sklearn/utils/validation.py:1352: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  y = column_or_1d(y, warn=True)
+LogisticRegression()</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 10</span></div><pre class="py">model.score(X_test,y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.9595</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 11</span></div><pre class="py">import pickle
+pickle.dump(model, open(&#x27;../Data/mlclass.pkl&#x27;,&#x27;wb&#x27;))</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

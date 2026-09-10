@@ -39,8 +39,14 @@ model written to disk with `joblib` and `pickle` and loaded back, with the whole
 (Session 22) returns to the linear family with the failure least squares cannot
 survive: because the error is squared, a handful of broken rows own the fit, so
 `RANSACRegressor` votes and discards them, `HuberRegressor` caps what one row can
-charge, and `TheilSenRegressor` takes the median of every pair's slope. Still open: classification,
-trees and ensembles, metrics beyond `.score()`, and `GridSearchCV`. M03
+charge, and `TheilSenRegressor` takes the median of every pair's slope.
+**Logistic regression** (Session 22) opens supervised classification: the same
+weighted sum, bent through a sigmoid so the output is a probability between 0
+and 1 rather than an unbounded number, fitted on a 10,000-row spam table.
+**PCA** (Session 22) is the unsupervised counterpart to LDA: eight diabetes
+columns folded into a shorter set of blends ordered by how much spread each one
+carries, with `PCA(0.90)` and `n_components=6` compared on the same `SVC`. Still
+open: trees and ensembles, metrics beyond `.score()`, and `GridSearchCV`. M03
 [NumPy](../01_Python/02_NumPy/Concept/README.md) and
 [Pandas](../01_Python/03_Pandas/Concept/README.md), plus Matplotlib,
 Seaborn, Plotly, and Streamlit, also remain in progress.

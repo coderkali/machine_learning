@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCA — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/theme.css">
+<script src="../../../17_Learning_As_Of_Now/shared/theme.js"></script>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>PCA</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#pca-fewer-columns-without-throwing-any-away">PCA — fewer columns, without throwing any away</a><a href="#the-story">The story</a><a href="#what-pca-actually-does">What PCA actually does</a><a href="#what-a-component-is-made-of">What a component is made of</a><a href="#does-the-model-survive-the-fold">Does the model survive the fold?</a><a href="#reading-it-back">Reading it back</a><a href="#where-this-matters-outside-the-clinic">Where this matters outside the clinic</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#pca-on-the-diabetes-panel-the-session-notebook">PCA on the diabetes panel — the session notebook</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>PCA</h1>
+  <p class="lede">Replacing many columns with a few blends of them, ordered by how much spread each one carries.</p>
+  <div class="tags"><span class="tag">2 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 5 handwritten pages</a></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Ritu screens patients at a clinic, and every patient leaves eight numbers behind</strong> — glucose, blood pressure, BMI, insulin, age and three more. An SVC on all eight flagged who needed a follow-up blood test, and scored 79%.</p><p>Then she was told the panel would keep growing, so she wanted to know how many columns' worth of information was really in there. She dropped the ones that looked least useful — insulin is blank half the time, skin thickness looks like a stand-in for BMI — and the score fell every time.</p><p><span class='beat'>Nothing in the panel was redundant enough to delete.</span> Each column carried a small, partly-overlapping piece of the signal, and deleting a column deleted its piece. The mistake was in the word <em>drop</em>: she was only ever choosing among the eight columns she was handed.</p><p>PCA builds new columns instead — each a weighted blend of all eight, ordered by how much of the spread it captures. Six of them hold 89.7% of it and score the same as the full panel. Nothing was thrown away; the overlap was folded together. And because a component mixes every column, it narrows what the model reads, never what you have to measure.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>PCA does not choose between your columns — it folds them into a shorter set of new ones, so scale first and read the count off the cumulative-variance curve.</p></div>
+<div class="src-head">📓 <a href="../Concept/40_PCA_explained.ipynb">40_PCA_explained.ipynb</a></div>
+<h2 id="pca-fewer-columns-without-throwing-any-away">PCA — fewer columns, without throwing any away</h2>
+<h2 id="the-story">The story</h2>
+<p>Ritu runs the screening desk at a clinic. Every patient who walks in leaves
+eight numbers behind: pregnancies, glucose, blood pressure, skin thickness,
+insulin, BMI, a family-history score, and age. She trained an <code>SVC</code> to read
+those eight numbers and flag who should come back for a proper blood test, and
+it scored <strong>79%</strong> on patients it had never seen.</p>
+<p>Then she was told the panel is going to grow. More instruments, more columns,
+and an <code>SVC</code> that already takes a while on 768 rows. Before the table got wider
+she wanted to know something simpler: <strong>how many columns' worth of information
+is actually in there?</strong> Eight columns describing one patient are not eight
+independent facts — skin thickness and BMI are measuring related things, and so
+are age and pregnancies.</p>
+<p>So she did the obvious thing: drop the columns that look least useful. Insulin
+is blank for nearly half the rows anyway — drop it. Skin thickness looks like a
+rough stand-in for BMI — drop that too. The score fell, and kept falling as she
+dropped more. Nothing in the panel was redundant <em>enough</em> to delete. Each column
+carried a small, partly-overlapping piece of the signal, and deleting a column
+deleted its piece.</p>
+<p><strong>The mistake is in the word &quot;drop&quot;.</strong> She was choosing between the eight columns
+she was handed. Those eight are not the only way to describe a patient. PCA
+builds <strong>new</strong> columns — each one a blend of all eight — ordered so the first few
+carry most of what spread the patients apart to begin with. Keep six of those and
+nothing is thrown away: the overlap is folded together, not deleted.</p>
+<p>One thing to be clear about before the code, because the story invites the wrong
+conclusion: <strong>PCA does not save Ritu a blood test.</strong> Every component is a mix of
+all eight measurements, so she still has to measure all eight to compute one.
+What gets narrower is the table the model sees, not the form at the desk.</p>
+
+<h2 id="what-pca-actually-does">What PCA actually does</h2>
+<p>One sentence: <strong>PCA finds the directions along which the rows are most spread
+out, and uses those directions as the new axes.</strong></p>
+<ul>
+<li>The first component is the direction of largest spread in the data.</li>
+<li>The second is the direction of largest <em>remaining</em> spread, at right angles to
+the first. And so on.</li>
+<li>Each component is a weighted mix of all the original columns, so every column
+still has a say.</li>
+<li>Spread is measured as <strong>variance</strong>, and each component reports how much of
+the total it captured — <code>explained_variance_ratio_</code>.</li>
+</ul>
+<p>Two things follow, and both matter in the code below:</p>
+<ol>
+<li><strong>It never looks at <code>y</code>.</strong> PCA is unsupervised. It maximises spread, not
+separation between classes. (That is exactly where
+<a href="../../36_Linear_Discriminant_Analysis/Concept/34_LDA_explained.ipynb">LDA</a>
+differs — LDA uses the labels.)</li>
+<li><strong>Scale first, always.</strong> Variance has units. Insulin runs to 846 and the
+family-history score sits under 2.5, so on raw numbers insulin <em>is</em> the
+first component, for no reason other than the unit it was recorded in.</li>
+</ol>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split, cross_val_score
+
+KEEP, CUT, LINE = &quot;#1f7a8c&quot;, &quot;#e4572e&quot;, &quot;#888888&quot;
+plt.rcParams.update({&quot;figure.dpi&quot;: 110, &quot;axes.grid&quot;: True, &quot;grid.alpha&quot;: .25,
+                     &quot;axes.spines.top&quot;: False, &quot;axes.spines.right&quot;: False,
+                     &quot;font.size&quot;: 10})
+
+df = pd.read_csv(&quot;../Data/pca1.csv&quot;)
+x = df[[&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;, &quot;F&quot;, &quot;G&quot;, &quot;H&quot;]]
+y = df[&quot;I&quot;]
+
+PANEL = [&quot;pregnancies&quot;, &quot;glucose&quot;, &quot;blood pressure&quot;, &quot;skin thickness&quot;,
+         &quot;insulin&quot;, &quot;BMI&quot;, &quot;family history&quot;, &quot;age&quot;]
+print(f&quot;{len(df)} patients, {x.shape[1]} measurements&quot;)
+print(f&quot;follow-up needed : {y.sum()}   not needed : {(y == 0).sum()}&quot;)
+x.describe().loc[[&quot;min&quot;, &quot;max&quot;, &quot;std&quot;]].round(1)</pre></div>
+<div class="out"><div class="h">Output</div><pre>768 patients, 8 measurements
+follow-up needed : 268   not needed : 500
+        A      B      C     D      E     F    G     H
+min   0.0    0.0    0.0   0.0    0.0   0.0  0.1  21.0
+max  17.0  199.0  122.0  99.0  846.0  67.1  2.4  81.0
+std   3.4   32.0   19.4  16.0  115.2   7.9  0.3  11.8</pre></div>
+<p>Read the <code>std</code> row. Insulin varies by 115, the family-history score by 0.33.
+Variance is what PCA maximises, so on these raw numbers insulin would own the
+first component — not because it tells us more, but because it is written in
+bigger units. <code>StandardScaler</code> puts every column on the same footing first.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">data_scaler   = StandardScaler().fit(x)
+data_rescaled = data_scaler.transform(x)
+
+pca_all = PCA().fit(data_rescaled)          # no n_components: keep all eight
+ratio   = pca_all.explained_variance_ratio_
+cum     = ratio.cumsum()
+
+for i, (r, c) in enumerate(zip(ratio, cum), start=1):
+    print(f&quot;component {i}:  holds {r:5.1%} of the spread   running total {c:5.1%}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>component 1:  holds 26.2% of the spread   running total 26.2%
+component 2:  holds 21.6% of the spread   running total 47.8%
+component 3:  holds 12.9% of the spread   running total 60.7%
+component 4:  holds 10.9% of the spread   running total 71.6%
+component 5:  holds  9.5% of the spread   running total 81.2%
+component 6:  holds  8.5% of the spread   running total 89.7%
+component 7:  holds  5.2% of the spread   running total 94.9%
+component 8:  holds  5.1% of the spread   running total 100.0%</pre></div>
+<p>That running total is the whole decision. The first component alone holds a
+quarter of the spread; the last one holds almost nothing. The plot below is the
+same numbers, which is how you actually read them.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">k = np.arange(1, len(ratio) + 1)
+n90 = int(np.searchsorted(cum, 0.90) + 1)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.8, 4.3))
+
+colours = [KEEP if i &lt; n90 else CUT for i in range(len(ratio))]
+bars = ax1.bar(k, ratio * 100, color=colours, width=.65)
+for b, r in zip(bars, ratio):
+    ax1.text(b.get_x() + b.get_width() / 2, r * 100 + .7, f&quot;{r:.0%}&quot;,
+             ha=&quot;center&quot;, fontsize=8.5)
+ax1.set(title=&quot;How much spread each component holds&quot;,
+        xlabel=&quot;component&quot;, ylabel=&quot;share of total variance (%)&quot;, ylim=(0, 30))
+ax1.text(4.6, 24, f&quot;teal = the {n90} PCA(0.90) keeps&quot;, color=KEEP, fontsize=9)
+ax1.text(4.6, 21.8, &quot;orange = dropped&quot;, color=CUT, fontsize=9)
+
+ax2.plot(k, cum * 100, marker=&quot;o&quot;, c=KEEP, lw=2.2, zorder=3)
+ax2.axhline(90, c=CUT, ls=&quot;--&quot;, lw=1.6)
+ax2.text(1.1, 91.5, &quot;90% of the spread&quot;, color=CUT, fontsize=9)
+ax2.axvline(n90, c=LINE, ls=&quot;:&quot;, lw=1.5)
+ax2.text(n90 - .15, 32, f&quot;PCA(0.90) stops here: {n90} components&quot;,
+         color=LINE, fontsize=9, rotation=90, va=&quot;bottom&quot;, ha=&quot;right&quot;)
+ax2.set(title=&quot;Running total — where is it safe to stop?&quot;,
+        xlabel=&quot;components kept&quot;, ylabel=&quot;variance kept (%)&quot;, ylim=(20, 106))
+
+plt.tight_layout(); plt.show()</pre></div>
+<figure class="shot"><img src="assets/40-pca-explained-c06-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The left panel is the <strong>scree plot</strong>, and it has no cliff. That is the honest
+reading of this dataset: the eight measurements are not eight copies of two
+ideas, so no small number of components captures everything. The last two
+components still hold about 5% each — small, but not zero.</p>
+<p>The right panel is the one you act on. Asking for 90% of the spread lands on
+seven components, which is what the class notebook got:</p>
+<div class="code"><pre class="py">pca  = PCA(0.90)              # a float &lt; 1 means &quot;keep enough components for this much variance&quot;
+xpca = pca.fit_transform(data_rescaled)
+xpca.shape                    # (768, 7)
+</pre></div>
+<p>A float asks for <em>variance</em>; an integer asks for a <em>count</em>:</p>
+<div class="code"><pre class="py">pca = PCA(n_components=6)     # &quot;give me exactly six, whatever they hold&quot;
+</pre></div>
+
+<h2 id="what-a-component-is-made-of">What a component is made of</h2>
+<p>A component is not one of the original columns and it is not a subset of them.
+It is a recipe. <code>pca.components_</code> holds the weights.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">pca6 = PCA(n_components=6).fit(data_rescaled)
+recipe = pd.DataFrame(pca6.components_[:2].T, index=PANEL,
+                      columns=[&quot;component 1&quot;, &quot;component 2&quot;]).round(2)
+recipe</pre></div>
+<div class="out"><div class="h">Output</div><pre>                component 1  component 2
+pregnancies            0.13         0.59
+glucose                0.39         0.17
+blood pressure         0.36         0.18
+skin thickness         0.44        -0.33
+insulin                0.44        -0.25
+BMI                    0.45        -0.10
+family history         0.27        -0.12
+age                    0.20         0.62</pre></div>
+<p>Every measurement appears in both, with a weight — that is what makes a
+component a blend rather than a choice.</p>
+<p>Component 1 loads on the body and blood measurements together: BMI 0.45, skin
+thickness 0.44, insulin 0.44, glucose 0.39. Component 2 is almost entirely age
+0.62 and pregnancies 0.59, and it pushes <em>against</em> skin thickness and insulin,
+which is how it stays at right angles to the first.</p>
+<p>Read the second one as &quot;how far through life this patient is&quot; and the first as
+&quot;how heavy the metabolic readings are&quot; — but only loosely. A component has no
+official meaning, and that is the price PCA charges.</p>
+<p>Nothing was deleted here. The eight columns were folded into six. That is the
+difference between PCA and feature <em>selection</em>, which really does drop columns.</p>
+
+<h2 id="does-the-model-survive-the-fold">Does the model survive the fold?</h2>
+<p>The class notebook trained the same <code>SVC</code> three times. Here is the same
+comparison across every possible number of components, so the three numbers sit
+in context.</p>
+<p>One change: the scaler and the PCA go <strong>inside a <code>Pipeline</code></strong>, and the score
+comes from cross-validation. The class notebook scaled and ran PCA on all 768
+rows and split afterwards, which lets the test rows influence the mean, the
+standard deviation and the component directions they are later judged on. It is
+a small leak on this dataset, and a habit worth not forming.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">def cv_score(n_components=None):
+    steps = [(&quot;scale&quot;, StandardScaler())]
+    if n_components is not None:
+        steps.append((&quot;pca&quot;, PCA(n_components=n_components, random_state=0)))
+    steps.append((&quot;svc&quot;, SVC()))
+    return cross_val_score(Pipeline(steps), x, y, cv=5).mean()
+
+baseline = cv_score(None)
+scores   = [cv_score(n) for n in k]
+
+print(f&quot;all 8 columns, no PCA : {baseline:.3f}&quot;)
+for n, s in zip(k, scores):
+    print(f&quot;{n} component{&#x27;s&#x27; if n &gt; 1 else &#x27; &#x27;}           : {s:.3f}&quot;
+          f&quot;   {&#x27;&lt;- PCA(0.90) picks this&#x27; if n == n90 else &#x27;&#x27;}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>all 8 columns, no PCA : 0.772
+1 component            : 0.719   
+2 components           : 0.724   
+3 components           : 0.737   
+4 components           : 0.727   
+5 components           : 0.738   
+6 components           : 0.770   
+7 components           : 0.773   &lt;- PCA(0.90) picks this
+8 components           : 0.772</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8.4, 4.3))
+ax.axhline(baseline * 100, c=LINE, ls=&quot;--&quot;, lw=1.6)
+ax.text(1.05, baseline * 100 + .35, &quot;all 8 columns, no PCA&quot;, color=LINE, fontsize=9)
+ax.plot(k, np.array(scores) * 100, marker=&quot;o&quot;, c=KEEP, lw=2.2, label=&quot;SVC on PCA components&quot;)
+ax.scatter([n90], [scores[n90 - 1] * 100], s=150, facecolor=&quot;none&quot;,
+           edgecolor=CUT, lw=2, zorder=5, label=f&quot;PCA(0.90) → {n90} components&quot;)
+ax.set(title=&quot;Accuracy against the number of components kept&quot;,
+       xlabel=&quot;components kept&quot;, ylabel=&quot;5-fold accuracy (%)&quot;)
+ax.legend(fontsize=8.5, loc=&quot;lower right&quot;)
+plt.tight_layout(); plt.show()
+
+best = int(np.argmax(scores)) + 1
+print(f&quot;best here: {best} components at {scores[best - 1]:.3f}, &quot;
+      f&quot;against {baseline:.3f} on the full panel&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>best here: 7 components at 0.773, against 0.772 on the full panel</pre></div>
+<figure class="shot"><img src="assets/40-pca-explained-c13-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>This is worth reading carefully, because it is not the tidy result PCA demos
+usually show.</p>
+<p>Up to five components the line sits <strong>below</strong> the full panel — those components
+hold plenty of variance, but not enough of the variance that separates the two
+classes. The jump happens at six (0.770), and seven (0.773) matches the full
+eight columns (0.772). In other words: on this dataset PCA buys a reduction from
+<strong>eight columns to six or seven</strong>, and not a single component less.</p>
+<p>That is the same thing the scree plot said. No cliff, no compression. And it is
+exactly what the class notebook found on its single split — 0.792 on all eight,
+0.779 on seven, 0.799 on six. Those three numbers bounce around by a couple of
+points because one 154-row test set is small; the shape of the curve above is
+the reliable version of the same story.</p>
+<p>So Ritu's answer is a modest one: the eight measurements really do carry about
+six columns' worth of distinct information, and she can hand the model six
+instead of eight. When a table has 300 columns that are genuinely repetitive,
+the same plot bends sharply and you keep 20 — the method is the same, the payoff
+depends entirely on how much overlap was there.</p>
+<p>Note what the low end means. Components 1 and 2 hold 48% of all the spread and
+score worse than the full panel. PCA never saw <code>y</code>, so it had no way to know
+which directions of spread were the useful ones. That is its one structural
+blind spot, and it is precisely what
+<a href="../../36_Linear_Discriminant_Analysis/Concept/34_LDA_explained.ipynb">LDA</a>
+fixes by using the labels.</p>
+
+<h2 id="reading-it-back">Reading it back</h2>
+<p>PCA is reversible, approximately. <code>inverse_transform</code> puts the rows back into
+the original eight columns, and what comes back is the data with the discarded
+components removed — a useful way to see how much was actually given up.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">xpca6 = pca6.transform(data_rescaled)
+back  = pca6.inverse_transform(xpca6)
+
+err = pd.DataFrame({
+    &quot;column&quot;: PANEL,
+    &quot;mean absolute difference (in sd units)&quot;: np.abs(data_rescaled - back).mean(axis=0).round(3),
+}).set_index(&quot;column&quot;)
+print(f&quot;variance kept by 6 components: {pca6.explained_variance_ratio_.sum():.1%}&quot;)
+err</pre></div>
+<div class="out"><div class="h">Output</div><pre>variance kept by 6 components: 89.7%
+                mean absolute difference (in sd units)
+column                                                
+pregnancies                                      0.282
+glucose                                          0.220
+blood pressure                                   0.091
+skin thickness                                   0.304
+insulin                                          0.272
+BMI                                              0.166
+family history                                   0.041
+age                                              0.349</pre></div>
+<p>Every column comes back within about a third of a standard deviation, and the
+two that suffer most — age 0.35 and skin thickness 0.30 — are the ones the
+dropped components were describing. That is what &quot;folded together, not deleted&quot;
+looks like numerically: 89.7% of the spread kept, and the 10% that went missing
+is spread thinly across all eight columns rather than removing any one of them.</p>
+<h2 id="where-this-matters-outside-the-clinic">Where this matters outside the clinic</h2>
+<p>The cost PCA removes is width, not accuracy. An <code>SVC</code> works through pairwise
+distances, so its training time grows with rows <em>and</em> columns; a 300-column table
+cut to 30 components trains far faster and the serving payload shrinks with it.
+The fitted <code>PCA</code> object then becomes part of the deployed artifact, exactly like
+the scaler — the same transform has to run at prediction time, or the model is
+being fed numbers that mean something else. Fit both inside one <code>Pipeline</code>,
+<code>pickle</code> the pipeline, ship one file.</p>
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li><strong>Running PCA before scaling.</strong> The column with the biggest unit becomes
+component 1, and the rest is noise around it.</li>
+<li><strong>Fitting on all the rows, then splitting.</strong> The component directions were
+computed using the test rows, so the test score is flattering.</li>
+<li><strong>Expecting a component to mean something.</strong> It is a weighted blend with no
+name, and it cannot be explained to an auditor.</li>
+<li><strong>Expecting PCA to reduce what you measure.</strong> Every component needs every
+original column. It narrows the model's input, not the data collection.</li>
+<li><strong>Reaching for PCA when the real problem is useless columns.</strong> PCA keeps them
+all, weighted. To remove a column, use feature selection.</li>
+</ol>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p>If you remember only one thing: <strong>PCA does not choose between your columns, it
+replaces them with a shorter set of blends ordered by how much spread they
+carry</strong> — so scale first, read the count off the cumulative-variance curve, and
+fit it inside the pipeline with everything else.</p>
+
+<div class="src-head">📓 <a href="../Concept/41_PCA_Diabetes_SVC.ipynb">41_PCA_Diabetes_SVC.ipynb</a></div>
+<h2 id="pca-on-the-diabetes-panel-the-session-notebook">PCA on the diabetes panel — the session notebook</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 22.</p>
+</div>
+<p>The notebook worked through in class, kept as it was written. An <code>SVC</code> is
+trained three times on the same 768 patients: once on all eight scaled columns,
+once on the components <code>PCA(0.90)</code> chooses, and once on six components asked
+for by hand. The three scores are the whole lesson.</p>
+<p>The dataset path is the one change made here: the class copy pointed at a
+<code>/Users/...</code> file, and it now reads <a href="../Data/pca1.csv"><code>../Data/pca1.csv</code></a>.</p>
+<p>Why the components work, and why scaling has to come first, is in
+<a href="../Concept/40_PCA_explained.ipynb"><code>40_PCA_explained.ipynb</code></a>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+df = pd.read_csv(&#x27;../Data/pca1.csv&#x27;)
+df.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   A    B   C   D    E     F      G   H  I
+0  6  148  72  35    0  33.6  0.627  50  1
+1  1   85  66  29    0  26.6  0.351  31  0
+2  8  183  64   0    0  23.3  0.672  32  1
+3  1   89  66  23   94  28.1  0.167  21  0
+4  0  137  40  35  168  43.1  2.288  33  1</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">df.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(768, 9)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">x=df[[&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;, &#x27;F&#x27;, &#x27;G&#x27;, &#x27;H&#x27;]]
+y=df[&#x27;I&#x27;]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x,y,test_size=0.3,random_state=100)
+X_train</pre></div>
+<div class="out"><div class="h">Output</div><pre>      A    B   C   D    E     F      G   H
+155   7  152  88  44    0  50.0  0.337  36
+150   1  136  74  50  204  37.4  0.399  24
+78    0  131   0   0    0  43.2  0.270  26
+9     8  125  96   0    0   0.0  0.232  54
+142   2  108  52  26   63  32.5  0.318  22
+..   ..  ...  ..  ..  ...   ...    ...  ..
+578  10  133  68   0    0  27.0  0.245  36
+53    8  176  90  34  300  33.7  0.467  58
+350   4   92  80   0    0  42.2  0.237  29
+79    2  112  66  22    0  25.0  0.307  24
+520   2   68  70  32   66  25.0  0.187  25
+
+[537 rows x 8 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">from sklearn.preprocessing import StandardScaler
+data_scaler = StandardScaler().fit(x)
+data_rescaled = data_scaler.transform(x)
+data_rescaled</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 0.63994726,  0.84832379,  0.14964075, ...,  0.20401277,
+         0.46849198,  1.4259954 ],
+       [-0.84488505, -1.12339636, -0.16054575, ..., -0.68442195,
+        -0.36506078, -0.19067191],
+       [ 1.23388019,  1.94372388, -0.26394125, ..., -1.10325546,
+         0.60439732, -0.10558415],
+       ...,
+       [ 0.3429808 ,  0.00330087,  0.14964075, ..., -0.73518964,
+        -0.68519336, -0.27575966],
+       [-0.84488505,  0.1597866 , -0.47073225, ..., -0.24020459,
+        -0.37110101,  1.17073215],
+       [-0.84488505, -0.8730192 ,  0.04624525, ..., -0.20212881,
+        -0.47378505, -0.87137393]], shape=(768, 8))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(data_rescaled,y,test_size=0.2,random_state=0)
+X_train</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[ 0.93691372,  0.91091809,  0.45982725, ...,  0.40708356,
+         0.66479969,  1.76634642],
+       [ 0.04601433, -0.74783062, -0.47073225, ..., -0.48135115,
+        -0.08720986, -0.95646168],
+       [-1.14185152,  1.38037527,  1.08020025, ...,  2.57740266,
+        -0.13553176, -0.87137393],
+       ...,
+       [ 0.04601433, -0.84172205, -0.2122435 , ..., -0.92556851,
+        -0.97814487, -1.04154944],
+       [ 2.12477957, -1.12339636,  0.25303625, ..., -0.24020459,
+        -0.51908683,  0.14967911],
+       [ 0.3429808 ,  0.47275805,  0.66661825, ..., -4.06047387,
+         0.50775352,  3.04266271]], shape=(614, 8))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">from sklearn.svm import SVC
+model = SVC()
+model.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>SVC()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">model.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.7922077922077922</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">from sklearn.decomposition import PCA
+pca = PCA(0.90)
+xpca = pca.fit_transform(data_rescaled)
+xpca.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(768, 7)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(xpca,y,test_size=0.2,random_state=0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.svm import SVC
+model = SVC()
+model.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>SVC()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">model.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.7792207792207793</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">pca = PCA(n_components=6)
+xpca = pca.fit_transform(data_rescaled)
+xpca.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(768, 6)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(xpca,y,test_size=0.2,random_state=0)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">from sklearn.svm import SVC
+model = SVC()
+model.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>SVC()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 16</span></div><pre class="py">model.score(X_test, y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.7987012987012987</pre></div>
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/PCA_01.png" data-name="PCA_01.png"><img src="../Handwritten_Notes/PCA_01.png" alt="PCA_01.png" loading="lazy"><span>PCA 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/PCA_02.png" data-name="PCA_02.png"><img src="../Handwritten_Notes/PCA_02.png" alt="PCA_02.png" loading="lazy"><span>PCA 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/PCA_03.png" data-name="PCA_03.png"><img src="../Handwritten_Notes/PCA_03.png" alt="PCA_03.png" loading="lazy"><span>PCA 03</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/PCA_04.png" data-name="PCA_04.png"><img src="../Handwritten_Notes/PCA_04.png" alt="PCA_04.png" loading="lazy"><span>PCA 04</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/PCA_05.png" data-name="PCA_05.png"><img src="../Handwritten_Notes/PCA_05.png" alt="PCA_05.png" loading="lazy"><span>PCA 05</span></button></div>
+<!-- HANDWRITTEN:END -->
+<div class="foot"><a class="btn" href="../Concept/40_PCA_explained.ipynb">40_PCA_explained.ipynb ↗</a><a class="btn" href="../Concept/41_PCA_Diabetes_SVC.ipynb">41_PCA_Diabetes_SVC.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

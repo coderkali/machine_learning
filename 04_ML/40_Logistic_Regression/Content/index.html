@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logistic Regression — Lesson</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/theme.css">
+<script src="../../../17_Learning_As_Of_Now/shared/theme.js"></script>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+</head>
+<body>
+<div class="progress"></div>
+<header class="bar">
+  <div class="crumb">04 ML › <b>Logistic Regression</b></div>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Map</a>
+  <a class="btn primary" href="../Concept/">Open the source files ↗</a>
+</header>
+<div class="wrap">
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#logistic-regression-a-straight-line-that-answers">Logistic regression — a straight line that answers y</a><a href="#the-story">The story</a><a href="#the-data">The data</a><a href="#why-the-line-has-to-be-bent">Why the line has to be bent</a><a href="#reading-the-fitted-model">Reading the fitted model</a><a href="#s-95-95-of-what">95.95% — of what?</a><a href="#saving-it">Saving it</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#spam-or-not-spam-the-session-notebook">Spam or not spam — the session notebook</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
+<main class="doc">
+<div class="hero">
+  <p class="eyebrow">Machine learning</p>
+  <h1>Logistic Regression</h1>
+  <p class="lede">A straight line whose output is bent into a probability, so it can answer yes or no.</p>
+  <div class="tags"><span class="tag">2 notebooks</span><a class="tag hn-jump" href="#handwritten">✍️ 5 handwritten pages</a></div>
+</div>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Arjun runs the mail gateway, and ten thousand messages are already labelled SPAM or NOT SPAM</strong>, each boiled down to four numbers: links, words, special characters, and whether a listed spam word appears. He had just learned LinearRegression, so he turned the label into 0 and 1 and fitted a line.</p><p>With a 0.5 cut it was right about 95% of the time. Then the mail team asked for the thing a filter actually needs — a confidence score, so borderline messages could go to a review queue instead of being junked.</p><p><span class='beat'>He printed the raw predictions: 1.162, −0.509, 0.87.</span> Out of 2 000 test messages, 441 came back outside 0 to 1. No message is 116% spam. There was no confidence to report, and clipping the values just piled everything onto 0 and 1, hiding the borderline cases he was looking for.</p><p>A line has no ceiling and no floor, and least squares charges it for the distance to 0 or 1 even on rows it already has right. Logistic regression keeps the same weighted sum and bends its output through a sigmoid that can never leave 0 to 1 — so every message gets a genuine probability, obvious spam stops dragging the boundary, and the threshold becomes a dial Arjun can turn without refitting anything.</p></section>
+<div class="note key"><div class="h">🔑 The one idea</div><p>Logistic regression is a linear model wrapped in a sigmoid — the boundary stays straight, but the output is a real probability you can threshold wherever you like.</p></div>
+<div class="src-head">📓 <a href="../Concept/42_Logistic_Regression_explained.ipynb">42_Logistic_Regression_explained.ipynb</a></div>
+<h2 id="logistic-regression-a-straight-line-that-answers">Logistic regression — a straight line that answers yes or no</h2>
+<h2 id="the-story">The story</h2>
+<p>Arjun maintains the mail gateway at a mid-size company. Ten thousand messages
+are already labelled by hand, <code>SPAM</code> or <code>NOT SPAM</code>, and each one has been boiled
+down to four numbers: how many links it contains, how many words, how many
+special characters, and whether any word from a known spam list appears.</p>
+<p>He had just finished learning <code>LinearRegression</code>, so he used it. Turn the label
+into 0 and 1, fit a line, and call anything above 0.5 spam.</p>
+<p>It fitted, and with a 0.5 cut it was right about 95% of the time, so for a day he
+thought he was done. Then the mail team asked for the thing every spam filter
+actually needs: <strong>a confidence score</strong>, so borderline messages could go to a
+review queue instead of being junked outright.</p>
+<p>He printed the raw predictions. <code>1.162</code>. <code>-0.509</code>. <code>0.87</code>. Out of 2 000 test
+messages, <strong>441 came back outside the range 0 to 1</strong> — no message is 116% spam,
+and none is minus 51% spam. There was no confidence to report. Clipping them to
+the range did not help either, because everything piled up at exactly 0 and 1 and
+the borderline cases he was trying to find disappeared.</p>
+<p><strong>The problem is the straight line itself.</strong> A line has no ceiling and no floor,
+and least squares scores it on how close it gets to 0 and 1 — so a message that
+is already obviously spam still pulls the line towards it, because being at 0.8
+instead of 1.0 is charged for exactly like a genuine mistake.</p>
+<p>Logistic regression keeps the line — the same weighted sum of the four numbers —
+and bends its output through a curve that can never leave 0 to 1. Every message
+comes back as a real probability, the obviously-spam ones stop pulling, and
+Arjun's review queue becomes a threshold he can move whenever he likes.</p>
+
+<h2 id="the-data">The data</h2>
+<p>Four numeric columns and one text label.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import (confusion_matrix, classification_report,
+                             accuracy_score)
+
+SPAM, HAM, LINE = &quot;#e4572e&quot;, &quot;#1f7a8c&quot;, &quot;#888888&quot;
+plt.rcParams.update({&quot;figure.dpi&quot;: 110, &quot;axes.grid&quot;: True, &quot;grid.alpha&quot;: .25,
+                     &quot;axes.spines.top&quot;: False, &quot;axes.spines.right&quot;: False,
+                     &quot;font.size&quot;: 10})
+
+dataset = pd.read_csv(&quot;../Data/spam_detection.csv&quot;)
+print(dataset.shape)
+print(dataset.label.value_counts())
+dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>(10000, 5)
+label
+NOT SPAM    7000
+SPAM        3000
+Name: count, dtype: int64
+   num_links  num_words  num_special_chars  has_spammy_keywords     label
+0          4         39                 15                    1  NOT SPAM
+1          1         72                  4                    1  NOT SPAM
+2          3        164                  5                    1  NOT SPAM
+3          3         63                  5                    1  NOT SPAM
+4          1        122                  1                    0  NOT SPAM</pre></div>
+<p><strong>7 000 not spam against 3 000 spam.</strong> Hold on to that ratio — it comes back at
+the end.</p>
+<p><code>LogisticRegression</code> needs numbers, so the label goes through <code>LabelEncoder</code>,
+which sorts the distinct values alphabetically and numbers them from zero:</p>
+<div class="code"><pre>NOT SPAM  -&gt;  0        (&quot;N&quot; before &quot;S&quot;)
+SPAM      -&gt;  1
+</pre></div>
+<p>Which way round it lands matters. Everything the model reports afterwards — the
+coefficients, <code>predict_proba</code>, the confusion matrix — is phrased as &quot;probability
+of class 1&quot;, and here class 1 is spam. Check it, never assume it.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">le = LabelEncoder()
+dataset[&quot;label&quot;] = le.fit_transform(dataset[&quot;label&quot;])
+print(dict(zip(le.classes_, le.transform(le.classes_))))
+
+x = dataset[[&quot;num_links&quot;, &quot;num_words&quot;, &quot;num_special_chars&quot;, &quot;has_spammy_keywords&quot;]]
+y = dataset[&quot;label&quot;]                      # a Series, not a DataFrame — see the note below
+dataset.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>{&#x27;NOT SPAM&#x27;: np.int64(0), &#x27;SPAM&#x27;: np.int64(1)}
+   num_links  num_words  num_special_chars  has_spammy_keywords  label
+0          4         39                 15                    1      0
+1          1         72                  4                    1      0
+2          3        164                  5                    1      0
+3          3         63                  5                    1      0
+4          1        122                  1                    0      0</pre></div>
+<div class="note"><div class="h">Note</div><p>The class notebook used <code>y = dataset[['label']]</code> with two brackets, which makes
+a one-column <strong>DataFrame</strong>, and sklearn answered with
+<code>DataConversionWarning: A column-vector y was passed when a 1d array was expected</code>. It still fitted, because sklearn flattened it silently. One bracket
+— <code>dataset['label']</code> — gives a Series and the warning goes away. <code>y.ravel()</code>
+is the other fix.</p>
+</div>
+
+<h2 id="why-the-line-has-to-be-bent">Why the line has to be bent</h2>
+<p>One picture, two panels. On the left is what Arjun saw: <code>LinearRegression</code>
+fitted to the 0/1 label on all four columns, and where its predictions land. On
+the right is what logistic regression returns instead.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">X_train, X_test, y_train, y_test = train_test_split(
+    x, y, train_size=0.8, random_state=1)
+
+lin = LinearRegression().fit(X_train, y_train)
+log = LogisticRegression().fit(X_train, y_train)
+
+raw  = lin.predict(X_test)                   # &quot;0/1&quot; predicted as a plain number
+out  = (raw &lt; 0) | (raw &gt; 1)                 # …except when it is not
+z    = log.decision_function(X_test)         # the linear part of logistic regression
+prob = log.predict_proba(X_test)[:, 1]       # the same thing, through the sigmoid
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.0, 4.4))
+
+ax1.hist(raw[~out], bins=45, color=HAM,  label=&quot;a usable number&quot;)
+ax1.hist(raw[out],  bins=45, color=SPAM, label=f&quot;impossible: {out.sum()} of {len(raw)}&quot;)
+for v, name in ((0, &quot;0&quot;), (1, &quot;1&quot;)):
+    ax1.axvline(v, c=LINE, ls=&quot;--&quot;, lw=1.6)
+    ax1.text(v, -4.5, name, color=LINE, fontsize=10, ha=&quot;center&quot;)
+ax1.set(title=&quot;LinearRegression on a 0/1 label&quot;,
+        xlabel=&quot;what the line predicted&quot;, ylabel=&quot;messages&quot;)
+ax1.legend(fontsize=8.5, loc=&quot;upper right&quot;)
+
+zoom = 14                                    # z runs to ±36; the bend all happens here
+curve_z = np.linspace(-zoom, zoom, 400)
+rng = np.random.default_rng(0)
+for cls, colour, name in [(0, HAM, &quot;not spam (0)&quot;), (1, SPAM, &quot;spam (1)&quot;)]:
+    m = y_test.values == cls
+    ax2.scatter(np.clip(z[m], -zoom, zoom), prob[m] + rng.uniform(-.025, .025, m.sum()),
+                s=10, c=colour, alpha=.35, label=name, zorder=2)
+ax2.plot(curve_z, 1 / (1 + np.exp(-curve_z)), c=&quot;#222222&quot;, lw=2.4, zorder=3)
+ax2.axhline(0.5, c=LINE, ls=&quot;:&quot;, lw=1.2)
+ax2.axvline(0.0, c=LINE, ls=&quot;:&quot;, lw=1.2)
+ax2.annotate(&quot;z = 0  -&gt;  P = 0.5\nthe decision boundary&quot;, xy=(0, .5), xytext=(-13, .62),
+             fontsize=8.5, color=&quot;#444444&quot;,
+             arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=LINE, lw=1.1))
+ax2.set(title=f&quot;LogisticRegression — the same score, squashed (z clipped at ±{zoom})&quot;,
+        xlabel=&quot;z, the weighted sum of the four columns&quot;, ylabel=&quot;P(spam)&quot;,
+        ylim=(-.1, 1.1), xlim=(-zoom - .5, zoom + .5))
+ax2.legend(fontsize=8.5, loc=&quot;center right&quot;)
+
+plt.tight_layout(); plt.show()
+
+print(f&quot;line: predictions run from {raw.min():.3f} to {raw.max():.3f}&quot;
+      f&quot;   ({out.sum()} of {len(raw)} outside 0-1)&quot;)
+print(f&quot;sigmoid: {prob.min():.3f} to {prob.max():.3f}   (0 to 1, always)&quot;)
+print(f&quot;z runs from {z.min():.1f} to {z.max():.1f} — any number at all&quot;)
+print(f&quot;messages with |z| &lt; 4 (the uncertain middle): {(np.abs(z) &lt; 4).sum()} of {len(z)}&quot;)
+print()
+print(f&quot;accuracy, line with a 0.5 cut : {((raw &gt;= .5).astype(int) == y_test).mean():.4f}&quot;)
+print(f&quot;accuracy, logistic regression : {log.score(X_test, y_test):.4f}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>line: predictions run from -0.509 to 1.162   (441 of 2000 outside 0-1)
+sigmoid: 0.000 to 1.000   (0 to 1, always)
+z runs from -36.0 to 23.0 — any number at all
+messages with |z| &lt; 4 (the uncertain middle): 429 of 2000
+
+accuracy, line with a 0.5 cut : 0.9530
+accuracy, logistic regression : 0.9595</pre></div>
+<figure class="shot"><img src="assets/42-logistic-regression-expla-c07-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p><strong>Left panel.</strong> The red bars are the 441 messages the line scored below 0 or
+above 1. They are not an edge case — they are a fifth of the test set, and they
+are the <em>confident</em> predictions, the ones a filter most wants to act on. A line
+has nowhere to put &quot;definitely spam&quot; except further and further past 1.</p>
+<p><strong>Right panel.</strong> The same rows, same four columns. <code>z</code> on the horizontal axis is
+an ordinary linear model and runs from −36 to +23, exactly as unbounded as the
+line on the left — the axis is clipped at ±14 because the entire bend happens in
+that window. The curve is what fixes it: whatever <code>z</code> does, the output stays
+between 0 and 1. Blue points sit on the left arm, red on the right, and the
+handful climbing the middle are the genuinely uncertain messages — Arjun's review
+queue, which now has a number to sort by.</p>
+<p>That curve is the <strong>sigmoid</strong>, and it is the only new piece of machinery:</p>
+<div class='formula'>P(spam) = \frac{1}{1 + e^{-z}}  \qquad\text{where}\qquad  z = w_1 x_1 + w_2 x_2 + w_3 x_3 + w_4 x_4 + b</div>
+
+<p>Read it right to left:</p>
+<ul>
+<li><code>z</code> is a plain linear model — the same shape <code>LinearRegression</code> fits. It can be
+any number.</li>
+<li>the sigmoid squashes <code>z</code> into 0…1. <code>z = 0</code> gives exactly 0.5; large positive
+<code>z</code> approaches 1, large negative approaches 0.</li>
+<li><code>predict()</code> then applies the 0.5 cut, which is the same thing as asking
+<code>z &gt; 0</code>.</li>
+</ul>
+<p>So the decision boundary is still a straight line through the four columns.
+Logistic regression is a <strong>linear</strong> model — only its output is curved. That is
+also why the two accuracies are close: both draw a straight boundary, and the
+sigmoid's advantage is not a cleverer boundary but an output you can read.</p>
+<p>The other half of the change is what it is scored on. Least squares charges for
+the squared distance to 0 or 1, so it keeps working on rows it already has right.
+Logistic regression charges <strong>log loss</strong>, which punishes confident mistakes hard
+and barely notices a correct answer that was only just correct — so obvious spam
+stops pulling the boundary around.</p>
+
+<h2 id="reading-the-fitted-model">Reading the fitted model</h2>
+<p>The model is already fitted above. This is the class notebook's own call, and
+<code>0.9595</code> is its number.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">print(f&quot;train rows {len(X_train)}   test rows {len(X_test)}&quot;)
+print(f&quot;accuracy on the test set : {log.score(X_test, y_test):.4f}&quot;)
+print(f&quot;intercept (b)            : {log.intercept_[0]:.2f}&quot;)
+
+weights = pd.DataFrame({
+    &quot;column&quot;: x.columns,
+    &quot;weight (w)&quot;: log.coef_[0].round(3),
+    &quot;odds x per unit&quot;: np.exp(log.coef_[0]).round(2),
+    &quot;column sd&quot;: x.std().values.round(1),
+    &quot;w x sd&quot;: (log.coef_[0] * x.std().values).round(2),
+}).set_index(&quot;column&quot;)
+weights</pre></div>
+<div class="out"><div class="h">Output</div><pre>train rows 8000   test rows 2000
+accuracy on the test set : 0.9595
+intercept (b)            : -38.97
+                     weight (w)  odds x per unit  column sd  w x sd
+column                                                             
+num_links                 0.667             1.95        1.4    0.94
+num_words                 0.187             1.21       56.7   10.58
+num_special_chars         1.089             2.97        5.8    6.27
+has_spammy_keywords       1.826             6.21        0.5    0.91</pre></div>
+<p>Two ways to read the same four numbers, and they disagree.</p>
+<p><strong><code>weight (w)</code></strong> is how much <code>z</code> moves per one extra unit of that column, with
+the others held still. By that measure <code>has_spammy_keywords</code> is the big one at
+1.83 — and since <code>exp(1.83) = 6.2</code>, a message containing a listed word has
+<strong>six times the odds</strong> of being spam. <code>num_words</code> looks negligible at 0.187.</p>
+<p><strong><code>w × sd</code></strong> tells the opposite story. A unit of <code>num_words</code> is one word, and the
+column has a standard deviation of 57 words, so a typical swing in message length
+moves <code>z</code> by about 10.6 — more than any other column. <code>num_links</code> has a standard
+deviation of 1.4, so its larger-looking weight only moves <code>z</code> by about 0.9.</p>
+<p>Both are true. A per-unit weight is not an importance unless the columns are on
+the same scale, which is the argument for scaling before you try to interpret
+coefficients at all. The prediction is unaffected either way — this is only about
+reading the model.</p>
+<p>The intercept is <strong>−38.97</strong>, far below anything the columns can be. That is the
+model saying &quot;assume not spam&quot;, and it takes a large positive contribution from
+the four columns to climb back over <code>z = 0</code>.</p>
+
+<h2 id="s-95-95-of-what">95.95% — of what?</h2>
+<p>Here is where the 7 000 / 3 000 split from the top comes back. A model that
+answers &quot;not spam&quot; to every single message is right 70% of the time. So the
+question is not &quot;is 95.95% high&quot; but &quot;what is it getting wrong&quot;.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 13</span></div><pre class="py">y_pred = log.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+labels = [&quot;not spam&quot;, &quot;spam&quot;]
+
+fig, ax = plt.subplots(figsize=(5.6, 4.8))
+ax.imshow(cm, cmap=&quot;Blues&quot;, vmin=0, vmax=cm.max())
+for i in range(2):
+    for j in range(2):
+        ax.text(j, i, f&quot;{cm[i, j]}&quot;, ha=&quot;center&quot;, va=&quot;center&quot;, fontsize=17,
+                color=&quot;white&quot; if cm[i, j] &gt; cm.max() * .55 else &quot;#222&quot;)
+ax.set(xticks=[0, 1], yticks=[0, 1], xticklabels=labels, yticklabels=labels,
+       xlabel=&quot;what the model said&quot;, ylabel=&quot;what it actually was&quot;,
+       title=&quot;Confusion matrix, 2 000 held-out messages&quot;)
+ax.grid(False)
+plt.tight_layout(); plt.show()
+
+tn, fp, fn, tp = cm.ravel()
+always_ham = accuracy_score(y_test, np.zeros_like(y_test))
+print(f&#x27;always answer &quot;not spam&quot; : {always_ham:.4f}&#x27;)
+print(f&quot;this model               : {accuracy_score(y_test, y_pred):.4f}&quot;)
+print()
+print(f&quot;spam that got through (false negative) : {fn}&quot;)
+print(f&quot;real mail junked        (false positive) : {fp}&quot;)
+print()
+print(classification_report(y_test, y_pred, target_names=labels))</pre></div>
+<div class="out"><div class="h">Output</div><pre>always answer &quot;not spam&quot; : 0.6980
+this model               : 0.9595
+
+spam that got through (false negative) : 40
+real mail junked        (false positive) : 41
+
+              precision    recall  f1-score   support
+
+    not spam       0.97      0.97      0.97      1396
+        spam       0.93      0.93      0.93       604
+
+    accuracy                           0.96      2000
+   macro avg       0.95      0.95      0.95      2000
+weighted avg       0.96      0.96      0.96      2000</pre></div>
+<figure class="shot"><img src="assets/42-logistic-regression-expla-c13-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The two error cells are not the same mistake. Spam that got through is an
+annoyance; real mail wrongly junked is an invoice nobody saw. Accuracy adds them
+together and hides the difference, which is why the confusion matrix is the
+report that matters here and <code>recall</code> for the spam row is the number Arjun would
+actually be held to.</p>
+<p>And because the sigmoid hands back a probability rather than a verdict, the 0.5
+cut is <strong>yours to move</strong>. Nothing needs refitting.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 15</span></div><pre class="py">proba = log.predict_proba(X_test)[:, 1]
+
+print(&quot;threshold   spam caught   real mail junked&quot;)
+for t in (0.30, 0.50, 0.70, 0.90):
+    pred = (proba &gt;= t).astype(int)
+    c = confusion_matrix(y_test, pred)
+    print(f&quot;   {t:.2f}        {c[1, 1]:4d} / {c[1].sum()}        {c[0, 1]:4d}&quot;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>threshold   spam caught   real mail junked
+   0.30         579 / 604          66
+   0.50         564 / 604          41
+   0.70         534 / 604          24
+   0.90         483 / 604           4</pre></div>
+<p>Raise the threshold and fewer innocent messages get junked, at the cost of
+letting more spam through. That trade is a business decision, not a modelling
+one — and
+<a href="../../25_ROC_And_AUC/Concept">ROC and AUC</a> is how you look at every threshold
+at once.</p>
+<h2 id="saving-it">Saving it</h2>
+<p>The class notebook ends by writing the fitted model to disk. Four numbers and an
+intercept are all that is being stored.</p>
+<div class="code"><pre class="py">import pickle
+pickle.dump(model, open(&#x27;../Data/mlclass.pkl&#x27;, &#x27;wb&#x27;))
+</pre></div>
+<p>The detail on <code>pickle</code>, <code>joblib</code>, and what actually has to be saved alongside the
+model is in
+<a href="../../37_Model_Persistence/Concept/36_Model_Persistence_explained.ipynb">Model Persistence</a>.</p>
+
+<h2 id="common-mistakes">Common mistakes</h2>
+<ol>
+<li><strong>Using <code>LinearRegression</code> for a label.</strong> It has no ceiling and no floor, so
+441 of 2 000 predictions here were not probabilities at all.</li>
+<li><strong>Not checking which class <code>LabelEncoder</code> made 1.</strong> Every probability and
+every confusion-matrix cell is read against it.</li>
+<li><strong>Passing <code>y</code> as a one-column DataFrame.</strong> It works, with a warning; one
+bracket fixes it.</li>
+<li><strong>Quoting accuracy on an imbalanced set.</strong> 69.8% was free here. Print the
+confusion matrix next to it.</li>
+<li><strong>Reading per-unit weights as importances.</strong> On unscaled columns the ranking
+reverses — <code>num_words</code> has the smallest weight and the largest effect.</li>
+<li><strong>Forgetting that <code>predict()</code> is just <code>predict_proba() &gt; 0.5</code>.</strong> The threshold
+is a decision you own, and it needs no refitting.</li>
+</ol>
+<h2 id="key-takeaway">Key takeaway</h2>
+<p>If you remember only one thing: <strong>logistic regression is a linear model wrapped
+in a sigmoid</strong> — the boundary is still straight, but the output is a genuine
+probability between 0 and 1, which is both why confident rows stop dragging the
+fit and why you can move the threshold afterwards without touching the model.</p>
+
+<div class="src-head">📓 <a href="../Concept/43_Logistic_Regression_Spam.ipynb">43_Logistic_Regression_Spam.ipynb</a></div>
+<h2 id="spam-or-not-spam-the-session-notebook">Spam or not spam — the session notebook</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 22.</p>
+</div>
+<p>The notebook worked through in class, kept as it was written. Ten thousand
+emails, four numbers each, one <code>LogisticRegression</code>, and the trained model
+written to disk with <code>pickle</code>.</p>
+<p>Two paths changed here: the dataset is read from
+<a href="../Data/spam_detection.csv"><code>../Data/spam_detection.csv</code></a>, and the pickle is
+written into <code>../Data/</code> instead of next to the notebook.</p>
+<p>What logistic regression is doing to those four numbers — and why 95.95%
+deserves a second look — is in
+<a href="../Concept/42_Logistic_Regression_explained.ipynb"><code>42_Logistic_Regression_explained.ipynb</code></a>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+import numpy as np</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">dataset = pd.read_csv(&#x27;../Data/spam_detection.csv&#x27;)
+dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>      num_links  num_words  num_special_chars  has_spammy_keywords     label
+0             4         39                 15                    1  NOT SPAM
+1             1         72                  4                    1  NOT SPAM
+2             3        164                  5                    1  NOT SPAM
+3             3         63                  5                    1  NOT SPAM
+4             1        122                  1                    0  NOT SPAM
+...         ...        ...                ...                  ...       ...
+9995          5         15                  1                    0  NOT SPAM
+9996          1         68                 14                    1  NOT SPAM
+9997          2        184                  7                    1      SPAM
+9998          3        132                 12                    1      SPAM
+9999          1         10                  2                    1  NOT SPAM
+
+[10000 rows x 5 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">dataset.label.value_counts()</pre></div>
+<div class="out"><div class="h">Output</div><pre>label
+NOT SPAM    7000
+SPAM        3000
+Name: count, dtype: int64</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+dataset.label = le.fit_transform(dataset.label)
+dataset</pre></div>
+<div class="out"><div class="h">Output</div><pre>      num_links  num_words  num_special_chars  has_spammy_keywords  label
+0             4         39                 15                    1      0
+1             1         72                  4                    1      0
+2             3        164                  5                    1      0
+3             3         63                  5                    1      0
+4             1        122                  1                    0      0
+...         ...        ...                ...                  ...    ...
+9995          5         15                  1                    0      0
+9996          1         68                 14                    1      0
+9997          2        184                  7                    1      1
+9998          3        132                 12                    1      1
+9999          1         10                  2                    1      0
+
+[10000 rows x 5 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">dataset.columns</pre></div>
+<div class="out"><div class="h">Output</div><pre>Index([&#x27;num_links&#x27;, &#x27;num_words&#x27;, &#x27;num_special_chars&#x27;, &#x27;has_spammy_keywords&#x27;,
+       &#x27;label&#x27;],
+      dtype=&#x27;str&#x27;)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 6</span></div><pre class="py">x = dataset[[&#x27;num_links&#x27;, &#x27;num_words&#x27;, &#x27;num_special_chars&#x27;, &#x27;has_spammy_keywords&#x27;]]
+y = dataset[[&#x27;label&#x27;]]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 7</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x,y,train_size=0.8,random_state=1)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 8</span></div><pre class="py">from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">model.fit(X_train, y_train)</pre></div>
+<div class="out"><div class="h">Output</div><pre>/Users/kaliprasad/Documents/MACHINE_LEARNING/.venv/lib/python3.14/site-packages/sklearn/utils/validation.py:1352: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+  y = column_or_1d(y, warn=True)
+LogisticRegression()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 10</span></div><pre class="py">model.score(X_test,y_test)</pre></div>
+<div class="out"><div class="h">Output</div><pre>0.9595</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">import pickle
+pickle.dump(model, open(&#x27;../Data/mlclass.pkl&#x27;,&#x27;wb&#x27;))</pre></div>
+<!-- HANDWRITTEN:START -->
+<h2 id="handwritten">✍️ Handwritten notes</h2>
+<p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Logistic_Regression_01.png" data-name="Logistic_Regression_01.png"><img src="../Handwritten_Notes/Logistic_Regression_01.png" alt="Logistic_Regression_01.png" loading="lazy"><span>Logistic Regression 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Logistic_Regression_02.png" data-name="Logistic_Regression_02.png"><img src="../Handwritten_Notes/Logistic_Regression_02.png" alt="Logistic_Regression_02.png" loading="lazy"><span>Logistic Regression 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Logistic_Regression_03.png" data-name="Logistic_Regression_03.png"><img src="../Handwritten_Notes/Logistic_Regression_03.png" alt="Logistic_Regression_03.png" loading="lazy"><span>Logistic Regression 03</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Logistic_Regression_04.png" data-name="Logistic_Regression_04.png"><img src="../Handwritten_Notes/Logistic_Regression_04.png" alt="Logistic_Regression_04.png" loading="lazy"><span>Logistic Regression 04</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Logistic_Regression_05.png" data-name="Logistic_Regression_05.png"><img src="../Handwritten_Notes/Logistic_Regression_05.png" alt="Logistic_Regression_05.png" loading="lazy"><span>Logistic Regression 05</span></button></div>
+<!-- HANDWRITTEN:END -->
+<div class="foot"><a class="btn" href="../Concept/42_Logistic_Regression_explained.ipynb">42_Logistic_Regression_explained.ipynb ↗</a><a class="btn" href="../Concept/43_Logistic_Regression_Spam.ipynb">43_Logistic_Regression_Spam.ipynb ↗</a>
+  <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
+</div>
+</main></div>
+<script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script>
+</body>
+</html>

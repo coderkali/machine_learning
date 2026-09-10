@@ -317,6 +317,9 @@
           '<span class="v-where">' + esc(e.sp.name) + " · " + esc(job.name) + "</span></p>" +
         '<h2 class="v-name">' + esc(o.name) + "</h2>" +
 
+        (o.how ? '<section class="v-how"><h3>What it actually does</h3><p>' +
+                 esc(o.how) + "</p></section>" : "") +
+
         '<div class="v-code"><pre>' + esc(o.code) + "</pre>" +
           '<button class="v-copy" id="vcopy">copy</button></div>' +
 
@@ -331,7 +334,9 @@
 
         (rivals.length ? '<section class="v-rivals"><h3>' +
             (isSeq ? "The other steps" : 'If they ask “why not…”') +
-            "<small>click one to read its card</small></h3>" + rivalRows + "</section>" : "") +
+            "<small>" + (isSeq ? "click one to read its card"
+                               : "each rival's headline weakness — click to read its card") +
+            "</small></h3>" + rivalRows + "</section>" : "") +
 
         (links ? '<div class="v-links"><span class="lbl">Where you learned it</span>' +
                  links + "</div>" : "") +

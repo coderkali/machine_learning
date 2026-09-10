@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCA — code</title>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/theme.css">
+<script src="../../../17_Learning_As_Of_Now/shared/theme.js"></script>
+<link rel="stylesheet" href="../../../17_Learning_As_Of_Now/shared/lesson.css">
+<style>body{background:#0a0f1a} .wrap{padding:16px 18px 60px;max-width:none}
+.doc{max-width:none} .code{margin:12px 0}
+.doc figure.shot{max-width:820px;margin:12px 0}</style>
+</head><body><div class="wrap"><main class="doc">
+<div class="src-head">📓 <a href="../Concept/40_PCA_explained.ipynb">40_PCA_explained.ipynb</a></div><div class="code"><div class="code-head"><span>In [1]</span><span class="cell">cell 2</span></div><pre class="py">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split, cross_val_score
+
+KEEP, CUT, LINE = &quot;#1f7a8c&quot;, &quot;#e4572e&quot;, &quot;#888888&quot;
+plt.rcParams.update({&quot;figure.dpi&quot;: 110, &quot;axes.grid&quot;: True, &quot;grid.alpha&quot;: .25,
+                     &quot;axes.spines.top&quot;: False, &quot;axes.spines.right&quot;: False,
+                     &quot;font.size&quot;: 10})
+
+df = pd.read_csv(&quot;../Data/pca1.csv&quot;)
+x = df[[&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;, &quot;F&quot;, &quot;G&quot;, &quot;H&quot;]]
+y = df[&quot;I&quot;]
+
+PANEL = [&quot;pregnancies&quot;, &quot;glucose&quot;, &quot;blood pressure&quot;, &quot;skin thickness&quot;,
+         &quot;insulin&quot;, &quot;BMI&quot;, &quot;family history&quot;, &quot;age&quot;]
+print(f&quot;{len(df)} patients, {x.shape[1]} measurements&quot;)
+print(f&quot;follow-up needed : {y.sum()}   not needed : {(y == 0).sum()}&quot;)
+x.describe().loc[[&quot;min&quot;, &quot;max&quot;, &quot;std&quot;]].round(1)</pre></div><div class="out"><div class="h">Output</div><pre>768 patients, 8 measurements
+follow-up needed : 268   not needed : 500
+        A      B      C     D      E     F    G     H
+min   0.0    0.0    0.0   0.0    0.0   0.0  0.1  21.0
+max  17.0  199.0  122.0  99.0  846.0  67.1  2.4  81.0
+std   3.4   32.0   19.4  16.0  115.2   7.9  0.3  11.8</pre></div><div class="code"><div class="code-head"><span>In [2]</span><span class="cell">cell 4</span></div><pre class="py">data_scaler   = StandardScaler().fit(x)
+data_rescaled = data_scaler.transform(x)
+
+pca_all = PCA().fit(data_rescaled)          # no n_components: keep all eight
+ratio   = pca_all.explained_variance_ratio_
+cum     = ratio.cumsum()
+
+for i, (r, c) in enumerate(zip(ratio, cum), start=1):
+    print(f&quot;component {i}:  holds {r:5.1%} of the spread   running total {c:5.1%}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>component 1:  holds 26.2% of the spread   running total 26.2%
+component 2:  holds 21.6% of the spread   running total 47.8%
+component 3:  holds 12.9% of the spread   running total 60.7%
+component 4:  holds 10.9% of the spread   running total 71.6%
+component 5:  holds  9.5% of the spread   running total 81.2%
+component 6:  holds  8.5% of the spread   running total 89.7%
+component 7:  holds  5.2% of the spread   running total 94.9%
+component 8:  holds  5.1% of the spread   running total 100.0%</pre></div><div class="code"><div class="code-head"><span>In [3]</span><span class="cell">cell 6</span></div><pre class="py">k = np.arange(1, len(ratio) + 1)
+n90 = int(np.searchsorted(cum, 0.90) + 1)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.8, 4.3))
+
+colours = [KEEP if i &lt; n90 else CUT for i in range(len(ratio))]
+bars = ax1.bar(k, ratio * 100, color=colours, width=.65)
+for b, r in zip(bars, ratio):
+    ax1.text(b.get_x() + b.get_width() / 2, r * 100 + .7, f&quot;{r:.0%}&quot;,
+             ha=&quot;center&quot;, fontsize=8.5)
+ax1.set(title=&quot;How much spread each component holds&quot;,
+        xlabel=&quot;component&quot;, ylabel=&quot;share of total variance (%)&quot;, ylim=(0, 30))
+ax1.text(4.6, 24, f&quot;teal = the {n90} PCA(0.90) keeps&quot;, color=KEEP, fontsize=9)
+ax1.text(4.6, 21.8, &quot;orange = dropped&quot;, color=CUT, fontsize=9)
+
+ax2.plot(k, cum * 100, marker=&quot;o&quot;, c=KEEP, lw=2.2, zorder=3)
+ax2.axhline(90, c=CUT, ls=&quot;--&quot;, lw=1.6)
+ax2.text(1.1, 91.5, &quot;90% of the spread&quot;, color=CUT, fontsize=9)
+ax2.axvline(n90, c=LINE, ls=&quot;:&quot;, lw=1.5)
+ax2.text(n90 - .15, 32, f&quot;PCA(0.90) stops here: {n90} components&quot;,
+         color=LINE, fontsize=9, rotation=90, va=&quot;bottom&quot;, ha=&quot;right&quot;)
+ax2.set(title=&quot;Running total — where is it safe to stop?&quot;,
+        xlabel=&quot;components kept&quot;, ylabel=&quot;variance kept (%)&quot;, ylim=(20, 106))
+
+plt.tight_layout(); plt.show()</pre></div><figure class="shot"><img src="assets/40-pca-explained-c06-1.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [4]</span><span class="cell">cell 9</span></div><pre class="py">pca6 = PCA(n_components=6).fit(data_rescaled)
+recipe = pd.DataFrame(pca6.components_[:2].T, index=PANEL,
+                      columns=[&quot;component 1&quot;, &quot;component 2&quot;]).round(2)
+recipe</pre></div><div class="out"><div class="h">Output</div><pre>                component 1  component 2
+pregnancies            0.13         0.59
+glucose                0.39         0.17
+blood pressure         0.36         0.18
+skin thickness         0.44        -0.33
+insulin                0.44        -0.25
+BMI                    0.45        -0.10
+family history         0.27        -0.12
+age                    0.20         0.62</pre></div><div class="code"><div class="code-head"><span>In [5]</span><span class="cell">cell 12</span></div><pre class="py">def cv_score(n_components=None):
+    steps = [(&quot;scale&quot;, StandardScaler())]
+    if n_components is not None:
+        steps.append((&quot;pca&quot;, PCA(n_components=n_components, random_state=0)))
+    steps.append((&quot;svc&quot;, SVC()))
+    return cross_val_score(Pipeline(steps), x, y, cv=5).mean()
+
+baseline = cv_score(None)
+scores   = [cv_score(n) for n in k]
+
+print(f&quot;all 8 columns, no PCA : {baseline:.3f}&quot;)
+for n, s in zip(k, scores):
+    print(f&quot;{n} component{&#x27;s&#x27; if n &gt; 1 else &#x27; &#x27;}           : {s:.3f}&quot;
+          f&quot;   {&#x27;&lt;- PCA(0.90) picks this&#x27; if n == n90 else &#x27;&#x27;}&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>all 8 columns, no PCA : 0.772
+1 component            : 0.719   
+2 components           : 0.724   
+3 components           : 0.737   
+4 components           : 0.727   
+5 components           : 0.738   
+6 components           : 0.770   
+7 components           : 0.773   &lt;- PCA(0.90) picks this
+8 components           : 0.772</pre></div><div class="code"><div class="code-head"><span>In [6]</span><span class="cell">cell 13</span></div><pre class="py">fig, ax = plt.subplots(figsize=(8.4, 4.3))
+ax.axhline(baseline * 100, c=LINE, ls=&quot;--&quot;, lw=1.6)
+ax.text(1.05, baseline * 100 + .35, &quot;all 8 columns, no PCA&quot;, color=LINE, fontsize=9)
+ax.plot(k, np.array(scores) * 100, marker=&quot;o&quot;, c=KEEP, lw=2.2, label=&quot;SVC on PCA components&quot;)
+ax.scatter([n90], [scores[n90 - 1] * 100], s=150, facecolor=&quot;none&quot;,
+           edgecolor=CUT, lw=2, zorder=5, label=f&quot;PCA(0.90) → {n90} components&quot;)
+ax.set(title=&quot;Accuracy against the number of components kept&quot;,
+       xlabel=&quot;components kept&quot;, ylabel=&quot;5-fold accuracy (%)&quot;)
+ax.legend(fontsize=8.5, loc=&quot;lower right&quot;)
+plt.tight_layout(); plt.show()
+
+best = int(np.argmax(scores)) + 1
+print(f&quot;best here: {best} components at {scores[best - 1]:.3f}, &quot;
+      f&quot;against {baseline:.3f} on the full panel&quot;)</pre></div><div class="out"><div class="h">Output</div><pre>best here: 7 components at 0.773, against 0.772 on the full panel</pre></div><figure class="shot"><img src="assets/40-pca-explained-c13-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [7]</span><span class="cell">cell 16</span></div><pre class="py">xpca6 = pca6.transform(data_rescaled)
+back  = pca6.inverse_transform(xpca6)
+
+err = pd.DataFrame({
+    &quot;column&quot;: PANEL,
+    &quot;mean absolute difference (in sd units)&quot;: np.abs(data_rescaled - back).mean(axis=0).round(3),
+}).set_index(&quot;column&quot;)
+print(f&quot;variance kept by 6 components: {pca6.explained_variance_ratio_.sum():.1%}&quot;)
+err</pre></div><div class="out"><div class="h">Output</div><pre>variance kept by 6 components: 89.7%
+                mean absolute difference (in sd units)
+column                                                
+pregnancies                                      0.282
+glucose                                          0.220
+blood pressure                                   0.091
+skin thickness                                   0.304
+insulin                                          0.272
+BMI                                              0.166
+family history                                   0.041
+age                                              0.349</pre></div><div class="src-head">📓 <a href="../Concept/41_PCA_Diabetes_SVC.ipynb">41_PCA_Diabetes_SVC.ipynb</a></div><div class="code"><div class="code-head"><span>In [8]</span><span class="cell">cell 1</span></div><pre class="py">import pandas as pd
+df = pd.read_csv(&#x27;../Data/pca1.csv&#x27;)
+df.head()</pre></div><div class="out"><div class="h">Output</div><pre>   A    B   C   D    E     F      G   H  I
+0  6  148  72  35    0  33.6  0.627  50  1
+1  1   85  66  29    0  26.6  0.351  31  0
+2  8  183  64   0    0  23.3  0.672  32  1
+3  1   89  66  23   94  28.1  0.167  21  0
+4  0  137  40  35  168  43.1  2.288  33  1</pre></div><div class="code"><div class="code-head"><span>In [9]</span><span class="cell">cell 2</span></div><pre class="py">df.shape</pre></div><div class="out"><div class="h">Output</div><pre>(768, 9)</pre></div><div class="code"><div class="code-head"><span>In [10]</span><span class="cell">cell 3</span></div><pre class="py">x=df[[&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;, &#x27;E&#x27;, &#x27;F&#x27;, &#x27;G&#x27;, &#x27;H&#x27;]]
+y=df[&#x27;I&#x27;]</pre></div><div class="code"><div class="code-head"><span>In [11]</span><span class="cell">cell 4</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(x,y,test_size=0.3,random_state=100)
+X_train</pre></div><div class="out"><div class="h">Output</div><pre>      A    B   C   D    E     F      G   H
+155   7  152  88  44    0  50.0  0.337  36
+150   1  136  74  50  204  37.4  0.399  24
+78    0  131   0   0    0  43.2  0.270  26
+9     8  125  96   0    0   0.0  0.232  54
+142   2  108  52  26   63  32.5  0.318  22
+..   ..  ...  ..  ..  ...   ...    ...  ..
+578  10  133  68   0    0  27.0  0.245  36
+53    8  176  90  34  300  33.7  0.467  58
+350   4   92  80   0    0  42.2  0.237  29
+79    2  112  66  22    0  25.0  0.307  24
+520   2   68  70  32   66  25.0  0.187  25
+
+[537 rows x 8 columns]</pre></div><div class="code"><div class="code-head"><span>In [12]</span><span class="cell">cell 5</span></div><pre class="py">from sklearn.preprocessing import StandardScaler
+data_scaler = StandardScaler().fit(x)
+data_rescaled = data_scaler.transform(x)
+data_rescaled</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 0.63994726,  0.84832379,  0.14964075, ...,  0.20401277,
+         0.46849198,  1.4259954 ],
+       [-0.84488505, -1.12339636, -0.16054575, ..., -0.68442195,
+        -0.36506078, -0.19067191],
+       [ 1.23388019,  1.94372388, -0.26394125, ..., -1.10325546,
+         0.60439732, -0.10558415],
+       ...,
+       [ 0.3429808 ,  0.00330087,  0.14964075, ..., -0.73518964,
+        -0.68519336, -0.27575966],
+       [-0.84488505,  0.1597866 , -0.47073225, ..., -0.24020459,
+        -0.37110101,  1.17073215],
+       [-0.84488505, -0.8730192 ,  0.04624525, ..., -0.20212881,
+        -0.47378505, -0.87137393]], shape=(768, 8))</pre></div><div class="code"><div class="code-head"><span>In [13]</span><span class="cell">cell 6</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(data_rescaled,y,test_size=0.2,random_state=0)
+X_train</pre></div><div class="out"><div class="h">Output</div><pre>array([[ 0.93691372,  0.91091809,  0.45982725, ...,  0.40708356,
+         0.66479969,  1.76634642],
+       [ 0.04601433, -0.74783062, -0.47073225, ..., -0.48135115,
+        -0.08720986, -0.95646168],
+       [-1.14185152,  1.38037527,  1.08020025, ...,  2.57740266,
+        -0.13553176, -0.87137393],
+       ...,
+       [ 0.04601433, -0.84172205, -0.2122435 , ..., -0.92556851,
+        -0.97814487, -1.04154944],
+       [ 2.12477957, -1.12339636,  0.25303625, ..., -0.24020459,
+        -0.51908683,  0.14967911],
+       [ 0.3429808 ,  0.47275805,  0.66661825, ..., -4.06047387,
+         0.50775352,  3.04266271]], shape=(614, 8))</pre></div><div class="code"><div class="code-head"><span>In [14]</span><span class="cell">cell 7</span></div><pre class="py">from sklearn.svm import SVC
+model = SVC()
+model.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>SVC()</pre></div><div class="code"><div class="code-head"><span>In [15]</span><span class="cell">cell 8</span></div><pre class="py">model.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.7922077922077922</pre></div><div class="code"><div class="code-head"><span>In [16]</span><span class="cell">cell 9</span></div><pre class="py">from sklearn.decomposition import PCA
+pca = PCA(0.90)
+xpca = pca.fit_transform(data_rescaled)
+xpca.shape</pre></div><div class="out"><div class="h">Output</div><pre>(768, 7)</pre></div><div class="code"><div class="code-head"><span>In [17]</span><span class="cell">cell 10</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(xpca,y,test_size=0.2,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [18]</span><span class="cell">cell 11</span></div><pre class="py">from sklearn.svm import SVC
+model = SVC()
+model.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>SVC()</pre></div><div class="code"><div class="code-head"><span>In [19]</span><span class="cell">cell 12</span></div><pre class="py">model.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.7792207792207793</pre></div><div class="code"><div class="code-head"><span>In [20]</span><span class="cell">cell 13</span></div><pre class="py">pca = PCA(n_components=6)
+xpca = pca.fit_transform(data_rescaled)
+xpca.shape</pre></div><div class="out"><div class="h">Output</div><pre>(768, 6)</pre></div><div class="code"><div class="code-head"><span>In [21]</span><span class="cell">cell 14</span></div><pre class="py">from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(xpca,y,test_size=0.2,random_state=0)</pre></div><div class="code"><div class="code-head"><span>In [22]</span><span class="cell">cell 15</span></div><pre class="py">from sklearn.svm import SVC
+model = SVC()
+model.fit(X_train, y_train)</pre></div><div class="out"><div class="h">Output</div><pre>SVC()</pre></div><div class="code"><div class="code-head"><span>In [23]</span><span class="cell">cell 16</span></div><pre class="py">model.score(X_test, y_test)</pre></div><div class="out"><div class="h">Output</div><pre>0.7987012987012987</pre></div>
+</main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>
