@@ -16,15 +16,15 @@ Name the files so they sort in reading order:
 
 The five `PCA_*.png` pages form a story-led revision sequence:
 
-1. Why dropping columns failed — overlapping signal, and the word "drop"
-2. What a component is — a direction of largest spread, and the blend behind it
-3. Scale first: variance has units, and insulin would win on units alone
-4. Reading the scree and cumulative-variance curves — `PCA(0.90)` vs `n_components=6`
-5. What PCA cannot do — it never sees `y`, and it does not reduce what you measure
+1. Ritu's clinic, PCA geometry, unsupervised learning, and scaling
+2. Scree and cumulative-variance curves; float versus integer component counts
+3. Component recipes, loadings, orthogonality, and interpretability
+4. Leakage-safe pipelines and SVC validation across component counts
+5. Reconstruction, deployment, method limits, and common mistakes
 
-Each page is a 1024 x 1536 portrait PNG. The examples follow Ritu's clinic
+Each page is a 1055 x 1491 portrait PNG. The examples follow Ritu's clinic
 story and use the exact variance, loading and SVC results from the topic
 notebooks.
 
-The page spec is in
+The visual page spec is in
 `17_Learning_As_Of_Now/shared/CODEX_HANDWRITTEN_NOTES_PROMPT.md`.

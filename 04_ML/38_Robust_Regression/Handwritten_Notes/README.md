@@ -12,15 +12,15 @@ python3 17_Learning_As_Of_Now/shared/build_site.py
 Name the files so they sort in reading order:
 `Robust_Regression_01.png`, `Robust_Regression_02.png`, …
 
-## Three-page revision lesson
+## Revision pages
 
-The three `Robust_Regression_*.png` pages are designed for a quick review:
+The five `Robust_Regression_*.png` pages form a complete revision sequence:
 
-1. **The problem** — faulty ₹600 rows distort Farhan's ordinary quote line
-2. **The fix** — RANSAC follows the line supported by the honest majority
-3. **In practice** — the minimal sklearn code and one key warning
+1. OLS failure, squared loss, breakdown point, and one-row leverage
+2. RANSAC voting, the winning inlier set, and `inlier_mask_`
+3. Huber loss, epsilon, down-weighting, and its failure mode
+4. Theil–Sen pairwise slopes and the 29% breakdown argument
+5. Honest-test comparison, method limits, and common mistakes
 
-Each page is a 1024 x 1536 PNG.
-
-The page spec is in
-`17_Learning_As_Of_Now/shared/CODEX_HANDWRITTEN_NOTES_PROMPT_V3.md`.
+Each page is a 1055 x 1491 PNG, matching the reference pages in
+`04_ML/07_Outliers/` and `04_ML/12_Preprocessing/`.

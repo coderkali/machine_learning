@@ -16,15 +16,15 @@ Name the files so they sort in reading order:
 
 The five `Logistic_Regression_*.png` pages form a story-led revision sequence:
 
-1. Why a straight line cannot answer yes/no — 441 of 2 000 predictions outside 0–1
-2. The sigmoid — `z` unbounded in, probability out, and `z = 0` as the boundary
-3. Log loss against squared error — what each one charges for
-4. Reading the weights — per-unit `w`, `exp(w)` as an odds multiplier, and `w × sd`
-5. 95.95% of what — the 70/30 class split, the confusion matrix, and moving the threshold
+1. Arjun's data, label encoding, and why linear-regression outputs fail
+2. The sigmoid, log loss, linear boundary, and probability threshold
+3. Coefficients, log-odds, odds multipliers, scaling, and intercept
+4. Class imbalance, confusion matrix, precision, recall, and F1
+5. Threshold tradeoffs, persistence, model limits, and common mistakes
 
-Each page is a 1024 x 1536 portrait PNG. The examples follow Arjun's spam
+Each page is a 1055 x 1491 portrait PNG. The examples follow Arjun's spam
 filter story and use the exact scores, coefficients, confusion-matrix counts
 and threshold results from the topic notebook.
 
-The page spec is in
+The visual page spec is in
 `17_Learning_As_Of_Now/shared/CODEX_HANDWRITTEN_NOTES_PROMPT.md`.

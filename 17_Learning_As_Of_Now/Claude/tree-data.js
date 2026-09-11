@@ -1362,11 +1362,13 @@ const TREE = {
             "Concept: 38_Robust_Regression_explained.ipynb",
             "Concept: 39_Robust_Regression_RANSAC.ipynb"
           ],
-          "notes": 3,
+          "notes": 5,
           "noteFiles": [
             "Robust_Regression_01.png",
             "Robust_Regression_02.png",
-            "Robust_Regression_03.png"
+            "Robust_Regression_03.png",
+            "Robust_Regression_04.png",
+            "Robust_Regression_05.png"
           ],
           "hasCode": true,
           "lede": "Fitting a line that belongs to the majority of the rows, not to the broken ones.",
@@ -1757,17 +1759,17 @@ const TREE = {
         },
         {
           "title": "shared",
-          "meta": "12 files",
+          "meta": "11 files",
           "status": "learning",
           "details": [
             "CODEX_HANDWRITTEN_NOTES_PROMPT.md",
-            "CODEX_HANDWRITTEN_NOTES_PROMPT_V3.md",
             "NEXT_CHAT_PROMPTS.md",
             "build_lessons.cpython-314.pyc",
             "build_lessons.py",
             "build_site.py",
             "gen_tree.py",
-            "lesson.css"
+            "lesson.css",
+            "lesson.js"
           ],
           "path": "../../17_Learning_As_Of_Now/shared"
         }

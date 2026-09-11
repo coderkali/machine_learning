@@ -16,7 +16,7 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#logistic-regression-a-straight-line-that-answers">Logistic regression — a straight line that answers y</a><a href="#the-story">The story</a><a href="#the-data">The data</a><a href="#why-the-line-has-to-be-bent">Why the line has to be bent</a><a href="#reading-the-fitted-model">Reading the fitted model</a><a href="#s-95-95-of-what">95.95% — of what?</a><a href="#saving-it">Saving it</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#spam-or-not-spam-the-session-notebook">Spam or not spam — the session notebook</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#logistic-regression-a-straight-line-that-answers">Logistic regression — a straight line that answers y</a><a href="#the-story">The story</a><a href="#what-this-story-is-actually-saying-in-plain-word">What this story is actually saying, in plain words</a><a href="#the-data">The data</a><a href="#why-the-line-has-to-be-bent">Why the line has to be bent</a><a href="#reading-the-fitted-model">Reading the fitted model</a><a href="#s-95-95-of-what">95.95% — of what?</a><a href="#saving-it">Saving it</a><a href="#common-mistakes">Common mistakes</a><a href="#key-takeaway">Key takeaway</a><a href="#spam-or-not-spam-the-session-notebook">Spam or not spam — the session notebook</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
@@ -52,6 +52,46 @@ instead of 1.0 is charged for exactly like a genuine mistake.</p>
 and bends its output through a curve that can never leave 0 to 1. Every message
 comes back as a real probability, the obviously-spam ones stop pulling, and
 Arjun's review queue becomes a threshold he can move whenever he likes.</p>
+<h2 id="what-this-story-is-actually-saying-in-plain-word">What this story is actually saying, in plain words</h2>
+<ol>
+<li><p><strong>The task is yes/no, not a number.</strong> Every message is either <code>SPAM</code> (1) or
+<code>NOT SPAM</code> (0). Arjun wants a model that says &quot;how sure are you it's spam&quot; —
+a probability between 0 and 1, like 0.9 or 0.2.</p>
+</li>
+<li><p><strong>He first tried <code>LinearRegression</code>, treating spam/not-spam like a number
+to predict.</strong> It drew a straight line through the 0s and 1s. With a simple
+cutoff (above 0.5 → call it spam), it looked fine at first — 95% correct.</p>
+</li>
+<li><p><strong>But a straight line has no limits.</strong> It can output anything: 5, -3, 1.2,
+whatever the maths works out to. It was never built to stay between 0 and 1.
+So when he asked for the actual predicted number (not just the yes/no
+answer), he got nonsense like <code>1.162</code> and <code>-0.509</code> — you can't be 116% spam.</p>
+</li>
+<li><p><strong>Chopping (clipping) those numbers to fit inside 0–1 doesn't fix it.</strong>
+It just squashes every extreme value to exactly 0 or exactly 1. Now almost
+every message looks either &quot;100% sure&quot; or &quot;0% sure,&quot; and the in-between,
+unsure messages — the exact ones he wanted for the review queue — vanish.</p>
+</li>
+<li><p><strong>The real cause:</strong> least squares (how <code>LinearRegression</code> fits its line)
+punishes every message for not landing exactly on 0 or 1 — even messages
+that are <em>already</em> obviously spam. That pulls the line into a bad shape
+trying to satisfy the &quot;obvious&quot; cases too, instead of focusing on the
+genuinely uncertain ones.</p>
+</li>
+<li><p><strong>Logistic regression fixes this by keeping the same weighted sum of the
+four features, but passing it through a curve (the sigmoid) that always
+squeezes the result into 0–1</strong> — no matter how large or small the number
+underneath is. Nothing gets clipped, nothing breaks the range, and the
+output is now a real, usable probability.</p>
+</li>
+<li><p><strong>Why this matters for Arjun:</strong> now he can move the decision threshold
+wherever the business wants (e.g. &quot;only flag as spam above 0.9 confidence,
+send 0.4–0.9 to a review queue&quot;) instead of being stuck with a single crude
+0.5 cutoff on numbers that were never real probabilities to begin with.</p>
+</li>
+</ol>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 23.</p>
+</div>
 
 <h2 id="the-data">The data</h2>
 <p>Four numeric columns and one text label.</p>
