@@ -70,14 +70,25 @@ The page is built for someone who knows no ML. Its shape is fixed; add to it,
 do not redesign it:
 
 ```
-Start here:  Where are you? → a real table (Meera's attrition data)
-             → the 8 stages in order, each listing the problems it fixes
-             → a button to the decision that fixes each problem
-All decisions: the full wall, for people who already know what they want
-A decision:  a few plain questions → the card
-A card:      one plain sentence → the code → one "use it when" and one
-             "do not use it when" → the other options → More detail
+Intro:     Meera's story, and "Where are you?"
+Three panels side by side, each scrolling on its own:
+  left     Meera's table, all 12 columns (scrolls sideways); it lights up,
+           and slides to, the columns the waiting question is about
+  middle   the 8 stages in order, each listing the problems it fixes, with
+           a button per problem
+  right    the picked decision's questions, one below another, each with a
+           plain hint; answering opens the next; changing an earlier answer
+           redraws everything below; the path ends on the card
+A card:    one plain sentence → the code → one "use it when" and one
+           "do not use it when" → the other options → More detail
+All decisions: the full wall; choosing one opens it in the right panel
+On a phone the panels stack: table, questions, then stages.
 ```
+
+The learner chose this layout (2026-09-11). Ask before changing it.
+
+Never move the reader to another screen to answer questions. They forget the
+earlier question, and the table they are reasoning about disappears.
 
 For each technique the learner has to **choose between** (a scaler, an
 encoder, a model, a metric, a test):
@@ -95,7 +106,12 @@ encoder, a model, a metric, a test):
      clearest one.
    - `topic` / `also` — real folder paths
 2. **Leaf** for it in that decision's tree in `FLOWS`. A card with no leaf is
-   invisible. Write new questions and answer labels in plain words.
+   invisible. Write new questions and answer labels in plain words, and give
+   every question a `hint`: what it is really asking, in simple English, with
+   an example from Meera's table wherever one fits ("Counts means you count
+   people in groups — how many who work OverTime left…"). Add
+   `see: ["Column", …]` when it is about particular columns, so the table
+   lights them up. Check every `see` column exists in `TOUR.cols`.
 3. **The start screen** (`Claude/chooser-tour.js`): if the technique fixes a
    problem you can see in the real table, add or re-point a problem. Rows must
    stay copied unchanged from
@@ -107,6 +123,11 @@ encoder, a model, a metric, a test):
 
 Colours: never write a raw colour. Use the tokens in `shared/theme.css`; if you
 need a new one, add it with a dark **and** a light value.
+
+Class names: never reuse one that `Claude/styles.css` already defines (`card`,
+`open`, `on`, `done`, `lit`, `dim`, `strip`, `hidden`…). The mind map's rules
+would land on your element, as they once did on the answer card. The chooser's
+state classes are all `is-…`.
 
 ## 5. The written record
 
@@ -129,9 +150,13 @@ python3 .claude/skills/update-documentation/screenshot_tabs.py <scratch-dir>
 ```
 
 The script saves a desktop and a phone-width screenshot of every tab. If it
-stops with "Headless Chrome is not responding", nothing was captured. Tell
-the learner the visual check was skipped, and never describe a page you have
-not seen. Otherwise **read every image** and check that:
+stops with "Headless Chrome is not responding", nothing was captured. So far
+that has happened while the learner's own Chrome was open. Never quit it
+yourself. Use Playwright instead: in a scratch folder, run
+`npm install playwright` and `npx playwright install chromium`. Its own browser
+runs alongside the learner's Chrome, and it can click through the page as well
+as screenshot it. If no browser works at all, say the visual check was skipped,
+and never describe a page you have not seen. Otherwise **read every image** and check that:
 
 - the new topic appears on Home, the Mind map, Workspace and Journey
 - its card is on When to Use What, in the right stage, and the flowchart reaches it
@@ -140,10 +165,15 @@ not seen. Otherwise **read every image** and check that:
 If you changed any `.js`, syntax-check it:
 `node -e 'new Function(require("fs").readFileSync("<file>","utf8"))'`.
 
-Headless Chrome cannot show the light theme reliably (the saved choice does
-not carry between local files, and colours fade in over 0.22 s). Check the
-light theme by making sure the stylesheet has no raw colours and every
-`var(--token)` it uses is defined in both theme blocks of `shared/theme.css`.
+To see the light theme, set `localStorage["lu-theme"] = "light"` before the
+page loads (Playwright's `addInitScript`). Flipping it after load captures the
+0.22 s colour fade instead. Also check that the stylesheet has no raw colours
+and that every `var(--token)` it uses is defined in both theme blocks of
+`shared/theme.css`.
+
+Code tests are not enough on their own. On 2026-09-11 every check passed while
+the answer card had borrowed `.card` from `styles.css` and was drawn as a tiny
+floating box. Look at every screenshot before saying a page works.
 
 ## 7. Report
 

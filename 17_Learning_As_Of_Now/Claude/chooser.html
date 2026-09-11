@@ -25,59 +25,66 @@
   </nav>
 </header>
 
-<!-- ══ SCREEN 0 · start here — a real table, then the order to fix it ═══ -->
+<!-- ══ the one page: a short intro, then three panels ═════════════════ -->
 <main class="screen start" id="start">
 
-  <section class="wtop">
+  <section class="wtop intro">
     <p class="hero-eye">When to use what &nbsp;·&nbsp; <b>start here</b></p>
-    <h1 class="hero-h">Start with the data,<br><em>not the algorithm.</em></h1>
-    <p class="hero-p">
-      Where are you right now? Pick one, and you will see only the part you need.
-    </p>
-    <div class="where" id="where"></div>
-  </section>
-
-  <section class="tour" id="tour">
-    <p class="sec-eye">The real data</p>
-    <h2 class="sec-h" id="tourh"></h2>
-    <div class="story" id="story"></div>
-  </section>
-
-  <div class="bench" id="bench">
-    <div class="tblbox" id="tblbox">
-      <div class="tblscroll"><table class="rawtbl" id="rawtbl"></table></div>
-      <p class="tblkey" id="tblkey"></p>
+    <h1 class="hero-h hero-sm">Start with the data, <em>not the algorithm.</em></h1>
+    <div class="intro-row">
+      <div>
+        <h2 class="sec-h" id="tourh"></h2>
+        <div class="story" id="story"></div>
+      </div>
+      <div>
+        <p class="sec-eye">Where are you right now?</p>
+        <div class="where" id="where"></div>
+      </div>
     </div>
+  </section>
 
-    <section class="flow" id="flow">
-      <p class="sec-eye">The process</p>
-      <h2 class="sec-h">Fix it in this order</h2>
-      <p class="flow-p">
-        Six steps come before the model is trained, and the order is not a matter of
-        taste. Step 3 is the one people get wrong: split the rows <b>before</b> any step
-        that learns from the data, or the final score is quietly too good.
-      </p>
-      <div class="strip" id="strip"></div>
-      <ol class="fsteps" id="fsteps"></ol>
+  <div class="tp-shell" id="shell">
+    <section class="tp-pane" id="pane-table">
+      <header class="tp-head"><span class="tp-dot tp-d1"></span>Meera’s table
+        <span class="tp-sub">10 real rows of 706 · scroll sideways for more</span></header>
+      <div class="tp-body">
+        <div class="tblscroll"><table class="rawtbl" id="rawtbl"></table></div>
+        <p class="tblnow" id="tblnow"></p>
+        <p class="tblkey" id="tblkey"></p>
+      </div>
+    </section>
+
+    <section class="tp-pane" id="pane-flow">
+      <header class="tp-head"><span class="tp-dot tp-d2"></span>The process
+        <span class="tp-sub">fix it in this order</span></header>
+      <div class="tp-body" id="flow">
+        <p class="flow-p">
+          Six steps come before the model is trained. Step 3 is the one people get
+          wrong: split the rows <b>before</b> any step that learns from the data.
+          Press a button on any problem — its questions open in the right panel.
+        </p>
+        <ol class="fsteps" id="fsteps"></ol>
+      </div>
+    </section>
+
+    <section class="tp-pane" id="pane-ask">
+      <header class="tp-head"><span class="tp-dot tp-d3"></span>Questions
+        <span class="tp-sub" id="asksub"></span></header>
+      <div class="tp-body" id="ask"></div>
     </section>
   </div>
-
-  <footer class="afoot">
-    <p>Already know what you need? <a href="#/all">See every decision on one page →</a></p>
-  </footer>
 </main>
 
-<!-- ══ SCREEN 1 · every decision on one page ═════════════════════════ -->
+<!-- ══ every decision, for someone who already knows the name ════════ -->
 <main class="screen arena" id="arena" hidden>
 
   <section class="wtop">
-    <a class="backlink" href="#/start">← New here? Start with a real table</a>
+    <a class="backlink" href="#/start">← Back to Meera’s table</a>
     <p class="hero-eye" id="heroEye"></p>
     <h1 class="hero-h">Which one,<br><em>and why.</em></h1>
     <p class="hero-p">
-      Every decision on one page, in the order you meet them. Click one, answer two or
-      three short questions, and it ends on <b>the one technique to use — and the
-      reason</b>.
+      Every decision on one page, in the order you meet them. Click one and its
+      questions <b>open in the right panel, beside Meera’s table</b>.
     </p>
 
     <div class="hero-tools">
@@ -101,29 +108,6 @@
        A missing card means the topic has not been learned yet — that is the
        honest answer, not a gap.</p>
   </footer>
-</main>
-
-<!-- ══ SCREEN 2/3 · one decision, then the verdict ════════════════════ -->
-<main class="screen play" id="play" hidden>
-
-  <div class="playbar">
-    <button class="pb-back" id="back">
-      <span>←</span> back
-    </button>
-    <div class="pb-mid">
-      <span class="pb-name" id="pbName"></span>
-      <div class="pb-track"><i id="pbFill"></i></div>
-      <span class="pb-step" id="pbStep"></span>
-    </div>
-    <div class="pb-pager">
-      <button id="prev" title="previous decision  (←)">◀</button>
-      <button id="next" title="next decision  (→)">▶</button>
-    </div>
-  </div>
-
-  <div class="crumbs" id="crumbs"></div>
-
-  <div class="playbody" id="playbody"></div>
 </main>
 
 <!-- ══ your stack ═════════════════════════════════════════════════════ -->

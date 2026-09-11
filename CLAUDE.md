@@ -251,6 +251,18 @@ learn from the training rows only. If the new technique fixes something visible
 in the real table on the start screen, point a problem at it in
 [`chooser-tour.js`](./17_Learning_As_Of_Now/Claude/chooser-tour.js).
 
+Every question in `FLOWS` carries a `hint`: what it is really asking, in simple
+English, using Meera's table as the example wherever one fits. Add
+`see: ["Column", …]` when the question is about particular columns, so the
+table lights them up while it is asked. A question without a hint is not
+finished — a beginner cannot answer "What are you comparing?" on its own.
+
+The three-panel layout (table | steps | questions) was chosen by the learner;
+ask before changing it. Never reuse a class name that `Claude/styles.css`
+already defines (`card`, `open`, `on`, `done`, `lit`, `strip`…) — the mind
+map's rules would land on the element. The chooser's state classes are all
+`is-…`.
+
 Never hand-edit `tree-data.js` or a generated `Content/index.html` — the next
 build overwrites them. To change a lesson's wording, change the notebook, the
 note, or `stories.json`. A page whose first lines contain `hand-authored` is
@@ -318,7 +330,7 @@ The website itself is `17_Learning_As_Of_Now/Claude/`:
 | `workspace.html` | three-pane reader — Content, Code, Handwritten Notes |
 | `journey.html` | the ML pipeline as a vertical tree, ticked as topics are learned |
 | `journey-data.js` | the hand-maintained stage → topic mapping behind it |
-| `chooser.html` | **When to Use What** — opens on *start here*: a real messy table and the eight steps that fix it, in order, each linking to its decision. Every decision is a flowchart you click down; the box you land on opens its card, simple first, and is recorded in "your stack" |
+| `chooser.html` | **When to Use What** — a short intro, then **three panels side by side**, each scrolling on its own: Meera's real table (left) · the eight steps and the problems each fixes (middle) · the questions of the picked decision (right). Questions stack one below another, each with a plain hint; changing an earlier answer redraws everything below; the table lights up and slides to the columns the question is about. The path ends on its card, simple first, which is recorded in "your stack". A second screen lists every decision for people who know the name |
 | `chooser-data.js` | the hand-written technique cards, grouped by pipeline stage, and the `FLOWS` decision tree per decision |
 | `chooser-tour.js` | the start screen: ten real rows of the attrition data, the problems in them, and the stage and decision that fix each one |
 

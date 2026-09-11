@@ -2319,6 +2319,11 @@ const NOT_A_CHOICE = {
      { pick: "<option name>" }                              an outcome
      { seq: ["<name>", "<name>", …] }                       do all, in order
 
+   A question also carries
+     hint: "..."      what it is really asking, in plain English, with an
+                      example from Meera's table (chooser-tour.js) where one fits
+     see: ["Col", …]  the columns of that table to light up while it is asked
+
    Every "pick" and every name in a "seq" must match an option `name` in that
    job exactly — build_site.py checks it. The questions are the whole point:
    they are what you actually ask yourself at the desk, in the order you ask.
@@ -2330,9 +2335,17 @@ const FLOWS = {
 
 describe: {
   q: "What do you want to know?",
+  hint: "Say what you want to learn about a column. For Meera's MonthlyIncome: " +
+        "“what is a normal salary?” is the middle and spread; “is it bunched at one " +
+        "end?” is lopsidedness; “does it rise with Age?” is how columns relate.",
+  see: ["MonthlyIncome", "Age"],
   a: [
     { label: "the middle, and the spread", to: {
       q: "Long tail, or extreme values?",
+      hint: "Are a few values far bigger than the rest? MonthlyIncome is like that: " +
+            "most people earn about 4,896, one earns 49,799. Those few drag the average " +
+            "up, so the middle value tells the truth better.",
+      see: ["MonthlyIncome"],
       a: [
         { label: "yes", to: { pick: "Median and IQR" } },
         { label: "no, it is symmetric", to: { pick: "Mean and standard deviation" } }
@@ -2343,12 +2356,23 @@ describe: {
 
 chart: {
   q: "How many columns at once?",
+  hint: "One column: how is Age spread out? Two: does MonthlyIncome change with " +
+        "Age? Many: how do all the number columns relate? Or you need a chart " +
+        "someone else will click through.",
+  see: ["Age", "MonthlyIncome"],
   a: [
     { label: "one", to: {
       q: "Numeric, or a category?",
+      hint: "A number column holds amounts, like Age or MonthlyIncome. A category " +
+            "column holds names, like Department or Gender.",
+      see: ["Age", "Department"],
       a: [
         { label: "numeric", to: {
           q: "Shape, or spread and outliers?",
+          hint: "Shape: where most values sit, and whether one side has a long tail. Spread " +
+                "and outliers: how wide the middle is, and which values sit far outside it, " +
+                "like Age 99.",
+          see: ["Age"],
           a: [
             { label: "the shape", to: { pick: "Histogram" } },
             { label: "spread and outliers", to: { pick: "Boxplot" } }
@@ -2357,18 +2381,27 @@ chart: {
       ] } },
     { label: "two", to: {
       q: "Both numeric?",
+      hint: "Two number columns, like Age and MonthlyIncome, give one dot per person. " +
+            "If one of the two is a date or a time, the points are joined in order " +
+            "instead.",
+      see: ["Age", "MonthlyIncome"],
       a: [
         { label: "yes", to: { pick: "Scatter plot" } },
         { label: "one of them is time", to: { pick: "Line chart" } }
       ] } },
     { label: "many", to: {
       q: "A handful, or lots?",
+      hint: "A handful is up to about five columns: every pair can get its own small " +
+            "plot. With more, there are too many pairs to draw, so one grid of colours " +
+            "shows them all.",
       a: [
         { label: "a handful", to: { pick: "Pairplot" } },
         { label: "lots", to: { pick: "Correlation heatmap" } }
       ] } },
     { label: "someone else will click it", to: {
       q: "A chart in a page, or an app?",
+      hint: "A chart the reader can hover over and zoom, or a small app with sliders " +
+            "and buttons that a colleague can use without you.",
       a: [
         { label: "a chart to hover and zoom", to: { pick: "Plotly" } },
         { label: "a whole app for a colleague", to: { pick: "Streamlit" } }
@@ -2377,19 +2410,33 @@ chart: {
 
 test: {
   q: "What are you comparing?",
+  hint: "Counts means you count people in groups — how many who work OverTime left, " +
+        "against how many who don't. Measurements means you compare a number — the " +
+        "average MonthlyIncome of people who left against people who stayed.",
+  see: ["OverTime", "Attrition", "MonthlyIncome"],
   a: [
     { label: "counts in categories", to: { pick: "Chi-square test" } },
     { label: "numeric measurements", to: {
       q: "How many groups?",
+      hint: "One group against a claimed number: “our average salary is 5,000 — is " +
+            "it?”. Two groups against each other: the salary of leavers against " +
+            "stayers.",
+      see: ["MonthlyIncome", "Attrition"],
       a: [
         { label: "one, against a claimed value", to: {
           q: "Do you know the population sd?",
+          hint: "“sd” is the standard deviation: the true spread of the whole population. " +
+                "You almost never know it in advance. If all you have is your own sample, " +
+                "answer no.",
           a: [
             { label: "yes, and n is large", to: { pick: "One-sample z-test" } },
             { label: "no — the usual case", to: { pick: "One-sample t-test" } }
           ] } },
         { label: "two", to: {
           q: "Same subjects measured twice?",
+          hint: "Same people measured twice: each employee's score before and after a " +
+                "training course. Different people: the people who left against the people " +
+                "who stayed.",
           a: [
             { label: "yes — before and after", to: { pick: "Paired t-test" } },
             { label: "no — separate people", to: { pick: "Two-sample t-test" } }
@@ -2399,6 +2446,8 @@ test: {
 
 synth: {
   q: "What do you want to practise?",
+  hint: "Pick the kind of answer your practice table should have: a number (like a " +
+        "salary), a label (like Yes or No), or no answer at all, just groups.",
   a: [
     { label: "predicting a number", to: { pick: "make_regression" } },
     { label: "predicting a label",  to: { pick: "make_classification" } },
@@ -2412,14 +2461,24 @@ clean: { seq: ["Fix inconsistent spellings", "drop_duplicates()", "Check and fix
 
 outliers: {
   q: "Is this value possible at all?",
+  hint: "Could this value really happen? Age 99 for someone still at work almost " +
+        "certainly cannot — it is a typing mistake. 137 km from home can happen; it " +
+        "is just rare.",
+  see: ["Age", "DistanceFromHome"],
   a: [
     { label: "impossible — age 300, negative price", to: { pick: "Drop the row" } },
     { label: "possible, just rare", to: {
       q: "Is the extreme value the thing you care about?",
+      hint: "Sometimes the rare value is the whole point — a fraud, a machine failure, " +
+            "a sales spike. Other times it is just noise that pulls everything else " +
+            "off.",
       a: [
         { label: "yes — fraud, failure, a spike", to: { pick: "Keep them, use a model that does not care" } },
         { label: "no, it is noise", to: {
           q: "Is the column roughly bell-shaped?",
+          hint: "Bell-shaped means most values sit in the middle and thin out evenly on " +
+                "both sides. MonthlyIncome is not: it has a long tail to the right.",
+          see: ["MonthlyIncome"],
           a: [
             { label: "yes", to: { pick: "Z-score / 3-sd rule" } },
             { label: "no, it is skewed", to: { pick: "IQR fence, then clip" } }
@@ -2435,13 +2494,24 @@ split: { seq: ["train_test_split(stratify=y)", "Pipeline + ColumnTransformer"] }
 
 missing: {
   q: "How much of the column is blank?",
+  hint: "Count the blanks in that column. In Meera's file MonthlyIncome has 28 " +
+        "blanks in 706 rows — about 4%.",
+  see: ["MonthlyIncome"],
   a: [
     { label: "under ~5%, scattered", to: { pick: "df.dropna()" } },
     { label: "more than that", to: {
       q: "What kind of column is it?",
+      hint: "Numeric holds amounts, like Age. Text holds names, like Gender. Time order " +
+            "means each row follows the one before, like daily readings — Meera's rows " +
+            "are not in time order.",
+      see: ["Age", "Gender"],
       a: [
         { label: "numeric", to: {
           q: "What shape is it?",
+          hint: "Long tail: a few values far bigger than the rest, like MonthlyIncome. " +
+                "Symmetric: values spread evenly around the middle. Columns related: other " +
+                "columns can predict this one, like Age and YearsAtCompany.",
+          see: ["MonthlyIncome", "Age", "YearsAtCompany"],
           a: [
             { label: "long tail, or outliers", to: { pick: "SimpleImputer(strategy='median')" } },
             { label: "roughly symmetric",      to: { pick: "SimpleImputer(strategy='mean')" } },
@@ -2449,6 +2519,9 @@ missing: {
           ] } },
         { label: "text / category", to: {
           q: "Does the blank itself mean something?",
+          hint: "Sometimes a blank is an answer — no second phone number, never upgraded. " +
+                "Then keep it as its own value. If it is just missing, fill it with the " +
+                "most common value.",
           a: [
             { label: "yes — no second phone, never upgraded", to: { pick: "Fill with a 'Missing' category" } },
             { label: "no, it is just absent", to: { pick: "SimpleImputer(strategy='most_frequent')" } }
@@ -2459,14 +2532,25 @@ missing: {
 
 encode: {
   q: "What is this column for?",
+  hint: "The target is the answer you predict — Attrition in Meera's table. Input " +
+        "features are the clues the model learns from — Gender, Department, " +
+        "Education.",
+  see: ["Attrition", "Gender", "Department", "Education"],
   a: [
     { label: "it is the target y", to: { pick: "LabelEncoder" } },
     { label: "it is an input feature", to: {
       q: "Is the order real? Low < Medium < High",
+      hint: "Education and PerformanceRating have a real order: High School comes " +
+            "before Bachelors, Low before Medium. Gender and Department do not: Sales " +
+            "is not “more” than HR.",
+      see: ["Education", "PerformanceRating", "Department"],
       a: [
         { label: "yes, the order means something", to: { pick: "OrdinalEncoder" } },
         { label: "no, they are just names", to: {
           q: "A quick look, or the real pipeline?",
+          hint: "A quick look is exploring in a notebook. The real pipeline is the code " +
+                "that trains and serves the model, and it must turn next month's data into " +
+                "exactly the same columns.",
           a: [
             { label: "just exploring", to: { pick: "pd.get_dummies()" } },
             { label: "the real pipeline", to: { pick: "OneHotEncoder" } }
@@ -2476,6 +2560,10 @@ encode: {
 
 shape: {
   q: "How heavy is the tail?",
+  hint: "Heavy: the biggest values are tens of times the typical one — " +
+        "MonthlyIncome's typical value is 4,896, its largest 49,799. Mild: the big " +
+        "values are only a few times bigger, or the column is counts.",
+  see: ["MonthlyIncome"],
   a: [
     { label: "heavy — income, price, page views", to: { pick: "FunctionTransformer(np.log1p)" } },
     { label: "mild, or it is count data", to: { pick: "Square-root transform" } }
@@ -2483,18 +2571,32 @@ shape: {
 
 scale: {
   q: "Does your model measure distance, or fit a weight?",
+  hint: "Some models compare rows by how far apart their numbers are, or give each " +
+        "column a weight. For them, MonthlyIncome in thousands would drown out Age " +
+        "in tens. Trees only ask “is Age above 40?”, so units do not matter.",
+  see: ["Age", "MonthlyIncome"],
   a: [
     { label: "no — trees, forests, boosting, Naive Bayes", to: { pick: "Do not scale at all" } },
     { label: "yes — KNN, SVM, PCA, LDA, linear models", to: {
       q: "Are you scaling columns, or whole rows?",
+      hint: "Almost always columns: bring Age and MonthlyIncome onto a similar range. " +
+            "Rows only for things like word counts, where each row should end up the " +
+            "same overall size.",
+      see: ["Age", "MonthlyIncome"],
       a: [
         { label: "rows — word counts, a signal vector", to: { pick: "Normalizer" } },
         { label: "columns, the normal case", to: {
           q: "Did extreme values survive cleaning?",
+          hint: "Are real but extreme values still there, like the 49,799 salary? A scaler " +
+                "built on the average would let them squash every other value.",
+          see: ["MonthlyIncome"],
           a: [
             { label: "yes, and they are real", to: { pick: "RobustScaler" } },
             { label: "no, the column is clean", to: {
               q: "Do you need a guaranteed 0–1 range?",
+              hint: "Some tools need every value between 0 and 1, like image pixels or some " +
+                    "neural networks. If nothing asks for it, the standard version is the safer " +
+                    "default.",
               a: [
                 { label: "yes", to: { pick: "MinMaxScaler" } },
                 { label: "no", to: { pick: "StandardScaler" } }
@@ -2507,17 +2609,27 @@ scale: {
 
 select: {
   q: "What is actually wrong with the columns?",
+  hint: "Never vary: the same value in every row. Repeat each other: two columns " +
+        "that say the same thing. Too many: you want the model to choose. Overlap: " +
+        "many columns share information, so dropping any one loses some.",
   a: [
     { label: "some never vary at all", to: { pick: "VarianceThreshold" } },
     { label: "some repeat each other", to: { pick: "Correlation check, drop one of a pair" } },
     { label: "too many — let the model judge", to: {
       q: "Does your model report importances or coefficients?",
+      hint: "Trees report how much each column helped, and linear models give each " +
+            "column a weight. KNN and SVM give neither, so columns have to be tested by " +
+            "trying them.",
       a: [
         { label: "yes — trees, linear models", to: { pick: "RFE" } },
         { label: "no — KNN, SVM", to: { pick: "SequentialFeatureSelector (forward / backward)" } }
       ] } },
     { label: "they overlap, and dropping any loses signal", to: {
       q: "Do you have class labels, and is separating those classes the point?",
+      hint: "Labels are answers like Attrition = Yes or No. If the goal is to tell " +
+            "leavers from stayers, squash the columns in the way that separates those " +
+            "two groups best.",
+      see: ["Attrition"],
       a: [
         { label: "yes — it is a classifier", to: { pick: "LDA as a reduction step" } },
         { label: "no, or I just want the table narrower", to: { pick: "PCA" } }
@@ -2528,19 +2640,31 @@ select: {
 
 reg: {
   q: "Is the relationship a straight line?",
+  hint: "Plot the number you predict against one clue. If the dots follow a " +
+        "straight line — salary rising steadily with years — say yes. If they curve " +
+        "or jump in steps, it bends.",
+  see: ["MonthlyIncome", "YearsAtCompany"],
   a: [
     { label: "yes, roughly", to: {
       q: "Are some y values plainly wrong — a sensor default, a stuck amount, a failed parse?",
+      hint: "y is the number you predict. Are some of those numbers mistakes — a salary " +
+            "stuck at 0, or 99999 left behind by a failed import?",
       a: [
         { label: "yes, and I want to know which rows", to: { pick: "RANSACRegressor" } },
         { label: "yes, but keep every row, just tamed", to: { pick: "HuberRegressor" } },
         { label: "yes, and it is a small table", to: { pick: "TheilSenRegressor" } },
         { label: "no, the target column is trustworthy", to: {
       q: "Are there many columns, or do they repeat each other?",
+      hint: "Many columns, or columns that move together like Age and YearsAtCompany, " +
+            "make a plain straight line jumpy. A penalty keeps it calm.",
+      see: ["Age", "YearsAtCompany"],
       a: [
         { label: "no, a small clean set", to: { pick: "LinearRegression" } },
         { label: "yes", to: {
           q: "Do you want the weak columns removed?",
+          hint: "Removed: columns that barely help get a weight of exactly zero, so you can " +
+                "see which ones matter. Kept: every column stays, just with smaller " +
+                "weights.",
           a: [
             { label: "yes, drop them to zero", to: { pick: "Lasso" } },
             { label: "no, keep them all, just calmer", to: { pick: "Ridge" } },
@@ -2550,10 +2674,14 @@ reg: {
       ] } },
     { label: "no, it bends", to: {
       q: "One clear curve, or steps and regions?",
+      hint: "One curve: the dots bend smoothly, like a U or an arc. Steps: the answer " +
+            "jumps at thresholds, like pay jumping at each new job level.",
       a: [
         { label: "one clear curve", to: { pick: "PolynomialFeatures + LinearRegression" } },
         { label: "steps, regions, thresholds", to: {
           q: "Explanation, or accuracy?",
+          hint: "Explanation: you must show someone why each prediction was made. Accuracy: " +
+                "the best score matters more than the reason.",
           a: [
             { label: "I must explain it", to: { pick: "DecisionTreeRegressor" } },
             { label: "I need the score",  to: { pick: "RandomForestRegressor" } }
@@ -2563,15 +2691,26 @@ reg: {
 
 clf: {
   q: "How much data do you have?",
+  hint: "Meera has 706 rows and about 16 columns once the words are encoded — a " +
+        "normal amount. Very little is a few dozen rows. Many columns, few rows " +
+        "means more columns than examples to learn from.",
   a: [
     { label: "very little", to: {
       q: "Can the boundary be written as a rule?",
+      hint: "Could a simple rule split the classes, like “works overtime and earns " +
+            "under 3,000 → leaves”? If the classes mix irregularly, no. Text data " +
+            "counts as rule-friendly here.",
+      see: ["OverTime", "MonthlyIncome"],
       a: [
         { label: "no, it is irregular", to: { pick: "KNeighborsClassifier" } },
         { label: "yes, or it is text", to: { pick: "GaussianNB / MultinomialNB" } }
       ] } },
     { label: "a normal amount", to: {
       q: "What do you need most?",
+      hint: "For Meera: a chance of leaving per employee, so HR can talk to the " +
+            "riskiest first → a probability. A rule HR can read → explain the decision. " +
+            "Or simply the best score.",
+      see: ["Attrition"],
       a: [
         { label: "a probability per row, and a movable threshold", to: { pick: "LogisticRegression" } },
         { label: "to explain the decision", to: { pick: "DecisionTreeClassifier" } },
@@ -2581,6 +2720,9 @@ clf: {
       ] } },
     { label: "many columns, few rows", to: {
       q: "Are the classes roughly round, similar clouds?",
+      hint: "Plot two columns and colour the dots by class. Round, similar-sized clouds " +
+            "suit a straight boundary. Odd shapes with a clear gap between them suit " +
+            "the widest gap.",
       a: [
         { label: "yes", to: { pick: "LinearDiscriminantAnalysis" } },
         { label: "no, but there is a clear gap", to: { pick: "SVC" } }
@@ -2589,10 +2731,15 @@ clf: {
 
 clu: {
   q: "Do you already know how many groups there are?",
+  hint: "Sometimes the business decides: “we want 4 customer segments”. Otherwise " +
+        "you have to find a sensible number from the data itself.",
   a: [
     { label: "yes, the business names them", to: { pick: "KMeans" } },
     { label: "no idea", to: {
       q: "Do you want to see every possible k at once?",
+      hint: "k is the number of groups. A dendrogram draws every possible number of " +
+            "groups as one tree. The elbow method tries a few values of k and stops " +
+            "where the gain flattens out.",
       a: [
         { label: "yes, show me the whole history", to: { pick: "AgglomerativeClustering + dendrogram" } },
         { label: "no, just find the elbow", to: { pick: "KMeans" } }
@@ -2603,15 +2750,24 @@ clu: {
 
 regmetric: {
   q: "What do you need the number for?",
+  hint: "Better than guessing: does the model beat always predicting the average " +
+        "salary? Real units: how far off, in rupees, is a typical prediction?",
+  see: ["MonthlyIncome"],
   a: [
     { label: "is this better than guessing the mean?", to: {
       q: "Comparing models with different column counts?",
+      hint: "Adding any column nudges plain R² up, even a useless one. If the models " +
+            "you compare use different numbers of columns, use the version that charges " +
+            "for each column.",
       a: [
         { label: "yes", to: { pick: "Adjusted R²" } },
         { label: "no, one fixed model", to: { pick: "R²" } }
       ] } },
     { label: "how far off am I, in real units?", to: {
       q: "Should one big miss hurt more than several small ones?",
+      hint: "Missing one salary by 10,000, or ten salaries by 1,000 each: should the " +
+            "single big miss count as worse?",
+      see: ["MonthlyIncome"],
       a: [
         { label: "yes, big misses are expensive", to: { pick: "RMSE" } },
         { label: "no, every rupee of error is equal", to: { pick: "MAE" } }
@@ -2620,14 +2776,24 @@ regmetric: {
 
 clfmetric: {
   q: "Have you looked at the confusion matrix yet?",
+  hint: "The confusion matrix is a small table: how many leavers the model caught, " +
+        "how many it missed, and how many stayers it wrongly flagged. Every other " +
+        "score is built from it.",
+  see: ["Attrition"],
   a: [
     { label: "not yet", to: { pick: "Confusion matrix" } },
     { label: "yes, I have", to: {
       q: "Are the classes balanced?",
+      hint: "Balanced means roughly half and half. Meera's are not: 71% stayed and 29% " +
+            "left.",
+      see: ["Attrition"],
       a: [
         { label: "yes, and both mistakes cost the same", to: { pick: "Accuracy" } },
         { label: "no, one class is rare", to: {
           q: "Which mistake is expensive?",
+          hint: "For Meera, a false alarm is flagging someone who was never going to leave. " +
+                "A miss is not flagging someone who then leaves. Which one costs HR more?",
+          see: ["Attrition"],
           a: [
             { label: "a false alarm", to: { pick: "Precision" } },
             { label: "a miss", to: { pick: "Recall" } },
@@ -2639,14 +2805,21 @@ clfmetric: {
 
 trust: {
   q: "Are the rows in time order?",
+  hint: "Time order means each row happened after the one before, like monthly " +
+        "sales. Shuffling those would let the model peek at the future. Meera's " +
+        "rows are not in time order.",
   a: [
     { label: "yes — never shuffle them", to: { pick: "Single hold-out split" } },
     { label: "no, order is meaningless", to: {
       q: "Plenty of rows, or few?",
+      hint: "With tens of thousands of rows, one test split gives a steady score. With " +
+            "a few hundred, like Meera's 706, one split can be lucky or unlucky.",
       a: [
         { label: "plenty, and I want a fast answer", to: { pick: "Single hold-out split" } },
         { label: "few — one split cannot be trusted", to: {
           q: "Predicting a label, or a number?",
+          hint: "A label, like Attrition Yes or No. A number, like MonthlyIncome.",
+          see: ["Attrition", "MonthlyIncome"],
           a: [
             { label: "a label", to: { pick: "StratifiedKFold" } },
             { label: "a number", to: { pick: "KFold + cross_val_score" } }
@@ -2656,6 +2829,9 @@ trust: {
 
 tune: {
   q: "How big is the search space?",
+  hint: "Count the combinations you want to try: 3 values for one setting and 3 for " +
+        "another is 9 — small. Many settings with wide ranges quickly runs into " +
+        "thousands.",
   a: [
     { label: "a few knobs, a few values each", to: { pick: "GridSearchCV" } },
     { label: "many knobs, wide ranges, or a deadline", to: { pick: "RandomizedSearchCV" } }
@@ -2665,6 +2841,8 @@ tune: {
 
 ship: {
   q: "What are you saving?",
+  hint: "A trained scikit-learn model or pipeline, which holds large arrays of " +
+        "numbers — or a small plain Python object, like a dictionary of settings.",
   a: [
     { label: "a scikit-learn model or pipeline", to: { pick: "joblib.dump" } },
     { label: "a plain Python object, no big arrays", to: { pick: "pickle" } }

@@ -1,26 +1,31 @@
 /* ══════════════════════════════════════════════════════════════════════
-   When to Use What — four screens over the same data.
+   When to Use What — one page in three panels, plus a wall of decisions.
 
-     start here   a real, messy table, and the eight stages that fix it in
-                  order; every problem in the table links to its decision
-     the arena    every decision on one page, for someone who knows what
-                  they are looking for
-     the ask      one question at a time, one screen each
-     the verdict  the technique you landed on: one plain sentence, the code,
-                  when to use it — and, behind "More detail", the mechanism
-                  and the rivals it beat
+     start here   a short intro (Meera's story, "where are you?"), then three
+                  panels side by side, each scrolling on its own:
+                    left    Meera's real table, lighting up the columns the
+                            current question is about
+                    middle  the eight stages, top to bottom, with the problems
+                            each one fixes and a button per problem
+                    right   the questions of the decision you picked, one
+                            below another; answering opens the next beneath
+                            it, changing an earlier answer redraws everything
+                            below; the path ends on the technique's card
+     the arena    every decision on one page, for someone who already knows
+                  what they want; choosing one opens it in the right panel
 
-   The data is chooser-data.js (SPACES in pipeline order, FLOWS) and
-   chooser-tour.js (the table and its problems); neither is touched here.
-   FLOWS[jobId] is a tree of questions whose leaves name techniques in that
-   job's options; a `seq` node is a checklist instead of a fork — those are
-   not rivals, you do all of them, in order.
+   The data is chooser-data.js (SPACES in pipeline order; FLOWS, whose
+   questions carry a plain `hint` and the `see` columns to light up) and
+   chooser-tour.js (the table and its problems). Neither is touched here.
 
-   The URL carries the whole position, so any screen can be linked to:
-       #/start                the table and the process (the default)
+   State classes are all `is-…`: styles.css already owns .card .open .on
+   .done .lit .dim .strip .hidden for the mind map, and borrowing any of
+   those names drags the map's styling onto this page.
+
+   The URL carries the position, so any of it can be linked to:
+       #/start                the page (the default)
        #/all                  every decision
-       #/d/<jobId>            the decision, from the top
-       #/d/<jobId>/1-0-2      after those three answers
+       #/d/<jobId>/1-0        a decision open in the right panel, after those answers
    ══════════════════════════════════════════════════════════════════════ */
 (function () {
   "use strict";
@@ -59,7 +64,7 @@
     var text = n ? n.title : folder.split("/").pop().replace(/^\d+_/, "").replace(/_/g, " ");
     return n && n.lesson
       ? '<a class="lz" href="' + esc(n.lesson) + '">' + esc(text) + " →</a>"
-      : '<span class="lz off">' + esc(text) + "</span>";
+      : '<span class="lz is-off">' + esc(text) + "</span>";
   }
 
   /* ── flatten the stages into one ordered list of decisions ─────────── */
@@ -78,6 +83,9 @@
 
   var TOTAL_TECHNIQUES = JOBS.reduce(function (n, e) { return n + e.job.options.length; }, 0);
 
+  var PROB = {};
+  TOUR.problems.forEach(function (p) { PROB[p.id] = p; });
+
   /* ── what you have chosen, kept between visits ─────────────────────── */
   var picks = (function () {
     try { return JSON.parse(localStorage.getItem(PICK_KEY)) || {}; }
@@ -87,37 +95,8 @@
     try { localStorage.setItem(PICK_KEY, JSON.stringify(picks)); } catch (e) {}
   }
 
-  /* ══════════════════════════════════════════════════════════════════
-     the shape of a flow
-     ══════════════════════════════════════════════════════════════════ */
-
-  /* how many questions can still be asked below here, at most */
-  function depthOf(n) {
-    if (!n || n.pick || n.seq) return 0;
-    return 1 + n.a.reduce(function (m, a) { return Math.max(m, depthOf(a.to)); }, 0);
-  }
-
-  /* walk a trail of answer indexes down from the root */
-  function nodeAt(jobId, trail) {
-    var n = FLOWS[jobId];
-    for (var k = 0; k < trail.length; k++) {
-      if (!n || !n.a || !n.a[trail[k]]) return null;
-      n = n.a[trail[k]].to;
-    }
-    return n;
-  }
-  function labelsAlong(jobId, trail) {
-    var out = [], n = FLOWS[jobId];
-    for (var k = 0; k < trail.length; k++) {
-      if (!n || !n.a || !n.a[trail[k]]) break;
-      out.push({ q: n.q, a: n.a[trail[k]].label });
-      n = n.a[trail[k]].to;
-    }
-    return out;
-  }
-
-  /* the shortest trail that reaches a named technique, so a pick made
-     earlier can be re-opened straight from the arena */
+  /* the first trail through a flow that reaches a named technique, so a
+     card can be opened straight from the arena, the stack or a rival */
   function trailTo(jobId, name) {
     var found = null;
     (function dig(n, trail) {
@@ -130,34 +109,71 @@
   }
 
   /* ══════════════════════════════════════════════════════════════════
-     which screen is showing
+     screens, and scrolling inside the panels
      ══════════════════════════════════════════════════════════════════ */
-  var SCREENS = ["start", "arena", "play"];
-  var screen = "start";     /* what is on screen now                       */
-  var from = "start";       /* where a decision was opened from, for ←     */
+  var screen = "start";
   var scrollMem = {};       /* a hidden screen forgets its scroll position */
 
   function showScreen(name) {
-    if (screen !== name && screen !== "play") scrollMem[screen] = $(screen).scrollTop;
-    SCREENS.forEach(function (s) { $(s).hidden = s !== name; });
-    if (screen !== name && name !== "play") $(name).scrollTop = scrollMem[name] || 0;
+    if (screen === name) return;
+    scrollMem[screen] = $(screen).scrollTop;
+    $("start").hidden = name !== "start";
+    $("arena").hidden = name !== "arena";
+    $(name).scrollTop = scrollMem[name] || 0;
     screen = name;
-    if (name === "start") measure();
   }
   function goScreen(name) {
-    cur = null;
+    if (name === "arena" && cur) closeDecision(true);
     showScreen(name);
     setHash();
     paintArena();
   }
-  function backLabel() { return from === "arena" ? "all decisions" : "start here"; }
+
+  /* on a narrow screen the panels stack and stop scrolling on their own */
+  function stacked() {
+    return !!(window.matchMedia && matchMedia("(max-width: 1000px)").matches);
+  }
+
+  /* where el sits inside a panel, from layout offsets — a bounding box would
+     include the rise animation's transform and land a few pixels short */
+  function offsetIn(el, box) {
+    var t = 0;
+    while (el && el !== box) { t += el.offsetTop; el = el.offsetParent; }
+    return el === box ? t : null;
+  }
+
+  /* bring el into view inside one panel, without moving the whole page */
+  function scrollInPane(body, el, how) {
+    if (!body || !el) return;
+    if (stacked() || body.scrollHeight <= body.clientHeight + 1) {
+      el.scrollIntoView({ behavior: smooth(), block: how === "center" ? "center" :
+                                                   how === "start" ? "start" : "nearest" });
+      return;
+    }
+    var top = offsetIn(el, body);
+    if (top === null) top = el.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
+    var h = el.offsetHeight, view = body.clientHeight, target;
+    if (how === "start") target = top - 12;
+    else if (how === "center") target = top - (view - h) / 2;
+    else {                                   /* only move if it is out of sight */
+      if (top >= body.scrollTop && top + h <= body.scrollTop + view) return;
+      target = top + h > body.scrollTop + view ? Math.min(top - 12, top + h - view + 24) : top - 12;
+    }
+    body.scrollTo({ top: Math.max(0, target), behavior: smooth() });
+  }
+
+  /* scroll the page so the three panels fill the screen (or, stacked,
+     so the questions are in sight) */
+  function showShell() {
+    if (screen !== "start") showScreen("start");
+    var s = $("start"), el = stacked() ? $("pane-ask") : $("shell");
+    var top = el.getBoundingClientRect().top - s.getBoundingClientRect().top + s.scrollTop;
+    if (Math.abs(top - s.scrollTop) > 2) s.scrollTo({ top: top, behavior: smooth() });
+  }
 
   /* ══════════════════════════════════════════════════════════════════
-     SCREEN 0 · start here
+     the intro
      ══════════════════════════════════════════════════════════════════ */
-  var stageOf = {};
-  SPACES.forEach(function (sp) { stageOf[sp.id] = sp; });
-
   function buildStart() {
     $("where").innerHTML = TOUR.where.map(function (w) {
       return '<button class="wbtn" data-go="' + esc(w.go) + '">' +
@@ -175,20 +191,24 @@
 
     buildTable();
     buildFlow();
-    wireTour();
+    renderAsk();
+    wire();
   }
 
   function go(where) {
     if (where === "all") { goScreen("arena"); q.focus(); return; }
     var m = /^(job|step):(\w+)$/.exec(where);
-    if (m && m[1] === "job") { openJob(m[2]); return; }
-    var el = m ? $("step-" + m[2]) : $(where);
-    if (!el) return;
-    el.scrollIntoView({ behavior: smooth(), block: "start" });
-    if (m) flash(el);
+    if (m && m[1] === "job") { openDecision(m[2], [], null, true); return; }
+    showShell();
+    if (m) {
+      var st = $("step-" + m[2]);
+      if (st) { scrollInPane($("flow"), st, "start"); flash(st); }
+    }
   }
 
-  /* ── the table, with every problem cell tinted in its stage's colour ── */
+  /* ══════════════════════════════════════════════════════════════════
+     left panel · the table
+     ══════════════════════════════════════════════════════════════════ */
   function buildTable() {
     var cellP = {}, colP = {}, rowP = {};
     function add(map, k, p) { (map[k] = map[k] || []).push(p); }
@@ -201,9 +221,8 @@
 
     var head = '<tr><th class="rn">row</th>' + TOUR.cols.map(function (c) {
       var cp = colP[c] || [];
-      /* let long camelCase headers break into words, so the whole table —
-         the answer column above all — fits without scrolling on a desktop */
-      return "<th" + (cp.length ? ' data-p="' + ids(cp) + '"' : "") + ">" +
+      /* long camelCase headers may break into words, to keep columns narrow */
+      return '<th data-c="' + esc(c) + '"' + (cp.length ? ' data-p="' + ids(cp) + '"' : "") + ">" +
         esc(c).replace(/([a-z])([A-Z])/g, "$1<wbr>$2") +
         (c === TOUR.target ? '<span class="tg">the answer</span>' : "") + "</th>";
     }).join("") + "</tr>";
@@ -220,7 +239,8 @@
           var cls = [];
           if (v === null) cls.push("nan");
           if (own.length) { cls.push("pc", "s-" + own[0].stage); tinted[own[0].stage] = 1; }
-          return "<td" + (cls.length ? ' class="' + cls.join(" ") + '"' : "") +
+          return '<td data-c="' + esc(col) + '"' +
+              (cls.length ? ' class="' + cls.join(" ") + '"' : "") +
               (all.length ? ' data-p="' + ids(all) + '"' : "") +
               (own.length ? ' data-own="' + ids(own) + '"' : "") + ">" + cellText(v) + "</td>";
         }).join("") +
@@ -230,13 +250,12 @@
     $("rawtbl").innerHTML = "<thead>" + head + "</thead><tbody>" + body + "</tbody>";
 
     $("tblkey").innerHTML =
-      "<span>" + TOUR.rows.length + " of the file’s rows · <i>row</i> = where it sits in the file</span>" +
+      "<span><i>row</i> = where it sits in the file</span>" +
       SPACES.filter(function (sp) { return tinted[sp.id]; }).map(function (sp) {
         return '<span class="s-' + sp.id + '"><b></b>fixed in step ' + esc(sp.n) + " · " +
                esc(sp.name) + "</span>";
       }).join("") +
-      "<span><code>NaN</code> = a blank cell · <code>␣</code> = a hidden space</span>" +
-      '<span class="kh">Hover a step below to light up its cells</span>';
+      "<span><code>NaN</code> = a blank cell</span><span><code>␣</code> = a hidden space</span>";
   }
   function cellText(v) {
     if (v === null) return "NaN";
@@ -244,21 +263,62 @@
     return esc(t) + (t !== s ? '<i class="sp" title="a hidden space">␣</i>' : "");
   }
 
-  /* ── the eight stages, each with what it fixes in this table ───────── */
+  /* the table lights up whatever you are pointing at, and otherwise what
+     the open decision is about */
+  var base = { ids: [], cols: [] };
+
+  function light(ids, cols) {
+    var tbl = $("rawtbl");
+    if (!ids && !cols) { ids = base.ids; cols = base.cols; }
+    ids = ids || []; cols = cols || [];
+    tbl.querySelectorAll(".is-lit").forEach(function (c) { c.classList.remove("is-lit"); });
+    var any = false;
+    function on(sel) {
+      tbl.querySelectorAll(sel).forEach(function (c) { c.classList.add("is-lit"); any = true; });
+    }
+    ids.forEach(function (id) { on('[data-p~="' + id + '"]'); });
+    cols.forEach(function (c) { on('[data-c="' + c + '"]'); });
+    tbl.classList.toggle("is-focus", any);
+  }
+
+  /* the table is wider than its panel: slide it sideways so the lit
+     columns are actually in sight (only when the open decision changes,
+     never on hover, so the table does not jump about under the mouse) */
+  function revealLit() {
+    var tbl = $("rawtbl"), box = tbl.parentNode;
+    var lit = tbl.querySelectorAll(".is-lit");
+    if (!lit.length) return;
+    var br = box.getBoundingClientRect(), lo = Infinity, hi = -Infinity;
+    lit.forEach(function (c) {
+      var r = c.getBoundingClientRect();
+      lo = Math.min(lo, r.left - br.left + box.scrollLeft);
+      hi = Math.max(hi, r.right - br.left + box.scrollLeft);
+    });
+    var view = box.clientWidth, rn = tbl.querySelector(".rn"), pin = rn ? rn.offsetWidth : 0;
+    if (lo >= box.scrollLeft + pin && hi <= box.scrollLeft + view) return;   /* already in sight */
+    var target = hi - lo <= view - pin ? lo - pin - (view - pin - (hi - lo)) / 2 : lo - pin - 8;
+    box.scrollTo({ left: Math.max(0, target), behavior: smooth() });
+  }
+
+  function caption() {
+    var c = $("tblnow");
+    if (!cur) {
+      c.innerHTML = "Point at a problem in the middle panel to see its cells here.";
+    } else if (base.cols.length) {
+      c.innerHTML = "Lit up: <b>" + base.cols.map(esc).join(" · ") +
+                    "</b> — the columns the waiting question is about.";
+    } else if (base.ids.length) {
+      c.innerHTML = "Lit up: the cells of the problem you picked.";
+    } else {
+      c.innerHTML = "This decision is not about particular cells of the table.";
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     middle panel · the stages
+     ══════════════════════════════════════════════════════════════════ */
   function buildFlow() {
     var fitAt = SPACES.map(function (sp) { return sp.id; }).indexOf(TOUR.fitAfter) + 1;
-    function pills(list) {
-      return list.map(function (sp) {
-        return '<button class="s-' + sp.id + '" data-stage="' + sp.id + '"><b>' + esc(sp.n) +
-               "</b>" + esc(sp.name) + "</button>";
-      }).join('<span class="arr">→</span>');
-    }
-    $("strip").innerHTML =
-      '<div class="sgrp"><span class="gl">Before the model is trained</span>' +
-        '<div class="pills">' + pills(SPACES.slice(0, fitAt)) + "</div></div>" +
-      '<div class="sfit"><span class="fitpill">model.fit()</span><span class="arr">→</span>' +
-        '<div class="sgrp"><span class="gl">After it is trained</span>' +
-          '<div class="pills">' + pills(SPACES.slice(fitAt)) + "</div></div></div>";
 
     $("fsteps").innerHTML = SPACES.map(function (sp, i) {
       var probs = TOUR.problems.filter(function (p) { return p.stage === sp.id; });
@@ -294,74 +354,383 @@
         '<span class="pdot"></span>' +
         '<span class="ptxt">' + p.text + "</span>" +      /* hand-written HTML */
         (e ? '<button class="pgo" data-job="' + esc(e.job.id) + '">' + esc(e.job.icon) + " " +
-             esc(e.job.name) + " →</button>" : "") +
+             esc(e.job.name) + '<b class="car">›</b></button>' : "") +
       "</li>";
   }
   function jobChip(job) {
     return '<button class="fjob" data-job="' + esc(job.id) + '">' +
-        "<b>" + esc(job.icon) + " " + esc(job.name) + "</b><small>" + esc(job.q) + "</small>" +
+        "<b>" + esc(job.icon) + " " + esc(job.name) + '<i class="car">›</i></b>' +
+        "<small>" + esc(job.q) + "</small>" +
       "</button>";
   }
 
-  /* ── pointing at a stage or a problem lights its cells in the table ── */
-  function wireTour() {
-    var tbl = $("rawtbl");
-    function light(ids) {
-      tbl.querySelectorAll(".lit").forEach(function (c) { c.classList.remove("lit"); });
-      var any = false;
-      (ids || []).forEach(function (id) {
-        tbl.querySelectorAll('[data-p~="' + id + '"]').forEach(function (c) {
-          c.classList.add("lit"); any = true;
-        });
-      });
-      tbl.classList.toggle("focus", any);
-    }
+  function wire() {
+    var tbl = $("rawtbl"), flow = $("flow");
     function idsFor(el) {
       var p = el.closest(".prob");
       if (p) return [p.dataset.prob];
-      var s = el.closest("[data-stage]");
+      var s = el.closest(".fstep");
       if (s) return TOUR.problems.filter(function (x) { return x.stage === s.dataset.stage; })
                                  .map(function (x) { return x.id; });
       return null;
     }
-    $("flow").addEventListener("mouseover", function (ev) { light(idsFor(ev.target)); });
-    $("flow").addEventListener("focusin",   function (ev) { light(idsFor(ev.target)); });
-    $("flow").addEventListener("mouseleave", function () { light(null); });
+    function point(ev) {
+      var ids = idsFor(ev.target);
+      if (ids) light(ids, []); else light();
+    }
+    flow.addEventListener("mouseover", point);
+    flow.addEventListener("focusin", point);
+    flow.addEventListener("mouseleave", function () { light(); });
 
     tbl.addEventListener("mouseover", function (ev) {
       var td = ev.target.closest("[data-own]");
-      light(td ? td.dataset.own.split(" ") : null);
+      if (td) light(td.dataset.own.split(" "), []); else light();
     });
-    tbl.addEventListener("mouseleave", function () { light(null); });
+    tbl.addEventListener("mouseleave", function () { light(); });
 
     /* a tinted cell answers "what is wrong here?" by showing its problem */
     tbl.addEventListener("click", function (ev) {
       var td = ev.target.closest("[data-own]");
       if (!td) return;
-      var item = $("flow").querySelector('[data-prob="' + td.dataset.own.split(" ")[0] + '"]');
+      var item = flow.querySelector('[data-prob="' + td.dataset.own.split(" ")[0] + '"]');
       if (!item) return;
-      item.scrollIntoView({ behavior: smooth(), block: "center" });
+      scrollInPane(flow, item, "center");
       flash(item);
     });
 
-    $("flow").addEventListener("click", function (ev) {
+    flow.addEventListener("click", function (ev) {
       var j = ev.target.closest("[data-job]");
-      if (j) { openJob(j.dataset.job); return; }
-      var s = ev.target.closest(".strip [data-stage]");
-      if (s) go("step:" + s.dataset.stage);
+      if (!j) return;
+      if (j.classList.contains("is-open")) closeDecision();
+      else openDecision(j.dataset.job, [], j, false);
     });
-  }
 
-  /* the table sticks to the top while the stages scroll under it, so a
-     stage's scroll target has to clear the table's height */
-  function measure() {
-    var b = $("tblbox");
-    if (b && b.offsetHeight) $("bench").style.setProperty("--tblh", (b.offsetHeight + 18) + "px");
+    $("ask").addEventListener("click", askClick);
   }
-  window.addEventListener("resize", measure);
 
   /* ══════════════════════════════════════════════════════════════════
-     SCREEN 1 · the arena
+     right panel · the questions
+     ══════════════════════════════════════════════════════════════════ */
+
+  var cur = null;   /* {jobId, trail, btn, probId, seqPick} while one is open */
+
+  /* where a decision belongs when it was not pressed in the middle panel */
+  function defaultButton(jobId) {
+    return $("flow").querySelector('.pgo[data-job="' + jobId + '"]') ||
+           $("flow").querySelector('.fjob[data-job="' + jobId + '"]');
+  }
+  function markOpen(on) {
+    if (!cur || !cur.btn) return;
+    cur.btn.classList.toggle("is-open", on);
+    var p = cur.btn.closest(".prob");
+    if (p) p.classList.toggle("is-open", on);
+  }
+
+  function openDecision(jobId, trail, btn, reveal) {
+    if (!BY_ID[jobId]) return;
+    /* show the page before drawing: a hidden page measures as zero, and the
+       table could not slide its lit columns into sight */
+    if (screen !== "start") showScreen("start");
+    btn = btn || defaultButton(jobId);
+    markOpen(false);
+    var prob = btn ? btn.closest(".prob") : null;
+    cur = { jobId: jobId, trail: trail || [], btn: btn,
+            probId: prob ? prob.dataset.prob : null, seqPick: null };
+    markOpen(true);
+    renderAsk();
+    setHash();
+    $("ask").scrollTop = 0;
+    showShell();
+    /* stacked, the stages sit below the questions: leave the page on the questions */
+    if (reveal && btn && !stacked()) scrollInPane($("flow"), prob || btn, "center");
+  }
+
+  function closeDecision(quiet) {
+    markOpen(false);
+    cur = null;
+    base = { ids: [], cols: [] };
+    renderAsk();
+    light();
+    if (!quiet) setHash();
+  }
+
+  /* the questions answered so far, the one waiting, and — at the end of
+     the path — the card; all of it redrawn from the trail every time */
+  function renderAsk() {
+    var box = $("ask");
+    if (!cur) {
+      $("asksub").textContent = "pick a problem in the middle";
+      box.innerHTML =
+        '<div class="ask-empty">' +
+          '<p class="ae-h">Pick a problem in the middle panel</p>' +
+          "<p>Its questions appear here, one below another. Answer one and the next " +
+          "opens beneath it. Change an earlier answer and everything below it changes too.</p>" +
+          '<p class="ae-try">Or start with one of these:</p>' +
+          '<div class="ae-list">' + ["blank", "words", "overtime"].map(function (id) {
+            var p = PROB[id], e = p && BY_ID[p.job];
+            return e ? '<button class="fjob s-' + e.sp.id + '" data-try="' + id + '">' +
+                "<b>" + esc(e.job.icon) + " " + esc(e.job.name) + "</b>" +
+                "<small>" + esc(e.job.q) + "</small></button>" : "";
+          }).join("") + "</div>" +
+        "</div>";
+      caption();
+      return;
+    }
+
+    var e = BY_ID[cur.jobId], job = e.job;
+    $("asksub").textContent = "step " + e.sp.n + " · " + e.sp.name;
+
+    var node = FLOWS[job.id], k = 0, waiting = null, leaf = null, seq = null, blocks = [];
+    while (node) {
+      if (node.seq)  { seq = node; break; }
+      if (node.pick) { leaf = node.pick; break; }
+      var chosen = cur.trail[k];
+      if (chosen === undefined || !node.a[chosen]) {
+        cur.trail = cur.trail.slice(0, k);             /* drop an impossible trail */
+        blocks.push(qBlock(node, k, undefined));
+        waiting = node;
+        break;
+      }
+      blocks.push(qBlock(node, k, chosen));
+      node = node.a[chosen].to;
+      k++;
+    }
+
+    var from = cur.probId && PROB[cur.probId];
+    box.innerHTML =
+      '<div class="dpanel s-' + e.sp.id + '">' +
+        '<div class="dp-head">' +
+          '<span class="dp-ico">' + esc(job.icon) + "</span>" +
+          '<div class="dp-t"><b>' + esc(job.name) + "</b><small>" + esc(job.q) + "</small></div>" +
+          '<button class="dp-x" data-act="close" title="close  (Esc)">✕</button>' +
+        "</div>" +
+        (from ? '<div class="dp-from"><b class="dp-lbl">In ' + esc(TOUR.who) + "’s table</b>" +
+                from.text + "</div>" : "") +                 /* hand-written HTML */
+        (job.note ? '<details class="dp-why"><summary>Why this decision matters</summary><p>' +
+                    esc(job.note) + "</p></details>" : "") +
+        '<div class="qstack">' + blocks.join("") +
+          (seq ? seqBlock(e, seq) : "") +
+          (leaf ? cardBlock(e, leaf, false) : "") +
+        "</div>" +
+      "</div>";
+
+    var more = box.querySelector(".v-more");
+    if (more) more.addEventListener("toggle", function () {
+      try { localStorage.setItem(MORE_KEY, more.open ? "1" : "0"); } catch (x) {}
+    });
+
+    /* the table shows what the waiting question is about, or else the
+       cells of the problem this decision was opened from */
+    var see = waiting && waiting.see || [];
+    base = see.length ? { ids: [], cols: see }
+                      : { ids: cur.probId ? [cur.probId] : [], cols: [] };
+    light();
+    revealLit();
+    caption();
+
+    if (leaf) { picks[job.id] = leaf; savePicks(); paintArena(); }
+  }
+
+  function qBlock(node, k, chosen) {
+    var done = chosen !== undefined;
+    return '<section class="qb' + (done ? " is-done" : " is-waiting") + '" data-k="' + k + '">' +
+        '<div class="qb-n">' + (k + 1) + "</div>" +
+        '<div class="qb-b">' +
+          "<h4>" + esc(node.q) + "</h4>" +
+          (node.hint ? '<p class="qb-hint">' + esc(node.hint) + "</p>" : "") +
+          '<div class="qb-ans">' + node.a.map(function (a, i) {
+            var st = !done ? "" : (i === chosen ? " is-on" : " is-off");
+            return '<button class="qa' + st + '" data-k="' + k + '" data-i="' + i + '">' +
+                "<i>" + (i === chosen ? "✓" : i + 1) + "</i><span>" + esc(a.label) + "</span>" +
+              "</button>";
+          }).join("") + "</div>" +
+        "</div>" +
+      "</section>";
+  }
+
+  /* a checklist is not a fork: you do every step, in order */
+  function seqBlock(e, node) {
+    var job = e.job;
+    return '<section class="qb is-waiting">' +
+        '<div class="qb-n">✓</div>' +
+        '<div class="qb-b">' +
+          "<h4>Do all of these, in this order</h4>" +
+          '<p class="qb-hint">They are not rivals — each one fixes a different problem. ' +
+            "Press one to see what it does.</p>" +
+          '<div class="qb-ans qb-seq">' + node.seq.map(function (name, i) {
+            var o = OPT[job.id][name];
+            return '<button class="qa' + (cur.seqPick === name ? " is-on" : "") +
+                '" data-seq="' + esc(name) + '"><i>' + (i + 1) + "</i><span>" + esc(name) +
+                (o && o.plain ? "<small>" + esc(o.plain) + "</small>" : "") + "</span></button>";
+          }).join("") + "</div>" +
+        "</div>" +
+      "</section>" +
+      (cur.seqPick ? cardBlock(e, cur.seqPick, true) : "");
+  }
+
+  /* the card: simple first, depth on request */
+  function col(kind, title, items) {
+    return '<section class="v-col v-' + kind + '"><h3><em>' + (kind === "good" ? "✓" : "✗") +
+      "</em>" + esc(title) + "</h3><ul>" +
+      items.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+      "</ul></section>";
+  }
+
+  function cardBlock(e, name, isSeq) {
+    var job = e.job, o = OPT[job.id][name];
+    if (!o) return "";
+    var rivals = job.options.filter(function (x) { return x.name !== name; });
+
+    var otherRows = rivals.map(function (r) {
+      return '<button class="rival" data-other="' + esc(r.name) + '">' +
+          '<span class="rival-n">' + esc(r.name) + "</span>" +
+          '<span class="rival-w"><span>' + esc(r.plain || r.use[0] || "") + "</span></span>" +
+        "</button>";
+    }).join("");
+    var whyNot = isSeq ? "" : rivals.map(function (r) {
+      return '<button class="rival" data-other="' + esc(r.name) + '">' +
+          '<span class="rival-n">' + esc(r.name) + "</span>" +
+          '<span class="rival-w"><em>✗</em><span>' + esc(r.avoid[0] || "") + "</span></span>" +
+        "</button>";
+    }).join("");
+
+    var moreUse = o.use.slice(1), moreAvoid = o.avoid.slice(1);
+    var hasMore = o.how || moreUse.length || moreAvoid.length || whyNot;
+    var openMore = false;
+    try { openMore = localStorage.getItem(MORE_KEY) === "1"; } catch (x) {}
+    var links = [o.topic].concat(o.also || []).filter(Boolean).map(lessonLink).join("");
+
+    return '<section class="qb qb-card">' +
+        '<div class="qb-n">★</div>' +
+        '<div class="qb-b">' +
+          '<p class="v-eye">' + (isSeq ? "One step of the checklist" : "Your answer") + "</p>" +
+          '<h3 class="v-name">' + esc(o.name) + "</h3>" +
+          (o.plain ? '<p class="v-plain">' + esc(o.plain) + "</p>" : "") +
+          '<div class="v-code"><pre>' + esc(o.code) + "</pre>" +
+            '<button class="v-copy">copy</button></div>' +
+          '<div class="v-cols">' +
+            col("good", "Use it when", o.use.slice(0, 1)) +
+            col("bad", "Do not use it when", o.avoid.slice(0, 1)) +
+          "</div>" +
+          (rivals.length ? '<section class="v-rivals"><h3>' +
+              (isSeq ? "The other steps" : "The other options") +
+              "<small>press one to see its card</small></h3>" + otherRows + "</section>" : "") +
+          (links ? '<div class="v-links"><span class="lbl">Where you learned it</span>' +
+                   links + "</div>" : "") +
+          (hasMore
+            ? '<details class="v-more"' + (openMore ? " open" : "") + ">" +
+                "<summary>More detail<small>how it works, every reason, and “why not the others”</small></summary>" +
+                '<div class="v-more-b">' +
+                  (o.how ? '<section class="v-how"><h3>What it actually does</h3><p>' +
+                           esc(o.how) + "</p></section>" : "") +
+                  (moreUse.length || moreAvoid.length
+                    ? '<div class="v-cols">' +
+                        (moreUse.length ? col("good", "More reasons to use it", moreUse) : "") +
+                        (moreAvoid.length ? col("bad", "More reasons not to", moreAvoid) : "") +
+                      "</div>" : "") +
+                  (whyNot ? '<section class="v-rivals"><h3>If they ask “why not…”' +
+                            "<small>each rival's biggest weakness</small></h3>" + whyNot +
+                            "</section>" : "") +
+                "</div>" +
+              "</details>"
+            : "") +
+        "</div>" +
+      "</section>";
+  }
+
+  /* ── everything you can press in the right panel ───────────────────── */
+  function askClick(ev) {
+    var t = ev.target.closest("[data-try]");
+    if (t) {
+      var b = $("flow").querySelector('.prob[data-prob="' + t.dataset.try + '"] .pgo');
+      if (b) openDecision(b.dataset.job, [], b, true);
+      return;
+    }
+    if (!cur) return;
+
+    var a = ev.target.closest(".qa[data-i]");
+    if (a) { answer(+a.dataset.k, +a.dataset.i); return; }
+
+    var s = ev.target.closest(".qa[data-seq]");
+    if (s) {
+      cur.seqPick = cur.seqPick === s.dataset.seq ? null : s.dataset.seq;
+      renderAsk();
+      if (cur.seqPick) scrollToNewest();
+      return;
+    }
+    var o = ev.target.closest("[data-other]");
+    if (o) { showOther(o.dataset.other); return; }
+
+    if (ev.target.closest('[data-act="close"]')) { closeDecision(); return; }
+    var c = ev.target.closest(".v-copy");
+    if (c) copyCode(c);
+  }
+
+  /* answering question k: everything below it is thrown away and redrawn */
+  function answer(k, i) {
+    if (cur.trail[k] === i) return;             /* same answer again: nothing changes */
+    cur.trail = cur.trail.slice(0, k).concat(i);
+    renderAsk();
+    setHash();
+    scrollToNewest();
+  }
+
+  /* a rival's card: the answers above switch to the path that leads to it */
+  function showOther(name) {
+    if (FLOWS[cur.jobId].seq) { cur.seqPick = name; }
+    else {
+      var t = trailTo(cur.jobId, name);
+      if (!t) return;
+      cur.trail = t;
+      setHash();
+    }
+    renderAsk();
+    scrollToNewest();
+  }
+
+  function scrollToNewest() {
+    var box = $("ask"), bs = box.querySelectorAll(".qb");
+    var last = bs[bs.length - 1];
+    if (!last) return;
+    /* a new question only needs to come into sight */
+    if (!last.classList.contains("qb-card")) { scrollInPane(box, last, "nearest"); return; }
+
+    /* a card: never scroll the answers that led to it out of sight — start
+       from the top if it all fits, else from the first (or last) answer */
+    var done = box.querySelectorAll(".qb.is-done");
+    var lastDone = done.length ? done[done.length - 1] : bs[0];
+    if (stacked()) { lastDone.scrollIntoView({ behavior: smooth(), block: "start" }); return; }
+    var top = offsetIn(last, box), first = offsetIn(bs[0], box);
+    if (top === null || first === null) { scrollInPane(box, lastDone, "start"); return; }
+    if (top < box.clientHeight * 0.55) { box.scrollTo({ top: 0, behavior: smooth() }); return; }
+    scrollInPane(box, top - first < box.clientHeight * 0.55 ? bs[0] : lastDone, "start");
+  }
+
+  function copyCode(btn) {
+    var text = btn.parentNode.querySelector("pre").textContent;
+    var ok = function () {
+      btn.textContent = "copied";
+      btn.classList.add("is-copied");
+      setTimeout(function () { btn.textContent = "copy"; btn.classList.remove("is-copied"); }, 1400);
+    };
+    /* opened as a local file the clipboard API may be unavailable, so keep
+       the old textarea trick as the fallback rather than failing silently */
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok, function () { legacyCopy(text, ok); });
+    } else { legacyCopy(text, ok); }
+  }
+  function legacyCopy(text, ok) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.cssText = "position:fixed;top:-1000px;opacity:0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); ok(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     the arena — every decision at once
      ══════════════════════════════════════════════════════════════════ */
 
   function chipsFor(job, hits) {
@@ -369,9 +738,9 @@
     var show = hits && hits.length ? hits.slice(0, 4) : names.slice(0, 3);
     var rest = names.length - show.length;
     return show.map(function (n) {
-      return '<span class="wchip' + (hits && hits.indexOf(n) >= 0 ? " hit" : "") + '">' +
+      return '<span class="wchip' + (hits && hits.indexOf(n) >= 0 ? " is-hit" : "") + '">' +
              esc(n) + "</span>";
-    }).join("") + (rest > 0 ? '<span class="wchip more">+' + rest + "</span>" : "");
+    }).join("") + (rest > 0 ? '<span class="wchip is-more">+' + rest + "</span>" : "");
   }
 
   function buildArena() {
@@ -392,8 +761,7 @@
             "<h3>" + esc(job.name) + "</h3>" +
             '<p class="dq">' + esc(job.q) + "</p>" +
             '<div class="wchips">' + chipsFor(job, null) + "</div>" +
-            '<span class="dgo">' + (FLOWS[job.id].seq ? "walk it" : "answer it") +
-              " <span>→</span></span>" +
+            '<span class="dgo">open its questions <span>→</span></span>' +
             '<span class="dmineslot"></span>' +
           "</button>";
       }).join("");
@@ -405,13 +773,16 @@
             '<div class="band-c">' + sp.jobs.length + " decision" +
               (sp.jobs.length === 1 ? "" : "s") + "</div>" +
           "</div>" +
-          '<div class="grid">' + cards + "</div>" +
+          '<div class="dgrid">' + cards + "</div>" +
         "</section>";
     }).join("");
 
     $("bands").addEventListener("click", function (ev) {
       var b = ev.target.closest(".dcard");
-      if (b) openJob(b.dataset.job);
+      if (!b) return;
+      if (document.activeElement === q) q.blur();
+      var id = b.dataset.job;
+      openDecision(id, picks[id] ? trailTo(id, picks[id]) || [] : [], null, true);
     });
     paintArena();
   }
@@ -427,292 +798,8 @@
     });
     var n = Object.keys(picks).length;
     $("stackn").textContent = n;
-    $("stackbtn").classList.toggle("wlive", n > 0);
+    $("stackbtn").classList.toggle("is-live", n > 0);
   }
-
-  /* ══════════════════════════════════════════════════════════════════
-     SCREEN 2/3 · one decision
-     ══════════════════════════════════════════════════════════════════ */
-
-  var cur = null;          /* {jobId, trail:[..]} while a decision is open */
-
-  function openJob(jobId, trail) {
-    if (screen !== "play") from = screen;
-    /* Safari does not move focus to a clicked button, so a search box left
-       focused would keep swallowing Esc and the number keys on the next screen */
-    if (document.activeElement === q) q.blur();
-    cur = { jobId: jobId, trail: trail || [] };
-    setHash();
-    render();
-    $("play").scrollTop = 0;
-  }
-
-  function render() {
-    var e = BY_ID[cur.jobId];
-    if (!e) { goScreen("start"); return; }
-    var job = e.job, flow = FLOWS[job.id];
-
-    showScreen("play");
-    $("play").className = "screen play s-" + e.sp.id;
-    $("back").innerHTML = "<span>←</span> " + backLabel();
-
-    $("pbName").textContent = "Step " + e.sp.n + " · " + job.name;
-
-    var node = nodeAt(job.id, cur.trail);
-    var asked = cur.trail.length;
-
-    /* progress: what is behind you against the deepest thing still ahead */
-    var ahead = depthOf(node);
-    var total = asked + ahead;
-    var done = total ? (asked + 1) / total : 1;   /* matches the label beside it */
-    if (!node || node.pick) { done = 1; total = asked; }
-    $("pbFill").style.width = Math.round(done * 100) + "%";
-    $("pbStep").textContent = ahead
-      ? "question " + (asked + 1) + " of " + total
-      : (flow.seq ? "all of them, in order" : "answered");
-
-    drawCrumbs();
-
-    if (!node)              { $("playbody").innerHTML = ""; return; }
-    if (node.seq)           { drawSeq(e, node); return; }
-    if (node.pick)          { drawVerdict(e, node.pick); return; }
-    drawAsk(e, node, asked);
-  }
-
-  function drawCrumbs() {
-    var steps = labelsAlong(cur.jobId, cur.trail);
-    $("crumbs").innerHTML = steps.map(function (s, i) {
-      return (i ? '<span class="wcrumb-sep">›</span>' : "") +
-        '<button class="wcrumb" data-k="' + i + '" title="' + esc(s.q) + '">' +
-          "<i>" + esc(shorten(s.q)) + "</i>" + esc(s.a) + "</button>";
-    }).join("");
-  }
-  function shorten(q) {
-    var t = String(q).replace(/\?$/, "");
-    return t.length > 30 ? t.slice(0, 29).trim() + "…" : t;
-  }
-  $("crumbs").addEventListener("click", function (ev) {
-    var b = ev.target.closest(".wcrumb");
-    if (!b) return;
-    cur.trail = cur.trail.slice(0, +b.dataset.k);   /* re-ask from there */
-    setHash(); render();
-  });
-
-  /* ── the question ──────────────────────────────────────────────────── */
-  function drawAsk(e, node, asked) {
-    var job = e.job;
-    var intro = asked === 0 && job.note
-      ? '<p class="ask-note">' + esc(job.note) + "</p>" : "";
-
-    $("playbody").innerHTML =
-      '<div class="ask">' +
-        '<p class="ask-eye"><span>' + esc(job.icon) + "</span>" + esc(job.name) + "</p>" +
-        "<h2>" + esc(node.q) + "</h2>" + intro +
-        '<div class="answers">' + node.a.map(function (a, i) {
-          var leads = a.to && a.to.pick;
-          return '<button class="ans" data-i="' + i + '">' +
-              "<b>" + (i + 1) + "</b>" +
-              '<span class="ans-t">' + esc(a.label) +
-                (leads ? '<span class="ans-lead">that settles it</span>' : "") +
-              "</span>" +
-              '<span class="ans-arrow">→</span>' +
-            "</button>";
-        }).join("") + "</div>" +
-      "</div>";
-  }
-
-  /* ── a checklist: not rivals, you do all of them ───────────────────── */
-  function drawSeq(e, node) {
-    var job = e.job;
-    $("playbody").innerHTML =
-      '<div class="ask">' +
-        '<p class="ask-eye"><span>' + esc(job.icon) + "</span>" + esc(job.name) + "</p>" +
-        "<h2>" + esc(job.q) + "</h2>" +
-        '<p class="ask-note">' + esc(job.note) + "</p>" +
-        '<p class="seqnote">These are not rivals — you do all of them, in this order</p>' +
-        '<div class="answers">' + node.seq.map(function (name, i) {
-          var o = OPT[job.id][name];
-          return '<button class="ans step" data-pick="' + esc(name) + '">' +
-              "<b>" + (i + 1) + "</b>" +
-              '<span class="ans-t">' + esc(name) +
-                (o && o.plain ? '<small class="ans-sub">' + esc(o.plain) + "</small>" : "") +
-              "</span>" +
-              '<span class="ans-arrow">→</span>' +
-            "</button>";
-        }).join("") + "</div>" +
-      "</div>";
-  }
-
-  /* ── the verdict: simple first, depth on request ───────────────────── */
-  function col(kind, title, items) {
-    return '<section class="v-col ' + kind + '"><h3><em>' + (kind === "good" ? "✓" : "✗") +
-      "</em>" + esc(title) + "</h3><ul>" +
-      items.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
-      "</ul></section>";
-  }
-
-  function drawVerdict(e, name) {
-    var job = e.job, o = OPT[job.id][name];
-    if (!o) { $("playbody").innerHTML = ""; return; }
-
-    var isSeq = !!FLOWS[job.id].seq;
-    if (!isSeq) {                 /* a checklist step is not a choice you made */
-      picks[job.id] = name;
-      savePicks();
-      paintArena();
-    }
-    var rivals = job.options.filter(function (x) { return x.name !== name; });
-
-    /* the other options, each in one plain sentence */
-    var otherRows = rivals.map(function (r) {
-      return '<button class="rival" data-pick="' + esc(r.name) + '">' +
-          '<span class="rival-n">' + esc(r.name) + "</span>" +
-          '<span class="rival-w"><span>' + esc(r.plain || r.use[0] || "") + "</span></span>" +
-        "</button>";
-    }).join("");
-    /* …and, for the interview, each one's headline weakness */
-    var whyNot = isSeq ? "" : rivals.map(function (r) {
-      return '<button class="rival" data-pick="' + esc(r.name) + '">' +
-          '<span class="rival-n">' + esc(r.name) + "</span>" +
-          '<span class="rival-w"><em>✗</em><span>' + esc(r.avoid[0] || "") + "</span></span>" +
-        "</button>";
-    }).join("");
-
-    var moreUse = o.use.slice(1), moreAvoid = o.avoid.slice(1);
-    var hasMore = o.how || moreUse.length || moreAvoid.length || whyNot;
-    var openMore = false;
-    try { openMore = localStorage.getItem(MORE_KEY) === "1"; } catch (x) {}
-
-    var links = [o.topic].concat(o.also || []).filter(Boolean).map(lessonLink).join("");
-    var next = BY_ID[job.id].i + 1 < JOBS.length ? JOBS[BY_ID[job.id].i + 1] : null;
-
-    $("playbody").innerHTML =
-      '<div class="verdict">' +
-        '<p class="v-eye">' + (isSeq ? "Step of the checklist" : "Your answer") +
-          '<span class="v-where">Step ' + esc(e.sp.n) + " · " + esc(e.sp.name) + " · " +
-          esc(job.name) + "</span></p>" +
-        '<h2 class="v-name">' + esc(o.name) + "</h2>" +
-        (o.plain ? '<p class="v-plain">' + esc(o.plain) + "</p>" : "") +
-
-        '<div class="v-code"><pre>' + esc(o.code) + "</pre>" +
-          '<button class="v-copy" id="vcopy">copy</button></div>' +
-
-        '<div class="v-cols">' +
-          col("good", "Use it when", o.use.slice(0, 1)) +
-          col("bad", "Do not use it when", o.avoid.slice(0, 1)) +
-        "</div>" +
-
-        (rivals.length ? '<section class="v-rivals"><h3>' +
-            (isSeq ? "The other steps" : "The other options") +
-            "<small>click one to read its card</small></h3>" + otherRows + "</section>" : "") +
-
-        (links ? '<div class="v-links"><span class="lbl">Where you learned it</span>' +
-                 links + "</div>" : "") +
-
-        (hasMore
-          ? '<details class="v-more" id="vmore"' + (openMore ? " open" : "") + ">" +
-              "<summary>More detail<small>how it works, every reason, and “why not the others”</small></summary>" +
-              '<div class="v-more-b">' +
-                (o.how ? '<section class="v-how"><h3>What it actually does</h3><p>' +
-                         esc(o.how) + "</p></section>" : "") +
-                (moreUse.length || moreAvoid.length
-                  ? '<div class="v-cols">' +
-                      (moreUse.length ? col("good", "More reasons to use it", moreUse) : "") +
-                      (moreAvoid.length ? col("bad", "More reasons not to", moreAvoid) : "") +
-                    "</div>" : "") +
-                (whyNot ? '<section class="v-rivals"><h3>If they ask “why not…”' +
-                          "<small>each rival's biggest weakness</small></h3>" + whyNot +
-                          "</section>" : "") +
-              "</div>" +
-            "</details>"
-          : "") +
-
-        '<div class="v-acts">' +
-          (isSeq
-            ? '<button class="act" data-act="restart">← back to the checklist</button>'
-            : '<button class="act" data-act="restart">Ask me again</button>') +
-          '<button class="act" data-act="back">Back to ' + backLabel() + "</button>" +
-          (next ? '<button class="act wgo" data-act="next">Next · ' +
-                  esc(next.job.name) + " →</button>" : "") +
-        "</div>" +
-      "</div>";
-
-    var more = $("vmore");
-    if (more) more.addEventListener("toggle", function () {
-      try { localStorage.setItem(MORE_KEY, more.open ? "1" : "0"); } catch (x) {}
-    });
-  }
-
-  /* ── everything you can click inside the play screen ───────────────── */
-  $("playbody").addEventListener("click", function (ev) {
-    var a = ev.target.closest(".ans[data-i]");
-    if (a) { answer(+a.dataset.i); return; }
-
-    var s = ev.target.closest("[data-pick]");
-    if (s) { jumpToPick(s.dataset.pick); return; }
-
-    var act = ev.target.closest("[data-act]");
-    if (act) {
-      if (act.dataset.act === "restart") { cur.trail = []; setHash(); render(); }
-      if (act.dataset.act === "back")    { goScreen(from); }
-      if (act.dataset.act === "next")    { openJob(JOBS[BY_ID[cur.jobId].i + 1].job.id); }
-      return;
-    }
-    if (ev.target.closest("#vcopy")) copyCode(ev.target.closest("#vcopy"));
-  });
-
-  function answer(i) {
-    var node = nodeAt(cur.jobId, cur.trail);
-    if (!node || !node.a || !node.a[i]) return;
-    cur.trail = cur.trail.concat(i);
-    setHash();
-    render();
-  }
-
-  /* opening a rival, or one step of a checklist, without losing the trail */
-  function jumpToPick(name) {
-    var t = trailTo(cur.jobId, name);
-    if (t) { cur.trail = t; setHash(); }
-    var e = BY_ID[cur.jobId];
-    drawVerdict(e, name);
-    drawCrumbs();
-    $("pbFill").style.width = "100%";
-    $("pbStep").textContent = "answered";
-    $("play").scrollTop = 0;
-  }
-
-  function copyCode(btn) {
-    var text = btn.parentNode.querySelector("pre").textContent;
-    var ok = function () {
-      btn.textContent = "copied";
-      btn.classList.add("wdone");
-      setTimeout(function () { btn.textContent = "copy"; btn.classList.remove("wdone"); }, 1400);
-    };
-    /* opened as a local file the clipboard API may be unavailable, so keep
-       the old textarea trick as the fallback rather than failing silently */
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(ok, function () { legacyCopy(text, ok); });
-    } else { legacyCopy(text, ok); }
-  }
-  function legacyCopy(text, ok) {
-    var ta = document.createElement("textarea");
-    ta.value = text;
-    ta.style.cssText = "position:fixed;top:-1000px;opacity:0";
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand("copy"); ok(); } catch (e) {}
-    document.body.removeChild(ta);
-  }
-
-  /* ── moving between decisions ──────────────────────────────────────── */
-  function step(d) {
-    if (!cur) return;
-    var i = (BY_ID[cur.jobId].i + d + JOBS.length) % JOBS.length;
-    openJob(JOBS[i].job.id);
-  }
-  $("prev").addEventListener("click", function () { step(-1); });
-  $("next").addEventListener("click", function () { step(1); });
-  $("back").addEventListener("click", function () { goScreen(from); });
 
   /* ══════════════════════════════════════════════════════════════════
      your stack
@@ -738,7 +825,7 @@
       b.addEventListener("click", function () {
         closeStack();
         var jobId = b.dataset.job;
-        openJob(jobId, trailTo(jobId, picks[jobId]) || []);
+        openDecision(jobId, trailTo(jobId, picks[jobId]) || [], null, true);
       });
     });
     var clear = $("clearstack");
@@ -782,10 +869,10 @@
 
     if (!s) {
       cards.forEach(function (c) {
-        c.classList.remove("faded");
+        c.classList.remove("is-faded");
         c.querySelector(".wchips").innerHTML = chipsFor(BY_ID[c.dataset.job].job, null);
       });
-      $("bands").querySelectorAll(".band").forEach(function (b) { b.classList.remove("faded"); });
+      $("bands").querySelectorAll(".band").forEach(function (b) { b.classList.remove("is-faded"); });
       $("findmsg").hidden = true;
       return;
     }
@@ -805,12 +892,12 @@
       var h = hits[e.job.id];
       var nameHit = e.job.name.toLowerCase().indexOf(s) >= 0;
       var show = h.length > 0 || nameHit;
-      c.classList.toggle("faded", !show);
+      c.classList.toggle("is-faded", !show);
       if (show) { shown++; found += h.length; }
       c.querySelector(".wchips").innerHTML = chipsFor(e.job, h);
     });
     $("bands").querySelectorAll(".band").forEach(function (b) {
-      b.classList.toggle("faded", !b.querySelector(".dcard:not(.faded)"));
+      b.classList.toggle("is-faded", !b.querySelector(".dcard:not(.is-faded)"));
     });
 
     $("findmsg").hidden = false;
@@ -831,24 +918,16 @@
       if (ev.key === "Escape") { q.value = ""; q.dispatchEvent(new Event("input")); q.blur(); }
       return;
     }
-    if (ev.key === "/" && screen !== "play") {
-      ev.preventDefault();
-      if (screen === "start") goScreen("arena");
-      q.focus();
-      return;
-    }
-    if (!cur) return;
+    if (ev.key === "/") { ev.preventDefault(); goScreen("arena"); q.focus(); return; }
+    if (!cur || screen !== "start") return;
 
-    if (ev.key === "Escape")    { goScreen(from); return; }
-    if (ev.key === "ArrowLeft") { step(-1); return; }
-    if (ev.key === "ArrowRight"){ step(1); return; }
+    if (ev.key === "Escape") { closeDecision(); return; }
     if (ev.key === "Backspace" && cur.trail.length) {
       ev.preventDefault();
-      cur.trail = cur.trail.slice(0, -1); setHash(); render(); return;
+      cur.trail = cur.trail.slice(0, -1); renderAsk(); setHash(); return;
     }
-    if (/^[1-9]$/.test(ev.key)) {
-      var btns = $("playbody").querySelectorAll(".ans");
-      var b = btns[+ev.key - 1];
+    if (/^[1-9]$/.test(ev.key)) {              /* answer the question that is waiting */
+      var b = $("ask").querySelectorAll(".qb.is-waiting .qa")[+ev.key - 1];
       if (b) b.click();
     }
   });
@@ -858,8 +937,9 @@
      ══════════════════════════════════════════════════════════════════ */
   var writing = false;
   function setHash() {
-    var h = cur ? "#/d/" + cur.jobId + (cur.trail.length ? "/" + cur.trail.join("-") : "")
-                : (screen === "arena" ? "#/all" : "#/start");
+    var h = screen === "arena" ? "#/all"
+          : cur ? "#/d/" + cur.jobId + (cur.trail.length ? "/" + cur.trail.join("-") : "")
+          : "#/start";
     if (location.hash === h) return;   /* no event would fire, so raise no flag */
     writing = true;
     location.hash = h;
@@ -869,12 +949,14 @@
     var m = /^#\/d\/(\w+)(?:\/([\d-]*))?$/.exec(h);
     if (m && BY_ID[m[1]]) {
       var trail = m[2] ? m[2].split("-").filter(function (x) { return x !== ""; }).map(Number) : [];
-      if (screen !== "play") from = screen;
-      cur = { jobId: m[1], trail: trail };
-      render();
+      if (cur && cur.jobId === m[1] && screen === "start") {    /* back/forward within one */
+        cur.trail = trail; cur.seqPick = null; renderAsk();
+      } else {
+        openDecision(m[1], trail, null, true);
+      }
       return;
     }
-    cur = null;
+    if (cur) closeDecision(true);
     showScreen(h === "#/all" ? "arena" : "start");
     paintArena();
   }
@@ -887,5 +969,4 @@
   buildArena();
   buildStart();
   readHash();
-  window.addEventListener("load", measure);
 })();
