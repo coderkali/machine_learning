@@ -12,6 +12,11 @@ and AI operations.
 > `17_Learning_As_Of_Now/shared/stories.json`, then run
 > `python3 17_Learning_As_Of_Now/shared/build_site.py`, which rebuilds every
 > lesson page and the learning map and verifies every link.
+>
+> **"Update the documentation"** means every tab of the website — Home, Mind
+> map, Workspace, Journey and When to Use What — plus the written docs, not only
+> the lesson pages. Follow the checklist in
+> [`.claude/skills/update-documentation/SKILL.md`](./.claude/skills/update-documentation/SKILL.md).
 
 The instructor bootcamp PDF is the primary source for curriculum scope. Use
 [`17_Learning_As_Of_Now/Claude/index.html`](./17_Learning_As_Of_Now/Claude/index.html)
