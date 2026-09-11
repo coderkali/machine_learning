@@ -21,21 +21,63 @@
     <a class="nav-btn" href="index.html#map">Mind map</a>
     <a class="nav-btn" href="workspace.html">Workspace</a>
     <a class="nav-btn" href="journey.html">Journey</a>
-    <button class="nav-btn active">When to Use What</button>
+    <a class="nav-btn active" href="#/start">When to Use What</a>
   </nav>
 </header>
 
-<!-- ══ SCREEN 1 · the arena ═══════════════════════════════════════════ -->
-<main class="screen arena" id="arena">
+<!-- ══ SCREEN 0 · start here — a real table, then the order to fix it ═══ -->
+<main class="screen start" id="start">
 
   <section class="wtop">
+    <p class="hero-eye">When to use what &nbsp;·&nbsp; <b>start here</b></p>
+    <h1 class="hero-h">Start with the data,<br><em>not the algorithm.</em></h1>
+    <p class="hero-p">
+      Where are you right now? Pick one, and you will see only the part you need.
+    </p>
+    <div class="where" id="where"></div>
+  </section>
+
+  <section class="tour" id="tour">
+    <p class="sec-eye">The real data</p>
+    <h2 class="sec-h" id="tourh"></h2>
+    <div class="story" id="story"></div>
+  </section>
+
+  <div class="bench" id="bench">
+    <div class="tblbox" id="tblbox">
+      <div class="tblscroll"><table class="rawtbl" id="rawtbl"></table></div>
+      <p class="tblkey" id="tblkey"></p>
+    </div>
+
+    <section class="flow" id="flow">
+      <p class="sec-eye">The process</p>
+      <h2 class="sec-h">Fix it in this order</h2>
+      <p class="flow-p">
+        Six steps come before the model is trained, and the order is not a matter of
+        taste. Step 3 is the one people get wrong: split the rows <b>before</b> any step
+        that learns from the data, or the final score is quietly too good.
+      </p>
+      <div class="strip" id="strip"></div>
+      <ol class="fsteps" id="fsteps"></ol>
+    </section>
+  </div>
+
+  <footer class="afoot">
+    <p>Already know what you need? <a href="#/all">See every decision on one page →</a></p>
+  </footer>
+</main>
+
+<!-- ══ SCREEN 1 · every decision on one page ═════════════════════════ -->
+<main class="screen arena" id="arena" hidden>
+
+  <section class="wtop">
+    <a class="backlink" href="#/start">← New here? Start with a real table</a>
     <p class="hero-eye" id="heroEye"></p>
     <h1 class="hero-h">Which one,<br><em>and why.</em></h1>
     <p class="hero-p">
-      Journey answers <b>what order</b>. This page answers the question you
-      actually have at 2&nbsp;a.m. with a half-written notebook open —
-      <b>which one of these do I reach for, right here, and what do I say when
-      someone asks me why.</b>
+      Every decision on one page, in the order you meet them. Click one, answer two or
+      three short questions, and it ends on <b>the one technique to use — and the
+      reason</b>.
     </p>
 
     <div class="hero-tools">
@@ -66,7 +108,7 @@
 
   <div class="playbar">
     <button class="pb-back" id="back">
-      <span>←</span> all decisions
+      <span>←</span> back
     </button>
     <div class="pb-mid">
       <span class="pb-name" id="pbName"></span>
@@ -97,6 +139,7 @@
 
 <script src="tree-data.js"></script>
 <script src="chooser-data.js"></script>
+<script src="chooser-tour.js"></script>
 <script src="chooser.js"></script>
 </body>
 </html>

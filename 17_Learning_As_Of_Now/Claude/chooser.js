@@ -1,31 +1,48 @@
 /* ══════════════════════════════════════════════════════════════════════
-   When to Use What — three screens over the same data.
+   When to Use What — four screens over the same data.
 
-     the arena    every decision as a card, colour-coded by stage
+     start here   a real, messy table, and the eight stages that fix it in
+                  order; every problem in the table links to its decision
+     the arena    every decision on one page, for someone who knows what
+                  they are looking for
      the ask      one question at a time, one screen each
-     the verdict  the technique you landed on, its code, and the rivals
-                  it beat — that last part is what you say out loud when
-                  someone asks you why not the other one
+     the verdict  the technique you landed on: one plain sentence, the code,
+                  when to use it — and, behind "More detail", the mechanism
+                  and the rivals it beat
 
-   The data is chooser-data.js and is never touched here. FLOWS[jobId] is a
-   tree of questions whose leaves name techniques in that job's options; a
-   `seq` node is a checklist instead of a fork — those are not rivals, you
-   do all of them, in order.
+   The data is chooser-data.js (SPACES in pipeline order, FLOWS) and
+   chooser-tour.js (the table and its problems); neither is touched here.
+   FLOWS[jobId] is a tree of questions whose leaves name techniques in that
+   job's options; a `seq` node is a checklist instead of a fork — those are
+   not rivals, you do all of them, in order.
 
-   The URL carries the whole position, so any question or any verdict can be
-   linked to and shared:  #/d/<jobId>            the decision, from the top
-                          #/d/<jobId>/1-0-2      after those three answers
+   The URL carries the whole position, so any screen can be linked to:
+       #/start                the table and the process (the default)
+       #/all                  every decision
+       #/d/<jobId>            the decision, from the top
+       #/d/<jobId>/1-0-2      after those three answers
    ══════════════════════════════════════════════════════════════════════ */
 (function () {
   "use strict";
 
   var $ = function (id) { return document.getElementById(id); };
   var PICK_KEY = "lu-wtuw-picks";
+  var MORE_KEY = "lu-wtuw-more";
 
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
+  }
+  function smooth() {
+    return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto" : "smooth";
+  }
+  function flash(el) {
+    el.classList.remove("flash");
+    void el.offsetWidth;                      /* restart the animation */
+    el.classList.add("flash");
+    setTimeout(function () { el.classList.remove("flash"); }, 1400);
   }
 
   /* ── folder → lesson node, the same resolution the Journey page uses ── */
@@ -45,7 +62,7 @@
       : '<span class="lz off">' + esc(text) + "</span>";
   }
 
-  /* ── flatten the spaces into one ordered list of decisions ─────────── */
+  /* ── flatten the stages into one ordered list of decisions ─────────── */
   var JOBS = [];                                  /* [{sp, job, i}] */
   SPACES.forEach(function (sp) {
     sp.jobs.forEach(function (job) { JOBS.push({ sp: sp, job: job, i: JOBS.length }); });
@@ -113,6 +130,237 @@
   }
 
   /* ══════════════════════════════════════════════════════════════════
+     which screen is showing
+     ══════════════════════════════════════════════════════════════════ */
+  var SCREENS = ["start", "arena", "play"];
+  var screen = "start";     /* what is on screen now                       */
+  var from = "start";       /* where a decision was opened from, for ←     */
+  var scrollMem = {};       /* a hidden screen forgets its scroll position */
+
+  function showScreen(name) {
+    if (screen !== name && screen !== "play") scrollMem[screen] = $(screen).scrollTop;
+    SCREENS.forEach(function (s) { $(s).hidden = s !== name; });
+    if (screen !== name && name !== "play") $(name).scrollTop = scrollMem[name] || 0;
+    screen = name;
+    if (name === "start") measure();
+  }
+  function goScreen(name) {
+    cur = null;
+    showScreen(name);
+    setHash();
+    paintArena();
+  }
+  function backLabel() { return from === "arena" ? "all decisions" : "start here"; }
+
+  /* ══════════════════════════════════════════════════════════════════
+     SCREEN 0 · start here
+     ══════════════════════════════════════════════════════════════════ */
+  var stageOf = {};
+  SPACES.forEach(function (sp) { stageOf[sp.id] = sp; });
+
+  function buildStart() {
+    $("where").innerHTML = TOUR.where.map(function (w) {
+      return '<button class="wbtn" data-go="' + esc(w.go) + '">' +
+          "<i>" + esc(w.icon) + "</i><span>" + esc(w.label) + "</span>" +
+          '<b class="warr">→</b></button>';
+    }).join("");
+    $("where").addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-go]");
+      if (b) go(b.dataset.go);
+    });
+
+    $("tourh").textContent = "Meet " + TOUR.who + "’s table";
+    /* hand-written HTML from chooser-tour.js, like the stories on lesson pages */
+    $("story").innerHTML = TOUR.story.map(function (p) { return "<p>" + p + "</p>"; }).join("");
+
+    buildTable();
+    buildFlow();
+    wireTour();
+  }
+
+  function go(where) {
+    if (where === "all") { goScreen("arena"); q.focus(); return; }
+    var m = /^(job|step):(\w+)$/.exec(where);
+    if (m && m[1] === "job") { openJob(m[2]); return; }
+    var el = m ? $("step-" + m[2]) : $(where);
+    if (!el) return;
+    el.scrollIntoView({ behavior: smooth(), block: "start" });
+    if (m) flash(el);
+  }
+
+  /* ── the table, with every problem cell tinted in its stage's colour ── */
+  function buildTable() {
+    var cellP = {}, colP = {}, rowP = {};
+    function add(map, k, p) { (map[k] = map[k] || []).push(p); }
+    TOUR.problems.forEach(function (p) {
+      (p.cells || []).forEach(function (c) { add(cellP, c[0] + "|" + c[1], p); });
+      (p.cols || []).forEach(function (c) { add(colP, c, p); });
+      (p.rows || []).forEach(function (r) { add(rowP, r, p); });
+    });
+    function ids(list) { return list.map(function (p) { return p.id; }).join(" "); }
+
+    var head = '<tr><th class="rn">row</th>' + TOUR.cols.map(function (c) {
+      var cp = colP[c] || [];
+      /* let long camelCase headers break into words, so the whole table —
+         the answer column above all — fits without scrolling on a desktop */
+      return "<th" + (cp.length ? ' data-p="' + ids(cp) + '"' : "") + ">" +
+        esc(c).replace(/([a-z])([A-Z])/g, "$1<wbr>$2") +
+        (c === TOUR.target ? '<span class="tg">the answer</span>' : "") + "</th>";
+    }).join("") + "</tr>";
+
+    var tinted = {};
+    var body = TOUR.rows.map(function (r) {
+      var rp = rowP[r.n] || [];
+      return "<tr>" +
+        '<td class="rn"' + (rp.length ? ' data-p="' + ids(rp) + '"' : "") + ">" + r.n + "</td>" +
+        r.v.map(function (v, k) {
+          var col = TOUR.cols[k];
+          var own = (cellP[r.n + "|" + col] || []).concat(rp);   /* this cell's own problems */
+          var all = own.concat(colP[col] || []);                  /* …plus its column's       */
+          var cls = [];
+          if (v === null) cls.push("nan");
+          if (own.length) { cls.push("pc", "s-" + own[0].stage); tinted[own[0].stage] = 1; }
+          return "<td" + (cls.length ? ' class="' + cls.join(" ") + '"' : "") +
+              (all.length ? ' data-p="' + ids(all) + '"' : "") +
+              (own.length ? ' data-own="' + ids(own) + '"' : "") + ">" + cellText(v) + "</td>";
+        }).join("") +
+      "</tr>";
+    }).join("");
+
+    $("rawtbl").innerHTML = "<thead>" + head + "</thead><tbody>" + body + "</tbody>";
+
+    $("tblkey").innerHTML =
+      "<span>" + TOUR.rows.length + " of the file’s rows · <i>row</i> = where it sits in the file</span>" +
+      SPACES.filter(function (sp) { return tinted[sp.id]; }).map(function (sp) {
+        return '<span class="s-' + sp.id + '"><b></b>fixed in step ' + esc(sp.n) + " · " +
+               esc(sp.name) + "</span>";
+      }).join("") +
+      "<span><code>NaN</code> = a blank cell · <code>␣</code> = a hidden space</span>" +
+      '<span class="kh">Hover a step below to light up its cells</span>';
+  }
+  function cellText(v) {
+    if (v === null) return "NaN";
+    var s = String(v), t = s.replace(/\s+$/, "");
+    return esc(t) + (t !== s ? '<i class="sp" title="a hidden space">␣</i>' : "");
+  }
+
+  /* ── the eight stages, each with what it fixes in this table ───────── */
+  function buildFlow() {
+    var fitAt = SPACES.map(function (sp) { return sp.id; }).indexOf(TOUR.fitAfter) + 1;
+    function pills(list) {
+      return list.map(function (sp) {
+        return '<button class="s-' + sp.id + '" data-stage="' + sp.id + '"><b>' + esc(sp.n) +
+               "</b>" + esc(sp.name) + "</button>";
+      }).join('<span class="arr">→</span>');
+    }
+    $("strip").innerHTML =
+      '<div class="sgrp"><span class="gl">Before the model is trained</span>' +
+        '<div class="pills">' + pills(SPACES.slice(0, fitAt)) + "</div></div>" +
+      '<div class="sfit"><span class="fitpill">model.fit()</span><span class="arr">→</span>' +
+        '<div class="sgrp"><span class="gl">After it is trained</span>' +
+          '<div class="pills">' + pills(SPACES.slice(fitAt)) + "</div></div></div>";
+
+    $("fsteps").innerHTML = SPACES.map(function (sp, i) {
+      var probs = TOUR.problems.filter(function (p) { return p.stage === sp.id; });
+      var used = {};
+      probs.forEach(function (p) { if (p.job) used[p.job] = 1; });
+      var others = sp.jobs.filter(function (j) { return !used[j.id]; });
+      var note = TOUR.notes[sp.id];
+
+      return (i === 0 ? '<li class="fphase">Before the model is trained</li>' : "") +
+        '<li class="fstep s-' + sp.id + '" id="step-' + sp.id + '" data-stage="' + sp.id + '">' +
+          '<div class="fs-n">' + esc(sp.n) + "</div>" +
+          '<div class="fs-b">' +
+            "<h3>" + esc(sp.name) + "</h3>" +
+            '<p class="fs-blurb">' + esc(sp.blurb) + "</p>" +
+            (note ? '<p class="fs-note">' + note + "</p>" : "") +
+            (probs.length ? '<p class="fs-lbl">In ' + esc(TOUR.who) + "’s table</p>" +
+               '<ul class="probs">' + probs.map(probItem).join("") + "</ul>" : "") +
+            (others.length ? '<p class="fs-lbl">' +
+               (probs.length ? "Also in this step" : "Decisions in this step") + "</p>" +
+               '<div class="fs-jobs">' + others.map(jobChip).join("") + "</div>" : "") +
+          "</div>" +
+        "</li>" +
+        (i === fitAt - 1
+          ? '<li class="ffit"><code>model.fit(X_train, y_train)</code>' +
+            "<span>The model is trained here. Everything above prepares for this one line.</span></li>" +
+            '<li class="fphase">After it is trained</li>'
+          : "");
+    }).join("");
+  }
+  function probItem(p) {
+    var e = p.job && BY_ID[p.job];
+    return '<li class="prob" data-prob="' + esc(p.id) + '">' +
+        '<span class="pdot"></span>' +
+        '<span class="ptxt">' + p.text + "</span>" +      /* hand-written HTML */
+        (e ? '<button class="pgo" data-job="' + esc(e.job.id) + '">' + esc(e.job.icon) + " " +
+             esc(e.job.name) + " →</button>" : "") +
+      "</li>";
+  }
+  function jobChip(job) {
+    return '<button class="fjob" data-job="' + esc(job.id) + '">' +
+        "<b>" + esc(job.icon) + " " + esc(job.name) + "</b><small>" + esc(job.q) + "</small>" +
+      "</button>";
+  }
+
+  /* ── pointing at a stage or a problem lights its cells in the table ── */
+  function wireTour() {
+    var tbl = $("rawtbl");
+    function light(ids) {
+      tbl.querySelectorAll(".lit").forEach(function (c) { c.classList.remove("lit"); });
+      var any = false;
+      (ids || []).forEach(function (id) {
+        tbl.querySelectorAll('[data-p~="' + id + '"]').forEach(function (c) {
+          c.classList.add("lit"); any = true;
+        });
+      });
+      tbl.classList.toggle("focus", any);
+    }
+    function idsFor(el) {
+      var p = el.closest(".prob");
+      if (p) return [p.dataset.prob];
+      var s = el.closest("[data-stage]");
+      if (s) return TOUR.problems.filter(function (x) { return x.stage === s.dataset.stage; })
+                                 .map(function (x) { return x.id; });
+      return null;
+    }
+    $("flow").addEventListener("mouseover", function (ev) { light(idsFor(ev.target)); });
+    $("flow").addEventListener("focusin",   function (ev) { light(idsFor(ev.target)); });
+    $("flow").addEventListener("mouseleave", function () { light(null); });
+
+    tbl.addEventListener("mouseover", function (ev) {
+      var td = ev.target.closest("[data-own]");
+      light(td ? td.dataset.own.split(" ") : null);
+    });
+    tbl.addEventListener("mouseleave", function () { light(null); });
+
+    /* a tinted cell answers "what is wrong here?" by showing its problem */
+    tbl.addEventListener("click", function (ev) {
+      var td = ev.target.closest("[data-own]");
+      if (!td) return;
+      var item = $("flow").querySelector('[data-prob="' + td.dataset.own.split(" ")[0] + '"]');
+      if (!item) return;
+      item.scrollIntoView({ behavior: smooth(), block: "center" });
+      flash(item);
+    });
+
+    $("flow").addEventListener("click", function (ev) {
+      var j = ev.target.closest("[data-job]");
+      if (j) { openJob(j.dataset.job); return; }
+      var s = ev.target.closest(".strip [data-stage]");
+      if (s) go("step:" + s.dataset.stage);
+    });
+  }
+
+  /* the table sticks to the top while the stages scroll under it, so a
+     stage's scroll target has to clear the table's height */
+  function measure() {
+    var b = $("tblbox");
+    if (b && b.offsetHeight) $("bench").style.setProperty("--tblh", (b.offsetHeight + 18) + "px");
+  }
+  window.addEventListener("resize", measure);
+
+  /* ══════════════════════════════════════════════════════════════════
      SCREEN 1 · the arena
      ══════════════════════════════════════════════════════════════════ */
 
@@ -130,7 +378,7 @@
     $("heroEye").innerHTML =
       "<b>" + JOBS.length + "</b> decisions &nbsp;·&nbsp; " +
       "<b>" + TOTAL_TECHNIQUES + "</b> techniques &nbsp;·&nbsp; " +
-      "<b>" + SPACES.length + "</b> stages of one pipeline";
+      "<b>" + SPACES.length + "</b> steps of one pipeline";
 
     $("bands").innerHTML = SPACES.map(function (sp) {
       var cards = sp.jobs.map(function (job) {
@@ -154,7 +402,8 @@
           '<div class="band-head">' +
             '<div class="band-n">' + esc(sp.n) + "</div>" +
             '<div class="band-t"><h2>' + esc(sp.name) + "</h2><p>" + esc(sp.blurb) + "</p></div>" +
-            '<div class="band-c">' + sp.jobs.length + " decisions</div>" +
+            '<div class="band-c">' + sp.jobs.length + " decision" +
+              (sp.jobs.length === 1 ? "" : "s") + "</div>" +
           "</div>" +
           '<div class="grid">' + cards + "</div>" +
         "</section>";
@@ -188,21 +437,26 @@
   var cur = null;          /* {jobId, trail:[..]} while a decision is open */
 
   function openJob(jobId, trail) {
+    if (screen !== "play") from = screen;
+    /* Safari does not move focus to a clicked button, so a search box left
+       focused would keep swallowing Esc and the number keys on the next screen */
+    if (document.activeElement === q) q.blur();
     cur = { jobId: jobId, trail: trail || [] };
     setHash();
     render();
+    $("play").scrollTop = 0;
   }
 
   function render() {
     var e = BY_ID[cur.jobId];
-    if (!e) { showArena(); return; }
+    if (!e) { goScreen("start"); return; }
     var job = e.job, flow = FLOWS[job.id];
 
-    $("arena").hidden = true;
-    $("play").hidden = false;
+    showScreen("play");
     $("play").className = "screen play s-" + e.sp.id;
+    $("back").innerHTML = "<span>←</span> " + backLabel();
 
-    $("pbName").textContent = e.sp.n + " · " + job.name;
+    $("pbName").textContent = "Step " + e.sp.n + " · " + job.name;
 
     var node = nodeAt(job.id, cur.trail);
     var asked = cur.trail.length;
@@ -277,16 +531,26 @@
         '<p class="ask-note">' + esc(job.note) + "</p>" +
         '<p class="seqnote">These are not rivals — you do all of them, in this order</p>' +
         '<div class="answers">' + node.seq.map(function (name, i) {
+          var o = OPT[job.id][name];
           return '<button class="ans step" data-pick="' + esc(name) + '">' +
               "<b>" + (i + 1) + "</b>" +
-              '<span class="ans-t">' + esc(name) + "</span>" +
+              '<span class="ans-t">' + esc(name) +
+                (o && o.plain ? '<small class="ans-sub">' + esc(o.plain) + "</small>" : "") +
+              "</span>" +
               '<span class="ans-arrow">→</span>' +
             "</button>";
         }).join("") + "</div>" +
       "</div>";
   }
 
-  /* ── the verdict ───────────────────────────────────────────────────── */
+  /* ── the verdict: simple first, depth on request ───────────────────── */
+  function col(kind, title, items) {
+    return '<section class="v-col ' + kind + '"><h3><em>' + (kind === "good" ? "✓" : "✗") +
+      "</em>" + esc(title) + "</h3><ul>" +
+      items.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+      "</ul></section>";
+  }
+
   function drawVerdict(e, name) {
     var job = e.job, o = OPT[job.id][name];
     if (!o) { $("playbody").innerHTML = ""; return; }
@@ -299,14 +563,25 @@
     }
     var rivals = job.options.filter(function (x) { return x.name !== name; });
 
-    var rivalRows = rivals.map(function (r) {
-      var why = isSeq ? (r.use[0] || "") : (r.avoid[0] || r.use[0] || "");
+    /* the other options, each in one plain sentence */
+    var otherRows = rivals.map(function (r) {
       return '<button class="rival" data-pick="' + esc(r.name) + '">' +
           '<span class="rival-n">' + esc(r.name) + "</span>" +
-          '<span class="rival-w">' + (isSeq ? "" : "<em>✗</em>") +
-            "<span>" + esc(why) + "</span></span>" +
+          '<span class="rival-w"><span>' + esc(r.plain || r.use[0] || "") + "</span></span>" +
         "</button>";
     }).join("");
+    /* …and, for the interview, each one's headline weakness */
+    var whyNot = isSeq ? "" : rivals.map(function (r) {
+      return '<button class="rival" data-pick="' + esc(r.name) + '">' +
+          '<span class="rival-n">' + esc(r.name) + "</span>" +
+          '<span class="rival-w"><em>✗</em><span>' + esc(r.avoid[0] || "") + "</span></span>" +
+        "</button>";
+    }).join("");
+
+    var moreUse = o.use.slice(1), moreAvoid = o.avoid.slice(1);
+    var hasMore = o.how || moreUse.length || moreAvoid.length || whyNot;
+    var openMore = false;
+    try { openMore = localStorage.getItem(MORE_KEY) === "1"; } catch (x) {}
 
     var links = [o.topic].concat(o.also || []).filter(Boolean).map(lessonLink).join("");
     var next = BY_ID[job.id].i + 1 < JOBS.length ? JOBS[BY_ID[job.id].i + 1] : null;
@@ -314,42 +589,58 @@
     $("playbody").innerHTML =
       '<div class="verdict">' +
         '<p class="v-eye">' + (isSeq ? "Step of the checklist" : "Your answer") +
-          '<span class="v-where">' + esc(e.sp.name) + " · " + esc(job.name) + "</span></p>" +
+          '<span class="v-where">Step ' + esc(e.sp.n) + " · " + esc(e.sp.name) + " · " +
+          esc(job.name) + "</span></p>" +
         '<h2 class="v-name">' + esc(o.name) + "</h2>" +
-
-        (o.how ? '<section class="v-how"><h3>What it actually does</h3><p>' +
-                 esc(o.how) + "</p></section>" : "") +
+        (o.plain ? '<p class="v-plain">' + esc(o.plain) + "</p>" : "") +
 
         '<div class="v-code"><pre>' + esc(o.code) + "</pre>" +
           '<button class="v-copy" id="vcopy">copy</button></div>' +
 
         '<div class="v-cols">' +
-          '<section class="v-col good"><h3><em>✓</em>Use it when</h3><ul>' +
-            o.use.map(function (u) { return "<li>" + esc(u) + "</li>"; }).join("") +
-          "</ul></section>" +
-          '<section class="v-col bad"><h3><em>✗</em>Do not use it when</h3><ul>' +
-            o.avoid.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("") +
-          "</ul></section>" +
+          col("good", "Use it when", o.use.slice(0, 1)) +
+          col("bad", "Do not use it when", o.avoid.slice(0, 1)) +
         "</div>" +
 
         (rivals.length ? '<section class="v-rivals"><h3>' +
-            (isSeq ? "The other steps" : 'If they ask “why not…”') +
-            "<small>" + (isSeq ? "click one to read its card"
-                               : "each rival's headline weakness — click to read its card") +
-            "</small></h3>" + rivalRows + "</section>" : "") +
+            (isSeq ? "The other steps" : "The other options") +
+            "<small>click one to read its card</small></h3>" + otherRows + "</section>" : "") +
 
         (links ? '<div class="v-links"><span class="lbl">Where you learned it</span>' +
                  links + "</div>" : "") +
+
+        (hasMore
+          ? '<details class="v-more" id="vmore"' + (openMore ? " open" : "") + ">" +
+              "<summary>More detail<small>how it works, every reason, and “why not the others”</small></summary>" +
+              '<div class="v-more-b">' +
+                (o.how ? '<section class="v-how"><h3>What it actually does</h3><p>' +
+                         esc(o.how) + "</p></section>" : "") +
+                (moreUse.length || moreAvoid.length
+                  ? '<div class="v-cols">' +
+                      (moreUse.length ? col("good", "More reasons to use it", moreUse) : "") +
+                      (moreAvoid.length ? col("bad", "More reasons not to", moreAvoid) : "") +
+                    "</div>" : "") +
+                (whyNot ? '<section class="v-rivals"><h3>If they ask “why not…”' +
+                          "<small>each rival's biggest weakness</small></h3>" + whyNot +
+                          "</section>" : "") +
+              "</div>" +
+            "</details>"
+          : "") +
 
         '<div class="v-acts">' +
           (isSeq
             ? '<button class="act" data-act="restart">← back to the checklist</button>'
             : '<button class="act" data-act="restart">Ask me again</button>') +
-          '<button class="act" data-act="arena">All decisions</button>' +
+          '<button class="act" data-act="back">Back to ' + backLabel() + "</button>" +
           (next ? '<button class="act wgo" data-act="next">Next · ' +
                   esc(next.job.name) + " →</button>" : "") +
         "</div>" +
       "</div>";
+
+    var more = $("vmore");
+    if (more) more.addEventListener("toggle", function () {
+      try { localStorage.setItem(MORE_KEY, more.open ? "1" : "0"); } catch (x) {}
+    });
   }
 
   /* ── everything you can click inside the play screen ───────────────── */
@@ -363,7 +654,7 @@
     var act = ev.target.closest("[data-act]");
     if (act) {
       if (act.dataset.act === "restart") { cur.trail = []; setHash(); render(); }
-      if (act.dataset.act === "arena")   { showArena(); }
+      if (act.dataset.act === "back")    { goScreen(from); }
       if (act.dataset.act === "next")    { openJob(JOBS[BY_ID[cur.jobId].i + 1].job.id); }
       return;
     }
@@ -418,19 +709,10 @@
     if (!cur) return;
     var i = (BY_ID[cur.jobId].i + d + JOBS.length) % JOBS.length;
     openJob(JOBS[i].job.id);
-    $("play").scrollTop = 0;
   }
   $("prev").addEventListener("click", function () { step(-1); });
   $("next").addEventListener("click", function () { step(1); });
-  $("back").addEventListener("click", function () { showArena(); });
-
-  function showArena() {
-    cur = null;
-    $("play").hidden = true;
-    $("arena").hidden = false;
-    setHash();
-    paintArena();
-  }
+  $("back").addEventListener("click", function () { goScreen(from); });
 
   /* ══════════════════════════════════════════════════════════════════
      your stack
@@ -483,7 +765,7 @@
     return job.options.filter(function (o) {
       var hay = o.name + " " + o.code;
       if (loose) {
-        hay += " " + o.use.join(" ") + " " + o.avoid.join(" ") + " " +
+        hay += " " + (o.plain || "") + " " + o.use.join(" ") + " " + o.avoid.join(" ") + " " +
                job.q + " " + job.note + " " +
                [o.topic].concat(o.also || []).filter(Boolean).map(function (f) {
                  var n = BY_FOLDER[f];
@@ -549,10 +831,15 @@
       if (ev.key === "Escape") { q.value = ""; q.dispatchEvent(new Event("input")); q.blur(); }
       return;
     }
-    if (ev.key === "/" && $("arena").hidden === false) { ev.preventDefault(); q.focus(); return; }
+    if (ev.key === "/" && screen !== "play") {
+      ev.preventDefault();
+      if (screen === "start") goScreen("arena");
+      q.focus();
+      return;
+    }
     if (!cur) return;
 
-    if (ev.key === "Escape")    { showArena(); return; }
+    if (ev.key === "Escape")    { goScreen(from); return; }
     if (ev.key === "ArrowLeft") { step(-1); return; }
     if (ev.key === "ArrowRight"){ step(1); return; }
     if (ev.key === "Backspace" && cur.trail.length) {
@@ -572,24 +859,24 @@
   var writing = false;
   function setHash() {
     var h = cur ? "#/d/" + cur.jobId + (cur.trail.length ? "/" + cur.trail.join("-") : "")
-                : "#/all";
+                : (screen === "arena" ? "#/all" : "#/start");
     if (location.hash === h) return;   /* no event would fire, so raise no flag */
     writing = true;
     location.hash = h;
   }
   function readHash() {
-    var m = /^#\/d\/(\w+)(?:\/([\d-]*))?$/.exec(location.hash || "");
+    var h = location.hash || "";
+    var m = /^#\/d\/(\w+)(?:\/([\d-]*))?$/.exec(h);
     if (m && BY_ID[m[1]]) {
       var trail = m[2] ? m[2].split("-").filter(function (x) { return x !== ""; }).map(Number) : [];
+      if (screen !== "play") from = screen;
       cur = { jobId: m[1], trail: trail };
-      $("arena").hidden = true;
       render();
-    } else {
-      cur = null;
-      $("play").hidden = true;
-      $("arena").hidden = false;
-      paintArena();
+      return;
     }
+    cur = null;
+    showScreen(h === "#/all" ? "arena" : "start");
+    paintArena();
   }
   window.addEventListener("hashchange", function () {
     if (writing) { writing = false; return; }   /* our own write, already drawn */
@@ -598,5 +885,7 @@
 
   /* ══ go ═══════════════════════════════════════════════════════════ */
   buildArena();
+  buildStart();
   readHash();
+  window.addEventListener("load", measure);
 })();

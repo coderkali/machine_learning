@@ -8,6 +8,13 @@
    "use when / do not use when" is judgement, not something a script can
    read out of a notebook.
 
+   The stages run in the order the work is really done: look, clean, SPLIT,
+   pre-process, feature engineering, choose a model — then, after fit(),
+   check the score and ship. The split sits before pre-processing on purpose:
+   every step after it learns a number from the data (a median, a category
+   list, a mean and sd) and must learn it from the training rows only.
+   chooser-tour.js walks a real table through these same stages.
+
    ── the contract ──────────────────────────────────────────────────────────
    topic / also   folder paths like "04_ML/08_Feature_Scaling".
                   build_site.py FAILS if a folder named here does not exist,
@@ -16,6 +23,9 @@
 
    name           what the technique is called; the flowchart leaves in FLOWS
                   at the bottom of this file must match it exactly
+   plain          ONE short sentence in simple English: what it does for you,
+                  in words a beginner can read. Shown first on the card; the
+                  mechanism and the full lists sit behind "More detail"
    code           the one line you would really type
    how            what the technique ACTUALLY DOES — the mechanism, in two or
                   three sentences, written so the use/avoid lists below follow
@@ -33,18 +43,536 @@ const SPACES = [
 
 /* ════════════════ 1 ════════════════════════════════════════════════════ */
 {
-  id: "prep", n: "1", name: "Preparing the data", icon: "🧹",
-  blurb: "Every decision here is inherited by every model you try afterwards. " +
-         "A wrong choice at this stage cannot be fixed by a better algorithm.",
+  id: "look", n: "1", name: "Look at it", icon: "🔍",
+  blurb: "Before you change anything, understand the table. What does one row mean? " +
+         "Which column is the answer you want to predict? Nothing gets changed in " +
+         "this step.",
+  jobs: [
+
+    { id: "describe", name: "Describe one column honestly", icon: "📉",
+      q: "What is the middle, and how spread out is it really?",
+      note: "Two datasets can share an average and describe completely different worlds.",
+      options: [
+        { name: "Mean and standard deviation", topic: "02_DataScience/01_Measures_Of_Variability",
+          plain: "The average, and the typical distance from it. For columns without huge values.",
+          code: "df['x'].mean(), df['x'].std()",
+          how: "The centre of mass of the column, and the typical distance from it. Both " +
+               "are built from every value in proportion to its size, which is what makes " +
+               "them efficient on well-behaved data and fragile on everything else.",
+          use: ["A roughly symmetric column with no extreme values, where the mean " +
+                "genuinely sits where most of the data is",
+                "You need the summary to feed something else. Most statistical tests, and " +
+                "most scalers, are built on the mean and the standard deviation",
+                "Comparing spread across columns after standardising, where the sd is the " +
+                "natural unit"],
+          avoid: ["A long tail. The mean then sits where almost nobody actually is — mean " +
+                  "income is a figure few people earn — and the sd is inflated by the same " +
+                  "tail",
+                  "Any column with outliers you decided to keep. One extreme value moves " +
+                  "both numbers, and neither describes the bulk of the data any more",
+                  "Reporting the mean on its own. Without the spread beside it a mean is " +
+                  "not a description of anything"],
+          },
+
+        { name: "Median and IQR", topic: "02_DataScience/02_IQR",
+
+          plain: "The middle value, and the spread of the middle half. Safe with huge values.",
+          code: "df['x'].median(), df['x'].quantile(.75) - df['x'].quantile(.25)",
+          how: "The middle value, and the width of the middle half of the data. Both are " +
+               "positions rather than magnitudes, so no single extreme value can shift " +
+               "either of them.",
+          use: ["A skewed column — income, price, waiting time. The median answers what a " +
+                "typical person actually experiences",
+                "Extreme values are present and you do not want them moving the summary",
+                "Reporting to a business audience. The median salary is a sentence people " +
+                "understand correctly; the mean salary is one they routinely misunderstand"],
+          avoid: ["Nothing, really. When in doubt report both this and the mean and let the " +
+                  "gap between them speak — a large gap is itself the finding",
+                  "Feeding a downstream method that specifically requires the mean, as most " +
+                  "parametric tests do"],
+          },
+
+        { name: "Skewness", topic: "02_DataScience/03_Skewness",
+
+          plain: "One number for how lopsided a column is.",
+          code: "df['x'].skew()",
+          how: "One number for the asymmetry of a column. Zero is symmetric, positive means " +
+               "the tail runs to the right, negative means it runs to the left, and as a " +
+               "rough working rule anything beyond about plus or minus one is worth acting " +
+               "on.",
+          use: ["Deciding whether a column needs a log or square-root transform before a " +
+                "linear model",
+                "A positive value means a tail to the right, which is the usual case for " +
+                "money, counts and durations",
+                "As a quick scan across many columns at once, to decide which ones deserve " +
+                "a proper look"],
+          avoid: ["Reading it alone. Always put the histogram beside it — two humps can " +
+                  "produce a skew near zero and look perfectly well behaved",
+                  "Applying a fixed threshold mechanically. Whether a skew matters depends " +
+                  "on what you are about to fit, and a tree does not care at all",
+                  "Computing it on a small sample, where the statistic is very unstable " +
+                  "from one draw to the next"],
+          },
+
+        { name: "Correlation matrix", topic: "02_DataScience/04_Correlation",
+
+          plain: "How strongly each pair of number columns moves together, from -1 to +1.",
+          code: "sns.heatmap(df.corr(numeric_only=True), annot=True)",
+          how: "Pearson correlation between every pair of numeric columns, running from -1 " +
+               "to +1. It measures only how well a straight line describes each pair, which " +
+               "is at once its usefulness and its entire limitation.",
+          use: ["Spotting which columns move with the target and which duplicate each " +
+                "other, in a single look",
+                "Before fitting a linear model, since correlated inputs are exactly what " +
+                "makes a coefficient table unreadable",
+                "As a first pass over a wide table, to decide which pairs are worth a " +
+                "scatter plot"],
+          avoid: ["Reading a low value as no relationship. It only sees straight lines, so " +
+                  "a perfect U shape scores near zero and looks like noise",
+                  "Reading a high value as cause. Two columns can move together because a " +
+                  "third drives both, and the matrix has no way to tell you so",
+                  "Forgetting that it ignores categorical columns completely, so the " +
+                  "strongest driver in your data may simply not appear on it",
+                  "Outliers, which are quite capable of creating or destroying a " +
+                  "correlation on their own"],
+          }
+      ] },
+
+    { id: "chart", name: "Which chart answers this?", icon: "📊",
+      q: "One column, two columns, or many? That is the whole decision.",
+      note: "Univariate shows shape. Bivariate shows relationship. Multivariate shows " +
+            "which columns carry the signal.",
+      options: [
+        { name: "Histogram", topic: "01_Python/05_Seaborn",
+          plain: "Bars showing how many rows fall in each range. The shape of one number column.",
+          also: ["04_ML/15_EDA_Uni_Bi_Multivariate"],
+          code: "sns.histplot(df['salary'], kde=True)",
+          how: "Buckets one numeric column into bins and draws how many rows fall into " +
+               "each. The bin width is a choice you are making whether you think about it " +
+               "or not — too few bins hides structure, too many turns the shape into noise.",
+          use: ["One numeric column. This is the first thing to draw, every time, before " +
+                "any modelling decision",
+                "Reading the shape: bell, long tail, two humps, a wall at zero, a spike at " +
+                "some default value",
+                "Spotting data quality problems. A pile at exactly 0 or 999 is almost " +
+                "always a placeholder rather than a measurement"],
+          avoid: ["Comparing many groups at once, where the bars pile up and hide each " +
+                  "other. Use a boxplot or a faceted grid instead",
+                  "Accepting the default bin count without ever trying another. The " +
+                  "apparent shape can change entirely",
+                  "Very few rows, where the histogram is showing you the sample rather than " +
+                  "the distribution"],
+          },
+
+        { name: "Boxplot", topic: "01_Python/05_Seaborn",
+
+          plain: "The middle, the spread and the outliers of one number column, in one picture.",
+          also: ["02_DataScience/02_IQR"],
+          code: "sns.boxplot(data=df, x='department', y='salary')",
+          how: "Draws the median, a box from the first to the third quartile, and whiskers " +
+               "reaching out to 1.5 IQRs, with anything past them drawn as an individual " +
+               "point. It is the IQR outlier rule made visible.",
+          use: ["Spread and extreme values in one picture — the whiskers are literally the " +
+                "IQR fence",
+                "Comparing one numeric column across several categories, which it does " +
+                "better than anything else",
+                "A compact summary when there are many groups and no room for many " +
+                "histograms"],
+          avoid: ["Showing shape. A box hides two humps completely — a bimodal column and a " +
+                  "uniform one can draw an identical box. Overlay the points, or use a " +
+                  "violin plot",
+                  "Small groups, where quartiles computed from six points imply a precision " +
+                  "that is not there",
+                  "Assuming every point past a whisker is an error. That is the rule's " +
+                  "definition of unusual, not a verdict"],
+          },
+
+        { name: "Countplot / bar", topic: "01_Python/05_Seaborn",
+
+          plain: "One bar per category, showing how many rows each one has.",
+          code: "sns.countplot(data=df, x='plan')",
+          how: "One bar per category, its height the number of rows. It is the categorical " +
+               "counterpart of the histogram, with the difference that the bins are given " +
+               "to you rather than chosen.",
+          use: ["One categorical column — how many of each, ordered so the reader can " +
+                "actually compare them",
+                "Checking class imbalance before you model anything. This is the plot that " +
+                "tells you whether accuracy is going to be a misleading metric",
+                "Spotting rare levels that will need grouping before they reach a one-hot " +
+                "encoder"],
+          avoid: ["Numeric columns with many distinct values, where a histogram is the " +
+                  "right chart",
+                  "High-cardinality categories. Fifty bars is a table pretending to be a " +
+                  "chart — show the top ten and an Other",
+                  "Starting the axis anywhere but zero, which in a bar chart specifically " +
+                  "exaggerates the differences"],
+          },
+
+        { name: "Scatter plot", topic: "01_Python/04_Matplotlib",
+
+          plain: "One dot per row, placed by two number columns.",
+          also: ["04_ML/15_EDA_Uni_Bi_Multivariate"],
+          code: "sns.scatterplot(data=df, x='area', y='price', hue='city')",
+          how: "One point per row, placed by two numeric columns. It is the only plot that " +
+               "shows the actual joint shape of a relationship rather than a summary of it, " +
+               "which is why it comes before the model.",
+          use: ["Two numeric columns — is this a straight line, a curve, or a formless " +
+                "cloud",
+                "This is the plot that tells you whether a linear model has any chance, " +
+                "before you fit one and puzzle over a disappointing R²",
+                "Colour by a third column with hue= to see whether the relationship differs " +
+                "between groups",
+                "Residuals against fitted values after modelling, which is the same plot " +
+                "doing diagnostic work"],
+          avoid: ["Very many rows without transparency. The points merge into a solid block " +
+                  "and the density becomes invisible — set alpha, or use a hexbin plot",
+                  "Reading a pattern into a cloud. If it looks like nothing, that is itself " +
+                  "the finding",
+                  "Two categorical columns, where every point lands on a grid and they " +
+                  "overlap completely"],
+          },
+
+        { name: "Correlation heatmap", topic: "02_DataScience/04_Correlation",
+
+          plain: "The correlation table drawn as colours, to scan many columns at once.",
+          code: "sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')",
+          how: "The correlation matrix drawn as a grid of colour. Colour is what lets you " +
+               "scan a large matrix in one glance, which is the whole advantage over " +
+               "reading the numbers themselves.",
+          use: ["Many numeric columns at once — the fastest read on duplication and on " +
+                "which columns relate to the target",
+                "With annot=True on a small matrix, so you get the colour and the number " +
+                "together",
+                "With a diverging colourmap centred on zero, since -1 and +1 are opposites " +
+                "and 0 is the meaningful middle"],
+          avoid: ["Categorical columns, which are simply absent from it — and their absence " +
+                  "is very easy to forget",
+                  "Very many columns, where the cells shrink past readability and the " +
+                  "picture becomes decorative rather than informative",
+                  "The same misreadings as the matrix behind it: low is not no " +
+                  "relationship, and high is not cause"],
+          },
+
+        { name: "Pairplot", topic: "04_ML/15_EDA_Uni_Bi_Multivariate",
+
+          plain: "A grid of scatter plots for every pair of a few columns.",
+          code: "sns.pairplot(df, hue='species')",
+          how: "A grid with every pair of numeric columns as a scatter plot and each " +
+               "column's own distribution down the diagonal. It is a whole exploratory " +
+               "session in one command, which is exactly why it stops working as the column " +
+               "count grows.",
+          use: ["A handful of numeric columns — every pair, plus every distribution, in one " +
+                "grid",
+                "Colour by the target with hue= and separable classes jump straight out of " +
+                "the page",
+                "Early exploration, when you do not yet know which pair is worth a chart of " +
+                "its own"],
+          avoid: ["Many columns. The grid grows with the square of the count, so ten " +
+                  "columns is a hundred panels and none of them is readable",
+                  "Large row counts, where every panel becomes a solid block and the whole " +
+                  "grid is slow to draw",
+                  "As a chart for someone else. It is a tool for you, not a finding for an " +
+                  "audience"],
+          },
+
+        { name: "Line chart", topic: "01_Python/04_Matplotlib",
+
+          plain: "Points joined in order. Only when the x axis is time, or another real order.",
+          code: "sns.lineplot(data=df, x='date', y='sales')",
+          how: "Joins points in order along the x axis. That connecting line is a claim " +
+               "that the space between two points means something, so it belongs to " +
+               "genuinely continuous sequences and nothing else.",
+          use: ["Rows are in time order and you want the trend, the seasonality, or the " +
+                "point where it broke",
+                "Several series on one pair of axes, where comparing them over time is the " +
+                "whole point",
+                "Learning curves and validation curves, which are lines because their x " +
+                "axis really is ordered"],
+          avoid: ["Unordered categories. A line between Mumbai and Chennai implies a " +
+                  "journey between them, and there is no such journey",
+                  "Very irregular sampling, where the line invents a smooth path across a " +
+                  "gap in which you measured nothing at all",
+                  "Too many series at once. Past about five the chart is a tangle and no " +
+                  "single line can be followed"],
+          },
+
+        { name: "Plotly", topic: "01_Python/06_Plotly",
+
+          plain: "Charts the reader can hover over and zoom into.",
+          code: "px.scatter(df, x='area', y='price', color='city', hover_data=['id'])",
+          how: "Renders a chart as interactive HTML rather than a static image, so " +
+               "hovering, zooming and filtering by legend come for free. The cost is that " +
+               "the output is a web object rather than a picture.",
+          use: ["The reader needs to hover, zoom or filter — an exploration someone else " +
+                "will drive without you in the room",
+                "The chart is going into a web page or a dashboard",
+                "Many points, where hovering to identify one is genuinely useful and " +
+                "hover_data can carry the id along"],
+          avoid: ["A static image for a PDF, a printout, or a notebook someone reads " +
+                  "offline where the JavaScript will never run",
+                  "A chart inside a git-tracked notebook, where the embedded HTML bloats " +
+                  "every diff",
+                  "A simple plot seaborn draws in one line. Interactivity nobody uses is " +
+                  "just weight"],
+          },
+
+        { name: "Streamlit", topic: "01_Python/07_Streamlit",
+
+          plain: "Turn a Python script into a small web app with sliders and buttons.",
+          code: "st.plotly_chart(fig, use_container_width=True)",
+          how: "Turns a Python script into a web app by re-running the whole script " +
+               "whenever a widget changes. There is no callback model to learn, which is " +
+               "why the distance from a working notebook to something a colleague can click " +
+               "is so short.",
+          use: ["Handing the analysis to someone who will not run a notebook — the model " +
+                "becomes a thing they can click rather than a file they cannot open",
+                "The fastest route from a working model to a demo, when what you need back " +
+                "is feedback rather than a deployment",
+                "An internal tool where a form and a chart is genuinely the whole " +
+                "requirement"],
+          avoid: ["A one-off answer, where a chart in a notebook is enough and the app is " +
+                  "overhead you will then have to maintain",
+                  "A production, multi-user, authenticated application. Re-running the " +
+                  "script on every interaction does not scale the way a real web framework " +
+                  "does",
+                  "Heavy computation on every interaction, unless it is safely behind " +
+                  "st.cache_data"],
+          }
+      ] },
+
+    { id: "test", name: "Is this difference real?", icon: "⚖️",
+      q: "Two numbers differ. Is that an effect, or a run of good luck?",
+      note: "Assume nothing happened, then ask how surprising your result would be if that " +
+            "were true. A small p-value means the data is hard to explain by luck alone.",
+      options: [
+        { name: "One-sample z-test", topic: "02_DataScience/07_Z_Test",
+          plain: "Is this average different from a claimed value? When you already know the true spread.",
+          also: ["02_DataScience/11_Z_Test_vs_T_Test", "02_DataScience/05_Central_Limit_Theorem"],
+          code: "z = (x_bar - mu) / (sigma / n**0.5)",
+          how: "Compares a sample mean against a claimed population mean by dividing the " +
+               "gap by the standard error. It reads the result off the normal distribution, " +
+               "which is only justified when the population standard deviation is genuinely " +
+               "known rather than estimated.",
+          use: ["You know the population standard deviation — in practice a " +
+                "long-established process with a documented sigma, not one you worked out " +
+                "from this very sample",
+                "A large sample, roughly 30 or more, so the Central Limit Theorem makes the " +
+                "sampling distribution of the mean approximately normal whatever the raw " +
+                "data looks like",
+                "Proportions at large n, where the normal approximation to the binomial " +
+                "holds comfortably"],
+          avoid: ["A small sample with an unknown standard deviation. That is precisely the " +
+                  "case the t-test was invented for, and its heavier tails are the " +
+                  "correction you are missing",
+                  "Estimating sigma from the sample and then treating it as known. That " +
+                  "understates the uncertainty and hands you a p-value that is too small",
+                  "Strongly skewed data at small n, where the Central Limit Theorem has not " +
+                  "yet rescued you"],
+          },
+
+        { name: "One-sample t-test", topic: "02_DataScience/08_T_Test",
+
+          plain: "Is this average different from a claimed value? The usual case.",
+          also: ["02_DataScience/06_Hypothesis_Testing_Basics"],
+          code: "ttest_1samp(sample, popmean=50)",
+          how: "Compares one group's mean against a claimed value, using the sample's own " +
+               "standard deviation as the estimate of spread. The t distribution has " +
+               "heavier tails than the normal — that is the price of not knowing sigma — " +
+               "and those tails thin out as the sample grows.",
+          use: ["Comparing one group's mean against a claimed or target value: a stated " +
+                "SLA, a specification, last year's average",
+                "The population standard deviation is unknown, which is almost always the " +
+                "real situation",
+                "Any sample size. At large n the t and z answers converge anyway, so the " +
+                "t-test is simply the safer default of the two"],
+          avoid: ["Comparing two separate groups. Use the two-sample form — testing each " +
+                  "against a constant separately does not answer the question you asked",
+                  "Strongly skewed data at small n. The test assumes the sampling " +
+                  "distribution of the mean is roughly normal, and with eight skewed points " +
+                  "it is not",
+                  "Reading a small p-value as a large effect. It says the difference is " +
+                  "unlikely to be chance, not that it is big enough to act on — report the " +
+                  "effect size beside it"],
+          },
+
+        { name: "Two-sample t-test", topic: "02_DataScience/08_T_Test",
+
+          plain: "Do two separate groups have different averages?",
+          code: "ttest_ind(group_a, group_b)",
+          how: "Tests whether two independent groups have different means, by weighing the " +
+               "gap between them against the variability inside them. ttest_ind assumes " +
+               "equal variances by default, and equal_var=False switches to Welch's " +
+               "version, which does not.",
+          use: ["Two independent groups of different people or units — control against " +
+                "variant, branch A against branch B",
+                "An A/B test, which is exactly this shape: two groups, one metric, one " +
+                "comparison",
+                "With equal_var=False as the standing habit. Welch's test costs almost " +
+                "nothing when the variances really are equal, and is far safer when they " +
+                "are not"],
+          avoid: ["The same people measured twice. That is a paired test, and using this " +
+                  "one discards the pairing along with most of your statistical power",
+                  "More than two groups compared pair by pair. Each comparison carries its " +
+                  "own false-positive risk, so use ANOVA or correct for the multiplicity",
+                  "Groups that are not really independent — the same customer appearing in " +
+                  "both, or units drawn from within the same store"],
+          },
+
+        { name: "Paired t-test", topic: "02_DataScience/09_Paired_T_Test",
+
+          plain: "Did the same people change, before versus after?",
+          code: "ttest_rel(before, after)",
+          how: "Subtracts each pair and runs a one-sample test on the differences. Because " +
+               "every subject acts as its own control, everything that varies between " +
+               "subjects cancels out — which is why it detects far smaller effects than the " +
+               "two-sample test on the same data.",
+          use: ["The same subjects measured twice — before and after training, the same " +
+                "store month on month, the same server under two configurations",
+                "Naturally matched pairs: twins, left and right, a matched control per case",
+                "Whenever pairing exists at all. Ignoring it throws away information you " +
+                "have already paid to collect"],
+          avoid: ["Two unrelated groups, or groups of unequal size. There is simply nothing " +
+                  "to pair",
+                  "Pairs that are not genuinely pairs. If the matching is arbitrary the " +
+                  "assumption is false and the answer cannot be trusted",
+                  "Misaligned rows. before and after must line up one for one, and a silent " +
+                  "misalignment produces a confident, meaningless result"],
+          },
+
+        { name: "Chi-square test", topic: "02_DataScience/10_Chi_Square_Test",
+
+          plain: "Are two category columns related — for example, overtime and leaving?",
+          code: "chi2_contingency(pd.crosstab(df.city, df.churn))",
+          how: "Compares the counts you actually observed in a contingency table against " +
+               "the counts you would expect if the two categories were unrelated. The " +
+               "larger the total gap across the cells, the less plausible independence " +
+               "becomes.",
+          use: ["Both columns are categories — is churn related to plan type, is defect " +
+                "rate related to shift",
+                "You are working with counts in a table rather than with means",
+                "Testing whether an observed distribution matches an expected one, which is " +
+                "the goodness-of-fit form of the same idea"],
+          avoid: ["Numeric columns. Binning one to force it through a chi-square discards " +
+                  "information, and the answer then depends on the bins you happened to " +
+                  "choose",
+                  "Very small expected counts in a cell. Below about 5 the approximation " +
+                  "stops holding — use Fisher's exact test on a small two-by-two table",
+                  "Reading it as a measure of strength. It tells you whether an association " +
+                  "exists, not how large it is; Cramer's V is the statistic that reports " +
+                  "size",
+                  "Paired or repeated categorical measurements, where McNemar's test is the " +
+                  "correct one"],
+          }
+      ] },
+
+    { id: "synth", name: "No data yet, or testing an idea", icon: "\u{1F9EA}",
+      q: "I want to try a technique, but I do not have a suitable dataset.",
+      note: "Generated data is the one case where you already know the right answer, " +
+            "so you can check whether the model actually found it. Reference only \u2014 " +
+            "this never appears in a real plan.",
+      options: [
+        { name: "make_regression", topic: "04_ML/14_Synthetic_Datasets",
+          plain: "Make a practice table where the answer is a number.",
+          also: ["04_ML/03_Data_Collection"],
+          code: "make_regression(n_samples=200, n_features=1, noise=15, random_state=42)",
+          how: "Generates X and y from a linear relationship it builds for you, then adds " +
+               "Gaussian noise of a size you choose. Because you set the truth, you know in " +
+               "advance what the best achievable score is — which is the entire point of " +
+               "it.",
+          use: ["Checking that a regression technique behaves the way the theory says, with " +
+                "no data quality problems standing in the way",
+                "You set the noise, so you know exactly how good the score ought to be and " +
+                "can tell a bug apart from a genuinely hard problem",
+                "Teaching or debugging — reproducing an effect such as multicollinearity or " +
+                "the leverage of a single outlier, on demand"],
+          avoid: ["Claiming anything about the real world from it. The relationship came " +
+                  "out linear because you asked for a linear one",
+                  "Benchmarking models against each other. A generator built on a linear " +
+                  "rule will always flatter linear models"],
+          },
+
+        { name: "make_classification", topic: "04_ML/14_Synthetic_Datasets",
+
+          plain: "Make a practice table where the answer is a class.",
+          code: "make_classification(n_samples=500, n_informative=3, weights=[0.95, 0.05])",
+          how: "Builds a classification problem from clusters placed around the corners of " +
+               "a hypercube, with the number of genuinely informative columns, the number " +
+               "of redundant ones and the class balance all under your control.",
+          use: ["Practising with a deliberately imbalanced target through weights=[0.95, " +
+                "0.05], so you can watch precision, recall and the confusion matrix behave " +
+                "under imbalance",
+                "Comparing classifiers on a boundary whose true shape you chose",
+                "Checking that a resampling strategy or class_weight does what you believe " +
+                "it does, on a case where the right answer is known"],
+          avoid: ["Tuning hyperparameters you then carry across to real data. They are " +
+                  "tuned to the generator, not to your problem",
+                  "Reporting its accuracy as evidence of anything. n_informative and " +
+                  "class_sep are dials, and they set the score directly"],
+          },
+
+        { name: "make_blobs", topic: "04_ML/14_Synthetic_Datasets",
+
+          plain: "Make practice points in clear groups, for trying clustering.",
+          code: "make_blobs(n_samples=300, centers=4, cluster_std=1.0, random_state=42)",
+          how: "Draws points from a small number of round Gaussian clusters whose centres " +
+               "and spread you choose. You know the true grouping, so you can check whether " +
+               "a clustering algorithm actually recovered it.",
+          use: ["Clustering practice, where you know the true k and can check whether " +
+                "KMeans found it",
+                "Seeing what the elbow method and the silhouette score look like on a case " +
+                "where the answer is genuinely known, so you learn to read them",
+                "Showing why scaling matters for clustering, by giving one dimension a much " +
+                "larger spread than the others"],
+          avoid: ["Concluding that KMeans works well in general. Blobs are exactly the " +
+                  "round, similarly sized shape KMeans assumes, so it can hardly fail here",
+                  "Testing density or shape-based clustering. Use make_moons or " +
+                  "make_circles, where round clusters are the wrong model and the " +
+                  "difference actually shows"],
+          }
+      ] }
+  ]
+},
+
+/* ════════════════ 2 ════════════════════════════════════════════════════ */
+{
+  id: "clean", n: "2", name: "Clean it", icon: "🧹",
+  blurb: "Fix what is plainly wrong: copied rows, one word spelled three ways, " +
+         "numbers stored as text, values that cannot be true.",
   jobs: [
 
     { id: "clean", name: "Clean the table first", icon: "\u{1F9FD}",
       q: "Before any of this: is the table itself sound?",
-      note: "Two quiet defects break everything downstream. A duplicated row leaks across " +
+      note: "Three quiet defects break everything downstream. One word spelled three ways " +
+            "becomes three categories. A duplicated row leaks across " +
             "the train/test split. A number stored as text silently disables arithmetic, " +
             "and no error is ever raised.",
       options: [
+        { name: "Fix inconsistent spellings", topic: "04_ML/35_Project_Employee_Attrition",
+          plain: "Make 'Male', 'male ' and 'MALE' the same word, so one group is not split into three.",
+          code: "df['Gender'] = df['Gender'].str.strip().str.capitalize()",
+          how: "str.strip() removes spaces at the start and end of every value; " +
+               "str.capitalize() makes the first letter upper-case and the rest " +
+               "lower-case. After both, 'MALE', 'male' and 'Male ' are the same string, so " +
+               "they are counted, grouped and encoded as one category instead of several.",
+          use: ["Any text column typed in by people or joined from several systems. In the " +
+                "attrition project Gender arrived in eight spellings, and one-hot encoding " +
+                "it unfixed would have made eight columns instead of two",
+                "Before counting, grouping or encoding. value_counts() on an unfixed column " +
+                "splits one real group into several small ones, and every chart and encoder " +
+                "after it inherits the split",
+                "Before drop_duplicates(). Two rows that differ only by 'Yes' and 'YES' are " +
+                "the same row, but they are not caught as copies until the spelling is " +
+                "fixed"],
+          avoid: ["Columns where capital letters carry meaning — product codes, IDs or " +
+                  "anything case-sensitive, where 'ab12' and 'AB12' are different things",
+                  "Expecting it to fix real typos. It fixes spaces and capital letters only; " +
+                  "'Mael' or 'Femal' still need a replace() mapping, so look at " +
+                  "value_counts() afterwards"],
+          },
+
         { name: "drop_duplicates()", topic: "04_ML/09_Duplicates_And_Dtypes",
+
+          plain: "Delete rows that are exact copies, so the same person is not counted twice.",
           also: ["04_ML/04_Data_Cleaning"],
           code: "df = df.drop_duplicates()",
           how: "Compares whole rows and keeps only the first copy of each. By default every " +
@@ -68,6 +596,8 @@ const SPACES = [
           },
 
         { name: "Check and fix dtypes", topic: "04_ML/09_Duplicates_And_Dtypes",
+
+          plain: "Make sure number columns are really stored as numbers, not as text.",
           also: ["04_ML/02_Types_Of_Variables"],
           code: "df.info()\ndf['amount'] = pd.to_numeric(df['amount'], errors='coerce')",
           how: "df.info() reports the dtype pandas guessed for each column when it read the " +
@@ -91,6 +621,8 @@ const SPACES = [
           },
 
         { name: "Know what each column IS", topic: "04_ML/02_Types_Of_Variables",
+
+          plain: "Decide what each column means — an amount, a name, or a ranking — before you touch it.",
           code: "# numeric \u2192 arithmetic  |  nominal \u2192 one-hot  |  ordinal \u2192 keep the order",
           how: "A judgement you make per column, not something a function returns. Numeric " +
                "means arithmetic on it is meaningful. Nominal means the values are names " +
@@ -114,12 +646,187 @@ const SPACES = [
           }
       ] },
 
+    { id: "outliers", name: "Extreme values", icon: "🎯",
+      q: "Is this row wrong, or just rare? One gets removed. The other is the finding.",
+      note: "Decide what the point IS before deciding what to do with it. " +
+            "An age of 300 is an error. A salary of 40 lakh is a person.",
+      options: [
+        { name: "IQR fence, then clip", topic: "04_ML/07_Outliers",
+          plain: "Find values far outside the usual middle range, and pull them back to the edge.",
+          also: ["02_DataScience/02_IQR"],
+          code: "lo, hi = q1 - 1.5*iqr, q3 + 1.5*iqr\ndf['x'] = df['x'].clip(lo, hi)",
+          how: "Takes the middle half of the data, from the first quartile to the third, " +
+               "and calls anything more than 1.5 IQRs beyond either quartile an outlier. " +
+               "clip then pulls those values back to the fence rather than deleting the row " +
+               "they sit in.",
+          use: ["Any shape of distribution. Quartiles are positions, so unlike the " +
+                "three-sigma rule this assumes nothing about a bell curve",
+                "You want to keep the row. Clipping leaves every other column of that row " +
+                "usable while stopping one value from dominating a scaler or a " +
+                "least-squares fit",
+                "Skewed columns above all, where the mean and standard deviation are " +
+                "already distorted by the very points you are trying to find"],
+          avoid: ["The extreme value is the thing you are trying to predict — fraud, " +
+                  "equipment failure, a demand spike. You have just clipped away the signal " +
+                  "and kept the noise",
+                  "Computing the fence on the full dataset. Learn lo and hi on the training " +
+                  "data only, or the test set has quietly shaped your preprocessing",
+                  "Small samples, where the quartiles themselves are unstable and the fence " +
+                  "moves noticeably with each new point"],
+          },
+
+        { name: "Z-score / 3-sd rule", topic: "04_ML/07_Outliers",
+
+          plain: "Remove values more than 3 standard deviations from the average. Only for bell-shaped columns.",
+          code: "df = df[(df['x'] - df['x'].mean()).abs() <= 3*df['x'].std()]",
+          how: "Measures each value as a number of standard deviations from the mean and " +
+               "removes anything beyond three. Under a normal distribution about 0.3% of " +
+               "values fall outside that band, which is the entire justification for the " +
+               "rule.",
+          use: ["The column really is roughly bell-shaped. Check that on a histogram before " +
+                "trusting the rule, not after it has deleted rows",
+                "Measurement error in a physical quantity, where whatever produces the " +
+                "outliers is genuinely a different mechanism from whatever produces the " +
+                "data"],
+          avoid: ["A skewed column. The mean and standard deviation are themselves pulled " +
+                  "by the points you are hunting, so the band widens to swallow them and " +
+                  "the rule finds almost nothing",
+                  "Small samples, where the standard deviation is unstable and three of " +
+                  "them may be wider than the data actually is",
+                  "Any column whose tail is real. Income has a long right tail by nature, " +
+                  "and being three standard deviations out does not make a value wrong"],
+          },
+
+        { name: "Drop the row", topic: "04_ML/07_Outliers",
+
+          plain: "Delete rows whose value cannot be true, like age 300 or a negative price.",
+          code: "df = df[df['age'] < 120]",
+          how: "Filters the frame with a condition. It is the only outlier action that " +
+               "destroys data, so it belongs to values that cannot be true rather than " +
+               "values that merely surprise you.",
+          use: ["The value is impossible — a negative price, an age of 300, a delivery date " +
+                "before its order date. That is a defect, and a defect is not data",
+                "You can state the rule that makes it impossible in one sentence, to " +
+                "someone else, without referring to the model",
+                "Corrupt or partial loads, where the row never represented a real event in " +
+                "the first place"],
+          avoid: ["The value is merely surprising. Surprising is data and impossible is a " +
+                  "defect, and confusing the two is how a genuine finding gets deleted",
+                  "Dropping rows to make a score improve. That is fitting the data to the " +
+                  "model, and it will not survive contact with production",
+                  "Dropping many rows without counting them and saying so. A rule that " +
+                  "removed 8% of the data has changed the question you are answering, and " +
+                  "the change needs to be visible"],
+          },
+
+        { name: "Keep them, use a model that does not care", topic: "04_ML/27_Decision_Tree_Regression",
+
+          plain: "Leave the extreme values in, and use a tree model, which is not bothered by them.",
+          also: ["04_ML/34_Ensemble_Methods", "04_ML/38_Robust_Regression"],
+          code: "DecisionTreeRegressor()   # splits, never averages distance",
+          how: "A tree splits on the order of values and never on the distance between " +
+               "them, so replacing 200 with 200,000 changes nothing as long as the ordering " +
+               "holds. Robust regressors carry the same idea into a straight-line fit by " +
+               "down-weighting large residuals instead of squaring them.",
+          use: ["The extremes are real and you refuse to fake them. This is the honest " +
+                "option whenever the tail is part of the phenomenon rather than a fault in " +
+                "the data",
+                "A tree, forest or boosting model is acceptable for the problem. They are " +
+                "unmoved by any order-preserving change to a feature, so outliers in X cost " +
+                "them very little",
+                "You need a straight line anyway. Then reach for a robust fitter such as " +
+                "HuberRegressor or RANSAC rather than deleting rows to protect an ordinary " +
+                "least-squares fit"],
+          avoid: ["You have already committed to plain LinearRegression. Least squares " +
+                  "squares the residual, so a single far point can dominate the whole fit",
+                  "The wild values are in the target y rather than in X. A tree is robust " +
+                  "to outliers in the features; it is much less robust to nonsense in the " +
+                  "thing it is trying to predict",
+                  "Distance-based models. KNN and SVM feel every extreme value directly, " +
+                  "through the metric itself"],
+          }
+      ] }
+  ]
+},
+
+/* ════════════════ 3 ════════════════════════════════════════════════════ */
+{
+  id: "split", n: "3", name: "Split it", icon: "✂️",
+  blurb: "Lock away about a fifth of the rows as a test set, now — before any step " +
+         "that learns from the data.",
+  jobs: [
+
+    { id: "split", name: "Keeping the test honest", icon: "✂",
+      q: "Have I split before anything learns from the data?",
+      note: "This is the one rule with no exception. Split first, then fit every transformer " +
+            "on the training half only. A scaler fitted on the whole table has already read the test set.",
+      options: [
+        { name: "train_test_split(stratify=y)", topic: "04_ML/13_Train_Test_Split",
+          plain: "Hide about 20% of the rows as a test set, with the same Yes/No mix as the full table.",
+          code: "train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)",
+          how: "Shuffles the rows and cuts them into a training part and a held-out test " +
+               "part. stratify=y makes the cut preserve the class proportions on both " +
+               "sides, and random_state makes the same cut happen every time the file runs.",
+          use: ["Every supervised problem, as the first line after loading — before any " +
+                "imputing, scaling or encoding, so that nothing you fit can ever have seen " +
+                "the test rows",
+                "stratify=y on any classification problem, and above all an imbalanced one. " +
+                "Without it a rare class can land almost entirely on one side of the split " +
+                "by chance",
+                "random_state fixed to a number, so a score you quote today can be " +
+                "reproduced tomorrow"],
+          avoid: ["Time-ordered rows split at random. You would train on the future and " +
+                  "test on the past, and the score you get is not one production can " +
+                  "deliver. Split by date instead",
+                  "Grouped rows — several visits by one patient, several orders by one " +
+                  "customer. A random split puts the same person on both sides and the " +
+                  "model learns to recognise the person rather than the pattern. Use " +
+                  "GroupShuffleSplit",
+                  "Re-running the split with new random_states until the score looks good. " +
+                  "That is choosing a test set that flatters the model"],
+          },
+
+        { name: "Pipeline + ColumnTransformer", topic: "04_ML/12_Preprocessing",
+
+          plain: "Put every preparation step and the model in one object, so each step learns from training rows only.",
+          code: "Pipeline([('prep', ColumnTransformer([...])), ('model', Ridge())])",
+          how: "A Pipeline chains preprocessing steps and a model into one object with a " +
+               "single fit and a single predict. A ColumnTransformer routes different " +
+               "columns down different paths — numeric to the imputer and scaler, " +
+               "categorical to the encoder — and hands the model one matrix at the end.",
+          use: ["Always, the moment you have more than one preprocessing step",
+                "It makes leakage structurally impossible. fit() only ever sees the fold it " +
+                "was given, so the scaler's mean and the imputer's median cannot be learned " +
+                "from test data even by accident",
+                "Numeric and categorical columns need different treatment, and this keeps " +
+                "that in one object instead of two parallel scripts you have to remember to " +
+                "keep in step",
+                "Cross-validation and grid search, which refit the entire chain on each " +
+                "fold. Without a pipeline, cross_val_score run on already-scaled data is " +
+                "quietly wrong and still prints a number",
+                "Deployment, because the whole chain pickles as one object and scoring " +
+                "becomes a single call"],
+          avoid: ["Nothing. If a step is worth doing it is worth doing inside a pipeline — " +
+                  "the only real cost is a few extra lines the first time you write one"],
+          }
+      ] }
+  ]
+},
+
+/* ════════════════ 4 ════════════════════════════════════════════════════ */
+{
+  id: "prep", n: "4", name: "Pre-process it", icon: "⚖️",
+  blurb: "A model can only read numbers. Fill the blanks, turn words into numbers, " +
+         "calm down long tails, and put the columns on a similar scale.",
+  jobs: [
+
     { id: "missing", name: "Blank cells", icon: "🕳",
       q: "Do I delete these rows, or invent a value for them?",
       note: "Deleting loses information you had. Filling invents information you never had. " +
             "There is no free option — pick the cheaper mistake.",
       options: [
         { name: "df.dropna()", topic: "04_ML/05_Missing_Values",
+          plain: "Delete the rows that have a blank. Fine when only a few rows are affected.",
           code: "df = df.dropna(subset=['age'])",
           how: "Deletes any row that has a blank in the columns you name. With no subset it " +
                "deletes a row for a blank anywhere, which on a wide table can remove most " +
@@ -142,6 +849,8 @@ const SPACES = [
           },
 
         { name: "SimpleImputer(strategy='median')", topic: "04_ML/05_Missing_Values",
+
+          plain: "Fill blanks with the middle value of the column. Safe even when a few values are huge.",
           code: "SimpleImputer(strategy='median')",
           how: "Learns one number per column on fit — the middle value once the column is " +
                "sorted — and writes it into every blank on transform. Because it is a rank " +
@@ -166,6 +875,8 @@ const SPACES = [
           },
 
         { name: "SimpleImputer(strategy='mean')", topic: "04_ML/05_Missing_Values",
+
+          plain: "Fill blanks with the column's average. Only when no huge values are pulling that average.",
           code: "SimpleImputer(strategy='mean')",
           how: "Learns the arithmetic average of the observed values on fit and writes it " +
                "into every blank. Every value in the column contributes to that average in " +
@@ -187,6 +898,8 @@ const SPACES = [
           },
 
         { name: "SimpleImputer(strategy='most_frequent')", topic: "04_ML/05_Missing_Values",
+
+          plain: "Fill blanks with the most common value. Works for text columns too.",
           code: "SimpleImputer(strategy='most_frequent')",
           how: "Learns the mode — the value that appears most often — and writes it into " +
                "every blank. It works on text and on numbers, but on numbers it picks the " +
@@ -207,6 +920,8 @@ const SPACES = [
           },
 
         { name: "ffill / bfill", topic: "04_ML/05_Missing_Values",
+
+          plain: "Copy the value from the row just before (or just after). Only for rows in time order.",
           code: "df['reading'] = df['reading'].ffill()",
           how: "Copies the last known value forward down the column, or the next known one " +
                "backward. It carries a real observed value rather than a summary of the " +
@@ -228,6 +943,8 @@ const SPACES = [
           },
 
         { name: "KNNImputer", topic: "04_ML/12_Preprocessing",
+
+          plain: "Fill a blank using the rows that look most like this one.",
           code: "KNNImputer(n_neighbors=5)",
           how: "For each row with a blank it finds the k most similar complete rows, using " +
                "the other columns as coordinates, and fills the gap with their average. " +
@@ -251,6 +968,8 @@ const SPACES = [
           },
 
         { name: "Fill with a 'Missing' category", topic: "04_ML/05_Missing_Values",
+
+          plain: "Write 'Missing' in the blank, because the blank itself tells you something.",
           code: "df['plan'] = df['plan'].fillna('Missing')",
           how: "Adds a new level to the column instead of guessing an existing one. The " +
                "encoder downstream then treats Missing as a category in its own right, and " +
@@ -276,6 +995,7 @@ const SPACES = [
             "Red = 1, Blue = 2 quietly tells the model that Blue is twice Red.",
       options: [
         { name: "OneHotEncoder", topic: "04_ML/06_Categorical_Encoding",
+          plain: "Turn one word column into several 0/1 columns, one per word. For names with no order.",
           code: "OneHotEncoder(handle_unknown='ignore', drop='first')",
           how: "Learns the set of categories on fit and produces one 0/1 column per " +
                "category on transform. handle_unknown='ignore' makes a category never seen " +
@@ -300,6 +1020,8 @@ const SPACES = [
           },
 
         { name: "OrdinalEncoder", topic: "04_ML/06_Categorical_Encoding",
+
+          plain: "Turn ranked words into numbers in the order you give: Low=0, Medium=1, High=2.",
           code: "OrdinalEncoder(categories=[['Low', 'Medium', 'High']])",
           how: "Maps each category to an integer. Passing categories=[[...]] fixes the " +
                "order yourself; left alone it sorts alphabetically, which is almost never " +
@@ -321,6 +1043,8 @@ const SPACES = [
           },
 
         { name: "LabelEncoder", topic: "04_ML/06_Categorical_Encoding",
+
+          plain: "Turn the answer column y into 0, 1, 2… For y only, never for the clue columns.",
           code: "y = LabelEncoder().fit_transform(y)",
           how: "Fits on a single one-dimensional array and maps its distinct values to " +
                "0..n-1 in sorted order. It is the same idea as OrdinalEncoder but shaped " +
@@ -338,6 +1062,8 @@ const SPACES = [
           },
 
         { name: "pd.get_dummies()", topic: "04_ML/06_Categorical_Encoding",
+
+          plain: "The quick pandas version of one-hot. Good for a first look, not for the real pipeline.",
           code: "pd.get_dummies(df, columns=['city'], drop_first=True)",
           how: "Expands category columns into 0/1 columns directly on a DataFrame. It has " +
                "no fit step, so it decides the columns from whatever data it is handed, " +
@@ -355,105 +1081,12 @@ const SPACES = [
           }
       ] },
 
-    { id: "outliers", name: "Extreme values", icon: "🎯",
-      q: "Is this row wrong, or just rare? One gets removed. The other is the finding.",
-      note: "Decide what the point IS before deciding what to do with it. " +
-            "An age of 300 is an error. A salary of 40 lakh is a person.",
-      options: [
-        { name: "IQR fence, then clip", topic: "04_ML/07_Outliers",
-          also: ["02_DataScience/02_IQR"],
-          code: "lo, hi = q1 - 1.5*iqr, q3 + 1.5*iqr\ndf['x'] = df['x'].clip(lo, hi)",
-          how: "Takes the middle half of the data, from the first quartile to the third, " +
-               "and calls anything more than 1.5 IQRs beyond either quartile an outlier. " +
-               "clip then pulls those values back to the fence rather than deleting the row " +
-               "they sit in.",
-          use: ["Any shape of distribution. Quartiles are positions, so unlike the " +
-                "three-sigma rule this assumes nothing about a bell curve",
-                "You want to keep the row. Clipping leaves every other column of that row " +
-                "usable while stopping one value from dominating a scaler or a " +
-                "least-squares fit",
-                "Skewed columns above all, where the mean and standard deviation are " +
-                "already distorted by the very points you are trying to find"],
-          avoid: ["The extreme value is the thing you are trying to predict — fraud, " +
-                  "equipment failure, a demand spike. You have just clipped away the signal " +
-                  "and kept the noise",
-                  "Computing the fence on the full dataset. Learn lo and hi on the training " +
-                  "data only, or the test set has quietly shaped your preprocessing",
-                  "Small samples, where the quartiles themselves are unstable and the fence " +
-                  "moves noticeably with each new point"],
-          },
-
-        { name: "Z-score / 3-sd rule", topic: "04_ML/07_Outliers",
-          code: "df = df[(df['x'] - df['x'].mean()).abs() <= 3*df['x'].std()]",
-          how: "Measures each value as a number of standard deviations from the mean and " +
-               "removes anything beyond three. Under a normal distribution about 0.3% of " +
-               "values fall outside that band, which is the entire justification for the " +
-               "rule.",
-          use: ["The column really is roughly bell-shaped. Check that on a histogram before " +
-                "trusting the rule, not after it has deleted rows",
-                "Measurement error in a physical quantity, where whatever produces the " +
-                "outliers is genuinely a different mechanism from whatever produces the " +
-                "data"],
-          avoid: ["A skewed column. The mean and standard deviation are themselves pulled " +
-                  "by the points you are hunting, so the band widens to swallow them and " +
-                  "the rule finds almost nothing",
-                  "Small samples, where the standard deviation is unstable and three of " +
-                  "them may be wider than the data actually is",
-                  "Any column whose tail is real. Income has a long right tail by nature, " +
-                  "and being three standard deviations out does not make a value wrong"],
-          },
-
-        { name: "Drop the row", topic: "04_ML/07_Outliers",
-          code: "df = df[df['age'] < 120]",
-          how: "Filters the frame with a condition. It is the only outlier action that " +
-               "destroys data, so it belongs to values that cannot be true rather than " +
-               "values that merely surprise you.",
-          use: ["The value is impossible — a negative price, an age of 300, a delivery date " +
-                "before its order date. That is a defect, and a defect is not data",
-                "You can state the rule that makes it impossible in one sentence, to " +
-                "someone else, without referring to the model",
-                "Corrupt or partial loads, where the row never represented a real event in " +
-                "the first place"],
-          avoid: ["The value is merely surprising. Surprising is data and impossible is a " +
-                  "defect, and confusing the two is how a genuine finding gets deleted",
-                  "Dropping rows to make a score improve. That is fitting the data to the " +
-                  "model, and it will not survive contact with production",
-                  "Dropping many rows without counting them and saying so. A rule that " +
-                  "removed 8% of the data has changed the question you are answering, and " +
-                  "the change needs to be visible"],
-          },
-
-        { name: "Keep them, use a model that does not care", topic: "04_ML/27_Decision_Tree_Regression",
-          also: ["04_ML/34_Ensemble_Methods", "04_ML/38_Robust_Regression"],
-          code: "DecisionTreeRegressor()   # splits, never averages distance",
-          how: "A tree splits on the order of values and never on the distance between " +
-               "them, so replacing 200 with 200,000 changes nothing as long as the ordering " +
-               "holds. Robust regressors carry the same idea into a straight-line fit by " +
-               "down-weighting large residuals instead of squaring them.",
-          use: ["The extremes are real and you refuse to fake them. This is the honest " +
-                "option whenever the tail is part of the phenomenon rather than a fault in " +
-                "the data",
-                "A tree, forest or boosting model is acceptable for the problem. They are " +
-                "unmoved by any order-preserving change to a feature, so outliers in X cost " +
-                "them very little",
-                "You need a straight line anyway. Then reach for a robust fitter such as " +
-                "HuberRegressor or RANSAC rather than deleting rows to protect an ordinary " +
-                "least-squares fit"],
-          avoid: ["You have already committed to plain LinearRegression. Least squares " +
-                  "squares the residual, so a single far point can dominate the whole fit",
-                  "The wild values are in the target y rather than in X. A tree is robust " +
-                  "to outliers in the features; it is much less robust to nonsense in the " +
-                  "thing it is trying to predict",
-                  "Distance-based models. KNN and SVM feel every extreme value directly, " +
-                  "through the metric itself"],
-          }
-      ] },
-
     { id: "shape", name: "A long tail", icon: "📐",
       q: "The column is bunched at one end. Do I reshape it?",
       note: "A straight-line model cannot bend. But the column can.",
       options: [
         { name: "FunctionTransformer(np.log1p)", topic: "04_ML/10_Function_Transformer",
+          plain: "Squash a long tail with a log, so a few huge values stop dominating.",
           code: "FunctionTransformer(np.log1p, validate=True)",
           how: "Applies log(1+x) to every value, compressing the large end of the column " +
                "far more than the small end. A column whose top decile sits a hundred times " +
@@ -477,6 +1110,8 @@ const SPACES = [
           },
 
         { name: "Square-root transform", topic: "04_ML/10_Function_Transformer",
+
+          plain: "A gentler squash than a log. Good for counts.",
           code: "FunctionTransformer(np.sqrt)",
           how: "Applies the square root, which compresses the large end far more gently " +
                "than a log does. It is the classic variance-stabilising transform for " +
@@ -498,6 +1133,7 @@ const SPACES = [
             "Ask what the algorithm actually computes, then decide.",
       options: [
         { name: "StandardScaler", topic: "04_ML/08_Feature_Scaling",
+          plain: "Shift every column so its average is 0 and its spread is 1.",
           also: ["04_ML/12_Preprocessing"],
           code: "StandardScaler().fit(X_train)   # mean 0, sd 1",
           how: "Learns the mean and standard deviation of each column on the training data, " +
@@ -522,6 +1158,8 @@ const SPACES = [
           },
 
         { name: "MinMaxScaler", topic: "04_ML/08_Feature_Scaling",
+
+          plain: "Squeeze every column into the range 0 to 1.",
           code: "MinMaxScaler()   # squeezed into 0–1",
           how: "Learns the smallest and largest value of each column on the training data " +
                "and maps them linearly onto 0 and 1. The shape of the distribution is " +
@@ -539,6 +1177,8 @@ const SPACES = [
           },
 
         { name: "RobustScaler", topic: "04_ML/12_Preprocessing",
+
+          plain: "Like StandardScaler, but built on the middle value, so extreme values cannot throw it off.",
           code: "RobustScaler()   # median and IQR, not mean and sd",
           how: "Centres on the median and divides by the interquartile range rather than " +
                "using the mean and standard deviation. Both of those are rank statistics, " +
@@ -558,6 +1198,8 @@ const SPACES = [
           },
 
         { name: "Normalizer", topic: "04_ML/12_Preprocessing",
+
+          plain: "Scale each row, not each column, to length 1. For word counts and similar rows.",
           code: "Normalizer(norm='l2')   # scales each ROW, not each column",
           how: "Scales each ROW so that its values together have length one. It is the only " +
                "tool in this decision that works across a row instead of down a column, " +
@@ -577,6 +1219,8 @@ const SPACES = [
           },
 
         { name: "Do not scale at all", topic: "04_ML/26_Decision_Tree_Classification",
+
+          plain: "Tree models do not care about units, so skip scaling for them.",
           also: ["04_ML/34_Ensemble_Methods"],
           code: "# trees ask 'is x > 5?' — the unit never enters the question",
           how: "A tree asks whether a value is above a threshold. That question has the " +
@@ -597,7 +1241,16 @@ const SPACES = [
                   "replace the tree next month, scaling now costs nothing and prevents a " +
                   "silent regression then"],
           }
-      ] },
+      ] }
+  ]
+},
+
+/* ════════════════ 5 ════════════════════════════════════════════════════ */
+{
+  id: "feat", n: "5", name: "Feature engineering", icon: "🎯",
+  blurb: "Keep the columns that help the model, and drop the ones that only add " +
+         "noise or repeat each other.",
+  jobs: [
 
     { id: "select", name: "Too many columns", icon: "✂️",
       q: "Which columns actually carry signal, and which just add noise?",
@@ -605,6 +1258,7 @@ const SPACES = [
             "for the model to find a pattern that is not there.",
       options: [
         { name: "VarianceThreshold", topic: "04_ML/11_Feature_Selection",
+          plain: "Drop columns that hold the same value in every row. They tell the model nothing.",
           code: "VarianceThreshold(threshold=0.0)",
           how: "Drops any column whose variance falls below the threshold. At the default " +
                "of zero that means columns holding one identical value in every row, which " +
@@ -624,6 +1278,8 @@ const SPACES = [
           },
 
         { name: "Correlation check, drop one of a pair", topic: "02_DataScience/04_Correlation",
+
+          plain: "If two columns say the same thing, keep only one of them.",
           also: ["04_ML/11_Feature_Selection"],
           code: "df.corr().abs()   # then drop one column from any pair above ~0.9",
           how: "Computes the pairwise linear correlation between columns and shows which " +
@@ -648,6 +1304,8 @@ const SPACES = [
           },
 
         { name: "SequentialFeatureSelector (forward / backward)", topic: "04_ML/11_Feature_Selection",
+
+          plain: "Add or remove one column at a time, and keep the change only if the score improves.",
           code: "SequentialFeatureSelector(model, n_features_to_select=5, direction='forward')",
           how: "Adds one column at a time, or removes one at a time, refitting the model " +
                "and keeping whichever move scores best under cross-validation. It judges a " +
@@ -665,6 +1323,8 @@ const SPACES = [
           },
 
         { name: "RFE", topic: "04_ML/11_Feature_Selection",
+
+          plain: "Let the model rank the columns, drop the weakest, and repeat.",
           code: "RFE(estimator=model, n_features_to_select=5)",
           how: "Fits the model, drops the weakest column according to the model's own " +
                "coefficients or importances, refits, and repeats until the requested number " +
@@ -684,6 +1344,8 @@ const SPACES = [
           },
 
         { name: "LDA as a reduction step", topic: "04_ML/36_Linear_Discriminant_Analysis",
+
+          plain: "Squash many columns into a few new ones that best separate the classes. Needs labels.",
           code: "LinearDiscriminantAnalysis(n_components=1).fit(X_train, y_train)",
           how: "Finds the directions that push the class centres as far apart as possible " +
                "while keeping each class tight around its own centre, and projects the data " +
@@ -705,6 +1367,8 @@ const SPACES = [
           },
 
         { name: "PCA", topic: "04_ML/39_PCA",
+
+          plain: "Squash many columns into a few new ones that keep most of the variation.",
           code: "Pipeline([('sc', StandardScaler()), ('pca', PCA(0.90)), ('m', SVC())])",
           how: "Finds the directions along which the data varies most and rewrites every " +
                "row in terms of those directions instead of the original columns. The first " +
@@ -731,128 +1395,16 @@ const SPACES = [
                   "original column in order to be computed, so nothing downstream becomes " +
                   "cheaper to measure"],
           }
-      ] },
-
-    { id: "split", name: "Keeping the test honest", icon: "✂",
-      q: "Have I split before touching anything else?",
-      note: "This is the one rule with no exception. Split first, then fit every transformer " +
-            "on the training half only. A scaler fitted on the whole table has already read the test set.",
-      options: [
-        { name: "train_test_split(stratify=y)", topic: "04_ML/13_Train_Test_Split",
-          code: "train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)",
-          how: "Shuffles the rows and cuts them into a training part and a held-out test " +
-               "part. stratify=y makes the cut preserve the class proportions on both " +
-               "sides, and random_state makes the same cut happen every time the file runs.",
-          use: ["Every supervised problem, as the first line after loading — before any " +
-                "imputing, scaling or encoding, so that nothing you fit can ever have seen " +
-                "the test rows",
-                "stratify=y on any classification problem, and above all an imbalanced one. " +
-                "Without it a rare class can land almost entirely on one side of the split " +
-                "by chance",
-                "random_state fixed to a number, so a score you quote today can be " +
-                "reproduced tomorrow"],
-          avoid: ["Time-ordered rows split at random. You would train on the future and " +
-                  "test on the past, and the score you get is not one production can " +
-                  "deliver. Split by date instead",
-                  "Grouped rows — several visits by one patient, several orders by one " +
-                  "customer. A random split puts the same person on both sides and the " +
-                  "model learns to recognise the person rather than the pattern. Use " +
-                  "GroupShuffleSplit",
-                  "Re-running the split with new random_states until the score looks good. " +
-                  "That is choosing a test set that flatters the model"],
-          },
-
-        { name: "Pipeline + ColumnTransformer", topic: "04_ML/12_Preprocessing",
-          code: "Pipeline([('prep', ColumnTransformer([...])), ('model', Ridge())])",
-          how: "A Pipeline chains preprocessing steps and a model into one object with a " +
-               "single fit and a single predict. A ColumnTransformer routes different " +
-               "columns down different paths — numeric to the imputer and scaler, " +
-               "categorical to the encoder — and hands the model one matrix at the end.",
-          use: ["Always, the moment you have more than one preprocessing step",
-                "It makes leakage structurally impossible. fit() only ever sees the fold it " +
-                "was given, so the scaler's mean and the imputer's median cannot be learned " +
-                "from test data even by accident",
-                "Numeric and categorical columns need different treatment, and this keeps " +
-                "that in one object instead of two parallel scripts you have to remember to " +
-                "keep in step",
-                "Cross-validation and grid search, which refit the entire chain on each " +
-                "fold. Without a pipeline, cross_val_score run on already-scaled data is " +
-                "quietly wrong and still prints a number",
-                "Deployment, because the whole chain pickles as one object and scoring " +
-                "becomes a single call"],
-          avoid: ["Nothing. If a step is worth doing it is worth doing inside a pipeline — " +
-                  "the only real cost is a few extra lines the first time you write one"],
-          }
-      ] },
-
-    { id: "synth", name: "No data yet, or testing an idea", icon: "\u{1F9EA}",
-      q: "I want to try a technique, but I do not have a suitable dataset.",
-      note: "Generated data is the one case where you already know the right answer, " +
-            "so you can check whether the model actually found it. Reference only \u2014 " +
-            "this never appears in a real plan.",
-      options: [
-        { name: "make_regression", topic: "04_ML/14_Synthetic_Datasets",
-          also: ["04_ML/03_Data_Collection"],
-          code: "make_regression(n_samples=200, n_features=1, noise=15, random_state=42)",
-          how: "Generates X and y from a linear relationship it builds for you, then adds " +
-               "Gaussian noise of a size you choose. Because you set the truth, you know in " +
-               "advance what the best achievable score is — which is the entire point of " +
-               "it.",
-          use: ["Checking that a regression technique behaves the way the theory says, with " +
-                "no data quality problems standing in the way",
-                "You set the noise, so you know exactly how good the score ought to be and " +
-                "can tell a bug apart from a genuinely hard problem",
-                "Teaching or debugging — reproducing an effect such as multicollinearity or " +
-                "the leverage of a single outlier, on demand"],
-          avoid: ["Claiming anything about the real world from it. The relationship came " +
-                  "out linear because you asked for a linear one",
-                  "Benchmarking models against each other. A generator built on a linear " +
-                  "rule will always flatter linear models"],
-          },
-
-        { name: "make_classification", topic: "04_ML/14_Synthetic_Datasets",
-          code: "make_classification(n_samples=500, n_informative=3, weights=[0.95, 0.05])",
-          how: "Builds a classification problem from clusters placed around the corners of " +
-               "a hypercube, with the number of genuinely informative columns, the number " +
-               "of redundant ones and the class balance all under your control.",
-          use: ["Practising with a deliberately imbalanced target through weights=[0.95, " +
-                "0.05], so you can watch precision, recall and the confusion matrix behave " +
-                "under imbalance",
-                "Comparing classifiers on a boundary whose true shape you chose",
-                "Checking that a resampling strategy or class_weight does what you believe " +
-                "it does, on a case where the right answer is known"],
-          avoid: ["Tuning hyperparameters you then carry across to real data. They are " +
-                  "tuned to the generator, not to your problem",
-                  "Reporting its accuracy as evidence of anything. n_informative and " +
-                  "class_sep are dials, and they set the score directly"],
-          },
-
-        { name: "make_blobs", topic: "04_ML/14_Synthetic_Datasets",
-          code: "make_blobs(n_samples=300, centers=4, cluster_std=1.0, random_state=42)",
-          how: "Draws points from a small number of round Gaussian clusters whose centres " +
-               "and spread you choose. You know the true grouping, so you can check whether " +
-               "a clustering algorithm actually recovered it.",
-          use: ["Clustering practice, where you know the true k and can check whether " +
-                "KMeans found it",
-                "Seeing what the elbow method and the silhouette score look like on a case " +
-                "where the answer is genuinely known, so you learn to read them",
-                "Showing why scaling matters for clustering, by giving one dimension a much " +
-                "larger spread than the others"],
-          avoid: ["Concluding that KMeans works well in general. Blobs are exactly the " +
-                  "round, similarly sized shape KMeans assumes, so it can hardly fail here",
-                  "Testing density or shape-based clustering. Use make_moons or " +
-                  "make_circles, where round clusters are the wrong model and the " +
-                  "difference actually shows"],
-          }
       ] }
   ]
 },
 
-/* ════════════════ 2 ════════════════════════════════════════════════════ */
+/* ════════════════ 6 ════════════════════════════════════════════════════ */
 {
-  id: "model", n: "2", name: "Choosing a model", icon: "🧭",
-  blurb: "Start with the simplest thing that could work and make it the score to beat. " +
-         "A complicated model that cannot beat a straight line has told you something.",
+  id: "model", n: "6", name: "Choose a model", icon: "🧭",
+  blurb: "What are you predicting — a number, a label like Yes or No, or no answer " +
+         "at all, just groups? That one question picks the family. Start simple, and " +
+         "make it the score to beat.",
   jobs: [
 
     { id: "reg", name: "Predict a number", icon: "📈",
@@ -861,6 +1413,7 @@ const SPACES = [
             "afterwards has to justify itself against it.",
       options: [
         { name: "LinearRegression", topic: "04_ML/16_Linear_Regression",
+          plain: "Fit a straight line. Always try this first — it is the score to beat.",
           also: ["04_ML/17_Multiple_Linear_Regression", "03_Math/05_Linear_Regression_From_Scratch"],
           code: "LinearRegression().fit(X_train, y_train)",
           how: "Fits one coefficient per column by minimising the sum of the squared " +
@@ -884,6 +1437,8 @@ const SPACES = [
           },
 
         { name: "PolynomialFeatures + LinearRegression", topic: "04_ML/18_Polynomial_Regression",
+
+          plain: "Fit a curve by adding squared columns to a straight-line model.",
           code: "Pipeline([('poly', PolynomialFeatures(2)), ('lr', LinearRegression())])",
           how: "Creates the squares, cubes and cross-products of your columns and hands " +
                "them to an ordinary linear fit. The model is still linear in its " +
@@ -904,6 +1459,8 @@ const SPACES = [
           },
 
         { name: "Ridge", topic: "04_ML/19_Ridge_Regression",
+
+          plain: "A straight line that keeps every weight small, so it does not overreact.",
           code: "Ridge(alpha=1.0)",
           how: "Ordinary least squares plus a penalty on the sum of the squared " +
                "coefficients. That penalty makes the fit prefer many small slopes over a " +
@@ -925,6 +1482,8 @@ const SPACES = [
           },
 
         { name: "Lasso", topic: "04_ML/20_Lasso_Regression",
+
+          plain: "A straight line that sets the weights of useless columns to exactly zero.",
           code: "Lasso(alpha=0.1)",
           how: "Least squares plus a penalty on the sum of the absolute coefficients. " +
                "Because that penalty subtracts a flat amount rather than a proportional " +
@@ -945,6 +1504,8 @@ const SPACES = [
           },
 
         { name: "ElasticNet", topic: "04_ML/21_ElasticNet",
+
+          plain: "A mix of Ridge and Lasso.",
           code: "ElasticNet(alpha=0.1, l1_ratio=0.5)",
           how: "Combines both penalties — the L1 part that zeroes weak columns and the L2 " +
                "part that shares weight between correlated ones. l1_ratio sets the mix, 1.0 " +
@@ -962,6 +1523,8 @@ const SPACES = [
           },
 
         { name: "RANSACRegressor", topic: "04_ML/38_Robust_Regression",
+
+          plain: "Fit the line using only the rows that agree, and point out the bad rows.",
           also: ["04_ML/07_Outliers"],
           code: "RANSACRegressor(random_state=0).fit(X_train, y_train)",
           how: "Fits a line to a small random sample of rows, counts how many other rows " +
@@ -987,6 +1550,8 @@ const SPACES = [
           },
 
         { name: "HuberRegressor", topic: "04_ML/38_Robust_Regression",
+
+          plain: "A straight line that listens less to rows with very large errors.",
           code: "HuberRegressor(epsilon=1.35).fit(X_train, y_train)",
           how: "Uses squared loss for small residuals and straight-line loss beyond " +
                "epsilon. Past that point an error costs proportionally rather than " +
@@ -1007,6 +1572,8 @@ const SPACES = [
           },
 
         { name: "TheilSenRegressor", topic: "04_ML/38_Robust_Regression",
+
+          plain: "A line built from the median slope, so a few bad points cannot pull it. For small tables.",
           code: "TheilSenRegressor(random_state=0).fit(X_train, y_train)",
           how: "Takes the slope of the line through every pair of points and uses the " +
                "median of all of them. A median cannot be dragged by a few extreme values, " +
@@ -1027,6 +1594,8 @@ const SPACES = [
           },
 
         { name: "DecisionTreeRegressor", topic: "04_ML/27_Decision_Tree_Regression",
+
+          plain: "Ask yes/no questions about the columns, and predict the average of each group.",
           code: "DecisionTreeRegressor(max_depth=5)",
           how: "Splits the rows repeatedly on one column at a time, each time choosing the " +
                "split that most reduces the error, and predicts the average of the training " +
@@ -1050,6 +1619,8 @@ const SPACES = [
           },
 
         { name: "RandomForestRegressor", topic: "04_ML/34_Ensemble_Methods",
+
+          plain: "Many slightly different trees, and the average of their answers.",
           code: "RandomForestRegressor(n_estimators=300, random_state=42)",
           how: "Trains many trees, each on a bootstrap sample of the rows and each choosing " +
                "its splits from a random subset of the columns, then averages their " +
@@ -1076,6 +1647,7 @@ const SPACES = [
       note: "Scale first for anything that measures distance — KNN and SVM are unusable without it.",
       options: [
         { name: "LogisticRegression", topic: "04_ML/40_Logistic_Regression",
+          plain: "Give each row a chance of 'Yes' between 0 and 1. The first model to try for a Yes/No answer.",
           code: "LogisticRegression()   # then predict_proba(X)[:, 1] for the probability",
           how: "Fits a straight-line score per row and pushes it through the sigmoid, which " +
                "maps any number onto the range 0 to 1. What comes out is a genuine " +
@@ -1101,6 +1673,8 @@ const SPACES = [
           },
 
         { name: "DecisionTreeClassifier", topic: "04_ML/26_Decision_Tree_Classification",
+
+          plain: "A flowchart of yes/no questions that you can read and explain.",
           code: "DecisionTreeClassifier(max_depth=5, random_state=42)",
           how: "Splits the rows on one column at a time, choosing the split that makes the " +
                "resulting groups purest by Gini or entropy, and predicts the majority class " +
@@ -1120,6 +1694,8 @@ const SPACES = [
           },
 
         { name: "RandomForestClassifier", topic: "04_ML/34_Ensemble_Methods",
+
+          plain: "Many trees vote on the answer. A strong score with little tuning.",
           code: "RandomForestClassifier(n_estimators=300, random_state=42)",
           how: "Many trees, each grown on a bootstrap sample of the rows and choosing from " +
                "a random subset of columns at every split, voting on the class. The " +
@@ -1138,6 +1714,8 @@ const SPACES = [
           },
 
         { name: "GradientBoosting / AdaBoost", topic: "04_ML/34_Ensemble_Methods",
+
+          plain: "Trees built one after another, each fixing the mistakes of the ones before.",
           code: "GradientBoostingClassifier(n_estimators=200, learning_rate=0.1)",
           how: "Builds trees in sequence, each new one fitted to the errors the previous " +
                "ones are still making, and adds them together scaled by a learning rate. " +
@@ -1159,6 +1737,8 @@ const SPACES = [
           },
 
         { name: "VotingClassifier", topic: "04_ML/34_Ensemble_Methods",
+
+          plain: "Several different models vote on the answer.",
           code: "VotingClassifier([('nb', GaussianNB()), ('dt', tree), ('knn', knn)], voting='soft')",
           how: "Runs several different models and combines them — hard voting takes the " +
                "majority label, soft voting averages the predicted probabilities. It only " +
@@ -1178,6 +1758,8 @@ const SPACES = [
           },
 
         { name: "GaussianNB / MultinomialNB", topic: "04_ML/28_Naive_Bayes",
+
+          plain: "Fast probability rules. Works well on text and on small data.",
           code: "GaussianNB().fit(X_train, y_train)",
           how: "Applies Bayes' rule under the assumption that the columns are independent " +
                "given the class. That assumption is usually false — which is what naive " +
@@ -1200,6 +1782,8 @@ const SPACES = [
           },
 
         { name: "KNeighborsClassifier", topic: "04_ML/29_K_Nearest_Neighbor",
+
+          plain: "Find the k most similar rows, and copy their answer.",
           code: "Pipeline([('sc', StandardScaler()), ('knn', KNeighborsClassifier(n_neighbors=5))])",
           how: "There is no training step at all — it stores the rows. At prediction time " +
                "it finds the k nearest stored rows by distance and takes their majority " +
@@ -1221,6 +1805,8 @@ const SPACES = [
           },
 
         { name: "SVC", topic: "04_ML/30_Support_Vector_Machines",
+
+          plain: "Draw the boundary with the widest possible gap between the classes.",
           code: "Pipeline([('sc', StandardScaler()), ('svc', SVC(kernel='rbf', C=1.0))])",
           how: "Finds the boundary with the widest possible margin to the nearest points of " +
                "each class, and only those nearest points — the support vectors — define " +
@@ -1246,6 +1832,8 @@ const SPACES = [
           },
 
         { name: "LinearDiscriminantAnalysis", topic: "04_ML/36_Linear_Discriminant_Analysis",
+
+          plain: "A straight boundary for classes that look like round clouds.",
           code: "LinearDiscriminantAnalysis().fit(X_train, y_train)",
           how: "Assumes each class is a Gaussian cloud sharing the same covariance and " +
                "finds the straight boundary that best separates them under that assumption. " +
@@ -1272,6 +1860,7 @@ const SPACES = [
             "measures distance, so an unscaled column decides the answer on its own.",
       options: [
         { name: "KMeans", topic: "04_ML/31_Clustering_KMeans",
+          plain: "Split the rows into k groups around k centre points.",
           code: "Pipeline([('sc', StandardScaler()), ('km', KMeans(n_clusters=4, n_init=10))])",
           how: "Picks k centres, assigns every row to its nearest one, moves each centre to " +
                "the mean of its members, and repeats until nothing moves. It is minimising " +
@@ -1298,6 +1887,8 @@ const SPACES = [
           },
 
         { name: "AgglomerativeClustering + dendrogram", topic: "04_ML/32_Hierarchical_Clustering",
+
+          plain: "Keep joining the two closest groups, and draw the whole history as a tree.",
           code: "AgglomerativeClustering(n_clusters=None, distance_threshold=0)",
           how: "Starts with every row as its own cluster and repeatedly merges the two " +
                "closest, recording the entire history. The dendrogram is that history drawn " +
@@ -1320,11 +1911,12 @@ const SPACES = [
   ]
 },
 
-/* ════════════════ 3 ════════════════════════════════════════════════════ */
+/* ════════════════ 7 ════════════════════════════════════════════════════ */
 {
-  id: "judge", n: "3", name: "Judging it, then shipping it", icon: "📊",
-  blurb: "The metric is a business decision wearing a maths costume. Pick it by asking " +
-         "what a mistake actually costs, not by which number looks best.",
+  id: "judge", n: "7", name: "Check the score", icon: "📊",
+  blurb: "The model is trained. Score it on test rows it has never seen, with a " +
+         "score that matches what a mistake really costs — and make sure the score " +
+         "is not luck.",
   jobs: [
 
     { id: "regmetric", name: "Score a number prediction", icon: "📏",
@@ -1333,6 +1925,7 @@ const SPACES = [
             "says whether you beat simply guessing the average.",
       options: [
         { name: "R²", topic: "04_ML/24_Model_Evaluation",
+          plain: "How much better than always guessing the average? 1 is perfect, 0 is no better.",
           code: "r2_score(y_test, y_pred)",
           how: "The share of the variance in y that the model explains, measured against " +
                "the simplest possible baseline — always predicting the mean. 1.0 is " +
@@ -1354,6 +1947,8 @@ const SPACES = [
           },
 
         { name: "RMSE", topic: "04_ML/22_Cost_Functions",
+
+          plain: "The typical size of the error, in real units. Big misses count extra.",
           code: "mean_squared_error(y_test, y_pred) ** 0.5",
           how: "The square root of the mean squared error, which brings it back into the " +
                "same unit as y. Squaring before averaging means one large miss contributes " +
@@ -1371,6 +1966,8 @@ const SPACES = [
           },
 
         { name: "MAE", topic: "04_ML/22_Cost_Functions",
+
+          plain: "The average size of the error, in real units. Every miss counts the same.",
           code: "mean_absolute_error(y_test, y_pred)",
           how: "The average of the absolute errors. Every unit of error contributes equally " +
                "whether it came from one large miss or ten small ones, which makes it far " +
@@ -1387,6 +1984,8 @@ const SPACES = [
           },
 
         { name: "Adjusted R²", topic: "04_ML/24_Model_Evaluation",
+
+          plain: "R² that goes down when you add columns that do not help.",
           code: "1 - (1-r2)*(n-1)/(n-p-1)",
           how: "R² with a correction that charges for every column you added. Adding a " +
                "useless column nudges plain R² up and pulls adjusted R² down, which is " +
@@ -1408,6 +2007,7 @@ const SPACES = [
             "With 1 fraud in 500 rows, predicting 'no fraud' every time scores 99.8%.",
       options: [
         { name: "Confusion matrix", topic: "04_ML/24_Model_Evaluation",
+          plain: "A small table of right and wrong answers. Always look at this first.",
           code: "confusion_matrix(y_test, y_pred)",
           how: "The full table of what happened: true positives, false positives, true " +
                "negatives and false negatives. Every other classification metric on this " +
@@ -1426,6 +2026,8 @@ const SPACES = [
           },
 
         { name: "Accuracy", topic: "04_ML/24_Model_Evaluation",
+
+          plain: "The share of answers that were right. It misleads when one class is rare.",
           code: "accuracy_score(y_test, y_pred)",
           how: "The share of rows the model got right. It weighs both kinds of mistake " +
                "equally and takes no account whatsoever of how common each class is.",
@@ -1442,6 +2044,8 @@ const SPACES = [
           },
 
         { name: "Precision", topic: "04_ML/24_Model_Evaluation",
+
+          plain: "When the model says 'Yes', how often is it right?",
           code: "precision_score(y_test, y_pred)",
           how: "Of everything the model flagged, the share that really was positive. It " +
                "answers the question: when this model raises its hand, how often should I " +
@@ -1459,6 +2063,8 @@ const SPACES = [
           },
 
         { name: "Recall", topic: "04_ML/24_Model_Evaluation",
+
+          plain: "Of all the real 'Yes' cases, how many did the model catch?",
           code: "recall_score(y_test, y_pred)",
           how: "Of everything that really was positive, the share the model caught. It " +
                "answers the other question: how much of the thing I care about is slipping " +
@@ -1475,6 +2081,8 @@ const SPACES = [
           },
 
         { name: "F1", topic: "04_ML/24_Model_Evaluation",
+
+          plain: "One number that is high only when precision and recall are both high.",
           code: "f1_score(y_test, y_pred)",
           how: "The harmonic mean of precision and recall. It is deliberately harsh: " +
                "because the mean is harmonic rather than arithmetic, a model that is " +
@@ -1493,6 +2101,8 @@ const SPACES = [
           },
 
         { name: "ROC curve and AUC", topic: "04_ML/25_ROC_And_AUC",
+
+          plain: "How well the model ranks real 'Yes' rows above 'No' rows, at every possible threshold.",
           code: "roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])",
           how: "The ROC curve plots the true positive rate against the false positive rate " +
                "as the threshold sweeps across its whole range. The area under it is the " +
@@ -1522,6 +2132,7 @@ const SPACES = [
             "you were about to report was mostly luck.",
       options: [
         { name: "Single hold-out split", topic: "04_ML/13_Train_Test_Split",
+          plain: "Score once on one test set. Fast, but one lucky split can fool you.",
           code: "train_test_split(X, y, test_size=0.2, random_state=42)",
           how: "One cut: fit on one part, score on the other. The number you get is an " +
                "estimate from a single sample of test rows, so it carries the luck of that " +
@@ -1540,6 +2151,8 @@ const SPACES = [
           },
 
         { name: "KFold + cross_val_score", topic: "04_ML/23_Cross_Validation",
+
+          plain: "Score k times, each part taking a turn as the test, and trust the average.",
           code: "cross_val_score(pipeline, X, y, cv=KFold(5, shuffle=True, random_state=42))",
           how: "Cuts the data into k parts, trains on k-1 and tests on the one left out, " +
                "rotating until every row has been test data exactly once. You get k scores, " +
@@ -1560,6 +2173,8 @@ const SPACES = [
           },
 
         { name: "StratifiedKFold", topic: "04_ML/23_Cross_Validation",
+
+          plain: "KFold that keeps the Yes/No mix the same in every part.",
           code: "cross_val_score(pipe, X, y, cv=StratifiedKFold(5, shuffle=True, random_state=42))",
           how: "KFold that preserves the class proportions inside every fold. It is what " +
                "cross_val_score already uses by default for a classifier, and naming it " +
@@ -1584,6 +2199,7 @@ const SPACES = [
             "on the training half, and leave the test set alone until the very end.",
       options: [
         { name: "GridSearchCV", topic: "04_ML/33_Hyperparameter_Tuning",
+          plain: "Try every combination of the settings you list, and keep the best.",
           code: "GridSearchCV(pipe, {'model__alpha': [0.01, 0.1, 1, 10]}, cv=5)",
           how: "Trains a model for every combination of the values you listed, scoring each " +
                "by cross-validation, then refits the winner on all the data. It is " +
@@ -1603,6 +2219,8 @@ const SPACES = [
           },
 
         { name: "RandomizedSearchCV", topic: "04_ML/33_Hyperparameter_Tuning",
+
+          plain: "Try a random sample of setting combinations. Faster when there are many.",
           code: "RandomizedSearchCV(pipe, param_dist, n_iter=50, cv=5, random_state=42)",
           how: "Samples n_iter combinations from the distributions or lists you give it " +
                "instead of trying all of them. With many parameters most barely matter, so " +
@@ -1619,7 +2237,16 @@ const SPACES = [
                   "A small n_iter across an enormous space, where the best it reports is " +
                   "barely better than a guess"],
           }
-      ] },
+      ] }
+  ]
+},
+
+/* ════════════════ 8 ════════════════════════════════════════════════════ */
+{
+  id: "ship", n: "8", name: "Ship it", icon: "📦",
+  blurb: "Save the whole pipeline as one file, so tomorrow's request is answered by " +
+         "exactly this model.",
+  jobs: [
 
     { id: "ship", name: "Freeze it and ship it", icon: "📦",
       q: "How does tomorrow's request get answered by exactly this model?",
@@ -1627,6 +2254,7 @@ const SPACES = [
             "encoder is a model that will be fed differently-shaped data in production.",
       options: [
         { name: "joblib.dump", topic: "04_ML/37_Model_Persistence",
+          plain: "Save the trained model or pipeline to a file, to load it again later.",
           code: "joblib.dump(pipeline, 'model.joblib')",
           how: "Serialises the fitted object to a file, with special handling for the large " +
                "NumPy arrays that scikit-learn models are mostly made of. Loading it back " +
@@ -1648,6 +2276,8 @@ const SPACES = [
           },
 
         { name: "pickle", topic: "04_ML/37_Model_Persistence",
+
+          plain: "Python's general save-to-file. Fine for small objects.",
           code: "pickle.dump(pipeline, open('model.pkl','wb'))",
           how: "Python's general-purpose object serialiser. It can store almost any Python " +
                "object, but it stores large arrays less efficiently than joblib and it " +
@@ -1661,398 +2291,6 @@ const SPACES = [
                   "no extra effort",
                   "Any cross-version or cross-language use. A pickle is a Python " +
                   "implementation detail, not an interchange format"],
-          }
-      ] }
-  ]
-},
-
-/* ════════════════ 4 ════════════════════════════════════════════════════ */
-{
-  id: "stats", n: "4", name: "Proving it, and seeing it", icon: "🔬",
-  blurb: "Before any model, two questions: is the difference I am looking at real, " +
-         "and what does this data actually look like?",
-  jobs: [
-
-    { id: "test", name: "Is this difference real?", icon: "⚖️",
-      q: "Two numbers differ. Is that an effect, or a run of good luck?",
-      note: "Assume nothing happened, then ask how surprising your result would be if that " +
-            "were true. A small p-value means the data is hard to explain by luck alone.",
-      options: [
-        { name: "One-sample z-test", topic: "02_DataScience/07_Z_Test",
-          also: ["02_DataScience/11_Z_Test_vs_T_Test", "02_DataScience/05_Central_Limit_Theorem"],
-          code: "z = (x_bar - mu) / (sigma / n**0.5)",
-          how: "Compares a sample mean against a claimed population mean by dividing the " +
-               "gap by the standard error. It reads the result off the normal distribution, " +
-               "which is only justified when the population standard deviation is genuinely " +
-               "known rather than estimated.",
-          use: ["You know the population standard deviation — in practice a " +
-                "long-established process with a documented sigma, not one you worked out " +
-                "from this very sample",
-                "A large sample, roughly 30 or more, so the Central Limit Theorem makes the " +
-                "sampling distribution of the mean approximately normal whatever the raw " +
-                "data looks like",
-                "Proportions at large n, where the normal approximation to the binomial " +
-                "holds comfortably"],
-          avoid: ["A small sample with an unknown standard deviation. That is precisely the " +
-                  "case the t-test was invented for, and its heavier tails are the " +
-                  "correction you are missing",
-                  "Estimating sigma from the sample and then treating it as known. That " +
-                  "understates the uncertainty and hands you a p-value that is too small",
-                  "Strongly skewed data at small n, where the Central Limit Theorem has not " +
-                  "yet rescued you"],
-          },
-
-        { name: "One-sample t-test", topic: "02_DataScience/08_T_Test",
-          also: ["02_DataScience/06_Hypothesis_Testing_Basics"],
-          code: "ttest_1samp(sample, popmean=50)",
-          how: "Compares one group's mean against a claimed value, using the sample's own " +
-               "standard deviation as the estimate of spread. The t distribution has " +
-               "heavier tails than the normal — that is the price of not knowing sigma — " +
-               "and those tails thin out as the sample grows.",
-          use: ["Comparing one group's mean against a claimed or target value: a stated " +
-                "SLA, a specification, last year's average",
-                "The population standard deviation is unknown, which is almost always the " +
-                "real situation",
-                "Any sample size. At large n the t and z answers converge anyway, so the " +
-                "t-test is simply the safer default of the two"],
-          avoid: ["Comparing two separate groups. Use the two-sample form — testing each " +
-                  "against a constant separately does not answer the question you asked",
-                  "Strongly skewed data at small n. The test assumes the sampling " +
-                  "distribution of the mean is roughly normal, and with eight skewed points " +
-                  "it is not",
-                  "Reading a small p-value as a large effect. It says the difference is " +
-                  "unlikely to be chance, not that it is big enough to act on — report the " +
-                  "effect size beside it"],
-          },
-
-        { name: "Two-sample t-test", topic: "02_DataScience/08_T_Test",
-          code: "ttest_ind(group_a, group_b)",
-          how: "Tests whether two independent groups have different means, by weighing the " +
-               "gap between them against the variability inside them. ttest_ind assumes " +
-               "equal variances by default, and equal_var=False switches to Welch's " +
-               "version, which does not.",
-          use: ["Two independent groups of different people or units — control against " +
-                "variant, branch A against branch B",
-                "An A/B test, which is exactly this shape: two groups, one metric, one " +
-                "comparison",
-                "With equal_var=False as the standing habit. Welch's test costs almost " +
-                "nothing when the variances really are equal, and is far safer when they " +
-                "are not"],
-          avoid: ["The same people measured twice. That is a paired test, and using this " +
-                  "one discards the pairing along with most of your statistical power",
-                  "More than two groups compared pair by pair. Each comparison carries its " +
-                  "own false-positive risk, so use ANOVA or correct for the multiplicity",
-                  "Groups that are not really independent — the same customer appearing in " +
-                  "both, or units drawn from within the same store"],
-          },
-
-        { name: "Paired t-test", topic: "02_DataScience/09_Paired_T_Test",
-          code: "ttest_rel(before, after)",
-          how: "Subtracts each pair and runs a one-sample test on the differences. Because " +
-               "every subject acts as its own control, everything that varies between " +
-               "subjects cancels out — which is why it detects far smaller effects than the " +
-               "two-sample test on the same data.",
-          use: ["The same subjects measured twice — before and after training, the same " +
-                "store month on month, the same server under two configurations",
-                "Naturally matched pairs: twins, left and right, a matched control per case",
-                "Whenever pairing exists at all. Ignoring it throws away information you " +
-                "have already paid to collect"],
-          avoid: ["Two unrelated groups, or groups of unequal size. There is simply nothing " +
-                  "to pair",
-                  "Pairs that are not genuinely pairs. If the matching is arbitrary the " +
-                  "assumption is false and the answer cannot be trusted",
-                  "Misaligned rows. before and after must line up one for one, and a silent " +
-                  "misalignment produces a confident, meaningless result"],
-          },
-
-        { name: "Chi-square test", topic: "02_DataScience/10_Chi_Square_Test",
-          code: "chi2_contingency(pd.crosstab(df.city, df.churn))",
-          how: "Compares the counts you actually observed in a contingency table against " +
-               "the counts you would expect if the two categories were unrelated. The " +
-               "larger the total gap across the cells, the less plausible independence " +
-               "becomes.",
-          use: ["Both columns are categories — is churn related to plan type, is defect " +
-                "rate related to shift",
-                "You are working with counts in a table rather than with means",
-                "Testing whether an observed distribution matches an expected one, which is " +
-                "the goodness-of-fit form of the same idea"],
-          avoid: ["Numeric columns. Binning one to force it through a chi-square discards " +
-                  "information, and the answer then depends on the bins you happened to " +
-                  "choose",
-                  "Very small expected counts in a cell. Below about 5 the approximation " +
-                  "stops holding — use Fisher's exact test on a small two-by-two table",
-                  "Reading it as a measure of strength. It tells you whether an association " +
-                  "exists, not how large it is; Cramer's V is the statistic that reports " +
-                  "size",
-                  "Paired or repeated categorical measurements, where McNemar's test is the " +
-                  "correct one"],
-          }
-      ] },
-
-    { id: "describe", name: "Describe one column honestly", icon: "📉",
-      q: "What is the middle, and how spread out is it really?",
-      note: "Two datasets can share an average and describe completely different worlds.",
-      options: [
-        { name: "Mean and standard deviation", topic: "02_DataScience/01_Measures_Of_Variability",
-          code: "df['x'].mean(), df['x'].std()",
-          how: "The centre of mass of the column, and the typical distance from it. Both " +
-               "are built from every value in proportion to its size, which is what makes " +
-               "them efficient on well-behaved data and fragile on everything else.",
-          use: ["A roughly symmetric column with no extreme values, where the mean " +
-                "genuinely sits where most of the data is",
-                "You need the summary to feed something else. Most statistical tests, and " +
-                "most scalers, are built on the mean and the standard deviation",
-                "Comparing spread across columns after standardising, where the sd is the " +
-                "natural unit"],
-          avoid: ["A long tail. The mean then sits where almost nobody actually is — mean " +
-                  "income is a figure few people earn — and the sd is inflated by the same " +
-                  "tail",
-                  "Any column with outliers you decided to keep. One extreme value moves " +
-                  "both numbers, and neither describes the bulk of the data any more",
-                  "Reporting the mean on its own. Without the spread beside it a mean is " +
-                  "not a description of anything"],
-          },
-
-        { name: "Median and IQR", topic: "02_DataScience/02_IQR",
-          code: "df['x'].median(), df['x'].quantile(.75) - df['x'].quantile(.25)",
-          how: "The middle value, and the width of the middle half of the data. Both are " +
-               "positions rather than magnitudes, so no single extreme value can shift " +
-               "either of them.",
-          use: ["A skewed column — income, price, waiting time. The median answers what a " +
-                "typical person actually experiences",
-                "Extreme values are present and you do not want them moving the summary",
-                "Reporting to a business audience. The median salary is a sentence people " +
-                "understand correctly; the mean salary is one they routinely misunderstand"],
-          avoid: ["Nothing, really. When in doubt report both this and the mean and let the " +
-                  "gap between them speak — a large gap is itself the finding",
-                  "Feeding a downstream method that specifically requires the mean, as most " +
-                  "parametric tests do"],
-          },
-
-        { name: "Skewness", topic: "02_DataScience/03_Skewness",
-          code: "df['x'].skew()",
-          how: "One number for the asymmetry of a column. Zero is symmetric, positive means " +
-               "the tail runs to the right, negative means it runs to the left, and as a " +
-               "rough working rule anything beyond about plus or minus one is worth acting " +
-               "on.",
-          use: ["Deciding whether a column needs a log or square-root transform before a " +
-                "linear model",
-                "A positive value means a tail to the right, which is the usual case for " +
-                "money, counts and durations",
-                "As a quick scan across many columns at once, to decide which ones deserve " +
-                "a proper look"],
-          avoid: ["Reading it alone. Always put the histogram beside it — two humps can " +
-                  "produce a skew near zero and look perfectly well behaved",
-                  "Applying a fixed threshold mechanically. Whether a skew matters depends " +
-                  "on what you are about to fit, and a tree does not care at all",
-                  "Computing it on a small sample, where the statistic is very unstable " +
-                  "from one draw to the next"],
-          },
-
-        { name: "Correlation matrix", topic: "02_DataScience/04_Correlation",
-          code: "sns.heatmap(df.corr(numeric_only=True), annot=True)",
-          how: "Pearson correlation between every pair of numeric columns, running from -1 " +
-               "to +1. It measures only how well a straight line describes each pair, which " +
-               "is at once its usefulness and its entire limitation.",
-          use: ["Spotting which columns move with the target and which duplicate each " +
-                "other, in a single look",
-                "Before fitting a linear model, since correlated inputs are exactly what " +
-                "makes a coefficient table unreadable",
-                "As a first pass over a wide table, to decide which pairs are worth a " +
-                "scatter plot"],
-          avoid: ["Reading a low value as no relationship. It only sees straight lines, so " +
-                  "a perfect U shape scores near zero and looks like noise",
-                  "Reading a high value as cause. Two columns can move together because a " +
-                  "third drives both, and the matrix has no way to tell you so",
-                  "Forgetting that it ignores categorical columns completely, so the " +
-                  "strongest driver in your data may simply not appear on it",
-                  "Outliers, which are quite capable of creating or destroying a " +
-                  "correlation on their own"],
-          }
-      ] },
-
-    { id: "chart", name: "Which chart answers this?", icon: "📊",
-      q: "One column, two columns, or many? That is the whole decision.",
-      note: "Univariate shows shape. Bivariate shows relationship. Multivariate shows " +
-            "which columns carry the signal.",
-      options: [
-        { name: "Histogram", topic: "01_Python/05_Seaborn",
-          also: ["04_ML/15_EDA_Uni_Bi_Multivariate"],
-          code: "sns.histplot(df['salary'], kde=True)",
-          how: "Buckets one numeric column into bins and draws how many rows fall into " +
-               "each. The bin width is a choice you are making whether you think about it " +
-               "or not — too few bins hides structure, too many turns the shape into noise.",
-          use: ["One numeric column. This is the first thing to draw, every time, before " +
-                "any modelling decision",
-                "Reading the shape: bell, long tail, two humps, a wall at zero, a spike at " +
-                "some default value",
-                "Spotting data quality problems. A pile at exactly 0 or 999 is almost " +
-                "always a placeholder rather than a measurement"],
-          avoid: ["Comparing many groups at once, where the bars pile up and hide each " +
-                  "other. Use a boxplot or a faceted grid instead",
-                  "Accepting the default bin count without ever trying another. The " +
-                  "apparent shape can change entirely",
-                  "Very few rows, where the histogram is showing you the sample rather than " +
-                  "the distribution"],
-          },
-
-        { name: "Boxplot", topic: "01_Python/05_Seaborn",
-          also: ["02_DataScience/02_IQR"],
-          code: "sns.boxplot(data=df, x='department', y='salary')",
-          how: "Draws the median, a box from the first to the third quartile, and whiskers " +
-               "reaching out to 1.5 IQRs, with anything past them drawn as an individual " +
-               "point. It is the IQR outlier rule made visible.",
-          use: ["Spread and extreme values in one picture — the whiskers are literally the " +
-                "IQR fence",
-                "Comparing one numeric column across several categories, which it does " +
-                "better than anything else",
-                "A compact summary when there are many groups and no room for many " +
-                "histograms"],
-          avoid: ["Showing shape. A box hides two humps completely — a bimodal column and a " +
-                  "uniform one can draw an identical box. Overlay the points, or use a " +
-                  "violin plot",
-                  "Small groups, where quartiles computed from six points imply a precision " +
-                  "that is not there",
-                  "Assuming every point past a whisker is an error. That is the rule's " +
-                  "definition of unusual, not a verdict"],
-          },
-
-        { name: "Countplot / bar", topic: "01_Python/05_Seaborn",
-          code: "sns.countplot(data=df, x='plan')",
-          how: "One bar per category, its height the number of rows. It is the categorical " +
-               "counterpart of the histogram, with the difference that the bins are given " +
-               "to you rather than chosen.",
-          use: ["One categorical column — how many of each, ordered so the reader can " +
-                "actually compare them",
-                "Checking class imbalance before you model anything. This is the plot that " +
-                "tells you whether accuracy is going to be a misleading metric",
-                "Spotting rare levels that will need grouping before they reach a one-hot " +
-                "encoder"],
-          avoid: ["Numeric columns with many distinct values, where a histogram is the " +
-                  "right chart",
-                  "High-cardinality categories. Fifty bars is a table pretending to be a " +
-                  "chart — show the top ten and an Other",
-                  "Starting the axis anywhere but zero, which in a bar chart specifically " +
-                  "exaggerates the differences"],
-          },
-
-        { name: "Scatter plot", topic: "01_Python/04_Matplotlib",
-          also: ["04_ML/15_EDA_Uni_Bi_Multivariate"],
-          code: "sns.scatterplot(data=df, x='area', y='price', hue='city')",
-          how: "One point per row, placed by two numeric columns. It is the only plot that " +
-               "shows the actual joint shape of a relationship rather than a summary of it, " +
-               "which is why it comes before the model.",
-          use: ["Two numeric columns — is this a straight line, a curve, or a formless " +
-                "cloud",
-                "This is the plot that tells you whether a linear model has any chance, " +
-                "before you fit one and puzzle over a disappointing R²",
-                "Colour by a third column with hue= to see whether the relationship differs " +
-                "between groups",
-                "Residuals against fitted values after modelling, which is the same plot " +
-                "doing diagnostic work"],
-          avoid: ["Very many rows without transparency. The points merge into a solid block " +
-                  "and the density becomes invisible — set alpha, or use a hexbin plot",
-                  "Reading a pattern into a cloud. If it looks like nothing, that is itself " +
-                  "the finding",
-                  "Two categorical columns, where every point lands on a grid and they " +
-                  "overlap completely"],
-          },
-
-        { name: "Correlation heatmap", topic: "02_DataScience/04_Correlation",
-          code: "sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')",
-          how: "The correlation matrix drawn as a grid of colour. Colour is what lets you " +
-               "scan a large matrix in one glance, which is the whole advantage over " +
-               "reading the numbers themselves.",
-          use: ["Many numeric columns at once — the fastest read on duplication and on " +
-                "which columns relate to the target",
-                "With annot=True on a small matrix, so you get the colour and the number " +
-                "together",
-                "With a diverging colourmap centred on zero, since -1 and +1 are opposites " +
-                "and 0 is the meaningful middle"],
-          avoid: ["Categorical columns, which are simply absent from it — and their absence " +
-                  "is very easy to forget",
-                  "Very many columns, where the cells shrink past readability and the " +
-                  "picture becomes decorative rather than informative",
-                  "The same misreadings as the matrix behind it: low is not no " +
-                  "relationship, and high is not cause"],
-          },
-
-        { name: "Pairplot", topic: "04_ML/15_EDA_Uni_Bi_Multivariate",
-          code: "sns.pairplot(df, hue='species')",
-          how: "A grid with every pair of numeric columns as a scatter plot and each " +
-               "column's own distribution down the diagonal. It is a whole exploratory " +
-               "session in one command, which is exactly why it stops working as the column " +
-               "count grows.",
-          use: ["A handful of numeric columns — every pair, plus every distribution, in one " +
-                "grid",
-                "Colour by the target with hue= and separable classes jump straight out of " +
-                "the page",
-                "Early exploration, when you do not yet know which pair is worth a chart of " +
-                "its own"],
-          avoid: ["Many columns. The grid grows with the square of the count, so ten " +
-                  "columns is a hundred panels and none of them is readable",
-                  "Large row counts, where every panel becomes a solid block and the whole " +
-                  "grid is slow to draw",
-                  "As a chart for someone else. It is a tool for you, not a finding for an " +
-                  "audience"],
-          },
-
-        { name: "Line chart", topic: "01_Python/04_Matplotlib",
-          code: "sns.lineplot(data=df, x='date', y='sales')",
-          how: "Joins points in order along the x axis. That connecting line is a claim " +
-               "that the space between two points means something, so it belongs to " +
-               "genuinely continuous sequences and nothing else.",
-          use: ["Rows are in time order and you want the trend, the seasonality, or the " +
-                "point where it broke",
-                "Several series on one pair of axes, where comparing them over time is the " +
-                "whole point",
-                "Learning curves and validation curves, which are lines because their x " +
-                "axis really is ordered"],
-          avoid: ["Unordered categories. A line between Mumbai and Chennai implies a " +
-                  "journey between them, and there is no such journey",
-                  "Very irregular sampling, where the line invents a smooth path across a " +
-                  "gap in which you measured nothing at all",
-                  "Too many series at once. Past about five the chart is a tangle and no " +
-                  "single line can be followed"],
-          },
-
-        { name: "Plotly", topic: "01_Python/06_Plotly",
-          code: "px.scatter(df, x='area', y='price', color='city', hover_data=['id'])",
-          how: "Renders a chart as interactive HTML rather than a static image, so " +
-               "hovering, zooming and filtering by legend come for free. The cost is that " +
-               "the output is a web object rather than a picture.",
-          use: ["The reader needs to hover, zoom or filter — an exploration someone else " +
-                "will drive without you in the room",
-                "The chart is going into a web page or a dashboard",
-                "Many points, where hovering to identify one is genuinely useful and " +
-                "hover_data can carry the id along"],
-          avoid: ["A static image for a PDF, a printout, or a notebook someone reads " +
-                  "offline where the JavaScript will never run",
-                  "A chart inside a git-tracked notebook, where the embedded HTML bloats " +
-                  "every diff",
-                  "A simple plot seaborn draws in one line. Interactivity nobody uses is " +
-                  "just weight"],
-          },
-
-        { name: "Streamlit", topic: "01_Python/07_Streamlit",
-          code: "st.plotly_chart(fig, use_container_width=True)",
-          how: "Turns a Python script into a web app by re-running the whole script " +
-               "whenever a widget changes. There is no callback model to learn, which is " +
-               "why the distance from a working notebook to something a colleague can click " +
-               "is so short.",
-          use: ["Handing the analysis to someone who will not run a notebook — the model " +
-                "becomes a thing they can click rather than a file they cannot open",
-                "The fastest route from a working model to a demo, when what you need back " +
-                "is feedback rather than a deployment",
-                "An internal tool where a form and a chart is genuinely the whole " +
-                "requirement"],
-          avoid: ["A one-off answer, where a chart in a notebook is enough and the app is " +
-                  "overhead you will then have to maintain",
-                  "A production, multi-user, authenticated application. Re-running the " +
-                  "script on every interaction does not scale the way a real web framework " +
-                  "does",
-                  "Heavy computation on every interaction, unless it is safely behind " +
-                  "st.cache_data"],
           }
       ] }
   ]
@@ -2088,9 +2326,112 @@ const NOT_A_CHOICE = {
 
 const FLOWS = {
 
-/* ── 1. preparing the data ─────────────────────────────────────────────── */
+/* ── 1. look at it ──────────────────────────────────────────────────────── */
 
-clean: { seq: ["drop_duplicates()", "Check and fix dtypes", "Know what each column IS"] },
+describe: {
+  q: "What do you want to know?",
+  a: [
+    { label: "the middle, and the spread", to: {
+      q: "Long tail, or extreme values?",
+      a: [
+        { label: "yes", to: { pick: "Median and IQR" } },
+        { label: "no, it is symmetric", to: { pick: "Mean and standard deviation" } }
+      ] } },
+    { label: "how lopsided it is", to: { pick: "Skewness" } },
+    { label: "how the columns relate", to: { pick: "Correlation matrix" } }
+  ] },
+
+chart: {
+  q: "How many columns at once?",
+  a: [
+    { label: "one", to: {
+      q: "Numeric, or a category?",
+      a: [
+        { label: "numeric", to: {
+          q: "Shape, or spread and outliers?",
+          a: [
+            { label: "the shape", to: { pick: "Histogram" } },
+            { label: "spread and outliers", to: { pick: "Boxplot" } }
+          ] } },
+        { label: "a category", to: { pick: "Countplot / bar" } }
+      ] } },
+    { label: "two", to: {
+      q: "Both numeric?",
+      a: [
+        { label: "yes", to: { pick: "Scatter plot" } },
+        { label: "one of them is time", to: { pick: "Line chart" } }
+      ] } },
+    { label: "many", to: {
+      q: "A handful, or lots?",
+      a: [
+        { label: "a handful", to: { pick: "Pairplot" } },
+        { label: "lots", to: { pick: "Correlation heatmap" } }
+      ] } },
+    { label: "someone else will click it", to: {
+      q: "A chart in a page, or an app?",
+      a: [
+        { label: "a chart to hover and zoom", to: { pick: "Plotly" } },
+        { label: "a whole app for a colleague", to: { pick: "Streamlit" } }
+      ] } }
+  ] },
+
+test: {
+  q: "What are you comparing?",
+  a: [
+    { label: "counts in categories", to: { pick: "Chi-square test" } },
+    { label: "numeric measurements", to: {
+      q: "How many groups?",
+      a: [
+        { label: "one, against a claimed value", to: {
+          q: "Do you know the population sd?",
+          a: [
+            { label: "yes, and n is large", to: { pick: "One-sample z-test" } },
+            { label: "no — the usual case", to: { pick: "One-sample t-test" } }
+          ] } },
+        { label: "two", to: {
+          q: "Same subjects measured twice?",
+          a: [
+            { label: "yes — before and after", to: { pick: "Paired t-test" } },
+            { label: "no — separate people", to: { pick: "Two-sample t-test" } }
+          ] } }
+      ] } }
+  ] },
+
+synth: {
+  q: "What do you want to practise?",
+  a: [
+    { label: "predicting a number", to: { pick: "make_regression" } },
+    { label: "predicting a label",  to: { pick: "make_classification" } },
+    { label: "finding groups",      to: { pick: "make_blobs" } }
+  ] },
+
+/* ── 2. clean it ────────────────────────────────────────────────────────── */
+
+clean: { seq: ["Fix inconsistent spellings", "drop_duplicates()", "Check and fix dtypes",
+               "Know what each column IS"] },
+
+outliers: {
+  q: "Is this value possible at all?",
+  a: [
+    { label: "impossible — age 300, negative price", to: { pick: "Drop the row" } },
+    { label: "possible, just rare", to: {
+      q: "Is the extreme value the thing you care about?",
+      a: [
+        { label: "yes — fraud, failure, a spike", to: { pick: "Keep them, use a model that does not care" } },
+        { label: "no, it is noise", to: {
+          q: "Is the column roughly bell-shaped?",
+          a: [
+            { label: "yes", to: { pick: "Z-score / 3-sd rule" } },
+            { label: "no, it is skewed", to: { pick: "IQR fence, then clip" } }
+          ] } }
+      ] } }
+  ] },
+
+/* ── 3. split it ────────────────────────────────────────────────────────── */
+
+split: { seq: ["train_test_split(stratify=y)", "Pipeline + ColumnTransformer"] },
+
+/* ── 4. pre-process it ──────────────────────────────────────────────────── */
 
 missing: {
   q: "How much of the column is blank?",
@@ -2133,23 +2474,6 @@ encode: {
       ] } }
   ] },
 
-outliers: {
-  q: "Is this value possible at all?",
-  a: [
-    { label: "impossible — age 300, negative price", to: { pick: "Drop the row" } },
-    { label: "possible, just rare", to: {
-      q: "Is the extreme value the thing you care about?",
-      a: [
-        { label: "yes — fraud, failure, a spike", to: { pick: "Keep them, use a model that does not care" } },
-        { label: "no, it is noise", to: {
-          q: "Is the column roughly bell-shaped?",
-          a: [
-            { label: "yes", to: { pick: "Z-score / 3-sd rule" } },
-            { label: "no, it is skewed", to: { pick: "IQR fence, then clip" } }
-          ] } }
-      ] } }
-  ] },
-
 shape: {
   q: "How heavy is the tail?",
   a: [
@@ -2179,6 +2503,8 @@ scale: {
       ] } }
   ] },
 
+/* ── 5. feature engineering ─────────────────────────────────────────────── */
+
 select: {
   q: "What is actually wrong with the columns?",
   a: [
@@ -2198,17 +2524,7 @@ select: {
       ] } }
   ] },
 
-split: { seq: ["train_test_split(stratify=y)", "Pipeline + ColumnTransformer"] },
-
-synth: {
-  q: "What do you want to practise?",
-  a: [
-    { label: "predicting a number", to: { pick: "make_regression" } },
-    { label: "predicting a label",  to: { pick: "make_classification" } },
-    { label: "finding groups",      to: { pick: "make_blobs" } }
-  ] },
-
-/* ── 2. choosing a model ───────────────────────────────────────────────── */
+/* ── 6. choose a model ──────────────────────────────────────────────────── */
 
 reg: {
   q: "Is the relationship a straight line?",
@@ -2283,7 +2599,7 @@ clu: {
       ] } }
   ] },
 
-/* ── 3. judging it, then shipping it ───────────────────────────────────── */
+/* ── 7. check the score ─────────────────────────────────────────────────── */
 
 regmetric: {
   q: "What do you need the number for?",
@@ -2345,82 +2661,13 @@ tune: {
     { label: "many knobs, wide ranges, or a deadline", to: { pick: "RandomizedSearchCV" } }
   ] },
 
+/* ── 8. ship it ─────────────────────────────────────────────────────────── */
+
 ship: {
   q: "What are you saving?",
   a: [
     { label: "a scikit-learn model or pipeline", to: { pick: "joblib.dump" } },
     { label: "a plain Python object, no big arrays", to: { pick: "pickle" } }
-  ] },
-
-/* ── 4. proving it, and seeing it ──────────────────────────────────────── */
-
-test: {
-  q: "What are you comparing?",
-  a: [
-    { label: "counts in categories", to: { pick: "Chi-square test" } },
-    { label: "numeric measurements", to: {
-      q: "How many groups?",
-      a: [
-        { label: "one, against a claimed value", to: {
-          q: "Do you know the population sd?",
-          a: [
-            { label: "yes, and n is large", to: { pick: "One-sample z-test" } },
-            { label: "no — the usual case", to: { pick: "One-sample t-test" } }
-          ] } },
-        { label: "two", to: {
-          q: "Same subjects measured twice?",
-          a: [
-            { label: "yes — before and after", to: { pick: "Paired t-test" } },
-            { label: "no — separate people", to: { pick: "Two-sample t-test" } }
-          ] } }
-      ] } }
-  ] },
-
-describe: {
-  q: "What do you want to know?",
-  a: [
-    { label: "the middle, and the spread", to: {
-      q: "Long tail, or extreme values?",
-      a: [
-        { label: "yes", to: { pick: "Median and IQR" } },
-        { label: "no, it is symmetric", to: { pick: "Mean and standard deviation" } }
-      ] } },
-    { label: "how lopsided it is", to: { pick: "Skewness" } },
-    { label: "how the columns relate", to: { pick: "Correlation matrix" } }
-  ] },
-
-chart: {
-  q: "How many columns at once?",
-  a: [
-    { label: "one", to: {
-      q: "Numeric, or a category?",
-      a: [
-        { label: "numeric", to: {
-          q: "Shape, or spread and outliers?",
-          a: [
-            { label: "the shape", to: { pick: "Histogram" } },
-            { label: "spread and outliers", to: { pick: "Boxplot" } }
-          ] } },
-        { label: "a category", to: { pick: "Countplot / bar" } }
-      ] } },
-    { label: "two", to: {
-      q: "Both numeric?",
-      a: [
-        { label: "yes", to: { pick: "Scatter plot" } },
-        { label: "one of them is time", to: { pick: "Line chart" } }
-      ] } },
-    { label: "many", to: {
-      q: "A handful, or lots?",
-      a: [
-        { label: "a handful", to: { pick: "Pairplot" } },
-        { label: "lots", to: { pick: "Correlation heatmap" } }
-      ] } },
-    { label: "someone else will click it", to: {
-      q: "A chart in a page, or an app?",
-      a: [
-        { label: "a chart to hover and zoom", to: { pick: "Plotly" } },
-        { label: "a whole app for a colleague", to: { pick: "Streamlit" } }
-      ] } }
   ] }
 
 };

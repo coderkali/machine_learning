@@ -229,13 +229,22 @@ If the topic is a technique you have to **choose between** — a scaler, an
 encoder, a model, a metric, a statistical test — also add a card to
 [`17_Learning_As_Of_Now/Claude/chooser-data.js`](./17_Learning_As_Of_Now/Claude/chooser-data.js)
 so it appears on the When to Use What page. That means two things: a card
-(`name`, `use`, `avoid`, `code`, `topic`) in `SPACES`, and a leaf for it in
-that decision's tree in `FLOWS` at the bottom of the same file — the tree is
-what gets drawn, so a card with no leaf is invisible. `build_site.py` fails on
-a leaf that names no card, on a decision with no tree, and on a topic path
-that does not exist; it warns about any `04_ML/` or `02_DataScience/` topic
-that is neither carded nor named in `NOT_A_CHOICE`. Journey answers *what
-order*; this page answers *which one, and why*.
+(`name`, `plain`, `use`, `avoid`, `code`, `topic`) in `SPACES` — `plain` is one
+short sentence in simple English, and it is the first thing a reader sees —
+and a leaf for it in that decision's tree in `FLOWS` at the bottom of the same
+file — the tree is what gets drawn, so a card with no leaf is invisible.
+`build_site.py` fails on a leaf that names no card, on a decision with no tree,
+and on a topic path that does not exist; it warns about any `04_ML/` or
+`02_DataScience/` topic that is neither carded nor named in `NOT_A_CHOICE`.
+Journey answers *what order*; this page answers *which one, and why*.
+
+`SPACES` runs in the order the work is really done — look, clean, **split**,
+pre-process, feature engineering, choose a model, then check and ship. Put a
+new decision in the stage where it happens. The split comes before
+pre-processing on purpose: every step after it learns from the data and must
+learn from the training rows only. If the new technique fixes something visible
+in the real table on the start screen, point a problem at it in
+[`chooser-tour.js`](./17_Learning_As_Of_Now/Claude/chooser-tour.js).
 
 Never hand-edit `tree-data.js` or a generated `Content/index.html` — the next
 build overwrites them. To change a lesson's wording, change the notebook, the
@@ -304,8 +313,9 @@ The website itself is `17_Learning_As_Of_Now/Claude/`:
 | `workspace.html` | three-pane reader — Content, Code, Handwritten Notes |
 | `journey.html` | the ML pipeline as a vertical tree, ticked as topics are learned |
 | `journey-data.js` | the hand-maintained stage → topic mapping behind it |
-| `chooser.html` | **When to Use What** — each decision drawn as a flowchart you click down; the box you land on opens its card and is recorded in "your stack" |
-| `chooser-data.js` | the hand-written technique cards, and the `FLOWS` decision tree per decision |
+| `chooser.html` | **When to Use What** — opens on *start here*: a real messy table and the eight steps that fix it, in order, each linking to its decision. Every decision is a flowchart you click down; the box you land on opens its card, simple first, and is recorded in "your stack" |
+| `chooser-data.js` | the hand-written technique cards, grouped by pipeline stage, and the `FLOWS` decision tree per decision |
+| `chooser-tour.js` | the start screen: ten real rows of the attrition data, the problems in them, and the stage and decision that fix each one |
 
 ## Topic documentation
 
