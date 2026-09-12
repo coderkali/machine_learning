@@ -104,11 +104,21 @@
     try { localStorage.setItem("lu-topic", t.title); } catch (e) {}
   }
 
-  /* ── collapse a pane by clicking its title ── */
+  /* ── collapse a pane by clicking its title ──
+     An inline flex would beat the .collapsed rule, so park it while collapsed
+     and hand it back on the way out. */
   document.querySelectorAll(".pane-head").forEach(function (h) {
     h.addEventListener("click", function (e) {
       if (e.target.closest(".pane-link")) return;
-      h.parentElement.classList.toggle("collapsed");
+      var p = h.parentElement;
+      if (p.classList.toggle("collapsed")) {
+        p.dataset.flex = p.style.flex || "";
+        p.style.flex = "";
+      } else {
+        p.style.flex = p.dataset.flex || "";
+        delete p.dataset.flex;
+      }
+      save();
     });
   });
 
@@ -125,16 +135,24 @@
       return el.classList.contains("pane");
     });
   }
-  /* freeze the current widths as pixels so a drag only moves two neighbours */
+  /* Panes are sized by SHARE, never by pixels.
+
+     A pixel width is a promise about a window that has since changed: hide the
+     explorer, drag the window wider, collapse a pane, and three panes pinned at
+     "0 0 753px" keep their old total and leave dead space on the right. So each
+     pane carries a flex-grow share over a zero basis — the row then fills
+     whatever width it is given, at the proportions you dragged. */
+  function setShare(p, g) { p.style.flex = g + " 1 0px"; }   // "753 1 0px"
+
+  /* take the widths on screen as the starting shares, so a drag begins from
+     exactly what the reader is looking at */
   function pinPanes() {
     panes().forEach(function (p) {
-      if (!p.classList.contains("collapsed")) {
-        p.style.flex = "0 0 " + p.getBoundingClientRect().width + "px";
-      }
+      if (!p.classList.contains("collapsed")) setShare(p, p.getBoundingClientRect().width);
     });
   }
   function equalise() {
-    panes().forEach(function (p) { p.style.flex = p.classList.contains("collapsed") ? "" : "1 1 0"; });
+    panes().forEach(function (p) { p.style.flex = ""; delete p.dataset.flex; });
     save();
   }
 
@@ -181,8 +199,8 @@
       var total = aw + bw;
       startDrag(e, function (x) {
         var na = Math.max(MIN_PANE, Math.min(total - MIN_PANE, aw + (x - x0)));
-        a.style.flex = "0 0 " + na + "px";
-        b.style.flex = "0 0 " + (total - na) + "px";
+        setShare(a, na);                 // the pair keeps its combined share,
+        setShare(b, total - na);         // so the other pane never moves
       });
     });
     g.addEventListener("dblclick", equalise);   // double-click a divider to reset
@@ -206,21 +224,45 @@
     }
   });
 
-  /* ── remember the layout ── */
+  /* ── remember the layout ──
+     Shares only. Anything with a pixel in it is a layout saved by an older
+     build; it is read as a share and written back clean. */
   function save() {
     try {
       localStorage.setItem("lu-layout", JSON.stringify({
         exp: exp.style.width || "",
-        panes: panes().map(function (p) { return p.style.flex || ""; })
+        shares: panes().map(function (p) {
+          return p.classList.contains("collapsed")
+            ? (parseFloat(p.dataset.flex) || 0) : (parseFloat(p.style.flex) || 0);
+        }),
+        collapsed: panes().map(function (p) { return p.classList.contains("collapsed"); })
       }));
     } catch (e) {}
   }
   (function restore() {
     try {
       var L = JSON.parse(localStorage.getItem("lu-layout") || "{}");
-      if (L.exp) exp.style.width = L.exp;
-      if (L.panes) panes().forEach(function (p, i) { if (L.panes[i]) p.style.flex = L.panes[i]; });
+      if (L.exp) {
+        exp.style.width = Math.max(MIN_EXP,
+          Math.min(MAX_EXP, parseFloat(L.exp) || MIN_EXP)) + "px";
+      }
+      /* The old key "panes" held the whole shorthand, "0 0 753px" — there the
+         proportion is the BASIS, not the leading grow of 0. Read the pixel
+         number when there is one, the grow otherwise. */
+      var raw = L.shares || L.panes || [];
+      panes().forEach(function (p, i) {
+        var v = String(raw[i] == null ? "" : raw[i]);
+        var px = v.match(/([\d.]+)px/);
+        var g = parseFloat(px ? px[1] : v);
+        if (isFinite(g) && g > 0) setShare(p, g);
+        if (L.collapsed && L.collapsed[i]) {
+          p.dataset.flex = p.style.flex || "";
+          p.style.flex = "";
+          p.classList.add("collapsed");
+        }
+      });
       setExplorer(localStorage.getItem("lu-exp") !== "0");
+      save();
     } catch (e) { setExplorer(true); }
   })();
 
