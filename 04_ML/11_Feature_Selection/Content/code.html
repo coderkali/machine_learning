@@ -558,8 +558,25 @@ for i in range(len(matrix.columns)):
  &#x27;worst concave points&#x27;,
  &#x27;worst perimeter&#x27;,
  &#x27;worst radius&#x27;,
- &#x27;worst texture&#x27;}</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 27</span></div><pre class="py">x1 = [3,5,6,7,3,4,8,9,5,1]
-x2 = [1,1,1,1,1,1,1,1,1,1]</pre></div><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.feature_selection import VarianceThreshold</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 30</span></div><pre class="py">sel = VarianceThreshold(threshold=0.5)
+ &#x27;worst texture&#x27;}</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 28</span></div><pre class="py">x1 = [3, 5, 6, 7, 3, 4, 8, 9, 5, 1]
+x2 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+x1_mean = sum(x1) / len(x1)
+x2_mean = sum(x2) / len(x2)
+x1_squared_deviations = [(value - x1_mean) ** 2 for value in x1]
+x2_squared_deviations = [(value - x2_mean) ** 2 for value in x2]
+
+print(f&#x27;x1 mean: {x1_mean}&#x27;)
+print(f&#x27;x1 squared deviations: {x1_squared_deviations}&#x27;)
+print(f&#x27;x1 variance: {sum(x1_squared_deviations) / len(x1)}&#x27;)
+print(f&#x27;x2 mean: {x2_mean}&#x27;)
+print(f&#x27;x2 squared deviations: {x2_squared_deviations}&#x27;)
+print(f&#x27;x2 variance: {sum(x2_squared_deviations) / len(x2)}&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>x1 mean: 5.1
+x1 squared deviations: [4.409999999999998, 0.009999999999999929, 0.8100000000000006, 3.610000000000001, 4.409999999999998, 1.2099999999999993, 8.410000000000002, 15.210000000000003, 0.009999999999999929, 16.81]
+x1 variance: 5.49
+x2 mean: 1.0
+x2 squared deviations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x2 variance: 0.0</pre></div><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 30</span></div><pre class="py">from sklearn.feature_selection import VarianceThreshold</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 32</span></div><pre class="py">sel = VarianceThreshold(threshold=0.5)
 sel.fit_transform(data.data)</pre></div><div class="out"><div class="h">Output</div><pre>array([[  17.99,   10.38,  122.8 , ...,   17.33,  184.6 , 2019.  ],
        [  20.57,   17.77,  132.9 , ...,   23.41,  158.8 , 1956.  ],
        [  19.69,   21.25,  130.  , ...,   25.53,  152.5 , 1709.  ],
@@ -567,9 +584,9 @@ sel.fit_transform(data.data)</pre></div><div class="out"><div class="h">Output</
        [  16.6 ,   28.08,  108.3 , ...,   34.12,  126.7 , 1124.  ],
        [  20.6 ,   29.33,  140.1 , ...,   39.42,  184.6 , 1821.  ],
        [   7.76,   24.54,   47.92, ...,   30.37,   59.16,  268.6 ]],
-      shape=(569, 10))</pre></div><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 31</span></div><pre class="py">sel.get_support()</pre></div><div class="out"><div class="h">Output</div><pre>array([ True,  True,  True,  True, False, False, False, False, False,
+      shape=(569, 10))</pre></div><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 33</span></div><pre class="py">sel.get_support()</pre></div><div class="out"><div class="h">Output</div><pre>array([ True,  True,  True,  True, False, False, False, False, False,
        False, False, False,  True,  True, False, False, False, False,
        False, False,  True,  True,  True,  True, False, False, False,
-       False, False, False])</pre></div><div class="code"><div class="code-head"><span>In [79]</span><span class="cell">cell 33</span></div><pre class="py">sel.get_feature_names_out()</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;x0&#x27;, &#x27;x1&#x27;, &#x27;x2&#x27;, &#x27;x3&#x27;, &#x27;x12&#x27;, &#x27;x13&#x27;, &#x27;x20&#x27;, &#x27;x21&#x27;, &#x27;x22&#x27;, &#x27;x23&#x27;],
+       False, False, False])</pre></div><div class="code"><div class="code-head"><span>In [79]</span><span class="cell">cell 35</span></div><pre class="py">sel.get_feature_names_out()</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;x0&#x27;, &#x27;x1&#x27;, &#x27;x2&#x27;, &#x27;x3&#x27;, &#x27;x12&#x27;, &#x27;x13&#x27;, &#x27;x20&#x27;, &#x27;x21&#x27;, &#x27;x22&#x27;, &#x27;x23&#x27;],
       dtype=object)</pre></div>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

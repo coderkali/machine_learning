@@ -765,13 +765,14 @@ const TREE = {
             "Concept: 21_Feature_Selection_VarianceThreshold.ipynb",
             "Concept: 22_Forward_Backward_Practice.ipynb"
           ],
-          "notes": 8,
+          "notes": 9,
           "noteFiles": [
             "Feature_Selection_01.png",
             "Feature_Selection_02.png",
             "Feature_Selection_03.png",
             "Feature_Selection_04.png",
             "Feature_Selection_05.png",
+            "Feature_Selection_06.png",
             "Feature_Selection_Page_1of3.png",
             "Feature_Selection_Page_2of3.png",
             "Feature_Selection_Page_3of3.png"

@@ -16,13 +16,13 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#feature-selection-techniques-overview">Feature Selection — Techniques Overview</a><a href="#the-two-families">The two families</a><a href="#how-each-technique-works">How each technique works</a><a href="#the-real-pipeline-use-both-in-order">The real pipeline: use both, in order</a><a href="#a-simple-analogy">A simple analogy</a><a href="#faq">FAQ</a><a href="#interview-style-q-amp-a">Interview-style Q&amp;A</a><a href="#feature-selection-techniques">Feature Selection Techniques</a><a href="#step-1-look-at-the-data">Step 1 — Look at the data</a><a href="#step-2-what-does-quot-training-a-model-quot-actu">Step 2 — What does &quot;training a model&quot; actually mean?</a><a href="#step-3-split-the-data-train-vs-test">Step 3 — Split the data: train vs test</a><a href="#step-4-pick-one-model-to-reuse">Step 4 — Pick one model to reuse</a><a href="#step-5-do-we-actually-need-all-5-features">Step 5 — Do we actually need all 5 features?</a><a href="#step-6-forward-selection">Step 6 — Forward Selection</a><a href="#step-7-backward-elimination">Step 7 — Backward Elimination</a><a href="#step-8-visualize-accuracy-vs-number-of-features">Step 8 — Visualize: accuracy vs. number of features</a><a href="#step-9-build-the-final-models-and-check-on-the-t">Step 9 — Build the final models and check on the tes</a><a href="#a-surprising-result-and-an-important-lesson">A surprising result — and an important lesson</a><a href="#step-10-compare-all-three-models">Step 10 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#feature-selection-variance-threshold">Feature Selection — Variance Threshold</a><a href="#forward-amp-backward-selection-hands-on-practice">Forward &amp; Backward Selection — Hands-on Practice</a><a href="#step-1-imports">Step 1 — Imports</a><a href="#step-2-build-a-made-up-dataset-rigged-on-purpose">Step 2 — Build a made-up dataset, rigged on purpose</a><a href="#step-3-look-at-the-data">Step 3 — Look at the data</a><a href="#step-4-split-into-x-and-y">Step 4 — Split into X and y</a><a href="#step-5-split-into-train-and-test">Step 5 — Split into train and test</a><a href="#step-6-build-the-baseline-model-train-it">Step 6 — Build the baseline model, train it</a><a href="#step-6-continued-score-the-baseline-on-the-test-">Step 6 (continued) — Score the baseline on the test </a><a href="#step-7-forward-selection">Step 7 — Forward Selection</a><a href="#step-8-backward-elimination">Step 8 — Backward Elimination</a><a href="#step-8-continued-build-the-final-backward-select">Step 8 (continued) — Build the final backward-select</a><a href="#step-9-compare-all-three-models">Step 9 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#recap-the-whole-flow-steps-1-6">Recap — the whole flow, Steps 1–6</a><a href="#feature-selection-keep-the-columns-that-matter">Feature Selection — keep the columns that matter</a><a href="#the-story">The story</a><a href="#the-data">The data</a><a href="#rule-1-mutual-information">Rule 1 — Mutual information</a><a href="#before-we-calculate-see-the-question">Before we calculate: see the question</a><a href="#what-the-visual-calculation-is-showing">What the visual calculation is showing</a><a href="#rule-2-correlation">Rule 2 — Correlation</a><a href="#rule-3-variance-threshold">Rule 3 — Variance threshold</a><a href="#summary">Summary</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#feature-selection-techniques-overview">Feature Selection — Techniques Overview</a><a href="#the-two-families">The two families</a><a href="#how-each-technique-works">How each technique works</a><a href="#the-real-pipeline-use-both-in-order">The real pipeline: use both, in order</a><a href="#a-simple-analogy">A simple analogy</a><a href="#faq">FAQ</a><a href="#interview-style-q-amp-a">Interview-style Q&amp;A</a><a href="#feature-selection-techniques">Feature Selection Techniques</a><a href="#step-1-look-at-the-data">Step 1 — Look at the data</a><a href="#step-2-what-does-quot-training-a-model-quot-actu">Step 2 — What does &quot;training a model&quot; actually mean?</a><a href="#step-3-split-the-data-train-vs-test">Step 3 — Split the data: train vs test</a><a href="#step-4-pick-one-model-to-reuse">Step 4 — Pick one model to reuse</a><a href="#step-5-do-we-actually-need-all-5-features">Step 5 — Do we actually need all 5 features?</a><a href="#step-6-forward-selection">Step 6 — Forward Selection</a><a href="#step-7-backward-elimination">Step 7 — Backward Elimination</a><a href="#step-8-visualize-accuracy-vs-number-of-features">Step 8 — Visualize: accuracy vs. number of features</a><a href="#step-9-build-the-final-models-and-check-on-the-t">Step 9 — Build the final models and check on the tes</a><a href="#a-surprising-result-and-an-important-lesson">A surprising result — and an important lesson</a><a href="#step-10-compare-all-three-models">Step 10 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#feature-selection-variance-threshold">Feature Selection — Variance Threshold</a><a href="#forward-amp-backward-selection-hands-on-practice">Forward &amp; Backward Selection — Hands-on Practice</a><a href="#step-1-imports">Step 1 — Imports</a><a href="#step-2-build-a-made-up-dataset-rigged-on-purpose">Step 2 — Build a made-up dataset, rigged on purpose</a><a href="#step-3-look-at-the-data">Step 3 — Look at the data</a><a href="#step-4-split-into-x-and-y">Step 4 — Split into X and y</a><a href="#step-5-split-into-train-and-test">Step 5 — Split into train and test</a><a href="#step-6-build-the-baseline-model-train-it">Step 6 — Build the baseline model, train it</a><a href="#step-6-continued-score-the-baseline-on-the-test-">Step 6 (continued) — Score the baseline on the test </a><a href="#step-7-forward-selection">Step 7 — Forward Selection</a><a href="#step-8-backward-elimination">Step 8 — Backward Elimination</a><a href="#step-8-continued-build-the-final-backward-select">Step 8 (continued) — Build the final backward-select</a><a href="#step-9-compare-all-three-models">Step 9 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#recap-the-whole-flow-steps-1-6">Recap — the whole flow, Steps 1–6</a><a href="#feature-selection-keep-the-columns-that-matter">Feature Selection — keep the columns that matter</a><a href="#the-story">The story</a><a href="#the-data">The data</a><a href="#rule-1-mutual-information">Rule 1 — Mutual information</a><a href="#before-we-calculate-see-the-question">Before we calculate: see the question</a><a href="#what-the-visual-calculation-is-showing">What the visual calculation is showing</a><a href="#rule-2-correlation">Rule 2 — Correlation</a><a href="#why-calculate-x1-and-x2-by-hand-first">Why calculate x1 and x2 by hand first?</a><a href="#rule-3-variance-threshold">Rule 3 — Variance threshold</a><a href="#what-will-variancethreshold-select">What will VarianceThreshold select?</a><a href="#summary">Summary</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Feature Selection</h1>
   <p class="lede">More columns is not more information. Some columns actively make the model worse.</p>
-  <div class="tags"><span class="tag">4 notebooks · 1 note</span><a class="tag hn-jump" href="#handwritten">✍️ 8 handwritten pages</a></div>
+  <div class="tags"><span class="tag">4 notebooks · 1 note</span><a class="tag hn-jump" href="#handwritten">✍️ 9 handwritten pages</a></div>
 </div>
 <section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Arun had 60 columns and believed every one helped.</strong> More information, better model — surely.</p><p>Test accuracy got <em>worse</em> as he added columns. The model was finding patterns in pure noise and trusting them.</p><p><span class='beat'>With enough useless columns, something will look meaningful by pure chance.</span> A constant column carries nothing; a duplicated column splits the credit and confuses both halves.</p><p>Feature selection removes them: a variance threshold for dead columns, a correlation check for columns that repeat each other, mutual information to score each column against the answer, and forward and backward selection to test whether a column actually earns its place.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Keep the columns that carry signal; drop the ones carrying noise, duplication, or nothing.</p></div>
@@ -1852,25 +1852,194 @@ for i in range(len(matrix.columns)):
 and they are dropped here. That is fine: <code>mean radius</code> stays, and it carries the
 same size information.</p>
 
-<h2 id="rule-3-variance-threshold">Rule 3 — Variance threshold</h2>
-<p>Variance is a number for how much a column changes. It is the average of the
-squared distance from the mean.</p>
-<p><code>x1</code> and <code>x2</code> are two tiny columns to show the idea:</p>
-<div class="code"><pre>x1 = 3 5 6 7 3 4 8 9 5 1    mean = 5.1   add up (value - 5.1)² = 54.9   54.9 / 10 = 5.49
-x2 = 1 1 1 1 1 1 1 1 1 1    mean = 1     every distance is 0             variance = 0
-</pre></div>
-<p><code>x2</code> is the same in every row. It cannot help the model tell one row from
-another, so it is safe to drop. A variance threshold does exactly this: it
-drops every column whose variance is below a number you choose.</p>
+<h2 id="why-calculate-x1-and-x2-by-hand-first">Why calculate <code>x1</code> and <code>x2</code> by hand first?</h2>
+<p>Before using <code>VarianceThreshold</code>, we calculate two tiny columns ourselves so the library does not feel like a black box.</p>
+<ul>
+<li><code>x1</code> changes from row to row. By calculating its mean, deviations, squared deviations, and final variance, we can see exactly what <strong>variation</strong> means.</li>
+<li><code>x2</code> is always <code>1</code>. Its calculation shows the opposite case: every value is equal to the mean, so every deviation is <code>0</code> and its variance is <code>0</code>.</li>
+<li>Comparing <code>x1</code> and <code>x2</code> gives us a simple mental picture: <strong>changing column = variance above zero; constant column = variance of zero</strong>.</li>
+<li>Once we understand that number, <code>VarianceThreshold(threshold=0.5)</code> becomes easy to read: it calculates the variance of every real feature and keeps only the columns whose variance is at least <code>0.5</code>.</li>
+</ul>
+<p>So the hand calculation is not a separate exercise. It prepares us to understand what <code>VarianceThreshold</code> is calculating, why <code>x2</code> should be removed, and why the choice of threshold changes which columns survive. The next section works through the formula carefully, then the sklearn code performs the same kind of calculation across all 30 breast-cancer features.</p>
 
-<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">x1 = [3,5,6,7,3,4,8,9,5,1]
-x2 = [1,1,1,1,1,1,1,1,1,1]</pre></div>
-<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.feature_selection import VarianceThreshold</pre></div>
+<h2 id="rule-3-variance-threshold">Rule 3 — Variance threshold</h2>
+<p>Variance answers this question: <strong>how much does one column change from row to row?</strong></p>
+<p>A column that has exactly the same value in every row has no variation. It cannot help us distinguish one row from another, so its variance is <code>0</code>.</p>
+<h3>The formula we will use</h3>
+<p>For this feature-selection example, we use <strong>population variance</strong>:</p>
+<div class='formula'>\operatorname{Var}(X) = \frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2</div>
+
+<p>Read the symbols from left to right:</p>
+<ul>
+<li>$X$ — one feature column, such as <code>x1</code>.</li>
+<li>$n$ — the number of values in that column. Here, $n = 10$.</li>
+<li>$x_i$ — one value from the column.</li>
+<li>$\bar{x}$ — the mean, or average, of all values.</li>
+<li>$x_i - \bar{x}$ — how far one value is from the mean. This can be negative or positive.</li>
+<li>$(x_i - \bar{x})^2$ — the squared distance. Squaring removes negative signs and gives larger differences more weight.</li>
+<li>$\sum$ — add all the squared distances.</li>
+<li>Divide by $n$ — calculate the average squared distance.</li>
+</ul>
+<h3>Complete calculation for <code>x1</code></h3>
+<div class="code"><pre>x1 = [3, 5, 6, 7, 3, 4, 8, 9, 5, 1]
+</pre></div>
+<p><strong>Step 1 — Calculate the mean:</strong></p>
+<div class='formula'>\bar{x}_1 = \frac{3+5+6+7+3+4+8+9+5+1}{10}
+= \frac{51}{10} = 5.1</div>
+
+<p><strong>Step 2 — Calculate each deviation and square it:</strong></p>
+<table class="tbl"><thead>
+<tr>
+  <th style="text-align:right">Value $x_i$</th>
+  <th style="text-align:right">Deviation $x_i - 5.1$</th>
+  <th style="text-align:right">Squared deviation $(x_i - 5.1)^2$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right">3</td>
+  <td style="text-align:right">-2.1</td>
+  <td style="text-align:right">4.41</td>
+</tr>
+<tr>
+  <td style="text-align:right">5</td>
+  <td style="text-align:right">-0.1</td>
+  <td style="text-align:right">0.01</td>
+</tr>
+<tr>
+  <td style="text-align:right">6</td>
+  <td style="text-align:right">0.9</td>
+  <td style="text-align:right">0.81</td>
+</tr>
+<tr>
+  <td style="text-align:right">7</td>
+  <td style="text-align:right">1.9</td>
+  <td style="text-align:right">3.61</td>
+</tr>
+<tr>
+  <td style="text-align:right">3</td>
+  <td style="text-align:right">-2.1</td>
+  <td style="text-align:right">4.41</td>
+</tr>
+<tr>
+  <td style="text-align:right">4</td>
+  <td style="text-align:right">-1.1</td>
+  <td style="text-align:right">1.21</td>
+</tr>
+<tr>
+  <td style="text-align:right">8</td>
+  <td style="text-align:right">2.9</td>
+  <td style="text-align:right">8.41</td>
+</tr>
+<tr>
+  <td style="text-align:right">9</td>
+  <td style="text-align:right">3.9</td>
+  <td style="text-align:right">15.21</td>
+</tr>
+<tr>
+  <td style="text-align:right">5</td>
+  <td style="text-align:right">-0.1</td>
+  <td style="text-align:right">0.01</td>
+</tr>
+<tr>
+  <td style="text-align:right">1</td>
+  <td style="text-align:right">-4.1</td>
+  <td style="text-align:right">16.81</td>
+</tr>
+<tr>
+  <td style="text-align:right"><strong>Total</strong></td>
+  <td style="text-align:right">—</td>
+  <td style="text-align:right"><strong>54.90</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 3 — Divide the total squared distance by the number of values:</strong></p>
+<div class='formula'>\operatorname{Var}(x1) = \frac{54.90}{10} = 5.49</div>
+
+<p>So <code>x1</code> changes noticeably from row to row, and its population variance is <strong>5.49</strong>.</p>
+<h3>Complete calculation for <code>x2</code></h3>
+<div class="code"><pre>x2 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+</pre></div>
+<p><strong>Step 1 — Calculate the mean:</strong></p>
+<div class='formula'>\bar{x}_2 = \frac{1+1+1+1+1+1+1+1+1+1}{10}
+= \frac{10}{10} = 1</div>
+
+<p><strong>Step 2 — Calculate the deviations:</strong> every value is $1$, so every deviation is:</p>
+<div class='formula'>1 - 1 = 0</div>
+
+<p>Every squared deviation is therefore $0^2 = 0$.</p>
+<p><strong>Step 3 — Calculate the variance:</strong></p>
+<div class='formula'>\operatorname{Var}(x2) = \frac{0+0+0+0+0+0+0+0+0+0}{10} = 0</div>
+
+<p>So <code>x2</code> never changes. Its variance is <strong>0</strong>, which makes it a good candidate for removal.</p>
+<div class="note"><div class="h">Note</div><p><strong>Important:</strong> dividing by $n$ gives population variance, which is what <code>VarianceThreshold</code> uses. In statistics, sample variance divides by $n-1$ when estimating the variance of a larger population. For <code>x1</code>, that would be $54.90 / 9 = 6.10$, but that is not the value used by <code>VarianceThreshold</code> here.</p>
+</div>
+<p>A variance threshold drops every column whose variance is below a number you choose. The next cells calculate these values and then apply the idea to the 30 breast-cancer features.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">x1 = [3, 5, 6, 7, 3, 4, 8, 9, 5, 1]
+x2 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+x1_mean = sum(x1) / len(x1)
+x2_mean = sum(x2) / len(x2)
+x1_squared_deviations = [(value - x1_mean) ** 2 for value in x1]
+x2_squared_deviations = [(value - x2_mean) ** 2 for value in x2]
+
+print(f&#x27;x1 mean: {x1_mean}&#x27;)
+print(f&#x27;x1 squared deviations: {x1_squared_deviations}&#x27;)
+print(f&#x27;x1 variance: {sum(x1_squared_deviations) / len(x1)}&#x27;)
+print(f&#x27;x2 mean: {x2_mean}&#x27;)
+print(f&#x27;x2 squared deviations: {x2_squared_deviations}&#x27;)
+print(f&#x27;x2 variance: {sum(x2_squared_deviations) / len(x2)}&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>x1 mean: 5.1
+x1 squared deviations: [4.409999999999998, 0.009999999999999929, 0.8100000000000006, 3.610000000000001, 4.409999999999998, 1.2099999999999993, 8.410000000000002, 15.210000000000003, 0.009999999999999929, 16.81]
+x1 variance: 5.49
+x2 mean: 1.0
+x2 squared deviations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+x2 variance: 0.0</pre></div>
+<h2 id="what-will-variancethreshold-select">What will <code>VarianceThreshold</code> select?</h2>
+<p>Now connect the hand calculation to the real feature-selection operation.</p>
+<p><code>VarianceThreshold</code> does <strong>not</strong> select individual values from <code>x1</code>. It looks at the complete column and asks whether that column changes enough across all rows.</p>
+<p>For our two example columns:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column</th>
+  <th style="text-align:right">Variance</th>
+  <th>With <code>threshold=0.5</code></th>
+  <th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>x1</code></td>
+  <td style="text-align:right"><code>5.49</code></td>
+  <td><code>5.49 &gt;= 0.5</code></td>
+  <td>Keep the complete <code>x1</code> column</td>
+</tr>
+<tr>
+  <td><code>x2</code></td>
+  <td style="text-align:right"><code>0.00</code></td>
+  <td><code>0.00 &lt; 0.5</code></td>
+  <td>Drop the complete <code>x2</code> column</td>
+</tr>
+</tbody>
+</table>
+<p>So if <code>X = [x1, x2]</code>, the selector keeps the <code>x1</code> feature, including all 10 of its row values, and removes the <code>x2</code> feature, including all 10 of its row values. It does not keep only the values <code>8</code> or <code>9</code> from <code>x1</code>; the decision is made for the whole column.</p>
+<p>For the breast-cancer dataset, <code>X = data.data</code> has shape <code>(569, 30)</code>:</p>
+<ul>
+<li>569 rows = 569 tumour records.</li>
+<li>30 columns = 30 candidate features.</li>
+<li><code>VarianceThreshold(threshold=0.5)</code> calculates one variance for each of the 30 columns.</li>
+<li>Every column with variance at least <code>0.5</code> is kept with all 569 row values.</li>
+<li>Every column with variance below <code>0.5</code> is removed completely.</li>
+</ul>
+<p>In this notebook, 10 complete feature columns pass the threshold and 20 complete feature columns are removed. The next cell imports the sklearn class that performs this column-level filtering.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">from sklearn.feature_selection import VarianceThreshold</pre></div>
 <p><code>VarianceThreshold(threshold=0.5)</code> drops every column whose variance is below
 0.5. <code>fit_transform</code> works out each column's variance and returns only the
 columns it kept.</p>
 
-<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">sel = VarianceThreshold(threshold=0.5)
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 32</span></div><pre class="py">sel = VarianceThreshold(threshold=0.5)
 sel.fit_transform(data.data)</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([[  17.99,   10.38,  122.8 , ...,   17.33,  184.6 , 2019.  ],
        [  20.57,   17.77,  132.9 , ...,   23.41,  158.8 , 1956.  ],
@@ -1880,7 +2049,7 @@ sel.fit_transform(data.data)</pre></div>
        [  20.6 ,   29.33,  140.1 , ...,   39.42,  184.6 , 1821.  ],
        [   7.76,   24.54,   47.92, ...,   30.37,   59.16,  268.6 ]],
       shape=(569, 10))</pre></div>
-<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">sel.get_support()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">sel.get_support()</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([ True,  True,  True,  True, False, False, False, False, False,
        False, False, False,  True,  True, False, False, False, False,
        False, False,  True,  True,  True,  True, False, False, False,
@@ -1888,7 +2057,7 @@ sel.fit_transform(data.data)</pre></div>
 <p><code>get_support()</code> gives one <code>True</code>/<code>False</code> per column. <code>True</code> means kept. 10 columns
 are kept and 20 are dropped.</p>
 
-<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">sel.get_feature_names_out()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 35</span></div><pre class="py">sel.get_feature_names_out()</pre></div>
 <div class="out"><div class="h">Output</div><pre>array([&#x27;x0&#x27;, &#x27;x1&#x27;, &#x27;x2&#x27;, &#x27;x3&#x27;, &#x27;x12&#x27;, &#x27;x13&#x27;, &#x27;x20&#x27;, &#x27;x21&#x27;, &#x27;x22&#x27;, &#x27;x23&#x27;],
       dtype=object)</pre></div>
 <p>The names come out as <code>x0</code>, <code>x1</code>, … because <code>data.data</code> is a plain NumPy array
