@@ -25,7 +25,7 @@ what you have learned.
 | Click a node | open that branch and show its details |
 | Drag, or scroll | move around the map |
 | ⌘ / Ctrl + scroll | zoom |
-| **Open everything** | expand all 83 nodes and jump to the top of the tree |
+| **Open everything** | expand all 88 topics and jump to the top of the tree |
 | **Fit** | zoom out to the whole shape at once |
 | Search | filters both views, highlights matches, and flies to the first one |
 | `+` `−` `0` `Esc` | zoom in, zoom out, fit, close the panel |
@@ -75,7 +75,7 @@ are carried across by file name, so hand-written detail is not lost.
 
 ## Snapshot
 
-101 nodes, of which **83 are topics** across 17 subject folders.
+106 nodes, of which **88 are topics** across 17 subject folders.
 
 The branches are the 17 numbered subject folders, from `01_Python` through
 `17_Learning_As_Of_Now`.

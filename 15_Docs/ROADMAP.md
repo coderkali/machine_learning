@@ -45,7 +45,12 @@ weighted sum, bent through a sigmoid so the output is a probability between 0
 and 1 rather than an unbounded number, fitted on a 10,000-row spam table.
 **PCA** (Session 22) is the unsupervised counterpart to LDA: eight diabetes
 columns folded into a shorter set of blends ordered by how much spread each one
-carries, with `PCA(0.90)` and `n_components=6` compared on the same `SVC`. Still
+carries, with `PCA(0.90)` and `n_components=6` compared on the same `SVC`.
+**Feature selection** (Session 23) returns to a topic first met in the archive,
+with three filter rules on the thirty breast-cancer columns: mutual information
+scores each column against the answer, a correlation > 0.9 loop drops ten columns
+that repeat an earlier one, and `VarianceThreshold(0.5)` shows that on raw data a
+threshold above zero picks columns by their unit. Still
 open: trees and ensembles, metrics beyond `.score()`, and `GridSearchCV`. M03
 [NumPy](../01_Python/02_NumPy/Concept/README.md) and
 [Pandas](../01_Python/03_Pandas/Concept/README.md), plus Matplotlib,

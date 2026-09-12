@@ -37,7 +37,7 @@ through `git mv`.
 06_Transformers_And_Prompting  07_Retrieval_And_LLM_Apps  08_Agentic_AI
 09_MLOps_And_Containers  10_Data_Platforms  11_Cloud_And_LLMOps
 12_Analytics_And_BI  13_SQL_And_Databases  14_System_Design_And_Career
-15_Docs  16_Experiments  17_Learning_As_Of_Now
+15_Docs  16_Experiments  17_Learning_As_Of_Now  18_Projects
 ```
 
 Every topic folder has the same three parts:
@@ -333,6 +333,63 @@ The website itself is `17_Learning_As_Of_Now/Claude/`:
 | `chooser.html` | **When to Use What** — a short intro, then **three panels side by side**, each scrolling on its own: Meera's real table (left) · the eight steps and the problems each fixes (middle) · the questions of the picked decision (right). Questions stack one below another, each with a plain hint; changing an earlier answer redraws everything below; the table lights up and slides to the columns the question is about. The path ends on its card, simple first, which is recorded in "your stack". A second screen lists every decision for people who know the name |
 | `chooser-data.js` | the hand-written technique cards, grouped by pipeline stage, and the `FLOWS` decision tree per decision |
 | `chooser-tour.js` | the start screen: ten real rows of the attrition data, the problems in them, and the stage and decision that fix each one |
+
+## Projects — a different workflow from topics
+
+`18_Projects/` holds end-to-end projects. A topic proves one idea; a project
+proves the ideas hold together from raw data to a running service. The
+learning-session workflow above does **not** apply to them: there is no
+`Concept/` folder, no `stories.json` entry, and no generated lesson page. The
+layout is in [`18_Projects/README.md`](./18_Projects/README.md).
+
+The current project is
+[`18_Projects/01_Delhi_Air_Forecast/`](./18_Projects/01_Delhi_Air_Forecast/) —
+🧪 My Experiment, started 2026-09-12.
+
+### The rule that matters most
+
+**The learner writes every line of project code. You do not.** This was agreed
+explicitly. Act as the experienced colleague who has shipped this before: give
+the goal, the checklist, what "done" looks like, the traps, and the library
+names to look up. When they are stuck, help in this order and no faster:
+
+```text
+hint  →  direction  →  explanation  →  partial example  →  full solution (only if asked)
+```
+
+Writing the code for them destroys the entire point of the project, which is
+confidence rather than a finished repository.
+
+### How work flows
+
+Work is cut into day-sized tickets in `docs/backlog/`, one file each, with YAML
+front matter (`id`, `status`, `depends_on`) and acceptance criteria. One ticket
+is one 2–3 hour sitting; four tickets is one week at the learner's pace.
+
+```text
+Claude writes the ticket + the phase research brief
+   → learner works    → learner says "verify DAF-07"
+   → Claude verifies every acceptance criterion by running it, not by reading it
+   → pass: status done, next ticket   ·   fail: name the criterion, same ticket
+```
+
+When verifying, actually run the code, the tests and the commands. Report a
+failed criterion plainly; do not pass a ticket to be encouraging. Each ticket
+also has explain-back questions, and the ticket is not done while those are
+unanswered — the answers are the evidence for `15_Docs/SKILLS.md`.
+
+Research is Claude's job: one brief per phase in `docs/phases/`, giving how
+teams usually do it, the options with trade-offs, and a recommendation. The
+learner decides, and the decision is recorded in `docs/decisions/` as a short
+ADR. Verify facts about external APIs against the live service or its
+specification before putting a number in a brief.
+
+### The website
+
+The project gets its own **Projects** tab, built after Phase 1. Until it is
+registered in `SUBJECT_META` in `gen_tree.py`, `18_Projects/` is invisible to
+`build_site.py` — which is intentional, and means the folder cannot break the
+existing build.
 
 ## Topic documentation
 

@@ -224,6 +224,14 @@ Linear regression with more than one input column:
 plane, more inputs draw a shape that cannot be pictured. The class is still
 `LinearRegression`; only the width of `X` — and the length of `coef_` — changes.
 
+### Mutual information
+
+A score for how much knowing one column tells you about the answer: `0` means
+nothing, higher means more. It judges one column at a time and sees curved
+links as well as straight ones. On the breast-cancer data, `worst perimeter`
+scored about `0.47` and `texture error` close to `0`. The call is
+`mutual_info_classif(X, y)`.
+
 ## O
 
 ### One-hot encoding

@@ -276,8 +276,8 @@ def build(subject, topic):
     scans = handwritten(tdir)
     page = fix_refs("\n".join(body), tdir, odir) + "\n" + gallery_html(scans)
     for m in re.finditer(r'<h2 id="([^"]+)">(.*?)</h2>', page, re.S):
-        t = re.sub(r"<[^>]+>", "", m.group(2)).strip()
-        if t and len(toc) < 40: toc.append((m.group(1), t[:52]))
+        t = H.unescape(re.sub(r"<[^>]+>", "", m.group(2))).strip()
+        if t and len(toc) < 60: toc.append((m.group(1), t[:52]))
 
     if scans: toc.append(("handwritten", "\u270D\uFE0F Handwritten notes"))
     nav = "".join(f'<a href="#{i}">{H.escape(t)}</a>' for i, t in toc)

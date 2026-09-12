@@ -757,7 +757,7 @@ const TREE = {
         },
         {
           "title": "Feature Selection",
-          "meta": "3 notebooks · 1 note",
+          "meta": "4 notebooks · 1 note",
           "status": "learning",
           "details": [
             "Concept: 20_Feature_Selection_techniques.MD",
@@ -765,11 +765,13 @@ const TREE = {
             "Concept: 21_Feature_Selection_VarianceThreshold.ipynb",
             "Concept: 22_Forward_Backward_Practice.ipynb"
           ],
-          "notes": 6,
+          "notes": 8,
           "noteFiles": [
             "Feature_Selection_01.png",
             "Feature_Selection_02.png",
             "Feature_Selection_03.png",
+            "Feature_Selection_04.png",
+            "Feature_Selection_05.png",
             "Feature_Selection_Page_1of3.png",
             "Feature_Selection_Page_2of3.png",
             "Feature_Selection_Page_3of3.png"

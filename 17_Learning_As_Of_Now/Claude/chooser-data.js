@@ -1273,8 +1273,9 @@ const SPACES = [
                   "nothing whatsoever — a column can have plenty of variance and still be " +
                   "worthless",
                   "Raising the threshold above zero on unscaled data. Variance carries the " +
-                  "square of the unit, so a threshold of 0.1 means something completely " +
-                  "different for each column"],
+                  "square of the unit, so the threshold ends up choosing by unit. On the " +
+                  "breast-cancer data, threshold=0.5 kept only the 10 columns measured in big " +
+                  "numbers and dropped mean concave points, one of the most useful"],
           },
 
         { name: "Correlation check, drop one of a pair", topic: "02_DataScience/04_Correlation",
@@ -1301,6 +1302,30 @@ const SPACES = [
                   "Trees and forests, which tolerate correlated columns. There it splits " +
                   "the importance between them, which muddles the importance chart but does " +
                   "not damage the prediction"],
+          },
+
+        { name: "Mutual information", topic: "04_ML/11_Feature_Selection",
+
+          plain: "Give every column a score for how much it tells you about the answer, then keep the top ones.",
+          code: "mutual_info_classif(X_train, y_train)",
+          how: "Scores each column by how much knowing it cuts the guesswork about the " +
+               "target: 0 means it tells you nothing, higher means more. It sees curved " +
+               "relationships as well as straight ones, but it judges one column at a time. " +
+               "Use mutual_info_regression when the target is a number.",
+          use: ["A quick first ranking before you train anything. On the breast-cancer data " +
+                "one line put the three 'worst' size columns on top and texture error last",
+                "The link to the answer may not be a straight line. Correlation scores a " +
+                "U-shape near zero; mutual information still sees it",
+                "Inside a Pipeline as SelectKBest(mutual_info_classif, k=10), so the columns " +
+                "are chosen on the training rows only"],
+          avoid: ["Keeping the top of the list as it stands. Each column is scored alone, so " +
+                  "the top three can be one measurement said three times — on the " +
+                  "breast-cancer data they were worst perimeter, worst area and worst radius. " +
+                  "Run a correlation check next",
+                  "Scoring every row before the split. It reads the answer, so the test rows " +
+                  "would help choose the columns they are later scored on",
+                  "Expecting the same numbers every run. It is an estimate, so the scores " +
+                  "shift a little; pass random_state to pin them"],
           },
 
         { name: "SequentialFeatureSelector (forward / backward)", topic: "04_ML/11_Feature_Selection",
@@ -2610,11 +2635,14 @@ scale: {
 select: {
   q: "What is actually wrong with the columns?",
   hint: "Never vary: the same value in every row. Repeat each other: two columns " +
-        "that say the same thing. Too many: you want the model to choose. Overlap: " +
+        "that say the same thing. Rank fast: give each column a score for how much it " +
+        "tells you about the answer — how much OverTime says about Attrition — without " +
+        "training a model. Let the model judge: you want the model to choose. Overlap: " +
         "many columns share information, so dropping any one loses some.",
   a: [
     { label: "some never vary at all", to: { pick: "VarianceThreshold" } },
     { label: "some repeat each other", to: { pick: "Correlation check, drop one of a pair" } },
+    { label: "too many — rank each one against the answer, fast", to: { pick: "Mutual information" } },
     { label: "too many — let the model judge", to: {
       q: "Does your model report importances or coefficients?",
       hint: "Trees report how much each column helped, and linear models give each " +

@@ -16,15 +16,15 @@
   <a class="btn primary" href="../Concept/">Open the source files ↗</a>
 </header>
 <div class="wrap">
-<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#feature-selection-techniques-overview">Feature Selection — Techniques Overview</a><a href="#the-two-families">The two families</a><a href="#how-each-technique-works">How each technique works</a><a href="#the-real-pipeline-use-both-in-order">The real pipeline: use both, in order</a><a href="#a-simple-analogy">A simple analogy</a><a href="#faq">FAQ</a><a href="#interview-style-q-amp-a">Interview-style Q&amp;amp;A</a><a href="#feature-selection-techniques">Feature Selection Techniques</a><a href="#step-1-look-at-the-data">Step 1 — Look at the data</a><a href="#step-2-what-does-quot-training-a-model-quot-actu">Step 2 — What does &amp;quot;training a model&amp;quot; actu</a><a href="#step-3-split-the-data-train-vs-test">Step 3 — Split the data: train vs test</a><a href="#step-4-pick-one-model-to-reuse">Step 4 — Pick one model to reuse</a><a href="#step-5-do-we-actually-need-all-5-features">Step 5 — Do we actually need all 5 features?</a><a href="#step-6-forward-selection">Step 6 — Forward Selection</a><a href="#step-7-backward-elimination">Step 7 — Backward Elimination</a><a href="#step-8-visualize-accuracy-vs-number-of-features">Step 8 — Visualize: accuracy vs. number of features</a><a href="#step-9-build-the-final-models-and-check-on-the-t">Step 9 — Build the final models and check on the tes</a><a href="#a-surprising-result-and-an-important-lesson">A surprising result — and an important lesson</a><a href="#step-10-compare-all-three-models">Step 10 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#feature-selection-variance-threshold">Feature Selection — Variance Threshold</a><a href="#forward-amp-backward-selection-hands-on-practice">Forward &amp;amp; Backward Selection — Hands-on Practice</a><a href="#step-1-imports">Step 1 — Imports</a><a href="#step-2-build-a-made-up-dataset-rigged-on-purpose">Step 2 — Build a made-up dataset, rigged on purpose</a><a href="#step-3-look-at-the-data">Step 3 — Look at the data</a><a href="#step-4-split-into-x-and-y">Step 4 — Split into X and y</a><a href="#step-5-split-into-train-and-test">Step 5 — Split into train and test</a><a href="#step-6-build-the-baseline-model-train-it">Step 6 — Build the baseline model, train it</a><a href="#step-6-continued-score-the-baseline-on-the-test-">Step 6 (continued) — Score the baseline on the test </a><a href="#step-7-forward-selection">Step 7 — Forward Selection</a><a href="#step-8-backward-elimination">Step 8 — Backward Elimination</a><a href="#step-8-continued-build-the-final-backward-select">Step 8 (continued) — Build the final backward-select</a><a href="#step-9-compare-all-three-models">Step 9 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#recap-the-whole-flow-steps-1-6">Recap — the whole flow, Steps 1–6</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
+<nav class="toc"><p class="toc-h">On this page</p><a href="#story">The problem</a><a href="#feature-selection-techniques-overview">Feature Selection — Techniques Overview</a><a href="#the-two-families">The two families</a><a href="#how-each-technique-works">How each technique works</a><a href="#the-real-pipeline-use-both-in-order">The real pipeline: use both, in order</a><a href="#a-simple-analogy">A simple analogy</a><a href="#faq">FAQ</a><a href="#interview-style-q-amp-a">Interview-style Q&amp;A</a><a href="#feature-selection-techniques">Feature Selection Techniques</a><a href="#step-1-look-at-the-data">Step 1 — Look at the data</a><a href="#step-2-what-does-quot-training-a-model-quot-actu">Step 2 — What does &quot;training a model&quot; actually mean?</a><a href="#step-3-split-the-data-train-vs-test">Step 3 — Split the data: train vs test</a><a href="#step-4-pick-one-model-to-reuse">Step 4 — Pick one model to reuse</a><a href="#step-5-do-we-actually-need-all-5-features">Step 5 — Do we actually need all 5 features?</a><a href="#step-6-forward-selection">Step 6 — Forward Selection</a><a href="#step-7-backward-elimination">Step 7 — Backward Elimination</a><a href="#step-8-visualize-accuracy-vs-number-of-features">Step 8 — Visualize: accuracy vs. number of features</a><a href="#step-9-build-the-final-models-and-check-on-the-t">Step 9 — Build the final models and check on the tes</a><a href="#a-surprising-result-and-an-important-lesson">A surprising result — and an important lesson</a><a href="#step-10-compare-all-three-models">Step 10 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#feature-selection-variance-threshold">Feature Selection — Variance Threshold</a><a href="#forward-amp-backward-selection-hands-on-practice">Forward &amp; Backward Selection — Hands-on Practice</a><a href="#step-1-imports">Step 1 — Imports</a><a href="#step-2-build-a-made-up-dataset-rigged-on-purpose">Step 2 — Build a made-up dataset, rigged on purpose</a><a href="#step-3-look-at-the-data">Step 3 — Look at the data</a><a href="#step-4-split-into-x-and-y">Step 4 — Split into X and y</a><a href="#step-5-split-into-train-and-test">Step 5 — Split into train and test</a><a href="#step-6-build-the-baseline-model-train-it">Step 6 — Build the baseline model, train it</a><a href="#step-6-continued-score-the-baseline-on-the-test-">Step 6 (continued) — Score the baseline on the test </a><a href="#step-7-forward-selection">Step 7 — Forward Selection</a><a href="#step-8-backward-elimination">Step 8 — Backward Elimination</a><a href="#step-8-continued-build-the-final-backward-select">Step 8 (continued) — Build the final backward-select</a><a href="#step-9-compare-all-three-models">Step 9 — Compare all three models</a><a href="#key-takeaways">Key takeaways</a><a href="#recap-the-whole-flow-steps-1-6">Recap — the whole flow, Steps 1–6</a><a href="#feature-selection-keep-the-columns-that-matter">Feature Selection — keep the columns that matter</a><a href="#the-story">The story</a><a href="#the-data">The data</a><a href="#rule-1-mutual-information">Rule 1 — Mutual information</a><a href="#before-we-calculate-see-the-question">Before we calculate: see the question</a><a href="#what-the-visual-calculation-is-showing">What the visual calculation is showing</a><a href="#rule-2-correlation">Rule 2 — Correlation</a><a href="#rule-3-variance-threshold">Rule 3 — Variance threshold</a><a href="#summary">Summary</a><a href="#handwritten">✍️ Handwritten notes</a><a href="#handwritten">✍️ Handwritten notes</a></nav>
 <main class="doc">
 <div class="hero">
   <p class="eyebrow">Machine learning</p>
   <h1>Feature Selection</h1>
   <p class="lede">More columns is not more information. Some columns actively make the model worse.</p>
-  <div class="tags"><span class="tag">3 notebooks · 1 note</span><a class="tag hn-jump" href="#handwritten">✍️ 6 handwritten pages</a></div>
+  <div class="tags"><span class="tag">4 notebooks · 1 note</span><a class="tag hn-jump" href="#handwritten">✍️ 8 handwritten pages</a></div>
 </div>
-<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Arun had 60 columns and believed every one helped.</strong> More information, better model — surely.</p><p>Test accuracy got <em>worse</em> as he added columns. The model was finding patterns in pure noise and trusting them.</p><p><span class='beat'>With enough useless columns, something will look meaningful by pure chance.</span> A constant column carries nothing; a duplicated column splits the credit and confuses both halves.</p><p>Feature selection removes them: variance thresholds for dead columns, forward and backward selection to test whether a column actually earns its place.</p></section>
+<section class="story" id="story"><p class="who">The problem behind this topic</p><p><strong>Arun had 60 columns and believed every one helped.</strong> More information, better model — surely.</p><p>Test accuracy got <em>worse</em> as he added columns. The model was finding patterns in pure noise and trusting them.</p><p><span class='beat'>With enough useless columns, something will look meaningful by pure chance.</span> A constant column carries nothing; a duplicated column splits the credit and confuses both halves.</p><p>Feature selection removes them: a variance threshold for dead columns, a correlation check for columns that repeat each other, mutual information to score each column against the answer, and forward and backward selection to test whether a column actually earns its place.</p></section>
 <div class="note key"><div class="h">🔑 The one idea</div><p>Keep the columns that carry signal; drop the ones carrying noise, duplication, or nothing.</p></div>
 <div class="src-head">📝 <a href="../Concept/20_Feature_Selection_techniques.MD">20_Feature_Selection_techniques.MD</a></div>
 <h2 id="feature-selection-techniques-overview">Feature Selection — Techniques Overview</h2>
@@ -1366,12 +1366,638 @@ peeking.</p>
 and the result becomes <strong>Block N</strong> — 73.3%, or about 22 out of 30
 correct, on a quiz the learner had genuinely never seen before.</p>
 
+<div class="src-head">📓 <a href="../Concept/44_Feature_Selection_Filter_Methods.ipynb">44_Feature_Selection_Filter_Methods.ipynb</a></div>
+<h2 id="feature-selection-keep-the-columns-that-matter">Feature Selection — keep the columns that matter</h2>
+<div class="note"><div class="h">Note</div><p>📘 <strong>Instructor Curriculum</strong> — Session 23.</p>
+</div>
+<h2 id="the-story">The story</h2>
+<p>Kavya works at a breast-cancer screening lab. For every tumour, a scan gives
+30 numbers: its radius, its texture, its area, and so on. She has 569 tumours,
+and a doctor has already marked each one as cancer or not cancer.</p>
+<p>She wants to train a model, but she does not want to give it all 30 columns.
+Her first idea was simple: look at the table and keep the columns with big
+numbers.</p>
+<p>That does not work. <code>mean area</code> is around 1000 and <code>mean smoothness</code> is around
+0.1. The size of a number only tells you its unit. It does not tell you if the
+column helps. And some columns are the same thing measured twice: radius,
+perimeter and area all measure how big the tumour is.</p>
+<p>So she needs a rule, not a guess. This notebook tries three rules:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Rule</th>
+  <th>The question it asks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1. Mutual information</td>
+  <td>How much does this column tell me about the answer?</td>
+</tr>
+<tr>
+  <td>2. Correlation</td>
+  <td>Does this column just repeat another column?</td>
+</tr>
+<tr>
+  <td>3. Variance threshold</td>
+  <td>Does this column change at all?</td>
+</tr>
+</tbody>
+</table>
+<p>All three look only at the data. None of them trains a model. (Forward and
+backward selection, in notebooks 20 and 22, train a model to test each column.)</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 2</span></div><pre class="py">data = load_breast_cancer()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 3</span></div><pre class="py">from sklearn.feature_selection import mutual_info_classif
+import matplotlib.pyplot as plt
+import pandas as pd</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 4</span></div><pre class="py">table = pd.DataFrame(data.data,columns=data.feature_names)
+table.head()</pre></div>
+<div class="out"><div class="h">Output</div><pre>   mean radius  mean texture  mean perimeter  mean area  mean smoothness  \
+0        17.99         10.38          122.80     1001.0          0.11840   
+1        20.57         17.77          132.90     1326.0          0.08474   
+2        19.69         21.25          130.00     1203.0          0.10960   
+3        11.42         20.38           77.58      386.1          0.14250   
+4        20.29         14.34          135.10     1297.0          0.10030   
+
+   mean compactness  mean concavity  mean concave points  mean symmetry  \
+0           0.27760          0.3001              0.14710         0.2419   
+1           0.07864          0.0869              0.07017         0.1812   
+2           0.15990          0.1974              0.12790         0.2069   
+3           0.28390          0.2414              0.10520         0.2597   
+4           0.13280          0.1980              0.10430         0.1809   
+
+   mean fractal dimension  ...  worst radius  worst texture  worst perimeter  \
+0                 0.07871  ...         25.38          17.33           184.60   
+1                 0.05667  ...         24.99          23.41           158.80   
+2                 0.05999  ...         23.57          25.53           152.50   
+3                 0.09744  ...         14.91          26.50            98.87   
+4                 0.05883  ...         22.54          16.67           152.20   
+
+   worst area  worst smoothness  worst compactness  worst concavity  \
+0      2019.0            0.1622             0.6656           0.7119   
+1      1956.0            0.1238             0.1866           0.2416   
+2      1709.0            0.1444             0.4245           0.4504   
+3       567.7            0.2098             0.8663           0.6869   
+4      1575.0            0.1374             0.2050           0.4000   
+
+   worst concave points  worst symmetry  worst fractal dimension  
+0                0.2654          0.4601                  0.11890  
+1                0.1860          0.2750                  0.08902  
+2                0.2430          0.3613                  0.08758  
+3                0.2575          0.6638                  0.17300  
+4                0.1625          0.2364                  0.07678  
+
+[5 rows x 30 columns]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 5</span></div><pre class="py">table.shape</pre></div>
+<div class="out"><div class="h">Output</div><pre>(569, 30)</pre></div>
+<h2 id="the-data">The data</h2>
+<p><code>load_breast_cancer()</code> is a dataset that comes with scikit-learn. We use three
+parts of it:</p>
+<ul>
+<li><code>data.data</code> — the numbers, 569 rows × 30 columns</li>
+<li><code>data.target</code> — the answer for each row: <code>0</code> = cancer (malignant, 212 rows),
+<code>1</code> = not cancer (benign, 357 rows)</li>
+<li><code>data.feature_names</code> — the 30 column names</li>
+</ul>
+<p><code>table</code> is the same numbers in a DataFrame, so the columns have names.</p>
+<p>The 30 columns are really 10 measurements, each stored three ways: <code>mean</code>
+(the average), <code>error</code> (how much it varies), and <code>worst</code> (the largest value).</p>
+
+<h2 id="rule-1-mutual-information">Rule 1 — Mutual information</h2>
+<p>Mutual information asks one question per column: <strong>if I know this column, how much does it tell me about the answer?</strong></p>
+<p>Think of each feature as a clue in Kavya's screening report. If knowing a clue makes the cancer/not-cancer decision easier, that clue contains information about the target. If the clue looks unrelated to the diagnosis, it contains little useful information.</p>
+<ul>
+<li><code>0</code> means the feature and the target show no detectable relationship in this data.</li>
+<li>A larger score means the feature gives more information about the target.</li>
+<li>The score is not an accuracy percentage, and it is not a probability that the feature is important.</li>
+<li>Mutual information can detect both straight-line relationships and more complicated relationships, so it is more flexible than checking only ordinary correlation.</li>
+</ul>
+<h3>What goes into the function?</h3>
+<p><code>mutual_info_classif(X, y)</code> needs two matching inputs:</p>
+<ul>
+<li><code>X</code> — the feature table. Here it is <code>data.data</code>, with shape <code>(569, 30)</code>: 569 tumours and 30 candidate columns.</li>
+<li><code>y</code> — the target, here <code>data.target</code>, with shape <code>(569,)</code>: one cancer/not-cancer label for each tumour.</li>
+</ul>
+<p>The function examines each of the 30 columns in <code>X</code> against the corresponding labels in <code>y</code>. It returns one score per column, so the result has shape <code>(30,)</code>. The first score belongs to <code>mean radius</code>, the second to <code>mean texture</code>, and so on in <code>data.feature_names</code> order.</p>
+<h3>A small example</h3>
+<p>Suppose a feature is <code>tumour size</code>:</p>
+<ul>
+<li>if small tumours are usually benign and large tumours are usually malignant, knowing size helps us guess the target, so its score should be relatively high;</li>
+<li>if the feature is <code>scanner serial number</code>, knowing it should not help us decide the diagnosis, so its score should be close to zero.</li>
+</ul>
+<p>The score does <strong>not</strong> prove that a feature causes cancer. It only measures how much the observed feature values and target labels are related in this dataset. It can also be noisy, especially with small datasets, so we should use it to rank candidates rather than treat one score as final truth.</p>
+<p>The next code cell calculates these 30 scores. The cell after that will attach the feature names, sort the scores, and show which clues appear most useful.</p>
+
+<h2 id="before-we-calculate-see-the-question">Before we calculate: see the question</h2>
+<p>Before asking scikit-learn for a score, let us draw the same question with a tiny screening report. Each dot is one tumour, the horizontal axis is one feature, and the colour is the known target:</p>
+<ul>
+<li><strong>blue = benign</strong> (<code>target = 1</code>)</li>
+<li><strong>red = malignant</strong> (<code>target = 0</code>)</li>
+</ul>
+<p>A useful feature makes the colours form different regions. An unhelpful feature leaves the colours mixed together. Mutual information gives a larger score to the first situation because knowing the feature value makes the target easier to guess.</p>
+<p>For this small demonstration we will put tumour size into three bins: <strong>small</strong>, <strong>medium</strong>, and <strong>large</strong>. Then we can count how often each size bin appears with each diagnosis. That count table is the part the formula uses.</p>
+<p>We will compare it with a <strong>scanner group</strong>, not a unique scanner ID. A unique ID is dangerous for this demonstration: because every row has a different number, it can identify the row itself and appear informative even when it has no medical meaning. Real feature selection must always question whether a high score represents useful signal or an accidental identifier.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 9</span></div><pre class="py">import numpy as np
+
+# A tiny, deliberately simple screening report: 0 = malignant, 1 = benign.
+size_bin = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2])
+target_demo = np.array([1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1])
+scanner_group = np.array([0, 1, 2, 3, 0, 1, 2, 3, 1, 0, 3, 2, 2, 3, 0, 1])
+size_labels = [&#x27;small&#x27;, &#x27;medium&#x27;, &#x27;large&#x27;]
+target_labels = [&#x27;malignant&#x27;, &#x27;benign&#x27;]
+
+# For a discrete example, this is the mutual-information formula directly.
+def discrete_mutual_information(feature, target):
+    total = len(feature)
+    score = 0.0
+    for feature_value in np.unique(feature):
+        for target_value in np.unique(target):
+            joint_count = np.sum((feature == feature_value) &amp; (target == target_value))
+            if joint_count == 0:
+                continue
+            joint_probability = joint_count / total
+            feature_probability = np.sum(feature == feature_value) / total
+            target_probability = np.sum(target == target_value) / total
+            score += joint_probability * np.log2(
+                joint_probability / (feature_probability * target_probability)
+            )
+    return score
+
+size_mi = discrete_mutual_information(size_bin, target_demo)
+scanner_mi = discrete_mutual_information(scanner_group, target_demo)
+rng = np.random.default_rng(42)
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 4), sharey=True)
+colors = {0: &#x27;#c0392b&#x27;, 1: &#x27;#2471a3&#x27;}
+for axis, feature, title, x_label in [
+    (axes[0], size_bin, &#x27;Useful clue: tumour size&#x27;, &#x27;size bin&#x27;),
+    (axes[1], scanner_group, &#x27;Mostly unhelpful clue: scanner group&#x27;, &#x27;scanner group&#x27;),
+]:
+    for target_value in [0, 1]:
+        selected = target_demo == target_value
+        jitter = rng.normal(0, 0.06, np.sum(selected))
+        axis.scatter(
+            feature[selected] + jitter,
+            target_demo[selected],
+            color=colors[target_value],
+            label=target_labels[target_value],
+            s=70,
+            alpha=0.85,
+            edgecolor=&#x27;white&#x27;,
+        )
+    axis.set_title(title)
+    axis.set_xlabel(x_label)
+    axis.set_yticks([0, 1], [&#x27;malignant&#x27;, &#x27;benign&#x27;])
+    axis.grid(axis=&#x27;y&#x27;, alpha=0.25)
+axes[0].set_xticks([0, 1, 2], size_labels)
+axes[1].set_xticks([0, 1, 2, 3], [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;])
+axes[1].legend(title=&#x27;known target&#x27;)
+fig.suptitle(&#x27;Mutual information starts with one question: does this feature separate the target?&#x27;, y=1.04)
+plt.tight_layout()
+plt.show()
+
+# Count how many tumours fall into each (size bin, diagnosis) combination.
+counts = np.zeros((3, 2), dtype=int)
+for feature_value in range(3):
+    for target_value in range(2):
+        counts[feature_value, target_value] = np.sum(
+            (size_bin == feature_value) &amp; (target_demo == target_value)
+        )
+
+fig, axis = plt.subplots(figsize=(6, 3.5))
+image = axis.imshow(counts, cmap=&#x27;Blues&#x27;)
+axis.set_title(&#x27;The count table behind the size score&#x27;)
+axis.set_xlabel(&#x27;known target&#x27;)
+axis.set_ylabel(&#x27;feature value&#x27;)
+axis.set_xticks([0, 1], target_labels)
+axis.set_yticks([0, 1, 2], size_labels)
+for row in range(counts.shape[0]):
+    for column in range(counts.shape[1]):
+        axis.text(column, row, counts[row, column], ha=&#x27;center&#x27;, va=&#x27;center&#x27;, fontsize=14)
+fig.colorbar(image, ax=axis, label=&#x27;number of tumours&#x27;)
+plt.tight_layout()
+plt.show()
+
+print(f&#x27;Mutual information for tumour size: {size_mi:.3f} bits&#x27;)
+print(f&#x27;Mutual information for scanner group: {scanner_mi:.3f} bits&#x27;)</pre></div>
+<div class="out"><div class="h">Output</div><pre>Mutual information for tumour size: 0.116 bits
+Mutual information for scanner group: 0.094 bits</pre></div>
+<figure class="shot"><img src="assets/44-feature-selection-filter--c09-1.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<figure class="shot"><img src="assets/44-feature-selection-filter--c09-2.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<h2 id="what-the-visual-calculation-is-showing">What the visual calculation is showing</h2>
+<p>👀 <strong>Look at the left plot first.</strong> The tumour-size values move from small to large. The red malignant dots become more common toward the large end, while blue benign dots are more common toward the small and medium ends. Knowing the size therefore changes our expectation about the diagnosis. That is why its mutual-information score is higher.</p>
+<p>👀 <strong>Now look at the right plot.</strong> Each scanner group contains a mixture of red and blue dots. Knowing the group does not make the diagnosis much easier to guess, so its score is lower. The colours are not perfectly mixed because this is a tiny sample; mutual information measures the relationship actually observed, not the relationship we hoped to create.</p>
+<h3>How one part of the formula is calculated</h3>
+<p>For the <code>small</code> + <code>benign</code> square in the count table:</p>
+<ul>
+<li>joint count = <code>3</code>, so $p(\text{small}, \text{benign}) = 3/16$</li>
+<li>small count = <code>4</code>, so $p(\text{small}) = 4/16$</li>
+<li>benign count = <code>8</code>, so $p(\text{benign}) = 8/16$</li>
+</ul>
+<p>Mutual information adds one contribution for every non-empty square:</p>
+<div class='formula'>I(X;Y) = \sum_{x,y} p(x,y)\log_2\left(\frac{p(x,y)}{p(x)p(y)}\right)</div>
+
+<p>For this one square:</p>
+<div class='formula'>\frac{3}{16}\log_2\left(\frac{3/16}{(4/16)(8/16)}\right)
+= \frac{3}{16}\log_2(1.5) \approx 0.110 \text{ bits}</div>
+
+<p>We repeat that calculation for all six squares in the heatmap and add the contributions. The total for this toy tumour-size feature is <code>0.116 bits</code>. A score of zero would mean the joint counts look exactly like we would expect if feature and target were unrelated.</p>
+<p>This toy calculation uses discrete bins so we can see every count. The real dataset contains continuous measurements, so <code>mutual_info_classif</code> estimates the same idea from the numeric values. It returns one estimated score for each of the 30 real features, which the next code cell calculates.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 11</span></div><pre class="py">imp = mutual_info_classif(data.data, data.target)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 12</span></div><pre class="py">fimp = pd.Series(imp,table.columns[0:len(table.columns)])
+fimp.sort_values(ascending=False)</pre></div>
+<div class="out"><div class="h">Output</div><pre>worst perimeter            0.476609
+worst area                 0.463210
+worst radius               0.452496
+mean concave points        0.439315
+worst concave points       0.437874
+mean perimeter             0.403214
+mean concavity             0.374832
+mean radius                0.364263
+mean area                  0.360122
+area error                 0.340625
+worst concavity            0.316958
+perimeter error            0.273136
+radius error               0.249299
+worst compactness          0.226720
+mean compactness           0.213611
+concave points error       0.125179
+worst texture              0.123267
+concavity error            0.117122
+mean texture               0.099861
+worst smoothness           0.097346
+worst symmetry             0.092600
+mean smoothness            0.081944
+compactness error          0.075217
+worst fractal dimension    0.068899
+mean symmetry              0.064848
+fractal dimension error    0.038395
+smoothness error           0.016374
+symmetry error             0.009299
+mean fractal dimension     0.008749
+texture error              0.001326
+dtype: float64</pre></div>
+<p>The top and the bottom of the list:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column</th>
+  <th>Score</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>worst perimeter</td>
+  <td>about 0.47</td>
+  <td>tells a lot</td>
+</tr>
+<tr>
+  <td>worst area</td>
+  <td>about 0.46</td>
+  <td>tells a lot</td>
+</tr>
+<tr>
+  <td>worst radius</td>
+  <td>about 0.45</td>
+  <td>tells a lot</td>
+</tr>
+<tr>
+  <td>…</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>mean fractal dimension</td>
+  <td>close to 0</td>
+  <td>tells almost nothing</td>
+</tr>
+<tr>
+  <td>texture error</td>
+  <td>close to 0</td>
+  <td>tells almost nothing</td>
+</tr>
+</tbody>
+</table>
+<p>The top three all measure size. That matches the simple example above.</p>
+<p>The scores move a little each time you run the cell, because they are an
+estimate. The order at the top stays the same.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 14</span></div><pre class="py">fimp.plot(kind=&#x27;bar&#x27;,color=&#x27;green&#x27;)
+plt.show</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;function matplotlib.pyplot.show(close=None, block=None)&gt;</pre></div>
+<figure class="shot"><img src="assets/44-feature-selection-filter--c14-3.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The same scores as bars. The bars are in the original column order, not
+sorted: <code>sort_values()</code> in the cell above printed a sorted copy, but it did not
+change <code>fimp</code>. The tallest bars are the <code>worst</code> size columns on the right.</p>
+
+<h2 id="rule-2-correlation">Rule 2 — Correlation</h2>
+<p>Correlation compares two columns and gives a number from -1 to 1.</p>
+<ul>
+<li>Near <code>1</code>: when one goes up, the other goes up too. They say the same thing.</li>
+<li>Near <code>0</code>: they are not linked.</li>
+</ul>
+<p><code>table.corr()</code> does this for every pair of columns, so <code>matrix</code> is a 30 × 30
+table.</p>
+<p>Simple example from <code>matrix</code>: <code>mean radius</code> and <code>mean perimeter</code> have a
+correlation of <code>0.998</code>. That makes sense, because perimeter = 2 × π × radius.
+If you know one, you know the other. The model needs only one of them.</p>
+<p>Correlation does not look at the answer <code>y</code>. It only compares columns with
+each other.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 17</span></div><pre class="py">import seaborn as sns
+import matplotlib.pyplot as plt</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 18</span></div><pre class="py">matrix = table.corr()</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 19</span></div><pre class="py">matrix</pre></div>
+<div class="out"><div class="h">Output</div><pre>                         mean radius  mean texture  mean perimeter  mean area  \
+mean radius                 1.000000      0.323782        0.997855   0.987357   
+mean texture                0.323782      1.000000        0.329533   0.321086   
+mean perimeter              0.997855      0.329533        1.000000   0.986507   
+mean area                   0.987357      0.321086        0.986507   1.000000   
+mean smoothness             0.170581     -0.023389        0.207278   0.177028   
+mean compactness            0.506124      0.236702        0.556936   0.498502   
+mean concavity              0.676764      0.302418        0.716136   0.685983   
+mean concave points         0.822529      0.293464        0.850977   0.823269   
+mean symmetry               0.147741      0.071401        0.183027   0.151293   
+mean fractal dimension     -0.311631     -0.076437       -0.261477  -0.283110   
+radius error                0.679090      0.275869        0.691765   0.732562   
+texture error              -0.097317      0.386358       -0.086761  -0.066280   
+perimeter error             0.674172      0.281673        0.693135   0.726628   
+area error                  0.735864      0.259845        0.744983   0.800086   
+smoothness error           -0.222600      0.006614       -0.202694  -0.166777   
+compactness error           0.206000      0.191975        0.250744   0.212583   
+concavity error             0.194204      0.143293        0.228082   0.207660   
+concave points error        0.376169      0.163851        0.407217   0.372320   
+symmetry error             -0.104321      0.009127       -0.081629  -0.072497   
+fractal dimension error    -0.042641      0.054458       -0.005523  -0.019887   
+worst radius                0.969539      0.352573        0.969476   0.962746   
+worst texture               0.297008      0.912045        0.303038   0.287489   
+worst perimeter             0.965137      0.358040        0.970387   0.959120   
+worst area                  0.941082      0.343546        0.941550   0.959213   
+worst smoothness            0.119616      0.077503        0.150549   0.123523   
+worst compactness           0.413463      0.277830        0.455774   0.390410   
+worst concavity             0.526911      0.301025        0.563879   0.512606   
+worst concave points        0.744214      0.295316        0.771241   0.722017   
+worst symmetry              0.163953      0.105008        0.189115   0.143570   
+worst fractal dimension     0.007066      0.119205        0.051019   0.003738   
+
+                         mean smoothness  mean compactness  mean concavity  \
+mean radiu</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 20</span></div><pre class="py">plt.figure(figsize = (30,30))
+sns.heatmap(matrix,annot = True)</pre></div>
+<div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div>
+<figure class="shot"><img src="assets/44-feature-selection-filter--c20-4.png" alt="plot from this notebook"><figcaption>Output from this notebook.</figcaption></figure>
+<p>The heatmap draws <code>matrix</code> as colours. Light squares are close to 1. The
+diagonal is always 1, because every column matches itself. The light blocks
+are groups of columns that repeat each other, like radius, perimeter and
+area.</p>
+
+<h3>Finding the columns to drop</h3>
+<p>The loop checks every pair of columns once.</p>
+<ul>
+<li><code>i</code> is a column, and <code>j</code> is every column <strong>before</strong> it (<code>range(i)</code>). So each
+pair is checked only one time.</li>
+<li>If the pair's correlation is above <code>0.9</code>, column <code>i</code> (the later one) goes into
+<code>final</code>.</li>
+<li><code>final</code> is a <code>set</code>, so a column goes in only once, even if it repeats several
+columns.</li>
+</ul>
+<p>Example: <code>mean radius</code> is column 0 and <code>mean perimeter</code> is column 2. When
+<code>i = 2</code> and <code>j = 0</code>, the value is <code>0.998</code>, so <code>mean perimeter</code> goes into
+<code>final</code>.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 23</span></div><pre class="py">final = set()
+for i in range(len(matrix.columns)):
+        for j in range(i):
+            if matrix.iloc[i, j] &gt; 0.9: 
+                col_name = matrix.columns[i]  
+                final.add(col_name)</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 24</span></div><pre class="py">final</pre></div>
+<div class="out"><div class="h">Output</div><pre>{&#x27;area error&#x27;,
+ &#x27;mean area&#x27;,
+ &#x27;mean concave points&#x27;,
+ &#x27;mean perimeter&#x27;,
+ &#x27;perimeter error&#x27;,
+ &#x27;worst area&#x27;,
+ &#x27;worst concave points&#x27;,
+ &#x27;worst perimeter&#x27;,
+ &#x27;worst radius&#x27;,
+ &#x27;worst texture&#x27;}</pre></div>
+<p>10 columns are in <code>final</code>. Each one repeats a column that comes before it:</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Column to drop</th>
+  <th>Repeats</th>
+  <th>Correlation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>mean perimeter</td>
+  <td>mean radius</td>
+  <td>0.998</td>
+</tr>
+<tr>
+  <td>mean area</td>
+  <td>mean radius</td>
+  <td>0.987</td>
+</tr>
+<tr>
+  <td>mean concave points</td>
+  <td>mean concavity</td>
+  <td>0.921</td>
+</tr>
+<tr>
+  <td>perimeter error</td>
+  <td>radius error</td>
+  <td>0.973</td>
+</tr>
+<tr>
+  <td>area error</td>
+  <td>radius error</td>
+  <td>0.952</td>
+</tr>
+<tr>
+  <td>worst radius</td>
+  <td>mean radius</td>
+  <td>0.970</td>
+</tr>
+<tr>
+  <td>worst texture</td>
+  <td>mean texture</td>
+  <td>0.912</td>
+</tr>
+<tr>
+  <td>worst perimeter</td>
+  <td>mean radius</td>
+  <td>0.965</td>
+</tr>
+<tr>
+  <td>worst area</td>
+  <td>mean radius</td>
+  <td>0.941</td>
+</tr>
+<tr>
+  <td>worst concave points</td>
+  <td>mean concave points</td>
+  <td>0.910</td>
+</tr>
+</tbody>
+</table>
+<p>Drop these 10 and keep the other 20.</p>
+<p><code>worst perimeter</code>, <code>worst area</code> and <code>worst radius</code> were the top three in Rule 1,
+and they are dropped here. That is fine: <code>mean radius</code> stays, and it carries the
+same size information.</p>
+
+<h2 id="rule-3-variance-threshold">Rule 3 — Variance threshold</h2>
+<p>Variance is a number for how much a column changes. It is the average of the
+squared distance from the mean.</p>
+<p><code>x1</code> and <code>x2</code> are two tiny columns to show the idea:</p>
+<div class="code"><pre>x1 = 3 5 6 7 3 4 8 9 5 1    mean = 5.1   add up (value - 5.1)² = 54.9   54.9 / 10 = 5.49
+x2 = 1 1 1 1 1 1 1 1 1 1    mean = 1     every distance is 0             variance = 0
+</pre></div>
+<p><code>x2</code> is the same in every row. It cannot help the model tell one row from
+another, so it is safe to drop. A variance threshold does exactly this: it
+drops every column whose variance is below a number you choose.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 27</span></div><pre class="py">x1 = [3,5,6,7,3,4,8,9,5,1]
+x2 = [1,1,1,1,1,1,1,1,1,1]</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.feature_selection import VarianceThreshold</pre></div>
+<p><code>VarianceThreshold(threshold=0.5)</code> drops every column whose variance is below
+0.5. <code>fit_transform</code> works out each column's variance and returns only the
+columns it kept.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 30</span></div><pre class="py">sel = VarianceThreshold(threshold=0.5)
+sel.fit_transform(data.data)</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([[  17.99,   10.38,  122.8 , ...,   17.33,  184.6 , 2019.  ],
+       [  20.57,   17.77,  132.9 , ...,   23.41,  158.8 , 1956.  ],
+       [  19.69,   21.25,  130.  , ...,   25.53,  152.5 , 1709.  ],
+       ...,
+       [  16.6 ,   28.08,  108.3 , ...,   34.12,  126.7 , 1124.  ],
+       [  20.6 ,   29.33,  140.1 , ...,   39.42,  184.6 , 1821.  ],
+       [   7.76,   24.54,   47.92, ...,   30.37,   59.16,  268.6 ]],
+      shape=(569, 10))</pre></div>
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 31</span></div><pre class="py">sel.get_support()</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([ True,  True,  True,  True, False, False, False, False, False,
+       False, False, False,  True,  True, False, False, False, False,
+       False, False,  True,  True,  True,  True, False, False, False,
+       False, False, False])</pre></div>
+<p><code>get_support()</code> gives one <code>True</code>/<code>False</code> per column. <code>True</code> means kept. 10 columns
+are kept and 20 are dropped.</p>
+
+<div class="code"><div class="code-head"><span>code</span><span class="cell">cell 33</span></div><pre class="py">sel.get_feature_names_out()</pre></div>
+<div class="out"><div class="h">Output</div><pre>array([&#x27;x0&#x27;, &#x27;x1&#x27;, &#x27;x2&#x27;, &#x27;x3&#x27;, &#x27;x12&#x27;, &#x27;x13&#x27;, &#x27;x20&#x27;, &#x27;x21&#x27;, &#x27;x22&#x27;, &#x27;x23&#x27;],
+      dtype=object)</pre></div>
+<p>The names come out as <code>x0</code>, <code>x1</code>, … because <code>data.data</code> is a plain NumPy array
+with no column names. <code>x0</code> means column 0. Pass <code>table</code> instead of <code>data.data</code>
+and you get the real names.</p>
+<p>The 10 kept columns, with their variance (<code>sel.variances_</code>):</p>
+<table class="tbl"><thead>
+<tr>
+  <th>Kept column</th>
+  <th>Variance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>worst area</td>
+  <td>323 598</td>
+</tr>
+<tr>
+  <td>mean area</td>
+  <td>123 626</td>
+</tr>
+<tr>
+  <td>area error</td>
+  <td>2 066</td>
+</tr>
+<tr>
+  <td>worst perimeter</td>
+  <td>1 127</td>
+</tr>
+<tr>
+  <td>mean perimeter</td>
+  <td>589</td>
+</tr>
+<tr>
+  <td>worst texture</td>
+  <td>37.7</td>
+</tr>
+<tr>
+  <td>worst radius</td>
+  <td>23.3</td>
+</tr>
+<tr>
+  <td>mean texture</td>
+  <td>18.5</td>
+</tr>
+<tr>
+  <td>mean radius</td>
+  <td>12.4</td>
+</tr>
+<tr>
+  <td>perimeter error</td>
+  <td>4.1</td>
+</tr>
+</tbody>
+</table>
+<h3>This is Kavya's first mistake again</h3>
+<p>Every kept column is measured in big numbers. Areas are in the hundreds, so
+their variance is huge. The dropped columns are measured in small numbers, like
+<code>mean concave points</code>, whose variance is <code>0.0015</code>.</p>
+<p>But <code>mean concave points</code> was 4th in Rule 1 (score about 0.44). It is a useful
+column, and the threshold dropped it only because its unit is small.</p>
+<p>So with a threshold above 0 on raw data, variance mostly measures the <strong>unit</strong>,
+not how useful the column is. The safe use is <code>threshold=0</code>: then it drops only
+columns like <code>x2</code>, which never change. Notebook 21 shows that case.</p>
+
+<h2 id="summary">Summary</h2>
+<table class="tbl"><thead>
+<tr>
+  <th>Rule</th>
+  <th>What it asks</th>
+  <th>Uses the answer <code>y</code>?</th>
+  <th>Result here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mutual information</td>
+  <td>How much does this column tell about the answer?</td>
+  <td>Yes</td>
+  <td>size columns on top, <code>texture error</code> last</td>
+</tr>
+<tr>
+  <td>Correlation &gt; 0.9</td>
+  <td>Does this column repeat an earlier one?</td>
+  <td>No</td>
+  <td>10 repeats to drop, 20 kept</td>
+</tr>
+<tr>
+  <td><code>VarianceThreshold(0.5)</code></td>
+  <td>Does this column change enough?</td>
+  <td>No</td>
+  <td>10 kept — only the big-unit ones</td>
+</tr>
+</tbody>
+</table>
+<p>One thing to watch: this notebook uses all 569 rows. In a real project, split
+first with <code>train_test_split</code> (imported in the first cell) and choose the
+columns using the training rows only. Otherwise the test rows help choose the
+columns they are later tested on.</p>
+<p><strong>If you remember only one thing:</strong> feature selection asks simple questions of
+each column — does it tell me about the answer, does it repeat another column,
+does it change at all. Always look at what a rule kept before you trust it.</p>
+
 <!-- HANDWRITTEN:START -->
 <h2 id="handwritten">✍️ Handwritten notes</h2>
 <p>The pages written by hand while working through this topic — the version that came before the tidy write-up. Click any page to enlarge.</p>
-<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_01.png" data-name="Feature_Selection_01.png"><img src="../Handwritten_Notes/Feature_Selection_01.png" alt="Feature_Selection_01.png" loading="lazy"><span>Feature Selection 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_02.png" data-name="Feature_Selection_02.png"><img src="../Handwritten_Notes/Feature_Selection_02.png" alt="Feature_Selection_02.png" loading="lazy"><span>Feature Selection 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_03.png" data-name="Feature_Selection_03.png"><img src="../Handwritten_Notes/Feature_Selection_03.png" alt="Feature_Selection_03.png" loading="lazy"><span>Feature Selection 03</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_Page_1of3.png" data-name="Feature_Selection_Page_1of3.png"><img src="../Handwritten_Notes/Feature_Selection_Page_1of3.png" alt="Feature_Selection_Page_1of3.png" loading="lazy"><span>Feature Selection Page 1of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_Page_2of3.png" data-name="Feature_Selection_Page_2of3.png"><img src="../Handwritten_Notes/Feature_Selection_Page_2of3.png" alt="Feature_Selection_Page_2of3.png" loading="lazy"><span>Feature Selection Page 2of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_Page_3of3.png" data-name="Feature_Selection_Page_3of3.png"><img src="../Handwritten_Notes/Feature_Selection_Page_3of3.png" alt="Feature_Selection_Page_3of3.png" loading="lazy"><span>Feature Selection Page 3of3</span></button></div>
+<div class="hn-grid"><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_01.png" data-name="Feature_Selection_01.png"><img src="../Handwritten_Notes/Feature_Selection_01.png" alt="Feature_Selection_01.png" loading="lazy"><span>Feature Selection 01</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_02.png" data-name="Feature_Selection_02.png"><img src="../Handwritten_Notes/Feature_Selection_02.png" alt="Feature_Selection_02.png" loading="lazy"><span>Feature Selection 02</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_03.png" data-name="Feature_Selection_03.png"><img src="../Handwritten_Notes/Feature_Selection_03.png" alt="Feature_Selection_03.png" loading="lazy"><span>Feature Selection 03</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_04.png" data-name="Feature_Selection_04.png"><img src="../Handwritten_Notes/Feature_Selection_04.png" alt="Feature_Selection_04.png" loading="lazy"><span>Feature Selection 04</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_05.png" data-name="Feature_Selection_05.png"><img src="../Handwritten_Notes/Feature_Selection_05.png" alt="Feature_Selection_05.png" loading="lazy"><span>Feature Selection 05</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_06.png" data-name="Feature_Selection_06.png"><img src="../Handwritten_Notes/Feature_Selection_06.png" alt="Feature_Selection_06.png" loading="lazy"><span>Feature Selection 06</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_Page_1of3.png" data-name="Feature_Selection_Page_1of3.png"><img src="../Handwritten_Notes/Feature_Selection_Page_1of3.png" alt="Feature_Selection_Page_1of3.png" loading="lazy"><span>Feature Selection Page 1of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_Page_2of3.png" data-name="Feature_Selection_Page_2of3.png"><img src="../Handwritten_Notes/Feature_Selection_Page_2of3.png" alt="Feature_Selection_Page_2of3.png" loading="lazy"><span>Feature Selection Page 2of3</span></button><button class="hn-thumb" data-src="../Handwritten_Notes/Feature_Selection_Page_3of3.png" data-name="Feature_Selection_Page_3of3.png"><img src="../Handwritten_Notes/Feature_Selection_Page_3of3.png" alt="Feature_Selection_Page_3of3.png" loading="lazy"><span>Feature Selection Page 3of3</span></button></div>
 <!-- HANDWRITTEN:END -->
-<div class="foot"><a class="btn" href="../Concept/20_Feature_Selection_techniques.ipynb">20_Feature_Selection_techniques.ipynb ↗</a><a class="btn" href="../Concept/21_Feature_Selection_VarianceThreshold.ipynb">21_Feature_Selection_VarianceThreshold.ipynb ↗</a><a class="btn" href="../Concept/22_Forward_Backward_Practice.ipynb">22_Forward_Backward_Practice.ipynb ↗</a><a class="btn" href="../Concept/20_Feature_Selection_techniques.MD">20_Feature_Selection_techniques.MD ↗</a>
+<div class="foot"><a class="btn" href="../Concept/20_Feature_Selection_techniques.ipynb">20_Feature_Selection_techniques.ipynb ↗</a><a class="btn" href="../Concept/21_Feature_Selection_VarianceThreshold.ipynb">21_Feature_Selection_VarianceThreshold.ipynb ↗</a><a class="btn" href="../Concept/22_Forward_Backward_Practice.ipynb">22_Forward_Backward_Practice.ipynb ↗</a><a class="btn" href="../Concept/44_Feature_Selection_Filter_Methods.ipynb">44_Feature_Selection_Filter_Methods.ipynb ↗</a>
   <a class="btn" href="../../../17_Learning_As_Of_Now/Claude/index.html">← Back to the map</a>
 </div>
 </main></div>

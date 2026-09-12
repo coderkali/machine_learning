@@ -385,5 +385,191 @@ backward_test_accuracy</pre></div><div class="out"><div class="h">Output</div><p
 comparison</pre></div><div class="out"><div class="h">Output</div><pre>                         features_used  test_accuracy
 All features (baseline)              5       0.733333
 Forward Selection                    2       0.733333
-Backward Elimination                 2       0.733333</pre></div>
+Backward Elimination                 2       0.733333</pre></div><div class="src-head">📓 <a href="../Concept/44_Feature_Selection_Filter_Methods.ipynb">44_Feature_Selection_Filter_Methods.ipynb</a></div><div class="code"><div class="code-head"><span>In [60]</span><span class="cell">cell 1</span></div><pre class="py">from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split</pre></div><div class="code"><div class="code-head"><span>In [61]</span><span class="cell">cell 2</span></div><pre class="py">data = load_breast_cancer()</pre></div><div class="code"><div class="code-head"><span>In [62]</span><span class="cell">cell 3</span></div><pre class="py">from sklearn.feature_selection import mutual_info_classif
+import matplotlib.pyplot as plt
+import pandas as pd</pre></div><div class="code"><div class="code-head"><span>In [63]</span><span class="cell">cell 4</span></div><pre class="py">table = pd.DataFrame(data.data,columns=data.feature_names)
+table.head()</pre></div><div class="out"><div class="h">Output</div><pre>   mean radius  mean texture  mean perimeter  mean area  mean smoothness  \
+0        17.99         10.38          122.80     1001.0          0.11840   
+1        20.57         17.77          132.90     1326.0          0.08474   
+2        19.69         21.25          130.00     1203.0          0.10960   
+3        11.42         20.38           77.58      386.1          0.14250   
+4        20.29         14.34          135.10     1297.0          0.10030   
+
+   mean compactness  mean concavity  mean concave points  mean symmetry  \
+0           0.27760          0.3001              0.14710         0.2419   
+1           0.07864          0.0869              0.07017         0.1812   
+2           0.15990          0.1974              0.12790         0.2069   
+3           0.28390          0.2414              0.10520         0.2597   
+4           0.13280          0.1980              0.10430         0.1809   
+
+   mean fractal dimension  ...  worst radius  worst texture  worst perimeter  \
+0                 0.07871  ...         25.38          17.33           184.60   
+1                 0.05667  ...         24.99          23.41           158.80   
+2                 0.05999  ...         23.57          25.53           152.50   
+3                 0.09744  ...         14.91          26.50            98.87   
+4                 0.05883  ...         22.54          16.67           152.20   
+
+   worst ar</pre></div><div class="code"><div class="code-head"><span>In [64]</span><span class="cell">cell 5</span></div><pre class="py">table.shape</pre></div><div class="out"><div class="h">Output</div><pre>(569, 30)</pre></div><div class="code"><div class="code-head"><span>In [65]</span><span class="cell">cell 9</span></div><pre class="py">import numpy as np
+
+# A tiny, deliberately simple screening report: 0 = malignant, 1 = benign.
+size_bin = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2])
+target_demo = np.array([1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1])
+scanner_group = np.array([0, 1, 2, 3, 0, 1, 2, 3, 1, 0, 3, 2, 2, 3, 0, 1])
+size_labels = [&#x27;small&#x27;, &#x27;medium&#x27;, &#x27;large&#x27;]
+target_labels = [&#x27;malignant&#x27;, &#x27;benign&#x27;]
+
+# For a discrete example, this is the mutual-information formula directly.
+def discrete_mutual_information(feature, target):
+    total = len(feature)
+    score = 0.0
+    for feature_value in np.unique(feature):
+        for target_value in np.unique(target):
+            joint_count = np.sum((feature == feature_value) &amp; (target == target_value))
+            if joint_count == 0:
+                continue
+            joint_probability = joint_count / total
+            feature_probability = np.sum(feature == feature_value) / total
+            target_probability = np.sum(target == target_value) / total
+            score += joint_probability * np.log2(
+                joint_probability / (feature_probability * target_probability)
+            )
+    return score
+
+size_mi = discrete_mutual_information(size_bin, target_demo)
+scanner_mi = discrete_mutual_information(scanner_group, target_demo)
+rng = np.random.default_rng(42)
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 4), sharey=True)
+colors = {0: &#x27;#c0392b&#x27;, 1: &#x27;#2471a3&#x27;}
+for axis, feature, title, x_label in [
+    (axes[0], size_bin, &#x27;Useful clue: tumour size&#x27;, &#x27;size bin&#x27;),
+    (axes[1], scanner_group, &#x27;Mostly unhelpful clue: scanner group&#x27;, &#x27;scanner group&#x27;),
+]:
+    for target_value in [0, 1]:
+        selected = target_demo == target_value
+        jitter = rng.normal(0, 0.06, np.sum(selected))
+        axis.scatter(
+            feature[selected] + jitter,
+            target_demo[selected],
+            color=colors[target_value],
+            label=target_labels[target_value],
+            s=70,
+            alpha=0.85,
+            edgecolor=&#x27;white&#x27;,
+        )
+    axis.set_title(title)
+    axis.set_xlabel(x_label)
+    axis.set_yticks([0, 1], [&#x27;malignant&#x27;, &#x27;benign&#x27;])
+    axis.grid(axis=&#x27;y&#x27;, alpha=0.25)
+axes[0].set_xticks([0, 1, 2], size_labels)
+axes[1].set_xticks([0, 1, 2, 3], [&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;, &#x27;D&#x27;])
+axes[1].legend(title=&#x27;known target&#x27;)
+fig.suptitle(&#x27;Mutual information starts with one question: does this feature separate the target?&#x27;, y=1.04)
+plt.tight_layout()
+plt.show()
+
+# Count how many tumours fall into each (size bin, diagnosis) combination.
+counts = np.zeros((3, 2), dtype=int)
+for feature_value in range(3):
+    for target_value in range(2):
+        counts[feature_value, target_value] = np.sum(
+            (size_bin == feature_value) &amp; (target_demo == target_value)
+        )
+
+fig, axis = plt.subplots(figsize=(6, 3.5))
+image = axis.imshow(counts, cmap=&#x27;Blues&#x27;)
+axis.set_title(&#x27;The count table behind the size score&#x27;)
+axis.set_xlabel(&#x27;known target&#x27;)
+axis.set_ylabel(&#x27;feature value&#x27;)
+axis.set_xticks([0, 1], target_labels)
+axis.set_yticks([0, 1, 2], size_labels)
+for row in range(counts.shape[0]):
+    for column in range(counts.shape[1]):
+        axis.text(column, row, counts[row, column], ha=&#x27;center&#x27;, va=&#x27;center&#x27;, fontsize=14)
+fig.colorbar(image, ax=axis, label=&#x27;number of tumours&#x27;)
+plt.tight_layout()
+plt.show()
+
+print(f&#x27;Mutual information for tumour size: {size_mi:.3f} bits&#x27;)
+print(f&#x27;Mutual information for scanner group: {scanner_mi:.3f} bits&#x27;)</pre></div><div class="out"><div class="h">Output</div><pre>Mutual information for tumour size: 0.116 bits
+Mutual information for scanner group: 0.094 bits</pre></div><figure class="shot"><img src="assets/44-feature-selection-filter--c09-1.png" alt="plot produced by this cell"></figure><figure class="shot"><img src="assets/44-feature-selection-filter--c09-2.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [66]</span><span class="cell">cell 11</span></div><pre class="py">imp = mutual_info_classif(data.data, data.target)</pre></div><div class="code"><div class="code-head"><span>In [67]</span><span class="cell">cell 12</span></div><pre class="py">fimp = pd.Series(imp,table.columns[0:len(table.columns)])
+fimp.sort_values(ascending=False)</pre></div><div class="out"><div class="h">Output</div><pre>worst perimeter            0.476609
+worst area                 0.463210
+worst radius               0.452496
+mean concave points        0.439315
+worst concave points       0.437874
+mean perimeter             0.403214
+mean concavity             0.374832
+mean radius                0.364263
+mean area                  0.360122
+area error                 0.340625
+worst concavity            0.316958
+perimeter error            0.273136
+radius error               0.249299
+worst compactness          0.226720
+mean compactness           0.213611
+concave points error       0.125179
+worst texture              0.123267
+concavity error            0.117122
+mean texture               0.099861
+worst smoothness           0.097346
+worst symmetry             0.092600
+mean smoothness            0.081944
+compactness error          0.075217
+worst fractal dimension    0.068899
+mean symmetry              0.064848
+fractal dimension error    0.038395
+smoothness error           0.016374
+symmetry error             0.009299
+mean fractal dimension     0.008749
+texture error              0.001326
+dtype: float64</pre></div><div class="code"><div class="code-head"><span>In [68]</span><span class="cell">cell 14</span></div><pre class="py">fimp.plot(kind=&#x27;bar&#x27;,color=&#x27;green&#x27;)
+plt.show</pre></div><div class="out"><div class="h">Output</div><pre>&lt;function matplotlib.pyplot.show(close=None, block=None)&gt;</pre></div><figure class="shot"><img src="assets/44-feature-selection-filter--c14-3.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [69]</span><span class="cell">cell 17</span></div><pre class="py">import seaborn as sns
+import matplotlib.pyplot as plt</pre></div><div class="code"><div class="code-head"><span>In [70]</span><span class="cell">cell 18</span></div><pre class="py">matrix = table.corr()</pre></div><div class="code"><div class="code-head"><span>In [71]</span><span class="cell">cell 19</span></div><pre class="py">matrix</pre></div><div class="out"><div class="h">Output</div><pre>                         mean radius  mean texture  mean perimeter  mean area  \
+mean radius                 1.000000      0.323782        0.997855   0.987357   
+mean texture                0.323782      1.000000        0.329533   0.321086   
+mean perimeter              0.997855      0.329533        1.000000   0.986507   
+mean area                   0.987357      0.321086        0.986507   1.000000   
+mean smoothness             0.170581     -0.023389        0.207278   0.177028   
+mean compactness            0.506124      0.236702        0.556936   0.498502   
+mean concavity              0.676764      0.302418        0.716136   0.685983   
+mean concave points         0.822529      0.293464        0.850977   0.823269   
+mean symmetry               0.147741      0.071401        0.183027   0.151293   
+mean fractal dimension     -0.311631     -0.076437       -0.261477  -0.283110   
+radius error                0.679090      0.275869        0.691765   0.732562   
+texture error              -0.097317      0.386358       -0.086761  -0.066280   
+perimeter error             0.674172      0.281673        0.693135   0.726628   
+area error                  0.735864      0.259845        0.744983   0.800086   
+smoothness error           -0.222600      0.006614       -0.202694  -0.166777   
+compactness error           0.206000      0.191975        0.250744   0.212583   
+concavity error        </pre></div><div class="code"><div class="code-head"><span>In [72]</span><span class="cell">cell 20</span></div><pre class="py">plt.figure(figsize = (30,30))
+sns.heatmap(matrix,annot = True)</pre></div><div class="out"><div class="h">Output</div><pre>&lt;Axes: &gt;</pre></div><figure class="shot"><img src="assets/44-feature-selection-filter--c20-4.png" alt="plot produced by this cell"></figure><div class="code"><div class="code-head"><span>In [73]</span><span class="cell">cell 23</span></div><pre class="py">final = set()
+for i in range(len(matrix.columns)):
+        for j in range(i):
+            if matrix.iloc[i, j] &gt; 0.9: 
+                col_name = matrix.columns[i]  
+                final.add(col_name)</pre></div><div class="code"><div class="code-head"><span>In [74]</span><span class="cell">cell 24</span></div><pre class="py">final</pre></div><div class="out"><div class="h">Output</div><pre>{&#x27;area error&#x27;,
+ &#x27;mean area&#x27;,
+ &#x27;mean concave points&#x27;,
+ &#x27;mean perimeter&#x27;,
+ &#x27;perimeter error&#x27;,
+ &#x27;worst area&#x27;,
+ &#x27;worst concave points&#x27;,
+ &#x27;worst perimeter&#x27;,
+ &#x27;worst radius&#x27;,
+ &#x27;worst texture&#x27;}</pre></div><div class="code"><div class="code-head"><span>In [75]</span><span class="cell">cell 27</span></div><pre class="py">x1 = [3,5,6,7,3,4,8,9,5,1]
+x2 = [1,1,1,1,1,1,1,1,1,1]</pre></div><div class="code"><div class="code-head"><span>In [76]</span><span class="cell">cell 28</span></div><pre class="py">from sklearn.feature_selection import VarianceThreshold</pre></div><div class="code"><div class="code-head"><span>In [77]</span><span class="cell">cell 30</span></div><pre class="py">sel = VarianceThreshold(threshold=0.5)
+sel.fit_transform(data.data)</pre></div><div class="out"><div class="h">Output</div><pre>array([[  17.99,   10.38,  122.8 , ...,   17.33,  184.6 , 2019.  ],
+       [  20.57,   17.77,  132.9 , ...,   23.41,  158.8 , 1956.  ],
+       [  19.69,   21.25,  130.  , ...,   25.53,  152.5 , 1709.  ],
+       ...,
+       [  16.6 ,   28.08,  108.3 , ...,   34.12,  126.7 , 1124.  ],
+       [  20.6 ,   29.33,  140.1 , ...,   39.42,  184.6 , 1821.  ],
+       [   7.76,   24.54,   47.92, ...,   30.37,   59.16,  268.6 ]],
+      shape=(569, 10))</pre></div><div class="code"><div class="code-head"><span>In [78]</span><span class="cell">cell 31</span></div><pre class="py">sel.get_support()</pre></div><div class="out"><div class="h">Output</div><pre>array([ True,  True,  True,  True, False, False, False, False, False,
+       False, False, False,  True,  True, False, False, False, False,
+       False, False,  True,  True,  True,  True, False, False, False,
+       False, False, False])</pre></div><div class="code"><div class="code-head"><span>In [79]</span><span class="cell">cell 33</span></div><pre class="py">sel.get_feature_names_out()</pre></div><div class="out"><div class="h">Output</div><pre>array([&#x27;x0&#x27;, &#x27;x1&#x27;, &#x27;x2&#x27;, &#x27;x3&#x27;, &#x27;x12&#x27;, &#x27;x13&#x27;, &#x27;x20&#x27;, &#x27;x21&#x27;, &#x27;x22&#x27;, &#x27;x23&#x27;],
+      dtype=object)</pre></div>
 </main></div><script src="../../../17_Learning_As_Of_Now/shared/lesson.js"></script></body></html>

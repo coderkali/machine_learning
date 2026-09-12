@@ -106,7 +106,7 @@
    "<strong>Arun had 60 columns and believed every one helped.</strong> More information, better model — surely.",
    "Test accuracy got <em>worse</em> as he added columns. The model was finding patterns in pure noise and trusting them.",
    "<span class='beat'>With enough useless columns, something will look meaningful by pure chance.</span> A constant column carries nothing; a duplicated column splits the credit and confuses both halves.",
-   "Feature selection removes them: variance thresholds for dead columns, forward and backward selection to test whether a column actually earns its place."
+   "Feature selection removes them: a variance threshold for dead columns, a correlation check for columns that repeat each other, mutual information to score each column against the answer, and forward and backward selection to test whether a column actually earns its place."
   ]
  },
  "04_ML/12_Preprocessing": {
