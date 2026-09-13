@@ -4,7 +4,7 @@ title: Write the requirements and the first decisions
 phase: 1 — Requirements and setup
 sprint: 1
 estimate: 2-3 h
-status: todo
+status: review
 depends_on: [DAF-01]
 ---
 
