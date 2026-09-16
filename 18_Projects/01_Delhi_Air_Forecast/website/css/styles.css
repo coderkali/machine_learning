@@ -1,0 +1,221 @@
+/* Delhi Air Forecast — project site.
+   Every colour is a token. Dark is the default; light is the same roles flipped. */
+
+:root{
+  --bg:#0c1014;      --bg2:#11161c;    --card:#141a21;   --card2:#1a222b;
+  --line:#232d38;    --line2:#33414f;
+  --ink:#e8eef5;     --ink2:#a8b6c5;   --ink3:#6f8093;
+  --accent:#4fd1c5;  --accent-rgb:79,209,197;
+  --amber:#f0b429;   --amber-rgb:240,180,41;
+  --rose:#f4708f;    --rose-rgb:244,112,143;
+  --violet:#9f8cf0;  --violet-rgb:159,140,240;
+  --good:#5ec26a;    --good-rgb:94,194,106;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.25);
+}
+:root[data-theme="light"]{
+  --bg:#f5f7fa;      --bg2:#eceff4;    --card:#ffffff;   --card2:#f4f7fa;
+  --line:#dde3ea;    --line2:#c2ccd8;
+  --ink:#16202b;     --ink2:#4c5a6a;   --ink3:#7d8b9a;
+  --accent:#0f8b80;  --accent-rgb:15,139,128;
+  --amber:#a86e00;   --amber-rgb:168,110,0;
+  --rose:#c0304f;    --rose-rgb:192,48,79;
+  --violet:#6144c4;  --violet-rgb:97,68,196;
+  --good:#2f8a3c;    --good-rgb:47,138,60;
+  --shadow:0 1px 2px rgba(16,32,48,.06), 0 8px 24px rgba(16,32,48,.07);
+}
+
+*{box-sizing:border-box}
+html{color-scheme:dark}
+:root[data-theme="light"] html,html[data-theme="light"]{color-scheme:light}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+a{color:var(--accent)}
+
+/* ---------- shell ---------- */
+.nav{
+  position:sticky; top:0; z-index:40; background:rgba(var(--accent-rgb),.02);
+  backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
+  background-color:var(--bg2);
+}
+.nav-in{max-width:1120px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:4px; min-height:56px; flex-wrap:wrap}
+.brand{font-weight:700; letter-spacing:-.01em; margin-right:18px; display:flex; align-items:center; gap:9px; text-decoration:none; color:var(--ink)}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(var(--accent-rgb),.15)}
+.nav a.tab{
+  color:var(--ink2); text-decoration:none; padding:7px 12px; border-radius:8px;
+  font-size:14.5px; font-weight:500;
+}
+.nav a.tab:hover{color:var(--ink); background:var(--card2)}
+.nav a.tab[aria-current="page"]{color:var(--ink); background:var(--card2); box-shadow:inset 0 0 0 1px var(--line2)}
+.themebtn{
+  margin-left:auto; border:1px solid var(--line2); background:var(--card); color:var(--ink2);
+  border-radius:8px; padding:6px 11px; font-size:13px; cursor:pointer; font-family:inherit;
+}
+.themebtn:hover{color:var(--ink); border-color:var(--accent)}
+
+.wrap{max-width:1120px; margin:0 auto; padding:0 20px 90px}
+.foot{max-width:1120px;margin:0 auto;padding:26px 20px 50px;color:var(--ink3);font-size:13px;border-top:1px solid var(--line)}
+
+/* ---------- type ---------- */
+h1{font-size:clamp(28px,4.4vw,42px); line-height:1.15; letter-spacing:-.02em; margin:0 0 14px}
+h2{font-size:clamp(20px,2.6vw,26px); letter-spacing:-.015em; margin:56px 0 6px}
+h3{font-size:17px; margin:26px 0 8px; letter-spacing:-.01em}
+p{margin:0 0 14px; color:var(--ink2); max-width:74ch}
+.lede{font-size:18.5px; color:var(--ink2); max-width:70ch}
+.eyebrow{
+  font-size:12px; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 12px;
+}
+.sub{color:var(--ink3); font-size:14px; max-width:74ch; margin:-2px 0 20px}
+.hdr{padding:46px 0 6px}
+
+/* ---------- cards ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:var(--shadow)}
+.grid{display:grid; gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+.stat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px}
+.stat .k{font-size:clamp(26px,3.6vw,34px); font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.stat .l{font-size:13px; color:var(--ink3); margin-top:5px; line-height:1.4}
+.stat.a .k{color:var(--accent)} .stat.m .k{color:var(--amber)}
+.stat.r .k{color:var(--rose)}   .stat.v .k{color:var(--violet)}
+
+.tag{
+  display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.06em; line-height:1.5;
+  text-transform:uppercase; padding:3px 8px; border-radius:6px; vertical-align:middle;
+}
+.tag.done{background:rgba(var(--good-rgb),.15); color:var(--good)}
+.tag.review{background:rgba(var(--amber-rgb),.16); color:var(--amber)}
+.tag.todo{background:var(--card2); color:var(--ink3); box-shadow:inset 0 0 0 1px var(--line)}
+.tag.upnext{background:rgba(var(--accent-rgb),.16); color:var(--accent)}
+.tag.doing{background:rgba(var(--violet-rgb),.16); color:var(--violet)}
+
+/* ---------- pipeline ---------- */
+.pipe{width:100%; height:auto; display:block; overflow:visible}
+.pipe .rail{stroke:var(--line2); stroke-width:3}
+.pipe .fill{stroke:var(--accent); stroke-width:3; stroke-linecap:round}
+.pipe .node{fill:var(--bg); stroke:var(--line2); stroke-width:2.5}
+.pipe .node.is-done{fill:var(--accent); stroke:var(--accent)}
+.pipe .node.is-here{fill:var(--bg); stroke:var(--amber); stroke-width:3.5}
+.pipe text{font-family:inherit; fill:var(--ink3)}
+.pipe .lbl{font-size:12.5px; font-weight:600; fill:var(--ink2)}
+.pipe .lbl.is-here{fill:var(--amber)}
+.pipe .cnt{font-size:11px}
+.pipe .youare{font-size:11px; font-weight:700; letter-spacing:.1em; fill:var(--amber)}
+
+.bar{height:9px; border-radius:99px; background:var(--card2); box-shadow:inset 0 0 0 1px var(--line); overflow:hidden}
+.bar > i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--violet)); border-radius:99px}
+
+/* ---------- next-action callout ---------- */
+.next{
+  border:1px solid rgba(var(--amber-rgb),.4); border-left:4px solid var(--amber);
+  background:rgba(var(--amber-rgb),.06); border-radius:12px; padding:20px 22px;
+}
+.next h3{margin-top:0; color:var(--amber)}
+.note{
+  border:1px solid var(--line); border-left:4px solid var(--violet);
+  background:rgba(var(--violet-rgb),.06); border-radius:12px; padding:16px 20px; font-size:14.5px;
+}
+.note b{color:var(--violet)}
+
+/* ---------- lists ---------- */
+.ck{list-style:none; padding:0; margin:0}
+.ck li{display:flex; gap:11px; align-items:flex-start; padding:7px 0; color:var(--ink2); font-size:15px; border-bottom:1px solid var(--line)}
+.ck li:last-child{border-bottom:0}
+.ck .m{flex:none; width:19px; height:19px; border-radius:50%; margin-top:2px; display:grid; place-items:center; font-size:11px; font-weight:700}
+.ck .m.y{background:rgba(var(--good-rgb),.16); color:var(--good)}
+.ck .m.n{background:var(--card2); color:var(--ink3); box-shadow:inset 0 0 0 1px var(--line)}
+
+/* ---------- tables ---------- */
+.tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--card)}
+table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:520px}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--line)}
+th{color:var(--ink3); font-size:12px; text-transform:uppercase; letter-spacing:.07em; font-weight:700; background:var(--card2)}
+td{color:var(--ink2)} tbody tr:last-child td{border-bottom:0}
+td b{color:var(--ink)}
+.num{font-variant-numeric:tabular-nums; text-align:right}
+
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px}
+code{background:var(--card2); padding:1.5px 6px; border-radius:5px; color:var(--accent); border:1px solid var(--line)}
+
+/* ---------- ticket board ---------- */
+.tk{display:flex; gap:12px; align-items:baseline; padding:9px 13px; border-radius:9px; background:var(--card2); border:1px solid var(--line); margin-bottom:6px}
+.tk .id{font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--ink3); flex:none; width:60px}
+.tk .t{flex:1; font-size:14.5px; color:var(--ink2); min-width:0}
+.tk.is-done{border-color:rgba(var(--good-rgb),.35)} .tk.is-done .t{color:var(--ink)}
+.tk.is-review{border-color:rgba(var(--amber-rgb),.45); background:rgba(var(--amber-rgb),.06)}
+.tk .flag{display:block; font-size:12.5px; color:var(--amber); margin-top:3px}
+.phase-h{display:flex; align-items:baseline; gap:10px; margin:30px 0 10px}
+.phase-h .n{font-size:12px; font-weight:700; letter-spacing:.1em; color:var(--ink3); text-transform:uppercase}
+.phase-h .c{margin-left:auto; font-size:12.5px; color:var(--ink3); font-variant-numeric:tabular-nums}
+
+/* ---------- charts ---------- */
+.chart{width:100%; height:auto; display:block; overflow:visible; font-family:inherit}
+.chart text{fill:var(--ink3); font-size:12px}
+#providers .chart text{font-size:13px}
+.chart .vlbl{fill:var(--ink2); font-size:12px; font-weight:600; font-variant-numeric:tabular-nums}
+.chart .grid-l{stroke:var(--line); stroke-width:1}
+.chart .axis{stroke:var(--line2); stroke-width:1}
+.legend{display:flex; gap:18px; flex-wrap:wrap; font-size:13px; color:var(--ink3); margin-top:12px}
+.legend i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:7px; vertical-align:-1px}
+.cap{font-size:13px; color:var(--ink3); margin-top:12px; max-width:70ch}
+
+/* funnel */
+.fn{display:grid; gap:9px}
+.fn-row{display:flex; align-items:center; gap:14px}
+.fn-bar{height:42px; border-radius:9px; display:flex; align-items:center; padding:0 14px;
+        font-weight:700; font-variant-numeric:tabular-nums; color:#fff; flex:none; min-width:64px}
+.fn-txt{font-size:14px; color:var(--ink2); min-width:0}
+.fn-txt span{display:block; font-size:12.5px; color:var(--ink3)}
+
+/* map */
+.map{background:var(--card2); border-radius:12px; border:1px solid var(--line)}
+.map .dot-pass{fill:var(--accent); fill-opacity:.85; stroke:var(--bg); stroke-width:1}
+.map .dot-fail{fill:var(--ink3); fill-opacity:.35; stroke:none}
+.map .frame{fill:none; stroke:var(--line2); stroke-dasharray:4 4}
+
+/* AQI scale */
+.aqi{display:flex; border-radius:10px; overflow:hidden; box-shadow:inset 0 0 0 1px var(--line)}
+.aqi div{padding:11px 8px; font-size:12px; font-weight:700; color:#10161d; text-align:center; line-height:1.3}
+.aqi div small{display:block; font-weight:600; font-size:10.5px; opacity:.75}
+.aqi-line{position:relative; height:30px; margin-top:6px}
+.aqi-line .mk{position:absolute; top:0; transform:translateX(-50%); text-align:center; font-size:12px; color:var(--rose); font-weight:700}
+.aqi-line .mk:before{content:""; display:block; width:2px; height:11px; background:var(--rose); margin:0 auto 3px}
+
+/* timeline */
+.tl{position:relative; padding-left:26px; margin:0}
+.tl:before{content:""; position:absolute; left:6px; top:8px; bottom:8px; width:2px; background:var(--line2)}
+.tl li{list-style:none; position:relative; padding:0 0 18px}
+.tl li:before{content:""; position:absolute; left:-24px; top:7px; width:11px; height:11px; border-radius:50%; background:var(--card); box-shadow:0 0 0 2px var(--line2)}
+.tl li.on:before{background:var(--amber); box-shadow:0 0 0 3px rgba(var(--amber-rgb),.25)}
+.tl .t{font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--accent); font-weight:600}
+.tl .d{font-size:14.5px; color:var(--ink2)}
+
+.yn{display:grid; gap:10px}
+.yn .row{display:flex; gap:10px; align-items:flex-start; font-size:14.5px; color:var(--ink2)}
+.yn .row i{flex:none; font-style:normal; font-weight:700; width:20px; text-align:center}
+.yn .row i.y{color:var(--good)} .yn .row i.n{color:var(--rose)}
+
+/* pipeline, stacked for phones */
+.pipe-list{display:none; list-style:none; margin:0; padding:0; counter-reset:none}
+.pipe-list li{display:flex; align-items:center; gap:11px; padding:9px 12px; border-radius:9px;
+  background:var(--card2); border:1px solid var(--line); margin-bottom:6px; font-size:14.5px; color:var(--ink3)}
+.pipe-list .pl-n{font-family:ui-monospace,Menlo,monospace; font-size:12px; flex:none; width:22px}
+.pipe-list .pl-t{flex:1; min-width:0}
+.pipe-list .pl-c{font-variant-numeric:tabular-nums; font-size:13px}
+.pipe-list li.is-done{border-color:rgba(var(--accent-rgb),.4)}
+.pipe-list li.is-done .pl-t,.pipe-list li.is-done .pl-n{color:var(--accent)}
+.pipe-list li.is-here{border-color:var(--amber); background:rgba(var(--amber-rgb),.08)}
+.pipe-list li.is-here .pl-t{color:var(--amber); font-weight:700}
+.pipe-list li.is-here .pl-t:after{content:" — you are here"; font-weight:600; font-size:12.5px}
+@media(max-width:760px){
+  .pipe{display:none}
+  .pipe-list{display:block}
+}

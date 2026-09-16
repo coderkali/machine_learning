@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Delhi Air Forecast — where the project is</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
+  <a class="tab" href="index.html" aria-current="page">Where we are</a>
+  <a class="tab" href="requirement.html">The requirement</a>
+  <a class="tab" href="journey.html">The 27 tickets</a>
+  <a class="tab" href="data.html">The data so far</a>
+  <button class="themebtn" type="button">Light</button>
+</div></nav>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <p class="eyebrow">🧪 My experiment · started 12 Sep 2026</p>
+    <h1>Asha has to decide tonight whether 600 children<br>stand outside tomorrow morning.</h1>
+    <p class="lede">She checks today's air quality and assumes tomorrow is the same. That is right on most days and
+    wrong on exactly the days that matter — the evening the wind drops, the week the crop smoke arrives, the morning
+    after Diwali. This project builds the thing that tells her tomorrow's number, tonight.</p>
+  </header>
+
+  <h2 style="margin-top:44px">Where the project is</h2>
+  <p class="sub">Eight phases, 27 tickets, one sitting each. The marker is the honest position of the work, not the tidy one.</p>
+
+  <div class="card">
+    <div id="pipeline"></div>
+    <div style="margin-top:22px">
+      <div class="bar"><i data-progress-fill style="width:5%"></i></div>
+      <p style="margin:10px 0 0;font-size:13.5px;color:var(--ink3)">
+        <b style="color:var(--good)"><span data-stat="done">1</span> verified</b> ·
+        <b style="color:var(--amber)"><span data-stat="review">1</span> waiting on verification</b> ·
+        <span data-stat="left">25</span> still to come, out of <span data-stat="total">27</span>.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid g4" style="margin-top:16px">
+    <div class="stat a"><div class="k">102</div><div class="l">Delhi-area locations found through OpenAQ</div></div>
+    <div class="stat v"><div class="k">147</div><div class="l">PM2.5 sensor records behind them</div></div>
+    <div class="stat m"><div class="k">50</div><div class="l">Stations with 2+ years of real history</div></div>
+    <div class="stat r"><div class="k">0</div><div class="l">Rows of measurement data downloaded yet</div></div>
+  </div>
+
+  <div class="next" style="margin-top:26px">
+    <h3>Next thing to do — write decision D-003</h3>
+    <p style="color:var(--ink2);margin-bottom:10px">Modelling does not start here. The next step is to <b style="color:var(--ink)">write down the rule</b>
+    that decides which of those 147 sensor records become the training set, and over what date range.</p>
+    <div class="yn">
+      <div class="row"><i>1</i><span>Which stations qualify? (50 pass the 730-day rule — is that the rule we keep?)</span></div>
+      <div class="row"><i>2</i><span>What exactly was the rule, written as a decision record, so it can be defended in three months?</span></div>
+      <div class="row"><i>3</i><span>What training date range follows from it?</span></div>
+    </div>
+    <p style="margin:14px 0 0;font-size:14px;color:var(--ink3)">Then <code>DAF-04</code> — download the sensor history from the S3 archive.</p>
+  </div>
+
+  <div class="note" style="margin-top:16px">
+    <b>One thing is out of step.</b> The station-discovery notebook is finished and <code>data/raw/stations.csv</code> is saved,
+    but <code>DAF-03</code>'s front matter still reads <code>todo</code>, and <code>DAF-02</code> still reads <code>review</code>.
+    The board on this site shows what the files say, not what the work looks like. Those two statuses want closing.
+  </div>
+
+  <h2>What has actually been built</h2>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card">
+      <span class="tag done">done</span>
+      <h3 style="margin-top:12px">A real project, not a notebook</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span>Folder tree: <code>data/</code>, <code>src/</code>, <code>tests/</code>, <code>models/</code>, <code>app/</code></span></li>
+        <li><span class="m y">✓</span><span><code>.venv</code> with pinned dependencies</span></li>
+        <li><span class="m y">✓</span><span><code>delhi_air</code> installed editable, so imports work anywhere</span></li>
+        <li><span class="m y">✓</span><span>The API key lives in <code>.env</code>, never in the repo</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag review">in review</span>
+      <h3 style="margin-top:12px">A requirement you can fail</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span>Target: tomorrow's 24-hour mean PM2.5, µg/m³</span></li>
+        <li><span class="m y">✓</span><span>Decided at 18:00 IST, with 18:00 information only</span></li>
+        <li><span class="m y">✓</span><span>Must beat "tomorrow = today" by 10% MAE</span></li>
+        <li><span class="m y">✓</span><span>…without losing recall on Poor-or-worse days</span></li>
+      </ul>
+      <p style="margin:12px 0 0"><a href="requirement.html">Read the requirement →</a></p>
+    </div>
+    <div class="card">
+      <span class="tag doing">in progress</span>
+      <h3 style="margin-top:12px">A station list we trust</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span>Every page of results fetched, not just the first 100</span></li>
+        <li><span class="m y">✓</span><span>Only <code>pm25</code> sensors kept</span></li>
+        <li><span class="m y">✓</span><span>Coverage measured in elapsed days, not calendar years</span></li>
+        <li><span class="m n">·</span><span>The selection rule is not yet a decision record</span></li>
+      </ul>
+      <p style="margin:12px 0 0"><a href="data.html">See what came back →</a></p>
+    </div>
+  </div>
+
+  <h2>The road from here to a running service</h2>
+  <p class="sub">Each row is a phase. The work is sequential on purpose: you cannot pick features before you know what is knowable at 18:00, and you cannot know that until the data is clean.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Phase</th><th>What it produces</th><th>Tickets</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 · Setup</b></td><td>A project skeleton and a requirement that can fail</td><td class="num">2</td><td><span class="tag review">1 done, 1 in review</span></td></tr>
+        <tr><td><b>2 · Data</b></td><td>Real sensor history and matching weather, plus a data card</td><td class="num">4</td><td><span class="tag doing">here</span></td></tr>
+        <tr><td><b>3 · Clean</b></td><td>One honest daily table with the target column on it</td><td class="num">5</td><td><span class="tag todo">to do</span></td></tr>
+        <tr><td><b>4 · Split</b></td><td>A split by time, and proof that a random split cheats</td><td class="num">2</td><td><span class="tag todo">to do</span></td></tr>
+        <tr><td><b>5 · Features</b></td><td>Lags, rolling windows, weather — all knowable at 18:00</td><td class="num">3</td><td><span class="tag todo">to do</span></td></tr>
+        <tr><td><b>6 · Models</b></td><td>Baseline first, then linear, then trees</td><td class="num">3</td><td><span class="tag todo">to do</span></td></tr>
+        <tr><td><b>7 · Evaluate</b></td><td>Time-aware CV, the final test run, a model card</td><td class="num">3</td><td><span class="tag todo">to do</span></td></tr>
+        <tr><td><b>8 · Ship</b></td><td>A FastAPI service in a container that answers Asha's question</td><td class="num">5</td><td><span class="tag todo">to do</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:16px"><a href="journey.html">Open the full board, ticket by ticket →</a></p>
+
+</div>
+
+<footer class="foot">
+  Generated from the project's own files on 16 Sep 2026 · <code>docs/backlog/</code>, <code>docs/decisions/</code>, <code>data/raw/stations.csv</code>.
+  No libraries, no network — every chart on this site is hand-written SVG.
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

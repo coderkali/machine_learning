@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The data so far — Delhi Air Forecast</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
+  <a class="tab" href="index.html">Where we are</a>
+  <a class="tab" href="requirement.html">The requirement</a>
+  <a class="tab" href="journey.html">The 27 tickets</a>
+  <a class="tab" href="data.html" aria-current="page">The data so far</a>
+  <button class="themebtn" type="button">Light</button>
+</div></nav>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <p class="eyebrow">Station discovery · notebook 03</p>
+    <h1>Delhi has 102 air monitors on OpenAQ.<br>Only 50 can teach a model anything.</h1>
+    <p class="lede">Before any measurement is downloaded, one question has to be answered: which monitors have enough
+    history to be worth downloading? This page is what came back, and what was thrown away.</p>
+  </header>
+
+  <h2>From 102 locations down to 50 usable stations</h2>
+  <p class="sub">Each step here is a real filter in the notebook, not a rounding.</p>
+  <div class="card">
+    <div id="funnel"></div>
+    <p class="cap" style="margin-top:20px"><b style="color:var(--amber)">The trap on step one.</b> The first request came back with
+    exactly 100 locations — the page limit — and the metadata said there were more. Stopping there would have silently dropped
+    two stations. The loop asks for page 2, page 3, and so on until a page returns fewer than 100.</p>
+  </div>
+
+  <h2>Where they are</h2>
+  <p class="sub">The bounding box <code>76.80, 28.40 → 77.40, 28.90</code> covers Delhi and its ring — Gurugram, Faridabad, Ghaziabad, Noida. Hover a teal dot for its name and history.</p>
+  <div class="grid g2" style="margin-top:14px;align-items:start">
+    <div class="card">
+      <div id="map"></div>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>50 stations with 2+ years of coverage</span>
+        <span><i style="background:var(--ink3);opacity:.5"></i>95 sensor records that fall short</span>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3 style="margin-top:0">Who runs the monitors</h3>
+        <div id="providers"></div>
+        <p class="cap">CPCB — India's Central Pollution Control Board — is the backbone: 106 of the 147 sensor records, and
+        42 of the 50 that qualify. The rest are state boards and a handful of low-cost sensors.</p>
+      </div>
+      <div class="note" style="margin-top:16px">
+        <b>147 sensors, but only 102 locations.</b> A station can hold more than one PM2.5 sensor — an old one that was
+        retired and a new one that replaced it. Choosing one sensor per station, or stitching them, is part of what
+        <code>D-003</code> has to decide.
+      </div>
+    </div>
+  </div>
+
+  <h2>How much history each sensor really has</h2>
+  <p class="sub">This is the check that was got wrong first, and then corrected.</p>
+  <div class="card">
+    <div id="hist"></div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>clears the 730-day rule</span>
+      <span><i style="background:var(--ink3);opacity:.5"></i>too short</span>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card" style="border-color:rgba(var(--rose-rgb),.35)">
+      <span class="tag" style="background:rgba(var(--rose-rgb),.16);color:var(--rose)">the wrong way</span>
+      <h3>Counting calendar years</h3>
+      <p style="margin-bottom:10px">The first version asked whether a sensor's first and last reading fell in different years.</p>
+      <p style="margin:0;font-size:14.5px">A sensor running from <b>31 Dec 2025</b> to <b>1 Jan 2026</b> touches two calendar
+      years and would have passed — on <b style="color:var(--rose)">one day</b> of data.</p>
+    </div>
+    <div class="card" style="border-color:rgba(var(--good-rgb),.35)">
+      <span class="tag done">the fix</span>
+      <h3>Counting elapsed days</h3>
+      <p style="margin-bottom:10px"><code>coverage_days = (last_reading − first_reading).days</code>, and keep it if it is 730 or more.</p>
+      <p style="margin:0;font-size:14.5px">That measures the actual span. <b style="color:var(--good)">50 sensors</b> pass — at
+      50 distinct locations, so no station is double-counted.</p>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:16px">
+    <b>What this check still does not prove.</b> A span from 2016 to 2026 says the sensor reported at both ends. It says
+    nothing about the gaps in between — dead months, missing hours, a stretch of zeros. That is <code>DAF-07</code>'s job,
+    and it is the reason the raw hourly data gets downloaded rather than the tidy <code>/days</code> aggregates.
+  </div>
+
+  <h2>The longest-running stations</h2>
+  <p class="sub">The top of the candidate list, by real elapsed coverage.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Station</th><th>Provider</th><th>First reading</th><th>Last reading</th><th class="num">Days</th><th class="num">Years</th></tr></thead>
+      <tbody id="toptable"></tbody>
+    </table>
+  </div>
+  <p class="cap">The full table is <code>data/raw/stations.csv</code> — 147 rows, 8 columns:
+  <code>location_id</code>, <code>sensor_id</code>, <code>name</code>, <code>latitude</code>, <code>longitude</code>,
+  <code>provider</code>, <code>first_reading</code>, <code>last_reading</code>.</p>
+
+  <h2>Where the data comes from</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Source</th><th>Used for</th><th>Key</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td><b>OpenAQ API v3</b></td><td>Station discovery now; live readings at 18:00 later</td><td>Yes, free</td><td><span class="tag done">connected</span></td></tr>
+        <tr><td><b>OpenAQ S3 archive</b></td><td>The hourly sensor history we train on</td><td>No</td><td><span class="tag todo">DAF-04</span></td></tr>
+        <tr><td><b>Open-Meteo archive</b></td><td>Matching weather history</td><td>No</td><td><span class="tag todo">DAF-05</span></td></tr>
+        <tr><td><b>Open-Meteo forecast</b></td><td>Tomorrow's weather, at prediction time</td><td>No</td><td><span class="tag todo">DAF-23</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="next" style="margin-top:26px">
+    <h3>So the next decision is D-003</h3>
+    <p style="margin-bottom:0;color:var(--ink2)">Is 730 days the rule we keep, or does the training window make a longer one
+    affordable? One sensor per station, or stitched? Which of the 50 actually sit inside Delhi rather than the ring towns?
+    Write it down, then <code>DAF-04</code> downloads exactly that set and nothing else.</p>
+  </div>
+
+</div>
+
+<footer class="foot">Source: <code>notebooks/03_station_discovery.ipynb</code> and <code>data/raw/stations.csv</code>, read on 16 Sep 2026.</footer>
+
+<script src="js/data.js"></script>
+<script src="js/site.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var body = document.getElementById("toptable");
+  if (!body) return;
+  DAF_DATA.stations
+    .filter(function (s) { return s.pass; })
+    .sort(function (a, b) { return b.days - a.days; })
+    .slice(0, 12)
+    .forEach(function (s) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td><b>" + s.name + "</b></td><td>" + s.prov + "</td><td>" + s.first +
+        "</td><td>" + s.last + "</td><td class='num'>" + s.days +
+        "</td><td class='num'>" + (s.days / 365.25).toFixed(1) + "</td>";
+      body.appendChild(tr);
+    });
+});
+</script>
+</body>
+</html>
