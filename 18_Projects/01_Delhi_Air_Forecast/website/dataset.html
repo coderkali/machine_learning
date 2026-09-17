@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The daily table — Delhi Air Forecast</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
+  <a class="tab" href="index.html">Where we are</a>
+  <a class="tab" href="requirement.html">The requirement</a>
+  <a class="tab" href="journey.html">The 27 tickets</a>
+  <a class="tab" href="data.html">The stations</a>
+  <a class="tab" href="dataset.html" aria-current="page">The daily table</a>
+  <button class="themebtn" type="button">Light</button>
+</div></nav>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <p class="eyebrow">Station cleanup · notebook 03</p>
+    <h1>3,342 rows of real Delhi PM2.5 —<br>every check passes, and it is still not enough.</h1>
+    <p class="lede">The cleanup notebook turned the cached OpenAQ measurements into one row per sensor per day and checked it properly.
+    Nothing is malformed. The problem is not the quality of what is there; it is <b style="color:var(--ink)">how little of it there is,
+    and how unevenly it is spread</b>.</p>
+  </header>
+
+  <div class="grid g4" style="margin-top:20px">
+    <div class="stat a"><div class="k">3,342</div><div class="l">rows in <code>pm25_daily_raw.csv</code></div></div>
+    <div class="stat v"><div class="k">44</div><div class="l">sensors, at 44 distinct locations</div></div>
+    <div class="stat m"><div class="k">1,462</div><div class="l">days in the D-004 window</div></div>
+    <div class="stat r"><div class="k">5.2%</div><div class="l">of the possible station-days present</div></div>
+  </div>
+
+  <h2>Every validation check passes</h2>
+  <p class="sub">This is what the notebook actually verified, not what it hoped.</p>
+  <div class="grid g2" style="margin-top:14px;align-items:start">
+    <div class="card">
+      <h3 style="margin-top:0">The checks</h3>
+      <div id="checks"></div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">The shape on disk</h3>
+      <div class="tbl-wrap" style="border:0">
+        <table style="min-width:0">
+          <thead><tr><th>Column</th><th>Type</th><th>Nulls</th></tr></thead>
+          <tbody>
+            <tr><td><code>sensor_id</code></td><td>int64</td><td>0</td></tr>
+            <tr><td><code>date</code></td><td>date</td><td>0</td></tr>
+            <tr><td><code>pm25_value</code></td><td>float64</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cap"><b style="color:var(--amber)">One thing the checks cannot say.</b> A clean table is not the same as a complete one.
+      Every row present is correct; the question this page asks is how many rows are missing, and from where.</p>
+    </div>
+  </div>
+
+  <h2>How full the window really is</h2>
+  <p class="sub">44 sensors across 1,462 days is 64,328 possible station-days. Each square below stands for about 112 of them.</p>
+  <div class="card">
+    <div id="fill"></div>
+    <p class="cap" style="margin-top:16px">For comparison: a single station reporting every day for those four years would be
+    1,462 rows on its own — almost half the entire table.</p>
+  </div>
+
+  <h2 id="contribution">And it is not spread evenly</h2>
+  <p class="sub">Each bar is one of the 44 selected sensors, tallest first. Hover for the station.</p>
+  <div class="card">
+    <div id="contribution-chart"></div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>the 2 sensors that are genuinely inside the window</span>
+      <span><i style="background:var(--amber)"></i>the other 42, averaging 29 rows each</span>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:16px">
+    <div class="stat a"><div class="k">1,400</div><div class="l">rows from <b>New Delhi</b> (AirNow) alone — 42% of the table</div></div>
+    <div class="stat a"><div class="k">732</div><div class="l">rows from <b>GK1 Oberoi Terrace</b> (AirGradient) — another 22%</div></div>
+    <div class="stat m"><div class="k">32</div><div class="l">rows for the median station — about six weeks</div></div>
+  </div>
+
+  <h2 id="reissue">Why 42 stations only gave six weeks each</h2>
+  <p class="sub">This is the finding, and it is not a mistake in the notebook. It is a trap in the source data.</p>
+
+  <div class="card">
+    <p>OpenAQ re-issued the CPCB feed in late 2022. The old sensor ids stop dead on <b style="color:var(--ink)">31 October 2022</b>
+    — 19 of them share the identical final timestamp — and new sensor ids appear for the same physical stations in February 2025.</p>
+    <p>D-003 measures a sensor's <b style="color:var(--ink)">total span</b>. The retired sensor ran 2018 → 2022, a span of 1,696 days, so it passes
+    the 730-day gate comfortably. Its live replacement has run 569 days so far, so it fails. The rule keeps the dead one.</p>
+    <div id="reissue-chart" style="margin-top:22px"></div>
+  </div>
+
+  <div class="grid g3" style="margin-top:16px">
+    <div class="stat r"><div class="k">37</div><div class="l">of the 44 selected stations have a live replacement that was rejected</div></div>
+    <div class="stat m"><div class="k">45</div><div class="l">days those sensors overlap the window — 16 Sep to 31 Oct 2022</div></div>
+    <div class="stat v"><div class="k">569</div><div class="l">day span of the live sensors, against a 730-day gate</div></div>
+  </div>
+
+  <div class="note" style="margin-top:16px;border-left-color:var(--rose);background:rgba(var(--rose-rgb),.06)">
+    <b style="color:var(--rose)">Neither rule is wrong on its own.</b> A 730-day minimum is a reasonable quality gate, and a four-year
+    window is a reasonable recency rule. They only fail together, because span and recency are different things and the CPCB
+    re-issue splits one station's history across two sensor ids. This is what <b>D-005</b> has to settle, and three fixes are
+    available: measure coverage <i>inside</i> the window rather than overall; stitch the old and new sensor at a location into one
+    series; or waive the gate for sensors still reporting today.
+  </div>
+
+  <h2>What the readings themselves look like</h2>
+  <p class="sub">Thin as the table is, the values in it are real Delhi air — and they land where you would expect.</p>
+  <div class="card">
+    <div id="dist"></div>
+    <p class="cap" style="margin-top:14px"><b style="color:var(--rose)">899 of the 3,342 readings — 26.9% — are Poor or worse.</b>
+    That is the number to remember when the metric is chosen: a model that simply never predicts a bad day would still be
+    right about three times in four. Accuracy will look fine. Recall will not.</p>
+  </div>
+
+  <h2>The season that makes this hard</h2>
+  <p class="sub">Mean of the cached readings by month. Bars above the dashed line are months where the average day already sends children indoors.</p>
+  <div class="card">
+    <div id="season"></div>
+    <p class="cap" style="margin-top:14px">November averages <b style="color:var(--ink)">229 µg/m³</b> and July averages
+    <b style="color:var(--ink)">32</b> — a seven-fold swing inside one year. Two consequences follow. A model that does not know
+    the month will be badly wrong twice a year. And a train/test split that cuts across seasons rather than along time will
+    quietly let the model see the winter it is about to be tested on — which is what <code>DAF-12</code> exists to prevent.</p>
+    <p class="cap"><b style="color:var(--amber)">Read these bars with care.</b> September and October carry 740 and 825 readings;
+    February has 136. The monthly means are not equally trustworthy, and they come from the same lopsided table as everything
+    else on this page.</p>
+  </div>
+
+  <h2>Where this table stands</h2>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card" style="border-color:rgba(var(--good-rgb),.35)">
+      <span class="tag done">what it is good for</span>
+      <h3>Exploring, and proving the pipeline works</h3>
+      <div class="yn">
+        <div class="row"><i class="y">✓</i><span>It proves the API path end to end: key, paging, sensors, measurements, daily rows</span></div>
+        <div class="row"><i class="y">✓</i><span>It is validated — no nulls, no duplicates, no negatives</span></div>
+        <div class="row"><i class="y">✓</i><span>It is enough to look at seasonality and band distribution</span></div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(var(--amber-rgb),.4)">
+      <span class="tag review">what it is not</span>
+      <h3>The raw archive DAF-04 asks for</h3>
+      <div class="yn">
+        <div class="row"><i class="n">✗</i><span>It is an API cache in one CSV, not the original files as they arrived</span></div>
+        <div class="row"><i class="n">✗</i><span>It lives in a notebook run, so it is not reproducible by a script</span></div>
+        <div class="row"><i class="n">✗</i><span>At 5.2% coverage it cannot carry a training set</span></div>
+      </div>
+      <p class="cap">The status summary puts it plainly: useful for exploration, but it should not replace the raw S3 archive.</p>
+    </div>
+  </div>
+
+  <div class="next" style="margin-top:26px">
+    <h3>So: D-005 first, then DAF-04</h3>
+    <p style="margin-bottom:0;color:var(--ink2)">Decide how the re-issued sensors are handled, regenerate the station list from that
+    decision, and only then point the collector at it. Downloading four years for 37 sensors that stopped in 2022 is the one
+    expensive mistake available at this point in the project.</p>
+  </div>
+
+</div>
+
+<footer class="foot">Source: <code>notebooks/03_station_cleanup.ipynb</code>, <code>data/raw/pm25_daily_raw.csv</code>,
+<code>data/processed/valid_stations_recent_4y.csv</code> and <code>docs/project_status_summary.md</code>, read on 17 Sep 2026.</footer>
+
+<script src="js/data.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

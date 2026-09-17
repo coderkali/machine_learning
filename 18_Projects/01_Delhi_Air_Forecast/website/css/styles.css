@@ -219,3 +219,11 @@ code{background:var(--card2); padding:1.5px 6px; border-radius:5px; color:var(--
   .pipe{display:none}
   .pipe-list{display:block}
 }
+
+/* map: a third state — passed the quality gate but dropped by the date window */
+.map .dot-gate{fill:var(--amber); fill-opacity:.55; stroke:none}
+
+/* Long file paths inside <code> must not force a page wider than the phone. */
+code{overflow-wrap:anywhere}
+.grid > *{min-width:0}
+.card,.stat,.note,.next{overflow-wrap:break-word}

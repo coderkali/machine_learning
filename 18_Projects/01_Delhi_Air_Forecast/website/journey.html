@@ -14,7 +14,8 @@
   <a class="tab" href="index.html">Where we are</a>
   <a class="tab" href="requirement.html">The requirement</a>
   <a class="tab" href="journey.html" aria-current="page">The 27 tickets</a>
-  <a class="tab" href="data.html">The data so far</a>
+  <a class="tab" href="data.html">The stations</a>
+  <a class="tab" href="dataset.html">The daily table</a>
   <button class="themebtn" type="button">Light</button>
 </div></nav>
 
@@ -41,26 +42,47 @@
   </div>
 
   <h2>Decisions on the record</h2>
-  <p class="sub">Every real choice becomes a file in <code>docs/decisions/</code>, so that in three months the reason is still on disk.</p>
-  <div class="grid g3" style="margin-top:14px">
+  <p class="sub">Every real choice becomes a file in <code>docs/decisions/</code>, so that in three months the reason is still on disk.
+  Four are accepted; the fifth is the one the data is now asking for.</p>
+  <div class="grid g2" style="margin-top:14px">
     <div class="card">
-      <span class="tag done">accepted</span> <code>D-001</code>
+      <span class="tag done">accepted</span> <code>D-001</code> <span style="color:var(--ink3);font-size:13px">· DAF-02</span>
       <h3>Predict the number, then apply the AQI table</h3>
       <p style="font-size:14.5px"><b style="color:var(--ink)">Chosen:</b> PM2.5 in µg/m³, with the CPCB table read off it afterwards.</p>
       <p style="font-size:14.5px;margin:0"><b style="color:var(--ink)">Why:</b> a category-only model makes 91 and 400 the same answer. The number keeps the severity and still gives the yes or no.</p>
     </div>
     <div class="card">
-      <span class="tag done">accepted</span> <code>D-002</code>
+      <span class="tag done">accepted</span> <code>D-002</code> <span style="color:var(--ink3);font-size:13px">· DAF-02</span>
       <h3>Tomorrow's 24-hour mean, 00:00–23:59 IST</h3>
       <p style="font-size:14.5px"><b style="color:var(--ink)">Chosen:</b> the full day, not the 07:00–10:00 assembly window.</p>
       <p style="font-size:14.5px;margin:0"><b style="color:var(--ink)">Why:</b> the CPCB bands are defined on the full day, so the number means the same thing to everyone. A morning target can come later.</p>
     </div>
-    <div class="card" style="border-color:rgba(var(--amber-rgb),.45)">
-      <span class="tag upnext">next</span> <code>D-003</code>
-      <h3>Which stations, and which date range</h3>
-      <p style="font-size:14.5px"><b style="color:var(--ink)">Not written yet.</b> 147 sensor records exist; 50 clear the two-year rule.</p>
-      <p style="font-size:14.5px;margin:0"><b style="color:var(--ink)">Why it matters:</b> until the rule is on disk, nobody can say later why a station was kept or dropped.</p>
+    <div class="card">
+      <span class="tag done">accepted</span> <code>D-003</code> <span style="color:var(--ink3);font-size:13px">· DAF-03 · 16 Sep</span>
+      <h3>Keep stations with 730+ days of real coverage</h3>
+      <p style="font-size:14.5px"><b style="color:var(--ink)">Chosen:</b> <code>coverage_days = last − first</code>, keep if ≥ 730. <b>50 stations</b> pass.</p>
+      <p style="font-size:14.5px;margin-bottom:10px"><b style="color:var(--ink)">Why:</b> objective, easy to explain, and based on elapsed time rather than calendar years.</p>
+      <p style="font-size:13.5px;margin:0;color:var(--ink3)">The record says it plainly: a minimum quality gate, not the final word. It also says the project
+      should then <i>prefer the newest 3–4 years</i> — which is what D-004 picks up.</p>
     </div>
+    <div class="card">
+      <span class="tag done">accepted</span> <code>D-004</code> <span style="color:var(--ink3);font-size:13px">· DAF-04 · 16 Sep</span>
+      <h3>Train on the most recent 3–4 years</h3>
+      <p style="font-size:14.5px"><b style="color:var(--ink)">Chosen:</b> the latest four years inside the valid pool — <b>2022-09-16 → 2026-09-16</b>. 44 of the 50 survive.</p>
+      <p style="font-size:14.5px;margin-bottom:10px"><b style="color:var(--ink)">Why:</b> Delhi's traffic, fuel and policy have changed. A model for tomorrow should learn the current regime, not 2016.</p>
+      <p style="font-size:13.5px;margin:0;color:var(--ink3)">Filed under ticket DAF-04, though DAF-04 on the board is the S3 collector. Worth a look when the ticket opens.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;border-color:rgba(var(--rose-rgb),.45);border-left:4px solid var(--rose)">
+    <span class="tag" style="background:rgba(var(--rose-rgb),.16);color:var(--rose)">open</span> <code>D-005</code>
+    <h3>What to do about the re-issued CPCB sensors</h3>
+    <p style="max-width:none"><b style="color:var(--ink)">The problem:</b> D-003 rewards a <i>long</i> history and D-004 wants a <i>recent</i> one. OpenAQ re-issued the
+    CPCB feed in late 2022, so at most Delhi stations there are two sensor records — a retired one with a long span, and a live one
+    with a short span. The 730-day gate keeps the retired one and throws away the live one, at <b style="color:var(--rose)">37 of the 44</b>
+    selected stations.</p>
+    <p style="max-width:none;margin:0"><b style="color:var(--ink)">The choice:</b> measure coverage <i>inside</i> the window instead of overall, or stitch the old and new sensor
+    at a station into one series, or lower the gate for sensors that are still reporting. <a href="dataset.html#reissue">The evidence is on the daily-table page →</a></p>
   </div>
 
   <h2>Every ticket</h2>
@@ -70,7 +92,7 @@
 
 </div>
 
-<footer class="foot">Source: <code>docs/backlog/</code> and <code>docs/decisions/</code>, as of 16 Sep 2026.</footer>
+<footer class="foot">Source: <code>docs/backlog/</code> and <code>docs/decisions/</code>, as of 17 Sep 2026.</footer>
 
 <script src="js/data.js"></script>
 <script src="js/site.js"></script>

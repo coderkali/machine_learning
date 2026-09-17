@@ -39,10 +39,12 @@ This gives us a real product question instead of a vague "predict air quality" g
 
 ### C. Key decisions were written down
 
-We already recorded the decisions that matter most:
+We recorded the decisions that matter most:
 
 - D-001: predict the number, then apply the decision table
 - D-002: target is tomorrow's 24-hour mean (00:00–23:59 IST)
+- D-003: keep stations with at least 730 days of actual coverage
+- D-004: use the most recent four-year training window
 
 These are important because they define the exact output the model must produce.
 
@@ -63,6 +65,9 @@ We used the OpenAQ data source to discover stations and PM2.5 readings in Delhi.
 5. kept only the PM2.5 sensor at each station
 6. extracted each station's first and last reading date
 7. saved the station list into `data/raw/stations.csv`
+8. filtered stations using actual elapsed coverage
+9. selected the latest four-year window dynamically
+10. fetched and cached daily PM2.5 readings for the selected sensors
 
 ### Final station dataset
 
@@ -107,8 +112,28 @@ This is much more honest, because it measures actual time span rather than calen
 The corrected check showed:
 
 - 50 unique stations passed the real coverage rule
-- that is enough for a real data collection pipeline
+- 44 of those stations remained in the latest four-year window
+- 44 sensors produced 3,342 cached daily PM2.5 rows
 - the project is not blocked by missing station history
+
+The 50-to-44 reduction is expected: 50 stations pass the minimum quality gate,
+then the recent-window rule keeps only stations whose readings are relevant to
+the selected training period.
+
+### Daily measurement validation
+
+The cleanup notebook built one row per location and date from the cached API
+measurements. The validation check found:
+
+- date range: `2022-09-16` to `2026-09-16`
+- no null values in `sensor_id`, `date`, or `pm25_value`
+- no duplicate sensor/date pairs
+- no negative PM2.5 readings
+- one sensor per selected location in the current dataset
+
+The current table is suitable for the next data-engineering step, but it is
+still an API cache in one CSV. It is not yet the immutable raw archive required
+for the project.
 
 ---
 
@@ -125,7 +150,9 @@ flowchart LR
     G --> H[Keep PM2.5 only]
     H --> I[Measure station coverage]
     I --> J[Save raw station list]
-    J --> K[Ready for D-003]
+    J --> K[Apply D-003 quality gate]
+    K --> L[Apply D-004 recent window]
+    L --> M[Build cached daily PM2.5 table]
 ```
 
 ---
@@ -143,36 +170,40 @@ So far, we have:
 - selected PM2.5 stations only
 - checked real historical coverage
 - saved the station inventory for future model work
+- selected the latest four-year training window
+- built and validated the first daily PM2.5 table
 
-In short: we have the data source and the usable station list. We are no longer guessing. We now know what data exists and what we can trust.
+In short: we have the data source, a measured station-quality rule, a recent
+training window, and a validated first daily PM2.5 table. We are no longer
+guessing about what data exists or which stations pass the first quality gate.
 
 ---
 
-## 7) What comes next: D-003
+## 7) What comes next: DAF-04
 
-The next step is not "start modeling yet."
+The next step is not model training yet. The next step is to graduate data
+collection from the notebook into a repeatable collector, as described in
+`docs/backlog/DAF-04_download_sensor_history.md`.
 
-The next step is:
+The collector must:
 
-- choose which stations qualify
-- define the selection rule in a decision record
-- decide the actual training date range
+- read station IDs from `data/raw/stations.csv`
+- download the original OpenAQ S3 archive files into `data/raw/openaq/`
+- skip files already present so a second run is idempotent
+- count missing station-days without failing
+- print a final summary of downloaded, skipped, missing, and stored data
 
-That is exactly what D-003 is for.
-
-D-003 will answer:
-
-- which stations are valid for the project?
-- what rule did we use to decide that?
-- how many stations passed the rule?
-
-Then we move into the date-range decision and the training data build.
+The first trial should download one station for one month. Only after that
+works should the full recent history be collected. The API-derived CSV remains
+useful for this notebook's exploration, but it should not replace the raw S3
+archive.
 
 ---
 
 ## 8) Short takeaway
 
-We are past the setup stage and through the data discovery stage.
+We are past setup and station discovery, and the first station-level data slice
+has been validated.
 
 We now have the key pieces:
 
@@ -181,5 +212,8 @@ We now have the key pieces:
 - the OpenAQ data connection
 - the cleaned station list
 - the real coverage check
+- the accepted station-selection and date-range decisions
+- the first validated daily PM2.5 table
 
-The project is ready to make the next formal decision: which station set and date range define the real training dataset.
+The project is ready to build the reproducible raw data archive before moving
+to weather data, data-quality exploration, and modelling.

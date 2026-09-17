@@ -1,6 +1,7 @@
-// Generated 2026-09-16 from data/raw/stations.csv — do not hand-edit numbers here.
+// Generated 2026-09-17 from the project's own files. Do not hand-edit the numbers here.
+// Sources: data/raw/stations.csv · data/processed/valid_stations_recent_4y.csv · data/raw/pm25_daily_raw.csv
 const DAF_DATA = {
- "generated": "2026-09-16",
+ "generated": "2026-09-17",
  "stations": [
   {
    "id": 13,
@@ -12,7 +13,8 @@ const DAF_DATA = {
    "first": "2016-11-03",
    "last": "2018-02-22",
    "days": 476,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 15,
@@ -24,7 +26,8 @@ const DAF_DATA = {
    "first": null,
    "last": null,
    "days": null,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 16,
@@ -36,7 +39,8 @@ const DAF_DATA = {
    "first": null,
    "last": null,
    "days": null,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 17,
@@ -48,7 +52,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 17,
@@ -60,7 +65,8 @@ const DAF_DATA = {
    "first": "2016-02-05",
    "last": "2018-02-22",
    "days": 747,
-   "pass": true
+   "pass": true,
+   "sel": false
   },
   {
    "id": 50,
@@ -72,7 +78,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 50,
@@ -84,7 +91,8 @@ const DAF_DATA = {
    "first": "2016-02-05",
    "last": "2018-02-22",
    "days": 747,
-   "pass": true
+   "pass": true,
+   "sel": false
   },
   {
    "id": 103,
@@ -96,7 +104,8 @@ const DAF_DATA = {
    "first": "2016-11-03",
    "last": "2018-02-22",
    "days": 476,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 235,
@@ -108,7 +117,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 235,
@@ -120,7 +130,8 @@ const DAF_DATA = {
    "first": "2016-02-05",
    "last": "2018-02-22",
    "days": 747,
-   "pass": true
+   "pass": true,
+   "sel": false
   },
   {
    "id": 236,
@@ -132,7 +143,8 @@ const DAF_DATA = {
    "first": "2016-02-05",
    "last": "2018-02-22",
    "days": 747,
-   "pass": true
+   "pass": true,
+   "sel": false
   },
   {
    "id": 301,
@@ -144,7 +156,8 @@ const DAF_DATA = {
    "first": "2025-10-01",
    "last": "2026-09-11",
    "days": 345,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 301,
@@ -156,7 +169,8 @@ const DAF_DATA = {
    "first": "2016-03-25",
    "last": "2022-10-31",
    "days": 2410,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 431,
@@ -168,7 +182,8 @@ const DAF_DATA = {
    "first": "2017-02-19",
    "last": "2018-02-22",
    "days": 368,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 2503,
@@ -180,7 +195,8 @@ const DAF_DATA = {
    "first": "2017-02-19",
    "last": "2018-02-22",
    "days": 368,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 2587,
@@ -192,7 +208,8 @@ const DAF_DATA = {
    "first": "2017-02-19",
    "last": "2018-02-22",
    "days": 368,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 2597,
@@ -204,7 +221,8 @@ const DAF_DATA = {
    "first": "2016-01-30",
    "last": "2016-11-09",
    "days": 284,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5404,
@@ -216,7 +234,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5404,
@@ -228,7 +247,8 @@ const DAF_DATA = {
    "first": "2017-09-15",
    "last": "2018-02-21",
    "days": 159,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5509,
@@ -240,7 +260,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5540,
@@ -252,7 +273,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2018-05-13",
    "days": 65,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5541,
@@ -264,7 +286,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-08-03",
    "days": 1608,
-   "pass": true
+   "pass": true,
+   "sel": false
   },
   {
    "id": 5541,
@@ -276,7 +299,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5570,
@@ -288,7 +312,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5570,
@@ -300,7 +325,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-16",
    "days": 1682,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5581,
@@ -312,7 +338,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2018-05-14",
    "days": 65,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5586,
@@ -324,7 +351,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5598,
@@ -336,7 +364,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5610,
@@ -348,7 +377,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5610,
@@ -360,7 +390,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5613,
@@ -372,7 +403,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2020-01-20",
    "days": 682,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5613,
@@ -384,7 +416,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5616,
@@ -396,7 +429,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5617,
@@ -408,7 +442,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5622,
@@ -420,7 +455,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5622,
@@ -432,7 +468,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5626,
@@ -444,7 +481,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5626,
@@ -456,7 +494,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5627,
@@ -468,7 +507,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5627,
@@ -480,7 +520,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5630,
@@ -492,7 +533,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5630,
@@ -504,7 +546,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5634,
@@ -516,7 +559,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5634,
@@ -528,7 +572,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-16",
    "days": 1682,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5639,
@@ -540,7 +585,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2018-05-12",
    "days": 64,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5641,
@@ -552,7 +598,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2018-05-12",
    "days": 64,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5650,
@@ -564,7 +611,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5665,
@@ -576,7 +624,8 @@ const DAF_DATA = {
    "first": "2018-03-09",
    "last": "2022-10-31",
    "days": 1696,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 5665,
@@ -588,7 +637,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5742,
@@ -600,7 +650,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-13",
    "days": 16,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5743,
@@ -612,7 +663,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5744,
@@ -624,7 +676,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5753,
@@ -636,7 +689,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5754,
@@ -648,7 +702,8 @@ const DAF_DATA = {
    "first": "2018-04-28",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5755,
@@ -660,7 +715,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-10",
    "days": 13,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5759,
@@ -672,7 +728,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5760,
@@ -684,7 +741,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-11",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5761,
@@ -696,7 +754,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5762,
@@ -708,7 +767,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5763,
@@ -720,7 +780,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-12",
    "days": 14,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5765,
@@ -732,7 +793,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-13",
    "days": 16,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 5766,
@@ -744,7 +806,8 @@ const DAF_DATA = {
    "first": "2018-04-27",
    "last": "2018-05-13",
    "days": 16,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6314,
@@ -756,7 +819,8 @@ const DAF_DATA = {
    "first": "2018-11-15",
    "last": "2018-11-16",
    "days": 1,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6356,
@@ -768,7 +832,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6357,
@@ -780,7 +845,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-16",
    "days": 1528,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6358,
@@ -792,7 +858,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6358,
@@ -804,7 +871,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6359,
@@ -816,7 +884,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6359,
@@ -828,7 +897,8 @@ const DAF_DATA = {
    "first": "2018-04-28",
    "last": "2022-10-31",
    "days": 1646,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6924,
@@ -840,7 +910,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6924,
@@ -852,7 +923,8 @@ const DAF_DATA = {
    "first": "2019-04-27",
    "last": "2022-10-31",
    "days": 1282,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6929,
@@ -864,7 +936,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6929,
@@ -876,7 +949,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6931,
@@ -888,7 +962,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6931,
@@ -900,7 +975,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6932,
@@ -912,7 +988,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6932,
@@ -924,7 +1001,8 @@ const DAF_DATA = {
    "first": "2018-12-15",
    "last": "2022-10-31",
    "days": 1415,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6934,
@@ -936,7 +1014,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6934,
@@ -948,7 +1027,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6936,
@@ -960,7 +1040,8 @@ const DAF_DATA = {
    "first": "2025-09-28",
    "last": "2026-09-11",
    "days": 348,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6936,
@@ -972,7 +1053,8 @@ const DAF_DATA = {
    "first": "2019-02-13",
    "last": "2022-10-31",
    "days": 1356,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6938,
@@ -984,7 +1066,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6938,
@@ -996,7 +1079,8 @@ const DAF_DATA = {
    "first": "2018-12-15",
    "last": "2022-10-31",
    "days": 1415,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6957,
@@ -1008,7 +1092,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6957,
@@ -1020,7 +1105,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6960,
@@ -1032,7 +1118,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6960,
@@ -1044,7 +1131,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6980,
@@ -1056,7 +1144,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6980,
@@ -1068,7 +1157,8 @@ const DAF_DATA = {
    "first": "2019-06-28",
    "last": "2022-10-16",
    "days": 1206,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 6988,
@@ -1080,7 +1170,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 7005,
@@ -1092,7 +1183,8 @@ const DAF_DATA = {
    "first": "2019-04-27",
    "last": "2022-10-31",
    "days": 1282,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 7005,
@@ -1104,7 +1196,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 7044,
@@ -1116,7 +1209,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8118,
@@ -1128,7 +1222,8 @@ const DAF_DATA = {
    "first": "2016-11-10",
    "last": "2026-09-16",
    "days": 3597,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8235,
@@ -1140,7 +1235,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 8235,
@@ -1152,7 +1248,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8239,
@@ -1164,7 +1261,8 @@ const DAF_DATA = {
    "first": "2018-08-22",
    "last": "2022-10-31",
    "days": 1530,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8239,
@@ -1176,7 +1274,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 8365,
@@ -1188,7 +1287,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 8365,
@@ -1200,7 +1300,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8472,
@@ -1212,7 +1313,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 8472,
@@ -1224,7 +1326,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8475,
@@ -1236,7 +1339,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 8475,
@@ -1248,7 +1352,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8915,
@@ -1260,7 +1365,8 @@ const DAF_DATA = {
    "first": "2018-12-15",
    "last": "2022-10-31",
    "days": 1415,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 8915,
@@ -1272,7 +1378,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 8917,
@@ -1284,7 +1391,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 8917,
@@ -1296,7 +1404,8 @@ const DAF_DATA = {
    "first": "2018-12-15",
    "last": "2022-10-31",
    "days": 1415,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10484,
@@ -1308,7 +1417,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10484,
@@ -1320,7 +1430,8 @@ const DAF_DATA = {
    "first": "2018-12-15",
    "last": "2022-10-31",
    "days": 1415,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10485,
@@ -1332,7 +1443,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10485,
@@ -1344,7 +1456,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10486,
@@ -1356,7 +1469,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10486,
@@ -1368,7 +1482,8 @@ const DAF_DATA = {
    "first": "2018-12-15",
    "last": "2022-10-31",
    "days": 1415,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10487,
@@ -1380,7 +1495,8 @@ const DAF_DATA = {
    "first": "2018-08-13",
    "last": "2021-09-20",
    "days": 1133,
-   "pass": true
+   "pass": true,
+   "sel": false
   },
   {
    "id": 10488,
@@ -1392,7 +1508,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10488,
@@ -1404,7 +1521,8 @@ const DAF_DATA = {
    "first": "2018-12-15",
    "last": "2022-10-31",
    "days": 1415,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10489,
@@ -1416,7 +1534,8 @@ const DAF_DATA = {
    "first": "2020-01-20",
    "last": "2022-10-31",
    "days": 1014,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10820,
@@ -1428,7 +1547,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10825,
@@ -1440,7 +1560,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10825,
@@ -1452,7 +1573,8 @@ const DAF_DATA = {
    "first": "2020-03-11",
    "last": "2022-10-16",
    "days": 949,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10831,
@@ -1464,7 +1586,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10831,
@@ -1476,7 +1599,8 @@ const DAF_DATA = {
    "first": "2018-08-10",
    "last": "2022-10-31",
    "days": 1542,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10900,
@@ -1488,7 +1612,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10900,
@@ -1500,7 +1625,8 @@ const DAF_DATA = {
    "first": "2020-03-30",
    "last": "2022-10-16",
    "days": 930,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 10921,
@@ -1512,7 +1638,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 10921,
@@ -1524,7 +1651,8 @@ const DAF_DATA = {
    "first": "2018-11-16",
    "last": "2022-10-14",
    "days": 1428,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 11603,
@@ -1536,7 +1664,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2026-09-11",
    "days": 569,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 11603,
@@ -1548,7 +1677,8 @@ const DAF_DATA = {
    "first": "2020-11-13",
    "last": "2022-08-02",
    "days": 626,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 11607,
@@ -1560,7 +1690,8 @@ const DAF_DATA = {
    "first": "2025-02-19",
    "last": "2025-12-27",
    "days": 311,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 11607,
@@ -1572,7 +1703,8 @@ const DAF_DATA = {
    "first": "2020-11-13",
    "last": "2022-08-02",
    "days": 626,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 2860223,
@@ -1584,7 +1716,8 @@ const DAF_DATA = {
    "first": "2024-05-22",
    "last": "2026-09-16",
    "days": 847,
-   "pass": true
+   "pass": true,
+   "sel": true
   },
   {
    "id": 3409496,
@@ -1596,7 +1729,8 @@ const DAF_DATA = {
    "first": "2026-03-10",
    "last": "2026-06-13",
    "days": 94,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 4663956,
@@ -1608,7 +1742,8 @@ const DAF_DATA = {
    "first": "2025-06-08",
    "last": "2026-09-16",
    "days": 465,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 4712609,
@@ -1620,7 +1755,8 @@ const DAF_DATA = {
    "first": "2026-01-28",
    "last": "2026-09-16",
    "days": 231,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6119272,
@@ -1632,7 +1768,8 @@ const DAF_DATA = {
    "first": "2025-11-04",
    "last": "2026-03-26",
    "days": 141,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6125489,
@@ -1644,7 +1781,8 @@ const DAF_DATA = {
    "first": "2025-11-10",
    "last": "2026-09-16",
    "days": 310,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6145551,
@@ -1656,7 +1794,8 @@ const DAF_DATA = {
    "first": "2025-11-28",
    "last": "2026-09-16",
    "days": 292,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6148686,
@@ -1668,7 +1807,8 @@ const DAF_DATA = {
    "first": "2025-12-01",
    "last": "2026-09-11",
    "days": 283,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6254594,
@@ -1680,7 +1820,8 @@ const DAF_DATA = {
    "first": "2026-02-27",
    "last": "2026-09-11",
    "days": 195,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6254663,
@@ -1692,7 +1833,8 @@ const DAF_DATA = {
    "first": "2026-02-27",
    "last": "2026-09-11",
    "days": 195,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6254664,
@@ -1704,7 +1846,8 @@ const DAF_DATA = {
    "first": "2026-02-27",
    "last": "2026-09-11",
    "days": 195,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6254665,
@@ -1716,7 +1859,8 @@ const DAF_DATA = {
    "first": "2026-02-27",
    "last": "2026-09-11",
    "days": 195,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6254666,
@@ -1728,7 +1872,8 @@ const DAF_DATA = {
    "first": "2026-02-27",
    "last": "2026-09-11",
    "days": 195,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6257818,
@@ -1740,7 +1885,8 @@ const DAF_DATA = {
    "first": "2026-03-02",
    "last": "2026-09-11",
    "days": 192,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6299494,
@@ -1752,7 +1898,8 @@ const DAF_DATA = {
    "first": "2026-04-07",
    "last": "2026-09-11",
    "days": 156,
-   "pass": false
+   "pass": false,
+   "sel": false
   },
   {
    "id": 6299678,
@@ -1764,7 +1911,8 @@ const DAF_DATA = {
    "first": "2026-04-07",
    "last": "2026-09-11",
    "days": 156,
-   "pass": false
+   "pass": false,
+   "sel": false
   }
  ],
  "hist": [
@@ -1848,14 +1996,634 @@ const DAF_DATA = {
    "note": "2 have never reported"
   },
   {
-   "label": "Sensors with 730+ days of real coverage",
+   "label": "D-003 — sensors with 730+ days of real coverage",
    "value": 50,
-   "note": "50 distinct stations — the candidate set"
+   "note": "the quality gate: 50 distinct stations"
+  },
+  {
+   "label": "D-004 — still present in the latest 4-year window",
+   "value": 44,
+   "note": "saved as valid_stations_recent_4y.csv"
   }
- ]
+ ],
+ "window": {
+  "from": "2022-09-16",
+  "to": "2026-09-16",
+  "days": 1462,
+  "sensors": 44,
+  "rows": 3342,
+  "possible": 64328,
+  "fill": 5.2
+ },
+ "selected": [
+  {
+   "sid": 23534,
+   "name": "New Delhi",
+   "prov": "AirNow",
+   "rows": 1400,
+   "overlap": 1461,
+   "span": 3597,
+   "first": "2016-11-10",
+   "last": "2026-09-16"
+  },
+  {
+   "sid": 9320367,
+   "name": "GK1 (Oberoi Terrace)",
+   "prov": "AirGradient",
+   "rows": 732,
+   "overlap": 846,
+   "span": 847,
+   "first": "2024-05-22",
+   "last": "2026-09-16"
+  },
+  {
+   "sid": 14922,
+   "name": "NSIT Dwarka, Delhi - CPCB",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 14959,
+   "name": "Shadipur, Delhi - CPCB",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 14985,
+   "name": "DTU, New Delhi - CPCB",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 17770,
+   "name": "Mandir Marg, New Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 19900,
+   "name": "Major Dhyan Chand National Stadium, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 20150,
+   "name": "Dwarka-Sector 8, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 20049,
+   "name": "Patparganj, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 20411,
+   "name": "R K Puram, Delhi - DPCC",
+   "prov": "caaqm",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 35010,
+   "name": "Nehru Nagar, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 36391,
+   "name": "Bawana, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 34790,
+   "name": "Narela, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 36399,
+   "name": "Rohini, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 24007,
+   "name": "Okhla Phase-2, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1530,
+   "first": "2018-08-22",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 19934,
+   "name": "Vivek Vihar, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1415,
+   "first": "2018-12-15",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 34731,
+   "name": "Wazirpur, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1415,
+   "first": "2018-12-15",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 34772,
+   "name": "Sri Aurobindo Marg, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1415,
+   "first": "2018-12-15",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 34767,
+   "name": "Mundka, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1415,
+   "first": "2018-12-15",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 34774,
+   "name": "Najafgarh, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1415,
+   "first": "2018-12-15",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 19935,
+   "name": "Alipur, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1415,
+   "first": "2018-12-15",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 19922,
+   "name": "Arya Nagar, Bahadurgarh - HSPCB",
+   "prov": "CPCB",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1356,
+   "first": "2019-02-13",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 35016,
+   "name": "ITO, Delhi - CPCB",
+   "prov": "caaqm",
+   "rows": 32,
+   "overlap": 45,
+   "span": 1014,
+   "first": "2020-01-20",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 15239,
+   "name": "Vasundhara, Ghaziabad - UPPCB",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 14717,
+   "name": "Aya Nagar, New Delhi - IMD",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 30,
+   "span": 1682,
+   "first": "2018-03-09",
+   "last": "2022-10-16"
+  },
+  {
+   "sid": 23997,
+   "name": "Jahangirpuri, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 35050,
+   "name": "Sonia Vihar, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 17776,
+   "name": "Punjabi Bagh, Delhi - DPCC",
+   "prov": "caaqm",
+   "rows": 31,
+   "overlap": 30,
+   "span": 1528,
+   "first": "2018-08-10",
+   "last": "2022-10-16"
+  },
+  {
+   "sid": 26032,
+   "name": "Ashok Vihar, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 45,
+   "span": 1415,
+   "first": "2018-12-15",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 20206,
+   "name": "Sector-1, Noida - UPPCB",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 30,
+   "span": 1206,
+   "first": "2019-06-28",
+   "last": "2022-10-16"
+  },
+  {
+   "sid": 36181,
+   "name": "Sector-51, Gurugram - HSPCB",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 30,
+   "span": 949,
+   "first": "2020-03-11",
+   "last": "2022-10-16"
+  },
+  {
+   "sid": 36539,
+   "name": "Teri Gram, Gurugram - HSPCB",
+   "prov": "CPCB",
+   "rows": 31,
+   "overlap": 30,
+   "span": 930,
+   "first": "2020-03-30",
+   "last": "2022-10-16"
+  },
+  {
+   "sid": 14860,
+   "name": "North Campus, DU, Delhi - IMD",
+   "prov": "CPCB",
+   "rows": 30,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 14935,
+   "name": "CRRI Mathura Road, New Delhi - IMD",
+   "prov": "CPCB",
+   "rows": 30,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 19884,
+   "name": "Indirapuram, Ghaziabad - UPPCB",
+   "prov": "CPCB",
+   "rows": 30,
+   "overlap": 45,
+   "span": 1282,
+   "first": "2019-04-27",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 20290,
+   "name": "Loni, Ghaziabad - UPPCB",
+   "prov": "CPCB",
+   "rows": 30,
+   "overlap": 45,
+   "span": 1282,
+   "first": "2019-04-27",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 17790,
+   "name": "IHBAS, Dilshad Garden,New Delhi - CPCB",
+   "prov": "CPCB",
+   "rows": 28,
+   "overlap": 45,
+   "span": 1646,
+   "first": "2018-04-28",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 14984,
+   "name": "Lodhi Road, New Delhi - IMD",
+   "prov": "CPCB",
+   "rows": 27,
+   "overlap": 30,
+   "span": 1682,
+   "first": "2018-03-09",
+   "last": "2022-10-16"
+  },
+  {
+   "sid": 36701,
+   "name": "NISE Gwal Pahari, Gurugram - IMD",
+   "prov": "CPCB",
+   "rows": 23,
+   "overlap": 28,
+   "span": 1428,
+   "first": "2018-11-16",
+   "last": "2022-10-14"
+  },
+  {
+   "sid": 14930,
+   "name": "Sector- 16A, Faridabad - HSPCB",
+   "prov": "caaqm",
+   "rows": 22,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 20020,
+   "name": "Jawaharlal Nehru Stadium, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 22,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 1166,
+   "name": "Vikas Sadan, Gurugram - HSPCB",
+   "prov": "CPCB",
+   "rows": 11,
+   "overlap": 45,
+   "span": 2410,
+   "first": "2016-03-25",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 19919,
+   "name": "Dr. Karni Singh Shooting Range, Delhi - DPCC",
+   "prov": "CPCB",
+   "rows": 5,
+   "overlap": 45,
+   "span": 1542,
+   "first": "2018-08-10",
+   "last": "2022-10-31"
+  },
+  {
+   "sid": 14521,
+   "name": "Anand Vihar, Delhi - DPCC",
+   "prov": "caaqm",
+   "rows": 1,
+   "overlap": 45,
+   "span": 1696,
+   "first": "2018-03-09",
+   "last": "2022-10-31"
+  }
+ ],
+ "dist": [
+  {
+   "label": "Good",
+   "short": "Good",
+   "count": 710,
+   "safe": true
+  },
+  {
+   "label": "Satisfactory",
+   "short": "Satisfactory",
+   "count": 1084,
+   "safe": true
+  },
+  {
+   "label": "Moderately polluted",
+   "short": "Moderately\npolluted",
+   "count": 632,
+   "safe": true
+  },
+  {
+   "label": "Poor",
+   "short": "Poor",
+   "count": 267,
+   "safe": false
+  },
+  {
+   "label": "Very Poor",
+   "short": "Very Poor",
+   "count": 467,
+   "safe": false
+  },
+  {
+   "label": "Severe",
+   "short": "Severe",
+   "count": 182,
+   "safe": false
+  }
+ ],
+ "season": [
+  {
+   "m": "Jan",
+   "mean": 206.6,
+   "n": 164
+  },
+  {
+   "m": "Feb",
+   "mean": 106.7,
+   "n": 136
+  },
+  {
+   "m": "Mar",
+   "mean": 69.2,
+   "n": 168
+  },
+  {
+   "m": "Apr",
+   "mean": 61.4,
+   "n": 173
+  },
+  {
+   "m": "May",
+   "mean": 58.6,
+   "n": 192
+  },
+  {
+   "m": "Jun",
+   "mean": 42.6,
+   "n": 207
+  },
+  {
+   "m": "Jul",
+   "mean": 32.0,
+   "n": 208
+  },
+  {
+   "m": "Aug",
+   "mean": 29.2,
+   "n": 166
+  },
+  {
+   "m": "Sep",
+   "mean": 45.5,
+   "n": 740
+  },
+  {
+   "m": "Oct",
+   "mean": 71.7,
+   "n": 825
+  },
+  {
+   "m": "Nov",
+   "mean": 228.8,
+   "n": 179
+  },
+  {
+   "m": "Dec",
+   "mean": 208.1,
+   "n": 184
+  }
+ ],
+ "years": [
+  {
+   "y": 2022,
+   "n": 1315
+  },
+  {
+   "y": 2023,
+   "n": 319
+  },
+  {
+   "y": 2024,
+   "n": 582
+  },
+  {
+   "y": 2025,
+   "n": 643
+  },
+  {
+   "y": 2026,
+   "n": 483
+  }
+ ],
+ "values": {
+  "mean": 82.1,
+  "median": 56.1,
+  "max": 665.0,
+  "min": 0.0,
+  "poor": 899,
+  "poorpct": 26.9
+ },
+ "checks": [
+  {
+   "what": "Date range covers the chosen window",
+   "got": "2022-09-16 → 2026-09-16",
+   "ok": true
+  },
+  {
+   "what": "No nulls in sensor_id, date or pm25_value",
+   "got": "0 nulls in all three columns",
+   "ok": true
+  },
+  {
+   "what": "No duplicate sensor/date pairs",
+   "got": "0 duplicates across 3,342 rows",
+   "ok": true
+  },
+  {
+   "what": "No negative PM2.5 readings",
+   "got": "minimum is 0.0 µg/m³",
+   "ok": true
+  },
+  {
+   "what": "One sensor per selected location",
+   "got": "44 sensors at 44 locations",
+   "ok": true
+  }
+ ],
+ "reissue": {
+  "affected": 37,
+  "of": 44,
+  "old_ends": "2022-10-31",
+  "new_span": 569,
+  "gate": 730
+ }
 };
 
-// The board, mirrored from docs/backlog/ front matter on 2026-09-16.
+// The board, mirrored from docs/backlog/ front matter on 2026-09-17.
 const DAF_PHASES = [
  {n:1, short:"Setup",    name:"Requirements and setup",   tickets:["DAF-01","DAF-02"]},
  {n:2, short:"Data",     name:"Get the data",             tickets:["DAF-03","DAF-04","DAF-05","DAF-06"]},
@@ -1870,8 +2638,8 @@ const DAF_PHASES = [
 const DAF_TICKETS = [
  {id:"DAF-01", title:"Project skeleton and environment",            sprint:1, status:"done"},
  {id:"DAF-02", title:"Write the requirements and the first decisions", sprint:1, status:"review"},
- {id:"DAF-03", title:"OpenAQ key, and Delhi's real station list",    sprint:1, status:"todo", flag:"The notebook is finished and stations.csv is saved, but the ticket front matter still says todo."},
- {id:"DAF-04", title:"Download the sensor history from the S3 archive", sprint:1, status:"todo"},
+ {id:"DAF-03", title:"OpenAQ key, and Delhi's real station list",    sprint:1, status:"todo", flag:"The work is finished — stations.csv, D-003, D-004, valid_stations_recent_4y.csv and pm25_daily_raw.csv all exist. Only the front matter still says todo."},
+ {id:"DAF-04", title:"Download the sensor history from the S3 archive", sprint:1, status:"todo", flag:"This is the next ticket. The notebook's API cache does not satisfy it — DAF-04 wants the original S3 files in data/raw/openaq/."},
  {id:"DAF-05", title:"Download the matching weather history",        sprint:2, status:"todo"},
  {id:"DAF-06", title:"Combine the raw files, and write the data card", sprint:2, status:"todo"},
  {id:"DAF-07", title:"First look: find what is wrong with this data", sprint:2, status:"todo"},
@@ -1898,15 +2666,21 @@ const DAF_TICKETS = [
 ];
 
 const DAF_DECISIONS = [
- {id:"D-001", title:"Predict the number, then apply the AQI table", status:"accepted", date:"2026-09-13",
+ {id:"D-001", title:"Predict the number, then apply the AQI table", status:"accepted", date:"2026-09-13", ticket:"DAF-02",
   chose:"Predict PM2.5 in µg/m³, then read the category off the CPCB table.",
   why:"A category-only model makes 91 and 400 the same answer. The number keeps the severity, and the table still gives Asha her yes or no."},
- {id:"D-002", title:"Tomorrow's 24-hour mean, 00:00–23:59 IST", status:"accepted", date:"2026-09-13",
+ {id:"D-002", title:"Tomorrow's 24-hour mean, 00:00–23:59 IST", status:"accepted", date:"2026-09-13", ticket:"DAF-02",
   chose:"The target is the full-day mean, not the 07:00–10:00 assembly window.",
-  why:"It is the window the CPCB bands are defined on, so the number means the same thing to Asha, to parents and to the government. A morning-only target can come later."},
- {id:"D-003", title:"Which stations, and which date range, are the training set", status:"next", date:"—",
-  chose:"Not written yet. This is the next thing to do.",
-  why:"147 sensor records exist and 50 pass the two-year rule. Until the rule is written down as a decision, nobody in three months can say why a station was kept or dropped."}
+  why:"It is the window the CPCB bands are defined on, so the number means the same thing to Asha, to parents and to the government."},
+ {id:"D-003", title:"Keep stations with 730+ days of real coverage", status:"accepted", date:"2026-09-16", ticket:"DAF-03",
+  chose:"coverage_days = last_reading − first_reading, and keep it if that is 730 or more. 50 stations pass.",
+  why:"Objective, easy to explain, and based on elapsed time rather than calendar years. It is a minimum quality gate, not the final word — the record says so itself."},
+ {id:"D-004", title:"Train on the most recent 3–4 years", status:"accepted", date:"2026-09-16", ticket:"DAF-04",
+  chose:"The latest four years inside the valid pool: 2022-09-16 → 2026-09-16. 44 of the 50 stations survive it.",
+  why:"Delhi's traffic, fuel and policy have changed. A model for tomorrow should learn from the current regime, not from 2016."},
+ {id:"D-005", title:"What to do about the re-issued CPCB sensors", status:"open", date:"—", ticket:"—",
+  chose:"Not written yet. See the finding on the daily-table page.",
+  why:"D-003 measures span and D-004 wants recency. Together they picked 37 retired sensors over their live replacements. One of the two rules has to give."}
 ];
 
 // The CPCB 24-hour PM2.5 bands, and what Asha does on each.
@@ -1922,6 +2696,6 @@ const DAF_BANDS = [
 // Where the work actually is, as opposed to what the front matter says.
 const DAF_HERE = {
   phase: 2,
-  headline: "Phase 2 — the station list is built, the training set is not yet defined.",
-  next: "Write D-003: which stations qualify, by what rule, and over what date range."
+  headline: "Phase 2 — the stations are chosen and a first daily table exists, but it is an API cache, not the raw archive.",
+  next: "DAF-04: a repeatable collector that pulls the original OpenAQ S3 files into data/raw/openaq/."
 };

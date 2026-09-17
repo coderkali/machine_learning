@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>The data so far — Delhi Air Forecast</title>
+<title>The stations — Delhi Air Forecast</title>
 <link rel="stylesheet" href="css/styles.css">
 <script src="js/theme.js"></script>
 </head>
@@ -14,7 +14,8 @@
   <a class="tab" href="index.html">Where we are</a>
   <a class="tab" href="requirement.html">The requirement</a>
   <a class="tab" href="journey.html">The 27 tickets</a>
-  <a class="tab" href="data.html" aria-current="page">The data so far</a>
+  <a class="tab" href="data.html" aria-current="page">The stations</a>
+  <a class="tab" href="dataset.html">The daily table</a>
   <button class="themebtn" type="button">Light</button>
 </div></nav>
 
@@ -22,12 +23,13 @@
 
   <header class="hdr">
     <p class="eyebrow">Station discovery · notebook 03</p>
-    <h1>Delhi has 102 air monitors on OpenAQ.<br>Only 50 can teach a model anything.</h1>
-    <p class="lede">Before any measurement is downloaded, one question has to be answered: which monitors have enough
-    history to be worth downloading? This page is what came back, and what was thrown away.</p>
+    <h1>Delhi has 102 air monitors on OpenAQ.<br>Two rules cut them to 44.</h1>
+    <p class="lede">Before any measurement is downloaded, one question has to be answered: which monitors are worth downloading?
+    Two decisions answer it — <b style="color:var(--ink)">D-003</b>, a minimum history, and <b style="color:var(--ink)">D-004</b>, a recent window.
+    This page is what came back, and what each rule threw away.</p>
   </header>
 
-  <h2>From 102 locations down to 50 usable stations</h2>
+  <h2>From 102 locations down to 44 selected stations</h2>
   <p class="sub">Each step here is a real filter in the notebook, not a rounding.</p>
   <div class="card">
     <div id="funnel"></div>
@@ -42,8 +44,9 @@
     <div class="card">
       <div id="map"></div>
       <div class="legend">
-        <span><i style="background:var(--accent)"></i>50 stations with 2+ years of coverage</span>
-        <span><i style="background:var(--ink3);opacity:.5"></i>95 sensor records that fall short</span>
+        <span><i style="background:var(--accent)"></i>44 selected — passed both rules</span>
+        <span><i style="background:var(--amber);opacity:.6"></i>6 passed D-003, dropped by the window</span>
+        <span><i style="background:var(--ink3);opacity:.5"></i>95 that never cleared the gate</span>
       </div>
     </div>
     <div>
@@ -94,11 +97,45 @@
     and it is the reason the raw hourly data gets downloaded rather than the tidy <code>/days</code> aggregates.
   </div>
 
+  <h2 id="rules">The two rules, in order</h2>
+  <p class="sub">The order matters. Quality first, then recency — that is how both decision records describe it.</p>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <span class="tag done">accepted</span> <code>D-003</code>
+      <h3>A station must have run for at least 730 days</h3>
+      <p><code>coverage_days = (last_reading − first_reading).days</code>, and keep it if that is 730 or more.</p>
+      <div class="yn">
+        <div class="row"><i class="y">✓</i><span><b style="color:var(--ink)">50 stations</b> pass, at 50 distinct locations</span></div>
+        <div class="row"><i class="n">✗</i><span>95 sensor records fall short and are dropped</span></div>
+      </div>
+      <p class="cap">The record is honest about its own limits: “a minimum quality gate, not the final word”. It even
+      recommends preferring the newest 3–4 years afterwards — which is exactly what D-004 does.</p>
+    </div>
+    <div class="card">
+      <span class="tag done">accepted</span> <code>D-004</code>
+      <h3>Train only on the most recent four years</h3>
+      <p>The window is computed from the latest available sensor date: <b style="color:var(--ink)">2022-09-16 → 2026-09-16</b>, 1,462 days.</p>
+      <div class="yn">
+        <div class="row"><i class="y">✓</i><span><b style="color:var(--ink)">44 stations</b> survive, saved to <code>data/processed/valid_stations_recent_4y.csv</code></span></div>
+        <div class="row"><i class="n">✗</i><span>6 of the 50 have nothing inside the window at all</span></div>
+      </div>
+      <p class="cap">Delhi's traffic, fuel and policy have moved since 2016. A model that answers “what about tomorrow”
+      should learn from the regime it is being asked about.</p>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:16px;border-left-color:var(--rose);background:rgba(var(--rose-rgb),.06)">
+    <b style="color:var(--rose)">The two rules disagree more than the counts suggest.</b> 50 → 44 looks like a gentle trim. It is not:
+    D-003 rewards a long history and D-004 rewards a recent one, and at 37 of the surviving 44 stations that pair has kept a sensor
+    which stopped reporting in October 2022 while discarding its live replacement. The counts hide it; the row counts do not.
+    <a href="dataset.html#reissue">See it on the daily table →</a>
+  </div>
+
   <h2>The longest-running stations</h2>
-  <p class="sub">The top of the candidate list, by real elapsed coverage.</p>
+  <p class="sub">The top of the D-003 pool, by real elapsed coverage. Note how many stop reporting on the same day in October 2022.</p>
   <div class="tbl-wrap">
     <table>
-      <thead><tr><th>Station</th><th>Provider</th><th>First reading</th><th>Last reading</th><th class="num">Days</th><th class="num">Years</th></tr></thead>
+      <thead><tr><th>Station</th><th>Provider</th><th>First reading</th><th>Last reading</th><th class="num">Days</th><th>In the 44?</th></tr></thead>
       <tbody id="toptable"></tbody>
     </table>
   </div>
@@ -120,15 +157,15 @@
   </div>
 
   <div class="next" style="margin-top:26px">
-    <h3>So the next decision is D-003</h3>
-    <p style="margin-bottom:0;color:var(--ink2)">Is 730 days the rule we keep, or does the training window make a longer one
-    affordable? One sensor per station, or stitched? Which of the 50 actually sit inside Delhi rather than the ring towns?
-    Write it down, then <code>DAF-04</code> downloads exactly that set and nothing else.</p>
+    <h3>These 44 are the list the collector will be handed</h3>
+    <p style="margin-bottom:0;color:var(--ink2)"><code>DAF-04</code> reads station ids and downloads their raw archive files. It will
+    faithfully fetch whatever list it is given — including 37 sensors that went quiet in 2022. Settling D-005 before the collector
+    runs saves downloading the wrong four years twice.
   </div>
 
 </div>
 
-<footer class="foot">Source: <code>notebooks/03_station_discovery.ipynb</code> and <code>data/raw/stations.csv</code>, read on 16 Sep 2026.</footer>
+<footer class="foot">Source: <code>notebooks/03_station_discovery.ipynb</code>, <code>notebooks/03_station_cleanup.ipynb</code>, <code>data/raw/stations.csv</code> and <code>data/processed/valid_stations_recent_4y.csv</code>, read on 17 Sep 2026.</footer>
 
 <script src="js/data.js"></script>
 <script src="js/site.js"></script>
@@ -143,8 +180,8 @@ document.addEventListener("DOMContentLoaded", function () {
     .forEach(function (s) {
       var tr = document.createElement("tr");
       tr.innerHTML = "<td><b>" + s.name + "</b></td><td>" + s.prov + "</td><td>" + s.first +
-        "</td><td>" + s.last + "</td><td class='num'>" + s.days +
-        "</td><td class='num'>" + (s.days / 365.25).toFixed(1) + "</td>";
+        "</td><td>" + s.last + "</td><td class='num'>" + s.days + "</td><td>" +
+        (s.sel ? "<span class='tag done'>selected</span>" : "<span class='tag todo'>dropped</span>") + "</td>";
       body.appendChild(tr);
     });
 });
