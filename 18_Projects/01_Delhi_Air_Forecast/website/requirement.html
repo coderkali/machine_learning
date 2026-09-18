@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The requirement — Delhi Air Forecast</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
+  <a class="tab" href="index.html">Where we are</a>
+  <a class="tab" href="requirement.html" aria-current="page">The requirement</a>
+  <a class="tab" href="journey.html">The 27 tickets</a>
+  <a class="tab" href="data.html">The stations</a>
+  <a class="tab" href="dataset.html">The daily table</a>
+  <button class="themebtn" type="button">Light</button>
+</div></nav>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <p class="eyebrow">What we promised to build</p>
+    <h1>Predict tomorrow's number, tonight —<br>and beat the free alternative.</h1>
+    <p class="lede">An ordinary requirement says what a system does. A machine-learning requirement has to say
+    something extra: <b style="color:var(--ink)">how wrong it is allowed to be, and compared to what</b>. A model is never
+    right or wrong, only better or worse than the thing you would have done anyway.</p>
+  </header>
+
+  <h2>The line that decides everything</h2>
+  <p class="sub">India's CPCB turns a PM2.5 concentration into six named bands. Asha's whole decision sits on one boundary.</p>
+  <div class="card">
+    <div id="bands"></div>
+    <p class="cap" style="margin-top:30px">Two things follow from this picture. Delhi in winter lives in the right-hand bands, so
+    "unhealthy" is not a rare event — which changes what a good score looks like. And an error of 10 µg/m³ at a true value of 40
+    costs nothing, while the same error at a true value of 85 flips Asha's answer. The metric has to know that.</p>
+  </div>
+
+  <h2>What exactly is predicted</h2>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3 style="margin-top:0">The target</h3>
+      <div class="tbl-wrap" style="border:0">
+        <table style="min-width:0">
+          <tbody>
+            <tr><td>Statistic</td><td><b>24-hour mean PM2.5</b></td></tr>
+            <tr><td>Window</td><td><b>00:00 → 23:59 IST, tomorrow</b></td></tr>
+            <tr><td>Unit</td><td><b>µg/m³</b></td></tr>
+            <tr><td>Valid day</td><td><b>at least 18 hourly readings</b>, else the day is dropped</td></tr>
+            <tr><td>Horizon</td><td><b>one day ahead</b>, no further</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cap">Decision <b>D-002</b> chose the full day over the 07:00–10:00 assembly window, because the CPCB bands are
+      defined on the full day. The number then means the same thing to Asha, to parents and to the government.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">The output Asha sees</h3>
+      <p>Decision <b>D-001</b>: the model predicts <b style="color:var(--ink)">a number</b>, and the CPCB table turns it into
+      the school action. Not the other way round.</p>
+      <div class="yn">
+        <div class="row"><i class="n">✗</i><span>A classifier that answers "safe / unsafe" makes 91 µg/m³ and 400 µg/m³ the same answer.</span></div>
+        <div class="row"><i class="y">✓</i><span>A number keeps the severity, and the table still gives her the yes or no.</span></div>
+        <div class="row"><i class="y">✓</i><span>One model then serves every threshold anyone asks for later.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>The 18:00 rule — the one that kills models in production</h2>
+  <p class="sub">The forecast is made at 18:00 IST today. Training may only use what genuinely exists at that moment.</p>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3 style="margin-top:0">Today, hour by hour</h3>
+      <ul class="tl">
+        <li><span class="t">00:00 – 17:00</span><div class="d">Today's readings arrive, hour by hour. These are usable.</div></li>
+        <li class="on"><span class="t">18:00 IST</span><div class="d"><b style="color:var(--amber)">The prediction is made here.</b> Everything after this line is the future.</div></li>
+        <li><span class="t">18:00 – 23:59</span><div class="d">Today's remaining hours. <b>Not</b> knowable — so today's own 24-hour mean is not a feature.</div></li>
+        <li><span class="t">Tomorrow 00:00 – 23:59</span><div class="d">The target. Tomorrow's <i>forecast</i> weather may be used; tomorrow's <i>actual</i> weather may not.</div></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Knowable at 18:00?</h3>
+      <div class="yn">
+        <div class="row"><i class="y">✓</i><span>Hourly PM2.5 up to 17:00 today, and every earlier day in full</span></div>
+        <div class="row"><i class="y">✓</i><span>Lags and rolling means built only from completed days</span></div>
+        <div class="row"><i class="y">✓</i><span>Calendar facts — month, weekday, festival dates</span></div>
+        <div class="row"><i class="y">✓</i><span>Tomorrow's <b>weather forecast</b> from Open-Meteo</span></div>
+        <div class="row"><i class="n">✗</i><span>Today's complete 24-hour mean</span></div>
+        <div class="row"><i class="n">✗</i><span>Tomorrow's <b>actual</b> weather — this is the train/serve gap to watch</span></div>
+        <div class="row"><i class="n">✗</i><span>Anything at all measured tomorrow</span></div>
+      </div>
+      <p class="cap">Ticket <code>DAF-15</code> turns this list into a written feature contract, and <code>DAF-12</code> proves
+      that a random split quietly breaks it.</p>
+    </div>
+  </div>
+
+  <h2>What counts as success</h2>
+  <p class="sub">Asha already has a method, it is free, and on most days it is right. It is the thing to beat.</p>
+  <div class="card">
+    <h3 style="margin-top:0">The persistence baseline</h3>
+    <p style="font-size:17px;color:var(--ink)">“Tomorrow's PM2.5 will be the same as today's.”</p>
+    <div class="grid g2" style="margin-top:18px">
+      <div>
+        <h3 style="margin-top:0">Headline metric — MAE</h3>
+        <p>Mean absolute error in µg/m³. The model must come in at least <b style="color:var(--accent)">10% lower</b> than the
+        baseline's MAE. Anything less and it is not worth running a service for.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Safety metric — recall</h3>
+        <p>Of all the days that truly were <b>Poor or worse</b> (≥ 91 µg/m³), how many did we call? This must
+        <b style="color:var(--rose)">not drop below the baseline</b>. A model that lowers MAE by smoothing away the bad days
+        has failed at the only job that matters.</p>
+      </div>
+    </div>
+    <p class="cap">Both numbers are still empty. They get filled in by <code>DAF-17</code> (the baseline) and
+    <code>DAF-22</code> (the final test run).</p>
+  </div>
+
+  <h2>What this is not</h2>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card"><h3 style="margin-top:0">Not hourly</h3><p style="margin:0">One number per day in version one. An hourly forecast is a different problem.</p></div>
+    <div class="card"><h3 style="margin-top:0">Not other cities</h3><p style="margin:0">Delhi only. Not other pollutants either — PM2.5 alone.</p></div>
+    <div class="card"><h3 style="margin-top:0">Not an app</h3><p style="margin:0">One REST endpoint in one container. No accounts, no mobile app, no multi-day horizon.</p></div>
+  </div>
+
+  <h2>Known risks, written down before they bite</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Risk</th><th>What it does to us</th></tr></thead>
+      <tbody>
+        <tr><td><b>Archive lag ≈ 72 hours</b></td><td>The S3 archive is written three days late, so training data and live data come from different doors.</td></tr>
+        <tr><td><b>Sensor outages</b></td><td>Stations drop hours or vanish. The 18-reading rule exists for this.</td></tr>
+        <tr><td><b>Rate limits</b></td><td>OpenAQ allows 60 requests a minute, 2,000 an hour. Over that is a 429, so the collector has to back off.</td></tr>
+        <tr><td><b>Leakage</b></td><td>The most likely way this project produces an excellent, useless model.</td></tr>
+        <tr><td><b>Train/serve gap</b></td><td>Training sees the weather that happened; production sees the weather that was forecast.</td></tr>
+        <tr><td><b>Festivals and crop burning</b></td><td>Real spikes that weather alone cannot explain. Expect the worst errors here.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer class="foot">Source: <code>docs/requirements.md</code>, <code>docs/decisions/D-001</code>, <code>D-002</code>, <code>docs/phases/01_requirements.md</code>.</footer>
+
+<script src="js/data.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>
