@@ -10,6 +10,13 @@ depends_on: [DAF-03]
 
 # DAF-04 · Download the sensor history from the S3 archive
 
+> **Scope change, 2026-09-18 — [D-005](../decisions/D-005-one-station-first.md).**
+> Version one is built on one station, R K Puram (location 17). For this ticket
+> that means: the collector still reads `stations.csv` and still works for any
+> station, but the full run is `--station 17` over its whole life,
+> 2025-02-19 → 2026-09-11. That run is already done (554 files). What is left is
+> the summary numbers, the explain-back answers, and setting `status: review`.
+
 ## Story
 
 As the developer, I want years of raw readings for the chosen stations on my
@@ -79,6 +86,7 @@ Two ways to fetch, both fine:
 - [ ] The end-of-run summary prints all six numbers listed in step 6
 - [ ] `git status` shows the script, and shows no data files
 - [ ] You can state the total size on disk and the number of station-days
+      (for station 17: files, missing days, MB)
 
 ## Explain back
 
@@ -91,7 +99,7 @@ Two ways to fetch, both fine:
 ## Traps
 
 - "Cleaning while downloading" — dropping bad rows in the collector. Do not.
-  That is DAF-08's job, and doing it here hides the fault permanently.
+  That is DAF-09's job, and doing it here hides the fault permanently.
 - Downloading five years for twenty stations on the first run, then discovering
   a bug 40 minutes in. One station, one month, first.
 - Hammering S3 with no pause. Be polite; it costs you nothing to sleep briefly
@@ -100,4 +108,4 @@ Two ways to fetch, both fine:
 ## My notes
 
 _Your answers, the final size on disk, and anything the data already looks odd
-about (note it, do not fix it — DAF-07 is where that goes)._
+about (note it, do not fix it — DAF-08 is where that goes)._

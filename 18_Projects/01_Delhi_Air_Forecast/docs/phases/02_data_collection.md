@@ -39,7 +39,7 @@ Real readings from government monitors, including India's CPCB network.
 
 Narrow format matters: PM2.5, PM10, NO₂ and the rest arrive as *rows*, not
 columns. Turning that into one column per pollutant is a pivot, and it happens
-in DAF-06, not in the collector.
+in DAF-05, not in the collector.
 
 ## Source 2 — OpenAQ API v3 (stations now, live readings later)
 
