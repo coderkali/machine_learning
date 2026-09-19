@@ -63,15 +63,26 @@ function drawPipeline(el) {
 
 /* ---------- the ticket board ---------- */
 function drawBoard(el) {
+  // Grouped by sprint — the order the work is actually done in. Milestones mark
+  // the three moments the project exists for.
+  const milestones = {
+    "DAF-07": "First model scored — does it beat Asha's method at all?",
+    "DAF-18": "The answer — scored once on the test period, model card written",
+    "DAF-20": "Asha gets a number — /forecast answers"
+  };
   let s = "";
-  DAF_PHASES.forEach(p => {
-    const st = phaseState(p);
-    s += `<div class="phase-h"><span class="n">Phase ${p.n}</span><strong>${esc(p.name)}</strong>
-          <span class="c">${st.done}/${st.total} done</span></div>`;
-    st.rows.forEach(t => {
-      s += `<div class="tk is-${t.status}"><span class="id">${t.id}</span>
-            <span class="t">${esc(t.title)}${t.flag ? `<span class="flag">⚑ ${esc(t.flag)}</span>` : ""}</span>
-            <span class="tag ${t.status}">${t.status}</span></div>`;
+  DAF_SPRINTS.forEach(sp => {
+    const rows = DAF_TICKETS.filter(t => String(t.sprint) === sp.id);
+    if (!rows.length) return;
+    const done = rows.filter(t => t.status === "done").length;
+    s += `<div class="phase-h"><span class="n">${sp.id === "later" ? "Later" : "Sprint " + sp.id}</span>
+          <strong>${esc(sp.name)}</strong><span class="c">${done}/${rows.length} done</span></div>`;
+    rows.forEach(t => {
+      const here = t.id === DAF_HERE.ticket;
+      s += `<div class="tk is-${t.status}${here ? " is-here" : ""}"><span class="id">${t.id}</span>
+            <span class="t">${esc(t.title)}<span class="ph">phase ${t.phase}</span>${t.flag ? `<span class="flag">⚑ ${esc(t.flag)}</span>` : ""}</span>
+            <span class="tag ${t.status}">${here ? "here · " : ""}${t.status}</span></div>`;
+      if (milestones[t.id]) s += `<div class="ms">◆ ${esc(milestones[t.id])}</div>`;
     });
   });
   el.innerHTML = s;
@@ -296,13 +307,66 @@ function drawReissue(el) {
   el.innerHTML = s;
 }
 
+/* ---------- station 17: every daily mean, with Asha's line ---------- */
+function drawS17Daily(el) {
+  const rows = DAF_S17.daily;
+  const W = 900, H = 294, L = 44, R = 16, T = 30, B = 40;
+  const t0 = new Date(rows[0].d).getTime(), t1 = new Date(rows[rows.length - 1].d).getTime();
+  const X = d => L + (new Date(d).getTime() - t0) / (t1 - t0) * (W - L - R);
+  const cap = 400, Y = v => H - B - Math.min(v, cap) / cap * (H - T - B);
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily mean PM2.5 at R K Puram">`;
+  [0, 90, 200, 400].forEach(v => {
+    s += `<line class="grid-l" x1="${L}" y1="${Y(v)}" x2="${W - R}" y2="${Y(v)}"/><text x="${L - 8}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  });
+  const w0 = X("2025-10-01"), w1 = X("2026-03-01");
+  s += `<rect x="${w0}" y="${T}" width="${w1 - w0}" height="${H - T - B}" fill="rgba(var(--rose-rgb),.06)"/>
+        <text x="${(w0 + w1) / 2}" y="${T - 10}" text-anchor="middle" fill="var(--rose)" font-weight="700">the only winter</text>`;
+  s += `<line x1="${L}" y1="${Y(90)}" x2="${W - R}" y2="${Y(90)}" stroke="var(--rose)" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+  rows.forEach(r => {
+    const over = r.v >= 91;
+    s += `<circle cx="${X(r.d).toFixed(1)}" cy="${Y(r.v).toFixed(1)}" r="${r.ok ? 2.3 : 2}"
+            fill="${!r.ok ? "var(--ink3)" : over ? "var(--rose)" : "var(--accent)"}" fill-opacity="${r.ok ? .85 : .35}">
+            <title>${r.d}: ${r.v} µg/m³${r.ok ? "" : " (fewer than 18 hours — not a valid day)"}${r.v > cap ? " — clipped" : ""}</title></circle>`;
+  });
+  ["2025-03-01", "2025-06-01", "2025-09-01", "2025-12-01", "2026-03-01", "2026-06-01", "2026-09-01"].forEach(d => {
+    const lab = new Date(d).toLocaleString("en-GB", { month: "short", year: "2-digit" });
+    s += `<text x="${X(d)}" y="${H - B + 18}" text-anchor="middle">${lab}</text>`;
+  });
+  s += `<text x="${W - R}" y="${Y(90) - 6}" text-anchor="end" fill="var(--rose)" font-weight="700">90 — indoors above</text></svg>`;
+  el.innerHTML = s;
+}
+
+/* ---------- station 17: what else the station measures ---------- */
+function drawParams(el) {
+  const rows = DAF_S17.params, max = Math.max(...rows.map(r => r.rows));
+  const W = 470, rowH = 26, H = rows.length * rowH + 8, L = 128, R = 60;
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Rows per parameter in the station 17 files">`;
+  rows.forEach((r, i) => {
+    const y = i * rowH + 4, w = r.rows / max * (W - L - R), pm = r.name === "pm25";
+    s += `<text x="${L - 10}" y="${y + 14}" text-anchor="end" fill="${pm ? "var(--ink)" : "var(--ink2)"}" font-weight="${pm ? 700 : 500}">${esc(r.name)}</text>
+          <rect x="${L}" y="${y + 3}" width="${w}" height="15" rx="4" fill="${pm ? "var(--accent)" : "var(--ink3)"}" fill-opacity="${pm ? 1 : .4}"/>
+          <text class="vlbl" x="${L + w + 8}" y="${y + 15}">${(r.rows / 1000).toFixed(1)}k</text>`;
+  });
+  el.innerHTML = s + `</svg>`;
+}
+
+/* ---------- a checklist from any {what, got, ok} list ---------- */
+function drawList(el, list) {
+  el.innerHTML = `<ul class="ck">` + list.map(c =>
+    `<li><span class="m ${c.ok ? "y" : "x"}">${c.ok ? "✓" : "✗"}</span>
+     <span><b style="color:var(--ink)">${esc(c.what)}</b><br><span style="font-size:13.5px;color:var(--ink3)">${esc(c.got)}</span></span></li>`
+  ).join("") + `</ul>`;
+}
+
 /* ---------- page boot ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const map = {
     "#pipeline": drawPipeline, "#board": drawBoard, "#funnel": drawFunnel,
     "#hist": drawHist, "#map": drawMap, "#providers": drawProviders, "#bands": drawBands,
     "#fill": drawFill, "#contribution-chart": drawContribution, "#dist": drawDist,
-    "#season": drawSeason, "#checks": drawChecks, "#reissue-chart": drawReissue
+    "#season": drawSeason, "#checks": drawChecks, "#reissue-chart": drawReissue,
+    "#s17-daily": drawS17Daily, "#s17-params": drawParams,
+    "#s17-verify": el => drawList(el, DAF_S17.verify)
   };
   Object.entries(map).forEach(([sel, fn]) => { const el = $(sel); if (el) fn(el); });
 

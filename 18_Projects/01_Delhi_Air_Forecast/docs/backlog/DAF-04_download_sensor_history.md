@@ -4,7 +4,7 @@ title: Download the sensor history from the S3 archive
 phase: 2 — Get the data
 sprint: 1
 estimate: 2-3 h
-status: todo
+status: review
 depends_on: [DAF-03]
 ---
 
@@ -92,9 +92,12 @@ Two ways to fetch, both fine:
 
 1. What does *idempotent* mean here, and what would go wrong on a re-run if it
    were not?
+   Answer:: Idempotent means running the same download again does not create duplicates or re-download work that is already present. If it were not, a second run would fetch the same files again, waste time and bandwidth, and make your summary numbers misleading because “downloaded” would include already-saved data.
 2. Why is raw data never edited in place, even when you can see it is wrong?
+   Answer:: Because the raw archive is your source of truth and the historical record. If you edit it while downloading, you lose the ability to trace what the original source actually sent, and you can no longer debug or reprocess cleanly later. Cleanup belongs in a downstream cleaning step, not in the raw storage layer.
 3. The archive lags 72 hours behind. Which later ticket does that break, and
    what will you do about it there?
+   Answer:: It breaks the live-data ticket later in the project, where you need recent readings for current monitoring. In that ticket, you will fetch the latest data from the OpenAQ API instead of relying on the archive, because the archive is only historical and delayed by 72 hours.
 
 ## Traps
 

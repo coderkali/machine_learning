@@ -179,41 +179,61 @@ guessing about what data exists or which stations pass the first quality gate.
 
 ---
 
-## 7) What comes next: DAF-04
+## 7) DAF-05 completed: daily table and target
 
-The next step is not model training yet. The next step is to graduate data
-collection from the notebook into a repeatable collector, as described in
-`docs/backlog/DAF-04_download_sensor_history.md`.
+DAF-04's immutable OpenAQ archive for R K Puram is now transformed into the
+first model-ready daily table in `notebooks/05_daily_table.ipynb`.
 
-The collector must:
+The notebook workflow is:
 
-- read station IDs from `data/raw/stations.csv`
-- download the original OpenAQ S3 archive files into `data/raw/openaq/`
-- skip files already present so a second run is idempotent
-- count missing station-days without failing
-- print a final summary of downloaded, skipped, missing, and stored data
+1. read all 554 raw compressed files for location 17
+2. keep PM2.5 readings and preserve the `+05:30` timezone
+3. aggregate 15-minute readings into hourly means
+4. aggregate hourly means into one row per IST calendar day
+5. calculate `pm25_mean`, `hours`, and `pm25_until_17`
+6. mark `valid = hours >= 18` without deleting invalid days
+7. reindex to a complete calendar range before creating the next-day target
+8. save the processed table and validate the result with interactive plots
 
-The first trial should download one station for one month. Only after that
-works should the full recent history be collected. The API-derived CSV remains
-useful for this notebook's exploration, but it should not replace the raw S3
-archive.
+The saved table is `data/interim/daily_17.csv` and contains:
+
+- `pm25_mean`: the day's available 24-hour PM2.5 mean
+- `hours`: hourly buckets with data, from 0 to 24
+- `pm25_until_17`: the mean available by 17:00 IST
+- `valid`: whether at least 18 hourly buckets had data
+- `target`: the next calendar day's `pm25_mean`, only when that day is valid
+
+Verified DAF-05 results:
+
+- 571 calendar-day rows
+- 0 duplicate dates
+- 488 valid days
+- 83 invalid days
+- 487 rows with a usable target
+- 84 rows without a usable target
+- 0 raw files changed; raw file count remained 554
+- all final validation assertions passed
+
+The notebook includes a 90-day interactive Plotly view. Hovering shows the
+date, daily PM2.5, target, available hours, and validity state. A second chart
+uses green/red bars to make the 18-hour coverage rule visible.
 
 ---
 
-## 8) Short takeaway
+## 8) What comes next: DAF-06
 
-We are past setup and station discovery, and the first station-level data slice
-has been validated.
+DAF-06 will score the baseline on `daily_17.csv`. The baseline prediction is
+today's PM2.5 value used to predict tomorrow's PM2.5. It must be evaluated only
+on rows with a usable target, and it will establish the first real MAE before
+DAF-07 trains a model.
 
-We now have the key pieces:
+The DAF-06 notebook should follow the same working pattern: markdown first,
+then code, step-by-step execution, explicit printed counts, a visual check,
+and a final assertion that the scored rows and target alignment are correct.
 
-- the business requirement
-- the target definition
-- the OpenAQ data connection
-- the cleaned station list
-- the real coverage check
-- the accepted station-selection and date-range decisions
-- the first validated daily PM2.5 table
+## 9) Short takeaway
 
-The project is ready to build the reproducible raw data archive before moving
-to weather data, data-quality exploration, and modelling.
+The project now has a reproducible station-level daily table with a clearly
+defined next-day target and an explicit data-coverage rule. We are ready to
+measure the baseline error in DAF-06 before adding any model complexity.
+

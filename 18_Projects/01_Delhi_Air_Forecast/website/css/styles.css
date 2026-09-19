@@ -158,7 +158,8 @@ code{background:var(--card2); padding:1.5px 6px; border-radius:5px; color:var(--
 
 /* ---------- charts ---------- */
 .chart{width:100%; height:auto; display:block; overflow:visible; font-family:inherit}
-.chart text{fill:var(--ink3); font-size:12px}
+.chart text{font-size:12px}
+.chart text:not([fill]){fill:var(--ink3)}
 #providers .chart text{font-size:13px}
 .chart .vlbl{fill:var(--ink2); font-size:12px; font-weight:600; font-variant-numeric:tabular-nums}
 .chart .grid-l{stroke:var(--line); stroke-width:1}
@@ -227,3 +228,17 @@ code{background:var(--card2); padding:1.5px 6px; border-radius:5px; color:var(--
 code{overflow-wrap:anywhere}
 .grid > *{min-width:0}
 .card,.stat,.note,.next{overflow-wrap:break-word}
+
+/* board by sprint */
+.tk .ph{display:inline-block; margin-left:8px; font-size:11.5px; color:var(--ink3)}
+.tk.is-here{border-color:var(--amber); box-shadow:0 0 0 2px rgba(var(--amber-rgb),.25)}
+.ms{margin:4px 0 12px 72px; font-size:13px; font-weight:700; color:var(--violet)}
+.ck .m.x{background:rgba(var(--rose-rgb),.16); color:var(--rose)}
+
+/* component diagram */
+.flow{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; align-items:stretch}
+.flow .box{background:var(--card2); border:1px solid var(--line2); border-radius:10px; padding:12px 13px; font-size:13.5px; color:var(--ink2); position:relative}
+.flow .box b{display:block; color:var(--ink); font-size:14px; margin-bottom:4px}
+.flow .box.hl{border-color:var(--accent); background:rgba(var(--accent-rgb),.07)}
+.flow .box:not(:last-child):after{content:"→"; position:absolute; right:-10px; top:50%; transform:translate(50%,-50%); color:var(--ink3); font-weight:700}
+@media(max-width:860px){.flow{grid-template-columns:1fr}.flow .box:not(:last-child):after{content:"↓"; right:50%; top:auto; bottom:-12px; transform:translate(50%,50%)}}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>R K Puram — Delhi Air Forecast</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
+  <a class="tab" href="index.html">Where we are</a>
+  <a class="tab" href="requirement.html">The requirement</a>
+  <a class="tab" href="journey.html">The tickets</a>
+  <a class="tab" href="data.html">The stations</a>
+  <a class="tab" href="dataset.html">The API cache</a>
+  <a class="tab" href="station.html" aria-current="page">R K Puram</a>
+  <button class="themebtn" type="button">Light</button>
+</div></nav>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <p class="eyebrow">The base station · D-005 · notebook 04</p>
+    <h1>One station, all the way through.<br>R K Puram is on disk, byte for byte.</h1>
+    <p class="lede">Rather than fix the whole station list first, version one is built on a single monitor — R K Puram,
+    location 17 — from raw files to a running service. Its full history is downloaded from the S3 archive by a script
+    that can be run again safely, and every file matches the archive exactly.</p>
+  </header>
+
+  <div class="grid g4" style="margin-top:20px">
+    <div class="stat a"><div class="k">554</div><div class="l">raw daily files, 2025-02-19 → 2026-09-11</div></div>
+    <div class="stat v"><div class="k">488</div><div class="l">valid days (≥ 18 hours) out of 571</div></div>
+    <div class="stat r"><div class="k">156</div><div class="l">of them Poor or worse — ≥ 91 µg/m³</div></div>
+    <div class="stat m"><div class="k">1</div><div class="l">winter in the whole history</div></div>
+  </div>
+
+  <h2>Why one station</h2>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <span class="tag done">accepted</span> <code>D-005</code>
+      <h3>Build version one on R K Puram alone</h3>
+      <p style="margin:0">The 44-station list from D-003 and D-004 kept retired sensors at 37 stations, and fixing that is real work.
+      One station that is already verified gets a real model error in three tickets, and every later data decision is then judged
+      by that error rather than by guesswork.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Why this station</h3>
+      <div class="yn">
+        <div class="row"><i class="y">✓</i><span>Already downloaded and verified from the raw archive</span></div>
+        <div class="row"><i class="y">✓</i><span>Still reporting today — sensor <code>12234787</code>, the live one</span></div>
+        <div class="row"><i class="y">✓</i><span>None of the re-issued-sensor trouble the 44-station list has</span></div>
+        <div class="row"><i class="n">✗</i><span>Describes R K Puram, not all of Delhi — widening is DAF-24</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>What the collector does</h2>
+  <p class="sub"><code>src/delhi_air/collect_openaq.py</code> — a command-line script, not notebook code. The notebook only calls it.</p>
+  <div class="flow" style="margin-top:14px">
+    <div class="box"><b>stations.csv</b>where the location ids come from — never hard-coded</div>
+    <div class="box hl"><b>collect_openaq</b><code>--start-date --end-date --station 17</code></div>
+    <div class="box"><b>S3 archive</b>one <code>.csv.gz</code> per station per day · no key · 404 = a missing day</div>
+    <div class="box hl"><b>data/raw/openaq/</b><code>locationid=17/year=…/month=…/</code> · never edited</div>
+    <div class="box"><b>next: DAF-05</b>15-min → hourly → daily table + target</div>
+  </div>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card"><h3 style="margin-top:0">Idempotent</h3><p style="margin:0;font-size:14.5px">A file already on disk is skipped. The second full run downloaded nothing and took under two seconds.</p></div>
+    <div class="card"><h3 style="margin-top:0">Missing is normal</h3><p style="margin:0;font-size:14.5px">A day the station did not report has no file. It is counted — 16 of them — and the run carries on. Any other HTTP error stops it.</p></div>
+    <div class="card"><h3 style="margin-top:0">Raw means raw</h3><p style="margin:0;font-size:14.5px">No filtering, no reshaping while downloading. Every fix happens downstream, so the original is always there to re-derive from.</p></div>
+  </div>
+
+  <h2>DAF-04, verified</h2>
+  <p class="sub">Every criterion was re-run on 2026-09-18, not read off the notebook.</p>
+  <div class="grid g2" style="margin-top:14px;align-items:start">
+    <div class="card"><div id="s17-verify"></div></div>
+    <div>
+      <div class="note" style="border-left-color:var(--amber);background:rgba(var(--amber-rgb),.06)">
+        <b style="color:var(--amber)">The code passes. The ticket does not, yet.</b> What is left is the write-up: the size and
+        station-day count in My notes, and the three explain-back answers. Then "verify DAF-04" again.
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3 style="margin-top:0">One gap worth closing</h3>
+        <p style="margin:0;font-size:14.5px">Each file is written straight to its final name. If a run is interrupted mid-write, a
+        half-written file is left behind — and the next run sees it exists and skips it for good. Not blocking, but it is the one
+        way this collector's idempotency can quietly break.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Every day of R K Puram's air</h2>
+  <p class="sub">One dot per day. Grey dots have fewer than 18 hours and will not be targets. Values above 400 are drawn at 400; hover any dot.</p>
+  <div class="card">
+    <div id="s17-daily"></div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>valid day, below 91</span>
+      <span><i style="background:var(--rose)"></i>valid day, Poor or worse</span>
+      <span><i style="background:var(--ink3);opacity:.5"></i>under 18 hours</span>
+    </div>
+    <p class="cap" style="margin-top:14px"><b style="color:var(--rose)">The shape that matters for DAF-06:</b> almost every Poor day sits
+    inside one October-to-February stretch. Where the train/test cut goes decides whether the test period has any bad days to be
+    judged on at all.</p>
+  </div>
+
+  <h2>What is inside one raw file</h2>
+  <div class="grid g2" style="margin-top:14px;align-items:start">
+    <div class="card">
+      <h3 style="margin-top:0">Narrow format — every pollutant mixed together</h3>
+      <div class="tbl-wrap" style="border:0">
+        <table style="min-width:0">
+          <thead><tr><th>sensors_id</th><th>datetime</th><th>parameter</th><th class="num">value</th></tr></thead>
+          <tbody>
+            <tr><td>12234786</td><td>2025-02-19 02:00</td><td>pm10</td><td class="num">182.0</td></tr>
+            <tr><td><b>12234787</b></td><td>2025-02-19 01:45</td><td><b>pm25</b></td><td class="num"><b>123.0</b></td></tr>
+            <tr><td><b>12234787</b></td><td>2025-02-19 02:00</td><td><b>pm25</b></td><td class="num"><b>97.0</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cap">467,816 rows across the 554 files; 44,139 of them are PM2.5. Keeping only <code>pm25</code> is DAF-05's first step.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">What else the station measures</h3>
+      <div id="s17-params"></div>
+      <p class="cap">Temperature, humidity and wind are measured right at the station. What they can and cannot do for a forecast
+      made at 18:00 is a DAF-08 question.</p>
+    </div>
+  </div>
+
+  <h2>Noticed, not yet explained</h2>
+  <p class="sub">Written down for DAF-08. Nothing here is fixed — raw stays raw.</p>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="stat v"><div class="k">15 min</div><div class="l">the reading interval — 41,551 of 44,138 gaps. Not hourly.</div></div>
+    <div class="stat m"><div class="k">86%</div><div class="l">of hours where all four 15-minute readings are identical</div></div>
+    <div class="stat r"><div class="k">1,753</div><div class="l">µg/m³, the largest reading — 2025-10-21 at 03:00. Why that night?</div></div>
+  </div>
+
+  <div class="next" style="margin-top:26px">
+    <h3>From here: three tickets to the first MAE</h3>
+    <div class="yn">
+      <div class="row"><i>1</i><span><b style="color:var(--ink)">DAF-04</b> — finish My notes and the explain-back, then "verify DAF-04"</span></div>
+      <div class="row"><i>2</i><span><b style="color:var(--ink)">DAF-05</b> — the daily table and the target column</span></div>
+      <div class="row"><i>3</i><span><b style="color:var(--ink)">DAF-06</b> — split by time, score Asha's own method: the first MAE</span></div>
+      <div class="row"><i>4</i><span><b style="color:var(--ink)">DAF-07</b> — the first trained model. Does it beat her?</span></div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="foot">Source: <code>notebooks/04_download_sesnor_history.ipynb</code>, <code>src/delhi_air/collect_openaq.py</code>,
+<code>data/raw/openaq/locationid=17/</code> and <code>docs/decisions/D-005-one-station-first.md</code>, read on 18 Sep 2026.</footer>
+
+<script src="js/data.js"></script>
+<script src="js/s17.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

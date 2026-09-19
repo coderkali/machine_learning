@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>The daily table — Delhi Air Forecast</title>
+<title>The API cache — Delhi Air Forecast</title>
 <link rel="stylesheet" href="css/styles.css">
 <script src="js/theme.js"></script>
 </head>
@@ -13,16 +13,17 @@
   <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
   <a class="tab" href="index.html">Where we are</a>
   <a class="tab" href="requirement.html">The requirement</a>
-  <a class="tab" href="journey.html">The 27 tickets</a>
+  <a class="tab" href="journey.html">The tickets</a>
   <a class="tab" href="data.html">The stations</a>
-  <a class="tab" href="dataset.html" aria-current="page">The daily table</a>
+  <a class="tab" href="dataset.html" aria-current="page">The API cache</a>
+  <a class="tab" href="station.html">R K Puram</a>
   <button class="themebtn" type="button">Light</button>
 </div></nav>
 
 <div class="wrap">
 
   <header class="hdr">
-    <p class="eyebrow">Station cleanup · notebook 03</p>
+    <p class="eyebrow">Station cleanup · notebook 03 · superseded by D-005</p>
     <h1>3,342 rows of real Delhi PM2.5 —<br>every check passes, and it is still not enough.</h1>
     <p class="lede">The cleanup notebook turned the cached OpenAQ measurements into one row per sensor per day and checked it properly.
     Nothing is malformed. The problem is not the quality of what is there; it is <b style="color:var(--ink)">how little of it there is,
@@ -104,8 +105,8 @@
   <div class="note" style="margin-top:16px;border-left-color:var(--rose);background:rgba(var(--rose-rgb),.06)">
     <b style="color:var(--rose)">Neither rule is wrong on its own.</b> A 730-day minimum is a reasonable quality gate, and a four-year
     window is a reasonable recency rule. They only fail together, because span and recency are different things and the CPCB
-    re-issue splits one station's history across two sensor ids. This is what <b>D-005</b> has to settle, and three fixes are
-    available: measure coverage <i>inside</i> the window rather than overall; stitch the old and new sensor at a location into one
+    re-issue splits one station's history across two sensor ids. This is what <b>D-005</b> was opened to settle. It chose to build on one live station first; the three fixes still
+    available for later (DAF-24) are: measure coverage <i>inside</i> the window rather than overall; stitch the old and new sensor at a location into one
     series; or waive the gate for sensors still reporting today.
   </div>
 
@@ -125,7 +126,7 @@
     <p class="cap" style="margin-top:14px">November averages <b style="color:var(--ink)">229 µg/m³</b> and July averages
     <b style="color:var(--ink)">32</b> — a seven-fold swing inside one year. Two consequences follow. A model that does not know
     the month will be badly wrong twice a year. And a train/test split that cuts across seasons rather than along time will
-    quietly let the model see the winter it is about to be tested on — which is what <code>DAF-12</code> exists to prevent.</p>
+    quietly let the model see the winter it is about to be tested on — which is what <code>DAF-06</code> exists to prevent.</p>
     <p class="cap"><b style="color:var(--amber)">Read these bars with care.</b> September and October carry 740 and 825 readings;
     February has 136. The monthly means are not equally trustworthy, and they come from the same lopsided table as everything
     else on this page.</p>
@@ -155,10 +156,10 @@
   </div>
 
   <div class="next" style="margin-top:26px">
-    <h3>So: D-005 first, then DAF-04</h3>
-    <p style="margin-bottom:0;color:var(--ink2)">Decide how the re-issued sensors are handled, regenerate the station list from that
-    decision, and only then point the collector at it. Downloading four years for 37 sensors that stopped in 2022 is the one
-    expensive mistake available at this point in the project.</p>
+    <h3>What happened next: D-005</h3>
+    <p style="margin-bottom:0;color:var(--ink2)">This page is why the plan changed. Instead of downloading four years for 37 sensors
+    that stopped in 2022, version one is built on R K Puram alone — 554 raw files, 488 valid days, still reporting.
+    This cache stays as the record of the finding. <a href="station.html">The base station →</a></p>
   </div>
 
 </div>
@@ -167,6 +168,7 @@
 <code>data/processed/valid_stations_recent_4y.csv</code> and <code>docs/project_status_summary.md</code>, read on 17 Sep 2026.</footer>
 
 <script src="js/data.js"></script>
+<script src="js/s17.js"></script>
 <script src="js/site.js"></script>
 </body>
 </html>
