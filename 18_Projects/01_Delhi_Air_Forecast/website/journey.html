@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>The 27 tickets — Delhi Air Forecast</title>
+<title>The tickets — Delhi Air Forecast</title>
 <link rel="stylesheet" href="css/styles.css">
 <script src="js/theme.js"></script>
 </head>
@@ -13,9 +13,10 @@
   <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
   <a class="tab" href="index.html">Where we are</a>
   <a class="tab" href="requirement.html">The requirement</a>
-  <a class="tab" href="journey.html" aria-current="page">The 27 tickets</a>
+  <a class="tab" href="journey.html" aria-current="page">The tickets</a>
   <a class="tab" href="data.html">The stations</a>
-  <a class="tab" href="dataset.html">The daily table</a>
+  <a class="tab" href="dataset.html">The API cache</a>
+  <a class="tab" href="station.html">R K Puram</a>
   <button class="themebtn" type="button">Light</button>
 </div></nav>
 
@@ -23,10 +24,10 @@
 
   <header class="hdr">
     <p class="eyebrow">The board</p>
-    <h1>27 tickets, one sitting each.</h1>
-    <p class="lede">Roughly 68 hours, about seven weeks at three or four sittings a week. A ticket is not finished when the
-    code runs — it is finished when its explain-back questions are answered in your own words, and every acceptance
-    criterion has been re-run, not re-read.</p>
+    <h1>23 tickets to a running service.<br>The first MAE is one away.</h1>
+    <p class="lede">After D-005 the plan is one station, end to end. Sprint 2 is a <b style="color:var(--ink)">walking skeleton</b>:
+    the shortest path to a real error number. Every ticket after it is an experiment — change one thing, re-score, log it.
+    A ticket is finished when every acceptance criterion has been re-run and its explain-back questions are answered in your own words.</p>
   </header>
 
   <div class="card" style="margin-top:8px">
@@ -41,9 +42,9 @@
     <div class="card"><span class="tag done">4</span><h3 style="margin-top:10px">Verified</h3><p style="margin:0;font-size:14.5px">Every criterion is <i>run</i>. Pass → done, next ticket. Fail → same ticket, named criterion.</p></div>
   </div>
 
-  <h2>Decisions on the record</h2>
+  <h2 id="decisions">Decisions on the record</h2>
   <p class="sub">Every real choice becomes a file in <code>docs/decisions/</code>, so that in three months the reason is still on disk.
-  Four are accepted; the fifth is the one the data is now asking for.</p>
+  All five are accepted. Two of them are parked until the project widens beyond one station.</p>
   <div class="grid g2" style="margin-top:14px">
     <div class="card">
       <span class="tag done">accepted</span> <code>D-001</code> <span style="color:var(--ink3);font-size:13px">· DAF-02</span>
@@ -58,7 +59,7 @@
       <p style="font-size:14.5px;margin:0"><b style="color:var(--ink)">Why:</b> the CPCB bands are defined on the full day, so the number means the same thing to everyone. A morning target can come later.</p>
     </div>
     <div class="card">
-      <span class="tag done">accepted</span> <code>D-003</code> <span style="color:var(--ink3);font-size:13px">· DAF-03 · 16 Sep</span>
+      <span class="tag done">accepted</span> <span class="tag todo">parked</span> <code>D-003</code> <span style="color:var(--ink3);font-size:13px">· DAF-03 · 16 Sep</span>
       <h3>Keep stations with 730+ days of real coverage</h3>
       <p style="font-size:14.5px"><b style="color:var(--ink)">Chosen:</b> <code>coverage_days = last − first</code>, keep if ≥ 730. <b>50 stations</b> pass.</p>
       <p style="font-size:14.5px;margin-bottom:10px"><b style="color:var(--ink)">Why:</b> objective, easy to explain, and based on elapsed time rather than calendar years.</p>
@@ -66,7 +67,7 @@
       should then <i>prefer the newest 3–4 years</i> — which is what D-004 picks up.</p>
     </div>
     <div class="card">
-      <span class="tag done">accepted</span> <code>D-004</code> <span style="color:var(--ink3);font-size:13px">· DAF-04 · 16 Sep</span>
+      <span class="tag done">accepted</span> <span class="tag todo">parked</span> <code>D-004</code> <span style="color:var(--ink3);font-size:13px">· DAF-04 · 16 Sep</span>
       <h3>Train on the most recent 3–4 years</h3>
       <p style="font-size:14.5px"><b style="color:var(--ink)">Chosen:</b> the latest four years inside the valid pool — <b>2022-09-16 → 2026-09-16</b>. 44 of the 50 survive.</p>
       <p style="font-size:14.5px;margin-bottom:10px"><b style="color:var(--ink)">Why:</b> Delhi's traffic, fuel and policy have changed. A model for tomorrow should learn the current regime, not 2016.</p>
@@ -74,27 +75,30 @@
     </div>
   </div>
 
-  <div class="card" style="margin-top:16px;border-color:rgba(var(--rose-rgb),.45);border-left:4px solid var(--rose)">
-    <span class="tag" style="background:rgba(var(--rose-rgb),.16);color:var(--rose)">open</span> <code>D-005</code>
-    <h3>What to do about the re-issued CPCB sensors</h3>
-    <p style="max-width:none"><b style="color:var(--ink)">The problem:</b> D-003 rewards a <i>long</i> history and D-004 wants a <i>recent</i> one. OpenAQ re-issued the
-    CPCB feed in late 2022, so at most Delhi stations there are two sensor records — a retired one with a long span, and a live one
-    with a short span. The 730-day gate keeps the retired one and throws away the live one, at <b style="color:var(--rose)">37 of the 44</b>
-    selected stations.</p>
-    <p style="max-width:none;margin:0"><b style="color:var(--ink)">The choice:</b> measure coverage <i>inside</i> the window instead of overall, or stitch the old and new sensor
-    at a station into one series, or lower the gate for sensors that are still reporting. <a href="dataset.html#reissue">The evidence is on the daily-table page →</a></p>
+  <div class="card" style="margin-top:16px;border-color:rgba(var(--good-rgb),.45);border-left:4px solid var(--good)">
+    <span class="tag done">accepted</span> <code>D-005</code> <span style="color:var(--ink3);font-size:13px">· DAF-04 · 18 Sep</span>
+    <h3>Build version one on a single station — R K Puram</h3>
+    <p style="max-width:none"><b style="color:var(--ink)">The problem it answers:</b> D-003 rewards a <i>long</i> history and D-004 a
+    <i>recent</i> one. OpenAQ re-issued the CPCB feed in late 2022, so together they kept a retired sensor over its live replacement
+    at 37 of the 44 stations. <a href="dataset.html#reissue">The evidence →</a></p>
+    <p style="max-width:none"><b style="color:var(--ink)">Chosen:</b> one station, all the way to a running service — R K Puram
+    (location 17), already downloaded, verified, and on the live sensor. 488 valid days, 156 of them Poor or worse.</p>
+    <p style="max-width:none;margin:0"><b style="color:var(--ink)">Why:</b> the project is for learning the whole path. One station
+    gets a real model error in three tickets, and every later data decision is judged by that error. D-003 and D-004 are parked, not
+    wrong; DAF-24 revisits them.</p>
   </div>
 
   <h2>Every ticket</h2>
-  <p class="sub">Statuses below are read straight from the <code>status:</code> line in each ticket's front matter.
-  Later sprints are deliberately one line each — what <code>DAF-08</code> has to clean depends on what <code>DAF-07</code> finds.</p>
+  <p class="sub">Grouped by sprint, in the order the work is done. Statuses are read straight from the <code>status:</code> line in each
+  ticket's front matter; ◆ marks the three moments the project exists for.</p>
   <div id="board"></div>
 
 </div>
 
-<footer class="foot">Source: <code>docs/backlog/</code> and <code>docs/decisions/</code>, as of 17 Sep 2026.</footer>
+<footer class="foot">Source: <code>docs/backlog/</code> and <code>docs/decisions/</code>, as of 19 Sep 2026.</footer>
 
 <script src="js/data.js"></script>
+<script src="js/s17.js"></script>
 <script src="js/site.js"></script>
 </body>
 </html>

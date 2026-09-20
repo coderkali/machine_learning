@@ -88,7 +88,7 @@ Say **18:00 IST today, for tomorrow**.
 That timing has a consequence people miss: at 18:00, *today is not over*. You
 have today's readings up to 17:00 and no further. So "today's daily average"
 is not something you can use as an input. This single fact will govern the
-feature contract in DAF-15, and it is the most common way a forecasting model
+feature contract in DAF-13, and it is the most common way a forecasting model
 looks brilliant in a notebook and useless in production.
 
 Now, tomorrow's *what*?
@@ -127,7 +127,7 @@ telling Asha the air is fine when it is not.
 Write the success criterion as a comparison, for example: *"beat the
 persistence baseline's MAE by at least 10% on the held-out test period, without
 recall on Poor-or-worse days falling below the baseline's."* You do not know
-the baseline's numbers yet — that is DAF-17. Set the target as a percentage
+the baseline's numbers yet — that is DAF-06. Set the target as a percentage
 now, fill in the absolute number then, and record it as a decision if it has to
 move.
 
@@ -140,7 +140,7 @@ move.
 - **Rate limits.** 60 requests a minute, 2,000 an hour.
 - **The train/serve gap.** In training you will use tomorrow's *actual*
   weather. In production you only have tomorrow's *forecast*, which is wrong in
-  its own way. Note it now; handle it in DAF-15.
+  its own way. Note it now; handle it in DAF-13.
 - **Festivals and stubble burning** are real, sharp, and not in the weather
   data. Decide whether a calendar flag is in scope.
 

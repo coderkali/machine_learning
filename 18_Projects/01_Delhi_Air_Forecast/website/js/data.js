@@ -2623,64 +2623,206 @@ const DAF_DATA = {
  }
 };
 
-// The board, mirrored from docs/backlog/ front matter on 2026-09-17.
-const DAF_PHASES = [
- {n:1, short:"Setup",    name:"Requirements and setup",   tickets:["DAF-01","DAF-02"]},
- {n:2, short:"Data",     name:"Get the data",             tickets:["DAF-03","DAF-04","DAF-05","DAF-06"]},
- {n:3, short:"Clean",    name:"Understand and clean it",  tickets:["DAF-07","DAF-08","DAF-09","DAF-10","DAF-11"]},
- {n:4, short:"Split",    name:"Split and pre-process",    tickets:["DAF-12","DAF-13"]},
- {n:5, short:"Features", name:"Features",                 tickets:["DAF-14","DAF-15","DAF-16"]},
- {n:6, short:"Models",   name:"Models",                   tickets:["DAF-17","DAF-18","DAF-19"]},
- {n:7, short:"Evaluate", name:"Evaluation and tuning",    tickets:["DAF-20","DAF-21","DAF-22"]},
- {n:8, short:"Ship",     name:"Service and delivery",     tickets:["DAF-23","DAF-24","DAF-25","DAF-26","DAF-27"]}
-];
-
+// The board — read from docs/backlog/*.md front matter on 2026-09-19.
+const DAF_PHASES = [{"n": 1, "short": "Setup", "name": "Requirements and setup", "tickets": ["DAF-01", "DAF-02"]}, {"n": 2, "short": "Data", "name": "Get the data", "tickets": ["DAF-03", "DAF-04", "DAF-12"]}, {"n": 3, "short": "Clean", "name": "Understand and clean it", "tickets": ["DAF-05", "DAF-08", "DAF-09", "DAF-10", "DAF-11"]}, {"n": 4, "short": "Split", "name": "Split and pre-process", "tickets": ["DAF-06"]}, {"n": 5, "short": "Features", "name": "Features", "tickets": ["DAF-13", "DAF-14"]}, {"n": 6, "short": "Models", "name": "Models", "tickets": ["DAF-07", "DAF-15"]}, {"n": 7, "short": "Evaluate", "name": "Evaluation and tuning", "tickets": ["DAF-16", "DAF-17", "DAF-18"]}, {"n": 8, "short": "Ship", "name": "Service and delivery", "tickets": ["DAF-19", "DAF-20", "DAF-21", "DAF-22", "DAF-23"]}];
+const DAF_SPRINTS = [{"id": "1", "name": "Requirements, and getting the data"}, {"id": "2", "name": "The walking skeleton — first model, first MAE"}, {"id": "3", "name": "Clean data, tested code, weather"}, {"id": "4", "name": "Features, models, and Asha's metric"}, {"id": "5", "name": "The answer, and the first half of the service"}, {"id": "6", "name": "Ship it"}, {"id": "later", "name": "Later, optional"}];
 const DAF_TICKETS = [
- {id:"DAF-01", title:"Project skeleton and environment",            sprint:1, status:"done"},
- {id:"DAF-02", title:"Write the requirements and the first decisions", sprint:1, status:"review"},
- {id:"DAF-03", title:"OpenAQ key, and Delhi's real station list",    sprint:1, status:"todo", flag:"The work is finished — stations.csv, D-003, D-004, valid_stations_recent_4y.csv and pm25_daily_raw.csv all exist. Only the front matter still says todo."},
- {id:"DAF-04", title:"Download the sensor history from the S3 archive", sprint:1, status:"todo", flag:"This is the next ticket. The notebook's API cache does not satisfy it — DAF-04 wants the original S3 files in data/raw/openaq/."},
- {id:"DAF-05", title:"Download the matching weather history",        sprint:2, status:"todo"},
- {id:"DAF-06", title:"Combine the raw files, and write the data card", sprint:2, status:"todo"},
- {id:"DAF-07", title:"First look: find what is wrong with this data", sprint:2, status:"todo"},
- {id:"DAF-08", title:"Clean it, one logged decision per fault",      sprint:2, status:"todo"},
- {id:"DAF-09", title:"Graduate the cleaning into clean.py, with tests", sprint:3, status:"todo"},
- {id:"DAF-10", title:"Build the daily table and the target column",  sprint:3, status:"todo"},
- {id:"DAF-11", title:"EDA on the daily table: the story in four charts", sprint:3, status:"todo"},
- {id:"DAF-12", title:"Split by time, and prove a random split cheats", sprint:3, status:"todo"},
- {id:"DAF-13", title:"The pre-processing Pipeline and ColumnTransformer", sprint:4, status:"todo"},
- {id:"DAF-14", title:"Lag, rolling and calendar features",           sprint:4, status:"todo"},
- {id:"DAF-15", title:"The feature contract: what is knowable at 6 pm", sprint:4, status:"todo"},
- {id:"DAF-16", title:"Feature selection, on the training rows only",  sprint:4, status:"todo"},
- {id:"DAF-17", title:"The baselines you have to beat",               sprint:5, status:"todo"},
- {id:"DAF-18", title:"Linear models inside the pipeline",            sprint:5, status:"todo"},
- {id:"DAF-19", title:"Tree and ensemble models",                     sprint:5, status:"todo"},
- {id:"DAF-20", title:"The metric that matches Asha's decision",      sprint:5, status:"todo"},
- {id:"DAF-21", title:"TimeSeriesSplit cross-validation and tuning",  sprint:6, status:"todo"},
- {id:"DAF-22", title:"Final test run, error analysis, model card",   sprint:6, status:"todo"},
- {id:"DAF-23", title:"Live feature builder from the two APIs",       sprint:6, status:"todo"},
- {id:"DAF-24", title:"The FastAPI service",                          sprint:6, status:"todo"},
- {id:"DAF-25", title:"Tests for the service, with the APIs mocked",  sprint:7, status:"todo"},
- {id:"DAF-26", title:"Docker image, and a container that answers",   sprint:7, status:"todo"},
- {id:"DAF-27", title:"README, retrospective, website page, skills update", sprint:7, status:"todo"}
-];
-
-const DAF_DECISIONS = [
- {id:"D-001", title:"Predict the number, then apply the AQI table", status:"accepted", date:"2026-09-13", ticket:"DAF-02",
-  chose:"Predict PM2.5 in µg/m³, then read the category off the CPCB table.",
-  why:"A category-only model makes 91 and 400 the same answer. The number keeps the severity, and the table still gives Asha her yes or no."},
- {id:"D-002", title:"Tomorrow's 24-hour mean, 00:00–23:59 IST", status:"accepted", date:"2026-09-13", ticket:"DAF-02",
-  chose:"The target is the full-day mean, not the 07:00–10:00 assembly window.",
-  why:"It is the window the CPCB bands are defined on, so the number means the same thing to Asha, to parents and to the government."},
- {id:"D-003", title:"Keep stations with 730+ days of real coverage", status:"accepted", date:"2026-09-16", ticket:"DAF-03",
-  chose:"coverage_days = last_reading − first_reading, and keep it if that is 730 or more. 50 stations pass.",
-  why:"Objective, easy to explain, and based on elapsed time rather than calendar years. It is a minimum quality gate, not the final word — the record says so itself."},
- {id:"D-004", title:"Train on the most recent 3–4 years", status:"accepted", date:"2026-09-16", ticket:"DAF-04",
-  chose:"The latest four years inside the valid pool: 2022-09-16 → 2026-09-16. 44 of the 50 stations survive it.",
-  why:"Delhi's traffic, fuel and policy have changed. A model for tomorrow should learn from the current regime, not from 2016."},
- {id:"D-005", title:"What to do about the re-issued CPCB sensors", status:"open", date:"—", ticket:"—",
-  chose:"Not written yet. See the finding on the daily-table page.",
-  why:"D-003 measures span and D-004 wants recency. Together they picked 37 retired sensors over their live replacements. One of the two rules has to give."}
+{
+"id": "DAF-01",
+"title": "Project skeleton and environment",
+"phase": 1,
+"sprint": "1",
+"status": "done",
+"file": "DAF-01_project_skeleton.md"
+},
+{
+"id": "DAF-02",
+"title": "Write the requirements and the first decisions",
+"phase": 1,
+"sprint": "1",
+"status": "review",
+"file": "DAF-02_requirements.md"
+},
+{
+"id": "DAF-03",
+"title": "OpenAQ key, and Delhi's real station list",
+"phase": 2,
+"sprint": "1",
+"status": "todo",
+"file": "DAF-03_station_list.md",
+"flag": "The work is finished — stations.csv, D-003 and D-004 exist. Only the front matter still says todo."
+},
+{
+"id": "DAF-04",
+"title": "Download the sensor history from the S3 archive",
+"phase": 2,
+"sprint": "1",
+"status": "review",
+"file": "DAF-04_download_sensor_history.md",
+"flag": "Code verified 2026-09-18 — every technical check passes. Still open: My notes and the explain-back answers."
+},
+{
+"id": "DAF-05",
+"title": "The daily table and the target column, for R K Puram",
+"phase": 3,
+"sprint": "2",
+"status": "todo",
+"file": "DAF-05_daily_table_and_target.md",
+"flag": "Notebook finished 2026-09-19 and its numbers independently re-checked. Still open: status todo, My notes empty."
+},
+{
+"id": "DAF-06",
+"title": "Split by time, and score the baselines — the first MAE",
+"phase": 4,
+"sprint": "2",
+"status": "todo",
+"file": "DAF-06_time_split_and_baselines.md",
+"flag": "Next — notebook 06 has been started."
+},
+{
+"id": "DAF-07",
+"title": "The first trained model — Ridge inside a Pipeline",
+"phase": 6,
+"sprint": "2",
+"status": "todo",
+"file": "DAF-07_first_trained_model.md"
+},
+{
+"id": "DAF-08",
+"title": "First look — find what is wrong with the raw data",
+"phase": 3,
+"sprint": "2",
+"status": "todo",
+"file": "DAF-08_first_look_whats_wrong.md"
+},
+{
+"id": "DAF-09",
+"title": "Clean it, one logged decision per fault — and re-score",
+"phase": 3,
+"sprint": "3",
+"status": "todo",
+"file": "DAF-09_clean_one_decision_per_fault.md"
+},
+{
+"id": "DAF-10",
+"title": "Graduate the table build into clean.py, with tests",
+"phase": 3,
+"sprint": "3",
+"status": "todo",
+"file": "DAF-10_clean_py_with_tests.md"
+},
+{
+"id": "DAF-11",
+"title": "EDA on the daily table — the story in four charts",
+"phase": 3,
+"sprint": "3",
+"status": "todo",
+"file": "DAF-11_eda_four_charts.md"
+},
+{
+"id": "DAF-12",
+"title": "Download the weather history for R K Puram",
+"phase": 2,
+"sprint": "3",
+"status": "todo",
+"file": "DAF-12_weather_history.md"
+},
+{
+"id": "DAF-13",
+"title": "The feature contract — what is knowable at 18:00 — and weather features",
+"phase": 5,
+"sprint": "4",
+"status": "todo",
+"file": "DAF-13_feature_contract_and_weather.md"
+},
+{
+"id": "DAF-14",
+"title": "Lag, rolling and calendar features — and selection on train only",
+"phase": 5,
+"sprint": "4",
+"status": "todo",
+"file": "DAF-14_lag_rolling_calendar_features.md"
+},
+{
+"id": "DAF-15",
+"title": "Tree and ensemble models",
+"phase": 6,
+"sprint": "4",
+"status": "todo",
+"file": "DAF-15_tree_and_ensemble_models.md"
+},
+{
+"id": "DAF-16",
+"title": "The metric that matches Asha's decision — walk-forward evaluation",
+"phase": 7,
+"sprint": "4",
+"status": "todo",
+"file": "DAF-16_asha_metric_walk_forward.md"
+},
+{
+"id": "DAF-17",
+"title": "TimeSeriesSplit cross-validation and tuning",
+"phase": 7,
+"sprint": "5",
+"status": "todo",
+"file": "DAF-17_timeseriessplit_tuning.md"
+},
+{
+"id": "DAF-18",
+"title": "Final test run, error analysis, and the model card",
+"phase": 7,
+"sprint": "5",
+"status": "todo",
+"file": "DAF-18_final_test_and_model_card.md"
+},
+{
+"id": "DAF-19",
+"title": "Live feature builder from the two APIs",
+"phase": 8,
+"sprint": "5",
+"status": "todo",
+"file": "DAF-19_live_feature_builder.md"
+},
+{
+"id": "DAF-20",
+"title": "The FastAPI service",
+"phase": 8,
+"sprint": "5",
+"status": "todo",
+"file": "DAF-20_fastapi_service.md"
+},
+{
+"id": "DAF-21",
+"title": "Tests for the service, with the APIs mocked",
+"phase": 8,
+"sprint": "6",
+"status": "todo",
+"file": "DAF-21_service_tests_mocked.md"
+},
+{
+"id": "DAF-22",
+"title": "Docker image, and a container that answers",
+"phase": 8,
+"sprint": "6",
+"status": "todo",
+"file": "DAF-22_docker_image.md"
+},
+{
+"id": "DAF-23",
+"title": "README, retrospective, website page, skills update",
+"phase": 8,
+"sprint": "6",
+"status": "todo",
+"file": "DAF-23_readme_retro_website_skills.md"
+},
+{
+"id": "DAF-24",
+"title": "(Later, optional) Widen to more stations",
+"phase": 2,
+"sprint": "later",
+"status": "todo",
+"file": "DAF-24_widen_to_more_stations.md"
+}
 ];
 
 // The CPCB 24-hour PM2.5 bands, and what Asha does on each.
@@ -2693,9 +2835,11 @@ const DAF_BANDS = [
  {lo:250, hi:320, name:"Severe",              action:"Indoors, parents told",   safe:false}
 ];
 
-// Where the work actually is, as opposed to what the front matter says.
+// Where the work actually is. The one place that sets the "you are here" marker.
+// The walking skeleton cuts across phases (3 → 4 → 6), so the marker follows the next ticket.
 const DAF_HERE = {
-  phase: 2,
-  headline: "Phase 2 — the stations are chosen and a first daily table exists, but it is an API cache, not the raw archive.",
-  next: "DAF-04: a repeatable collector that pulls the original OpenAQ S3 files into data/raw/openaq/."
+  phase: 4,
+  ticket: "DAF-06",
+  headline: "The daily table exists and is verified. Next: split by time and score Asha's method — the first MAE.",
+  next: "DAF-06 — split by time, score the two baselines, start reports/experiments.csv."
 };

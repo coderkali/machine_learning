@@ -4,11 +4,18 @@ title: Download the sensor history from the S3 archive
 phase: 2 — Get the data
 sprint: 1
 estimate: 2-3 h
-status: todo
+status: done
 depends_on: [DAF-03]
 ---
 
 # DAF-04 · Download the sensor history from the S3 archive
+
+> **Scope change, 2026-09-18 — [D-005](../decisions/D-005-one-station-first.md).**
+> Version one is built on one station, R K Puram (location 17). For this ticket
+> that means: the collector still reads `stations.csv` and still works for any
+> station, but the full run is `--station 17` over its whole life,
+> 2025-02-19 → 2026-09-11. That run is already done (554 files). What is left is
+> the summary numbers, the explain-back answers, and setting `status: review`.
 
 ## Story
 
@@ -79,19 +86,23 @@ Two ways to fetch, both fine:
 - [ ] The end-of-run summary prints all six numbers listed in step 6
 - [ ] `git status` shows the script, and shows no data files
 - [ ] You can state the total size on disk and the number of station-days
+      (for station 17: files, missing days, MB)
 
 ## Explain back
 
 1. What does *idempotent* mean here, and what would go wrong on a re-run if it
    were not?
+   Answer:: Idempotent means running the same download again does not create duplicates or re-download work that is already present. If it were not, a second run would fetch the same files again, waste time and bandwidth, and make your summary numbers misleading because “downloaded” would include already-saved data.
 2. Why is raw data never edited in place, even when you can see it is wrong?
+   Answer:: Because the raw archive is your source of truth and the historical record. If you edit it while downloading, you lose the ability to trace what the original source actually sent, and you can no longer debug or reprocess cleanly later. Cleanup belongs in a downstream cleaning step, not in the raw storage layer.
 3. The archive lags 72 hours behind. Which later ticket does that break, and
    what will you do about it there?
+   Answer:: It breaks the live-data ticket later in the project, where you need recent readings for current monitoring. In that ticket, you will fetch the latest data from the OpenAQ API instead of relying on the archive, because the archive is only historical and delayed by 72 hours.
 
 ## Traps
 
 - "Cleaning while downloading" — dropping bad rows in the collector. Do not.
-  That is DAF-08's job, and doing it here hides the fault permanently.
+  That is DAF-09's job, and doing it here hides the fault permanently.
 - Downloading five years for twenty stations on the first run, then discovering
   a bug 40 minutes in. One station, one month, first.
 - Hammering S3 with no pause. Be polite; it costs you nothing to sleep briefly
@@ -100,4 +111,4 @@ Two ways to fetch, both fine:
 ## My notes
 
 _Your answers, the final size on disk, and anything the data already looks odd
-about (note it, do not fix it — DAF-07 is where that goes)._
+about (note it, do not fix it — DAF-08 is where that goes)._

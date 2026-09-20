@@ -36,7 +36,7 @@ Delhi, and is that safe for children?**
 
 ## How to run
 
-_Filled in during DAF-01 and completed in DAF-27. Until then there is nothing
+_Filled in during DAF-01 and completed in DAF-23. Until then there is nothing
 to run._
 
 ## How we work

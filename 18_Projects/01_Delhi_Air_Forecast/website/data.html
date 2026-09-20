@@ -13,9 +13,10 @@
   <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
   <a class="tab" href="index.html">Where we are</a>
   <a class="tab" href="requirement.html">The requirement</a>
-  <a class="tab" href="journey.html">The 27 tickets</a>
+  <a class="tab" href="journey.html">The tickets</a>
   <a class="tab" href="data.html" aria-current="page">The stations</a>
-  <a class="tab" href="dataset.html">The daily table</a>
+  <a class="tab" href="dataset.html">The API cache</a>
+  <a class="tab" href="station.html">R K Puram</a>
   <button class="themebtn" type="button">Light</button>
 </div></nav>
 
@@ -93,7 +94,7 @@
 
   <div class="note" style="margin-top:16px">
     <b>What this check still does not prove.</b> A span from 2016 to 2026 says the sensor reported at both ends. It says
-    nothing about the gaps in between — dead months, missing hours, a stretch of zeros. That is <code>DAF-07</code>'s job,
+    nothing about the gaps in between — dead months, missing hours, a stretch of zeros. That is <code>DAF-08</code>'s job,
     and it is the reason the raw hourly data gets downloaded rather than the tidy <code>/days</code> aggregates.
   </div>
 
@@ -149,18 +150,18 @@
       <thead><tr><th>Source</th><th>Used for</th><th>Key</th><th>State</th></tr></thead>
       <tbody>
         <tr><td><b>OpenAQ API v3</b></td><td>Station discovery now; live readings at 18:00 later</td><td>Yes, free</td><td><span class="tag done">connected</span></td></tr>
-        <tr><td><b>OpenAQ S3 archive</b></td><td>The hourly sensor history we train on</td><td>No</td><td><span class="tag todo">DAF-04</span></td></tr>
-        <tr><td><b>Open-Meteo archive</b></td><td>Matching weather history</td><td>No</td><td><span class="tag todo">DAF-05</span></td></tr>
-        <tr><td><b>Open-Meteo forecast</b></td><td>Tomorrow's weather, at prediction time</td><td>No</td><td><span class="tag todo">DAF-23</span></td></tr>
+        <tr><td><b>OpenAQ S3 archive</b></td><td>The sensor history we train on</td><td>No</td><td><span class="tag review">R K Puram downloaded</span></td></tr>
+        <tr><td><b>Open-Meteo archive</b></td><td>Matching weather history</td><td>No</td><td><span class="tag todo">DAF-12</span></td></tr>
+        <tr><td><b>Open-Meteo forecast</b></td><td>Tomorrow's weather, at prediction time</td><td>No</td><td><span class="tag todo">DAF-19</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="next" style="margin-top:26px">
-    <h3>These 44 are the list the collector will be handed</h3>
-    <p style="margin-bottom:0;color:var(--ink2)"><code>DAF-04</code> reads station ids and downloads their raw archive files. It will
-    faithfully fetch whatever list it is given — including 37 sensors that went quiet in 2022. Settling D-005 before the collector
-    runs saves downloading the wrong four years twice.
+    <h3>Where this list went: D-005</h3>
+    <p style="margin-bottom:0;color:var(--ink2)">Rather than repair the 44-station list first, version one is built on a single
+    station — R K Puram, already on disk and on its live sensor. D-003 and D-004 are parked, not discarded; DAF-24 comes back to
+    them once the whole pipeline works. <a href="station.html">The base station →</a>
   </div>
 
 </div>
@@ -168,6 +169,7 @@
 <footer class="foot">Source: <code>notebooks/03_station_discovery.ipynb</code>, <code>notebooks/03_station_cleanup.ipynb</code>, <code>data/raw/stations.csv</code> and <code>data/processed/valid_stations_recent_4y.csv</code>, read on 17 Sep 2026.</footer>
 
 <script src="js/data.js"></script>
+<script src="js/s17.js"></script>
 <script src="js/site.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {

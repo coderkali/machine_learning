@@ -13,9 +13,10 @@
   <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
   <a class="tab" href="index.html">Where we are</a>
   <a class="tab" href="requirement.html" aria-current="page">The requirement</a>
-  <a class="tab" href="journey.html">The 27 tickets</a>
+  <a class="tab" href="journey.html">The tickets</a>
   <a class="tab" href="data.html">The stations</a>
-  <a class="tab" href="dataset.html">The daily table</a>
+  <a class="tab" href="dataset.html">The API cache</a>
+  <a class="tab" href="station.html">R K Puram</a>
   <button class="themebtn" type="button">Light</button>
 </div></nav>
 
@@ -36,6 +37,11 @@
     <p class="cap" style="margin-top:30px">Two things follow from this picture. Delhi in winter lives in the right-hand bands, so
     "unhealthy" is not a rare event — which changes what a good score looks like. And an error of 10 µg/m³ at a true value of 40
     costs nothing, while the same error at a true value of 85 flips Asha's answer. The metric has to know that.</p>
+  </div>
+
+  <div class="note" style="margin-top:16px">
+    <b>Version one is one station.</b> Under <a href="journey.html#decisions">D-005</a>, "Delhi's PM2.5" means R K Puram's
+    (location 17) until the project widens. The target, the 18:00 rule and the success bar below are unchanged.
   </div>
 
   <h2>What exactly is predicted</h2>
@@ -91,7 +97,7 @@
         <div class="row"><i class="n">✗</i><span>Tomorrow's <b>actual</b> weather — this is the train/serve gap to watch</span></div>
         <div class="row"><i class="n">✗</i><span>Anything at all measured tomorrow</span></div>
       </div>
-      <p class="cap">Ticket <code>DAF-15</code> turns this list into a written feature contract, and <code>DAF-12</code> proves
+      <p class="cap">Ticket <code>DAF-13</code> turns this list into a written feature contract, and <code>DAF-06</code> proves
       that a random split quietly breaks it.</p>
     </div>
   </div>
@@ -114,8 +120,8 @@
         has failed at the only job that matters.</p>
       </div>
     </div>
-    <p class="cap">Both numbers are still empty. They get filled in by <code>DAF-17</code> (the baseline) and
-    <code>DAF-22</code> (the final test run).</p>
+    <p class="cap">Both numbers are still empty. They get filled in by <code>DAF-06</code> (the baseline) and
+    <code>DAF-18</code> (the final test run).</p>
   </div>
 
   <h2>What this is not</h2>
@@ -145,6 +151,7 @@
 <footer class="foot">Source: <code>docs/requirements.md</code>, <code>docs/decisions/D-001</code>, <code>D-002</code>, <code>docs/phases/01_requirements.md</code>.</footer>
 
 <script src="js/data.js"></script>
+<script src="js/s17.js"></script>
 <script src="js/site.js"></script>
 </body>
 </html>
