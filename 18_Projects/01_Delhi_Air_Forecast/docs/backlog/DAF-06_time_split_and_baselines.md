@@ -4,7 +4,7 @@ title: Split by time, and score the baselines — the first MAE
 phase: 4 — Split and pre-process
 sprint: 2
 estimate: 2-3 h
-status: todo
+status: review
 depends_on: [DAF-05]
 ---
 
@@ -76,9 +76,30 @@ Two baselines, both needing no training:
 ## Explain back
 
 1. What does MAE = 25 mean to Asha, in one sentence she would understand?
+   Answer:: MAE 25 means how much she is predicting wrong about next day weather
+   Review (Claude): Right idea. Make it exact: give the unit, say "on a typical
+   day", and name what is predicted. It is tomorrow's PM2.5, not the weather.
+   Example shape: "On a normal day, my forecast for tomorrow's PM2.5 is about 25
+   µg/m³ away from what really happens." Then compare it with her free habit
+   (persistence, about 16). Status: revise.
 2. Why is a random split cheating for a forecast, even when it looks harmless?
+   Answer:: Random split is harrmless because lets say we are predicting the 1st
+   March , but our model nveer trained on previous days instead it was just
+   trained on future daya like 2nd and 3rd march
+   Review (Claude): The example is exactly the right one: predicting 1 March
+   after learning from 2 and 3 March means the model has seen the future. Two fixes:
+   (a) the first sentence says "harmless", but the point is that it *looks*
+   harmless and is not; (b) the model is trained on a mix of days before and
+   after the test day, not only on future days. Add why it matters: neighbouring
+   days have similar air, so the test day is easy, and the score can look better
+   than real life. Status: revise.
 3. Your test set is one stretch of time. What does that fail to tell you, and
    which ticket fixes it? (Hint: DAF-16.)
+   Answer:: i am not sure what exactly faiule d, may be i will get more
+   explannation future
+   Review (Claude): Not answered yet. Direction: our test is only March to
+   September 2026, with 17 Poor days. Ask what one score from one period can and
+   cannot say about other periods, such as winter. Status: open.
 
 ## Traps
 
@@ -90,5 +111,51 @@ Two baselines, both needing no training:
 
 ## My notes
 
-_Cut date and why · train/test sizes · Poor days on each side · both baseline
-MAEs and recalls · what the random split showed._
+**Cut date: 2026-03-01.** Chosen from the calendar and the Poor-day counts in
+the monthly chart, before any score was calculated. Everything before it is
+train, everything from it onwards is test. Reason: the train side keeps the whole
+winter (the dirtiest months), and the test side still holds 17 Poor-or-worse days,
+so recall has a real denominator. It also puts the test period after every train
+day, like a real forecast.
+
+**Sizes and Poor days (rows with a usable target)**
+
+| Side | Rows | Date range | Poor-or-worse days |
+|---|---:|---|---:|
+| Train | 323 | 2025-02-19 to 2026-02-28 | 139 |
+| Test | 164 | 2026-03-01 to 2026-09-10 | 17 |
+
+3 of the 164 test rows have a missing guess, so the baselines are scored on the
+same **161** rows.
+
+**Baselines on the 161 test rows** (also logged in `reports/experiments.csv`)
+
+| Baseline | MAE | Recall on Poor days | Caught / missed | False alarms |
+|---|---:|---:|---|---:|
+| Persistence (`pm25_until_17`) | 15.73 | 0.471 | 8 / 9 | 12 |
+| Yesterday's full day | 16.40 | 0.471 | 8 / 9 | 10 |
+
+Both baselines missed more than half of the 17 Poor days. Recall rests on only 17
+days, so one day changes it by about 6 points.
+
+**Random-split demonstration** (`LinearRegression` on `pm25_until_17`, 482 usable rows)
+
+| Way of scoring | MAE | Test days |
+|---|---:|---|
+| Time split (train before the cut) | 19.58 | 162 days, average tomorrow 55.7 |
+| Random 80/20, `random_state=42` | 31.81 | 97 days, all months |
+| Random 80/20, `random_state` 0 to 4 | 25.80 to 30.01 | average tomorrow 80.7 to 102.8 |
+| Random 70/30, `random_state=42` | 30.24 | 145 days, average tomorrow 89.2 |
+
+What it showed:
+- The random split did **not** look better than the time split here. Its test days
+  are dirtier (average 85 to 89 against 55.7, with a 397 spike), so the errors are
+  bigger. The two MAEs are measured on different days and cannot be compared.
+- The random score changes with the shuffle (a spread of 4.21 over five shuffles).
+  The time split gives one repeatable number.
+- It still leaks: all 97 test days were older than the newest train day, so the model
+  had learned from days after them. With one input and a straight line it cannot
+  memorise, so the harm is small here. A model with many lag features would use it.
+- The trained model (19.67 on the same 161 days) lost to free persistence (15.73).
+  It learned its line mostly from dirty winter days (train average 110.7), and its
+  intercept of about 27 pushes March to September forecasts up.
