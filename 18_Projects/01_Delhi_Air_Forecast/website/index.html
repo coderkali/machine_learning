@@ -47,20 +47,19 @@
 
   <div class="grid g4" style="margin-top:16px">
     <div class="stat a"><div class="k">554</div><div class="l">raw daily files for R K Puram, identical to S3</div></div>
-    <div class="stat v"><div class="k">488</div><div class="l">valid days of PM2.5 to learn from</div></div>
-    <div class="stat r"><div class="k">156</div><div class="l">of them Poor or worse — the days that matter</div></div>
-    <div class="stat m"><div class="k">3</div><div class="l">tickets from here to the first MAE</div></div>
+    <div class="stat v"><div class="k">487</div><div class="l">daily rows with tomorrow's answer attached</div></div>
+    <div class="stat r"><div class="k">156</div><div class="l">of those answers are Poor or worse</div></div>
+    <div class="stat m"><div class="k">1</div><div class="l">ticket from here to the first MAE</div></div>
   </div>
 
   <div class="next" style="margin-top:26px">
-    <h3>Next thing to do — close DAF-04, then start the walking skeleton</h3>
-    <p style="color:var(--ink2);margin-bottom:10px">The collector is built and every technical check passed on 2026-09-18. What stands
-    between here and the first model is the DAF-04 write-up, then three short tickets.</p>
+    <h3>Next thing to do — DAF-06, the first MAE</h3>
+    <p style="color:var(--ink2);margin-bottom:10px">The daily table is built: 571 days, 488 valid, 487 with a usable target, and every
+    number re-checked against <code>data/interim/daily_17.csv</code>. The next ticket scores Asha's own method on it.</p>
     <div class="yn">
-      <div class="row"><i>1</i><span><b style="color:var(--ink)">DAF-04</b> — size and station-days in My notes, three explain-back answers, "verify DAF-04"</span></div>
-      <div class="row"><i>2</i><span><b style="color:var(--ink)">DAF-05</b> — 15-minute readings → hourly → one row per day, plus tomorrow's mean as the target</span></div>
-      <div class="row"><i>3</i><span><b style="color:var(--ink)">DAF-06</b> — split by time and score Asha's own method: <b style="color:var(--ink)">the first MAE</b></span></div>
-      <div class="row"><i>4</i><span><b style="color:var(--ink)">DAF-07</b> — the first trained model. Does it beat her by 10%?</span></div>
+      <div class="row"><i>1</i><span><b style="color:var(--ink)">DAF-06</b> — choose one cut date from the calendar, count the Poor days on each side, score both baselines</span></div>
+      <div class="row"><i>2</i><span><b style="color:var(--ink)">DAF-07</b> — Ridge in a pipeline. Does it beat persistence by 10%?</span></div>
+      <div class="row"><i>·</i><span><b style="color:var(--ink)">Paperwork</b> — DAF-04 and DAF-05 both have empty My notes, and DAF-05 still reads <code>todo</code></span></div>
     </div>
   </div>
 
@@ -71,8 +70,9 @@
   </div>
 
   <div class="note" style="margin-top:16px">
-    <b>The board is a little behind the work.</b> <code>DAF-03</code>'s front matter still reads <code>todo</code> although its
-    work is finished, and <code>DAF-02</code> still reads <code>review</code>. The board on this site shows what the files say.
+    <b>The board is behind the work.</b> <code>DAF-03</code> and <code>DAF-05</code> still read <code>todo</code> although their
+    work is finished; <code>DAF-02</code> and <code>DAF-04</code> read <code>review</code>. The board on this site shows what the files
+    say, so it will catch up as soon as they do.
   </div>
 
   <h2>What has actually been built</h2>
@@ -133,16 +133,16 @@
       </ul>
       <p style="margin:12px 0 0"><a href="dataset.html">What it showed →</a></p>
     </div>
-    <div class="card">
-      <span class="tag todo">next</span>
-      <h3 style="margin-top:12px">The walking skeleton</h3>
+    <div class="card" style="border-color:rgba(var(--accent-rgb),.45)">
+      <span class="tag done">verified</span>
+      <h3 style="margin-top:12px">The daily table and target</h3>
       <ul class="ck">
-        <li><span class="m n">·</span><span>DAF-05 daily table and target</span></li>
-        <li><span class="m n">·</span><span>DAF-06 time split and baselines</span></li>
-        <li><span class="m n">·</span><span>DAF-07 the first trained model</span></li>
-        <li><span class="m n">·</span><span>Every result logged in <code>reports/experiments.csv</code></span></li>
+        <li><span class="m y">✓</span><span>15-min → hourly → one row per IST day</span></li>
+        <li><span class="m y">✓</span><span><code>valid</code> = 18+ hours; 83 invalid days kept and flagged</span></li>
+        <li><span class="m y">✓</span><span>Target by calendar date, never from an invalid day</span></li>
+        <li><span class="m y">✓</span><span>487 usable rows in <code>data/interim/daily_17.csv</code></span></li>
       </ul>
-      <p style="margin:12px 0 0"><a href="journey.html">The whole board →</a></p>
+      <p style="margin:12px 0 0"><a href="station.html#daily-table">How it was built →</a></p>
     </div>
   </div>
 
@@ -152,8 +152,8 @@
     <table>
       <thead><tr><th>Sprint</th><th>What it produces</th><th>Tickets</th><th>Milestone</th></tr></thead>
       <tbody>
-        <tr><td><b>1 · Data</b></td><td>Requirements, decisions, station list, the collector</td><td>DAF-01 → 04</td><td><span class="tag doing">here</span></td></tr>
-        <tr><td><b>2 · Skeleton</b></td><td>Daily table, time split, baselines, first model, fault list</td><td>DAF-05 → 08</td><td><span class="tag upnext">first MAE</span></td></tr>
+        <tr><td><b>1 · Data</b></td><td>Requirements, decisions, station list, the collector</td><td>DAF-01 → 04</td><td><span class="tag review">work done, write-ups open</span></td></tr>
+        <tr><td><b>2 · Skeleton</b></td><td>Daily table ✓, time split, baselines, first model, fault list</td><td>DAF-05 → 08</td><td><span class="tag doing">here — first MAE next</span></td></tr>
         <tr><td><b>3 · Clean</b></td><td>Cleaning decisions, <code>clean.py</code> with tests, four charts, weather</td><td>DAF-09 → 12</td><td><span class="tag todo">—</span></td></tr>
         <tr><td><b>4 · Features</b></td><td>Feature contract, lags and calendar, trees, walk-forward evaluation</td><td>DAF-13 → 16</td><td><span class="tag todo">—</span></td></tr>
         <tr><td><b>5 · Answer</b></td><td>Tuning, final test, model card, live features, FastAPI</td><td>DAF-17 → 20</td><td><span class="tag upnext">the answer</span></td></tr>
@@ -166,7 +166,7 @@
 </div>
 
 <footer class="foot">
-  Generated from the project's own files on 18 Sep 2026 · <code>docs/backlog/</code>, <code>docs/decisions/</code>, <code>data/raw/stations.csv</code>, <code>data/processed/valid_stations_recent_4y.csv</code>, <code>data/raw/pm25_daily_raw.csv</code>, <code>data/raw/openaq/locationid=17/</code>.
+  Generated from the project's own files on 19 Sep 2026 · <code>docs/backlog/</code>, <code>docs/decisions/</code>, <code>data/raw/stations.csv</code>, <code>data/processed/valid_stations_recent_4y.csv</code>, <code>data/raw/pm25_daily_raw.csv</code>, <code>data/raw/openaq/locationid=17/</code>, <code>data/interim/daily_17.csv</code>.
   No libraries, no network — every chart on this site is hand-written SVG.
 </footer>
 

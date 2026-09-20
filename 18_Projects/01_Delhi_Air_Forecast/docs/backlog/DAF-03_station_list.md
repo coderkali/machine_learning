@@ -4,7 +4,7 @@ title: OpenAQ key, and Delhi's real station list
 phase: 2 — Get the data
 sprint: 1
 estimate: 2-3 h
-status: todo
+status: done
 depends_on: [DAF-01, DAF-02]
 ---
 

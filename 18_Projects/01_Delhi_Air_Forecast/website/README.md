@@ -19,12 +19,13 @@ chart is hand-written SVG and there is not a single external request on any page
 
 ## Where the numbers come from
 
-`js/data.js` and `js/s17.js` are **snapshots**, last generated on 18 Sep 2026 from:
+`js/data.js` and `js/s17.js` are **snapshots**, last generated on 19 Sep 2026 from:
 
 - `data/raw/stations.csv` — 147 PM2.5 sensor records and their coverage
 - `data/processed/valid_stations_recent_4y.csv` — the 44 that survived D-003 and D-004
 - `data/raw/pm25_daily_raw.csv` — the 3,342 cached daily readings
 - `data/raw/openaq/locationid=17/` — R K Puram's 554 raw files (into `s17.js`)
+- `data/interim/daily_17.csv` — the DAF-05 daily table (into `s17.js`)
 - `docs/backlog/*.md` — the `status:` line of each ticket
 - `docs/decisions/` — D-001 to D-005
 

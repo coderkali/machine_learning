@@ -4,6 +4,9 @@
 const $ = (sel, root) => (root || document).querySelector(sel);
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const svgNS = "http://www.w3.org/2000/svg";
+// "2025-03-01" -> "Mar". Built from the digits, never through Date, so the viewer's timezone cannot shift it a month.
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthOf = ymd => MON[parseInt(ymd.slice(5, 7), 10) - 1];
 
 /* ---------- derived progress ---------- */
 function progress() {
@@ -89,13 +92,18 @@ function drawBoard(el) {
 }
 
 /* ---------- funnel: 102 locations down to 50 usable stations ---------- */
-function drawFunnel(el) {
-  const rows = DAF_DATA.funnel, max = Math.max(...rows.map(r => r.value));
-  const tone = ["var(--ink3)", "var(--violet)", "var(--amber)", "var(--accent)", "var(--good)"];
+function drawFunnel(el) { drawFunnelRows(el, DAF_DATA.funnel, false); }
+
+// A funnel of labelled counts. With log = true, bar widths use a log scale so
+// 467,816 and 487 can sit in the same picture.
+function drawFunnelRows(el, rows, log) {
+  const tone = ["var(--ink3)", "var(--violet)", "var(--amber)", "var(--accent)", "var(--good)", "var(--rose)"];
+  const f = v => log ? Math.log10(v) : v;
+  const max = Math.max(...rows.map(r => f(r.value))), min = log ? Math.min(...rows.map(r => f(r.value))) * 0.8 : 0;
   el.innerHTML = `<div class="fn">` + rows.map((r, i) => {
-    const w = 18 + (r.value / max) * 52;
+    const w = 18 + ((f(r.value) - min) / (max - min)) * 52;
     return `<div class="fn-row">
-      <div class="fn-bar" style="width:${w}%;background:${tone[i % tone.length]}">${r.value}</div>
+      <div class="fn-bar" style="width:${w}%;background:${tone[i % tone.length]}">${r.value.toLocaleString()}</div>
       <div class="fn-txt">${esc(r.label)}<span>${esc(r.note)}</span></div>
     </div>`;
   }).join("") + `</div>`;
@@ -311,8 +319,9 @@ function drawReissue(el) {
 function drawS17Daily(el) {
   const rows = DAF_S17.daily;
   const W = 900, H = 294, L = 44, R = 16, T = 30, B = 40;
-  const t0 = new Date(rows[0].d).getTime(), t1 = new Date(rows[rows.length - 1].d).getTime();
-  const X = d => L + (new Date(d).getTime() - t0) / (t1 - t0) * (W - L - R);
+  const ms = d => Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10));
+  const t0 = ms(rows[0].d), t1 = ms(rows[rows.length - 1].d);
+  const X = d => L + (ms(d) - t0) / (t1 - t0) * (W - L - R);
   const cap = 400, Y = v => H - B - Math.min(v, cap) / cap * (H - T - B);
   let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily mean PM2.5 at R K Puram">`;
   [0, 90, 200, 400].forEach(v => {
@@ -329,7 +338,7 @@ function drawS17Daily(el) {
             <title>${r.d}: ${r.v} µg/m³${r.ok ? "" : " (fewer than 18 hours — not a valid day)"}${r.v > cap ? " — clipped" : ""}</title></circle>`;
   });
   ["2025-03-01", "2025-06-01", "2025-09-01", "2025-12-01", "2026-03-01", "2026-06-01", "2026-09-01"].forEach(d => {
-    const lab = new Date(d).toLocaleString("en-GB", { month: "short", year: "2-digit" });
+    const lab = monthOf(d) + " " + d.slice(2, 4);
     s += `<text x="${X(d)}" y="${H - B + 18}" text-anchor="middle">${lab}</text>`;
   });
   s += `<text x="${W - R}" y="${Y(90) - 6}" text-anchor="end" fill="var(--rose)" font-weight="700">90 — indoors above</text></svg>`;
@@ -358,6 +367,31 @@ function drawList(el, list) {
   ).join("") + `</ul>`;
 }
 
+/* ---------- DAF-05: invalid days by month ---------- */
+function drawInvalidMonths(el) {
+  // Every month from the first to the last, so months with no invalid days show as gaps.
+  const byM = Object.fromEntries(DAF_05.invalid_by_month.map(r => [r.m, r.n]));
+  const months = [];
+  for (let y = 2025, m = 2; y < 2026 || m <= 9; m++) {
+    if (m > 12) { m = 1; y++; }
+    months.push(`${y}-${String(m).padStart(2, "0")}`);
+  }
+  const W = 780, H = 220, L = 34, R = 10, T = 18, B = 40, bw = (W - L - R) / months.length;
+  const max = Math.max(...Object.values(byM));
+  const Y = v => H - B - v / max * (H - T - B);
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Invalid days per month">`;
+  [0, 5, 10].forEach(v => s += `<line class="grid-l" x1="${L}" y1="${Y(v)}" x2="${W - R}" y2="${Y(v)}"/><text x="${L - 7}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`);
+  months.forEach((m, i) => {
+    const n = byM[m] || 0, x = L + i * bw + bw * .18, w = bw * .64, winter = /2025-1[0-2]|2026-0[12]/.test(m);
+    if (n) s += `<rect x="${x}" y="${Y(n)}" width="${w}" height="${H - B - Y(n)}" rx="3" fill="${winter ? "var(--rose)" : "var(--ink3)"}" fill-opacity="${winter ? 1 : .55}"><title>${m}: ${n} invalid days</title></rect>
+                  <text class="vlbl" x="${x + w / 2}" y="${Y(n) - 5}" text-anchor="middle">${n}</text>`;
+    const lab = monthOf(m + "-01");
+    s += `<text x="${x + w / 2}" y="${H - B + 15}" text-anchor="middle">${lab}</text>`;
+    if (m.endsWith("-01") || i === 0) s += `<text x="${x + w / 2}" y="${H - B + 30}" text-anchor="middle" font-weight="600">${m.slice(0, 4)}</text>`;
+  });
+  el.innerHTML = s + `<line class="axis" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/></svg>`;
+}
+
 /* ---------- page boot ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const map = {
@@ -366,7 +400,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "#fill": drawFill, "#contribution-chart": drawContribution, "#dist": drawDist,
     "#season": drawSeason, "#checks": drawChecks, "#reissue-chart": drawReissue,
     "#s17-daily": drawS17Daily, "#s17-params": drawParams,
-    "#s17-verify": el => drawList(el, DAF_S17.verify)
+    "#s17-verify": el => drawList(el, DAF_S17.verify),
+    "#d5-funnel": el => drawFunnelRows(el, DAF_05.funnel, true),
+    "#d5-checks": el => drawList(el, DAF_05.checks),
+    "#d5-invalid": drawInvalidMonths
   };
   Object.entries(map).forEach(([sel, fn]) => { const el = $(sel); if (el) fn(el); });
 

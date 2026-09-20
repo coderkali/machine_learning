@@ -4,7 +4,7 @@ title: The daily table and the target column, for R K Puram
 phase: 3 — Understand and clean it
 sprint: 2
 estimate: 2-3 h
-status: todo
+status: done
 depends_on: [DAF-04]
 ---
 

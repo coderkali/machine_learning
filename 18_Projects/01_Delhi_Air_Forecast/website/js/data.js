@@ -2623,7 +2623,7 @@ const DAF_DATA = {
  }
 };
 
-// The board — read from docs/backlog/*.md front matter on 2026-09-18.
+// The board — read from docs/backlog/*.md front matter on 2026-09-19.
 const DAF_PHASES = [{"n": 1, "short": "Setup", "name": "Requirements and setup", "tickets": ["DAF-01", "DAF-02"]}, {"n": 2, "short": "Data", "name": "Get the data", "tickets": ["DAF-03", "DAF-04", "DAF-12"]}, {"n": 3, "short": "Clean", "name": "Understand and clean it", "tickets": ["DAF-05", "DAF-08", "DAF-09", "DAF-10", "DAF-11"]}, {"n": 4, "short": "Split", "name": "Split and pre-process", "tickets": ["DAF-06"]}, {"n": 5, "short": "Features", "name": "Features", "tickets": ["DAF-13", "DAF-14"]}, {"n": 6, "short": "Models", "name": "Models", "tickets": ["DAF-07", "DAF-15"]}, {"n": 7, "short": "Evaluate", "name": "Evaluation and tuning", "tickets": ["DAF-16", "DAF-17", "DAF-18"]}, {"n": 8, "short": "Ship", "name": "Service and delivery", "tickets": ["DAF-19", "DAF-20", "DAF-21", "DAF-22", "DAF-23"]}];
 const DAF_SPRINTS = [{"id": "1", "name": "Requirements, and getting the data"}, {"id": "2", "name": "The walking skeleton — first model, first MAE"}, {"id": "3", "name": "Clean data, tested code, weather"}, {"id": "4", "name": "Features, models, and Asha's metric"}, {"id": "5", "name": "The answer, and the first half of the service"}, {"id": "6", "name": "Ship it"}, {"id": "later", "name": "Later, optional"}];
 const DAF_TICKETS = [
@@ -2659,7 +2659,7 @@ const DAF_TICKETS = [
 "sprint": "1",
 "status": "review",
 "file": "DAF-04_download_sensor_history.md",
-"flag": "Code verified 2026-09-18: every technical check passes. Still open: My notes and the three explain-back answers."
+"flag": "Code verified 2026-09-18 — every technical check passes. Still open: My notes and the explain-back answers."
 },
 {
 "id": "DAF-05",
@@ -2668,7 +2668,7 @@ const DAF_TICKETS = [
 "sprint": "2",
 "status": "todo",
 "file": "DAF-05_daily_table_and_target.md",
-"flag": "Next — first step of the walking skeleton."
+"flag": "Notebook finished 2026-09-19 and its numbers independently re-checked. Still open: status todo, My notes empty."
 },
 {
 "id": "DAF-06",
@@ -2676,7 +2676,8 @@ const DAF_TICKETS = [
 "phase": 4,
 "sprint": "2",
 "status": "todo",
-"file": "DAF-06_time_split_and_baselines.md"
+"file": "DAF-06_time_split_and_baselines.md",
+"flag": "Next — notebook 06 has been started."
 },
 {
 "id": "DAF-07",
@@ -2835,9 +2836,10 @@ const DAF_BANDS = [
 ];
 
 // Where the work actually is. The one place that sets the "you are here" marker.
+// The walking skeleton cuts across phases (3 → 4 → 6), so the marker follows the next ticket.
 const DAF_HERE = {
-  phase: 2,
-  ticket: "DAF-04",
-  headline: "The collector is built and verified on R K Puram. DAF-04 needs its write-up, then the walking skeleton starts.",
-  next: "Finish DAF-04's My notes and explain-back, then DAF-05 — the daily table and the target."
+  phase: 4,
+  ticket: "DAF-06",
+  headline: "The daily table exists and is verified. Next: split by time and score Asha's method — the first MAE.",
+  next: "DAF-06 — split by time, score the two baselines, start reports/experiments.csv."
 };

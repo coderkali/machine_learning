@@ -4,7 +4,7 @@ title: Download the sensor history from the S3 archive
 phase: 2 — Get the data
 sprint: 1
 estimate: 2-3 h
-status: review
+status: done
 depends_on: [DAF-03]
 ---
 

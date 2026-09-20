@@ -1,0 +1,3 @@
+ticket,date,model,features,mae,recall_poor,notes
+DAF-06,2026-09-20,persistence,"pm25_until_17 (same day, hours 00-17)",15.728,0.471,"time split, cut 2026-03-01; 161 test rows; 17 Poor days (caught 8, missed 9, false alarms 12)"
+DAF-06,2026-09-20,yesterday_full_day,pm25_mean of previous day,16.399,0.471,"time split, cut 2026-03-01; 161 test rows; 17 Poor days (caught 8, missed 9, false alarms 10)"
