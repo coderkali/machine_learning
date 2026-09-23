@@ -1,10 +1,13 @@
 # Data faults — R K Puram (location 17)
 
-**Ticket:** DAF-08 · **Notebook:** `notebooks/08_look_what_wrong.ipynb`
+**Ticket:** DAF-08 (found) · DAF-09 (decided) · **Notebooks:** `notebooks/08_look_what_wrong.ipynb`, `notebooks/09_clean.ipynb`
 
 This is a list of what's wrong with the raw data, with evidence for each
-item. Nothing here is fixed yet — that's DAF-09, one logged decision per
-fault. Options are listed, not chosen.
+item. DAF-08 found the faults and listed options. DAF-09 chose one
+treatment per fault; each **Decision (DAF-09)** paragraph gives the choice,
+the reason and how many rows it changed. The cleaning code is
+`clean_pm25()` in `notebooks/09_clean.ipynb` (moving to
+`src/delhi_air/clean.py` in DAF-10).
 
 ## Fault 1 — Each hour has one real PM2.5 reading, not four
 
@@ -30,6 +33,14 @@ step 2a.
    something downstream treats "4 readings" as 4 independent samples (e.g.
    a variance or confidence calculation).
 
+**Decision (DAF-09): leave it. Rows changed: 0.** The hourly average of
+equal copies is the same number. DAF-09 found that in 1,668 hours (13.7%)
+the fresh reading arrives at `:15` instead of `:00`, so the `:00` slot still
+holds the previous hour's value and the average mixes in a quarter of the
+previous hour. Measured on daily means, the effect is a median of 0 and at
+most 2.1 µg/m³, which is small next to the model's ~15 µg/m³ error. The
+DAF-05 hourly average is kept.
+
 ## Fault 2 — ~11% of hours are missing, in both scattered and clustered patterns
 
 **What it is.** Comparing the full expected hourly range against the hours
@@ -50,6 +61,16 @@ all. See notebook step 2c.
 2. Leave all gaps as missing and let downstream steps (train/test split,
    model) handle absence explicitly, without inventing values for real
    outages.
+
+**Decision (DAF-09): fill holes of 1–2 hours with a straight line; leave
+longer holes empty. Rows changed: 240 hours filled.** A 1–2 hour hole
+between two real readings is a fair guess; a longer one would be made-up
+air. The limit of 2 hours is a hand-picked guess, not a measured number.
+Only holes with a real reading on **both** sides are filled. The fill runs
+**after** the broken week (Fault 7) is removed, so no guess is made from a
+bad reading. For `pm25_until_17` only, the 18 fills that needed a reading
+from 18:00 or later are not used, because Asha doesn't have that reading at
+18:00. Effect: 7 invalid days became valid.
 
 ## Fault 3 — Invalid days (DAF-05 flag) cluster in specific months, not evenly spread
 
@@ -74,6 +95,12 @@ step 2d.
 2. Leave the existing DAF-05 `valid` flag and logic untouched; this ticket
    only observes the pattern, doesn't change the flag's definition.
 
+**Decision (DAF-09): leave it. Rows changed: 0.** Most of this fault is
+Fault 2 seen at the day level. Filling short holes helped a little
+(83 → 76 invalid days before Fault 7), and the big clusters (January 2026,
+April 2025) are long outages we chose not to fill. The 18-hour rule
+(D-002) is unchanged.
+
 ## Fault 4 — Three weather parameters only exist for the last ~11 months of the span
 
 **What it is.** The raw files carry 12 parameters per station, one row per
@@ -97,6 +124,40 @@ starters reflects "didn't exist yet," not "gappy." See notebook step 2e.
 2. Don't use these parameters at all, keeping training data length
    consistent across the whole span.
 
+**Decision (DAF-09): leave it. Rows changed: 0.** The model uses PM2.5
+only, so there is nothing to clean yet. Revisit when weather features are
+added (DAF-12 to DAF-14).
+
+## Fault 7 — The sensor misbehaved for one week, 4–11 July 2025
+
+**What it is.** Found in DAF-09, not DAF-08: it surfaced when the model got
+slightly worse after cleaning. Readings jump in ways real air does not, for
+example `1 → 432 → 17` within three hours on 9 July, and `729, 951` on
+11 July in monsoon season. Diwali, by contrast, rises and falls smoothly
+over several hours.
+
+**Evidence.** Each hour is compared with the median of the 7 hours around
+it. An hour is flagged when it is more than 4× that local median and above
+200 µg/m³. Across the whole span 12 hours are flagged, and **11 of them fall
+between 4 and 11 July 2025**. The single exception is 266 µg/m³ on 6 June
+2025, which stands alone. Diwali is not flagged. See notebook step 3.7.
+
+**Rows affected.** 144 hourly readings over 8 days.
+
+**Possible treatments:**
+1. Mark the whole week invalid (a fixed date range).
+2. Blank only the flagged spike hours and clean the rest as usual.
+3. Leave it, and note it for later.
+
+**Decision (DAF-09): mark the whole week invalid. Rows changed: 144 hours
+removed, 8 days.** If the sensor was wrong at 10:00, its 1.0 at 05:00 can't
+be trusted either, so single-hour repair is not safe. The spike rule is only
+used to **find** the week. The cleaning uses the fixed dates
+`2025-07-04` to `2025-07-11`, like an incident window. Effect: 4 fake Poor
+days disappear (4, 5, 8, 11 July), and train loses 11 days in total
+(`mean_7` looks back into the removed week). All 8 days are before the cut
+date, so no test day is affected.
+
 ## Not a fault — the biggest value is plausible
 
 **What was checked.** The single largest hourly PM2.5 reading in the whole
@@ -111,6 +172,12 @@ notebook step 2b.
 **Conclusion.** No treatment needed — this is a real pollution event, not a
 sensor error. Recorded here so it isn't mistaken for one later.
 
+**Decision (DAF-09): leave it. Rows changed: 0.** Guarded by an `assert`
+in the notebook: after cleaning, the peak is still 1,753 µg/m³ at
+2025-10-21 03:00. Filling two missing hours next to it (01:00, 02:00)
+raised Diwali morning's `pm25_until_17` from 668 to 773: cleaning restored
+the peak rather than hiding it.
+
 ## Not a fault — no PM2.5 sensor swap
 
 **What was checked.** Whether `sensors_id` changes partway through the span
@@ -123,6 +190,8 @@ parameters shows exactly one `sensors_id` per parameter, no mixing. See
 notebook step 2f.
 
 **Conclusion.** No treatment needed.
+
+**Decision (DAF-09): leave it. Rows changed: 0.**
 
 ## Other parameters this station records, with coverage
 
