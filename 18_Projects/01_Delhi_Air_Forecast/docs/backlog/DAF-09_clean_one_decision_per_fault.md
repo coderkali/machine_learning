@@ -4,7 +4,7 @@ title: Clean it, one logged decision per fault — and re-score
 phase: 3 — Understand and clean it
 sprint: 3
 estimate: 3 h
-status: todo
+status: Review
 depends_on: [DAF-08]
 ---
 
