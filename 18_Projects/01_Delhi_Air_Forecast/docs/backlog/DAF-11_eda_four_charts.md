@@ -4,7 +4,7 @@ title: EDA on the daily table — the story in four charts
 phase: 3 — Understand and clean it
 sprint: 3
 estimate: 2 h
-status: todo
+status: review
 depends_on: [DAF-10]
 ---
 
