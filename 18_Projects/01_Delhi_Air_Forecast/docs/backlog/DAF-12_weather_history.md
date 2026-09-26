@@ -78,3 +78,5 @@ That is the train/serve gap `requirements.md` warns about.
 ## My notes
 
 _What the one-week comparison showed._
+
+Notebook: [12_weather_history.ipynb](../../notebooks/12_weather_history.ipynb)
