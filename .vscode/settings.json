@@ -1,0 +1,20 @@
+{
+    // Two venvs in this repo:
+    //   .venv                                  -> 3.14.4, the learning notebooks
+    //   18_Projects/01_Delhi_Air_Forecast/.venv -> 3.12.14, the project
+    // The root one is auto-discovered; the nested one is not, so VS Code fell
+    // back to Homebrew's bare python3.12 (same 3.12.14 label, no ipykernel).
+    // venvPath points the scanner at the project folder so both are offered.
+    "python.venvPath": "${workspaceFolder}/18_Projects/01_Delhi_Air_Forecast",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+
+    "python-envs.defaultEnvManager": "ms-python.python:venv",
+    "python-envs.defaultPackageManager": "ms-python.python:pip",
+    "python-envs.pythonProjects": [
+        {
+            "path": "18_Projects/01_Delhi_Air_Forecast",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
+}

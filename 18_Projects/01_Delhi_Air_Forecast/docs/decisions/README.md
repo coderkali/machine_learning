@@ -14,4 +14,8 @@ Do not write one for "I named the column `pm25`".
 
 | ID | Decision | Ticket | Date |
 |---|---|---|---|
-| _(none yet)_ | | | |
+| [D-001](D-001-predict-number-then-apply-table.md) | Predict the number, then apply the AQI table | DAF-02 | 2026-09-13 |
+| [D-002](D-002-tomorrow-24h-mean.md) | Target is tomorrow's 24-hour mean, 00:00–23:59 IST | DAF-02 | 2026-09-13 |
+| [D-003](D-003-station-selection-rule.md) | Keep stations with 730+ days of real coverage | DAF-03 | 2026-09-16 |
+| [D-004](D-004-training-date-range.md) | Train on the most recent 3–4 years | DAF-04 | 2026-09-16 |
+| [D-005](D-005-one-station-first.md) | Build version one on one station, R K Puram | DAF-04 | 2026-09-18 |

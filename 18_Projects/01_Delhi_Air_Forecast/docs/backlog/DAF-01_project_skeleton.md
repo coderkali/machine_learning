@@ -4,7 +4,7 @@ title: Project skeleton and environment
 phase: 1 — Requirements and setup
 sprint: 1
 estimate: 2-3 h
-status: todo
+status: done
 depends_on: []
 ---
 

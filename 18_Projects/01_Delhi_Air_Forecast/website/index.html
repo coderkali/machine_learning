@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Delhi Air Forecast — where the project is</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-in">
+  <a class="brand" href="index.html"><span class="dot"></span>Delhi Air Forecast</a>
+  <a class="tab" href="index.html" aria-current="page">Where we are</a>
+  <a class="tab" href="requirement.html">The requirement</a>
+  <a class="tab" href="journey.html">The tickets</a>
+  <a class="tab" href="data.html">The stations</a>
+  <a class="tab" href="dataset.html">The API cache</a>
+  <a class="tab" href="station.html">R K Puram</a>
+  <button class="themebtn" type="button">Light</button>
+</div></nav>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <p class="eyebrow">🧪 My experiment · started 12 Sep 2026</p>
+    <h1>Asha has to decide tonight whether 600 children<br>stand outside tomorrow morning.</h1>
+    <p class="lede">She checks today's air quality and assumes tomorrow is the same. That is right on most days and
+    wrong on exactly the days that matter — the evening the wind drops, the week the crop smoke arrives, the morning
+    after Diwali. This project builds the thing that tells her tomorrow's number, tonight.</p>
+  </header>
+
+  <h2 style="margin-top:44px">Where the project is</h2>
+  <p class="sub">Eight phases, 23 tickets to a running service, one sitting each. The marker is the honest position of the work.</p>
+
+  <div class="card">
+    <div id="pipeline"></div>
+    <div style="margin-top:22px">
+      <div class="bar"><i data-progress-fill style="width:5%"></i></div>
+      <p style="margin:10px 0 0;font-size:13.5px;color:var(--ink3)">
+        <b style="color:var(--good)"><span data-stat="done">1</span> verified</b> ·
+        <b style="color:var(--amber)"><span data-stat="review">2</span> waiting on verification</b> ·
+        <span data-stat="left">21</span> still to come, out of <span data-stat="total">24</span> (one of them optional).
+      </p>
+    </div>
+  </div>
+
+  <div class="grid g4" style="margin-top:16px">
+    <div class="stat a"><div class="k">554</div><div class="l">raw daily files for R K Puram, identical to S3</div></div>
+    <div class="stat v"><div class="k">487</div><div class="l">daily rows with tomorrow's answer attached</div></div>
+    <div class="stat r"><div class="k">156</div><div class="l">of those answers are Poor or worse</div></div>
+    <div class="stat m"><div class="k">1</div><div class="l">ticket from here to the first MAE</div></div>
+  </div>
+
+  <div class="next" style="margin-top:26px">
+    <h3>Next thing to do — DAF-06, the first MAE</h3>
+    <p style="color:var(--ink2);margin-bottom:10px">The daily table is built: 571 days, 488 valid, 487 with a usable target, and every
+    number re-checked against <code>data/interim/daily_17.csv</code>. The next ticket scores Asha's own method on it.</p>
+    <div class="yn">
+      <div class="row"><i>1</i><span><b style="color:var(--ink)">DAF-06</b> — choose one cut date from the calendar, count the Poor days on each side, score both baselines</span></div>
+      <div class="row"><i>2</i><span><b style="color:var(--ink)">DAF-07</b> — Ridge in a pipeline. Does it beat persistence by 10%?</span></div>
+      <div class="row"><i>·</i><span><b style="color:var(--ink)">Paperwork</b> — DAF-04 and DAF-05 both have empty My notes, and DAF-05 still reads <code>todo</code></span></div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:16px;border-left-color:var(--good);background:rgba(var(--good-rgb),.06)">
+    <b style="color:var(--good)">Resolved: the station problem.</b> The 44-station list kept retired sensors at 37 stations.
+    <a href="journey.html#decisions">D-005</a> sidesteps it: version one is built on <b>one</b> station, R K Puram, already on disk
+    and still reporting. Widening to more stations is an optional ticket at the end (DAF-24). <a href="station.html">Why R K Puram →</a>
+  </div>
+
+  <div class="note" style="margin-top:16px">
+    <b>The board is behind the work.</b> <code>DAF-03</code> and <code>DAF-05</code> still read <code>todo</code> although their
+    work is finished; <code>DAF-02</code> and <code>DAF-04</code> read <code>review</code>. The board on this site shows what the files
+    say, so it will catch up as soon as they do.
+  </div>
+
+  <h2>What has actually been built</h2>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card">
+      <span class="tag done">done</span>
+      <h3 style="margin-top:12px">A real project, not a notebook</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span>Folder tree: <code>data/</code>, <code>src/</code>, <code>tests/</code>, <code>models/</code>, <code>app/</code></span></li>
+        <li><span class="m y">✓</span><span><code>.venv</code> with pinned dependencies</span></li>
+        <li><span class="m y">✓</span><span><code>delhi_air</code> installed editable</span></li>
+        <li><span class="m y">✓</span><span>The API key lives in <code>.env</code>, never in the repo</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag review">in review</span>
+      <h3 style="margin-top:12px">A requirement you can fail</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span>Target: tomorrow's 24-hour mean PM2.5</span></li>
+        <li><span class="m y">✓</span><span>Decided at 18:00 IST, with 18:00 information only</span></li>
+        <li><span class="m y">✓</span><span>Must beat "tomorrow = today" by 10% MAE</span></li>
+        <li><span class="m y">✓</span><span>…without losing recall on Poor-or-worse days</span></li>
+      </ul>
+      <p style="margin:12px 0 0"><a href="requirement.html">Read the requirement →</a></p>
+    </div>
+    <div class="card">
+      <span class="tag done">done</span>
+      <h3 style="margin-top:12px">Five decisions on the record</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span><b>D-001</b> predict the number, then the band</span></li>
+        <li><span class="m y">✓</span><span><b>D-002</b> tomorrow's 24-hour mean, IST</span></li>
+        <li><span class="m y">✓</span><span><b>D-003 / D-004</b> 730-day gate, four-year window — parked</span></li>
+        <li><span class="m y">✓</span><span><b>D-005</b> one station first: R K Puram</span></li>
+      </ul>
+      <p style="margin:12px 0 0"><a href="journey.html#decisions">All decisions →</a></p>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card" style="border-color:rgba(var(--accent-rgb),.45)">
+      <span class="tag review">code verified</span>
+      <h3 style="margin-top:12px">A collector you can re-run</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span><code>python -m delhi_air.collect_openaq</code> with a real CLI</span></li>
+        <li><span class="m y">✓</span><span>Second run: 0 downloaded, 554 skipped</span></li>
+        <li><span class="m y">✓</span><span>Files byte-identical to the S3 archive</span></li>
+        <li><span class="m n">·</span><span>Write-up still open</span></li>
+      </ul>
+      <p style="margin:12px 0 0"><a href="station.html">The collector and its data →</a></p>
+    </div>
+    <div class="card">
+      <span class="tag todo">superseded</span>
+      <h3 style="margin-top:12px">The first API cache</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span>3,342 validated daily rows over 44 sensors</span></li>
+        <li><span class="m n">·</span><span>5.2% coverage; two sensors carry 64%</span></li>
+        <li><span class="m n">·</span><span>Kept as the record of why D-005 was needed</span></li>
+      </ul>
+      <p style="margin:12px 0 0"><a href="dataset.html">What it showed →</a></p>
+    </div>
+    <div class="card" style="border-color:rgba(var(--accent-rgb),.45)">
+      <span class="tag done">verified</span>
+      <h3 style="margin-top:12px">The daily table and target</h3>
+      <ul class="ck">
+        <li><span class="m y">✓</span><span>15-min → hourly → one row per IST day</span></li>
+        <li><span class="m y">✓</span><span><code>valid</code> = 18+ hours; 83 invalid days kept and flagged</span></li>
+        <li><span class="m y">✓</span><span>Target by calendar date, never from an invalid day</span></li>
+        <li><span class="m y">✓</span><span>487 usable rows in <code>data/interim/daily_17.csv</code></span></li>
+      </ul>
+      <p style="margin:12px 0 0"><a href="station.html#daily-table">How it was built →</a></p>
+    </div>
+  </div>
+
+  <h2>The road from here to a running service</h2>
+  <p class="sub">The plan after D-005: one station, end to end. The skeleton comes first, so there is a real score before any polishing.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Sprint</th><th>What it produces</th><th>Tickets</th><th>Milestone</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 · Data</b></td><td>Requirements, decisions, station list, the collector</td><td>DAF-01 → 04</td><td><span class="tag review">work done, write-ups open</span></td></tr>
+        <tr><td><b>2 · Skeleton</b></td><td>Daily table ✓, time split, baselines, first model, fault list</td><td>DAF-05 → 08</td><td><span class="tag doing">here — first MAE next</span></td></tr>
+        <tr><td><b>3 · Clean</b></td><td>Cleaning decisions, <code>clean.py</code> with tests, four charts, weather</td><td>DAF-09 → 12</td><td><span class="tag todo">—</span></td></tr>
+        <tr><td><b>4 · Features</b></td><td>Feature contract, lags and calendar, trees, walk-forward evaluation</td><td>DAF-13 → 16</td><td><span class="tag todo">—</span></td></tr>
+        <tr><td><b>5 · Answer</b></td><td>Tuning, final test, model card, live features, FastAPI</td><td>DAF-17 → 20</td><td><span class="tag upnext">the answer</span></td></tr>
+        <tr><td><b>6 · Ship</b></td><td>Mocked tests, Docker, README and retrospective</td><td>DAF-21 → 23</td><td><span class="tag upnext">Asha gets a number</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:16px"><a href="journey.html">Open the full board, ticket by ticket →</a></p>
+
+</div>
+
+<footer class="foot">
+  Generated from the project's own files on 19 Sep 2026 · <code>docs/backlog/</code>, <code>docs/decisions/</code>, <code>data/raw/stations.csv</code>, <code>data/processed/valid_stations_recent_4y.csv</code>, <code>data/raw/pm25_daily_raw.csv</code>, <code>data/raw/openaq/locationid=17/</code>, <code>data/interim/daily_17.csv</code>.
+  No libraries, no network — every chart on this site is hand-written SVG.
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/s17.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>
