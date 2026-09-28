@@ -1,0 +1,115 @@
+1
+00:00:00,030 --> 00:00:02,610
+Meera reads biopsy slides. Everyone comes
+
+2
+00:00:02,610 --> 00:00:04,770
+back as 30 numbers, and she needs
+
+3
+00:00:04,770 --> 00:00:07,260
+one word, malignant or benign.
+
+4
+00:00:07,633 --> 00:00:09,293
+The obvious move is to point straight
+
+5
+00:00:09,293 --> 00:00:11,043
+at the other group's average. The
+
+6
+00:00:11,043 --> 00:00:13,143
+difference between the centers. Here
+
+7
+00:00:13,143 --> 00:00:16,433
+that's four, five, it's often wrong.
+
+8
+00:00:16,600 --> 00:00:20,010
+Step one, average each class. Class one
+
+9
+00:00:20,010 --> 00:00:23,810
+centers at 2.5, 3.5, class two at
+
+10
+00:00:23,810 --> 00:00:24,640
+6.5, 8.5.
+
+11
+00:00:26,643 --> 00:00:29,273
+Step two, measure how each class spreads
+
+12
+00:00:29,273 --> 00:00:31,543
+around its own center. Class two isn't
+
+13
+00:00:31,543 --> 00:00:33,933
+round, it leans hard in one direction.
+
+14
+00:00:34,167 --> 00:00:37,027
+Step three, correct the naive guess for
+
+15
+00:00:37,027 --> 00:00:40,037
+that lean. The real answer is 10
+
+16
+00:00:40,037 --> 00:00:42,667
+minus three, tilted away from the obvious
+
+17
+00:00:42,667 --> 00:00:43,467
+guess.
+
+18
+00:00:43,610 --> 00:00:47,400
+Step four, project every point onto that
+
+19
+00:00:47,400 --> 00:00:49,490
+line. Class one lands at 11 and
+
+20
+00:00:49,490 --> 00:00:51,840
+18. Class two lands at 39 and
+
+21
+00:00:51,840 --> 00:00:54,100
+40. A clean gap with nothing in
+
+22
+00:00:54,100 --> 00:00:55,140
+between.
+
+23
+00:00:55,383 --> 00:00:57,453
+Check it against scikit-learn on the same
+
+24
+00:00:57,453 --> 00:01:00,893
+toy points, same direction. Then scale it
+
+25
+00:01:00,893 --> 00:01:05,133
+up. 30 real features, 569 real biopsies.
+
+26
+00:01:05,470 --> 00:01:07,440
+Don't chase the direction with the most
+
+27
+00:01:07,440 --> 00:01:10,620
+spread. That's PCA, and it can pick
+
+28
+00:01:10,620 --> 00:01:12,990
+the wrong axis. Chase the direction with
+
+29
+00:01:12,990 --> 00:01:15,020
+the widest gap between groups.

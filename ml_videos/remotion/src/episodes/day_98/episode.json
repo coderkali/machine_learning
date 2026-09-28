@@ -1,0 +1,67 @@
+{
+  "day": 98,
+  "slug": "voicetest_kali",
+  "title": "Start Here",
+  "topic": "Why ML + the 84-day map",
+  "badge": "START HERE",
+  "next": {
+    "day": 1,
+    "title": "What is Machine Learning?"
+  },
+  "thumbnail": {
+    "blocks": [
+      {
+        "text": "WHY JAVA DEVS",
+        "style": "black"
+      },
+      {
+        "text": "NEED",
+        "style": "white"
+      },
+      {
+        "text": "ML",
+        "style": "red"
+      },
+      {
+        "text": "THE 84-DAY MAP",
+        "style": "yellow"
+      }
+    ],
+    "diagram": {
+      "source": "claude/SERIES_ROADMAP.md §4 (arcs)",
+      "rows": [
+        {
+          "title": "ONE IDEA A DAY",
+          "tone": "good",
+          "items": [
+            "PYTHON",
+            "->",
+            "MATH",
+            "->",
+            "DATA",
+            "->",
+            {
+              "label": "ML",
+              "fill": "yellow"
+            },
+            "->",
+            {
+              "label": "SHIP",
+              "fill": "green"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "chapters": [
+    {
+      "beat": "question",
+      "label": "WHY"
+    }
+  ],
+  "titleCard": {
+    "line": "ML FOR JAVA DEVELOPERS",
+    "sub": "ML concepts, explained visually"
+  }
+}

@@ -35,7 +35,20 @@
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
-    "create-subtitles": "node sub.mjs"
+    "create-subtitles": "node sub.mjs",
+    "visual:preview": "remotion studio src/visual-lda/entry.tsx --port=3001",
+    "visual:render": "remotion render src/visual-lda/entry.tsx VisualLDA out/lda_visual_v3.mp4 --codec=h264 --crf=18 --concurrency=4",
+    "series:studio": "remotion studio src/index.ts --port=3002",
+    "voice": "node scripts/voice.mjs",
+    "master": "node scripts/master.mjs",
+    "captions": "node scripts/captions.mjs",
+    "timeline": "node scripts/timeline.mjs",
+    "thumb": "node scripts/thumb.mjs",
+    "draft": "node scripts/draft.mjs",
+    "qa": "node scripts/qa.mjs",
+    "autopick": "node scripts/autopick.mjs",
+    "render": "node scripts/render.mjs",
+    "publish": "node scripts/publish.mjs"
   },
   "sideEffects": [
     "*.css"

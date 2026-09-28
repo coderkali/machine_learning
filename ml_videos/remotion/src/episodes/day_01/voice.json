@@ -1,0 +1,143 @@
+{
+  "day": 1,
+  "source": "claude/episodes/day_01/voiceover_sheet_v2.md (new script approved 2026-09-27 after viewer feedback)",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "2026-09-27 by the creator (series voice, replaces Brian)"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "hook",
+      "type": "hook",
+      "text": "This is Day 1 of ML for a Java developer. What is machine learning? Your spam folder uses it every day. A \"you won a prize\" email lands in spam, and nobody wrote a rule for it. So how did it know?",
+      "v3": {
+        "text": "[confident] This is Day 1 of ML for a Java developer. [curious] What is machine learning? Your spam folder uses it every day. A \"you won a prize\" email lands in spam… and nobody wrote a rule for it. [softly] So how did it know?",
+        "stability": 0.5
+      },
+      "v2": {
+        "text": "This is Day 1 of ML for a Java developer. <break time=\"0.4s\" /> What is machine learning? <break time=\"0.3s\" /> Your spam folder uses it every day. A \"you won a prize\" email lands in spam, <break time=\"0.4s\" /> and nobody wrote a rule for it. <break time=\"0.7s\" /> So how did it know?",
+        "stability": 0.4,
+        "style": 0.35,
+        "speed": 0.97
+      },
+      "seed": 1029165336,
+      "chosen": "day_01/takes/hook_v3_t4.mp3",
+      "holdAfter": 0
+    },
+    {
+      "id": "rules",
+      "type": "problem",
+      "text": "As Java developers, we'd write a rule: if the email says prize, it's spam. But real emails say prize too. So we add exceptions, and the if-else grows into a maze. We can't write a rule for every case.",
+      "v3": {
+        "text": "[matter-of-fact] As Java developers, we'd write a rule: if the email says prize, it's spam. [sarcastic] But real emails say prize too. So we add exceptions… and the if-else grows into a maze. [sighs] We can't write a rule for every case.",
+        "stability": 0.5
+      },
+      "v2": {
+        "text": "As Java developers, we'd write a rule: if the email says prize, it's spam. But real emails say prize too. So we add exceptions, and the if-else grows into a maze. <break time=\"0.5s\" /> We can't write a rule for every case.",
+        "stability": 0.45,
+        "style": 0.3,
+        "speed": 1.03
+      },
+      "seed": 2944857575,
+      "chosen": "day_01/takes/rules_v3_t1.mp3",
+      "holdAfter": 0
+    },
+    {
+      "id": "shift",
+      "type": "insight",
+      "text": "Machine learning flips it. Instead of writing the rules, we show the computer examples.",
+      "v3": {
+        "text": "[thoughtful] Machine learning flips it. [softly] Instead of writing the rules… we show the computer examples.",
+        "stability": 0.5
+      },
+      "v2": {
+        "text": "Machine learning flips it. <break time=\"0.5s\" /> Instead of writing the rules, <break time=\"0.3s\" /> we show the computer examples.",
+        "stability": 0.55,
+        "style": 0.2,
+        "speed": 0.92
+      },
+      "seed": 2096648721,
+      "chosen": "day_01/takes/shift_v3_t2.mp3",
+      "holdAfter": 0
+    },
+    {
+      "id": "training",
+      "type": "explain",
+      "text": "Give it emails labeled spam or safe. It finds the clues spam tends to have, and corrects itself when it's wrong. What it learns is called a model. Learning it is called training.",
+      "v3": {
+        "text": "[confident] Give it emails labeled spam or safe. It finds the clues spam tends to have, and corrects itself when it's wrong. What it learns… is called a model. Learning it is called training.",
+        "stability": 0.5
+      },
+      "v2": {
+        "text": "Give it emails labeled spam or safe. <break time=\"0.3s\" /> It finds the clues spam tends to have, and corrects itself when it's wrong. <break time=\"0.7s\" /> What it learns is called a model. <break time=\"0.4s\" /> Learning it is called training.",
+        "stability": 0.5,
+        "style": 0.25,
+        "speed": 1
+      },
+      "seed": 481806675,
+      "chosen": "day_01/takes/training_v3_t1.mp3",
+      "holdAfter": 0
+    },
+    {
+      "id": "prediction",
+      "type": "caveat",
+      "text": "Now a new email arrives. The model checks the clues and says: likely spam. It's a prediction, not a promise, so people still check.",
+      "v3": {
+        "text": "[curious] Now a new email arrives. The model checks the clues and says… likely spam. [honestly] It's a prediction, not a promise… [warmly] so people still check.",
+        "stability": 0.5
+      },
+      "v2": {
+        "text": "Now a new email arrives. The model checks the clues and says: <break time=\"0.4s\" /> likely spam. <break time=\"0.5s\" /> It's a prediction, not a promise, <break time=\"0.3s\" /> so people still check.",
+        "stability": 0.55,
+        "style": 0.2,
+        "speed": 0.94
+      },
+      "seed": 618228401,
+      "chosen": "day_01/takes/prediction_v3_t2.mp3",
+      "holdAfter": 0
+    },
+    {
+      "id": "java",
+      "type": "java",
+      "text": "So in Java terms: no more if-else maze. Just two steps: train on examples, then predict on new input. We'll write that code later in the series.",
+      "v3": {
+        "text": "[warmly] So in Java terms: no more if-else maze. Just two steps: train on examples… then predict on new input. [smiling] We'll write that code later in the series.",
+        "stability": 0.5
+      },
+      "v2": {
+        "text": "So in Java terms: no more if-else maze. Just two steps: <break time=\"0.3s\" /> train on examples, then predict on new input. <break time=\"0.4s\" /> We'll write that code later in the series.",
+        "stability": 0.4,
+        "style": 0.4,
+        "speed": 0.97
+      },
+      "seed": 2394331031,
+      "chosen": "day_01/takes/java_v3_t3.mp3",
+      "holdAfter": 0,
+      "pickedBy": "manual"
+    },
+    {
+      "id": "takeaway",
+      "type": "done",
+      "text": "Machine learning means learning from examples to predict new cases. Day 1 done! Next, Day 2: before we teach machines, we learn the language ML speaks, through Java eyes.",
+      "v3": {
+        "text": "[confident] Machine learning means learning from examples to predict new cases. [excited] Day 1 done! [mischievously] Next, Day 2… before we teach machines, we learn the language ML speaks… through Java eyes.",
+        "stability": 0.5
+      },
+      "v2": {
+        "text": "Machine learning means learning from examples to predict new cases. <break time=\"0.4s\" /> Day 1 done. <break time=\"0.8s\" /> Next, Day 2: <break time=\"0.3s\" /> before we teach machines, we learn the language ML speaks, through Java eyes.",
+        "stability": 0.4,
+        "style": 0.4,
+        "speed": 1
+      },
+      "seed": 2894620121,
+      "chosen": "day_01/takes/takeaway_v3_t5.mp3",
+      "holdAfter": 0
+    }
+  ]
+}

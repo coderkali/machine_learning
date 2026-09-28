@@ -1,7 +1,6 @@
-// This is your entry file! Refer to it when you render:
-// npx remotion render <entry-file> HelloWorld out/video.mp4
-
+// Entry for the reusable series pipeline (Day 2+ and Day 1 v3). Day 1's original compositions
+// stay in src/day01/entry.tsx; LDA stays in src/visual-lda/entry.tsx.
 import { registerRoot } from "remotion";
-import { RemotionRoot } from "./Root";
+import { SeriesRoot } from "./series/Root";
 
-registerRoot(RemotionRoot);
+registerRoot(SeriesRoot);
