@@ -1,0 +1,260 @@
+[
+  {
+    "id": "hook",
+    "audio": "day01/audio_v2_final/hook.wav",
+    "duration": 9,
+    "frames": 270,
+    "speechFrames": 270,
+    "captions": [
+      {
+        "text": "Your inbox files a ‘you won a",
+        "startFrame": 0,
+        "endFrame": 90
+      },
+      {
+        "text": "prize’ email as spam.",
+        "startFrame": 90,
+        "endFrame": 141
+      },
+      {
+        "text": "Nobody wrote a rule for it.",
+        "startFrame": 141,
+        "endFrame": 218
+      },
+      {
+        "text": "How did it know?",
+        "startFrame": 218,
+        "endFrame": 270
+      }
+    ]
+  },
+  {
+    "id": "rules",
+    "audio": "day01/audio_v2_final/rules.wav",
+    "duration": 12,
+    "frames": 360,
+    "speechFrames": 360,
+    "captions": [
+      {
+        "text": "Rule: prize means spam.",
+        "startFrame": 0,
+        "endFrame": 53
+      },
+      {
+        "text": "Real offers use that word too.",
+        "startFrame": 53,
+        "endFrame": 133
+      },
+      {
+        "text": "Add exceptions, and the rulebook becomes a",
+        "startFrame": 133,
+        "endFrame": 226
+      },
+      {
+        "text": "maze.",
+        "startFrame": 226,
+        "endFrame": 240
+      },
+      {
+        "text": "Computers follow rules perfectly; people",
+        "startFrame": 240,
+        "endFrame": 306
+      },
+      {
+        "text": "can’t anticipate every case.",
+        "startFrame": 306,
+        "endFrame": 360
+      }
+    ]
+  },
+  {
+    "id": "shift",
+    "audio": "day01/audio_v2_final/shift.wav",
+    "duration": 10,
+    "frames": 300,
+    "speechFrames": 300,
+    "captions": [
+      {
+        "text": "As the problem grew messier, a better",
+        "startFrame": 0,
+        "endFrame": 99
+      },
+      {
+        "text": "question emerged: what if we showed",
+        "startFrame": 99,
+        "endFrame": 185
+      },
+      {
+        "text": "computers examples instead of spelling out",
+        "startFrame": 185,
+        "endFrame": 271
+      },
+      {
+        "text": "every answer?",
+        "startFrame": 271,
+        "endFrame": 300
+      }
+    ]
+  },
+  {
+    "id": "training",
+    "audio": "day01/audio_v2_final/training.wav",
+    "duration": 15,
+    "frames": 450,
+    "speechFrames": 450,
+    "captions": [
+      {
+        "text": "Label emails spam or safe.",
+        "startFrame": 0,
+        "endFrame": 66
+      },
+      {
+        "text": "The computer compares them, finds clues",
+        "startFrame": 66,
+        "endFrame": 145
+      },
+      {
+        "text": "that tend to appear together, and adjusts",
+        "startFrame": 145,
+        "endFrame": 238
+      },
+      {
+        "text": "its pattern from feedback.",
+        "startFrame": 238,
+        "endFrame": 291
+      },
+      {
+        "text": "That learned pattern is a model; training",
+        "startFrame": 291,
+        "endFrame": 383
+      },
+      {
+        "text": "is how examples shape it.",
+        "startFrame": 383,
+        "endFrame": 450
+      }
+    ]
+  },
+  {
+    "id": "prediction",
+    "audio": "day01/audio_v2_final/prediction.wav",
+    "duration": 13,
+    "frames": 390,
+    "speechFrames": 390,
+    "captions": [
+      {
+        "text": "A new email arrives.",
+        "startFrame": 0,
+        "endFrame": 52
+      },
+      {
+        "text": "The model checks its clues and predicts",
+        "startFrame": 52,
+        "endFrame": 143
+      },
+      {
+        "text": "likely spam.",
+        "startFrame": 143,
+        "endFrame": 169
+      },
+      {
+        "text": "Prediction isn’t a promise: a strange new",
+        "startFrame": 169,
+        "endFrame": 260
+      },
+      {
+        "text": "message can fool it, so people stay",
+        "startFrame": 260,
+        "endFrame": 351
+      },
+      {
+        "text": "in the loop.",
+        "startFrame": 351,
+        "endFrame": 390
+      }
+    ]
+  },
+  {
+    "id": "java",
+    "audio": "day01/audio_v2_final/java.wav",
+    "duration": 15,
+    "frames": 450,
+    "speechFrames": 450,
+    "captions": [
+      {
+        "text": "For a Java developer, picture replacing a",
+        "startFrame": 0,
+        "endFrame": 101
+      },
+      {
+        "text": "growing if-statement maze with two steps:",
+        "startFrame": 101,
+        "endFrame": 188
+      },
+      {
+        "text": "train on labeled examples, then call",
+        "startFrame": 188,
+        "endFrame": 275
+      },
+      {
+        "text": "predict for new input.",
+        "startFrame": 275,
+        "endFrame": 333
+      },
+      {
+        "text": "Today, remember the shift; we’ll code it",
+        "startFrame": 333,
+        "endFrame": 435
+      },
+      {
+        "text": "later.",
+        "startFrame": 435,
+        "endFrame": 450
+      }
+    ]
+  },
+  {
+    "id": "takeaway",
+    "audio": "day01/audio_v2_final/takeaway.wav",
+    "duration": 14,
+    "frames": 420,
+    "speechFrames": 420,
+    "captions": [
+      {
+        "text": "Machine learning learns from examples to",
+        "startFrame": 0,
+        "endFrame": 78
+      },
+      {
+        "text": "predict new cases.",
+        "startFrame": 78,
+        "endFrame": 118
+      },
+      {
+        "text": "Examples matter, and people still check",
+        "startFrame": 118,
+        "endFrame": 196
+      },
+      {
+        "text": "results.",
+        "startFrame": 196,
+        "endFrame": 210
+      },
+      {
+        "text": "Day 1 done.",
+        "startFrame": 210,
+        "endFrame": 249
+      },
+      {
+        "text": "Next: what counts as data, and how",
+        "startFrame": 249,
+        "endFrame": 341
+      },
+      {
+        "text": "do we load it in Java?",
+        "startFrame": 341,
+        "endFrame": 420
+      }
+    ]
+  }
+]

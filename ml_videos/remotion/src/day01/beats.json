@@ -1,0 +1,330 @@
+[
+  {
+    "id": "hook",
+    "audio": "day01/audio/hook.mp3",
+    "duration": 9.705941,
+    "frames": 331,
+    "speechFrames": 291,
+    "captions": [
+      {
+        "text": "Your inbox moves a strange ‘you won",
+        "startFrame": 0,
+        "endFrame": 65
+      },
+      {
+        "text": "a prize’ email into spam.",
+        "startFrame": 65,
+        "endFrame": 112
+      },
+      {
+        "text": "You never taught it that exact message.",
+        "startFrame": 112,
+        "endFrame": 178
+      },
+      {
+        "text": "So how did it know?",
+        "startFrame": 178,
+        "endFrame": 225
+      },
+      {
+        "text": "And what if tomorrow’s spam looks",
+        "startFrame": 225,
+        "endFrame": 281
+      },
+      {
+        "text": "different?",
+        "startFrame": 281,
+        "endFrame": 291
+      }
+    ]
+  },
+  {
+    "id": "rules",
+    "audio": "day01/audio/rules.mp3",
+    "duration": 19.597642,
+    "frames": 628,
+    "speechFrames": 588,
+    "captions": [
+      {
+        "text": "We could write an instruction: if an",
+        "startFrame": 0,
+        "endFrame": 79
+      },
+      {
+        "text": "email says ‘prize,’ send it to spam.",
+        "startFrame": 79,
+        "endFrame": 158
+      },
+      {
+        "text": "But a real message might say prize",
+        "startFrame": 158,
+        "endFrame": 237
+      },
+      {
+        "text": "too.",
+        "startFrame": 237,
+        "endFrame": 248
+      },
+      {
+        "text": "Add a rule for unknown senders, and",
+        "startFrame": 248,
+        "endFrame": 327
+      },
+      {
+        "text": "a new colleague’s email disappears.",
+        "startFrame": 327,
+        "endFrame": 384
+      },
+      {
+        "text": "More rules mean more exceptions.",
+        "startFrame": 384,
+        "endFrame": 441
+      },
+      {
+        "text": "The computer follows them perfectly; we",
+        "startFrame": 441,
+        "endFrame": 508
+      },
+      {
+        "text": "just can’t describe every possibility in",
+        "startFrame": 508,
+        "endFrame": 576
+      },
+      {
+        "text": "advance.",
+        "startFrame": 576,
+        "endFrame": 588
+      }
+    ]
+  },
+  {
+    "id": "shift",
+    "audio": "day01/audio/shift.mp3",
+    "duration": 16.439728,
+    "frames": 533,
+    "speechFrames": 493,
+    "captions": [
+      {
+        "text": "So people asked a new question: can",
+        "startFrame": 0,
+        "endFrame": 82
+      },
+      {
+        "text": "we show a computer what happened before,",
+        "startFrame": 82,
+        "endFrame": 164
+      },
+      {
+        "text": "and let it find useful patterns?",
+        "startFrame": 164,
+        "endFrame": 234
+      },
+      {
+        "text": "We give it examples: these emails were",
+        "startFrame": 234,
+        "endFrame": 316
+      },
+      {
+        "text": "spam; these were legitimate.",
+        "startFrame": 316,
+        "endFrame": 363
+      },
+      {
+        "text": "Computers can compare examples and notice",
+        "startFrame": 363,
+        "endFrame": 434
+      },
+      {
+        "text": "clues that often appear together.",
+        "startFrame": 434,
+        "endFrame": 493
+      }
+    ]
+  },
+  {
+    "id": "training",
+    "audio": "day01/audio/training.mp3",
+    "duration": 15.046531,
+    "frames": 491,
+    "speechFrames": 451,
+    "captions": [
+      {
+        "text": "A suspicious link might matter.",
+        "startFrame": 0,
+        "endFrame": 53
+      },
+      {
+        "text": "Certain wording might matter.",
+        "startFrame": 53,
+        "endFrame": 96
+      },
+      {
+        "text": "But no single clue is a perfect",
+        "startFrame": 96,
+        "endFrame": 171
+      },
+      {
+        "text": "rule.",
+        "startFrame": 171,
+        "endFrame": 182
+      },
+      {
+        "text": "As the computer sees more examples, it",
+        "startFrame": 182,
+        "endFrame": 257
+      },
+      {
+        "text": "adjusts its pattern.",
+        "startFrame": 257,
+        "endFrame": 289
+      },
+      {
+        "text": "That learned pattern is called a model.",
+        "startFrame": 289,
+        "endFrame": 365
+      },
+      {
+        "text": "Using examples to shape it is called",
+        "startFrame": 365,
+        "endFrame": 440
+      },
+      {
+        "text": "training.",
+        "startFrame": 440,
+        "endFrame": 451
+      }
+    ]
+  },
+  {
+    "id": "prediction",
+    "audio": "day01/audio/prediction.mp3",
+    "duration": 17.136327,
+    "frames": 554,
+    "speechFrames": 514,
+    "captions": [
+      {
+        "text": "Now a never-before-seen email arrives.",
+        "startFrame": 0,
+        "endFrame": 62
+      },
+      {
+        "text": "The model estimates whether it looks more",
+        "startFrame": 62,
+        "endFrame": 150
+      },
+      {
+        "text": "like the spam examples or the legitimate",
+        "startFrame": 150,
+        "endFrame": 238
+      },
+      {
+        "text": "ones.",
+        "startFrame": 238,
+        "endFrame": 250
+      },
+      {
+        "text": "It might say, ‘Likely spam.",
+        "startFrame": 250,
+        "endFrame": 313
+      },
+      {
+        "text": "’ That is a prediction, not a",
+        "startFrame": 313,
+        "endFrame": 401
+      },
+      {
+        "text": "guarantee or human understanding.",
+        "startFrame": 401,
+        "endFrame": 451
+      },
+      {
+        "text": "Unusual messages can still fool it.",
+        "startFrame": 451,
+        "endFrame": 526
+      }
+    ]
+  },
+  {
+    "id": "quality",
+    "audio": "day01/audio/quality.mp3",
+    "duration": 15.928889,
+    "frames": 518,
+    "speechFrames": 478,
+    "captions": [
+      {
+        "text": "The answer depends on the examples.",
+        "startFrame": 0,
+        "endFrame": 71
+      },
+      {
+        "text": "If they’re incomplete or misleading,",
+        "startFrame": 71,
+        "endFrame": 131
+      },
+      {
+        "text": "predictions can be too.",
+        "startFrame": 131,
+        "endFrame": 179
+      },
+      {
+        "text": "People choose examples, train the model,",
+        "startFrame": 179,
+        "endFrame": 250
+      },
+      {
+        "text": "then check how it handles new cases.",
+        "startFrame": 250,
+        "endFrame": 334
+      },
+      {
+        "text": "Machine learning isn’t a magic button;",
+        "startFrame": 334,
+        "endFrame": 406
+      },
+      {
+        "text": "people guide and evaluate the process.",
+        "startFrame": 406,
+        "endFrame": 478
+      }
+    ]
+  },
+  {
+    "id": "takeaway",
+    "audio": "day01/audio/takeaway.mp3",
+    "duration": 13.049615,
+    "frames": 485,
+    "speechFrames": 391,
+    "captions": [
+      {
+        "text": "That’s machine learning: learn a pattern",
+        "startFrame": 0,
+        "endFrame": 83
+      },
+      {
+        "text": "from examples, then use it to predict",
+        "startFrame": 83,
+        "endFrame": 181
+      },
+      {
+        "text": "something new.",
+        "startFrame": 181,
+        "endFrame": 209
+      },
+      {
+        "text": "Day one starts here.",
+        "startFrame": 209,
+        "endFrame": 265
+      },
+      {
+        "text": "Next, we’ll look at what those",
+        "startFrame": 265,
+        "endFrame": 349
+      },
+      {
+        "text": "examples—the data—actually contain.",
+        "startFrame": 349,
+        "endFrame": 391
+      }
+    ]
+  }
+]

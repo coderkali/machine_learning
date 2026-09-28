@@ -8,6 +8,31 @@ _instructor/
 .ipynb_checkpoints/
 __pycache__/
 *.pyc
+.venv/
+.venv-*/
+venv/
+ml_videos/.venv/
+pizza_env/
+
+# Local secrets and generated video-project files
+.env
+.env.*
+!.env.example
+node_modules/
+ml_videos/media/
+ml_videos/remotion/out/
+ml_videos/**/*.mp4
 
 # macOS
 .DS_Store
+
+# Video pipeline: third-party tool (its own git repo + large model files)
+ml_videos/remotion/whisper.cpp/
+# Voice audio: large, paid ElevenLabs takes + mastered mixes (regenerable from voice.json seeds)
+ml_videos/remotion/public/day_*/takes/
+ml_videos/remotion/public/day_*/mix/
+ml_videos/remotion/public/day_*/placeholder/
+# Local "moved, not deleted" copies
+ml_videos/_backup/
+# Remotion build cache
+ml_videos/remotion/build/
