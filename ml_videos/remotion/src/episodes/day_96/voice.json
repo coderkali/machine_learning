@@ -1,0 +1,110 @@
+{
+  "day": 96,
+  "source": "VOICE SAMPLE (not an episode): neutral tech narration in the creator's cloned voice for friends' review",
+  "voice": {
+    "name": "Kali (Instant Voice Clone)",
+    "voiceId": "dEibRDzkMexIgcF5EEiJ",
+    "accent": "creator's own voice",
+    "model": "v3",
+    "chosen": "2026-09-28 voice test"
+  },
+  "leadIn": 0.1,
+  "endHold": 1,
+  "beats": [
+    {
+      "id": "hook",
+      "type": "hook",
+      "text": "What actually happens when you type a web address and press Enter? It feels instant, but a lot happens in less than a second.",
+      "v3": {
+        "text": "[excited] What actually happens when you type a web address and press Enter? [curious] It feels instant… but a LOT happens in less than a second!",
+        "stability": 0
+      },
+      "v2": {
+        "text": "What actually happens when you type a web address and press Enter? It feels instant, but a lot happens in less than a second.",
+        "stability": 0.45,
+        "style": 0.3,
+        "speed": 1
+      },
+      "seed": 24929496,
+      "chosen": "day_96/takes/hook_v3_t3.mp3",
+      "holdAfter": 0,
+      "pickedBy": "manual"
+    },
+    {
+      "id": "dns",
+      "type": "explain",
+      "text": "First, your browser asks a DNS server to turn the name into an IP address. Think of it as the internet's phone book.",
+      "v3": {
+        "text": "[enthusiastic] First, your browser asks a DNS server to turn the name into an IP address. Think of it as the internet's phone book!",
+        "stability": 0
+      },
+      "v2": {
+        "text": "First, your browser asks a DNS server to turn the name into an IP address. Think of it as the internet's phone book.",
+        "stability": 0.45,
+        "style": 0.3,
+        "speed": 1
+      },
+      "seed": 238654166,
+      "chosen": "day_96/takes/dns_v3_t3.mp3",
+      "holdAfter": 0,
+      "pickedBy": "manual"
+    },
+    {
+      "id": "tls",
+      "type": "explain",
+      "text": "Next, it opens a connection to that server. With HTTPS, both sides agree on a secret key, so nobody in the middle can read your data.",
+      "v3": {
+        "text": "[confident] Next, it opens a connection to that server. [excited] With HTTPS, both sides agree on a secret key… so nobody in the middle can read your data!",
+        "stability": 0
+      },
+      "v2": {
+        "text": "Next, it opens a connection to that server. With HTTPS, both sides agree on a secret key, so nobody in the middle can read your data.",
+        "stability": 0.45,
+        "style": 0.3,
+        "speed": 1
+      },
+      "seed": 4052822892,
+      "chosen": "day_96/takes/tls_v3_t3.mp3",
+      "holdAfter": 0,
+      "pickedBy": "manual"
+    },
+    {
+      "id": "render",
+      "type": "explain",
+      "text": "Then the browser sends a request, and the server sends back HTML, CSS, and JavaScript. The browser reads them, builds the page, and paints it on your screen.",
+      "v3": {
+        "text": "[enthusiastic] Then the browser sends a request, and the server sends back HTML, CSS, and JavaScript. The browser reads them, builds the page, and paints it on your screen!",
+        "stability": 0
+      },
+      "v2": {
+        "text": "Then the browser sends a request, and the server sends back HTML, CSS, and JavaScript. The browser reads them, builds the page, and paints it on your screen.",
+        "stability": 0.45,
+        "style": 0.3,
+        "speed": 1
+      },
+      "seed": 3378593999,
+      "chosen": "day_96/takes/render_v3_t3.mp3",
+      "holdAfter": 0,
+      "pickedBy": "manual"
+    },
+    {
+      "id": "wrap",
+      "type": "takeaway",
+      "text": "Honestly, it's one of the most impressive things we use every day, and we barely notice it. Next time a page loads, remember the tiny journey it just made.",
+      "v3": {
+        "text": "[excited] Honestly, it's one of the most impressive things we use every day… and we barely notice it! [warmly] Next time a page loads, remember the tiny journey it just made.",
+        "stability": 0
+      },
+      "v2": {
+        "text": "Honestly, it's one of the most impressive things we use every day, and we barely notice it. Next time a page loads, remember the tiny journey it just made.",
+        "stability": 0.45,
+        "style": 0.3,
+        "speed": 1
+      },
+      "seed": 3865185540,
+      "chosen": "day_96/takes/wrap_v3_t3.mp3",
+      "holdAfter": 0,
+      "pickedBy": "manual"
+    }
+  ]
+}
