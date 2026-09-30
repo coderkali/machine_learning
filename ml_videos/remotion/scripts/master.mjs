@@ -151,11 +151,18 @@ if (music) {
 await fs.mkdir(path.join(ep.publicDir, "mix"), { recursive: true });
 const out = nextFreePath(path.join(ep.publicDir, "mix"), "narration", ".wav");
 await fs.copyFile(finalSource, out);
+// With music: also keep the voice-only master, so captions/QA transcribe the voice, not voice + music.
+let voiceOnly = null;
+if (music) {
+  voiceOnly = out.replace(/\.wav$/, "_voice.wav");
+  await fs.copyFile(voiceNorm, voiceOnly);
+}
 const final = await loudness(out);
 
 const master = {
   day: ep.n,
   audio: publicRel(out),
+  voiceAudio: voiceOnly ? publicRel(voiceOnly) : null,
   durationSec: +(await duration(out)).toFixed(3),
   sampleRate: SAMPLE_RATE,
   lufs: final.lufs,

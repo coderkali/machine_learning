@@ -81,7 +81,35 @@ developer telling a friend a story. TTS-safe text only (VOICE_GUIDE §6).
   `thumbnail {blocks, diagram {source, rows}}` per §5b: 3–5 boxes, 3–9 words, exactly one red
   box, diagram = the episode's main idea from the notes (name the file in `source`).
 
-## 3 · Voice → master → captions → timeline (all in `$R`)
+## 3a · OWN VOICE (default from Day 2, 2026-09-29): the creator records, Claude cleans
+
+The series narrator is **Kali's real voice** (not ElevenLabs). The creator reads a reading sheet Claude
+writes, one recording per part, and Claude does everything else. Progress over perfection: ship each
+episode with the current recording; give 2–3 encouraging, concrete notes; track his pitch-movement number.
+
+1. **Reading sheet** `$CL/episodes/day_NN/reading_sheet_vN.md` (format of `day_02/reading_sheet_v1.md`):
+   8 parts HOOK · PROBLEM · INTUITION · VISUAL · TECHNICAL · JAVA · EXAMPLE · RECAP; one line = one breath,
+   **bold** stress word, `/` short and `//` long pause, pronunciation notes, short easy-to-say sentences.
+   Opener: "I'm Kali, and this is Day N of ML for a Java developer." (no "Hello everyone": topic in first 5 s).
+   Ending: recap → "Day N done." → "Next: …" (no "tomorrow", no sign-off after the teaser).
+2. **He records** (iPhone Voice Memos, Lossless, or USB mic; sitting) into
+   `~/Documents/Instagram_Youtube_Reels/Recodings/DayN/<Part>.m4a` (folder is spelled "Recodings").
+3. **Analyze**: `node scripts/analyze-recording.mjs <folder>` (transcript, wpm, pauses, level, unclear words) +
+   pitch movement (numpy autocorrelation, 10–90 % range in semitones; his baseline 4.0–5.9, Viraj 9–12).
+4. **Clean**: `node scripts/clean-voice.mjs day_NN --from <folder> --map Hook=hook,… --max-pause 0.55 --keep-pause 0.42
+   [--cut beat=a-b+c-d]` → `public/day_NN/rec_clean/`. Never use ffmpeg `silenceremove` on speech (it cut words).
+4b. **Voice Changer (creator's choice, 2026-09-29):** `node scripts/voice-changer.mjs day_NN --confirm` sends each
+   cleaned part through ElevenLabs speech-to-speech with his clone (`dEibRDzkMexIgcF5EEiJ`) → `public/day_NN/rec_sts/`
+   (≈ 1,000 credits per audio minute). Clearer key words + studio-quiet; keeps his timing, energy and wording.
+   Then master with `--takes-from day_NN/rec_sts` (add `--music <approved bed> --music-lufs -28` only after audio preview approval).
+4c. **Music bed: UNDECIDED (2026-09-29)** — the creator disliked every code-generated bed; no music until a source is chosen. Tool kept for later: code-generated bed
+   (`node scripts/music-bed.mjs --seconds 180` → `public/series/music/bed_calm_v1.wav`, no copyright),
+   −28 LUFS, auto-ducked under the voice. Captions transcribe the voice-only master (`master.json → voiceAudio`).
+5. `voice.json`: `voice {name:"Kali (own voice, recorded)", model:"recorded"}`, beat `text` = what he actually
+   said (fix only Whisper mishearings of key terms), then `npm run master -- day_NN --takes-from day_NN/rec_clean`,
+   `captions`, `timeline`, scenes, render, QA as usual. Report by ear-check items he must verify (e.g. can/can't).
+
+## 3b · (fallback) AI voice → master → captions → timeline (all in `$R`)
 
 ```bash
 npm run voice -- day_NN --takes 3 --confirm     # paid; checks quota first, exits 2 if too little

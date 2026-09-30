@@ -19,3 +19,4 @@ Do not write one for "I named the column `pm25`".
 | [D-003](D-003-station-selection-rule.md) | Keep stations with 730+ days of real coverage | DAF-03 | 2026-09-16 |
 | [D-004](D-004-training-date-range.md) | Train on the most recent 3–4 years | DAF-04 | 2026-09-16 |
 | [D-005](D-005-one-station-first.md) | Build version one on one station, R K Puram | DAF-04 | 2026-09-18 |
+| [D-006](D-006-weather-source.md) | Keep the current model free of these weather features; use forecast weather for future production-honest comparisons | DAF-13 | 2026-09-29 |

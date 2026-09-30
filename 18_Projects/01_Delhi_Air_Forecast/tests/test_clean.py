@@ -13,9 +13,14 @@ import pytest
 
 from delhi_air.clean import (
     add_target,
+    add_calendar_features,
+    add_change_features,
+    add_event_features,
     apply_cleaning,
     fill_short_holes,
     hours_known_at_18,
+    add_lag_features,
+    add_rolling_features,
     load_raw,
     main,
     remove_days,
@@ -265,6 +270,70 @@ def test_add_target_is_empty_when_tomorrow_is_missing_or_invalid():
     assert pd.isna(result.loc["2025-03-25", "target"]), "tomorrow (26 Mar) is invalid"
     assert pd.isna(result.loc["2025-03-26", "target"]), "tomorrow (27 Mar) has no reading"
     assert result.loc["2025-03-27", "target"] == 70.0
+
+
+# ---------- DAF-14 feature families ----------
+
+def test_add_lag_features_look_back_without_using_today():
+    daily = _daily(
+        ["2025-03-25", "2025-03-26", "2025-03-27", "2025-03-28", "2025-03-29", "2025-03-30", "2025-03-31", "2025-04-01"],
+        pm25_mean=[10, 20, 30, 40, 50, 60, 70, 80],
+        hours=[24] * 8,
+    )
+
+    result = add_lag_features(daily)
+
+    assert pd.isna(result.loc["2025-03-25", "lag_1"])
+    assert result.loc["2025-03-28", "lag_1"] == 30
+    assert result.loc["2025-04-01", "lag_7"] == 10
+
+
+def test_add_rolling_features_ends_at_yesterday():
+    daily = _daily(
+        ["2025-03-25", "2025-03-26", "2025-03-27", "2025-03-28"],
+        pm25_mean=[10, 20, 30, 1000],
+        hours=[24] * 4,
+    )
+
+    result = add_rolling_features(daily)
+
+    assert result.loc["2025-03-28", "mean_3"] == 20
+
+
+def test_add_change_features_compares_today_so_far_with_yesterday():
+    daily = _daily(
+        ["2025-03-25", "2025-03-26"],
+        pm25_mean=[30, 40],
+        hours=[24, 24],
+    )
+    daily["pm25_until_17"] = [25, 35]
+
+    result = add_change_features(daily)
+
+    assert result.loc["2025-03-26", "pm25_change"] == 5
+
+
+def test_add_calendar_features_wraps_month_as_a_circle():
+    daily = _daily(["2025-03-31", "2025-04-01"], pm25_mean=[10, 20], hours=[24, 24])
+
+    result = add_calendar_features(daily)
+
+    assert result.loc["2025-03-31", "month_sin"] > 0
+    assert abs(result.loc["2025-03-31", "month_cos"]) < 1e-12
+    assert result.loc["2025-04-01", "month_sin"] > 0
+    assert result.loc["2025-04-01", "month_cos"] < 0
+    assert result.loc["2025-03-31", "day_of_week"] == 0
+
+
+def test_add_event_features_uses_known_calendar_dates():
+    daily = _daily(["2025-10-20", "2025-10-21", "2025-12-01"], pm25_mean=[10, 20, 30], hours=[24] * 3)
+
+    result = add_event_features(daily, festival_dates=["2025-10-21"])
+
+    assert result.loc["2025-10-20", "festival_flag"] == 0
+    assert result.loc["2025-10-21", "festival_flag"] == 1
+    assert result.loc["2025-10-21", "crop_burning_season_flag"] == 1
+    assert result.loc["2025-12-01", "crop_burning_season_flag"] == 0
 
 
 # ---------- CLI ----------

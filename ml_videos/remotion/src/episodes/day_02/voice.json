@@ -1,0 +1,76 @@
+{
+  "day": 2,
+  "source": "creator's own recording (Recodings/Day2, 2026-09-29, iPhone Voice Memos, 8 parts) — cleaned by scripts/clean-voice.mjs",
+  "voice": {
+    "name": "Kali (own voice, recorded)",
+    "model": "recorded"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.2,
+  "beats": [
+    {
+      "id": "hook",
+      "type": "hook",
+      "text": "Hello everyone. My name is Kali, and this is Day 2 of ML for a Java developer. So here's the first thing that surprised me in Python. There is no int, there is no String. You just write x equals to 5. See, how does Python knows what is x is?",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "problem",
+      "type": "problem",
+      "text": "As a Java developer, we trust always a types. The compiler checks them before the code runs. So when I saw the Python code, with no type at all, and my thought was, is this going to be break?",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "intuition",
+      "type": "insight",
+      "text": "But think about this way. In Java, the box has a type. You create int inside the box, but only number goes in. But in Python, the value has the type. So the variable just a label, you are going to stick on it.",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "visual",
+      "type": "explain",
+      "text": "So, let's visualize it. x equals 5: the label x points to the number 5. Now write x equals hello. The same label, the new value, the new type. No error at all. That's called dynamic typing.",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "technical",
+      "type": "explain",
+      "text": "As you know, that's dynamic typing. So Python always checks types while the code runs, not before. So think of it: you can always ask what is the type of x. It tells you whether it's a float, or int, or a string, depending on the value.",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "java",
+      "type": "java",
+      "text": "And this is where the Java developer usually gets confused. So Python is dynamic, but it's still strict. Let's say you try 5 plus the text called hello, and Python stops you with a type error. It won't guess for you.",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "example",
+      "type": "explain",
+      "text": "Here's one more thing Java can't do. So let's say in Python, an integer has no size limit. A number with hundreds of digits? Still just an int. In Java, a long would have overflowed long ago.",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "recap",
+      "type": "done",
+      "text": "So, Day 2 in one line, I can say: in Python, values have types, variables are just labels, and Python still checks your work. Day 2 is now done. So, we will start with NumPy, where one line replaces the whole loop.",
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    }
+  ]
+}
