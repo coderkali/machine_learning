@@ -31,7 +31,7 @@ const master = await readJSON(path.join(ep.genDir, "master.json"));
 // 1. Whisper word timestamps (16 kHz mono is what whisper.cpp expects).
 const work = await fs.mkdtemp(path.join(os.tmpdir(), `${ep.id}-captions-`));
 const wav16 = path.join(work, "narration16k.wav");
-await run("ffmpeg", ["-y", "-i", path.join(PUBLIC, master.audio), "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav16]);
+await run("ffmpeg", ["-y", "-i", path.join(PUBLIC, master.voiceAudio ?? master.audio), "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav16]);
 const whisperOut = await transcribe({
   inputPath: wav16,
   whisperPath: path.join(ROOT, "whisper.cpp"),

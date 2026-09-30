@@ -19,6 +19,7 @@ writes data/processed/daily_17.parquet
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -158,6 +159,80 @@ def add_target(daily: pd.DataFrame) -> pd.DataFrame:
     next_day_valid = daily["valid"].shift(-1, fill_value=False)
     daily["target"] = daily["pm25_mean"].shift(-1).where(next_day_valid)
     return daily
+
+
+def add_lag_features(daily: pd.DataFrame) -> pd.DataFrame:
+    """Add previous-day, two-day and seven-day PM2.5 values."""
+    result = daily.copy()
+    for days in (1, 2, 7):
+        result[f"lag_{days}"] = result["pm25_mean"].shift(days)
+    return result
+
+
+def add_rolling_features(daily: pd.DataFrame) -> pd.DataFrame:
+    """Add rolling statistics over completed days only."""
+    result = daily.copy()
+    completed_days = result["pm25_mean"].shift(1)
+    result["mean_3"] = completed_days.rolling(3).mean()
+    result["mean_7"] = completed_days.rolling(7).mean()
+    result["mean_14"] = completed_days.rolling(14).mean()
+    result["std_7"] = completed_days.rolling(7).std(ddof=0)
+    result["max_7"] = completed_days.rolling(7).max()
+    return result
+
+
+def add_change_features(daily: pd.DataFrame) -> pd.DataFrame:
+    """Add today's partial-day PM2.5 change from yesterday's full day."""
+    result = add_lag_features(daily)
+    result["pm25_change"] = result["pm25_until_17"] - result["lag_1"]
+    return result
+
+
+def add_calendar_features(daily: pd.DataFrame) -> pd.DataFrame:
+    """Add circular month and day-of-year features plus weekday."""
+    result = daily.copy()
+    month_angle = 2 * math.pi * result.index.month / 12
+    day_angle = 2 * math.pi * result.index.dayofyear / 365.25
+    result["month_sin"] = month_angle.map(math.sin)
+    result["month_cos"] = month_angle.map(math.cos)
+    result["day_of_week"] = result.index.dayofweek
+    result["day_of_year_sin"] = day_angle.map(math.sin)
+    result["day_of_year_cos"] = day_angle.map(math.cos)
+    return result
+
+
+def add_event_features(
+    daily: pd.DataFrame,
+    festival_dates: list[str] | tuple[str, ...] = (),
+    crop_burning_months: tuple[int, ...] = (10, 11),
+) -> pd.DataFrame:
+    """Add flags based only on calendar dates known before prediction."""
+    result = daily.copy()
+    event_dates = pd.DatetimeIndex(pd.to_datetime(list(festival_dates)))
+    if event_dates.tz is not None:
+        event_dates = event_dates.tz_convert("Asia/Kolkata").normalize()
+    else:
+        event_dates = event_dates.normalize()
+    if result.index.tz is not None:
+        date_index = result.index.tz_convert("Asia/Kolkata").normalize()
+    else:
+        date_index = result.index.normalize()
+    festival_set = set(event_dates.date)
+    result["festival_flag"] = date_index.map(lambda value: int(value.date() in festival_set))
+    result["crop_burning_season_flag"] = result.index.month.isin(crop_burning_months).astype(int)
+    return result
+
+
+def add_feature_families(
+    daily: pd.DataFrame,
+    festival_dates: list[str] | tuple[str, ...] = (),
+) -> pd.DataFrame:
+    """Add all DAF-14 feature families without changing the input table."""
+    result = add_lag_features(daily)
+    result = add_rolling_features(result)
+    result = add_change_features(result)
+    result = add_calendar_features(result)
+    return add_event_features(result, festival_dates=festival_dates)
 
 
 def build_daily_table(location_id: int, raw_root: Path) -> pd.DataFrame:
