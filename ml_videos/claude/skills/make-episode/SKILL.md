@@ -87,9 +87,12 @@ The series narrator is **Kali's real voice** (not ElevenLabs). The creator reads
 writes, one recording per part, and Claude does everything else. Progress over perfection: ship each
 episode with the current recording; give 2–3 encouraging, concrete notes; track his pitch-movement number.
 
-1. **Reading sheet** `$CL/episodes/day_NN/reading_sheet_vN.md` (format of `day_02/reading_sheet_v1.md`):
-   8 parts HOOK · PROBLEM · INTUITION · VISUAL · TECHNICAL · JAVA · EXAMPLE · RECAP; one line = one breath,
-   **bold** stress word, `/` short and `//` long pause, pronunciation notes, short easy-to-say sentences.
+1. **Reading sheet** `$CL/episodes/day_NN/reading_sheet_vN.md`: 8 parts HOOK · PROBLEM · INTUITION · VISUAL ·
+   TECHNICAL · JAVA · EXAMPLE · RECAP, each a **flowing paragraph** (not one line per breath — that made him sound
+   like he was reading, 2026-09-30). **Indian teacher ↔ student voice:** "Look…", "See…", "Let me explain it this
+   way…", "Just imagine…", "Right?", "Okay?", "Simple, na?", "Now here is the catch…", ask-then-answer, repeat the key
+   idea once in other words, his own experience ("The first time I saw this, honestly…"). Vary the phrases.
+   **Bold** key terms + pronunciation notes. Tell him: read twice, then explain it in his own words.
    Opener: "I'm Kali, and this is Day N of ML for a Java developer." (no "Hello everyone": topic in first 5 s).
    Ending: recap → "Day N done." → "Next: …" (no "tomorrow", no sign-off after the teaser).
 2. **He records** (iPhone Voice Memos, Lossless, or USB mic; sitting) into
@@ -102,9 +105,17 @@ episode with the current recording; give 2–3 encouraging, concrete notes; trac
    cleaned part through ElevenLabs speech-to-speech with his clone (`dEibRDzkMexIgcF5EEiJ`) → `public/day_NN/rec_sts/`
    (≈ 1,000 credits per audio minute). Clearer key words + studio-quiet; keeps his timing, energy and wording.
    Then master with `--takes-from day_NN/rec_sts` (add `--music <approved bed> --music-lufs -28` only after audio preview approval).
-4c. **Music bed: UNDECIDED (2026-09-29)** — the creator disliked every code-generated bed; no music until a source is chosen. Tool kept for later: code-generated bed
-   (`node scripts/music-bed.mjs --seconds 180` → `public/series/music/bed_calm_v1.wav`, no copyright),
-   −28 LUFS, auto-ducked under the voice. Captions transcribe the voice-only master (`master.json → voiceAudio`).
+4c. **No background music** (creator, 2026-09-30: "don't add unnecessary music"). Voice only, unless he asks.
+   If he ever asks: offer audio previews first (`scripts/music-preview.mjs`), never straight into a video.
+4d. **Lessons from Day 2 (own voice):**
+   - Read Whisper's transcript of every cleaned part before building: cut self-corrections ("Python, sorry, Java"),
+     filler restarts, "This is called…", and sign-offs after the teaser (`clean-voice.mjs --cut beat=a-b`), then
+     re-transcribe to verify the cut.
+   - His wording changes between takes: set `voice.json` text to what he said (fix only mishearings), move
+     visuals to where he now says them, and use optional cues (`opt()` in `Day02.tsx`: hidden when the word
+     isn't said) instead of `at()` fallbacks that pop at the start of the part.
+   - Report energy per part vs his previous take (pitch 10–90 % range, semitones) and 2 things to try next.
+   - Voice Changer flattens energy by ≈ 1 st; still his choice. Keep old parts (`rec_sts_<date>/`) before re-running.
 5. `voice.json`: `voice {name:"Kali (own voice, recorded)", model:"recorded"}`, beat `text` = what he actually
    said (fix only Whisper mishearings of key terms), then `npm run master -- day_NN --takes-from day_NN/rec_clean`,
    `captions`, `timeline`, scenes, render, QA as usual. Report by ear-check items he must verify (e.g. can/can't).
