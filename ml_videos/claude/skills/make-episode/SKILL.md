@@ -89,9 +89,9 @@ episode with the current recording; give 2–3 encouraging, concrete notes; trac
 
 1. **Reading sheet** `$CL/episodes/day_NN/reading_sheet_vN.md`: 8 parts HOOK · PROBLEM · INTUITION · VISUAL ·
    TECHNICAL · JAVA · EXAMPLE · RECAP, each a **flowing paragraph** (not one line per breath — that made him sound
-   like he was reading, 2026-09-30). **Indian teacher ↔ student voice:** "Look…", "See…", "Let me explain it this
-   way…", "Just imagine…", "Right?", "Okay?", "Simple, na?", "Now here is the catch…", ask-then-answer, repeat the key
-   idea once in other words, his own experience ("The first time I saw this, honestly…"). Vary the phrases.
+   like he was reading, 2026-09-30). **Desi-teacher ↔ student voice in clear English:** use
+   `$CL/PHRASE_BANK.md` (core five: "See", "Let's say", "Now", "Right?", "Here's the catch"; 1–2 per part, only where
+   they do a job, varied; no slang like "na"; "like" only for real comparisons), ask-then-answer, his own experience.
    **Bold** key terms + pronunciation notes. Tell him: read twice, then explain it in his own words.
    Opener: "I'm Kali, and this is Day N of ML for a Java developer." (no "Hello everyone": topic in first 5 s).
    Ending: recap → "Day N done." → "Next: …" (no "tomorrow", no sign-off after the teaser).

@@ -32,7 +32,7 @@ const outDir = path.join(ep.publicDir, "rec_clean");
 mkdirSync(outDir, { recursive: true });
 const probe = (f) => Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f], { encoding: "utf8" }));
 
-for (const file of readdirSync(from).filter((f) => /\.(m4a|wav|mp3|aac|caf)$/i.test(f))) {
+for (const file of readdirSync(from).filter((f) => /\.(m4a|wav|mp3|aac|caf|qta)$/i.test(f))) {
   const base = file.replace(/\.[^.]+$/, "");
   const beat = map[base] ?? base.toLowerCase();
   if (!ep.voice.beats.some((b) => b.id === beat)) {
@@ -41,8 +41,13 @@ for (const file of readdirSync(from).filter((f) => /\.(m4a|wav|mp3|aac|caf)$/i.t
   }
   const src = path.join(from, file);
   const dur = probe(src);
+  // Silence threshold adapts to the room: 10 dB above this recording's noise floor (min −40, max −28 dB),
+  // so a noisy take (fan, AC) still gets its pauses detected.
+  const st = spawnSync("ffmpeg", ["-hide_banner", "-nostats", "-i", src, "-af", "astats=measure_overall=Noise_floor:measure_perchannel=0", "-f", "null", "-"], { encoding: "utf8" }).stderr;
+  const floor = Number((st.match(/Noise floor dB: (-?[\d.]+)/) ?? [])[1] ?? -60);
+  const thr = Math.min(-28, Math.max(SILENCE_DB, Math.round(floor + 10)));
   // Silences on the raw recording: [start, end] pairs.
-  const log = spawnSync("ffmpeg", ["-hide_banner", "-nostats", "-i", src, "-af", `silencedetect=noise=${SILENCE_DB}dB:d=0.1`, "-f", "null", "-"], { encoding: "utf8" }).stderr;
+  const log = spawnSync("ffmpeg", ["-hide_banner", "-nostats", "-i", src, "-af", `silencedetect=noise=${thr}dB:d=0.1`, "-f", "null", "-"], { encoding: "utf8" }).stderr;
   const starts = [...log.matchAll(/silence_start: (-?[\d.]+)/g)].map((m) => Math.max(0, Number(m[1])));
   const ends = [...log.matchAll(/silence_end: ([\d.]+)/g)].map((m) => Number(m[1]));
   const silences = starts.map((s, i) => [s, ends[i] ?? dur]);
@@ -67,6 +72,6 @@ for (const file of readdirSync(from).filter((f) => /\.(m4a|wav|mp3|aac|caf)$/i.t
   const out = path.join(outDir, `${beat}.wav`);
   execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ar", "48000", "-ac", "1", "-c:a", "pcm_s16le", out]);
   const removed = cuts.reduce((n, [s, e]) => n + (e - s), 0);
-  console.log(`${beat.padEnd(11)} ${file}: ${dur.toFixed(2)}s → ${probe(out).toFixed(2)}s  (${cuts.length} pauses/edges trimmed, ${removed.toFixed(2)}s removed)`);
+  console.log(`${beat.padEnd(11)} ${file}: ${dur.toFixed(2)}s → ${probe(out).toFixed(2)}s  (${cuts.length} pauses/edges trimmed, ${removed.toFixed(2)}s removed, silence < ${thr} dB)`);
 }
 console.log(`→ ${path.relative(process.cwd(), outDir)}   next: npm run master -- ${ep.id} --takes-from ${ep.id}/rec_clean`);
