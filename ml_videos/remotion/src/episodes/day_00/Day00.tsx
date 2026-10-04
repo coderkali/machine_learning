@@ -86,7 +86,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     api: at("services", "api"),
     answer: at("services", "answer|answers"),
     job: at("services", "job"),
-    catch: at("services", "catch"),
+    catch: at("services", "catch|itself"),
     // 4 · team
     learnHow: at("team", "learn"),
     most: at("team", "most"),
@@ -111,6 +111,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     pMl: at("python", "machine"),
     python: at("python", "python"),
     eyes: at("python", "eyes"),
+    pThrough: at("python", "through"),
     numpy: at("python", "numpy"),
     pandas: at("python", "pandas"),
     charts: at("python", "charts"),
@@ -155,7 +156,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     capstone: at("ship", "capstone"),
     // 11 · promise
     everyDay: at("promise", "every"),
-    idea: at("promise", "idea"),
+    idea: at("promise", "every|idea"),
     lens: at("promise", "java"),
     explained: at("promise", "explained"),
     time: at("promise", "topic|time"),
@@ -210,11 +211,11 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
         {inBeat("team") && <TeamBeat f={f} c={c} />}
         {f >= start("map") && <MapStage f={f} c={c} start={start} />}
       </Workspace>
-      {inBeat("team") && f >= c.edge && <TermCard text="REAL EDGE" color={K.green} size={76} style={{ left: 600, top: 590, ...tilt(pop(f, c.edge), -4) }} />}
+      {inBeat("team") && f >= c.edge && <TermCard text="REAL EDGE" color={K.green} size={76} style={{ left: 600, top: 590, ...tilt(pop(f, c.edge), -4 + 2.5 * Math.sin((f - c.edge) / 7)) }} />}
       {inBeat("services") && f >= c.us && f < c.our + 10 && <TermCard text="US. ☕" color={K.blue} size={120} style={{ left: 330, top: 820, ...tilt(pop(f, c.us, 8), -4), opacity: 1 - enter(f, c.our, 10) }} />}
       {inBeat("services") && f >= c.job && <TermCard text="OUR JOB NOW" color={K.yellow} fg={K.ink} size={84} style={{ left: 250, top: 830, ...tilt(pop(f, c.job, 8), -3) }} />}
       {inBeat("ml") && f >= c.starts && f < c.cleaning + 10 && <Chip label="▶ STARTS HERE" color={K.ink} size={36} style={{ position: "absolute", left: 300, top: 720, ...pop(f, c.starts), opacity: 1 - enter(f, c.cleaning, 10) }} />}
-      {inBeat("ml") && f >= c.realMl && f < c.cleaning + 20 && <TermCard text="THE REAL ML" color={K.yellow} fg={K.ink} size={110} style={{ left: 150, top: 560, ...tilt(pop(f, c.realMl, 8), -3), opacity: 1 - enter(f, c.cleaning + 10, 10) }} />}
+      {inBeat("ml") && f >= c.realMl && f < c.cleaning + 20 && <TermCard text="THE REAL ML" color={K.yellow} fg={K.ink} size={110} style={{ left: 150, top: 560, ...tilt(pop(f, c.realMl, 8), -3 + 2.5 * Math.sin((f - c.realMl) / 7)), opacity: 1 - enter(f, c.cleaning + 10, 10) }} />}
       {inBeat("start") && f >= c.startDay1 && <StartCard f={f} c={c} />}
       {inBeat("products") && f >= c.models && <TermCard text="MODELS" color={K.yellow} fg={K.ink} size={96} style={{ left: 96, top: 700, ...tilt(pop(f, c.models), -4) }} />}
       {meta.titleCard && <TitleCard f={f} line={meta.titleCard.line} sub={meta.titleCard.sub} until={hasHost ? c.im : c.every} />}
@@ -626,7 +627,7 @@ function MapStage({ f, c, start }: { f: number; c: Cues; start: (id: string) => 
         const filled = f >= fillAt(d);
         const col = arcColor(d);
         const dim = range && filled && (d < range[0] || d > range[1]) ? 0.4 : 1;
-        const scale = (filled ? bump(f, fillAt(d), 10) : 1) * bump(f, bandAt(d), 14) * bump(f, judgeAt(d), 12) * (d >= 22 && d <= 36 ? bump(f, c.likeThat, 14) : 1) * (d === 84 ? bump(f, c.afterW, 16) : 1) * (d === 1 && f >= c.startDay1 ? bump(f, c.startDay1, 16) : 1);
+        const scale = (filled ? bump(f, fillAt(d), 10) : 1) * bump(f, bandAt(d), 14) * bump(f, judgeAt(d), 12) * (d >= 22 && d <= 36 ? bump(f, c.likeThat, 14) : 1) * (d >= 2 && d <= 12 ? bump(f, c.inHand, 14) * bump(f, c.inHand + 30, 14) : 1) * (d === 84 ? bump(f, c.afterW, 16) : 1) * (d === 1 && f >= c.startDay1 ? bump(f, c.startDay1, 16) : 1);
         const darkText = filled && (d >= 37 && d <= 78);
         return (
           <div key={d} style={{ position: "absolute", left: x, top: y, width: G.size, height: G.size, borderRadius: 10, boxSizing: "border-box", background: filled ? col : "#fff", border: `3px solid ${filled ? K.ink : K.line}`, display: "grid", placeItems: "center", fontSize: 20, fontWeight: 900, color: filled ? (darkText ? K.ink : "#fff") : "#B4BECB", opacity: pop(f, ap, 6).opacity * dim, transform: `${pop(f, ap, 6).transform} scale(${scale})` }}>
@@ -696,6 +697,7 @@ function PythonPanel({ f, c }: { f: number; c: Cues }) {
   return (
     <>
       <PanelTitle text={m > 0.5 ? "🐍 PYTHON" : "☕ JAVA"} color={m > 0.5 ? K.blue : K.ink} />
+      {f >= c.pThrough && f < c.eyes + 20 && <Chip label="👀 THROUGH JAVA EYES" color={K.yellow} fg={K.ink} size={24} style={{ position: "absolute", right: 18, top: 14, border: `3px solid ${K.ink}`, ...pop(f, c.pThrough) }} />}
       {f >= c.python && (
         <div style={{ position: "absolute", left: 30, top: 70, ...mono, whiteSpace: "pre", ...pop(f, c.python) }}>
           <span style={{ display: "inline-block", overflow: "hidden", verticalAlign: "bottom", width: 106 * (1 - m), color: K.purple, opacity: 1 - m, textDecoration: m > 0 ? `line-through ${K.red}` : undefined }}>int </span>

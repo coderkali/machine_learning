@@ -1,0 +1,169 @@
+{
+  "day": 118,
+  "source": "18_Projects/01_Delhi_Air_Forecast/notebooks/18_final_test_and_model_card.ipynb + 18_visual_walkthrough.ipynb",
+  "voice": {
+    "name": "Kali (ElevenLabs clone)",
+    "voiceId": "dEibRDzkMexIgcF5EEiJ",
+    "model": "v3"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "hook",
+      "type": "hook",
+      "text": "I'm Kali, and this is DAF-18 of my Delhi Air Forecast project. Honestly, this ticket confused me at first. So let me explain it the way I finally understood it, with a school story.",
+      "v3": {
+        "text": "I'm Kali, and this is DAF-18 of my Delhi Air Forecast project. Honestly, this ticket confused me at first. So let me explain it the way I finally understood it, with a school story.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "school",
+      "type": "problem",
+      "text": "See, there is a school in Delhi, and the coordinator is Asha madam. Delhi's air is sometimes very bad. The tiny dust is measured as PM2.5, and ninety-one or more is called Poor. On a Poor day, children should not stand outside. So every evening she must decide: tomorrow morning, will six hundred children stand outside for assembly, or stay indoors? For that, she needs a guess of tomorrow's PM2.5.",
+      "v3": {
+        "text": "See, there is a school in Delhi, and the coordinator is Asha madam. Delhi's air is sometimes very bad. The tiny dust is measured as PM2.5, and ninety-one or more is called Poor. On a Poor day, children should not stand outside. So every evening she must decide: tomorrow morning, will six hundred children stand outside for assembly, or stay indoors? For that, she needs a guess of tomorrow's PM2.5.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "ways",
+      "type": "problem",
+      "text": "Now, she has two ways to guess. Way one, her old method, persistence: look at today's reading and say tomorrow will be the same. It is free. Way two, a small machine-learning model called Ridge, which looks at today, and the last three, seven and fourteen days. So the whole project asks one question: is the model really better than the free method? Because if not, why keep the computer?",
+      "v3": {
+        "text": "Now, she has two ways to guess. Way one, her old method, persistence: look at today's reading and say tomorrow will be the same. It is free. Way two, a small machine-learning model called Ridge, which looks at today, and the last three, seven and fourteen days. So the whole project asks one question: is the model really better than the free method? Because if not, why keep the computer?",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "history",
+      "type": "problem",
+      "text": "Let's see where she is. In the earlier tickets, she built the model, like learning the chapters and writing practice tests. In DAF-17, she chose the settings using only her two hundred fifty-one study days, and signed her final plan in a file. Now, in DAF-18, she opens the one hundred thirty test days, from the first of March. This is the real board exam paper.",
+      "v3": {
+        "text": "Let's see where she is. In the earlier tickets, she built the model, like learning the chapters and writing practice tests. In DAF-17, she chose the settings using only her two hundred fifty-one study days, and signed her final plan in a file. Now, in DAF-18, she opens the one hundred thirty test days, from the first of March. This is the real board exam paper.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "envelope",
+      "type": "insight",
+      "text": "Here's the catch. Those test days are locked in a sealed envelope. The model has never learned from them. That is exactly why they can give an honest answer. Left of this line, the model may study. Right of it, only judge.",
+      "v3": {
+        "text": "Here's the catch. Those test days are locked in a sealed envelope. The model has never learned from them. That is exactly why they can give an honest answer. Left of this line, the model may study. Right of it, only judge.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "trap",
+      "type": "caveat",
+      "text": "Now think about the temptation. She opens the envelope, sees a poor score, quietly changes one setting, and opens it again. The score looks better. But now the test days have started teaching the model, so the score is a lie. The rule is simple: open the envelope once.",
+      "v3": {
+        "text": "Now think about the temptation. She opens the envelope, sees a poor score, quietly changes one setting, and opens it again. The score looks better. But now the test days have started teaching the model, so the score is a lie. The rule is simple: open the envelope once.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "rules",
+      "type": "explain",
+      "text": "And before she opens it, the principal writes the pass marks on the board. Otherwise, you write the marks that suit you. Rule one: the average mistake, called MAE, must be at least ten percent lower than persistence. Rule two: it must catch at least as many Poor days. Both must hold, right? And honestly, in the practice tests, the win was only three point eight percent. So the answer may well be: not met.",
+      "v3": {
+        "text": "And before she opens it, the principal writes the pass marks on the board. Otherwise, you write the marks that suit you. Rule one: the average mistake, called MAE, must be at least ten percent lower than persistence. Rule two: it must catch at least as many Poor days. Both must hold, right? And honestly, in the practice tests, the win was only three point eight percent. So the answer may well be: not met.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "toy",
+      "type": "explain",
+      "text": "Let's see it on a toy town, with twenty-two made-up readings. Each row is a question: today is this, what is tomorrow? Fourteen rows are study rows, seven are sealed. Ridge learns only from the study rows, and finds a rule: tomorrow equals zero point three times today, plus sixty-five. Basically, a very high day is usually followed by a lower one. The old method cannot know that.",
+      "v3": {
+        "text": "Let's see it on a toy town, with twenty-two made-up readings. Each row is a question: today is this, what is tomorrow? Fourteen rows are study rows, seven are sealed. Ridge learns only from the study rows, and finds a rule: tomorrow equals zero point three times today, plus sixty-five. Basically, a very high day is usually followed by a lower one. The old method cannot know that.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "open",
+      "type": "explain",
+      "text": "Now she opens the envelope, once. Same seven rows for both methods, otherwise it is unfair. Each stick is a mistake. Persistence is off by eighteen point six on average, Ridge by fifteen. That is nineteen percent better. Both methods catch three of four Poor days. Both rules met. But look, Ridge does not win every row. MAE looks at the average.",
+      "v3": {
+        "text": "Now she opens the envelope, once. Same seven rows for both methods, otherwise it is unfair. Each stick is a mistake. Persistence is off by eighteen point six on average, Ridge by fifteen. That is nineteen percent better. Both methods catch three of four Poor days. Both rules met. But look, Ridge does not win every row. MAE looks at the average.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "second",
+      "type": "explain",
+      "text": "One exam can be luck, so she also checks smaller monthly exams inside the study days. This is called walk-forward. In the real project, Ridge scored thirty point four, against about thirty-five for persistence. If it had disagreed, she would not change anything. She would write the disagreement in the report.",
+      "v3": {
+        "text": "One exam can be luck, so she also checks smaller monthly exams inside the study days. This is called walk-forward. In the real project, Ridge scored thirty point four, against about thirty-five for persistence. If it had disagreed, she would not change anything. She would write the disagreement in the report.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "worst",
+      "type": "explain",
+      "text": "A good student does not only count marks. She opens the answer sheet. Which days did the model lose most? In the toy, the air suddenly cleaned up overnight, and nothing in today's number warned about it. In a long smog spell, Ridge guessed too low. These are patterns, so the ten worst days go into the report as failure cases.",
+      "v3": {
+        "text": "A good student does not only count marks. She opens the answer sheet. Which days did the model lose most? In the toy, the air suddenly cleaned up overnight, and nothing in today's number warned about it. In a long smog spell, Ridge guessed too low. These are patterns, so the ten worst days go into the report as failure cases.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "save",
+      "type": "explain",
+      "text": "Last, she saves the model in one file with joblib. New session, nothing in memory, load it back, and check: the same day gives one hundred point seven before, and one hundred point seven after. Then comes the model card, like the paper inside a medicine box: what it is for, the data, how good it is, where it fails, and when not to use it. It must also say that the test days were already peeked at earlier.",
+      "v3": {
+        "text": "Last, she saves the model in one file with joblib. New session, nothing in memory, load it back, and check: the same day gives one hundred point seven before, and one hundred point seven after. Then comes the model card, like the paper inside a medicine box: what it is for, the data, how good it is, where it fails, and when not to use it. It must also say that the test days were already peeked at earlier.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    },
+    {
+      "id": "recap",
+      "type": "done",
+      "text": "So, basically, as Java developers, this should feel familiar. The test set is data you never touch while developing. The pass marks are acceptance criteria written first. The model file is the build the service loads, and the model card is the README. DAF-18 is not about making the model better. It is about testing it once, and reporting honestly, even if the result is bad. DAF-18 done. Next: DAF-19, the live service.",
+      "v3": {
+        "text": "So, basically, as Java developers, this should feel familiar. The test set is data you never touch while developing. The pass marks are acceptance criteria written first. The model file is the build the service loads, and the model card is the README. DAF-18 is not about making the model better. It is about testing it once, and reporting honestly, even if the result is bad. DAF-18 done. Next: DAF-19, the live service.",
+        "stability": 0.5
+      },
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
+    }
+  ]
+}

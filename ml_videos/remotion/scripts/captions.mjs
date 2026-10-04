@@ -28,23 +28,35 @@ const outName = tag ? `captions.${tag}.json` : "captions.json";
 const scriptOverride = opt("script") ? Object.fromEntries((await readJSON(path.resolve(opt("script")))).map((b) => [b.id, b.text])) : {};
 const master = await readJSON(path.join(ep.genDir, "master.json"));
 
-// 1. Whisper word timestamps (16 kHz mono is what whisper.cpp expects).
+// 1. Whisper word timestamps, transcribed PER BEAT (16 kHz mono, 1.5 s padding): on a long mix whisper.cpp
+//    sometimes squeezes a sentence's timestamps (Intro 2026-10-03: 15 words stamped into 2.4 s), and it drops a
+//    final word that ends right at the file edge. Short padded clips fix both. Times are offset back to the mix.
 const work = await fs.mkdtemp(path.join(os.tmpdir(), `${ep.id}-captions-`));
-const wav16 = path.join(work, "narration16k.wav");
-await run("ffmpeg", ["-y", "-i", path.join(PUBLIC, master.voiceAudio ?? master.audio), "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav16]);
-const whisperOut = await transcribe({
-  inputPath: wav16,
-  whisperPath: path.join(ROOT, "whisper.cpp"),
-  whisperCppVersion: "1.6.0",
-  model: "small.en",
-  tokenLevelTimestamps: true,
-  splitOnWord: true,
-  printOutput: false,
-});
+const voicePath = path.join(PUBLIC, master.voiceAudio ?? master.audio);
+const heard = [];
+for (const b of master.beats) {
+  const from = Math.max(0, b.speechStart - 0.15);
+  const to = b.speechEnd + 0.25;
+  const clip = path.join(work, `${b.id}.wav`);
+  await run("ffmpeg", ["-y", "-ss", from.toFixed(3), "-to", to.toFixed(3), "-i", voicePath, "-af", "apad=pad_dur=1.5", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", clip]);
+  const out = await transcribe({
+    inputPath: clip,
+    whisperPath: path.join(ROOT, "whisper.cpp"),
+    whisperCppVersion: "1.6.0",
+    model: "small.en",
+    tokenLevelTimestamps: true,
+    splitOnWord: true,
+    printOutput: false,
+  });
+  for (const c of toCaptions({ whisperCppOutput: out }).captions) {
+    const text = c.text.trim();
+    if (/^\[.*\]$/.test(text) || norm(text) === "") continue;
+    const startMs = c.startMs + from * 1000;
+    if (startMs > to * 1000) continue; // hallucination inside the padding
+    heard.push({ text, startMs, endMs: Math.min(c.endMs + from * 1000, to * 1000) });
+  }
+}
 await fs.rm(work, { recursive: true, force: true });
-const heard = toCaptions({ whisperCppOutput: whisperOut })
-  .captions.map((c) => ({ text: c.text.trim(), startMs: c.startMs, endMs: c.endMs }))
-  .filter((c) => !/^\[.*\]$/.test(c.text) && norm(c.text) !== "");
 await writeJSON(path.join(ep.genDir, "whisper.json"), { audio: master.audio, words: heard });
 
 // 2. Script words, tagged with their beat.

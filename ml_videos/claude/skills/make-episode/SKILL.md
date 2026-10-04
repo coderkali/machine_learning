@@ -104,7 +104,7 @@ episode with the current recording; give 2–3 encouraging, concrete notes; trac
 4b. **Voice Changer (creator's choice, 2026-09-29):** `node scripts/voice-changer.mjs day_NN --confirm` sends each
    cleaned part through ElevenLabs speech-to-speech with his clone (`dEibRDzkMexIgcF5EEiJ`) → `public/day_NN/rec_sts/`
    (≈ 1,000 credits per audio minute). Clearer key words + studio-quiet; keeps his timing, energy and wording.
-   Then master with `--takes-from day_NN/rec_sts` (add `--music <approved bed> --music-lufs -28` only after audio preview approval).
+   Then master with `--takes-from day_NN/rec_sts --min-gap 0.7` (0.25 s joins felt like hard cuts, 2026-10-04) (add `--music <approved bed> --music-lufs -28` only after audio preview approval).
 4c. **No background music** (creator, 2026-09-30: "don't add unnecessary music"). Voice only, unless he asks.
    If he ever asks: offer audio previews first (`scripts/music-preview.mjs`), never straight into a video.
 4d. **Lessons from Day 2 (own voice):**
@@ -116,6 +116,10 @@ episode with the current recording; give 2–3 encouraging, concrete notes; trac
      isn't said) instead of `at()` fallbacks that pop at the start of the part.
    - Report energy per part vs his previous take (pitch 10–90 % range, semitones) and 2 things to try next.
    - Voice Changer flattens energy by ≈ 1 st; still his choice. Keep old parts (`rec_sts_<date>/`) before re-running.
+   - Never pipe a paid/long script into `head`/`tail -n` mid-run (SIGPIPE killed voice-changer after 2 parts) — redirect to a log.
+   - Cut boundaries: Whisper word times are rough; confirm with 50 ms levels + snippet transcripts, then re-transcribe.
+   - Voice Memos "Lossless" saves `.qta` (AAC + spatial): extract with `ffmpeg -i x.qta -map 0:a:0 -c:a copy x.m4a`.
+   - `captions.mjs` transcribes per beat (padded); `analyze-recording.mjs` pads 1.5 s (Whisper drops a final word).
 5. `voice.json`: `voice {name:"Kali (own voice, recorded)", model:"recorded"}`, beat `text` = what he actually
    said (fix only Whisper mishearings of key terms), then `npm run master -- day_NN --takes-from day_NN/rec_clean`,
    `captions`, `timeline`, scenes, render, QA as usual. Report by ear-check items he must verify (e.g. can/can't).

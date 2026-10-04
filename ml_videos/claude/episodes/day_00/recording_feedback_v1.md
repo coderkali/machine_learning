@@ -29,3 +29,12 @@ clean-voice.mjs now adapts its silence threshold to each file's noise floor; ana
   (my, blocks, jobs, answers, fails, checks) + new steps (catch, likeThat, starts, topic, afterW).
 - Video: `remotion/out/day_00/episode_v8.mp4`. QA: context ✅ (no "Hello everyone"), motion ✅; only word-match fails.
 - Viraj-version data backed up in `_backup/2026-10-02_intro_viraj_data/`.
+
+## MIC take (2026-10-03, `Recodings/Intro_Mic/*.m4a`, sheet v4 Indian-teacher style)
+Energy raw avg 5.4 (phone 5.0); median pitch 144–155 Hz (phone 132–145). Level low (−31…−33 LUFS): raise mic gain.
+Best: Map 6.8, Promise 6.3, Start 6.1, Products/Python 5.9. Flattest: ML 3.7, Data 3.8.
+Still unclear: "Us" (heard urge/edge), "Java eyes" (ISE), "Day" → "date", "capstone" (capstan/kefton), "if-else" (Efels), "learn" → "mean".
+Cuts `public/day_00/rec_clean/CUTS_mic.txt` (verified by level + snippet transcripts for Services). Total 153 s.
+Video: `remotion/out/day_00/episode_v12.mp4`. Phone-take STS kept in `public/day_00/rec_sts_phone/`.
+Pipeline lessons: (1) never pipe paid scripts into `head` (SIGPIPE stopped voice-changer after 2 parts);
+(2) captions.mjs now transcribes PER BEAT with padding (whole-mix Whisper squeezed ML timestamps).
