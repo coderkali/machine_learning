@@ -1,0 +1,174 @@
+{
+  "day": 352,
+  "source": "DAF-02 part 2 — claude/daf/episodes/daf_02/script_v1.md",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap2",
+      "type": "hook",
+      "text": "In Part one, we fixed the decision, the target, and the time. Now come the two questions that beginners skip. What score counts as success? And what must the model beat?",
+      "v3": {
+        "text": "In Part one, we fixed the decision, the target, and the time. Now come the two questions that beginners skip. What score counts as success? And what must the model beat?",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/recap2_v3_t2.mp3",
+      "seed": 2831776830
+    },
+    {
+      "id": "accurate",
+      "type": "problem",
+      "text": "See, the model must be accurate, sounds fine. But how accurate? Compared to what? Without a comparison, every model looks good. So success must be a number, next to a named rival.",
+      "v3": {
+        "text": "See, the model must be accurate, sounds fine. But how accurate? Compared to what? Without a comparison, every model looks good. So success must be a number, next to a named rival.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/accurate_v3_t2.mp3",
+      "seed": 2624142015
+    },
+    {
+      "id": "baseline",
+      "type": "explain",
+      "text": "And Asha madam already has a method. Tomorrow will be like today. We call it the persistence baseline. It is free, it needs no model, and on most days, it is right. Our model must beat it.",
+      "v3": {
+        "text": "And Asha madam already has a method. Tomorrow will be like today. We call it the persistence baseline. It is free, it needs no model, and on most days, it is right. Our model must beat it.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/baseline_v3_t1.mp3",
+      "seed": 299686322
+    },
+    {
+      "id": "doubt3",
+      "type": "java",
+      "text": "Sir, even if it does not beat it, a model is still something, right?",
+      "v3": {
+        "text": "Sir, even if it does not beat it, a model is still something, right?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_352/takes/doubt3_v3_t2.mp3",
+      "seed": 3086748019
+    },
+    {
+      "id": "answer3",
+      "type": "explain",
+      "text": "No. It has negative value, not zero. A model costs data pipelines, servers, and maintenance. And people trust it more, because it looks clever. If it is worse than tomorrow equals today, Asha would decide better with no model at all.",
+      "v3": {
+        "text": "No. It has negative value, not zero. A model costs data pipelines, servers, and maintenance. And people trust it more, because it looks clever. If it is worse than tomorrow equals today, Asha would decide better with no model at all.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/answer3_v3_t2.mp3",
+      "seed": 4252568049
+    },
+    {
+      "id": "mae",
+      "type": "explain",
+      "text": "Now, how do we measure better? Our headline metric is MAE, mean absolute error. On average, how many micrograms off are we? Simple, right?",
+      "v3": {
+        "text": "Now, how do we measure better? Our headline metric is MAE, mean absolute error. On average, how many micrograms off are we? Simple, right?",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/mae_v3_t1.mp3",
+      "seed": 3507384638
+    },
+    {
+      "id": "catch",
+      "type": "insight",
+      "text": "But here's the catch. MAE treats every error the same. Let's say we are ten off when the true value is forty. The children go outside either way, no harm. The same ten, at eighty-five, flips the decision. So we add a safety metric. Recall on Poor days, ninety-one and above. Of all the truly bad days, how many did we catch?",
+      "v3": {
+        "text": "But here's the catch. MAE treats every error the same. Let's say we are ten off when the true value is forty. The children go outside either way, no harm. The same ten, at eighty-five, flips the decision. So we add a safety metric. Recall on Poor days, ninety-one and above. Of all the truly bad days, how many did we catch?",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/catch_v3_t2.mp3",
+      "seed": 2554198167
+    },
+    {
+      "id": "criterion",
+      "type": "explain",
+      "text": "So our success criterion is one sentence. Beat the persistence MAE by at least ten percent, on held-out days the model has never seen, without catching fewer Poor days than persistence. A number, next to a named baseline. And we set this bar now, before we see any model.",
+      "v3": {
+        "text": "So our success criterion is one sentence. Beat the persistence MAE by at least ten percent, on held-out days the model has never seen, without catching fewer Poor days than persistence. A number, next to a named baseline. And we set this bar now, before we see any model.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/criterion_v3_t1.mp3",
+      "seed": 3745500681
+    },
+    {
+      "id": "nongoals",
+      "type": "explain",
+      "text": "Last, we also write what we are not building. No hourly forecast. No other city. No other pollutant. No mobile app. Nothing beyond tomorrow. Non-goals are not laziness. They stop the project from growing sideways for six months.",
+      "v3": {
+        "text": "Last, we also write what we are not building. No hourly forecast. No other city. No other pollutant. No mobile app. Nothing beyond tomorrow. Non-goals are not laziness. They stop the project from growing sideways for six months.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/nongoals_v3_t2.mp3",
+      "seed": 86570822
+    },
+    {
+      "id": "records",
+      "type": "explain",
+      "text": "And our two big choices are written as decision records. The options, why we chose, and what the other option would have made easier.",
+      "v3": {
+        "text": "And our two big choices are written as decision records. The options, why we chose, and what the other option would have made easier.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/records_v3_t1.mp3",
+      "seed": 3782528406
+    },
+    {
+      "id": "asha",
+      "type": "explain",
+      "text": "So what did DAF-02 give Asha madam? Still no forecast. But now she knows exactly what she will get, at six pm, and how wrong it is allowed to be.",
+      "v3": {
+        "text": "So what did DAF-02 give Asha madam? Still no forecast. But now she knows exactly what she will get, at six pm, and how wrong it is allowed to be.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/asha_v3_t2.mp3",
+      "seed": 2998861466
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. A requirement pins down five things. The decision, the target, the time, the success number, and the baseline. And a model that cannot beat the baseline has negative value. The full documents are on GitHub.",
+      "v3": {
+        "text": "So, remember. A requirement pins down five things. The decision, the target, the time, the success number, and the baseline. And a model that cannot beat the baseline has negative value. The full documents are on GitHub.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_352/takes/recall_v3_t1.mp3",
+      "seed": 2477515953
+    },
+    {
+      "id": "next",
+      "type": "teaser",
+      "text": "Next time, DAF-03. Delhi has many air sensors. But which ones can we really trust?",
+      "v3": {
+        "text": "Next time, DAF-03. Delhi has many air sensors. But which ones can we really trust?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "chosen": "day_352/takes/next_v3_t1.mp3",
+      "seed": 2351531832
+    }
+  ]
+}

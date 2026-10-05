@@ -1,0 +1,42 @@
+{
+  "day": 903,
+  "source": "PVC voice test — first two lines of DAF-02 Video A",
+  "voice": {
+    "name": "Kali – Teacher (PVC)",
+    "voiceId": "99SWo5wjrbPpMKuP8Mik",
+    "model": "v2",
+    "chosen": "Kali's professional voice clone"
+  },
+  "leadIn": 0.1,
+  "endHold": 1,
+  "beats": [
+    {
+      "id": "hook",
+      "type": "hook",
+      "text": "Before we train any model, we must answer one simple question. What exactly are we predicting?",
+      "v2": {
+        "text": "Before we train any model, we must answer one simple question. What exactly are we predicting?",
+        "stability": 0.5,
+        "style": 0.15,
+        "speed": 0.95
+      },
+      "holdAfter": 1,
+      "chosen": "day_903/takes/hook_v2_t2.mp3",
+      "seed": 349418488
+    },
+    {
+      "id": "data",
+      "type": "explain",
+      "text": "See, this is our real data, from one sensor at R K Puram in Delhi. One row for each day. And this column is the average PM2.5 of that day.",
+      "v2": {
+        "text": "See, this is our real data, from one sensor at R K Puram in Delhi. One row for each day. And this column is the average PM2.5 of that day.",
+        "stability": 0.5,
+        "style": 0.15,
+        "speed": 0.95
+      },
+      "holdAfter": 0,
+      "chosen": "day_903/takes/data_v2_t1.mp3",
+      "seed": 3260699724
+    }
+  ]
+}

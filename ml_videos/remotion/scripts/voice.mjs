@@ -115,7 +115,7 @@ for (const beat of beats) {
     while (existsSync(path.join(takesDir, `${beat.id}_${modelKey}_t${n}.mp3`))) n++;
     const file = path.join(takesDir, `${beat.id}_${modelKey}_t${n}.mp3`);
     const seed = takes === 1 && beat.seed != null ? beat.seed : Math.floor(Math.random() * 4294967295);
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ep.voice.voice.voiceId}?output_format=mp3_44100_128`, {
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${beat.voiceId ?? ep.voice.voice.voiceId}?output_format=mp3_44100_128`, {
       method: "POST",
       headers: { "xi-api-key": apiKey, "content-type": "application/json", accept: "audio/mpeg" },
       body: JSON.stringify({ text, model_id: MODELS[modelKey], voice_settings, seed }),

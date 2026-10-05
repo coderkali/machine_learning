@@ -45,7 +45,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     // 1 · question (series intro → [host] → the question)
     newSeries: at("question", "new"),
     java0: at("question", "java"),
-    im: at("question", "im"),
+    im: at("question", "im|my"),
     kali: at("question", "kali"),
     engineer: at("question", "engineer"),
     years: at("question", "years"),
@@ -57,41 +57,43 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     see: at("question", "see"),
     works: at("question", "works"),
     visually: at("question", "visually"),
-    first: at("question", "so"),
+    first: at("question", "so|first"),
     why: at("question", "why"),
     all: at("question", "all"),
     // 2 · products
-    because: at("products", "because"),
+    because: at("products", "because|see"),
     software: at("products", "software"),
     changing: at("products", "changing"),
     more: at("products", "more"),
     appsRun: at("products", "run"),
     learning: at("products", "learning"),
+    isnt: at("products", "isnt|nowadays"),
     rec: at("products", "recommendations"),
     fraud: at("products", "fraud"),
-    search: at("products", "search"),
+    search: at("products", "search|checks"),
     spam: at("products", "spam"),
     those: at("products", "those"),
     models: at("products", "models"),
     not: at("products", "not"),
-    rules: at("products", "rules"),
+    rules: at("products", "rules|blocks"),
     // 3 · services
     who: at("services", "who"),
-    app: at("services", "app"),
+    app: at("services", "app|jobs"),
     us: at("services", "us"),
     our: at("services", "our"),
     send: at("services", "send"),
     sendData: at("services", "data"),
     call: at("services", "call"),
     api: at("services", "api"),
-    answer: at("services", "answer"),
+    answer: at("services", "answer|answers"),
     job: at("services", "job"),
+    catch: at("services", "catch|itself"),
     // 4 · team
     learnHow: at("team", "learn"),
     most: at("team", "most"),
     buildIt: at("team", "build"),
     test: at("team", "test"),
-    fail: at("team", "fail"),
+    fail: at("team", "fail|fails"),
     speak: at("team", "speak"),
     dataTeam: at("team", "data"),
     language: at("team", "language"),
@@ -110,6 +112,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     pMl: at("python", "machine"),
     python: at("python", "python"),
     eyes: at("python", "eyes"),
+    pThrough: at("python", "through"),
     numpy: at("python", "numpy"),
     pandas: at("python", "pandas"),
     charts: at("python", "charts"),
@@ -134,6 +137,8 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     luck: at("data", "luck"),
     // 9 · ml
     readLike: at("ml", "read"),
+    likeThat: at("ml", "like"),
+    starts: at("ml", "starts"),
     m37: at("ml", "37"),
     m78: at("ml", "78"),
     realMl: at("ml", "machine"),
@@ -146,22 +151,25 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     // 10 · ship
     s79: at("ship", "79"),
     makeReal: at("ship", "real"),
+    making: at("ship", "making|real"),
     tuning: at("ship", "tuning"),
     ensembles: at("ship", "ensembles"),
     saving: at("ship", "saving"),
     capstone: at("ship", "capstone"),
     // 11 · promise
     everyDay: at("promise", "every"),
-    idea: at("promise", "idea"),
+    idea: at("promise", "every|idea"),
     lens: at("promise", "java"),
     explained: at("promise", "explained"),
-    time: at("promise", "time"),
+    time: at("promise", "topic|time"),
     part: at("promise", "part"),
     // 12 · start
     after84: at("start", "84"),
     deep: at("start", "deep"),
+    afterW: at("start", "after"),
     transformers: at("start", "transformers"),
     agents: at("start", "agents"),
+    further: at("start", "further|go"),
     startDay1: at("start", "1"),
     follow: at("start", "follow"),
     by84: at("start", "by"),
@@ -206,15 +214,16 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
         {inBeat("team") && <TeamBeat f={f} c={c} />}
         {f >= start("map") && <MapStage f={f} c={c} start={start} />}
       </Workspace>
-      {inBeat("team") && f >= c.edge && <TermCard text="REAL EDGE" color={K.green} size={76} style={{ left: 600, top: 590, ...tilt(pop(f, c.edge), -4) }} />}
+      {inBeat("team") && f >= c.edge && <TermCard text="REAL EDGE" color={K.green} size={76} style={{ left: 600, top: 590, ...tilt(pop(f, c.edge), -4 + 2.5 * Math.sin((f - c.edge) / 7)) }} />}
       {inBeat("services") && f >= c.us && f < c.our + 10 && <TermCard text="US. ☕" color={K.blue} size={120} style={{ left: 330, top: 820, ...tilt(pop(f, c.us, 8), -4), opacity: 1 - enter(f, c.our, 10) }} />}
       {inBeat("services") && f >= c.job && <TermCard text="OUR JOB NOW" color={K.yellow} fg={K.ink} size={84} style={{ left: 250, top: 830, ...tilt(pop(f, c.job, 8), -3) }} />}
-      {inBeat("ml") && f >= c.realMl && f < c.cleaning + 20 && <TermCard text="THE REAL ML" color={K.yellow} fg={K.ink} size={110} style={{ left: 150, top: 560, ...tilt(pop(f, c.realMl, 8), -3), opacity: 1 - enter(f, c.cleaning + 10, 10) }} />}
+      {inBeat("ml") && f >= c.starts && f < c.cleaning + 10 && <Chip label="▶ STARTS HERE" color={K.ink} size={36} style={{ position: "absolute", left: 300, top: 720, ...pop(f, c.starts), opacity: 1 - enter(f, c.cleaning, 10) }} />}
+      {inBeat("ml") && f >= c.realMl && f < c.cleaning + 20 && <TermCard text="THE REAL ML" color={K.yellow} fg={K.ink} size={110} style={{ left: 150, top: 560, ...tilt(pop(f, c.realMl, 8), -3 + 2.5 * Math.sin((f - c.realMl) / 7)), opacity: 1 - enter(f, c.cleaning + 10, 10) }} />}
       {inBeat("start") && f >= c.startDay1 && <StartCard f={f} c={c} />}
       {inBeat("products") && f >= c.models && <TermCard text="MODELS" color={K.yellow} fg={K.ink} size={96} style={{ left: 96, top: 700, ...tilt(pop(f, c.models), -4) }} />}
       {meta.titleCard && <TitleCard f={f} line={meta.titleCard.line} sub={meta.titleCard.sub} until={hasHost ? c.im : c.every} />}
       <TitleExtras f={f} c={c} />
-      {hasHost && f >= c.kali && f < c.every && <Chip label="👋 KALI · YOUR HOST" color={K.blue} size={30} style={{ position: "absolute", left: 250, top: 1196, border: `4px solid ${K.ink}`, ...tilt(pop(f, c.kali, 8), -2) }} />}
+      {hasHost && f >= c.kali && f < c.every && <Chip label="👋 KALI · YOUR HOST" color={K.blue} size={30} style={{ position: "absolute", left: 260, top: 1110, border: `4px solid ${K.ink}`, ...tilt(pop(f, c.kali, 8), -2) }} />}
       <Narrator pose={pointing ? "point" : "present"} />
       <CaptionPill f={f} />
     </AbsoluteFill>
@@ -348,7 +357,7 @@ function ProductsBeat({ f, c }: { f: number; c: Cues }) {
             const x = 60 + (i % 4) * 220;
             const y = 120 + Math.floor(i / 4) * 140;
             const ap = c.software + i * 1.5;
-            const wig = f >= c.changing && f < c.changing + 16 ? 5 * Math.sin((f - c.changing + i) * 1.2) : 0;
+            const wig = (f >= c.changing && f < c.changing + 16 ? 5 * Math.sin((f - c.changing + i) * 1.2) : 0) + (f >= c.isnt && f < c.isnt + 20 ? 4 * Math.sin((f - c.isnt + i) * 1.1) : 0);
             return f >= ap ? (
               <div key={i} style={{ position: "absolute", left: x, top: y, width: 180, height: 116, borderRadius: 24, background: "#fff", border: `4px solid ${f >= badgeAt(i) ? K.ink : K.line}`, display: "grid", placeItems: "center", fontSize: 58, transform: `${pop(f, ap, 7).transform} rotate(${wig}deg)`, opacity: pop(f, ap, 7).opacity }}>
                 {a}
@@ -512,6 +521,7 @@ function ServicesBeat({ f, c }: { f: number; c: Cues }) {
       )}
       {f >= c.sendData && out < 1 && <Packet x={mix(a.x1, a.x2, out)} y={mix(a.y1, a.y2, out)} label="{data}" color={K.blue} />}
       {f >= c.answer - 12 && back < 1 && <Packet x={mix(a.x2, a.x1, back)} y={mix(a.y2, a.y1, back) + 40} label="answer" color={K.green} />}
+      {f >= c.catch && f < c.job && <Chip label="⚠ HERE'S THE CATCH" color={K.red} size={34} style={{ position: "absolute", left: 420, top: 480, border: `4px solid ${K.ink}`, ...pop(f, c.catch) }} />}
       {f >= c.api && f < c.job && <Chip label="SEND · CALL · ACT" color={K.ink} size={30} style={{ position: "absolute", left: 420, top: 400, ...pop(f, c.api) }} />}
     </>
   );
@@ -620,7 +630,7 @@ function MapStage({ f, c, start }: { f: number; c: Cues; start: (id: string) => 
         const filled = f >= fillAt(d);
         const col = arcColor(d);
         const dim = range && filled && (d < range[0] || d > range[1]) ? 0.4 : 1;
-        const scale = (filled ? bump(f, fillAt(d), 10) : 1) * bump(f, bandAt(d), 14) * bump(f, judgeAt(d), 12) * (d === 1 && f >= c.startDay1 ? bump(f, c.startDay1, 16) : 1);
+        const scale = (filled ? bump(f, fillAt(d), 10) : 1) * bump(f, bandAt(d), 14) * bump(f, judgeAt(d), 12) * (d >= 22 && d <= 36 ? bump(f, c.likeThat, 14) : 1) * (d >= 2 && d <= 12 ? bump(f, c.inHand, 14) * bump(f, c.inHand + 30, 14) : 1) * (d === 84 ? bump(f, c.afterW, 16) * bump(f, c.further, 16) : 1) * (d >= 79 ? bump(f, c.making, 16) : 1) * (d === 1 && f >= c.startDay1 ? bump(f, c.startDay1, 16) : 1);
         const darkText = filled && (d >= 37 && d <= 78);
         return (
           <div key={d} style={{ position: "absolute", left: x, top: y, width: G.size, height: G.size, borderRadius: 10, boxSizing: "border-box", background: filled ? col : "#fff", border: `3px solid ${filled ? K.ink : K.line}`, display: "grid", placeItems: "center", fontSize: 20, fontWeight: 900, color: filled ? (darkText ? K.ink : "#fff") : "#B4BECB", opacity: pop(f, ap, 6).opacity * dim, transform: `${pop(f, ap, 6).transform} scale(${scale})` }}>
@@ -690,6 +700,7 @@ function PythonPanel({ f, c }: { f: number; c: Cues }) {
   return (
     <>
       <PanelTitle text={m > 0.5 ? "🐍 PYTHON" : "☕ JAVA"} color={m > 0.5 ? K.blue : K.ink} />
+      {f >= c.pThrough && f < c.eyes + 20 && <Chip label="👀 THROUGH JAVA EYES" color={K.yellow} fg={K.ink} size={24} style={{ position: "absolute", right: 18, top: 14, border: `3px solid ${K.ink}`, ...pop(f, c.pThrough) }} />}
       {f >= c.python && (
         <div style={{ position: "absolute", left: 30, top: 70, ...mono, whiteSpace: "pre", ...pop(f, c.python) }}>
           <span style={{ display: "inline-block", overflow: "hidden", verticalAlign: "bottom", width: 106 * (1 - m), color: K.purple, opacity: 1 - m, textDecoration: m > 0 ? `line-through ${K.red}` : undefined }}>int </span>
@@ -819,6 +830,7 @@ function ShipPanel({ f, c }: { f: number; c: Cues }) {
   return (
     <>
       <PanelTitle text="MAKE IT REAL" color={K.red} />
+      {f >= c.making && f < c.tuning && <Chip label="🚀 MAKING IT REAL" color={K.red} size={40} style={{ position: "absolute", left: 120, top: 100, border: `4px solid ${K.ink}`, ...tilt(pop(f, c.making), 3 * Math.sin((f - c.making) / 6)) }} />}
       {nodes.map((n, i) => {
         const x = 18 + i * 142;
         return f >= n.at ? (
@@ -868,6 +880,8 @@ function SeasonPanel({ f, c }: { f: number; c: Cues }) {
     <>
       <div style={{ opacity: 1 - out }}>
         <PanelTitle text="SEASON 2 →" color={K.purple} />
+        {f >= c.afterW && f < c.deep && <Chip label="AFTER DAY 84" color={K.purple} size={32} style={{ position: "absolute", left: 40, top: 100, border: `4px solid ${K.ink}`, ...pop(f, c.afterW) }} />}
+        {f >= c.further && f < c.deep && <Chip label="GO FURTHER →" color={K.yellow} fg={K.ink} size={32} style={{ position: "absolute", left: 300, top: 160, border: `4px solid ${K.ink}`, ...pop(f, c.further) }} />}
         {items.map((it, i) =>
           f >= it.at ? (
             <div key={it.label} style={{ position: "absolute", left: 18 + i * 186, top: 90, width: 172, height: 90, borderRadius: 14, border: `4px dashed ${K.purple}`, background: "#F3EEFF", display: "grid", placeItems: "center", fontFamily: K.head, fontSize: 24, color: K.purple, ...pop(f, it.at) }}>

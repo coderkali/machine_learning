@@ -38,3 +38,29 @@ fails only on recording items (greeting before topic; own phrasing vs text).
 - Energy not improved: pitch movement 5.1 → 4.7 st average (slightly flatter). Wording errors kept.
 - Recap got worse in one spot ("values have types" → heard "do you have it types").
 Decision pending: creator listens to the A/B.
+
+## Re-record 2 (2026-09-30, Hook/Problem/Intuition, `Recodings/VoiceTest_Sep30`)
+
+| Part | Energy raw (st) Sep 29 → Sep 30 | After Voice Changer | wpm | Level (LUFS) |
+|---|---|---|---|---|
+| Hook | 4.7 → 5.0 | 4.3 → 4.0 | 146 → 150 | −27.6 → −21.8 |
+| Problem | 4.3 → **6.1** | 4.3 → 5.2 | 140 → 135 | −27.8 → −23.7 |
+| Intuition | 4.4 → **6.6** | 4.3 → 5.4 | 134 → 148 | −27.9 → −22.0 |
+Median pitch rose 125 → 135 Hz (more lift). Grammar better ("we always trusted types", "value has a type",
+"you stick onto it"); still: "Hello everyone" opener, "this is a Day 2", "what is x is", "going to be definitely break".
+Voice Changer flattens ≈ 1 st and pulls pitch back to ≈ 122 Hz — it eats part of his energy gain.
+Video: `out/day_02/episode_v9.mp4` (131 s). Old STS parts kept in `public/day_02/rec_sts_sep29/`.
+
+## Re-record 2, parts 4–8 (2026-09-30 12:16)
+
+| Part | Energy raw (st) Sep 29 → Sep 30 | wpm Sep 30 |
+|---|---|---|
+| Visual | 5.3 → **6.9** | 165 |
+| Technical | 4.9 → 5.3 | 108 (slow) |
+| Java | 4.0 → 4.8 | 147 |
+| Example | 4.5 → 5.8 | 151 |
+| Recap | 5.9 → 5.2 ⬇ | 130 |
+All 8 parts: 4.9 → 5.7 average (+16 %); median pitch ≈ +8 Hz. Edits: Recap cut "This is called" + "Thank you for watching";
+Example cut self-correction "Python, sorry,". Still: "label" → "level" (Visual), "string" → "shrink", "Hello everyone" opener.
+"That's called dynamic typing" moved to the start of Technical (card moved with it). Day02.tsx now uses `opt()` cues
+(hidden when a word isn't said). Video: `out/day_02/episode_v12.mp4` (131 s, all 8 parts from Sep 30, Voice Changer).

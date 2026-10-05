@@ -1,0 +1,114 @@
+{
+  "day": 352,
+  "source": "DAF-02 v2 video B — claude/daf/episodes/daf_02/script_v2.md",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "Last time, we built the answer column. Tomorrow's average. Now the model needs an input. But which numbers is it allowed to see?",
+      "v3": {
+        "text": "Last time, we built the answer column. Tomorrow's average. Now the model needs an input. But which numbers is it allowed to see?",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_352/takes/recap_v3_t1.mp3",
+      "seed": 3458030740
+    },
+    {
+      "id": "six",
+      "type": "explain",
+      "text": "See, Asha madam decides at six pm. So the model must also predict at six pm.",
+      "v3": {
+        "text": "See, Asha madam decides at six pm. So the model must also predict at six pm.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_352/takes/six_v3_t1.mp3",
+      "seed": 1644043912
+    },
+    {
+      "id": "notover",
+      "type": "explain",
+      "text": "And at six pm, today is not over. The sensor has readings only up to five pm. The rest of the day has not happened yet.",
+      "v3": {
+        "text": "And at six pm, today is not over. The sensor has readings only up to five pm. The rest of the day has not happened yet.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_352/takes/notover_v3_t2.mp3",
+      "seed": 2003248815
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, but today's full average is the best clue. Why can't I use it?",
+      "v3": {
+        "text": "Sir, but today's full average is the best clue. Why can't I use it?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_352/takes/doubt1_v3_t1.mp3",
+      "seed": 1945578257
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "text": "Because at six pm, it does not exist. In our table, the full day is sitting right there, so the model looks brilliant. But in real life, at six pm, that number is missing. And the model fails.",
+      "v3": {
+        "text": "Because at six pm, it does not exist. In our table, the full day is sitting right there, so the model looks brilliant. But in real life, at six pm, that number is missing. And the model fails.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_352/takes/answer1_v3_t1.mp3",
+      "seed": 2974021903
+    },
+    {
+      "id": "rule",
+      "type": "insight",
+      "text": "So the rule is simple. Use only what exists at prediction time. That's why our input column is the average up to five pm. For the twenty-fourth of February, one hundred two point seven. Known at six pm.",
+      "v3": {
+        "text": "So the rule is simple. Use only what exists at prediction time. That's why our input column is the average up to five pm. For the twenty-fourth of February, one hundred two point seven. Known at six pm.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_352/takes/rule_v3_t2.mp3",
+      "seed": 518336535
+    },
+    {
+      "id": "weather",
+      "type": "explain",
+      "text": "Same for the weather. Tomorrow's actual weather, we cannot know. But tomorrow's weather forecast, we can use.",
+      "v3": {
+        "text": "Same for the weather. Tomorrow's actual weather, we cannot know. But tomorrow's weather forecast, we can use.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_352/takes/weather_v3_t1.mp3",
+      "seed": 715869295
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. The model predicts at six pm, and it uses only what exists at six pm. Next, how do we know if the model is any good?",
+      "v3": {
+        "text": "So, remember. The model predicts at six pm, and it uses only what exists at six pm. Next, how do we know if the model is any good?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "chosen": "day_352/takes/recall_v3_t4.mp3",
+      "seed": 2319198598
+    }
+  ]
+}

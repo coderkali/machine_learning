@@ -19,7 +19,7 @@ const ff = (args) => execFileSync("ffmpeg", ["-hide_banner", "-nostats", ...args
 const stderrOf = (args) => spawnSync("ffmpeg", ["-hide_banner", "-nostats", ...args], { encoding: "utf8" }).stderr;
 
 const results = [];
-for (const file of readdirSync(dir).filter((f) => /\.(m4a|wav|mp3|aac|caf)$/i.test(f)).sort()) {
+for (const file of readdirSync(dir).filter((f) => /\.(m4a|wav|mp3|aac|caf|qta)$/i.test(f)).sort()) {
   const src = path.join(dir, file);
   const loud = stderrOf(["-i", src, "-af", "loudnorm=print_format=json", "-f", "null", "-"]);
   const j = JSON.parse(loud.slice(loud.lastIndexOf("{"), loud.lastIndexOf("}") + 1));
@@ -27,7 +27,8 @@ for (const file of readdirSync(dir).filter((f) => /\.(m4a|wav|mp3|aac|caf)$/i.te
   const pick = (k) => Number((stats.match(new RegExp(`${k}: (-?[\\d.]+|-inf)`)) ?? [])[1]);
   const sil = [...stderrOf(["-i", src, "-af", "silencedetect=noise=-38dB:d=0.35", "-f", "null", "-"]).matchAll(/silence_duration: ([\d.]+)/g)].map((m) => Number(m[1]));
   const wav = path.join(tmp, file.replace(/\.[^.]+$/, ".wav"));
-  ff(["-y", "-i", src, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav]);
+  // 1.5 s of padding: Whisper drops the last word when a recording ends right after it.
+  ff(["-y", "-i", src, "-af", "apad=pad_dur=1.5", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav]);
   const dur = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", src], { encoding: "utf8" }));
   const out = await transcribe({ inputPath: wav, whisperPath: path.join(ROOT, "whisper.cpp"), whisperCppVersion: "1.6.0", model: "small.en", tokenLevelTimestamps: true, splitOnWord: true, printOutput: false });
   const caps = toCaptions({ whisperCppOutput: out }).captions.filter((c) => c.text.trim() && !/^\s*\[.*\]\s*$/.test(c.text));

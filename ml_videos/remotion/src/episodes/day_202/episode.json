@@ -1,0 +1,72 @@
+{
+  "day": 202,
+  "slug": "daf_trailer_part2",
+  "title": "Delhi Air Forecast",
+  "topic": "DAF trailer part 2: PM2.5, the 91 line, beat the rival",
+  "badge": "DAF \u00b7 TRAILER 2",
+  "next": {
+    "day": 301,
+    "title": "DAF-01: the project skeleton"
+  },
+  "titleCard": {
+    "line": "ONE NUMBER",
+    "sub": "Delhi Air Forecast \u00b7 Trailer 2"
+  },
+  "chapters": [
+    {
+      "beat": "hook",
+      "label": "6 pm"
+    },
+    {
+      "beat": "pm25",
+      "label": "PM2.5"
+    },
+    {
+      "beat": "line",
+      "label": "91"
+    },
+    {
+      "beat": "problem",
+      "label": "Rival"
+    },
+    {
+      "beat": "start",
+      "label": "Next"
+    }
+  ],
+  "thumbnail": {
+    "blocks": [
+      {
+        "text": "ONE NUMBER",
+        "style": "black"
+      },
+      {
+        "text": "91",
+        "style": "red"
+      },
+      {
+        "text": "TRAILER 2",
+        "style": "yellow"
+      }
+    ],
+    "diagram": {
+      "source": "docs/requirements.md (91 = Poor line) + README.md (Asha's decision)",
+      "rows": [
+        {
+          "title": "BELOW 91",
+          "tone": "good",
+          "items": [
+            "outside"
+          ]
+        },
+        {
+          "title": "91 OR ABOVE",
+          "tone": "bad",
+          "items": [
+            "inside"
+          ]
+        }
+      ]
+    }
+  }
+}

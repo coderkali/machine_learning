@@ -1,13 +1,9 @@
 {
   "day": 0,
-  "source": "claude/episodes/day_00/voiceover_sheet_v3.md (WHY section rewritten after viewer feedback 2026-09-28)",
+  "source": "Kali's MIC recording 2026-10-03 (Recodings/Intro_Mic), sheet claude/episodes/day_00/reading_sheet_v4.md; cuts public/day_00/rec_clean/CUTS_mic.txt",
   "voice": {
-    "name": "Viraj - Confident and Natural",
-    "voiceId": "fPIfC3elMLbN9tNwMXkw",
-    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
-    "accent": "Indian English",
-    "model": "v3",
-    "chosen": "2026-09-27 by the creator (series voice, replaces Brian)"
+    "name": "Kali (own voice, recorded) → Voice Changer",
+    "model": "recorded"
   },
   "leadIn": 0.1,
   "endHold": 1.5,
@@ -15,7 +11,7 @@
     {
       "id": "question",
       "type": "hook",
-      "text": "This is our new series, ML for a Java developer. For every Java developer who's curious about machine learning, and wants to see how it works, visually. So first, why should a Java developer learn ML at all?",
+      "text": "This is our new series, ML for a Java developer. I'm Kali, a software engineer with 13+ years of experience, and I am learning ML through Java eyes. This series is for every Java developer who is curious about machine learning and wants to see how it works, visually. But first, why should a Java developer learn ML at all?",
       "v3": {
         "text": "[excited] This is our new series… ML for a Java developer. [warmly] For every Java developer who's curious about machine learning, and wants to see how it works, visually. [curious] So first… why should a Java developer learn ML at all?",
         "stability": 0.5
@@ -26,15 +22,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 1724694995,
-      "chosen": "day_00/takes/question_v3_t5.mp3",
-      "holdAfter": 0,
-      "pickedBy": "manual"
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
     },
     {
       "id": "products",
       "type": "problem",
-      "text": "Because software is changing. More and more apps now run on machine learning. Recommendations, fraud checks, search, spam filters. Those features are models, not if-else rules.",
+      "text": "See, software is changing. More and more apps now run on machine learning, isn't it? Nowadays, recommendations, fraud checks, search, spam filters, all those features are models, not if-else rules.",
       "v3": {
         "text": "[confident] Because software is changing. More and more apps now run on machine learning. Recommendations, fraud checks, search, spam filters… [thoughtful] those features are models, not if-else rules.",
         "stability": 0.5
@@ -45,15 +40,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 3406418041,
-      "chosen": "day_00/takes/products_v3_t4.mp3",
-      "holdAfter": 0,
-      "pickedBy": "manual"
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
     },
     {
       "id": "services",
       "type": "explain",
-      "text": "And who connects those models to the app? Us. Our Java services send them data, call them through an API, and act on the answer. So ML is becoming part of our job.",
+      "text": "Now, just think once. Who connects those models to the app? It's us. Yes, we only. Our Java services send them data, call them through an API, and act on the answer. So ML is becoming part of our job itself.",
       "v3": {
         "text": "[curious] And who connects those models to the app? [confident] Us. Our Java services send them data, call them through an API, and act on the answer. So ML is becoming part of our job.",
         "stability": 0.5
@@ -64,15 +58,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 1054002636,
-      "chosen": "day_00/takes/services_v3_t4.mp3",
-      "holdAfter": 0,
-      "pickedBy": "manual"
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
     },
     {
       "id": "team",
       "type": "java",
-      "text": "Learn how it works, and you get the most out of it. You can build the feature, test it, know when it will fail, and speak the data team's language. That's a real edge for a Java developer.",
+      "text": "I'll tell you one thing. If you learn how it works, you get the most out of it. You can build a feature, test it, and know when it will fail. And you speak the data team's language also. That is the real edge of a Java developer, isn't it?",
       "v3": {
         "text": "[warmly] Learn how it works, and you get the most out of it. You can build the feature, test it, know when it will fail… and speak the data team's language. [confident] That's a real edge for a Java developer.",
         "stability": 0.5
@@ -83,15 +76,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 4110811676,
-      "chosen": "day_00/takes/team_v3_t5.mp3",
-      "holdAfter": 0.3,
-      "pickedBy": "manual"
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
     },
     {
       "id": "map",
       "type": "insight",
-      "text": "So I built a map. Eighty-four days. One idea a day, in the order I actually learned it.",
+      "text": "So, that's why I built a map. 84 days, one idea per day, in the same order I learned it myself.",
       "v3": {
         "text": "[thoughtful] So… [confident] I built a map. Eighty-four days. One idea a day, in the order I actually learned it.",
         "stability": 0.5
@@ -102,14 +94,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 1463147835,
-      "chosen": "day_00/takes/map_v3_t1.mp3",
+      "seed": null,
+      "chosen": null,
       "holdAfter": 0
     },
     {
       "id": "python",
       "type": "explain",
-      "text": "It starts where I started. Day 1: what is machine learning? Then Days 2 to 12: Python, through Java eyes. NumPy, Pandas, charts, and two small projects.",
+      "text": "First of all, it starts where I started. Day 1: what is machine learning? Then Day 2 to 12: Python, through Java eyes, like NumPy, Pandas, charts and two small projects.",
       "v3": {
         "text": "[confident] It starts where I started. Day 1: what is machine learning? Then Days 2 to 12: Python, through Java eyes. NumPy, Pandas, charts, and two small projects.",
         "stability": 0.5
@@ -120,14 +112,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 3988518575,
-      "chosen": "day_00/takes/python_v3_t1.mp3",
+      "seed": null,
+      "chosen": null,
       "holdAfter": 0
     },
     {
       "id": "math",
       "type": "explain",
-      "text": "With Python in hand, Days 13 to 21: only the math you need. Statistics, vectors, and the slope behind gradient descent.",
+      "text": "Once Python is in your hands, Day 13 to 21: only the math you need. Statistics, vectors, the slope behind gradient descent. Don't worry, it's very simple only.",
       "v3": {
         "text": "[confident] With Python in hand, Days 13 to 21: only the math you need. Statistics, vectors, and the slope behind gradient descent.",
         "stability": 0.5
@@ -138,14 +130,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 740649848,
-      "chosen": "day_00/takes/math_v3_t3.mp3",
+      "seed": null,
+      "chosen": null,
       "holdAfter": 0
     },
     {
       "id": "data",
       "type": "explain",
-      "text": "Then we point that math at real data. Days 22 to 36: reading data like a scientist. Spread, correlation, and tests that separate real patterns from luck.",
+      "text": "Then we point that math at real data, from Day 22 to 36, reading the data like a scientist. Spread, correlation and tests, and the tests tell real patterns from luck.",
       "v3": {
         "text": "[confident] Then we point that math at real data. Days 22 to 36: reading data like a scientist. Spread, correlation, and tests that separate real patterns from luck.",
         "stability": 0.5
@@ -156,14 +148,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 1459717506,
-      "chosen": "day_00/takes/data_v3_t1.mp3",
+      "seed": null,
+      "chosen": null,
       "holdAfter": 0
     },
     {
       "id": "ml",
       "type": "explain",
-      "text": "Once you can read data like that, Days 37 to 78. The real machine learning. Cleaning data, predicting numbers, predicting classes, finding groups, and judging every model honestly.",
+      "text": "And once you can read data like that, Day 37 to 78, now the real machine learning starts. Cleaning the data, predicting the numbers, predicting the classes, finding the groups, judging every model honestly. Understood, right?",
       "v3": {
         "text": "[thoughtful] Once you can read data like that… Days 37 to 78. [excited] The real machine learning. [confident] Cleaning data, predicting numbers, predicting classes, finding groups, and judging every model honestly.",
         "stability": 0.5
@@ -174,14 +166,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 3225567555,
-      "chosen": "day_00/takes/ml_v3_t2.mp3",
-      "holdAfter": 0.3
+      "seed": null,
+      "chosen": null,
+      "holdAfter": 0
     },
     {
       "id": "ship",
       "type": "explain",
-      "text": "And finally, Days 79 to 84: making it real. Tuning, ensembles, saving a model, and a full capstone project.",
+      "text": "Now, from Day 79 to 84, making it real. Tuning, ensembles, saving a model, and one full capstone project.",
       "v3": {
         "text": "[confident] And finally, Days 79 to 84: making it real. Tuning, ensembles, saving a model, and a full capstone project.",
         "stability": 0.5
@@ -192,14 +184,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 2893717360,
-      "chosen": "day_00/takes/ship_v3_t2.mp3",
+      "seed": null,
+      "chosen": null,
       "holdAfter": 0
     },
     {
       "id": "promise",
       "type": "takeaway",
-      "text": "Every day is one idea, with a Java lens, explained properly. And when a topic needs more time, it gets a part two.",
+      "text": "So, basically, every day is one idea, with a Java lens, explained properly. And if some topic needs more time, no problem, I will get it into part two.",
       "v3": {
         "text": "[confident] Every day is one idea, with a Java lens, explained properly. And when a topic needs more time, it gets a part two.",
         "stability": 0.5
@@ -210,14 +202,14 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 1231299692,
-      "chosen": "day_00/takes/promise_v3_t1.mp3",
+      "seed": null,
+      "chosen": null,
       "holdAfter": 0
     },
     {
       "id": "start",
       "type": "teaser",
-      "text": "After Day 84: deep learning, then transformers and agents. But Day 1 starts now. Follow along, and by Day 84, you'll have built a real ML project, start to finish.",
+      "text": "After Day 84, we go further, into deep learning, then transformers, then agents. But first things first, Day 1 starts now. Follow along with me, and by Day 84, you will build your own real ML project, start to finish.",
       "v3": {
         "text": "[curious] After Day 84: deep learning, then transformers and agents. [warmly] But Day 1 starts now. Follow along… and by Day 84, you'll have built a real ML project, start to finish.",
         "stability": 0.5
@@ -228,8 +220,8 @@
         "style": 0.3,
         "speed": 1
       },
-      "seed": 2384648893,
-      "chosen": "day_00/takes/start_v3_t1.mp3",
+      "seed": null,
+      "chosen": null,
       "holdAfter": 0
     }
   ]

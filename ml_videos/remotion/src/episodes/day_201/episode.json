@@ -1,0 +1,78 @@
+{
+  "day": 201,
+  "slug": "daf_trailer_part1",
+  "title": "Delhi Air Forecast",
+  "topic": "DAF trailer part 1: why this project?",
+  "badge": "DAF \u00b7 TRAILER 1",
+  "next": {
+    "day": 202,
+    "title": "Trailer part 2: from sensors to a forecast"
+  },
+  "titleCard": {
+    "line": "WHY THIS PROJECT?",
+    "sub": "Delhi Air Forecast \u00b7 Trailer 1"
+  },
+  "chapters": [
+    {
+      "beat": "journey",
+      "label": "Why"
+    },
+    {
+      "beat": "why_delhi",
+      "label": "Delhi"
+    },
+    {
+      "beat": "for_whom",
+      "label": "Cast"
+    },
+    {
+      "beat": "rival",
+      "label": "Rival"
+    },
+    {
+      "beat": "recall",
+      "label": "Remember"
+    }
+  ],
+  "thumbnail": {
+    "blocks": [
+      {
+        "text": "DELHI AIR",
+        "style": "black"
+      },
+      {
+        "text": "TOMORROW?",
+        "style": "red"
+      },
+      {
+        "text": "TRAILER 1",
+        "style": "yellow"
+      }
+    ],
+    "diagram": {
+      "source": "18_Projects/01_Delhi_Air_Forecast/README.md + docs/requirements.md",
+      "rows": [
+        {
+          "title": "RIVAL",
+          "tone": "bad",
+          "items": [
+            "today",
+            "->",
+            "tomorrow"
+          ]
+        },
+        {
+          "title": "MODEL",
+          "tone": "good",
+          "items": [
+            "@table",
+            "->",
+            "@model",
+            "->",
+            "tomorrow"
+          ]
+        }
+      ]
+    }
+  }
+}

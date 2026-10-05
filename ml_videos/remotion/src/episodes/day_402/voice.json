@@ -1,0 +1,126 @@
+{
+  "day": 402,
+  "source": "DAF-02 v2 video C — claude/daf/episodes/daf_02/script_v2.md",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "We have the input column, and the answer column. Now the big question. How do we know if a model is good?",
+      "v3": {
+        "text": "We have the input column, and the answer column. Now the big question. How do we know if a model is good?",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_402/takes/recap_v3_t2.mp3",
+      "seed": 3946483920
+    },
+    {
+      "id": "rival",
+      "type": "explain",
+      "text": "See, saying the model must be accurate is not enough. Accurate compared to what? We need a rival.",
+      "v3": {
+        "text": "See, saying the model must be accurate is not enough. Accurate compared to what? We need a rival.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_402/takes/rival_v3_t2.mp3",
+      "seed": 3349234856
+    },
+    {
+      "id": "persistence",
+      "type": "explain",
+      "text": "And Asha madam already has one. Tomorrow will be like today. We call it persistence. Let's add it as a column. Every day, it simply copies yesterday's number.",
+      "v3": {
+        "text": "And Asha madam already has one. Tomorrow will be like today. We call it persistence. Let's add it as a column. Every day, it simply copies yesterday's number.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_402/takes/persistence_v3_t2.mp3",
+      "seed": 3691765707
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, if our model is a little worse than this, it is still useful, right?",
+      "v3": {
+        "text": "Sir, if our model is a little worse than this, it is still useful, right?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_402/takes/doubt1_v3_t2.mp3",
+      "seed": 2124827074
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "text": "No. A model costs servers and maintenance, and people trust it more. If it cannot beat tomorrow equals today, Asha is better off with no model at all.",
+      "v3": {
+        "text": "No. A model costs servers and maintenance, and people trust it more. If it cannot beat tomorrow equals today, Asha is better off with no model at all.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_402/takes/answer1_v3_t2.mp3",
+      "seed": 1771784479
+    },
+    {
+      "id": "mae",
+      "type": "explain",
+      "text": "Now, how far off is persistence? We add one more column. The error. On the twenty-first, forty-one off. On the twenty-third, only five off. The average of this column is called MAE. Here, eighteen point six.",
+      "v3": {
+        "text": "Now, how far off is persistence? We add one more column. The error. On the twenty-first, forty-one off. On the twenty-third, only five off. The average of this column is called MAE. Here, eighteen point six.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_402/takes/mae_v3_t1.mp3",
+      "seed": 1683931945
+    },
+    {
+      "id": "catch",
+      "type": "insight",
+      "text": "But here's the catch. MAE treats every error the same. For Asha, missing a Poor day is the costly mistake. So we also count the Poor days we caught. Persistence caught two out of three. This is called recall.",
+      "v3": {
+        "text": "But here's the catch. MAE treats every error the same. For Asha, missing a Poor day is the costly mistake. So we also count the Poor days we caught. Persistence caught two out of three. This is called recall.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_402/takes/catch_v3_t2.mp3",
+      "seed": 1702922327
+    },
+    {
+      "id": "goal",
+      "type": "insight",
+      "text": "So our goal is one sentence. Beat the persistence MAE by ten percent, without catching fewer Poor days. And we test it on days the model has never seen.",
+      "v3": {
+        "text": "So our goal is one sentence. Beat the persistence MAE by ten percent, without catching fewer Poor days. And we test it on days the model has never seen.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_402/takes/goal_v3_t1.mp3",
+      "seed": 2641316639
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. A model is good only compared to a rival. MAE tells us how far off we are. Recall tells us how many bad days we caught.",
+      "v3": {
+        "text": "So, remember. A model is good only compared to a rival. MAE tells us how far off we are. Recall tells us how many bad days we caught.",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "chosen": "day_402/takes/recall_v3_t1.mp3",
+      "seed": 1977264510
+    }
+  ]
+}

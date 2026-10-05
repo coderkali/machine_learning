@@ -1,0 +1,65 @@
+{
+  "frozen_on": "2026-10-03",
+  "ticket": "DAF-17",
+  "model": {
+    "name": "ridge",
+    "steps": [
+      [
+        "StandardScaler",
+        {}
+      ],
+      [
+        "Ridge",
+        {
+          "solver": "lsqr",
+          "alpha": 1.0
+        }
+      ]
+    ]
+  },
+  "features": [
+    "pm25_until_17",
+    "mean_3",
+    "mean_7",
+    "mean_14"
+  ],
+  "target": "target",
+  "poor_line": 91,
+  "train": {
+    "rows": 251,
+    "first_date": "2025-03-17",
+    "last_date": "2026-02-28",
+    "target_sha256": "4becfde856706a349111384ef69d538bed008ca56e539528669abd51c949a7ec"
+  },
+  "locked_test": {
+    "cut_date": "2026-03-01",
+    "rows_not_used": 130
+  },
+  "cv": {
+    "method": "TimeSeriesSplit",
+    "n_splits": 5,
+    "fold_mae": [
+      31.8979,
+      14.6577,
+      46.3532,
+      52.356,
+      37.0174
+    ],
+    "mean_mae": 36.4564,
+    "persistence_mean_mae": 37.8892,
+    "folds_better_than_persistence": 3
+  },
+  "tuning": {
+    "ridge": {
+      "default_cv": 36.4564,
+      "tuned_cv": 36.4092,
+      "kept": "default"
+    },
+    "hist_gradient_boosting": {
+      "default_cv": 47.7822,
+      "tuned_cv": 47.6832,
+      "kept": "default"
+    }
+  },
+  "sklearn_version": "1.5.2"
+}

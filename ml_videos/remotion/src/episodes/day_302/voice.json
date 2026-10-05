@@ -1,0 +1,126 @@
+{
+  "day": 302,
+  "source": "DAF-02 v2 video A — claude/daf/episodes/daf_02/script_v2.md",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "hook",
+      "type": "hook",
+      "text": "Before we train any model, we must answer one simple question. What exactly are we predicting?",
+      "v3": {
+        "text": "Before we train any model, we must answer one simple question. What exactly are we predicting?",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_302/takes/hook_v3_t2.mp3",
+      "seed": 1766683505
+    },
+    {
+      "id": "data",
+      "type": "explain",
+      "text": "See, this is our real data, from one sensor at R K Puram in Delhi. One row for each day. And this column is the average PM2.5 of that day.",
+      "v3": {
+        "text": "See, this is our real data, from one sensor at R K Puram in Delhi. One row for each day. And this column is the average PM2.5 of that day.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_302/takes/data_v3_t1.mp3",
+      "seed": 3261856676
+    },
+    {
+      "id": "number",
+      "type": "explain",
+      "text": "So what will the model predict? A number. Tomorrow's PM2.5.",
+      "v3": {
+        "text": "So what will the model predict? A number. Tomorrow's PM2.5.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_302/takes/number_v3_t1.mp3",
+      "seed": 1470874319
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, Asha only needs inside or outside. Why not just predict safe or unsafe?",
+      "v3": {
+        "text": "Sir, Asha only needs inside or outside. Why not just predict safe or unsafe?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_302/takes/doubt1_v3_t3.mp3",
+      "seed": 3652185701
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "text": "Because a category hides information. Look at these two real days. Ninety-two, and three hundred ninety-seven. Both are unsafe. But one is bad, and the other is dangerous. The number keeps that difference. And the official table can still turn it into a category for Asha.",
+      "v3": {
+        "text": "Because a category hides information. Look at these two real days. Ninety-two, and three hundred ninety-seven. Both are unsafe. But one is bad, and the other is dangerous. The number keeps that difference. And the official table can still turn it into a category for Asha.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_302/takes/answer1_v3_t3.mp3",
+      "seed": 2447520397
+    },
+    {
+      "id": "tomorrow",
+      "type": "explain",
+      "text": "Now, which number exactly? Tomorrow's average, from midnight to midnight, Indian time. Because the official air quality bands use the full-day average.",
+      "v3": {
+        "text": "Now, which number exactly? Tomorrow's average, from midnight to midnight, Indian time. Because the official air quality bands use the full-day average.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_302/takes/tomorrow_v3_t1.mp3",
+      "seed": 3443972047
+    },
+    {
+      "id": "shift",
+      "type": "explain",
+      "text": "So we take tomorrow's average, and move it up one row. Now every day has its answer sitting right next to it. This new column is our target.",
+      "v3": {
+        "text": "So we take tomorrow's average, and move it up one row. Now every day has its answer sitting right next to it. This new column is our target.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_302/takes/shift_v3_t2.mp3",
+      "seed": 3249145413
+    },
+    {
+      "id": "rule",
+      "type": "insight",
+      "text": "But here's the catch. Sensors go down. On the second of March, this sensor gave nothing at all. So we make one rule. A day counts only if it has at least eighteen hours of readings. Otherwise, we drop it.",
+      "v3": {
+        "text": "But here's the catch. Sensors go down. On the second of March, this sensor gave nothing at all. So we make one rule. A day counts only if it has at least eighteen hours of readings. Otherwise, we drop it.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_302/takes/rule_v3_t2.mp3",
+      "seed": 2538708906
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. We predict a number. Tomorrow's full-day average. Only from days with enough readings. Next, what is the model allowed to see at six pm?",
+      "v3": {
+        "text": "So, remember. We predict a number. Tomorrow's full-day average. Only from days with enough readings. Next, what is the model allowed to see at six pm?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "chosen": "day_302/takes/recall_v3_t2.mp3",
+      "seed": 1070739039
+    }
+  ]
+}

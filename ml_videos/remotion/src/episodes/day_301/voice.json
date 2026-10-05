@@ -1,0 +1,126 @@
+{
+  "day": 301,
+  "source": "DAF-01 part 1 — claude/daf/episodes/daf_01/script_v2.md beats recap…answer1 + p1_end",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "Last time, in the trailer, we met Asha madam, and we learned that one number, ninety-one, decides if six hundred children go outside. But before we can predict that number, every real project must answer one question first.",
+      "v3": {
+        "text": "Last time, in the trailer, we met Asha madam, and we learned that one number, ninety-one, decides if six hundred children go outside. But before we can predict that number, every real project must answer one question first.",
+        "stability": 0.5
+      },
+      "seed": 2451066982,
+      "chosen": "day_301/takes/recap_v3_t2.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "question",
+      "type": "problem",
+      "text": "If my laptop breaks tomorrow, can someone else run this project, and get exactly the same result? In ML, this idea has a name. Reproducibility. And today's ticket is all about it.",
+      "v3": {
+        "text": "If my laptop breaks tomorrow, can someone else run this project, and get exactly the same result? In ML, this idea has a name. Reproducibility. And today's ticket is all about it.",
+        "stability": 0.5
+      },
+      "seed": 29126041,
+      "chosen": "day_301/takes/question_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "matters",
+      "type": "problem",
+      "text": "See, why does it matter so much in ML? Let's say our model says, tomorrow will be Poor, keep the children inside. And someone asks, how did you get this answer? If I cannot run the same code, on the same data, with the same libraries, and get the same number again, then I cannot explain it. And I cannot trust it.",
+      "v3": {
+        "text": "See, why does it matter so much in ML? Let's say our model says, tomorrow will be Poor, keep the children inside. And someone asks, how did you get this answer? If I cannot run the same code, on the same data, with the same libraries, and get the same number again, then I cannot explain it. And I cannot trust it.",
+        "stability": 0.5
+      },
+      "seed": 4111578028,
+      "chosen": "day_301/takes/matters_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "java",
+      "type": "java",
+      "text": "As Java developers, we already know this very well. Nobody writes a controller before the project has its structure and its pom.xml. But Python lets you skip all of that, and start typing in a notebook on day one. And here's the catch. That freedom is exactly why so many ML projects cannot be run a second time.",
+      "v3": {
+        "text": "As Java developers, we already know this very well. Nobody writes a controller before the project has its structure and its pom.xml. But Python lets you skip all of that, and start typing in a notebook on day one. And here's the catch. That freedom is exactly why so many ML projects cannot be run a second time.",
+        "stability": 0.5
+      },
+      "seed": 3295609278,
+      "chosen": "day_301/takes/java_v3_t2.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "four",
+      "type": "insight",
+      "text": "So reproducibility stands on four simple ideas. Let's take them one by one.",
+      "v3": {
+        "text": "So reproducibility stands on four simple ideas. Let's take them one by one.",
+        "stability": 0.5
+      },
+      "seed": 717518784,
+      "chosen": "day_301/takes/four_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "isolation",
+      "type": "explain",
+      "text": "Idea one. Every project lives in its own room. Just think once. On one laptop, I have many Python projects. One needs a new version of a library, another one needs an old version. If they all share one Python, upgrading for one project silently breaks the other. So each project gets its own isolated environment. In Python, we call it a virtual environment.",
+      "v3": {
+        "text": "Idea one. Every project lives in its own room. Just think once. On one laptop, I have many Python projects. One needs a new version of a library, another one needs an old version. If they all share one Python, upgrading for one project silently breaks the other. So each project gets its own isolated environment. In Python, we call it a virtual environment.",
+        "stability": 0.5
+      },
+      "seed": 593504358,
+      "chosen": "day_301/takes/isolation_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, in Java I never needed this. Why does Python need it?",
+      "v3": {
+        "text": "Sir, in Java I never needed this. Why does Python need it?",
+        "stability": 0.5
+      },
+      "seed": 1583410896,
+      "chosen": "day_301/takes/doubt1_v3_t2.mp3",
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)"
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "text": "Because in Java, Maven already does it for you. It keeps every library version separately, and each project picks exactly what it needs. Python, by default, has one shared shelf for everyone. The virtual environment gives every project its own shelf. Same idea, different tool.",
+      "v3": {
+        "text": "Because in Java, Maven already does it for you. It keeps every library version separately, and each project picks exactly what it needs. Python, by default, has one shared shelf for everyone. The virtual environment gives every project its own shelf. Same idea, different tool.",
+        "stability": 0.5
+      },
+      "seed": 3915900785,
+      "chosen": "day_301/takes/answer1_v3_t2.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "p1_end",
+      "type": "teaser",
+      "text": "So that is idea one. Every project in its own room. In part two, the other three ideas. Exact versions, one home for the real code, and what we share, and what we never share.",
+      "v3": {
+        "text": "So that is idea one. Every project in its own room. In part two, the other three ideas. Exact versions, one home for the real code, and what we share, and what we never share.",
+        "stability": 0.5
+      },
+      "seed": 131498424,
+      "chosen": "day_301/takes/p1_end_v3_t1.mp3",
+      "holdAfter": 0
+    }
+  ]
+}

@@ -30,6 +30,7 @@ const music = flag("music");
 const musicLufs = Number(flag("music-lufs") ?? TARGET_LUFS - 12);
 // --beats hook,rules,shift → master only these beats (a short sample before the full episode).
 const onlyBeats = flag("beats")?.split(",").map((b) => b.trim());
+const minGap = Number(flag("min-gap") ?? 0);
 if (onlyBeats) ep.voice.beats = ep.voice.beats.filter((b) => onlyBeats.includes(b.id));
 
 const work = await fs.mkdtemp(path.join(os.tmpdir(), `${ep.id}-master-`));
@@ -64,7 +65,8 @@ for (const [i, beat] of ep.voice.beats.entries()) {
   const trimmed = path.join(work, `${beat.id}.wav`);
   await run("ffmpeg", ["-y", "-i", source, "-af", trimFilter, "-ar", String(SAMPLE_RATE), "-ac", "1", "-c:a", "pcm_s16le", trimmed]);
   const len = await duration(trimmed);
-  const gap = i === 0 ? 0 : beat.gapBefore ?? gapBefore(beat.type);
+  // --min-gap: own-voice episodes need a breath between parts (0.25 s felt like a hard cut, creator 2026-10-04).
+  const gap = i === 0 ? 0 : Math.max(beat.gapBefore ?? gapBefore(beat.type), minGap + (beat.type === "insight" ? 0.3 : 0));
   t += gap;
   const speechStart = t;
   t += len;

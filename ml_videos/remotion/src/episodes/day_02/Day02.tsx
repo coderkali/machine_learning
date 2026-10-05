@@ -26,12 +26,16 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
   const next = (id: string) => tl.beats[tl.beats.findIndex((b) => b.id === id) + 1]?.from ?? Infinity;
   const inBeat = (id: string) => f >= start(id) && f < next(id);
 
+  // Own-voice recordings change wording: an optional cue whose word isn't said stays hidden (Infinity),
+  // instead of falling back to the start of the part.
+  const said = (beat: string, word: string) => tl.captions.some((p) => p.words.some((w) => w.beatId === beat && word.split("|").some((x) => w.text.toLowerCase().replace(/[^a-z0-9-]/g, "") === x)));
+  const opt = (beat: string, word: string, nth = 1) => (said(beat, word) ? at(beat, word, nth) : Infinity);
   const c: Cues = {
     // hook
     kali: at("hook", "kali"),
     this: at("hook", "this"),
     day: at("hook", "day"),
-    ml: at("hook", "ml"),
+    ml: at("hook", "ml|machine"),
     first: at("hook", "first"),
     surprised: at("hook", "surprised"),
     noInt: at("hook", "int"),
@@ -41,17 +45,18 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     equals: at("hook", "equals"),
     five: at("hook", "5"),
     how: at("hook", "how"),
-    knows: at("hook", "knows"),
+    knows: at("hook", "knows|know"),
     xIs: at("hook", "x", 2),
     // problem
-    trust: at("problem", "trust"),
+    pJava: at("problem", "java"),
+    trust: at("problem", "trust|trusted"),
     types: at("problem", "types"),
     compiler: at("problem", "compiler"),
     checks: at("problem", "checks"),
     before: at("problem", "before"),
     runs: at("problem", "runs"),
     saw: at("problem", "saw"),
-    noType: at("problem", "type"),
+    noType: at("problem", "type|types", 2),
     thought: at("problem", "thought"),
     brk: at("problem", "break"),
     // intuition
@@ -62,6 +67,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     hasType: at("intuition", "type"),
     create: at("intuition", "create"),
     box2: at("intuition", "box", 2),
+    inside: at("intuition", "inside"),
     only: at("intuition", "only"),
     goesIn: at("intuition", "goes"),
     python: at("intuition", "python"),
@@ -70,36 +76,40 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     variable: at("intuition", "variable"),
     label: at("intuition", "label"),
     stick: at("intuition", "stick"),
-    onIt: at("intuition", "on"),
+    onIt: at("intuition", "on|onto"),
     // visual
     visualize: at("visual", "visualize"),
     vx: at("visual", "x"),
     vFive: at("visual", "5"),
+    vNumber: at("visual", "number"),
+    vFive2: at("visual", "5", 2),
     vLabel: at("visual", "label"),
-    points: at("visual", "points"),
+    points: at("visual", "points|point"),
     now: at("visual", "now"),
     hello: at("visual", "hello"),
     same: at("visual", "same"),
-    newValue: at("visual", "value"),
+    newValue: at("visual", "value|values"),
     newType: at("visual", "type"),
     noError: at("visual", "no"),
-    dynamic: at("visual", "dynamic"),
+    dynamic: opt("technical", "dynamic"),
     // technical
     tChecks: at("technical", "checks"),
     tRuns: at("technical", "runs"),
     tBefore: at("technical", "before"),
-    tThink: at("technical", "think"),
+    tThink: opt("technical", "think|ask"),
     ask: at("technical", "ask"),
     tX: at("technical", "x"),
-    tYou: at("technical", "you", 2),
+    tYou: opt("technical", "always|ask"),
+    tWhat: opt("technical", "what"),
     tTypeOf: at("technical", "type"),
     tells: at("technical", "tells"),
     tFloat: at("technical", "float"),
     tInt: at("technical", "int"),
     tString: at("technical", "string"),
-    depending: at("technical", "depending"),
+    depending: opt("technical", "depending"),
     // java
-    confused: at("java", "confused"),
+    confused: at("java", "java|confused"),
+    conf2: at("java", "confused"),
     jDynamic: at("java", "dynamic"),
     strict: at("java", "strict"),
     tryIt: at("java", "try"),
@@ -116,8 +126,12 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     eJava: at("example", "java", 2),
     overflowed: at("example", "overflowed"),
     // recap
-    oneLine: at("recap", "line"),
+    oneLine: at("recap", "day|line"),
+    work: at("recap", "work"),
+    rOne: at("recap", "one", 2),
+    replace: at("recap", "replace"),
     values: at("recap", "values"),
+    rPython: at("recap", "python"),
     labels: at("recap", "labels"),
     checksWork: at("recap", "checks"),
     done: at("recap", "done"),
@@ -159,7 +173,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
         {inBeat("recap") && <RecapBeat f={f} c={c} />}
       </Workspace>
       {inBeat("problem") && f >= c.brk && <TermCard text="WILL IT BREAK?" color={K.red} size={84} style={{ left: 250, top: 830, ...tilt(pop(f, c.brk, 8), -3) }} />}
-      {inBeat("visual") && f >= c.dynamic && <TermCard text="DYNAMIC TYPING" color={K.yellow} fg={K.ink} size={90} style={{ left: 160, top: 840, ...tilt(pop(f, c.dynamic, 8), -3) }} />}
+      {inBeat("technical") && f >= c.dynamic && f < c.tRuns + 10 && <TermCard text="DYNAMIC TYPING" color={K.yellow} fg={K.ink} size={90} style={{ left: 160, top: 840, ...tilt(pop(f, c.dynamic, 8), -3), opacity: 1 - enter(f, c.tRuns, 10) }} />}
       {inBeat("recap") && f >= c.done && <TermCard text="DAY 2 DONE ✓" color={K.green} size={96} style={{ left: 220, top: 830, ...tilt(pop(f, c.done, 8), -3), opacity: 1 - enter(f, c.numpy - 4, 8) }} />}
       {meta.titleCard && <TitleCard f={f} line={meta.titleCard.line} sub={meta.titleCard.sub} until={c.this} />}
       {f >= c.kali && f < c.surprised && <Chip label="👋 KALI · YOUR HOST" color={K.blue} size={30} style={{ position: "absolute", left: 250, top: 1196, border: `4px solid ${K.ink}`, ...tilt(pop(f, c.kali, 8), -2) }} />}
@@ -201,7 +215,7 @@ function HookBeat({ f, c }: { f: number; c: Cues }) {
               {f >= c.noString && <span style={{ position: "absolute", left: 0, top: 30, width: 110 * draw(f, c.noString, 8), height: 5, background: K.red }} />}
             </div>
           </Panel>
-          <Panel x={500} w={444} title="🐍 PYTHON" color={K.green} style={{ ...pop(f, c.surprised + 6), transform: `${pop(f, c.surprised + 6).transform} translateX(${shake(f, c.knows, 16, 5)}px)` }}>
+          <Panel x={500} w={444} title="🐍 PYTHON" color={K.green} style={{ ...pop(f, c.surprised + 6), transform: `${pop(f, c.surprised + 6).transform} translateX(${shake(f, c.knows, 16, 5)}px) scale(${f >= c.write && f < c.write + 14 ? 1 + 0.06 * Math.sin((Math.PI * (f - c.write)) / 14) : 1})` }}>
             <div style={{ whiteSpace: "pre", fontSize: 64, color: "#E2E8F0", marginTop: 20 }}>
               {py}
               {py.length < 5 && f % 16 < 10 && <span style={{ color: K.yellow }}>▍</span>}
@@ -236,6 +250,7 @@ function ProblemBeat({ f, c }: { f: number; c: Cues }) {
   const pyShake = shake(f, c.brk, 22, 10);
   return (
     <>
+      {f >= c.pJava && f < c.trust && <Chip label="☕ AS A JAVA DEV…" color={K.ink} size={34} style={{ position: "absolute", left: 30, top: 24, ...pop(f, c.pJava) }} />}
       {f >= c.trust && <Chip label="☕ WE TRUST TYPES" color={K.blue} size={34} style={{ position: "absolute", left: 30, top: 30, ...pop(f, c.trust) }} />}
       {stage(40, "COMPILE", c.compiler, K.blue, f >= c.before)}
       {f >= c.before && <div style={{ position: "absolute", left: 300, top: 186, width: 90 * draw(f, c.before, 10), height: 8, background: K.ink }} />}
@@ -282,7 +297,7 @@ function IntuitionBeat({ f, c }: { f: number; c: Cues }) {
       {f >= c.python && <div style={{ position: "absolute", left: 500, top: 30, width: 4, height: 460, background: K.line }} />}
       {/* the typed box */}
       {f >= c.box && (
-        <div style={{ position: "absolute", left: bx, top: by, width: 240, height: 180, ...pop(f, c.box) }}>
+        <div style={{ position: "absolute", left: bx, top: by, width: 240, height: 180, opacity: pop(f, c.box).opacity, transform: `${pop(f, c.box).transform} scale(${f >= c.inside && f < c.inside + 14 ? 1 + 0.12 * Math.sin((Math.PI * (f - c.inside)) / 14) : 1})` }}>
           <div style={{ position: "absolute", inset: 0, border: `6px solid ${K.ink}`, borderTop: "none", borderRadius: "0 0 18px 18px", background: "rgba(30,136,229,.12)" }} />
           {f >= c.hasType && <div style={{ position: "absolute", left: 60, top: 150, fontFamily: K.head, fontSize: 36, color: "#fff", background: K.blue, border: `4px solid ${K.ink}`, padding: "0 16px", ...tilt(pop(f, c.hasType, 8), -4) }}>int</div>}
           {f >= c.create + 6 && <div style={{ position: "absolute", left: 90, top: mix(-160, 60, drop), fontFamily: K.head, fontSize: 70, color: K.ink }}>5</div>}
@@ -324,6 +339,7 @@ function Bubble({ x, y, text, color, tag, at, tagAt, dim = 0, f }: { x: number; 
 }
 
 function VisualBeat({ f, c }: { f: number; c: Cues }) {
+  const bump = f >= c.vNumber && f < c.vNumber + 16 ? 1 + 0.15 * Math.sin((Math.PI * (f - c.vNumber)) / 16) : 1;
   const move = enter(f, c.same, 16);
   const lx = mix(210, 640, move), ly = mix(170, 170, move) - 60 * Math.sin(Math.PI * move);
   return (
@@ -333,7 +349,9 @@ function VisualBeat({ f, c }: { f: number; c: Cues }) {
         <div>{typed("x = 5", f, c.vx, 0.6)}</div>
         <div>{typed('x = "hello"', f, c.now, 0.5)}</div>
       </div>
-      <Bubble f={f} x={120} y={220} text="5" color={K.blue} tag="int" at={c.vFive} tagAt={c.vFive + 8} dim={enter(f, c.same + 10, 10)} />
+      <div style={{ position: "absolute", inset: 0, transform: `scale(${bump})`, transformOrigin: "220px 320px" }}>
+        <Bubble f={f} x={120} y={220} text="5" color={K.blue} tag="int" at={c.vFive} tagAt={c.vFive + 8} dim={enter(f, c.same + 10, 10)} />
+      </div>
       <Bubble f={f} x={560} y={220} text={'"hello"'} color={K.purple} tag="str" at={c.hello} tagAt={c.newType} />
       {f >= c.vLabel && (
         <div style={{ position: "absolute", left: lx, top: ly, width: 110, height: 70, background: K.yellow, border: `4px solid ${K.ink}`, borderRadius: 8, display: "grid", placeItems: "center", fontFamily: K.mono, fontSize: 44, fontWeight: 800, color: K.ink, transform: `rotate(-8deg) scale(${pop(f, c.vLabel).opacity})`, boxShadow: "4px 4px 0 rgba(0,0,0,.25)" }}>x</div>
@@ -353,7 +371,9 @@ function VisualBeat({ f, c }: { f: number; c: Cues }) {
 function TechnicalBeat({ f, c }: { f: number; c: Cues }) {
   const head = f >= c.tChecks ? Math.min(1, (f - c.tChecks) / Math.max(20, c.tRuns - c.tChecks + 10)) : 0;
   const rows = [{ code: "x = 5", type: "int" }, { code: 'x = "hello"', type: "str" }];
-  const cycle = f >= c.tString ? "str" : f >= c.tInt ? "int" : f >= c.tFloat ? "float" : null;
+  const hits = ([["float", c.tFloat], ["int", c.tInt], ["str", c.tString]] as const).filter(([, t]) => f >= t).sort((a, b) => b[1] - a[1]);
+  const cycle = hits[0]?.[0] ?? null;
+  const cycleAt = hits[0]?.[1] ?? 0;
   return (
     <>
       <Chip label="▶ CHECKED WHILE RUNNING" color={K.green} size={30} style={{ position: "absolute", left: 30, top: 24, ...pop(f, c.tChecks) }} />
@@ -380,7 +400,8 @@ function TechnicalBeat({ f, c }: { f: number; c: Cues }) {
           {f >= c.tells && <div style={{ color: "#86EFAC", ...pop(f, c.tells) }}>&lt;class &apos;{cycle ?? "str"}&apos;&gt;</div>}
         </div>
       )}
-      {cycle && <Chip key={cycle} label={cycle.toUpperCase()} color={cycle === "float" ? K.blue : cycle === "int" ? K.purple : K.green} size={48} style={{ position: "absolute", left: 560, top: 470, border: `5px solid ${K.ink}`, ...pop(f, f >= c.tString ? c.tString : f >= c.tInt ? c.tInt : c.tFloat) }} />}
+      {cycle && <Chip key={cycle} label={cycle.toUpperCase()} color={cycle === "float" ? K.blue : cycle === "int" ? K.purple : K.green} size={48} style={{ position: "absolute", left: 560, top: 470, border: `5px solid ${K.ink}`, ...pop(f, cycleAt) }} />}
+      {f >= c.tWhat && f < c.tells && <Chip label="❓ WHAT TYPE?" color={K.yellow} fg={K.ink} size={40} style={{ position: "absolute", left: 460, top: 470, border: `5px solid ${K.ink}`, ...pop(f, c.tWhat) }} />}
       {f >= c.depending && <Chip label="DEPENDS ON THE VALUE" color={K.ink} size={30} style={{ position: "absolute", left: 420, top: 600, ...pop(f, c.depending) }} />}
     </>
   );
@@ -394,6 +415,7 @@ function JavaBeat({ f, c }: { f: number; c: Cues }) {
         <div style={{ position: "absolute", left: 30, top: 24, display: "flex", alignItems: "center", gap: 14, ...pop(f, c.confused) }}>
           <Chip label="☕ JAVA DEVS" color={K.blue} size={32} />
           <span style={{ fontSize: 60, display: "inline-block", transform: `rotate(${10 * Math.sin((f - c.confused) / 4)}deg)` }}>🤔</span>
+          {f >= c.conf2 && f < c.strict && <Chip label="CONFUSED?" color={K.yellow} fg={K.ink} size={32} style={{ border: `4px solid ${K.ink}`, ...pop(f, c.conf2) }} />}
         </div>
       )}
       <div style={{ position: "absolute", left: 30, top: 130, display: "flex", gap: 14 }}>
@@ -465,10 +487,12 @@ function RecapBeat({ f, c }: { f: number; c: Cues }) {
     { at: c.labels, icon: "x", text: "Variables are just labels", color: K.yellow },
     { at: c.checksWork, icon: "🔒", text: "Python still checks your work", color: K.green },
   ];
-  const collapse = enter(f, c.loop - 10, 14);
+  const collapse = enter(f, Math.min(c.replace, c.loop - 10), 16);
+  const hl = f >= c.rOne && collapse === 0;
   return (
     <>
       {f >= c.oneLine && <Chip label="DAY 2 IN ONE LINE" color={K.ink} size={32} style={{ position: "absolute", left: 30, top: 24, ...pop(f, c.oneLine) }} />}
+      {f >= c.rPython && f < c.values + 10 && <Chip label="🐍 IN PYTHON…" color={K.green} size={32} style={{ position: "absolute", left: 420, top: 24, ...pop(f, c.rPython) }} />}
       {rows.map((r, i) =>
         f >= r.at ? (
           <div key={r.text} style={{ position: "absolute", left: 30, top: 110 + i * 100, width: 900, height: 84, borderRadius: 16, background: "#fff", border: `4px solid ${K.ink}`, display: "flex", alignItems: "center", gap: 18, padding: "0 18px", boxSizing: "border-box", ...pop(f, r.at) }}>
@@ -478,10 +502,11 @@ function RecapBeat({ f, c }: { f: number; c: Cues }) {
           </div>
         ) : null,
       )}
+      {f >= c.work && <Chip label="3 IDEAS ✓" color={K.green} size={30} style={{ position: "absolute", left: 40, top: 430, border: `4px solid ${K.ink}`, ...tilt(pop(f, c.work, 8), -4) }} />}
       {f >= c.numpy && (
         <div style={{ position: "absolute", left: 400, top: 430, width: 530, ...pop(f, c.numpy) }}>
           <Chip label="NEXT → DAY 3: NUMPY" color={K.blue} size={32} style={{ border: `4px solid ${K.ink}` }} />
-          <div style={{ marginTop: 14, borderRadius: 14, background: "#0F172A", padding: "12px 18px", fontFamily: K.mono, fontSize: 24, color: "#E2E8F0", whiteSpace: "pre", height: 120, overflow: "hidden" }}>
+          <div style={{ marginTop: 14, borderRadius: 14, background: "#0F172A", outline: hl ? `4px solid ${K.yellow}` : "none", padding: "12px 18px", fontFamily: K.mono, fontSize: 24, color: "#E2E8F0", whiteSpace: "pre", height: 120, overflow: "hidden" }}>
             <div style={{ opacity: 1 - collapse, transform: `translateY(${-30 * collapse}px)` }}>
               {"for v in values:\n    result.append(v * 2)"}
             </div>

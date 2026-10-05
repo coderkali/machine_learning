@@ -1,33 +1,82 @@
 {
-  "audio": "day_01/mix/narration.wav",
-  "createdAt": "2026-09-27T19:24:28.986Z",
+  "audio": "day_01/mix/narration_v3.wav",
+  "createdAt": "2026-10-05T11:28:42.610Z",
   "stats": {
     "scriptWords": 208,
-    "heardWords": 211,
-    "matched": 207,
-    "fuzzy": 0,
-    "substituted": 1,
-    "missing": 0,
-    "extra": 1,
-    "majorIssues": 0,
-    "minorIssues": 2,
-    "matchRate": 0.9952,
-    "outOfBeat": 0
+    "heardWords": 206,
+    "matched": 194,
+    "fuzzy": 6,
+    "substituted": 4,
+    "missing": 4,
+    "extra": 2,
+    "majorIssues": 4,
+    "minorIssues": 5,
+    "matchRate": 0.9615,
+    "outOfBeat": 3
   },
   "issues": [
     {
+      "severity": "major",
+      "beatId": "hook",
+      "atSec": 8.32,
+      "script": "A",
+      "heard": "(nothing)"
+    },
+    {
       "severity": "minor",
       "beatId": "hook",
-      "atSec": 7.8,
-      "script": "won",
-      "heard": "want"
+      "atSec": 10.43,
+      "script": "lands",
+      "heard": "lance"
+    },
+    {
+      "severity": "major",
+      "beatId": "hook",
+      "atSec": 14.68,
+      "script": "it know?",
+      "heard": "(nothing)"
+    },
+    {
+      "severity": "minor",
+      "beatId": "rules",
+      "atSec": 25.48,
+      "script": "if-else",
+      "heard": "FLs"
+    },
+    {
+      "severity": "major",
+      "beatId": "training",
+      "atSec": 50.06,
+      "script": "training.",
+      "heard": "(nothing)"
+    },
+    {
+      "severity": "major",
+      "beatId": "prediction",
+      "atSec": 58.84,
+      "script": "(nothing)",
+      "heard": "check."
     },
     {
       "severity": "minor",
       "beatId": "java",
-      "atSec": 63.62,
+      "atSec": 62.73,
+      "script": "maze.",
+      "heard": "miss,"
+    },
+    {
+      "severity": "minor",
+      "beatId": "java",
+      "atSec": 67.79,
       "script": "(nothing)",
-      "heard": "the"
+      "heard": "We"
+    },
+    {
+      "severity": "minor",
+      "beatId": "takeaway",
+      "atSec": 82.34,
+      "script": "eyes.",
+      "heard": "ISE."
     }
   ],
   "words": [
@@ -35,1458 +84,1467 @@
       "text": "This",
       "beatId": "hook",
       "startMs": 130,
-      "endMs": 380,
+      "endMs": 520,
       "status": "match"
     },
     {
       "text": "is",
       "beatId": "hook",
-      "startMs": 380,
-      "endMs": 570,
+      "startMs": 520,
+      "endMs": 740,
       "status": "match"
     },
     {
       "text": "Day",
       "beatId": "hook",
-      "startMs": 570,
-      "endMs": 860,
+      "startMs": 740,
+      "endMs": 1230,
       "status": "match"
     },
     {
       "text": "1",
       "beatId": "hook",
-      "startMs": 860,
-      "endMs": 1150,
+      "startMs": 1230,
+      "endMs": 1590,
       "status": "match"
     },
     {
       "text": "of",
       "beatId": "hook",
-      "startMs": 1150,
-      "endMs": 1340,
+      "startMs": 1590,
+      "endMs": 1730,
       "status": "match"
     },
     {
       "text": "ML",
       "beatId": "hook",
-      "startMs": 1340,
-      "endMs": 1530,
+      "startMs": 1730,
+      "endMs": 2260,
       "status": "match"
     },
     {
       "text": "for",
       "beatId": "hook",
-      "startMs": 1530,
-      "endMs": 1820,
+      "startMs": 2260,
+      "endMs": 2300,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "hook",
-      "startMs": 1820,
-      "endMs": 1910,
+      "startMs": 2300,
+      "endMs": 2340,
       "status": "match"
     },
     {
       "text": "Java",
       "beatId": "hook",
-      "startMs": 1910,
-      "endMs": 2290,
+      "startMs": 2340,
+      "endMs": 2680,
       "status": "match"
     },
     {
       "text": "developer.",
       "beatId": "hook",
-      "startMs": 2290,
-      "endMs": 3200,
+      "startMs": 2680,
+      "endMs": 3760,
       "status": "match"
     },
     {
       "text": "What",
       "beatId": "hook",
-      "startMs": 3200,
-      "endMs": 3450,
+      "startMs": 3760,
+      "endMs": 4060,
       "status": "match"
     },
     {
       "text": "is",
       "beatId": "hook",
-      "startMs": 3450,
-      "endMs": 3570,
+      "startMs": 4060,
+      "endMs": 4190,
       "status": "match"
     },
     {
       "text": "machine",
       "beatId": "hook",
-      "startMs": 3570,
-      "endMs": 4010,
+      "startMs": 4190,
+      "endMs": 4660,
       "status": "match"
     },
     {
       "text": "learning?",
       "beatId": "hook",
-      "startMs": 4010,
-      "endMs": 4720,
+      "startMs": 4660,
+      "endMs": 5440,
       "status": "match"
     },
     {
       "text": "Your",
       "beatId": "hook",
-      "startMs": 4720,
-      "endMs": 5090,
+      "startMs": 5440,
+      "endMs": 5930,
       "status": "match"
     },
     {
       "text": "spam",
       "beatId": "hook",
-      "startMs": 5090,
-      "endMs": 5460,
+      "startMs": 5930,
+      "endMs": 6240,
       "status": "match"
     },
     {
       "text": "folder",
       "beatId": "hook",
-      "startMs": 5460,
-      "endMs": 6020,
+      "startMs": 6240,
+      "endMs": 6830,
       "status": "match"
     },
     {
       "text": "uses",
       "beatId": "hook",
-      "startMs": 6020,
-      "endMs": 6390,
+      "startMs": 6830,
+      "endMs": 7230,
       "status": "match"
     },
     {
       "text": "it",
       "beatId": "hook",
-      "startMs": 6390,
-      "endMs": 6570,
+      "startMs": 7230,
+      "endMs": 7430,
       "status": "match"
     },
     {
       "text": "every",
       "beatId": "hook",
-      "startMs": 6570,
-      "endMs": 7150,
+      "startMs": 7430,
+      "endMs": 7880,
       "status": "match"
     },
     {
       "text": "day.",
       "beatId": "hook",
-      "startMs": 7150,
-      "endMs": 7360,
+      "startMs": 7880,
+      "endMs": 8320,
       "status": "match"
     },
     {
       "text": "A",
       "beatId": "hook",
-      "startMs": 7360,
-      "endMs": 7500,
-      "status": "match"
+      "startMs": 8320,
+      "endMs": 8321,
+      "status": "missing"
     },
     {
       "text": "\"you",
       "beatId": "hook",
-      "startMs": 7500,
-      "endMs": 7800,
+      "startMs": 8320,
+      "endMs": 8560,
       "status": "match"
     },
     {
       "text": "won",
       "beatId": "hook",
-      "startMs": 7800,
-      "endMs": 8060,
-      "status": "substituted",
-      "heardAs": "want"
+      "startMs": 8560,
+      "endMs": 8800,
+      "status": "match"
     },
     {
       "text": "a",
       "beatId": "hook",
-      "startMs": 8060,
-      "endMs": 8140,
+      "startMs": 8800,
+      "endMs": 8970,
       "status": "match"
     },
     {
       "text": "prize\"",
       "beatId": "hook",
-      "startMs": 8140,
-      "endMs": 8600,
-      "status": "match"
+      "startMs": 8970,
+      "endMs": 9560,
+      "status": "fuzzy",
+      "heardAs": "price,"
     },
     {
       "text": "email",
       "beatId": "hook",
-      "startMs": 8600,
-      "endMs": 9120,
+      "startMs": 9560,
+      "endMs": 10430,
       "status": "match"
     },
     {
       "text": "lands",
       "beatId": "hook",
-      "startMs": 9120,
-      "endMs": 9510,
-      "status": "match"
+      "startMs": 10430,
+      "endMs": 10910,
+      "status": "substituted",
+      "heardAs": "lance"
     },
     {
       "text": "in",
       "beatId": "hook",
-      "startMs": 9510,
-      "endMs": 9690,
+      "startMs": 10910,
+      "endMs": 11100,
       "status": "match"
     },
     {
       "text": "spam,",
       "beatId": "hook",
-      "startMs": 9690,
-      "endMs": 10260,
+      "startMs": 11100,
+      "endMs": 11680,
       "status": "match"
     },
     {
       "text": "and",
       "beatId": "hook",
-      "startMs": 10260,
-      "endMs": 10320,
+      "startMs": 11680,
+      "endMs": 11681,
       "status": "match"
     },
     {
       "text": "nobody",
       "beatId": "hook",
-      "startMs": 10320,
-      "endMs": 10750,
+      "startMs": 11680,
+      "endMs": 12160,
       "status": "match"
     },
     {
       "text": "wrote",
       "beatId": "hook",
-      "startMs": 10750,
-      "endMs": 11110,
+      "startMs": 12160,
+      "endMs": 12320,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "hook",
-      "startMs": 11110,
-      "endMs": 11180,
+      "startMs": 12320,
+      "endMs": 12410,
       "status": "match"
     },
     {
       "text": "rule",
       "beatId": "hook",
-      "startMs": 11180,
-      "endMs": 11470,
+      "startMs": 12410,
+      "endMs": 12640,
       "status": "match"
     },
     {
       "text": "for",
       "beatId": "hook",
-      "startMs": 11470,
-      "endMs": 11660,
+      "startMs": 12640,
+      "endMs": 12930,
       "status": "match"
     },
     {
       "text": "it.",
       "beatId": "hook",
-      "startMs": 11660,
-      "endMs": 12080,
+      "startMs": 12930,
+      "endMs": 13440,
       "status": "match"
     },
     {
       "text": "So",
       "beatId": "hook",
-      "startMs": 12080,
-      "endMs": 12240,
+      "startMs": 13440,
+      "endMs": 13770,
       "status": "match"
     },
     {
       "text": "how",
       "beatId": "hook",
-      "startMs": 12240,
-      "endMs": 12490,
+      "startMs": 13770,
+      "endMs": 14270,
       "status": "match"
     },
     {
       "text": "did",
       "beatId": "hook",
-      "startMs": 12490,
-      "endMs": 12750,
+      "startMs": 14270,
+      "endMs": 14532,
       "status": "match"
     },
     {
       "text": "it",
       "beatId": "hook",
-      "startMs": 12750,
-      "endMs": 12900,
-      "status": "match"
+      "startMs": 14682,
+      "endMs": 14683,
+      "status": "missing"
     },
     {
       "text": "know?",
       "beatId": "hook",
-      "startMs": 12900,
-      "endMs": 13480,
-      "status": "match"
+      "startMs": 14682,
+      "endMs": 14683,
+      "status": "missing"
     },
     {
       "text": "As",
       "beatId": "rules",
-      "startMs": 13520,
-      "endMs": 13730,
+      "startMs": 15162,
+      "endMs": 15163,
       "status": "match"
     },
     {
       "text": "Java",
       "beatId": "rules",
-      "startMs": 13730,
-      "endMs": 13920,
+      "startMs": 15162,
+      "endMs": 15532,
       "status": "match"
     },
     {
       "text": "developers,",
       "beatId": "rules",
-      "startMs": 13920,
-      "endMs": 14720,
+      "startMs": 15532,
+      "endMs": 16632,
       "status": "match"
     },
     {
       "text": "we'd",
       "beatId": "rules",
-      "startMs": 14720,
-      "endMs": 14990,
+      "startMs": 16632,
+      "endMs": 17012,
       "status": "match"
     },
     {
       "text": "write",
       "beatId": "rules",
-      "startMs": 14990,
-      "endMs": 15330,
+      "startMs": 17012,
+      "endMs": 17542,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "rules",
-      "startMs": 15330,
-      "endMs": 15390,
+      "startMs": 17542,
+      "endMs": 17942,
       "status": "match"
     },
     {
       "text": "rule:",
       "beatId": "rules",
-      "startMs": 15390,
-      "endMs": 15920,
+      "startMs": 17942,
+      "endMs": 18192,
       "status": "match"
     },
     {
       "text": "if",
       "beatId": "rules",
-      "startMs": 15920,
-      "endMs": 16130,
+      "startMs": 18192,
+      "endMs": 18242,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "rules",
-      "startMs": 16130,
-      "endMs": 16440,
+      "startMs": 18242,
+      "endMs": 18422,
       "status": "match"
     },
     {
       "text": "email",
       "beatId": "rules",
-      "startMs": 16440,
-      "endMs": 16970,
+      "startMs": 18422,
+      "endMs": 18732,
       "status": "match"
     },
     {
       "text": "says",
       "beatId": "rules",
-      "startMs": 16970,
-      "endMs": 17370,
+      "startMs": 18732,
+      "endMs": 19062,
       "status": "match"
     },
     {
       "text": "prize,",
       "beatId": "rules",
-      "startMs": 17370,
-      "endMs": 18310,
-      "status": "match"
+      "startMs": 19062,
+      "endMs": 19912,
+      "status": "fuzzy",
+      "heardAs": "price,"
     },
     {
       "text": "it's",
       "beatId": "rules",
-      "startMs": 18310,
-      "endMs": 19140,
+      "startMs": 19912,
+      "endMs": 20332,
       "status": "match"
     },
     {
       "text": "spam.",
       "beatId": "rules",
-      "startMs": 19140,
-      "endMs": 19520,
+      "startMs": 20332,
+      "endMs": 21122,
       "status": "match"
     },
     {
       "text": "But",
       "beatId": "rules",
-      "startMs": 19520,
-      "endMs": 19760,
+      "startMs": 21122,
+      "endMs": 21272,
       "status": "match"
     },
     {
       "text": "real",
       "beatId": "rules",
-      "startMs": 19760,
-      "endMs": 20080,
+      "startMs": 21272,
+      "endMs": 21462,
       "status": "match"
     },
     {
       "text": "emails",
       "beatId": "rules",
-      "startMs": 20080,
-      "endMs": 20550,
+      "startMs": 21462,
+      "endMs": 21862,
       "status": "match"
     },
     {
       "text": "say",
       "beatId": "rules",
-      "startMs": 20550,
-      "endMs": 20860,
+      "startMs": 21862,
+      "endMs": 22182,
       "status": "match"
     },
     {
       "text": "prize",
       "beatId": "rules",
-      "startMs": 20860,
-      "endMs": 21320,
-      "status": "match"
+      "startMs": 22182,
+      "endMs": 22752,
+      "status": "fuzzy",
+      "heardAs": "price"
     },
     {
       "text": "too.",
       "beatId": "rules",
-      "startMs": 21320,
-      "endMs": 21860,
+      "startMs": 22752,
+      "endMs": 22982,
       "status": "match"
     },
     {
       "text": "So",
       "beatId": "rules",
-      "startMs": 21860,
-      "endMs": 21960,
+      "startMs": 22982,
+      "endMs": 23182,
       "status": "match"
     },
     {
       "text": "we",
       "beatId": "rules",
-      "startMs": 21960,
-      "endMs": 22140,
+      "startMs": 23182,
+      "endMs": 23652,
       "status": "match"
     },
     {
       "text": "add",
       "beatId": "rules",
-      "startMs": 22140,
-      "endMs": 22430,
+      "startMs": 23652,
+      "endMs": 23692,
       "status": "match"
     },
     {
       "text": "exceptions,",
       "beatId": "rules",
-      "startMs": 22430,
-      "endMs": 23440,
+      "startMs": 23692,
+      "endMs": 24722,
       "status": "match"
     },
     {
       "text": "and",
       "beatId": "rules",
-      "startMs": 23440,
-      "endMs": 23730,
+      "startMs": 24722,
+      "endMs": 25442,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "rules",
-      "startMs": 23730,
-      "endMs": 24110,
+      "startMs": 25442,
+      "endMs": 25482,
       "status": "match"
     },
     {
       "text": "if-else",
       "beatId": "rules",
-      "startMs": 24110,
-      "endMs": 24780,
-      "status": "match"
+      "startMs": 25482,
+      "endMs": 25662,
+      "status": "substituted",
+      "heardAs": "FLs"
     },
     {
       "text": "grows",
       "beatId": "rules",
-      "startMs": 24780,
-      "endMs": 25340,
+      "startMs": 25662,
+      "endMs": 26042,
       "status": "match"
     },
     {
       "text": "into",
       "beatId": "rules",
-      "startMs": 25340,
-      "endMs": 25660,
+      "startMs": 26042,
+      "endMs": 26342,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "rules",
-      "startMs": 25660,
-      "endMs": 25750,
+      "startMs": 26342,
+      "endMs": 26412,
       "status": "match"
     },
     {
       "text": "maze.",
       "beatId": "rules",
-      "startMs": 25750,
-      "endMs": 26480,
+      "startMs": 26412,
+      "endMs": 26982,
       "status": "match"
     },
     {
       "text": "We",
       "beatId": "rules",
-      "startMs": 26480,
-      "endMs": 26630,
+      "startMs": 26982,
+      "endMs": 27052,
       "status": "match"
     },
     {
       "text": "can't",
       "beatId": "rules",
-      "startMs": 26630,
-      "endMs": 27010,
+      "startMs": 27052,
+      "endMs": 28062,
       "status": "match"
     },
     {
       "text": "write",
       "beatId": "rules",
-      "startMs": 27010,
-      "endMs": 27390,
+      "startMs": 28062,
+      "endMs": 28202,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "rules",
-      "startMs": 27390,
-      "endMs": 27460,
+      "startMs": 28202,
+      "endMs": 28302,
       "status": "match"
     },
     {
       "text": "rule",
       "beatId": "rules",
-      "startMs": 27460,
-      "endMs": 27770,
+      "startMs": 28302,
+      "endMs": 28712,
       "status": "match"
     },
     {
       "text": "for",
       "beatId": "rules",
-      "startMs": 27770,
-      "endMs": 28000,
+      "startMs": 28712,
+      "endMs": 29022,
       "status": "match"
     },
     {
       "text": "every",
       "beatId": "rules",
-      "startMs": 28000,
-      "endMs": 28370,
+      "startMs": 29022,
+      "endMs": 29532,
       "status": "match"
     },
     {
       "text": "case.",
       "beatId": "rules",
-      "startMs": 28370,
-      "endMs": 28610,
+      "startMs": 29532,
+      "endMs": 29982,
       "status": "match"
     },
     {
       "text": "Machine",
       "beatId": "shift",
-      "startMs": 29120,
-      "endMs": 29490,
+      "startMs": 30919,
+      "endMs": 31369,
       "status": "match"
     },
     {
       "text": "learning",
       "beatId": "shift",
-      "startMs": 29490,
-      "endMs": 30050,
+      "startMs": 31369,
+      "endMs": 32089,
       "status": "match"
     },
     {
       "text": "flips",
       "beatId": "shift",
-      "startMs": 30050,
-      "endMs": 30440,
+      "startMs": 32089,
+      "endMs": 32219,
       "status": "match"
     },
     {
       "text": "it.",
       "beatId": "shift",
-      "startMs": 30440,
-      "endMs": 30880,
+      "startMs": 32219,
+      "endMs": 33009,
       "status": "match"
     },
     {
       "text": "Instead",
       "beatId": "shift",
-      "startMs": 30880,
-      "endMs": 31430,
+      "startMs": 33009,
+      "endMs": 33259,
       "status": "match"
     },
     {
       "text": "of",
       "beatId": "shift",
-      "startMs": 31430,
-      "endMs": 31590,
+      "startMs": 33259,
+      "endMs": 33459,
       "status": "match"
     },
     {
       "text": "writing",
       "beatId": "shift",
-      "startMs": 31590,
-      "endMs": 32140,
+      "startMs": 33459,
+      "endMs": 33929,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "shift",
-      "startMs": 32140,
-      "endMs": 32380,
+      "startMs": 33929,
+      "endMs": 34169,
       "status": "match"
     },
     {
       "text": "rules,",
       "beatId": "shift",
-      "startMs": 32380,
-      "endMs": 33100,
+      "startMs": 34169,
+      "endMs": 34899,
       "status": "match"
     },
     {
       "text": "we",
       "beatId": "shift",
-      "startMs": 33100,
-      "endMs": 33190,
+      "startMs": 34899,
+      "endMs": 34949,
       "status": "match"
     },
     {
       "text": "show",
       "beatId": "shift",
-      "startMs": 33190,
-      "endMs": 33380,
+      "startMs": 34949,
+      "endMs": 35229,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "shift",
-      "startMs": 33380,
-      "endMs": 33590,
+      "startMs": 35229,
+      "endMs": 35479,
       "status": "match"
     },
     {
       "text": "computer",
       "beatId": "shift",
-      "startMs": 33590,
-      "endMs": 34160,
+      "startMs": 35479,
+      "endMs": 36139,
       "status": "match"
     },
     {
       "text": "examples.",
       "beatId": "shift",
-      "startMs": 34160,
-      "endMs": 34960,
-      "status": "match"
+      "startMs": 36139,
+      "endMs": 36447,
+      "status": "fuzzy",
+      "heardAs": "example."
     },
     {
       "text": "Give",
       "beatId": "training",
-      "startMs": 34960,
-      "endMs": 35280,
+      "startMs": 37077,
+      "endMs": 37367,
       "status": "match"
     },
     {
       "text": "it",
       "beatId": "training",
-      "startMs": 35280,
-      "endMs": 35450,
+      "startMs": 37367,
+      "endMs": 37507,
       "status": "match"
     },
     {
       "text": "emails",
       "beatId": "training",
-      "startMs": 35450,
-      "endMs": 35970,
+      "startMs": 37507,
+      "endMs": 38117,
       "status": "match"
     },
     {
       "text": "labeled",
       "beatId": "training",
-      "startMs": 35970,
-      "endMs": 36540,
+      "startMs": 38117,
+      "endMs": 38847,
       "status": "match"
     },
     {
       "text": "spam",
       "beatId": "training",
-      "startMs": 36540,
-      "endMs": 36910,
+      "startMs": 38847,
+      "endMs": 39457,
       "status": "match"
     },
     {
       "text": "or",
       "beatId": "training",
-      "startMs": 36910,
-      "endMs": 37150,
+      "startMs": 39457,
+      "endMs": 39697,
       "status": "match"
     },
     {
       "text": "safe.",
       "beatId": "training",
-      "startMs": 37150,
-      "endMs": 37840,
+      "startMs": 39697,
+      "endMs": 40887,
       "status": "match"
     },
     {
       "text": "It",
       "beatId": "training",
-      "startMs": 37840,
-      "endMs": 38060,
+      "startMs": 40887,
+      "endMs": 40947,
       "status": "match"
     },
     {
       "text": "finds",
       "beatId": "training",
-      "startMs": 38060,
-      "endMs": 38470,
+      "startMs": 40947,
+      "endMs": 41407,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "training",
-      "startMs": 38470,
-      "endMs": 38740,
+      "startMs": 41407,
+      "endMs": 41547,
       "status": "match"
     },
     {
       "text": "clues",
       "beatId": "training",
-      "startMs": 38740,
-      "endMs": 39260,
-      "status": "match"
+      "startMs": 41547,
+      "endMs": 41867,
+      "status": "fuzzy",
+      "heardAs": "clue"
     },
     {
       "text": "spam",
       "beatId": "training",
-      "startMs": 39260,
-      "endMs": 39550,
+      "startMs": 41867,
+      "endMs": 42367,
       "status": "match"
     },
     {
       "text": "tends",
       "beatId": "training",
-      "startMs": 39550,
-      "endMs": 40000,
+      "startMs": 42367,
+      "endMs": 42497,
       "status": "match"
     },
     {
       "text": "to",
       "beatId": "training",
-      "startMs": 40000,
-      "endMs": 40180,
+      "startMs": 42497,
+      "endMs": 42657,
       "status": "match"
     },
     {
       "text": "have,",
       "beatId": "training",
-      "startMs": 40180,
-      "endMs": 40750,
+      "startMs": 42657,
+      "endMs": 43217,
       "status": "match"
     },
     {
       "text": "and",
       "beatId": "training",
-      "startMs": 40750,
-      "endMs": 40770,
+      "startMs": 43217,
+      "endMs": 43417,
       "status": "match"
     },
     {
       "text": "corrects",
       "beatId": "training",
-      "startMs": 40770,
-      "endMs": 41330,
+      "startMs": 43417,
+      "endMs": 43957,
       "status": "match"
     },
     {
       "text": "itself",
       "beatId": "training",
-      "startMs": 41330,
-      "endMs": 41780,
+      "startMs": 43957,
+      "endMs": 44367,
       "status": "match"
     },
     {
       "text": "when",
       "beatId": "training",
-      "startMs": 41780,
-      "endMs": 42080,
+      "startMs": 44367,
+      "endMs": 44677,
       "status": "match"
     },
     {
       "text": "it's",
       "beatId": "training",
-      "startMs": 42080,
-      "endMs": 42300,
+      "startMs": 44677,
+      "endMs": 44887,
       "status": "match"
     },
     {
       "text": "wrong.",
       "beatId": "training",
-      "startMs": 42300,
-      "endMs": 42880,
+      "startMs": 44887,
+      "endMs": 45667,
       "status": "match"
     },
     {
       "text": "What",
       "beatId": "training",
-      "startMs": 42880,
-      "endMs": 43280,
+      "startMs": 45667,
+      "endMs": 45707,
       "status": "match"
     },
     {
       "text": "it",
       "beatId": "training",
-      "startMs": 43280,
-      "endMs": 43480,
+      "startMs": 45707,
+      "endMs": 45937,
       "status": "match"
     },
     {
       "text": "learns",
       "beatId": "training",
-      "startMs": 43480,
-      "endMs": 44220,
+      "startMs": 45937,
+      "endMs": 46507,
       "status": "match"
     },
     {
       "text": "is",
       "beatId": "training",
-      "startMs": 44220,
-      "endMs": 44290,
+      "startMs": 46507,
+      "endMs": 46687,
       "status": "match"
     },
     {
       "text": "called",
       "beatId": "training",
-      "startMs": 44290,
-      "endMs": 44900,
+      "startMs": 46687,
+      "endMs": 47277,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "training",
-      "startMs": 44900,
-      "endMs": 45000,
+      "startMs": 47277,
+      "endMs": 47377,
       "status": "match"
     },
     {
       "text": "model.",
       "beatId": "training",
-      "startMs": 45000,
-      "endMs": 45840,
+      "startMs": 47377,
+      "endMs": 47937,
       "status": "match"
     },
     {
       "text": "Learning",
       "beatId": "training",
-      "startMs": 45840,
-      "endMs": 46450,
+      "startMs": 47937,
+      "endMs": 49127,
       "status": "match"
     },
     {
       "text": "it",
       "beatId": "training",
-      "startMs": 46450,
-      "endMs": 46590,
+      "startMs": 49127,
+      "endMs": 49427,
       "status": "match"
     },
     {
       "text": "is",
       "beatId": "training",
-      "startMs": 46590,
-      "endMs": 46820,
+      "startMs": 49427,
+      "endMs": 49667,
       "status": "match"
     },
     {
       "text": "called",
       "beatId": "training",
-      "startMs": 46820,
-      "endMs": 47210,
+      "startMs": 49667,
+      "endMs": 49908,
       "status": "match"
     },
     {
       "text": "training.",
       "beatId": "training",
-      "startMs": 47210,
-      "endMs": 48075,
-      "status": "match"
+      "startMs": 50058,
+      "endMs": 50059,
+      "status": "missing"
     },
     {
       "text": "Now",
       "beatId": "prediction",
-      "startMs": 48080,
-      "endMs": 48360,
+      "startMs": 50538,
+      "endMs": 50668,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "prediction",
-      "startMs": 48360,
-      "endMs": 48450,
+      "startMs": 50668,
+      "endMs": 50768,
       "status": "match"
     },
     {
       "text": "new",
       "beatId": "prediction",
-      "startMs": 48450,
-      "endMs": 48730,
+      "startMs": 50768,
+      "endMs": 51078,
       "status": "match"
     },
     {
       "text": "email",
       "beatId": "prediction",
-      "startMs": 48730,
-      "endMs": 49200,
+      "startMs": 51078,
+      "endMs": 51568,
       "status": "match"
     },
     {
       "text": "arrives.",
       "beatId": "prediction",
-      "startMs": 49200,
-      "endMs": 50160,
+      "startMs": 51568,
+      "endMs": 52448,
       "status": "match"
     },
     {
       "text": "The",
       "beatId": "prediction",
-      "startMs": 50160,
-      "endMs": 50410,
+      "startMs": 52448,
+      "endMs": 52598,
       "status": "match"
     },
     {
       "text": "model",
       "beatId": "prediction",
-      "startMs": 50410,
-      "endMs": 50830,
+      "startMs": 52598,
+      "endMs": 52908,
       "status": "match"
     },
     {
       "text": "checks",
       "beatId": "prediction",
-      "startMs": 50830,
-      "endMs": 51340,
+      "startMs": 52908,
+      "endMs": 53208,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "prediction",
-      "startMs": 51340,
-      "endMs": 51580,
+      "startMs": 53208,
+      "endMs": 53338,
       "status": "match"
     },
     {
       "text": "clues",
       "beatId": "prediction",
-      "startMs": 51580,
-      "endMs": 51990,
+      "startMs": 53338,
+      "endMs": 53668,
       "status": "match"
     },
     {
       "text": "and",
       "beatId": "prediction",
-      "startMs": 51990,
-      "endMs": 52640,
+      "startMs": 53668,
+      "endMs": 53998,
       "status": "match"
     },
     {
       "text": "says:",
       "beatId": "prediction",
-      "startMs": 52640,
-      "endMs": 52710,
+      "startMs": 53998,
+      "endMs": 54778,
       "status": "match"
     },
     {
       "text": "likely",
       "beatId": "prediction",
-      "startMs": 52710,
-      "endMs": 53290,
+      "startMs": 54778,
+      "endMs": 55188,
       "status": "match"
     },
     {
       "text": "spam.",
       "beatId": "prediction",
-      "startMs": 53290,
-      "endMs": 53920,
+      "startMs": 55188,
+      "endMs": 55538,
       "status": "match"
     },
     {
       "text": "It's",
       "beatId": "prediction",
-      "startMs": 53920,
-      "endMs": 54150,
+      "startMs": 55538,
+      "endMs": 56278,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "prediction",
-      "startMs": 54150,
-      "endMs": 54200,
+      "startMs": 56278,
+      "endMs": 56358,
       "status": "match"
     },
     {
       "text": "prediction,",
       "beatId": "prediction",
-      "startMs": 54200,
-      "endMs": 55020,
+      "startMs": 56358,
+      "endMs": 57158,
       "status": "match"
     },
     {
       "text": "not",
       "beatId": "prediction",
-      "startMs": 55020,
-      "endMs": 55070,
+      "startMs": 57158,
+      "endMs": 57348,
       "status": "match"
     },
     {
       "text": "a",
       "beatId": "prediction",
-      "startMs": 55070,
-      "endMs": 55130,
+      "startMs": 57348,
+      "endMs": 57408,
       "status": "match"
     },
     {
       "text": "promise,",
       "beatId": "prediction",
-      "startMs": 55130,
-      "endMs": 55650,
+      "startMs": 57408,
+      "endMs": 57998,
       "status": "match"
     },
     {
       "text": "so",
       "beatId": "prediction",
-      "startMs": 55650,
-      "endMs": 55870,
+      "startMs": 57998,
+      "endMs": 58068,
       "status": "match"
     },
     {
       "text": "people",
       "beatId": "prediction",
-      "startMs": 55870,
-      "endMs": 56110,
+      "startMs": 58068,
+      "endMs": 58668,
       "status": "match"
     },
     {
       "text": "still",
       "beatId": "prediction",
-      "startMs": 56110,
-      "endMs": 56400,
+      "startMs": 58668,
+      "endMs": 58838,
       "status": "match"
     },
     {
       "text": "check.",
       "beatId": "prediction",
-      "startMs": 56400,
-      "endMs": 56918,
+      "startMs": 59408,
+      "endMs": 59699,
       "status": "match"
     },
     {
       "text": "So",
       "beatId": "java",
-      "startMs": 57090,
-      "endMs": 57140,
+      "startMs": 60319,
+      "endMs": 60329,
       "status": "match"
     },
     {
       "text": "in",
       "beatId": "java",
-      "startMs": 57140,
-      "endMs": 57280,
+      "startMs": 60329,
+      "endMs": 60489,
       "status": "match"
     },
     {
       "text": "Java",
       "beatId": "java",
-      "startMs": 57280,
-      "endMs": 57610,
+      "startMs": 60489,
+      "endMs": 60839,
       "status": "match"
     },
     {
       "text": "terms:",
       "beatId": "java",
-      "startMs": 57610,
-      "endMs": 58340,
+      "startMs": 60839,
+      "endMs": 61639,
       "status": "match"
     },
     {
       "text": "no",
       "beatId": "java",
-      "startMs": 58340,
-      "endMs": 58350,
+      "startMs": 61639,
+      "endMs": 61649,
       "status": "match"
     },
     {
       "text": "more",
       "beatId": "java",
-      "startMs": 58350,
-      "endMs": 58680,
+      "startMs": 61649,
+      "endMs": 62049,
       "status": "match"
     },
     {
       "text": "if-else",
       "beatId": "java",
-      "startMs": 58680,
-      "endMs": 59330,
+      "startMs": 62049,
+      "endMs": 62729,
       "status": "match"
     },
     {
       "text": "maze.",
       "beatId": "java",
-      "startMs": 59330,
-      "endMs": 60000,
-      "status": "match"
+      "startMs": 62729,
+      "endMs": 63589,
+      "status": "substituted",
+      "heardAs": "miss,"
     },
     {
       "text": "Just",
       "beatId": "java",
-      "startMs": 60000,
-      "endMs": 60320,
+      "startMs": 63589,
+      "endMs": 63869,
       "status": "match"
     },
     {
       "text": "two",
       "beatId": "java",
-      "startMs": 60320,
-      "endMs": 60560,
+      "startMs": 63869,
+      "endMs": 64169,
       "status": "match"
     },
     {
       "text": "steps:",
       "beatId": "java",
-      "startMs": 60560,
-      "endMs": 61200,
+      "startMs": 64169,
+      "endMs": 64929,
       "status": "match"
     },
     {
       "text": "train",
       "beatId": "java",
-      "startMs": 61200,
-      "endMs": 61600,
+      "startMs": 64929,
+      "endMs": 65129,
       "status": "match"
     },
     {
       "text": "on",
       "beatId": "java",
-      "startMs": 61600,
-      "endMs": 61760,
+      "startMs": 65129,
+      "endMs": 65269,
       "status": "match"
     },
     {
       "text": "examples,",
       "beatId": "java",
-      "startMs": 61760,
-      "endMs": 62720,
+      "startMs": 65269,
+      "endMs": 66359,
       "status": "match"
     },
     {
       "text": "then",
       "beatId": "java",
-      "startMs": 62720,
-      "endMs": 62890,
+      "startMs": 66359,
+      "endMs": 66389,
       "status": "match"
     },
     {
       "text": "predict",
       "beatId": "java",
-      "startMs": 62890,
-      "endMs": 63490,
+      "startMs": 66389,
+      "endMs": 66789,
       "status": "match"
     },
     {
       "text": "on",
       "beatId": "java",
-      "startMs": 63490,
-      "endMs": 63620,
+      "startMs": 66789,
+      "endMs": 66939,
       "status": "match"
     },
     {
       "text": "new",
       "beatId": "java",
-      "startMs": 63860,
-      "endMs": 64100,
+      "startMs": 66939,
+      "endMs": 67169,
       "status": "match"
     },
     {
       "text": "input.",
       "beatId": "java",
-      "startMs": 64100,
-      "endMs": 64800,
+      "startMs": 67169,
+      "endMs": 67789,
       "status": "match"
     },
     {
       "text": "We'll",
       "beatId": "java",
-      "startMs": 64800,
-      "endMs": 65070,
-      "status": "match"
+      "startMs": 68039,
+      "endMs": 68119,
+      "status": "fuzzy",
+      "heardAs": "will"
     },
     {
       "text": "write",
       "beatId": "java",
-      "startMs": 65070,
-      "endMs": 65350,
+      "startMs": 68119,
+      "endMs": 68399,
       "status": "match"
     },
     {
       "text": "that",
       "beatId": "java",
-      "startMs": 65350,
-      "endMs": 65560,
+      "startMs": 68399,
+      "endMs": 68629,
       "status": "match"
     },
     {
       "text": "code",
       "beatId": "java",
-      "startMs": 65560,
-      "endMs": 65790,
+      "startMs": 68629,
+      "endMs": 68839,
       "status": "match"
     },
     {
       "text": "later",
       "beatId": "java",
-      "startMs": 65790,
-      "endMs": 66070,
+      "startMs": 68839,
+      "endMs": 69119,
       "status": "match"
     },
     {
       "text": "in",
       "beatId": "java",
-      "startMs": 66070,
-      "endMs": 66210,
+      "startMs": 69119,
+      "endMs": 69229,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "java",
-      "startMs": 66210,
-      "endMs": 66340,
+      "startMs": 69229,
+      "endMs": 69389,
       "status": "match"
     },
     {
       "text": "series.",
       "beatId": "java",
-      "startMs": 66340,
-      "endMs": 66880,
+      "startMs": 69389,
+      "endMs": 69789,
       "status": "match"
     },
     {
       "text": "Machine",
       "beatId": "takeaway",
-      "startMs": 66880,
-      "endMs": 67270,
+      "startMs": 70519,
+      "endMs": 70759,
       "status": "match"
     },
     {
       "text": "learning",
       "beatId": "takeaway",
-      "startMs": 67270,
-      "endMs": 67710,
+      "startMs": 70759,
+      "endMs": 71229,
       "status": "match"
     },
     {
       "text": "means",
       "beatId": "takeaway",
-      "startMs": 67710,
-      "endMs": 67990,
+      "startMs": 71229,
+      "endMs": 71599,
       "status": "match"
     },
     {
       "text": "learning",
       "beatId": "takeaway",
-      "startMs": 67990,
-      "endMs": 68430,
+      "startMs": 71599,
+      "endMs": 72009,
       "status": "match"
     },
     {
       "text": "from",
       "beatId": "takeaway",
-      "startMs": 68430,
-      "endMs": 68650,
+      "startMs": 72009,
+      "endMs": 72299,
       "status": "match"
     },
     {
       "text": "examples",
       "beatId": "takeaway",
-      "startMs": 68650,
-      "endMs": 69120,
+      "startMs": 72299,
+      "endMs": 72879,
       "status": "match"
     },
     {
       "text": "to",
       "beatId": "takeaway",
-      "startMs": 69120,
-      "endMs": 69320,
+      "startMs": 72879,
+      "endMs": 73049,
       "status": "match"
     },
     {
       "text": "predict",
       "beatId": "takeaway",
-      "startMs": 69320,
-      "endMs": 69860,
+      "startMs": 73049,
+      "endMs": 73619,
       "status": "match"
     },
     {
       "text": "new",
       "beatId": "takeaway",
-      "startMs": 69860,
-      "endMs": 70110,
+      "startMs": 73619,
+      "endMs": 73889,
       "status": "match"
     },
     {
       "text": "cases.",
       "beatId": "takeaway",
-      "startMs": 70110,
-      "endMs": 70800,
+      "startMs": 73889,
+      "endMs": 74499,
       "status": "match"
     },
     {
       "text": "Day",
       "beatId": "takeaway",
-      "startMs": 70800,
-      "endMs": 71130,
+      "startMs": 74499,
+      "endMs": 74929,
       "status": "match"
     },
     {
       "text": "1",
       "beatId": "takeaway",
-      "startMs": 71130,
-      "endMs": 71450,
+      "startMs": 74929,
+      "endMs": 75359,
       "status": "match"
     },
     {
       "text": "done!",
       "beatId": "takeaway",
-      "startMs": 71450,
-      "endMs": 72240,
+      "startMs": 75359,
+      "endMs": 75939,
       "status": "match"
     },
     {
       "text": "Next,",
       "beatId": "takeaway",
-      "startMs": 72240,
-      "endMs": 72880,
+      "startMs": 75939,
+      "endMs": 76849,
       "status": "match"
     },
     {
       "text": "Day",
       "beatId": "takeaway",
-      "startMs": 72880,
-      "endMs": 73360,
+      "startMs": 76849,
+      "endMs": 77069,
       "status": "match"
     },
     {
       "text": "2:",
       "beatId": "takeaway",
-      "startMs": 73360,
-      "endMs": 74320,
+      "startMs": 77069,
+      "endMs": 77839,
       "status": "match"
     },
     {
       "text": "before",
       "beatId": "takeaway",
-      "startMs": 74320,
-      "endMs": 74700,
+      "startMs": 77839,
+      "endMs": 78259,
       "status": "match"
     },
     {
       "text": "we",
       "beatId": "takeaway",
-      "startMs": 74700,
-      "endMs": 74760,
+      "startMs": 78259,
+      "endMs": 78399,
       "status": "match"
     },
     {
       "text": "teach",
       "beatId": "takeaway",
-      "startMs": 74760,
-      "endMs": 75050,
+      "startMs": 78399,
+      "endMs": 78749,
       "status": "match"
     },
     {
       "text": "machines,",
       "beatId": "takeaway",
-      "startMs": 75050,
-      "endMs": 75600,
+      "startMs": 78749,
+      "endMs": 79549,
       "status": "match"
     },
     {
       "text": "we",
       "beatId": "takeaway",
-      "startMs": 75600,
-      "endMs": 75780,
+      "startMs": 79549,
+      "endMs": 79569,
       "status": "match"
     },
     {
       "text": "learn",
       "beatId": "takeaway",
-      "startMs": 75780,
-      "endMs": 76110,
+      "startMs": 79569,
+      "endMs": 79839,
       "status": "match"
     },
     {
       "text": "the",
       "beatId": "takeaway",
-      "startMs": 76110,
-      "endMs": 76330,
+      "startMs": 79839,
+      "endMs": 80009,
       "status": "match"
     },
     {
       "text": "language",
       "beatId": "takeaway",
-      "startMs": 76330,
-      "endMs": 76920,
+      "startMs": 80009,
+      "endMs": 80569,
       "status": "match"
     },
     {
       "text": "ML",
       "beatId": "takeaway",
-      "startMs": 76920,
-      "endMs": 77130,
+      "startMs": 80569,
+      "endMs": 80779,
       "status": "match"
     },
     {
       "text": "speaks,",
       "beatId": "takeaway",
-      "startMs": 77130,
-      "endMs": 77840,
+      "startMs": 80779,
+      "endMs": 81849,
       "status": "match"
     },
     {
       "text": "through",
       "beatId": "takeaway",
-      "startMs": 77840,
-      "endMs": 78080,
+      "startMs": 81849,
+      "endMs": 82109,
       "status": "match"
     },
     {
       "text": "Java",
       "beatId": "takeaway",
-      "startMs": 78080,
-      "endMs": 78310,
+      "startMs": 82109,
+      "endMs": 82339,
       "status": "match"
     },
     {
       "text": "eyes.",
       "beatId": "takeaway",
-      "startMs": 78310,
-      "endMs": 78720,
-      "status": "match"
+      "startMs": 82339,
+      "endMs": 82739,
+      "status": "substituted",
+      "heardAs": "ISE."
     }
   ],
   "pages": [
@@ -1494,1543 +1552,1551 @@
       "beatId": "hook",
       "text": "This is Day 1 of ML",
       "startMs": 130,
-      "endMs": 1530,
+      "endMs": 2260,
       "words": [
         {
           "text": "This",
           "beatId": "hook",
           "startMs": 130,
-          "endMs": 380
+          "endMs": 520
         },
         {
           "text": "is",
           "beatId": "hook",
-          "startMs": 380,
-          "endMs": 570
+          "startMs": 520,
+          "endMs": 740
         },
         {
           "text": "Day",
           "beatId": "hook",
-          "startMs": 570,
-          "endMs": 860
+          "startMs": 740,
+          "endMs": 1230
         },
         {
           "text": "1",
           "beatId": "hook",
-          "startMs": 860,
-          "endMs": 1150
+          "startMs": 1230,
+          "endMs": 1590
         },
         {
           "text": "of",
           "beatId": "hook",
-          "startMs": 1150,
-          "endMs": 1340
+          "startMs": 1590,
+          "endMs": 1730
         },
         {
           "text": "ML",
           "beatId": "hook",
-          "startMs": 1340,
-          "endMs": 1530
+          "startMs": 1730,
+          "endMs": 2260
         }
       ]
     },
     {
       "beatId": "hook",
       "text": "for a Java developer.",
-      "startMs": 1530,
-      "endMs": 3200,
+      "startMs": 2260,
+      "endMs": 3760,
       "words": [
         {
           "text": "for",
           "beatId": "hook",
-          "startMs": 1530,
-          "endMs": 1820
+          "startMs": 2260,
+          "endMs": 2300
         },
         {
           "text": "a",
           "beatId": "hook",
-          "startMs": 1820,
-          "endMs": 1910
+          "startMs": 2300,
+          "endMs": 2340
         },
         {
           "text": "Java",
           "beatId": "hook",
-          "startMs": 1910,
-          "endMs": 2290
+          "startMs": 2340,
+          "endMs": 2680
         },
         {
           "text": "developer.",
           "beatId": "hook",
-          "startMs": 2290,
-          "endMs": 3200
+          "startMs": 2680,
+          "endMs": 3760
         }
       ]
     },
     {
       "beatId": "hook",
       "text": "What is machine learning?",
-      "startMs": 3200,
-      "endMs": 4720,
+      "startMs": 3760,
+      "endMs": 5440,
       "words": [
         {
           "text": "What",
           "beatId": "hook",
-          "startMs": 3200,
-          "endMs": 3450
+          "startMs": 3760,
+          "endMs": 4060
         },
         {
           "text": "is",
           "beatId": "hook",
-          "startMs": 3450,
-          "endMs": 3570
+          "startMs": 4060,
+          "endMs": 4190
         },
         {
           "text": "machine",
           "beatId": "hook",
-          "startMs": 3570,
-          "endMs": 4010
+          "startMs": 4190,
+          "endMs": 4660
         },
         {
           "text": "learning?",
           "beatId": "hook",
-          "startMs": 4010,
-          "endMs": 4720
+          "startMs": 4660,
+          "endMs": 5440
         }
       ]
     },
     {
       "beatId": "hook",
       "text": "Your spam folder uses it every day.",
-      "startMs": 4720,
-      "endMs": 7360,
+      "startMs": 5440,
+      "endMs": 8320,
       "words": [
         {
           "text": "Your",
           "beatId": "hook",
-          "startMs": 4720,
-          "endMs": 5090
+          "startMs": 5440,
+          "endMs": 5930
         },
         {
           "text": "spam",
           "beatId": "hook",
-          "startMs": 5090,
-          "endMs": 5460
+          "startMs": 5930,
+          "endMs": 6240
         },
         {
           "text": "folder",
           "beatId": "hook",
-          "startMs": 5460,
-          "endMs": 6020
+          "startMs": 6240,
+          "endMs": 6830
         },
         {
           "text": "uses",
           "beatId": "hook",
-          "startMs": 6020,
-          "endMs": 6390
+          "startMs": 6830,
+          "endMs": 7230
         },
         {
           "text": "it",
           "beatId": "hook",
-          "startMs": 6390,
-          "endMs": 6570
+          "startMs": 7230,
+          "endMs": 7430
         },
         {
           "text": "every",
           "beatId": "hook",
-          "startMs": 6570,
-          "endMs": 7150
+          "startMs": 7430,
+          "endMs": 7880
         },
         {
           "text": "day.",
           "beatId": "hook",
-          "startMs": 7150,
-          "endMs": 7360
+          "startMs": 7880,
+          "endMs": 8320
         }
       ]
     },
     {
       "beatId": "hook",
       "text": "A \"you won a prize\"",
-      "startMs": 7360,
-      "endMs": 8600,
+      "startMs": 8320,
+      "endMs": 9560,
       "words": [
         {
           "text": "A",
           "beatId": "hook",
-          "startMs": 7360,
-          "endMs": 7500
+          "startMs": 8320,
+          "endMs": 8321
         },
         {
           "text": "\"you",
           "beatId": "hook",
-          "startMs": 7500,
-          "endMs": 7800
+          "startMs": 8320,
+          "endMs": 8560
         },
         {
           "text": "won",
           "beatId": "hook",
-          "startMs": 7800,
-          "endMs": 8060
+          "startMs": 8560,
+          "endMs": 8800
         },
         {
           "text": "a",
           "beatId": "hook",
-          "startMs": 8060,
-          "endMs": 8140
+          "startMs": 8800,
+          "endMs": 8970
         },
         {
           "text": "prize\"",
           "beatId": "hook",
-          "startMs": 8140,
-          "endMs": 8600
+          "startMs": 8970,
+          "endMs": 9560
         }
       ]
     },
     {
       "beatId": "hook",
       "text": "email lands in spam,",
-      "startMs": 8600,
-      "endMs": 10260,
+      "startMs": 9560,
+      "endMs": 11680,
       "words": [
         {
           "text": "email",
           "beatId": "hook",
-          "startMs": 8600,
-          "endMs": 9120
+          "startMs": 9560,
+          "endMs": 10430
         },
         {
           "text": "lands",
           "beatId": "hook",
-          "startMs": 9120,
-          "endMs": 9510
+          "startMs": 10430,
+          "endMs": 10910
         },
         {
           "text": "in",
           "beatId": "hook",
-          "startMs": 9510,
-          "endMs": 9690
+          "startMs": 10910,
+          "endMs": 11100
         },
         {
           "text": "spam,",
           "beatId": "hook",
-          "startMs": 9690,
-          "endMs": 10260
+          "startMs": 11100,
+          "endMs": 11680
         }
       ]
     },
     {
       "beatId": "hook",
       "text": "and nobody wrote a rule for it.",
-      "startMs": 10260,
-      "endMs": 12080,
+      "startMs": 11680,
+      "endMs": 13440,
       "words": [
         {
           "text": "and",
           "beatId": "hook",
-          "startMs": 10260,
-          "endMs": 10320
+          "startMs": 11680,
+          "endMs": 11681
         },
         {
           "text": "nobody",
           "beatId": "hook",
-          "startMs": 10320,
-          "endMs": 10750
+          "startMs": 11680,
+          "endMs": 12160
         },
         {
           "text": "wrote",
           "beatId": "hook",
-          "startMs": 10750,
-          "endMs": 11110
+          "startMs": 12160,
+          "endMs": 12320
         },
         {
           "text": "a",
           "beatId": "hook",
-          "startMs": 11110,
-          "endMs": 11180
+          "startMs": 12320,
+          "endMs": 12410
         },
         {
           "text": "rule",
           "beatId": "hook",
-          "startMs": 11180,
-          "endMs": 11470
+          "startMs": 12410,
+          "endMs": 12640
         },
         {
           "text": "for",
           "beatId": "hook",
-          "startMs": 11470,
-          "endMs": 11660
+          "startMs": 12640,
+          "endMs": 12930
         },
         {
           "text": "it.",
           "beatId": "hook",
-          "startMs": 11660,
-          "endMs": 12080
+          "startMs": 12930,
+          "endMs": 13440
         }
       ]
     },
     {
       "beatId": "hook",
       "text": "So how did it know?",
-      "startMs": 12080,
-      "endMs": 13520,
+      "startMs": 13440,
+      "endMs": 14933,
       "words": [
         {
           "text": "So",
           "beatId": "hook",
-          "startMs": 12080,
-          "endMs": 12240
+          "startMs": 13440,
+          "endMs": 13770
         },
         {
           "text": "how",
           "beatId": "hook",
-          "startMs": 12240,
-          "endMs": 12490
+          "startMs": 13770,
+          "endMs": 14270
         },
         {
           "text": "did",
           "beatId": "hook",
-          "startMs": 12490,
-          "endMs": 12750
+          "startMs": 14270,
+          "endMs": 14532
         },
         {
           "text": "it",
           "beatId": "hook",
-          "startMs": 12750,
-          "endMs": 12900
+          "startMs": 14682,
+          "endMs": 14683
         },
         {
           "text": "know?",
           "beatId": "hook",
-          "startMs": 12900,
-          "endMs": 13480
+          "startMs": 14682,
+          "endMs": 14683
         }
       ]
     },
     {
       "beatId": "rules",
       "text": "As Java developers, we'd write a rule:",
-      "startMs": 13520,
-      "endMs": 15920,
+      "startMs": 15162,
+      "endMs": 18192,
       "words": [
         {
           "text": "As",
           "beatId": "rules",
-          "startMs": 13520,
-          "endMs": 13730
+          "startMs": 15162,
+          "endMs": 15163
         },
         {
           "text": "Java",
           "beatId": "rules",
-          "startMs": 13730,
-          "endMs": 13920
+          "startMs": 15162,
+          "endMs": 15532
         },
         {
           "text": "developers,",
           "beatId": "rules",
-          "startMs": 13920,
-          "endMs": 14720
+          "startMs": 15532,
+          "endMs": 16632
         },
         {
           "text": "we'd",
           "beatId": "rules",
-          "startMs": 14720,
-          "endMs": 14990
+          "startMs": 16632,
+          "endMs": 17012
         },
         {
           "text": "write",
           "beatId": "rules",
-          "startMs": 14990,
-          "endMs": 15330
+          "startMs": 17012,
+          "endMs": 17542
         },
         {
           "text": "a",
           "beatId": "rules",
-          "startMs": 15330,
-          "endMs": 15390
+          "startMs": 17542,
+          "endMs": 17942
         },
         {
           "text": "rule:",
           "beatId": "rules",
-          "startMs": 15390,
-          "endMs": 15920
+          "startMs": 17942,
+          "endMs": 18192
         }
       ]
     },
     {
       "beatId": "rules",
       "text": "if the email says prize, it's spam.",
-      "startMs": 15920,
-      "endMs": 19520,
+      "startMs": 18192,
+      "endMs": 21122,
       "words": [
         {
           "text": "if",
           "beatId": "rules",
-          "startMs": 15920,
-          "endMs": 16130
+          "startMs": 18192,
+          "endMs": 18242
         },
         {
           "text": "the",
           "beatId": "rules",
-          "startMs": 16130,
-          "endMs": 16440
+          "startMs": 18242,
+          "endMs": 18422
         },
         {
           "text": "email",
           "beatId": "rules",
-          "startMs": 16440,
-          "endMs": 16970
+          "startMs": 18422,
+          "endMs": 18732
         },
         {
           "text": "says",
           "beatId": "rules",
-          "startMs": 16970,
-          "endMs": 17370
+          "startMs": 18732,
+          "endMs": 19062
         },
         {
           "text": "prize,",
           "beatId": "rules",
-          "startMs": 17370,
-          "endMs": 18310
+          "startMs": 19062,
+          "endMs": 19912
         },
         {
           "text": "it's",
           "beatId": "rules",
-          "startMs": 18310,
-          "endMs": 19140
+          "startMs": 19912,
+          "endMs": 20332
         },
         {
           "text": "spam.",
           "beatId": "rules",
-          "startMs": 19140,
-          "endMs": 19520
+          "startMs": 20332,
+          "endMs": 21122
         }
       ]
     },
     {
       "beatId": "rules",
       "text": "But real emails say prize too.",
-      "startMs": 19520,
-      "endMs": 21860,
+      "startMs": 21122,
+      "endMs": 22982,
       "words": [
         {
           "text": "But",
           "beatId": "rules",
-          "startMs": 19520,
-          "endMs": 19760
+          "startMs": 21122,
+          "endMs": 21272
         },
         {
           "text": "real",
           "beatId": "rules",
-          "startMs": 19760,
-          "endMs": 20080
+          "startMs": 21272,
+          "endMs": 21462
         },
         {
           "text": "emails",
           "beatId": "rules",
-          "startMs": 20080,
-          "endMs": 20550
+          "startMs": 21462,
+          "endMs": 21862
         },
         {
           "text": "say",
           "beatId": "rules",
-          "startMs": 20550,
-          "endMs": 20860
+          "startMs": 21862,
+          "endMs": 22182
         },
         {
           "text": "prize",
           "beatId": "rules",
-          "startMs": 20860,
-          "endMs": 21320
+          "startMs": 22182,
+          "endMs": 22752
         },
         {
           "text": "too.",
           "beatId": "rules",
-          "startMs": 21320,
-          "endMs": 21860
+          "startMs": 22752,
+          "endMs": 22982
         }
       ]
     },
     {
       "beatId": "rules",
       "text": "So we add exceptions,",
-      "startMs": 21860,
-      "endMs": 23440,
+      "startMs": 22982,
+      "endMs": 24722,
       "words": [
         {
           "text": "So",
           "beatId": "rules",
-          "startMs": 21860,
-          "endMs": 21960
+          "startMs": 22982,
+          "endMs": 23182
         },
         {
           "text": "we",
           "beatId": "rules",
-          "startMs": 21960,
-          "endMs": 22140
+          "startMs": 23182,
+          "endMs": 23652
         },
         {
           "text": "add",
           "beatId": "rules",
-          "startMs": 22140,
-          "endMs": 22430
+          "startMs": 23652,
+          "endMs": 23692
         },
         {
           "text": "exceptions,",
           "beatId": "rules",
-          "startMs": 22430,
-          "endMs": 23440
+          "startMs": 23692,
+          "endMs": 24722
         }
       ]
     },
     {
       "beatId": "rules",
       "text": "and the if-else grows into a maze.",
-      "startMs": 23440,
-      "endMs": 26480,
+      "startMs": 24722,
+      "endMs": 26982,
       "words": [
         {
           "text": "and",
           "beatId": "rules",
-          "startMs": 23440,
-          "endMs": 23730
+          "startMs": 24722,
+          "endMs": 25442
         },
         {
           "text": "the",
           "beatId": "rules",
-          "startMs": 23730,
-          "endMs": 24110
+          "startMs": 25442,
+          "endMs": 25482
         },
         {
           "text": "if-else",
           "beatId": "rules",
-          "startMs": 24110,
-          "endMs": 24780
+          "startMs": 25482,
+          "endMs": 25662
         },
         {
           "text": "grows",
           "beatId": "rules",
-          "startMs": 24780,
-          "endMs": 25340
+          "startMs": 25662,
+          "endMs": 26042
         },
         {
           "text": "into",
           "beatId": "rules",
-          "startMs": 25340,
-          "endMs": 25660
+          "startMs": 26042,
+          "endMs": 26342
         },
         {
           "text": "a",
           "beatId": "rules",
-          "startMs": 25660,
-          "endMs": 25750
+          "startMs": 26342,
+          "endMs": 26412
         },
         {
           "text": "maze.",
           "beatId": "rules",
-          "startMs": 25750,
-          "endMs": 26480
+          "startMs": 26412,
+          "endMs": 26982
         }
       ]
     },
     {
       "beatId": "rules",
       "text": "We can't write a rule for every case.",
-      "startMs": 26480,
-      "endMs": 28860,
+      "startMs": 26982,
+      "endMs": 30232,
       "words": [
         {
           "text": "We",
           "beatId": "rules",
-          "startMs": 26480,
-          "endMs": 26630
+          "startMs": 26982,
+          "endMs": 27052
         },
         {
           "text": "can't",
           "beatId": "rules",
-          "startMs": 26630,
-          "endMs": 27010
+          "startMs": 27052,
+          "endMs": 28062
         },
         {
           "text": "write",
           "beatId": "rules",
-          "startMs": 27010,
-          "endMs": 27390
+          "startMs": 28062,
+          "endMs": 28202
         },
         {
           "text": "a",
           "beatId": "rules",
-          "startMs": 27390,
-          "endMs": 27460
+          "startMs": 28202,
+          "endMs": 28302
         },
         {
           "text": "rule",
           "beatId": "rules",
-          "startMs": 27460,
-          "endMs": 27770
+          "startMs": 28302,
+          "endMs": 28712
         },
         {
           "text": "for",
           "beatId": "rules",
-          "startMs": 27770,
-          "endMs": 28000
+          "startMs": 28712,
+          "endMs": 29022
         },
         {
           "text": "every",
           "beatId": "rules",
-          "startMs": 28000,
-          "endMs": 28370
+          "startMs": 29022,
+          "endMs": 29532
         },
         {
           "text": "case.",
           "beatId": "rules",
-          "startMs": 28370,
-          "endMs": 28610
+          "startMs": 29532,
+          "endMs": 29982
         }
       ]
     },
     {
       "beatId": "shift",
       "text": "Machine learning flips it.",
-      "startMs": 29120,
-      "endMs": 30880,
+      "startMs": 30919,
+      "endMs": 33009,
       "words": [
         {
           "text": "Machine",
           "beatId": "shift",
-          "startMs": 29120,
-          "endMs": 29490
+          "startMs": 30919,
+          "endMs": 31369
         },
         {
           "text": "learning",
           "beatId": "shift",
-          "startMs": 29490,
-          "endMs": 30050
+          "startMs": 31369,
+          "endMs": 32089
         },
         {
           "text": "flips",
           "beatId": "shift",
-          "startMs": 30050,
-          "endMs": 30440
+          "startMs": 32089,
+          "endMs": 32219
         },
         {
           "text": "it.",
           "beatId": "shift",
-          "startMs": 30440,
-          "endMs": 30880
+          "startMs": 32219,
+          "endMs": 33009
         }
       ]
     },
     {
       "beatId": "shift",
       "text": "Instead of writing the rules,",
-      "startMs": 30880,
-      "endMs": 33100,
+      "startMs": 33009,
+      "endMs": 34899,
       "words": [
         {
           "text": "Instead",
           "beatId": "shift",
-          "startMs": 30880,
-          "endMs": 31430
+          "startMs": 33009,
+          "endMs": 33259
         },
         {
           "text": "of",
           "beatId": "shift",
-          "startMs": 31430,
-          "endMs": 31590
+          "startMs": 33259,
+          "endMs": 33459
         },
         {
           "text": "writing",
           "beatId": "shift",
-          "startMs": 31590,
-          "endMs": 32140
+          "startMs": 33459,
+          "endMs": 33929
         },
         {
           "text": "the",
           "beatId": "shift",
-          "startMs": 32140,
-          "endMs": 32380
+          "startMs": 33929,
+          "endMs": 34169
         },
         {
           "text": "rules,",
           "beatId": "shift",
-          "startMs": 32380,
-          "endMs": 33100
+          "startMs": 34169,
+          "endMs": 34899
         }
       ]
     },
     {
       "beatId": "shift",
       "text": "we show the computer examples.",
-      "startMs": 33100,
-      "endMs": 34960,
+      "startMs": 34899,
+      "endMs": 36697,
       "words": [
         {
           "text": "we",
           "beatId": "shift",
-          "startMs": 33100,
-          "endMs": 33190
+          "startMs": 34899,
+          "endMs": 34949
         },
         {
           "text": "show",
           "beatId": "shift",
-          "startMs": 33190,
-          "endMs": 33380
+          "startMs": 34949,
+          "endMs": 35229
         },
         {
           "text": "the",
           "beatId": "shift",
-          "startMs": 33380,
-          "endMs": 33590
+          "startMs": 35229,
+          "endMs": 35479
         },
         {
           "text": "computer",
           "beatId": "shift",
-          "startMs": 33590,
-          "endMs": 34160
+          "startMs": 35479,
+          "endMs": 36139
         },
         {
           "text": "examples.",
           "beatId": "shift",
-          "startMs": 34160,
-          "endMs": 34960
+          "startMs": 36139,
+          "endMs": 36447
         }
       ]
     },
     {
       "beatId": "training",
       "text": "Give it emails labeled spam or safe.",
-      "startMs": 34960,
-      "endMs": 37840,
+      "startMs": 37077,
+      "endMs": 40887,
       "words": [
         {
           "text": "Give",
           "beatId": "training",
-          "startMs": 34960,
-          "endMs": 35280
+          "startMs": 37077,
+          "endMs": 37367
         },
         {
           "text": "it",
           "beatId": "training",
-          "startMs": 35280,
-          "endMs": 35450
+          "startMs": 37367,
+          "endMs": 37507
         },
         {
           "text": "emails",
           "beatId": "training",
-          "startMs": 35450,
-          "endMs": 35970
+          "startMs": 37507,
+          "endMs": 38117
         },
         {
           "text": "labeled",
           "beatId": "training",
-          "startMs": 35970,
-          "endMs": 36540
+          "startMs": 38117,
+          "endMs": 38847
         },
         {
           "text": "spam",
           "beatId": "training",
-          "startMs": 36540,
-          "endMs": 36910
+          "startMs": 38847,
+          "endMs": 39457
         },
         {
           "text": "or",
           "beatId": "training",
-          "startMs": 36910,
-          "endMs": 37150
+          "startMs": 39457,
+          "endMs": 39697
         },
         {
           "text": "safe.",
           "beatId": "training",
-          "startMs": 37150,
-          "endMs": 37840
+          "startMs": 39697,
+          "endMs": 40887
         }
       ]
     },
     {
       "beatId": "training",
       "text": "It finds the clues spam tends to have,",
-      "startMs": 37840,
-      "endMs": 40750,
+      "startMs": 40887,
+      "endMs": 43217,
       "words": [
         {
           "text": "It",
           "beatId": "training",
-          "startMs": 37840,
-          "endMs": 38060
+          "startMs": 40887,
+          "endMs": 40947
         },
         {
           "text": "finds",
           "beatId": "training",
-          "startMs": 38060,
-          "endMs": 38470
+          "startMs": 40947,
+          "endMs": 41407
         },
         {
           "text": "the",
           "beatId": "training",
-          "startMs": 38470,
-          "endMs": 38740
+          "startMs": 41407,
+          "endMs": 41547
         },
         {
           "text": "clues",
           "beatId": "training",
-          "startMs": 38740,
-          "endMs": 39260
+          "startMs": 41547,
+          "endMs": 41867
         },
         {
           "text": "spam",
           "beatId": "training",
-          "startMs": 39260,
-          "endMs": 39550
+          "startMs": 41867,
+          "endMs": 42367
         },
         {
           "text": "tends",
           "beatId": "training",
-          "startMs": 39550,
-          "endMs": 40000
+          "startMs": 42367,
+          "endMs": 42497
         },
         {
           "text": "to",
           "beatId": "training",
-          "startMs": 40000,
-          "endMs": 40180
+          "startMs": 42497,
+          "endMs": 42657
         },
         {
           "text": "have,",
           "beatId": "training",
-          "startMs": 40180,
-          "endMs": 40750
+          "startMs": 42657,
+          "endMs": 43217
         }
       ]
     },
     {
       "beatId": "training",
       "text": "and corrects itself when it's wrong.",
-      "startMs": 40750,
-      "endMs": 42880,
+      "startMs": 43217,
+      "endMs": 45667,
       "words": [
         {
           "text": "and",
           "beatId": "training",
-          "startMs": 40750,
-          "endMs": 40770
+          "startMs": 43217,
+          "endMs": 43417
         },
         {
           "text": "corrects",
           "beatId": "training",
-          "startMs": 40770,
-          "endMs": 41330
+          "startMs": 43417,
+          "endMs": 43957
         },
         {
           "text": "itself",
           "beatId": "training",
-          "startMs": 41330,
-          "endMs": 41780
+          "startMs": 43957,
+          "endMs": 44367
         },
         {
           "text": "when",
           "beatId": "training",
-          "startMs": 41780,
-          "endMs": 42080
+          "startMs": 44367,
+          "endMs": 44677
         },
         {
           "text": "it's",
           "beatId": "training",
-          "startMs": 42080,
-          "endMs": 42300
+          "startMs": 44677,
+          "endMs": 44887
         },
         {
           "text": "wrong.",
           "beatId": "training",
-          "startMs": 42300,
-          "endMs": 42880
+          "startMs": 44887,
+          "endMs": 45667
         }
       ]
     },
     {
       "beatId": "training",
       "text": "What it learns is called a model.",
-      "startMs": 42880,
-      "endMs": 45840,
+      "startMs": 45667,
+      "endMs": 47937,
       "words": [
         {
           "text": "What",
           "beatId": "training",
-          "startMs": 42880,
-          "endMs": 43280
+          "startMs": 45667,
+          "endMs": 45707
         },
         {
           "text": "it",
           "beatId": "training",
-          "startMs": 43280,
-          "endMs": 43480
+          "startMs": 45707,
+          "endMs": 45937
         },
         {
           "text": "learns",
           "beatId": "training",
-          "startMs": 43480,
-          "endMs": 44220
+          "startMs": 45937,
+          "endMs": 46507
         },
         {
           "text": "is",
           "beatId": "training",
-          "startMs": 44220,
-          "endMs": 44290
+          "startMs": 46507,
+          "endMs": 46687
         },
         {
           "text": "called",
           "beatId": "training",
-          "startMs": 44290,
-          "endMs": 44900
+          "startMs": 46687,
+          "endMs": 47277
         },
         {
           "text": "a",
           "beatId": "training",
-          "startMs": 44900,
-          "endMs": 45000
+          "startMs": 47277,
+          "endMs": 47377
         },
         {
           "text": "model.",
           "beatId": "training",
-          "startMs": 45000,
-          "endMs": 45840
+          "startMs": 47377,
+          "endMs": 47937
         }
       ]
     },
     {
       "beatId": "training",
       "text": "Learning it is called training.",
-      "startMs": 45840,
-      "endMs": 48080,
+      "startMs": 47937,
+      "endMs": 50309,
       "words": [
         {
           "text": "Learning",
           "beatId": "training",
-          "startMs": 45840,
-          "endMs": 46450
+          "startMs": 47937,
+          "endMs": 49127
         },
         {
           "text": "it",
           "beatId": "training",
-          "startMs": 46450,
-          "endMs": 46590
+          "startMs": 49127,
+          "endMs": 49427
         },
         {
           "text": "is",
           "beatId": "training",
-          "startMs": 46590,
-          "endMs": 46820
+          "startMs": 49427,
+          "endMs": 49667
         },
         {
           "text": "called",
           "beatId": "training",
-          "startMs": 46820,
-          "endMs": 47210
+          "startMs": 49667,
+          "endMs": 49908
         },
         {
           "text": "training.",
           "beatId": "training",
-          "startMs": 47210,
-          "endMs": 48075
+          "startMs": 50058,
+          "endMs": 50059
         }
       ]
     },
     {
       "beatId": "prediction",
       "text": "Now a new email arrives.",
-      "startMs": 48080,
-      "endMs": 50160,
+      "startMs": 50538,
+      "endMs": 52448,
       "words": [
         {
           "text": "Now",
           "beatId": "prediction",
-          "startMs": 48080,
-          "endMs": 48360
+          "startMs": 50538,
+          "endMs": 50668
         },
         {
           "text": "a",
           "beatId": "prediction",
-          "startMs": 48360,
-          "endMs": 48450
+          "startMs": 50668,
+          "endMs": 50768
         },
         {
           "text": "new",
           "beatId": "prediction",
-          "startMs": 48450,
-          "endMs": 48730
+          "startMs": 50768,
+          "endMs": 51078
         },
         {
           "text": "email",
           "beatId": "prediction",
-          "startMs": 48730,
-          "endMs": 49200
+          "startMs": 51078,
+          "endMs": 51568
         },
         {
           "text": "arrives.",
           "beatId": "prediction",
-          "startMs": 49200,
-          "endMs": 50160
+          "startMs": 51568,
+          "endMs": 52448
         }
       ]
     },
     {
       "beatId": "prediction",
       "text": "The model checks the clues",
-      "startMs": 50160,
-      "endMs": 51990,
+      "startMs": 52448,
+      "endMs": 53668,
       "words": [
         {
           "text": "The",
           "beatId": "prediction",
-          "startMs": 50160,
-          "endMs": 50410
+          "startMs": 52448,
+          "endMs": 52598
         },
         {
           "text": "model",
           "beatId": "prediction",
-          "startMs": 50410,
-          "endMs": 50830
+          "startMs": 52598,
+          "endMs": 52908
         },
         {
           "text": "checks",
           "beatId": "prediction",
-          "startMs": 50830,
-          "endMs": 51340
+          "startMs": 52908,
+          "endMs": 53208
         },
         {
           "text": "the",
           "beatId": "prediction",
-          "startMs": 51340,
-          "endMs": 51580
+          "startMs": 53208,
+          "endMs": 53338
         },
         {
           "text": "clues",
           "beatId": "prediction",
-          "startMs": 51580,
-          "endMs": 51990
+          "startMs": 53338,
+          "endMs": 53668
         }
       ]
     },
     {
       "beatId": "prediction",
       "text": "and says: likely spam.",
-      "startMs": 51990,
-      "endMs": 53920,
+      "startMs": 53668,
+      "endMs": 55538,
       "words": [
         {
           "text": "and",
           "beatId": "prediction",
-          "startMs": 51990,
-          "endMs": 52640
+          "startMs": 53668,
+          "endMs": 53998
         },
         {
           "text": "says:",
           "beatId": "prediction",
-          "startMs": 52640,
-          "endMs": 52710
+          "startMs": 53998,
+          "endMs": 54778
         },
         {
           "text": "likely",
           "beatId": "prediction",
-          "startMs": 52710,
-          "endMs": 53290
+          "startMs": 54778,
+          "endMs": 55188
         },
         {
           "text": "spam.",
           "beatId": "prediction",
-          "startMs": 53290,
-          "endMs": 53920
+          "startMs": 55188,
+          "endMs": 55538
         }
       ]
     },
     {
       "beatId": "prediction",
-      "text": "It's a prediction, not a promise,",
-      "startMs": 53920,
-      "endMs": 55650,
+      "text": "It's a prediction,",
+      "startMs": 55538,
+      "endMs": 57158,
       "words": [
         {
           "text": "It's",
           "beatId": "prediction",
-          "startMs": 53920,
-          "endMs": 54150
+          "startMs": 55538,
+          "endMs": 56278
         },
         {
           "text": "a",
           "beatId": "prediction",
-          "startMs": 54150,
-          "endMs": 54200
+          "startMs": 56278,
+          "endMs": 56358
         },
         {
           "text": "prediction,",
           "beatId": "prediction",
-          "startMs": 54200,
-          "endMs": 55020
-        },
-        {
-          "text": "not",
-          "beatId": "prediction",
-          "startMs": 55020,
-          "endMs": 55070
-        },
-        {
-          "text": "a",
-          "beatId": "prediction",
-          "startMs": 55070,
-          "endMs": 55130
-        },
-        {
-          "text": "promise,",
-          "beatId": "prediction",
-          "startMs": 55130,
-          "endMs": 55650
+          "startMs": 56358,
+          "endMs": 57158
         }
       ]
     },
     {
       "beatId": "prediction",
-      "text": "so people still check.",
-      "startMs": 55650,
-      "endMs": 57090,
+      "text": "not a promise, so people still",
+      "startMs": 57158,
+      "endMs": 59408,
       "words": [
+        {
+          "text": "not",
+          "beatId": "prediction",
+          "startMs": 57158,
+          "endMs": 57348
+        },
+        {
+          "text": "a",
+          "beatId": "prediction",
+          "startMs": 57348,
+          "endMs": 57408
+        },
+        {
+          "text": "promise,",
+          "beatId": "prediction",
+          "startMs": 57408,
+          "endMs": 57998
+        },
         {
           "text": "so",
           "beatId": "prediction",
-          "startMs": 55650,
-          "endMs": 55870
+          "startMs": 57998,
+          "endMs": 58068
         },
         {
           "text": "people",
           "beatId": "prediction",
-          "startMs": 55870,
-          "endMs": 56110
+          "startMs": 58068,
+          "endMs": 58668
         },
         {
           "text": "still",
           "beatId": "prediction",
-          "startMs": 56110,
-          "endMs": 56400
-        },
+          "startMs": 58668,
+          "endMs": 58838
+        }
+      ]
+    },
+    {
+      "beatId": "prediction",
+      "text": "check.",
+      "startMs": 59408,
+      "endMs": 59949,
+      "words": [
         {
           "text": "check.",
           "beatId": "prediction",
-          "startMs": 56400,
-          "endMs": 56918
+          "startMs": 59408,
+          "endMs": 59699
         }
       ]
     },
     {
       "beatId": "java",
       "text": "So in Java terms: no more if-else maze.",
-      "startMs": 57090,
-      "endMs": 60000,
+      "startMs": 60319,
+      "endMs": 63589,
       "words": [
         {
           "text": "So",
           "beatId": "java",
-          "startMs": 57090,
-          "endMs": 57140
+          "startMs": 60319,
+          "endMs": 60329
         },
         {
           "text": "in",
           "beatId": "java",
-          "startMs": 57140,
-          "endMs": 57280
+          "startMs": 60329,
+          "endMs": 60489
         },
         {
           "text": "Java",
           "beatId": "java",
-          "startMs": 57280,
-          "endMs": 57610
+          "startMs": 60489,
+          "endMs": 60839
         },
         {
           "text": "terms:",
           "beatId": "java",
-          "startMs": 57610,
-          "endMs": 58340
+          "startMs": 60839,
+          "endMs": 61639
         },
         {
           "text": "no",
           "beatId": "java",
-          "startMs": 58340,
-          "endMs": 58350
+          "startMs": 61639,
+          "endMs": 61649
         },
         {
           "text": "more",
           "beatId": "java",
-          "startMs": 58350,
-          "endMs": 58680
+          "startMs": 61649,
+          "endMs": 62049
         },
         {
           "text": "if-else",
           "beatId": "java",
-          "startMs": 58680,
-          "endMs": 59330
+          "startMs": 62049,
+          "endMs": 62729
         },
         {
           "text": "maze.",
           "beatId": "java",
-          "startMs": 59330,
-          "endMs": 60000
+          "startMs": 62729,
+          "endMs": 63589
         }
       ]
     },
     {
       "beatId": "java",
       "text": "Just two steps: train on examples,",
-      "startMs": 60000,
-      "endMs": 62720,
+      "startMs": 63589,
+      "endMs": 66359,
       "words": [
         {
           "text": "Just",
           "beatId": "java",
-          "startMs": 60000,
-          "endMs": 60320
+          "startMs": 63589,
+          "endMs": 63869
         },
         {
           "text": "two",
           "beatId": "java",
-          "startMs": 60320,
-          "endMs": 60560
+          "startMs": 63869,
+          "endMs": 64169
         },
         {
           "text": "steps:",
           "beatId": "java",
-          "startMs": 60560,
-          "endMs": 61200
+          "startMs": 64169,
+          "endMs": 64929
         },
         {
           "text": "train",
           "beatId": "java",
-          "startMs": 61200,
-          "endMs": 61600
+          "startMs": 64929,
+          "endMs": 65129
         },
         {
           "text": "on",
           "beatId": "java",
-          "startMs": 61600,
-          "endMs": 61760
+          "startMs": 65129,
+          "endMs": 65269
         },
         {
           "text": "examples,",
           "beatId": "java",
-          "startMs": 61760,
-          "endMs": 62720
+          "startMs": 65269,
+          "endMs": 66359
         }
       ]
     },
     {
       "beatId": "java",
       "text": "then predict on new input.",
-      "startMs": 62720,
-      "endMs": 64800,
+      "startMs": 66359,
+      "endMs": 68039,
       "words": [
         {
           "text": "then",
           "beatId": "java",
-          "startMs": 62720,
-          "endMs": 62890
+          "startMs": 66359,
+          "endMs": 66389
         },
         {
           "text": "predict",
           "beatId": "java",
-          "startMs": 62890,
-          "endMs": 63490
+          "startMs": 66389,
+          "endMs": 66789
         },
         {
           "text": "on",
           "beatId": "java",
-          "startMs": 63490,
-          "endMs": 63620
+          "startMs": 66789,
+          "endMs": 66939
         },
         {
           "text": "new",
           "beatId": "java",
-          "startMs": 63860,
-          "endMs": 64100
+          "startMs": 66939,
+          "endMs": 67169
         },
         {
           "text": "input.",
           "beatId": "java",
-          "startMs": 64100,
-          "endMs": 64800
+          "startMs": 67169,
+          "endMs": 67789
         }
       ]
     },
     {
       "beatId": "java",
       "text": "We'll write that code later in the series.",
-      "startMs": 64800,
-      "endMs": 66880,
+      "startMs": 68039,
+      "endMs": 70039,
       "words": [
         {
           "text": "We'll",
           "beatId": "java",
-          "startMs": 64800,
-          "endMs": 65070
+          "startMs": 68039,
+          "endMs": 68119
         },
         {
           "text": "write",
           "beatId": "java",
-          "startMs": 65070,
-          "endMs": 65350
+          "startMs": 68119,
+          "endMs": 68399
         },
         {
           "text": "that",
           "beatId": "java",
-          "startMs": 65350,
-          "endMs": 65560
+          "startMs": 68399,
+          "endMs": 68629
         },
         {
           "text": "code",
           "beatId": "java",
-          "startMs": 65560,
-          "endMs": 65790
+          "startMs": 68629,
+          "endMs": 68839
         },
         {
           "text": "later",
           "beatId": "java",
-          "startMs": 65790,
-          "endMs": 66070
+          "startMs": 68839,
+          "endMs": 69119
         },
         {
           "text": "in",
           "beatId": "java",
-          "startMs": 66070,
-          "endMs": 66210
+          "startMs": 69119,
+          "endMs": 69229
         },
         {
           "text": "the",
           "beatId": "java",
-          "startMs": 66210,
-          "endMs": 66340
+          "startMs": 69229,
+          "endMs": 69389
         },
         {
           "text": "series.",
           "beatId": "java",
-          "startMs": 66340,
-          "endMs": 66880
+          "startMs": 69389,
+          "endMs": 69789
         }
       ]
     },
     {
       "beatId": "takeaway",
       "text": "Machine learning means learning",
-      "startMs": 66880,
-      "endMs": 68430,
+      "startMs": 70519,
+      "endMs": 72009,
       "words": [
         {
           "text": "Machine",
           "beatId": "takeaway",
-          "startMs": 66880,
-          "endMs": 67270
+          "startMs": 70519,
+          "endMs": 70759
         },
         {
           "text": "learning",
           "beatId": "takeaway",
-          "startMs": 67270,
-          "endMs": 67710
+          "startMs": 70759,
+          "endMs": 71229
         },
         {
           "text": "means",
           "beatId": "takeaway",
-          "startMs": 67710,
-          "endMs": 67990
+          "startMs": 71229,
+          "endMs": 71599
         },
         {
           "text": "learning",
           "beatId": "takeaway",
-          "startMs": 67990,
-          "endMs": 68430
+          "startMs": 71599,
+          "endMs": 72009
         }
       ]
     },
     {
       "beatId": "takeaway",
       "text": "from examples to predict new cases.",
-      "startMs": 68430,
-      "endMs": 70800,
+      "startMs": 72009,
+      "endMs": 74499,
       "words": [
         {
           "text": "from",
           "beatId": "takeaway",
-          "startMs": 68430,
-          "endMs": 68650
+          "startMs": 72009,
+          "endMs": 72299
         },
         {
           "text": "examples",
           "beatId": "takeaway",
-          "startMs": 68650,
-          "endMs": 69120
+          "startMs": 72299,
+          "endMs": 72879
         },
         {
           "text": "to",
           "beatId": "takeaway",
-          "startMs": 69120,
-          "endMs": 69320
+          "startMs": 72879,
+          "endMs": 73049
         },
         {
           "text": "predict",
           "beatId": "takeaway",
-          "startMs": 69320,
-          "endMs": 69860
+          "startMs": 73049,
+          "endMs": 73619
         },
         {
           "text": "new",
           "beatId": "takeaway",
-          "startMs": 69860,
-          "endMs": 70110
+          "startMs": 73619,
+          "endMs": 73889
         },
         {
           "text": "cases.",
           "beatId": "takeaway",
-          "startMs": 70110,
-          "endMs": 70800
+          "startMs": 73889,
+          "endMs": 74499
         }
       ]
     },
     {
       "beatId": "takeaway",
       "text": "Day 1 done!",
-      "startMs": 70800,
-      "endMs": 72240,
+      "startMs": 74499,
+      "endMs": 75939,
       "words": [
         {
           "text": "Day",
           "beatId": "takeaway",
-          "startMs": 70800,
-          "endMs": 71130
+          "startMs": 74499,
+          "endMs": 74929
         },
         {
           "text": "1",
           "beatId": "takeaway",
-          "startMs": 71130,
-          "endMs": 71450
+          "startMs": 74929,
+          "endMs": 75359
         },
         {
           "text": "done!",
           "beatId": "takeaway",
-          "startMs": 71450,
-          "endMs": 72240
+          "startMs": 75359,
+          "endMs": 75939
         }
       ]
     },
     {
       "beatId": "takeaway",
       "text": "Next, Day 2: before we teach machines,",
-      "startMs": 72240,
-      "endMs": 75600,
+      "startMs": 75939,
+      "endMs": 79549,
       "words": [
         {
           "text": "Next,",
           "beatId": "takeaway",
-          "startMs": 72240,
-          "endMs": 72880
+          "startMs": 75939,
+          "endMs": 76849
         },
         {
           "text": "Day",
           "beatId": "takeaway",
-          "startMs": 72880,
-          "endMs": 73360
+          "startMs": 76849,
+          "endMs": 77069
         },
         {
           "text": "2:",
           "beatId": "takeaway",
-          "startMs": 73360,
-          "endMs": 74320
+          "startMs": 77069,
+          "endMs": 77839
         },
         {
           "text": "before",
           "beatId": "takeaway",
-          "startMs": 74320,
-          "endMs": 74700
+          "startMs": 77839,
+          "endMs": 78259
         },
         {
           "text": "we",
           "beatId": "takeaway",
-          "startMs": 74700,
-          "endMs": 74760
+          "startMs": 78259,
+          "endMs": 78399
         },
         {
           "text": "teach",
           "beatId": "takeaway",
-          "startMs": 74760,
-          "endMs": 75050
+          "startMs": 78399,
+          "endMs": 78749
         },
         {
           "text": "machines,",
           "beatId": "takeaway",
-          "startMs": 75050,
-          "endMs": 75600
+          "startMs": 78749,
+          "endMs": 79549
         }
       ]
     },
     {
       "beatId": "takeaway",
       "text": "we learn the language ML speaks,",
-      "startMs": 75600,
-      "endMs": 77840,
+      "startMs": 79549,
+      "endMs": 81849,
       "words": [
         {
           "text": "we",
           "beatId": "takeaway",
-          "startMs": 75600,
-          "endMs": 75780
+          "startMs": 79549,
+          "endMs": 79569
         },
         {
           "text": "learn",
           "beatId": "takeaway",
-          "startMs": 75780,
-          "endMs": 76110
+          "startMs": 79569,
+          "endMs": 79839
         },
         {
           "text": "the",
           "beatId": "takeaway",
-          "startMs": 76110,
-          "endMs": 76330
+          "startMs": 79839,
+          "endMs": 80009
         },
         {
           "text": "language",
           "beatId": "takeaway",
-          "startMs": 76330,
-          "endMs": 76920
+          "startMs": 80009,
+          "endMs": 80569
         },
         {
           "text": "ML",
           "beatId": "takeaway",
-          "startMs": 76920,
-          "endMs": 77130
+          "startMs": 80569,
+          "endMs": 80779
         },
         {
           "text": "speaks,",
           "beatId": "takeaway",
-          "startMs": 77130,
-          "endMs": 77840
+          "startMs": 80779,
+          "endMs": 81849
         }
       ]
     },
     {
       "beatId": "takeaway",
       "text": "through Java eyes.",
-      "startMs": 77840,
-      "endMs": 78970,
+      "startMs": 81849,
+      "endMs": 82989,
       "words": [
         {
           "text": "through",
           "beatId": "takeaway",
-          "startMs": 77840,
-          "endMs": 78080
+          "startMs": 81849,
+          "endMs": 82109
         },
         {
           "text": "Java",
           "beatId": "takeaway",
-          "startMs": 78080,
-          "endMs": 78310
+          "startMs": 82109,
+          "endMs": 82339
         },
         {
           "text": "eyes.",
           "beatId": "takeaway",
-          "startMs": 78310,
-          "endMs": 78720
+          "startMs": 82339,
+          "endMs": 82739
         }
       ]
     }

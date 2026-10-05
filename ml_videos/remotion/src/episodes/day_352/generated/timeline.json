@@ -1,0 +1,1527 @@
+{
+  "day": 352,
+  "fps": 30,
+  "totalFrames": 2250,
+  "audio": "day_352/mix/narration_v2.wav",
+  "music": null,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "from": 0,
+      "durationInFrames": 283,
+      "speechFrom": 3,
+      "speechTo": 250
+    },
+    {
+      "id": "six",
+      "type": "explain",
+      "from": 283,
+      "durationInFrames": 158,
+      "speechFrom": 287,
+      "speechTo": 407
+    },
+    {
+      "id": "notover",
+      "type": "explain",
+      "from": 441,
+      "durationInFrames": 242,
+      "speechFrom": 445,
+      "speechTo": 649
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "from": 683,
+      "durationInFrames": 126,
+      "speechFrom": 687,
+      "speechTo": 805
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "from": 809,
+      "durationInFrames": 433,
+      "speechFrom": 812,
+      "speechTo": 1203
+    },
+    {
+      "id": "rule",
+      "type": "insight",
+      "from": 1242,
+      "durationInFrames": 431,
+      "speechFrom": 1251,
+      "speechTo": 1640
+    },
+    {
+      "id": "weather",
+      "type": "explain",
+      "from": 1673,
+      "durationInFrames": 230,
+      "speechFrom": 1677,
+      "speechTo": 1864
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "from": 1903,
+      "durationInFrames": 347,
+      "speechFrom": 1912,
+      "speechTo": 2205
+    }
+  ],
+  "captions": [
+    {
+      "text": "Last time, we built the answer column.",
+      "startFrame": 4,
+      "endFrame": 74,
+      "words": [
+        {
+          "text": "Last",
+          "beatId": "recap",
+          "startFrame": 4,
+          "endFrame": 8
+        },
+        {
+          "text": "time,",
+          "beatId": "recap",
+          "startFrame": 8,
+          "endFrame": 21
+        },
+        {
+          "text": "we",
+          "beatId": "recap",
+          "startFrame": 21,
+          "endFrame": 25
+        },
+        {
+          "text": "built",
+          "beatId": "recap",
+          "startFrame": 25,
+          "endFrame": 36
+        },
+        {
+          "text": "the",
+          "beatId": "recap",
+          "startFrame": 36,
+          "endFrame": 42
+        },
+        {
+          "text": "answer",
+          "beatId": "recap",
+          "startFrame": 42,
+          "endFrame": 55
+        },
+        {
+          "text": "column.",
+          "beatId": "recap",
+          "startFrame": 55,
+          "endFrame": 74
+        }
+      ]
+    },
+    {
+      "text": "Tomorrow's average.",
+      "startFrame": 74,
+      "endFrame": 120,
+      "words": [
+        {
+          "text": "Tomorrow's",
+          "beatId": "recap",
+          "startFrame": 74,
+          "endFrame": 98
+        },
+        {
+          "text": "average.",
+          "beatId": "recap",
+          "startFrame": 98,
+          "endFrame": 120
+        }
+      ]
+    },
+    {
+      "text": "Now the model needs an input.",
+      "startFrame": 120,
+      "endFrame": 182,
+      "words": [
+        {
+          "text": "Now",
+          "beatId": "recap",
+          "startFrame": 120,
+          "endFrame": 127
+        },
+        {
+          "text": "the",
+          "beatId": "recap",
+          "startFrame": 127,
+          "endFrame": 134
+        },
+        {
+          "text": "model",
+          "beatId": "recap",
+          "startFrame": 134,
+          "endFrame": 146
+        },
+        {
+          "text": "needs",
+          "beatId": "recap",
+          "startFrame": 146,
+          "endFrame": 158
+        },
+        {
+          "text": "an",
+          "beatId": "recap",
+          "startFrame": 158,
+          "endFrame": 162
+        },
+        {
+          "text": "input.",
+          "beatId": "recap",
+          "startFrame": 162,
+          "endFrame": 182
+        }
+      ]
+    },
+    {
+      "text": "But which numbers is it allowed to see?",
+      "startFrame": 182,
+      "endFrame": 260,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "recap",
+          "startFrame": 182,
+          "endFrame": 185
+        },
+        {
+          "text": "which",
+          "beatId": "recap",
+          "startFrame": 185,
+          "endFrame": 194
+        },
+        {
+          "text": "numbers",
+          "beatId": "recap",
+          "startFrame": 194,
+          "endFrame": 206
+        },
+        {
+          "text": "is",
+          "beatId": "recap",
+          "startFrame": 206,
+          "endFrame": 209
+        },
+        {
+          "text": "it",
+          "beatId": "recap",
+          "startFrame": 209,
+          "endFrame": 214
+        },
+        {
+          "text": "allowed",
+          "beatId": "recap",
+          "startFrame": 214,
+          "endFrame": 225
+        },
+        {
+          "text": "to",
+          "beatId": "recap",
+          "startFrame": 225,
+          "endFrame": 228
+        },
+        {
+          "text": "see?",
+          "beatId": "recap",
+          "startFrame": 240,
+          "endFrame": 253
+        }
+      ]
+    },
+    {
+      "text": "See, Asha madam decides at six pm.",
+      "startFrame": 288,
+      "endFrame": 342,
+      "words": [
+        {
+          "text": "See,",
+          "beatId": "six",
+          "startFrame": 288,
+          "endFrame": 291
+        },
+        {
+          "text": "Asha",
+          "beatId": "six",
+          "startFrame": 291,
+          "endFrame": 299
+        },
+        {
+          "text": "madam",
+          "beatId": "six",
+          "startFrame": 299,
+          "endFrame": 306
+        },
+        {
+          "text": "decides",
+          "beatId": "six",
+          "startFrame": 306,
+          "endFrame": 319
+        },
+        {
+          "text": "at",
+          "beatId": "six",
+          "startFrame": 319,
+          "endFrame": 322
+        },
+        {
+          "text": "six",
+          "beatId": "six",
+          "startFrame": 322,
+          "endFrame": 327
+        },
+        {
+          "text": "pm.",
+          "beatId": "six",
+          "startFrame": 327,
+          "endFrame": 342
+        }
+      ]
+    },
+    {
+      "text": "So the model must also",
+      "startFrame": 342,
+      "endFrame": 373,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "six",
+          "startFrame": 342,
+          "endFrame": 350
+        },
+        {
+          "text": "the",
+          "beatId": "six",
+          "startFrame": 350,
+          "endFrame": 353
+        },
+        {
+          "text": "model",
+          "beatId": "six",
+          "startFrame": 353,
+          "endFrame": 360
+        },
+        {
+          "text": "must",
+          "beatId": "six",
+          "startFrame": 360,
+          "endFrame": 366
+        },
+        {
+          "text": "also",
+          "beatId": "six",
+          "startFrame": 366,
+          "endFrame": 373
+        }
+      ]
+    },
+    {
+      "text": "predict at six pm.",
+      "startFrame": 373,
+      "endFrame": 410,
+      "words": [
+        {
+          "text": "predict",
+          "beatId": "six",
+          "startFrame": 373,
+          "endFrame": 382
+        },
+        {
+          "text": "at",
+          "beatId": "six",
+          "startFrame": 382,
+          "endFrame": 385
+        },
+        {
+          "text": "six",
+          "beatId": "six",
+          "startFrame": 385,
+          "endFrame": 390
+        },
+        {
+          "text": "pm.",
+          "beatId": "six",
+          "startFrame": 390,
+          "endFrame": 403
+        }
+      ]
+    },
+    {
+      "text": "And at six pm, today is not over.",
+      "startFrame": 446,
+      "endFrame": 514,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "notover",
+          "startFrame": 446,
+          "endFrame": 447
+        },
+        {
+          "text": "at",
+          "beatId": "notover",
+          "startFrame": 447,
+          "endFrame": 452
+        },
+        {
+          "text": "six",
+          "beatId": "notover",
+          "startFrame": 452,
+          "endFrame": 453
+        },
+        {
+          "text": "pm,",
+          "beatId": "notover",
+          "startFrame": 452,
+          "endFrame": 468
+        },
+        {
+          "text": "today",
+          "beatId": "notover",
+          "startFrame": 468,
+          "endFrame": 480
+        },
+        {
+          "text": "is",
+          "beatId": "notover",
+          "startFrame": 480,
+          "endFrame": 485
+        },
+        {
+          "text": "not",
+          "beatId": "notover",
+          "startFrame": 485,
+          "endFrame": 492
+        },
+        {
+          "text": "over.",
+          "beatId": "notover",
+          "startFrame": 492,
+          "endFrame": 514
+        }
+      ]
+    },
+    {
+      "text": "The sensor has readings",
+      "startFrame": 514,
+      "endFrame": 552,
+      "words": [
+        {
+          "text": "The",
+          "beatId": "notover",
+          "startFrame": 514,
+          "endFrame": 516
+        },
+        {
+          "text": "sensor",
+          "beatId": "notover",
+          "startFrame": 516,
+          "endFrame": 529
+        },
+        {
+          "text": "has",
+          "beatId": "notover",
+          "startFrame": 529,
+          "endFrame": 535
+        },
+        {
+          "text": "readings",
+          "beatId": "notover",
+          "startFrame": 535,
+          "endFrame": 552
+        }
+      ]
+    },
+    {
+      "text": "only up to five pm.",
+      "startFrame": 552,
+      "endFrame": 592,
+      "words": [
+        {
+          "text": "only",
+          "beatId": "notover",
+          "startFrame": 552,
+          "endFrame": 560
+        },
+        {
+          "text": "up",
+          "beatId": "notover",
+          "startFrame": 560,
+          "endFrame": 564
+        },
+        {
+          "text": "to",
+          "beatId": "notover",
+          "startFrame": 564,
+          "endFrame": 568
+        },
+        {
+          "text": "five",
+          "beatId": "notover",
+          "startFrame": 568,
+          "endFrame": 569
+        },
+        {
+          "text": "pm.",
+          "beatId": "notover",
+          "startFrame": 568,
+          "endFrame": 592
+        }
+      ]
+    },
+    {
+      "text": "The rest of the day",
+      "startFrame": 592,
+      "endFrame": 615,
+      "words": [
+        {
+          "text": "The",
+          "beatId": "notover",
+          "startFrame": 592,
+          "endFrame": 593
+        },
+        {
+          "text": "rest",
+          "beatId": "notover",
+          "startFrame": 592,
+          "endFrame": 599
+        },
+        {
+          "text": "of",
+          "beatId": "notover",
+          "startFrame": 599,
+          "endFrame": 603
+        },
+        {
+          "text": "the",
+          "beatId": "notover",
+          "startFrame": 603,
+          "endFrame": 608
+        },
+        {
+          "text": "day",
+          "beatId": "notover",
+          "startFrame": 608,
+          "endFrame": 615
+        }
+      ]
+    },
+    {
+      "text": "has not happened yet.",
+      "startFrame": 615,
+      "endFrame": 658,
+      "words": [
+        {
+          "text": "has",
+          "beatId": "notover",
+          "startFrame": 615,
+          "endFrame": 622
+        },
+        {
+          "text": "not",
+          "beatId": "notover",
+          "startFrame": 622,
+          "endFrame": 627
+        },
+        {
+          "text": "happened",
+          "beatId": "notover",
+          "startFrame": 627,
+          "endFrame": 639
+        },
+        {
+          "text": "yet.",
+          "beatId": "notover",
+          "startFrame": 639,
+          "endFrame": 650
+        }
+      ]
+    },
+    {
+      "text": "Sir, but today's full",
+      "startFrame": 689,
+      "endFrame": 724,
+      "words": [
+        {
+          "text": "Sir,",
+          "beatId": "doubt1",
+          "startFrame": 689,
+          "endFrame": 693
+        },
+        {
+          "text": "but",
+          "beatId": "doubt1",
+          "startFrame": 693,
+          "endFrame": 704
+        },
+        {
+          "text": "today's",
+          "beatId": "doubt1",
+          "startFrame": 704,
+          "endFrame": 715
+        },
+        {
+          "text": "full",
+          "beatId": "doubt1",
+          "startFrame": 715,
+          "endFrame": 724
+        }
+      ]
+    },
+    {
+      "text": "average is the best clue.",
+      "startFrame": 724,
+      "endFrame": 772,
+      "words": [
+        {
+          "text": "average",
+          "beatId": "doubt1",
+          "startFrame": 724,
+          "endFrame": 742
+        },
+        {
+          "text": "is",
+          "beatId": "doubt1",
+          "startFrame": 742,
+          "endFrame": 745
+        },
+        {
+          "text": "the",
+          "beatId": "doubt1",
+          "startFrame": 745,
+          "endFrame": 751
+        },
+        {
+          "text": "best",
+          "beatId": "doubt1",
+          "startFrame": 751,
+          "endFrame": 760
+        },
+        {
+          "text": "clue.",
+          "beatId": "doubt1",
+          "startFrame": 760,
+          "endFrame": 772
+        }
+      ]
+    },
+    {
+      "text": "Why can't I use it?",
+      "startFrame": 772,
+      "endFrame": 812,
+      "words": [
+        {
+          "text": "Why",
+          "beatId": "doubt1",
+          "startFrame": 772,
+          "endFrame": 778
+        },
+        {
+          "text": "can't",
+          "beatId": "doubt1",
+          "startFrame": 778,
+          "endFrame": 788
+        },
+        {
+          "text": "I",
+          "beatId": "doubt1",
+          "startFrame": 788,
+          "endFrame": 789
+        },
+        {
+          "text": "use",
+          "beatId": "doubt1",
+          "startFrame": 789,
+          "endFrame": 795
+        },
+        {
+          "text": "it?",
+          "beatId": "doubt1",
+          "startFrame": 795,
+          "endFrame": 805
+        }
+      ]
+    },
+    {
+      "text": "Because at six pm, it does not exist.",
+      "startFrame": 813,
+      "endFrame": 898,
+      "words": [
+        {
+          "text": "Because",
+          "beatId": "answer1",
+          "startFrame": 813,
+          "endFrame": 827
+        },
+        {
+          "text": "at",
+          "beatId": "answer1",
+          "startFrame": 827,
+          "endFrame": 833
+        },
+        {
+          "text": "six",
+          "beatId": "answer1",
+          "startFrame": 833,
+          "endFrame": 840
+        },
+        {
+          "text": "pm,",
+          "beatId": "answer1",
+          "startFrame": 840,
+          "endFrame": 846
+        },
+        {
+          "text": "it",
+          "beatId": "answer1",
+          "startFrame": 846,
+          "endFrame": 856
+        },
+        {
+          "text": "does",
+          "beatId": "answer1",
+          "startFrame": 856,
+          "endFrame": 862
+        },
+        {
+          "text": "not",
+          "beatId": "answer1",
+          "startFrame": 862,
+          "endFrame": 871
+        },
+        {
+          "text": "exist.",
+          "beatId": "answer1",
+          "startFrame": 871,
+          "endFrame": 898
+        }
+      ]
+    },
+    {
+      "text": "In our table, the full day is sitting",
+      "startFrame": 898,
+      "endFrame": 964,
+      "words": [
+        {
+          "text": "In",
+          "beatId": "answer1",
+          "startFrame": 898,
+          "endFrame": 908
+        },
+        {
+          "text": "our",
+          "beatId": "answer1",
+          "startFrame": 908,
+          "endFrame": 909
+        },
+        {
+          "text": "table,",
+          "beatId": "answer1",
+          "startFrame": 909,
+          "endFrame": 922
+        },
+        {
+          "text": "the",
+          "beatId": "answer1",
+          "startFrame": 922,
+          "endFrame": 927
+        },
+        {
+          "text": "full",
+          "beatId": "answer1",
+          "startFrame": 927,
+          "endFrame": 939
+        },
+        {
+          "text": "day",
+          "beatId": "answer1",
+          "startFrame": 939,
+          "endFrame": 943
+        },
+        {
+          "text": "is",
+          "beatId": "answer1",
+          "startFrame": 943,
+          "endFrame": 948
+        },
+        {
+          "text": "sitting",
+          "beatId": "answer1",
+          "startFrame": 948,
+          "endFrame": 964
+        }
+      ]
+    },
+    {
+      "text": "right there, so the model looks brilliant.",
+      "startFrame": 964,
+      "endFrame": 1048,
+      "words": [
+        {
+          "text": "right",
+          "beatId": "answer1",
+          "startFrame": 964,
+          "endFrame": 975
+        },
+        {
+          "text": "there,",
+          "beatId": "answer1",
+          "startFrame": 975,
+          "endFrame": 988
+        },
+        {
+          "text": "so",
+          "beatId": "answer1",
+          "startFrame": 988,
+          "endFrame": 998
+        },
+        {
+          "text": "the",
+          "beatId": "answer1",
+          "startFrame": 998,
+          "endFrame": 1000
+        },
+        {
+          "text": "model",
+          "beatId": "answer1",
+          "startFrame": 1000,
+          "endFrame": 1012
+        },
+        {
+          "text": "looks",
+          "beatId": "answer1",
+          "startFrame": 1012,
+          "endFrame": 1024
+        },
+        {
+          "text": "brilliant.",
+          "beatId": "answer1",
+          "startFrame": 1024,
+          "endFrame": 1048
+        }
+      ]
+    },
+    {
+      "text": "But in real life, at six pm,",
+      "startFrame": 1048,
+      "endFrame": 1107,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "answer1",
+          "startFrame": 1048,
+          "endFrame": 1056
+        },
+        {
+          "text": "in",
+          "beatId": "answer1",
+          "startFrame": 1056,
+          "endFrame": 1062
+        },
+        {
+          "text": "real",
+          "beatId": "answer1",
+          "startFrame": 1062,
+          "endFrame": 1074
+        },
+        {
+          "text": "life,",
+          "beatId": "answer1",
+          "startFrame": 1074,
+          "endFrame": 1087
+        },
+        {
+          "text": "at",
+          "beatId": "answer1",
+          "startFrame": 1087,
+          "endFrame": 1094
+        },
+        {
+          "text": "six",
+          "beatId": "answer1",
+          "startFrame": 1094,
+          "endFrame": 1102
+        },
+        {
+          "text": "pm,",
+          "beatId": "answer1",
+          "startFrame": 1102,
+          "endFrame": 1107
+        }
+      ]
+    },
+    {
+      "text": "that number is missing.",
+      "startFrame": 1107,
+      "endFrame": 1168,
+      "words": [
+        {
+          "text": "that",
+          "beatId": "answer1",
+          "startFrame": 1107,
+          "endFrame": 1124
+        },
+        {
+          "text": "number",
+          "beatId": "answer1",
+          "startFrame": 1124,
+          "endFrame": 1139
+        },
+        {
+          "text": "is",
+          "beatId": "answer1",
+          "startFrame": 1139,
+          "endFrame": 1146
+        },
+        {
+          "text": "missing.",
+          "beatId": "answer1",
+          "startFrame": 1146,
+          "endFrame": 1168
+        }
+      ]
+    },
+    {
+      "text": "And the model fails.",
+      "startFrame": 1168,
+      "endFrame": 1213,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "answer1",
+          "startFrame": 1168,
+          "endFrame": 1177
+        },
+        {
+          "text": "the",
+          "beatId": "answer1",
+          "startFrame": 1177,
+          "endFrame": 1186
+        },
+        {
+          "text": "model",
+          "beatId": "answer1",
+          "startFrame": 1186,
+          "endFrame": 1201
+        },
+        {
+          "text": "fails.",
+          "beatId": "answer1",
+          "startFrame": 1201,
+          "endFrame": 1206
+        }
+      ]
+    },
+    {
+      "text": "So the rule is simple.",
+      "startFrame": 1251,
+      "endFrame": 1293,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "rule",
+          "startFrame": 1251,
+          "endFrame": 1253
+        },
+        {
+          "text": "the",
+          "beatId": "rule",
+          "startFrame": 1253,
+          "endFrame": 1257
+        },
+        {
+          "text": "rule",
+          "beatId": "rule",
+          "startFrame": 1257,
+          "endFrame": 1266
+        },
+        {
+          "text": "is",
+          "beatId": "rule",
+          "startFrame": 1266,
+          "endFrame": 1267
+        },
+        {
+          "text": "simple.",
+          "beatId": "rule",
+          "startFrame": 1267,
+          "endFrame": 1293
+        }
+      ]
+    },
+    {
+      "text": "Use only what exists at prediction time.",
+      "startFrame": 1293,
+      "endFrame": 1374,
+      "words": [
+        {
+          "text": "Use",
+          "beatId": "rule",
+          "startFrame": 1293,
+          "endFrame": 1296
+        },
+        {
+          "text": "only",
+          "beatId": "rule",
+          "startFrame": 1296,
+          "endFrame": 1305
+        },
+        {
+          "text": "what",
+          "beatId": "rule",
+          "startFrame": 1305,
+          "endFrame": 1314
+        },
+        {
+          "text": "exists",
+          "beatId": "rule",
+          "startFrame": 1314,
+          "endFrame": 1330
+        },
+        {
+          "text": "at",
+          "beatId": "rule",
+          "startFrame": 1330,
+          "endFrame": 1333
+        },
+        {
+          "text": "prediction",
+          "beatId": "rule",
+          "startFrame": 1333,
+          "endFrame": 1356
+        },
+        {
+          "text": "time.",
+          "beatId": "rule",
+          "startFrame": 1356,
+          "endFrame": 1374
+        }
+      ]
+    },
+    {
+      "text": "That's why our input column",
+      "startFrame": 1374,
+      "endFrame": 1422,
+      "words": [
+        {
+          "text": "That's",
+          "beatId": "rule",
+          "startFrame": 1374,
+          "endFrame": 1386
+        },
+        {
+          "text": "why",
+          "beatId": "rule",
+          "startFrame": 1386,
+          "endFrame": 1392
+        },
+        {
+          "text": "our",
+          "beatId": "rule",
+          "startFrame": 1392,
+          "endFrame": 1399
+        },
+        {
+          "text": "input",
+          "beatId": "rule",
+          "startFrame": 1399,
+          "endFrame": 1409
+        },
+        {
+          "text": "column",
+          "beatId": "rule",
+          "startFrame": 1409,
+          "endFrame": 1422
+        }
+      ]
+    },
+    {
+      "text": "is the average up to five pm.",
+      "startFrame": 1422,
+      "endFrame": 1479,
+      "words": [
+        {
+          "text": "is",
+          "beatId": "rule",
+          "startFrame": 1422,
+          "endFrame": 1426
+        },
+        {
+          "text": "the",
+          "beatId": "rule",
+          "startFrame": 1426,
+          "endFrame": 1432
+        },
+        {
+          "text": "average",
+          "beatId": "rule",
+          "startFrame": 1432,
+          "endFrame": 1447
+        },
+        {
+          "text": "up",
+          "beatId": "rule",
+          "startFrame": 1447,
+          "endFrame": 1451
+        },
+        {
+          "text": "to",
+          "beatId": "rule",
+          "startFrame": 1451,
+          "endFrame": 1459
+        },
+        {
+          "text": "five",
+          "beatId": "rule",
+          "startFrame": 1459,
+          "endFrame": 1462
+        },
+        {
+          "text": "pm.",
+          "beatId": "rule",
+          "startFrame": 1462,
+          "endFrame": 1479
+        }
+      ]
+    },
+    {
+      "text": "For the twenty-fourth of February,",
+      "startFrame": 1479,
+      "endFrame": 1545,
+      "words": [
+        {
+          "text": "For",
+          "beatId": "rule",
+          "startFrame": 1479,
+          "endFrame": 1488
+        },
+        {
+          "text": "the",
+          "beatId": "rule",
+          "startFrame": 1488,
+          "endFrame": 1494
+        },
+        {
+          "text": "twenty-fourth",
+          "beatId": "rule",
+          "startFrame": 1494,
+          "endFrame": 1511
+        },
+        {
+          "text": "of",
+          "beatId": "rule",
+          "startFrame": 1511,
+          "endFrame": 1517
+        },
+        {
+          "text": "February,",
+          "beatId": "rule",
+          "startFrame": 1517,
+          "endFrame": 1545
+        }
+      ]
+    },
+    {
+      "text": "one hundred two point seven.",
+      "startFrame": 1545,
+      "endFrame": 1600,
+      "words": [
+        {
+          "text": "one",
+          "beatId": "rule",
+          "startFrame": 1545,
+          "endFrame": 1546
+        },
+        {
+          "text": "hundred",
+          "beatId": "rule",
+          "startFrame": 1545,
+          "endFrame": 1546
+        },
+        {
+          "text": "two",
+          "beatId": "rule",
+          "startFrame": 1545,
+          "endFrame": 1546
+        },
+        {
+          "text": "point",
+          "beatId": "rule",
+          "startFrame": 1545,
+          "endFrame": 1546
+        },
+        {
+          "text": "seven.",
+          "beatId": "rule",
+          "startFrame": 1545,
+          "endFrame": 1600
+        }
+      ]
+    },
+    {
+      "text": "Known at six pm.",
+      "startFrame": 1600,
+      "endFrame": 1643,
+      "words": [
+        {
+          "text": "Known",
+          "beatId": "rule",
+          "startFrame": 1600,
+          "endFrame": 1607
+        },
+        {
+          "text": "at",
+          "beatId": "rule",
+          "startFrame": 1607,
+          "endFrame": 1611
+        },
+        {
+          "text": "six",
+          "beatId": "rule",
+          "startFrame": 1611,
+          "endFrame": 1619
+        },
+        {
+          "text": "pm.",
+          "beatId": "rule",
+          "startFrame": 1619,
+          "endFrame": 1635
+        }
+      ]
+    },
+    {
+      "text": "Same for the weather.",
+      "startFrame": 1677,
+      "endFrame": 1719,
+      "words": [
+        {
+          "text": "Same",
+          "beatId": "weather",
+          "startFrame": 1677,
+          "endFrame": 1679
+        },
+        {
+          "text": "for",
+          "beatId": "weather",
+          "startFrame": 1679,
+          "endFrame": 1686
+        },
+        {
+          "text": "the",
+          "beatId": "weather",
+          "startFrame": 1686,
+          "endFrame": 1690
+        },
+        {
+          "text": "weather.",
+          "beatId": "weather",
+          "startFrame": 1690,
+          "endFrame": 1719
+        }
+      ]
+    },
+    {
+      "text": "Tomorrow's actual weather, we cannot know.",
+      "startFrame": 1719,
+      "endFrame": 1790,
+      "words": [
+        {
+          "text": "Tomorrow's",
+          "beatId": "weather",
+          "startFrame": 1719,
+          "endFrame": 1728
+        },
+        {
+          "text": "actual",
+          "beatId": "weather",
+          "startFrame": 1728,
+          "endFrame": 1739
+        },
+        {
+          "text": "weather,",
+          "beatId": "weather",
+          "startFrame": 1739,
+          "endFrame": 1754
+        },
+        {
+          "text": "we",
+          "beatId": "weather",
+          "startFrame": 1754,
+          "endFrame": 1758
+        },
+        {
+          "text": "cannot",
+          "beatId": "weather",
+          "startFrame": 1758,
+          "endFrame": 1769
+        },
+        {
+          "text": "know.",
+          "beatId": "weather",
+          "startFrame": 1769,
+          "endFrame": 1790
+        }
+      ]
+    },
+    {
+      "text": "But tomorrow's weather forecast, we can use.",
+      "startFrame": 1790,
+      "endFrame": 1874,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "weather",
+          "startFrame": 1790,
+          "endFrame": 1793
+        },
+        {
+          "text": "tomorrow's",
+          "beatId": "weather",
+          "startFrame": 1793,
+          "endFrame": 1807
+        },
+        {
+          "text": "weather",
+          "beatId": "weather",
+          "startFrame": 1807,
+          "endFrame": 1824
+        },
+        {
+          "text": "forecast,",
+          "beatId": "weather",
+          "startFrame": 1824,
+          "endFrame": 1848
+        },
+        {
+          "text": "we",
+          "beatId": "weather",
+          "startFrame": 1848,
+          "endFrame": 1849
+        },
+        {
+          "text": "can",
+          "beatId": "weather",
+          "startFrame": 1848,
+          "endFrame": 1855
+        },
+        {
+          "text": "use.",
+          "beatId": "weather",
+          "startFrame": 1855,
+          "endFrame": 1867
+        }
+      ]
+    },
+    {
+      "text": "So, remember.",
+      "startFrame": 1912,
+      "endFrame": 1938,
+      "words": [
+        {
+          "text": "So,",
+          "beatId": "recall",
+          "startFrame": 1912,
+          "endFrame": 1915
+        },
+        {
+          "text": "remember.",
+          "beatId": "recall",
+          "startFrame": 1915,
+          "endFrame": 1938
+        }
+      ]
+    },
+    {
+      "text": "The model predicts at six pm, and it",
+      "startFrame": 1938,
+      "endFrame": 2016,
+      "words": [
+        {
+          "text": "The",
+          "beatId": "recall",
+          "startFrame": 1938,
+          "endFrame": 1941
+        },
+        {
+          "text": "model",
+          "beatId": "recall",
+          "startFrame": 1941,
+          "endFrame": 1954
+        },
+        {
+          "text": "predicts",
+          "beatId": "recall",
+          "startFrame": 1954,
+          "endFrame": 1972
+        },
+        {
+          "text": "at",
+          "beatId": "recall",
+          "startFrame": 1972,
+          "endFrame": 1975
+        },
+        {
+          "text": "six",
+          "beatId": "recall",
+          "startFrame": 1975,
+          "endFrame": 1982
+        },
+        {
+          "text": "pm,",
+          "beatId": "recall",
+          "startFrame": 1982,
+          "endFrame": 2005
+        },
+        {
+          "text": "and",
+          "beatId": "recall",
+          "startFrame": 2005,
+          "endFrame": 2009
+        },
+        {
+          "text": "it",
+          "beatId": "recall",
+          "startFrame": 2009,
+          "endFrame": 2016
+        }
+      ]
+    },
+    {
+      "text": "uses only what exists at six pm.",
+      "startFrame": 2016,
+      "endFrame": 2088,
+      "words": [
+        {
+          "text": "uses",
+          "beatId": "recall",
+          "startFrame": 2016,
+          "endFrame": 2026
+        },
+        {
+          "text": "only",
+          "beatId": "recall",
+          "startFrame": 2026,
+          "endFrame": 2035
+        },
+        {
+          "text": "what",
+          "beatId": "recall",
+          "startFrame": 2035,
+          "endFrame": 2045
+        },
+        {
+          "text": "exists",
+          "beatId": "recall",
+          "startFrame": 2045,
+          "endFrame": 2060
+        },
+        {
+          "text": "at",
+          "beatId": "recall",
+          "startFrame": 2060,
+          "endFrame": 2067
+        },
+        {
+          "text": "six",
+          "beatId": "recall",
+          "startFrame": 2067,
+          "endFrame": 2073
+        },
+        {
+          "text": "pm.",
+          "beatId": "recall",
+          "startFrame": 2073,
+          "endFrame": 2088
+        }
+      ]
+    },
+    {
+      "text": "Next, how do we know",
+      "startFrame": 2088,
+      "endFrame": 2154,
+      "words": [
+        {
+          "text": "Next,",
+          "beatId": "recall",
+          "startFrame": 2088,
+          "endFrame": 2118
+        },
+        {
+          "text": "how",
+          "beatId": "recall",
+          "startFrame": 2118,
+          "endFrame": 2123
+        },
+        {
+          "text": "do",
+          "beatId": "recall",
+          "startFrame": 2123,
+          "endFrame": 2128
+        },
+        {
+          "text": "we",
+          "beatId": "recall",
+          "startFrame": 2128,
+          "endFrame": 2148
+        },
+        {
+          "text": "know",
+          "beatId": "recall",
+          "startFrame": 2148,
+          "endFrame": 2154
+        }
+      ]
+    },
+    {
+      "text": "if the model is any good?",
+      "startFrame": 2154,
+      "endFrame": 2220,
+      "words": [
+        {
+          "text": "if",
+          "beatId": "recall",
+          "startFrame": 2154,
+          "endFrame": 2162
+        },
+        {
+          "text": "the",
+          "beatId": "recall",
+          "startFrame": 2162,
+          "endFrame": 2174
+        },
+        {
+          "text": "model",
+          "beatId": "recall",
+          "startFrame": 2174,
+          "endFrame": 2193
+        },
+        {
+          "text": "is",
+          "beatId": "recall",
+          "startFrame": 2193,
+          "endFrame": 2201
+        },
+        {
+          "text": "any",
+          "beatId": "recall",
+          "startFrame": 2201,
+          "endFrame": 2208
+        },
+        {
+          "text": "good?",
+          "beatId": "recall",
+          "startFrame": 2213,
+          "endFrame": 2214
+        }
+      ]
+    }
+  ]
+}
