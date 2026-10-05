@@ -62,7 +62,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     no: at("answer", "No"), size: at("answer", "size"), micro: at("answer", "micrometres|micrometers"),
     decides: at("line", "decides"), n91: at("line", "Ninety-one"), below: at("line", "Below"), above: at("line", "above"), six00: at("line", "six"), depend: at("line", "depend"),
     tonight: at("problem", "tonight"), exist: at("problem", "exist"), guesses: at("problem", "guesses"), rival: at("problem", "rival"),
-    evening: at("goal", "evening"), clues: at("goal", "clues"), guess: at("goal", "guess"), number: at("goal", "number"), better: at("goal", "better"),
+    job: at("goal", "job"), evening: at("goal", "evening"), clues: at("goal", "clues"), guess: at("goal", "guess"), number: at("goal", "number"), better: at("goal", "better"),
     easy: at("stakes", "easy"), most: at("stakes", "most"), right2: at("stakes", "right", 2), harder: at("stakes", "harder"),
     small: at("start", "small"), station: at("start", "station"), ticket: at("start", "ticket"), step: at("start", "step"),
     together: at("close", "together"), episode: at("close", "Episode"), write: at("close", "write"), house: at("close", "house"),
@@ -182,13 +182,22 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
             <div style={{ width: 170, height: 220, border: `5px dashed ${K.muted}`, borderRadius: 12, display: "grid", placeItems: "center", fontFamily: K.head, fontSize: 110, color: K.red, background: "#fff" }}>{f < c.guesses ? "?" : ""}</div>
             <div style={{ fontFamily: K.head, fontSize: 40, marginTop: 8, color: K.muted }}>TOMORROW</div>
           </div>
-          <div style={{ position: "absolute", left: 230 + 390 * enter(f, c.guesses, 16), top: 250, width: 170, height: 220, boxSizing: "border-box", background: "#B8C2CF", border: `5px solid ${K.muted}`, borderRadius: 12, opacity: f >= c.guesses ? 1 : 0 }} />
+          {(() => {
+            // first copy slides once; then the habit repeats (fade in at TODAY, slide, fade out at TOMORROW)
+            const loop = f >= c.guesses + 40 ? ((f - c.guesses - 40) % 45) / 45 : -1;
+            const x = loop < 0 ? enter(f, c.guesses, 16) : loop;
+            const op = f < c.guesses ? 0 : loop < 0 ? 1 : 0.35 + 0.65 * Math.sin(Math.PI * loop);
+            return <div style={{ position: "absolute", left: 230 + 390 * x, top: 250, width: 170, height: 220, boxSizing: "border-box", background: "#B8C2CF", border: `5px solid ${K.muted}`, borderRadius: 12, opacity: op }} />;
+          })()}
           <div style={{ position: "absolute", left: 425, top: 320, fontFamily: K.head, fontSize: 52, ...pop(f, c.guesses + 6) }}>copy →</div>
           <div style={{ position: "absolute", left: 230, top: 570, ...tilt(pop(f, c.rival, 7), -3) }}><TermCard text="THE RIVAL: TOMORROW = TODAY" color={K.muted} size={50} /></div>
         </div>
 
         {/* ── goal: clues → our guess → tomorrow, better than the rival ── */}
         <div style={{ opacity: sec("goal", "stakes") }}>
+          <div style={{ position: "absolute", left: 300, top: 220, opacity: 1 - enter(f, c.evening, 8) }}>
+            <div style={tilt(pop(f, c.job, 7), -3 + 2 * Math.sin(f / 6))}><TermCard text="OUR JOB" color={K.blue} size={120} /></div>
+          </div>
           <div style={{ position: "absolute", left: 200, top: 30, ...pop(f, c.evening) }}><Chip label="🕕 every evening at six" color={K.ink} size={30} /></div>
           {[["TODAY'S CLUES", K.blue, c.clues], ["OUR GUESS", K.purple, c.guess], ["TOMORROW'S NUMBER", K.red, c.number]].map(([t, col, a], i) => (
             <div key={t as string} style={{ position: "absolute", left: 195 + i * 255, top: 130, display: "flex", alignItems: "center", ...pop(f, a as number) }}>

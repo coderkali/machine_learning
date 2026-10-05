@@ -1,0 +1,2970 @@
+{
+  "day": 351,
+  "fps": 30,
+  "totalFrames": 4627,
+  "audio": "day_351/mix/narration.wav",
+  "music": null,
+  "beats": [
+    {
+      "id": "bridge",
+      "type": "hook",
+      "from": 0,
+      "durationInFrames": 528,
+      "speechFrom": 3,
+      "speechTo": 500
+    },
+    {
+      "id": "versions",
+      "type": "explain",
+      "from": 528,
+      "durationInFrames": 765,
+      "speechFrom": 531,
+      "speechTo": 1266
+    },
+    {
+      "id": "package",
+      "type": "explain",
+      "from": 1293,
+      "durationInFrames": 638,
+      "speechFrom": 1297,
+      "speechTo": 1903
+    },
+    {
+      "id": "doubt2",
+      "type": "java",
+      "from": 1931,
+      "durationInFrames": 63,
+      "speechFrom": 1935,
+      "speechTo": 1990
+    },
+    {
+      "id": "answer2",
+      "type": "explain",
+      "from": 1994,
+      "durationInFrames": 362,
+      "speechFrom": 1997,
+      "speechTo": 2329
+    },
+    {
+      "id": "share",
+      "type": "explain",
+      "from": 2356,
+      "durationInFrames": 463,
+      "speechFrom": 2360,
+      "speechTo": 2791
+    },
+    {
+      "id": "doubt3",
+      "type": "java",
+      "from": 2819,
+      "durationInFrames": 81,
+      "speechFrom": 2823,
+      "speechTo": 2897
+    },
+    {
+      "id": "answer3",
+      "type": "explain",
+      "from": 2900,
+      "durationInFrames": 402,
+      "speechFrom": 2904,
+      "speechTo": 3269
+    },
+    {
+      "id": "asha",
+      "type": "insight",
+      "from": 3302,
+      "durationInFrames": 459,
+      "speechFrom": 3311,
+      "speechTo": 3733
+    },
+    {
+      "id": "recall",
+      "type": "takeaway",
+      "from": 3761,
+      "durationInFrames": 619,
+      "speechFrom": 3765,
+      "speechTo": 4353
+    },
+    {
+      "id": "next",
+      "type": "teaser",
+      "from": 4380,
+      "durationInFrames": 247,
+      "speechFrom": 4384,
+      "speechTo": 4557
+    }
+  ],
+  "captions": [
+    {
+      "text": "This is DAF-01, part two.",
+      "startFrame": 3,
+      "endFrame": 93,
+      "words": [
+        {
+          "text": "This",
+          "beatId": "bridge",
+          "startFrame": 3,
+          "endFrame": 15
+        },
+        {
+          "text": "is",
+          "beatId": "bridge",
+          "startFrame": 15,
+          "endFrame": 22
+        },
+        {
+          "text": "DAF-01,",
+          "beatId": "bridge",
+          "startFrame": 22,
+          "endFrame": 55
+        },
+        {
+          "text": "part",
+          "beatId": "bridge",
+          "startFrame": 55,
+          "endFrame": 70
+        },
+        {
+          "text": "two.",
+          "beatId": "bridge",
+          "startFrame": 70,
+          "endFrame": 93
+        }
+      ]
+    },
+    {
+      "text": "Last time, we learned reproducibility.",
+      "startFrame": 93,
+      "endFrame": 190,
+      "words": [
+        {
+          "text": "Last",
+          "beatId": "bridge",
+          "startFrame": 93,
+          "endFrame": 112
+        },
+        {
+          "text": "time,",
+          "beatId": "bridge",
+          "startFrame": 112,
+          "endFrame": 124
+        },
+        {
+          "text": "we",
+          "beatId": "bridge",
+          "startFrame": 124,
+          "endFrame": 132
+        },
+        {
+          "text": "learned",
+          "beatId": "bridge",
+          "startFrame": 132,
+          "endFrame": 143
+        },
+        {
+          "text": "reproducibility.",
+          "beatId": "bridge",
+          "startFrame": 143,
+          "endFrame": 190
+        }
+      ]
+    },
+    {
+      "text": "Same code, same data,",
+      "startFrame": 190,
+      "endFrame": 238,
+      "words": [
+        {
+          "text": "Same",
+          "beatId": "bridge",
+          "startFrame": 190,
+          "endFrame": 197
+        },
+        {
+          "text": "code,",
+          "beatId": "bridge",
+          "startFrame": 197,
+          "endFrame": 215
+        },
+        {
+          "text": "same",
+          "beatId": "bridge",
+          "startFrame": 215,
+          "endFrame": 221
+        },
+        {
+          "text": "data,",
+          "beatId": "bridge",
+          "startFrame": 221,
+          "endFrame": 238
+        }
+      ]
+    },
+    {
+      "text": "same libraries, same answer.",
+      "startFrame": 238,
+      "endFrame": 293,
+      "words": [
+        {
+          "text": "same",
+          "beatId": "bridge",
+          "startFrame": 238,
+          "endFrame": 245
+        },
+        {
+          "text": "libraries,",
+          "beatId": "bridge",
+          "startFrame": 245,
+          "endFrame": 267
+        },
+        {
+          "text": "same",
+          "beatId": "bridge",
+          "startFrame": 267,
+          "endFrame": 275
+        },
+        {
+          "text": "answer.",
+          "beatId": "bridge",
+          "startFrame": 275,
+          "endFrame": 293
+        }
+      ]
+    },
+    {
+      "text": "And idea one: every project",
+      "startFrame": 293,
+      "endFrame": 382,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "bridge",
+          "startFrame": 293,
+          "endFrame": 324
+        },
+        {
+          "text": "idea",
+          "beatId": "bridge",
+          "startFrame": 324,
+          "endFrame": 326
+        },
+        {
+          "text": "one:",
+          "beatId": "bridge",
+          "startFrame": 326,
+          "endFrame": 350
+        },
+        {
+          "text": "every",
+          "beatId": "bridge",
+          "startFrame": 350,
+          "endFrame": 376
+        },
+        {
+          "text": "project",
+          "beatId": "bridge",
+          "startFrame": 376,
+          "endFrame": 382
+        }
+      ]
+    },
+    {
+      "text": "lives in its own room.",
+      "startFrame": 382,
+      "endFrame": 437,
+      "words": [
+        {
+          "text": "lives",
+          "beatId": "bridge",
+          "startFrame": 382,
+          "endFrame": 395
+        },
+        {
+          "text": "in",
+          "beatId": "bridge",
+          "startFrame": 395,
+          "endFrame": 401
+        },
+        {
+          "text": "its",
+          "beatId": "bridge",
+          "startFrame": 401,
+          "endFrame": 409
+        },
+        {
+          "text": "own",
+          "beatId": "bridge",
+          "startFrame": 409,
+          "endFrame": 421
+        },
+        {
+          "text": "room.",
+          "beatId": "bridge",
+          "startFrame": 421,
+          "endFrame": 437
+        }
+      ]
+    },
+    {
+      "text": "Now, let's continue.",
+      "startFrame": 437,
+      "endFrame": 507,
+      "words": [
+        {
+          "text": "Now,",
+          "beatId": "bridge",
+          "startFrame": 437,
+          "endFrame": 448
+        },
+        {
+          "text": "let's",
+          "beatId": "bridge",
+          "startFrame": 448,
+          "endFrame": 468
+        },
+        {
+          "text": "continue.",
+          "beatId": "bridge",
+          "startFrame": 468,
+          "endFrame": 499
+        }
+      ]
+    },
+    {
+      "text": "Idea two.",
+      "startFrame": 533,
+      "endFrame": 569,
+      "words": [
+        {
+          "text": "Idea",
+          "beatId": "versions",
+          "startFrame": 533,
+          "endFrame": 544
+        },
+        {
+          "text": "two.",
+          "beatId": "versions",
+          "startFrame": 544,
+          "endFrame": 569
+        }
+      ]
+    },
+    {
+      "text": "Write down exactly what you need.",
+      "startFrame": 569,
+      "endFrame": 631,
+      "words": [
+        {
+          "text": "Write",
+          "beatId": "versions",
+          "startFrame": 569,
+          "endFrame": 576
+        },
+        {
+          "text": "down",
+          "beatId": "versions",
+          "startFrame": 576,
+          "endFrame": 585
+        },
+        {
+          "text": "exactly",
+          "beatId": "versions",
+          "startFrame": 585,
+          "endFrame": 602
+        },
+        {
+          "text": "what",
+          "beatId": "versions",
+          "startFrame": 602,
+          "endFrame": 611
+        },
+        {
+          "text": "you",
+          "beatId": "versions",
+          "startFrame": 611,
+          "endFrame": 619
+        },
+        {
+          "text": "need.",
+          "beatId": "versions",
+          "startFrame": 619,
+          "endFrame": 631
+        }
+      ]
+    },
+    {
+      "text": "A recipe that says, some flour,",
+      "startFrame": 631,
+      "endFrame": 717,
+      "words": [
+        {
+          "text": "A",
+          "beatId": "versions",
+          "startFrame": 631,
+          "endFrame": 653
+        },
+        {
+          "text": "recipe",
+          "beatId": "versions",
+          "startFrame": 653,
+          "endFrame": 654
+        },
+        {
+          "text": "that",
+          "beatId": "versions",
+          "startFrame": 654,
+          "endFrame": 666
+        },
+        {
+          "text": "says,",
+          "beatId": "versions",
+          "startFrame": 666,
+          "endFrame": 679
+        },
+        {
+          "text": "some",
+          "beatId": "versions",
+          "startFrame": 679,
+          "endFrame": 694
+        },
+        {
+          "text": "flour,",
+          "beatId": "versions",
+          "startFrame": 694,
+          "endFrame": 717
+        }
+      ]
+    },
+    {
+      "text": "gives a different cake every time.",
+      "startFrame": 717,
+      "endFrame": 778,
+      "words": [
+        {
+          "text": "gives",
+          "beatId": "versions",
+          "startFrame": 717,
+          "endFrame": 725
+        },
+        {
+          "text": "a",
+          "beatId": "versions",
+          "startFrame": 725,
+          "endFrame": 728
+        },
+        {
+          "text": "different",
+          "beatId": "versions",
+          "startFrame": 728,
+          "endFrame": 747
+        },
+        {
+          "text": "cake",
+          "beatId": "versions",
+          "startFrame": 747,
+          "endFrame": 756
+        },
+        {
+          "text": "every",
+          "beatId": "versions",
+          "startFrame": 756,
+          "endFrame": 767
+        },
+        {
+          "text": "time.",
+          "beatId": "versions",
+          "startFrame": 767,
+          "endFrame": 778
+        }
+      ]
+    },
+    {
+      "text": "A recipe that says, two hundred grams,",
+      "startFrame": 778,
+      "endFrame": 860,
+      "words": [
+        {
+          "text": "A",
+          "beatId": "versions",
+          "startFrame": 778,
+          "endFrame": 787
+        },
+        {
+          "text": "recipe",
+          "beatId": "versions",
+          "startFrame": 787,
+          "endFrame": 794
+        },
+        {
+          "text": "that",
+          "beatId": "versions",
+          "startFrame": 794,
+          "endFrame": 806
+        },
+        {
+          "text": "says,",
+          "beatId": "versions",
+          "startFrame": 806,
+          "endFrame": 813
+        },
+        {
+          "text": "two",
+          "beatId": "versions",
+          "startFrame": 813,
+          "endFrame": 814
+        },
+        {
+          "text": "hundred",
+          "beatId": "versions",
+          "startFrame": 813,
+          "endFrame": 836
+        },
+        {
+          "text": "grams,",
+          "beatId": "versions",
+          "startFrame": 836,
+          "endFrame": 860
+        }
+      ]
+    },
+    {
+      "text": "gives the same cake in any kitchen.",
+      "startFrame": 860,
+      "endFrame": 924,
+      "words": [
+        {
+          "text": "gives",
+          "beatId": "versions",
+          "startFrame": 860,
+          "endFrame": 862
+        },
+        {
+          "text": "the",
+          "beatId": "versions",
+          "startFrame": 862,
+          "endFrame": 869
+        },
+        {
+          "text": "same",
+          "beatId": "versions",
+          "startFrame": 869,
+          "endFrame": 878
+        },
+        {
+          "text": "cake",
+          "beatId": "versions",
+          "startFrame": 878,
+          "endFrame": 887
+        },
+        {
+          "text": "in",
+          "beatId": "versions",
+          "startFrame": 887,
+          "endFrame": 893
+        },
+        {
+          "text": "any",
+          "beatId": "versions",
+          "startFrame": 893,
+          "endFrame": 899
+        },
+        {
+          "text": "kitchen.",
+          "beatId": "versions",
+          "startFrame": 899,
+          "endFrame": 924
+        }
+      ]
+    },
+    {
+      "text": "So we list every library the project needs,",
+      "startFrame": 924,
+      "endFrame": 1015,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "versions",
+          "startFrame": 924,
+          "endFrame": 929
+        },
+        {
+          "text": "we",
+          "beatId": "versions",
+          "startFrame": 929,
+          "endFrame": 937
+        },
+        {
+          "text": "list",
+          "beatId": "versions",
+          "startFrame": 937,
+          "endFrame": 950
+        },
+        {
+          "text": "every",
+          "beatId": "versions",
+          "startFrame": 950,
+          "endFrame": 957
+        },
+        {
+          "text": "library",
+          "beatId": "versions",
+          "startFrame": 957,
+          "endFrame": 975
+        },
+        {
+          "text": "the",
+          "beatId": "versions",
+          "startFrame": 975,
+          "endFrame": 983
+        },
+        {
+          "text": "project",
+          "beatId": "versions",
+          "startFrame": 983,
+          "endFrame": 1001
+        },
+        {
+          "text": "needs,",
+          "beatId": "versions",
+          "startFrame": 1001,
+          "endFrame": 1015
+        }
+      ]
+    },
+    {
+      "text": "with its exact version.",
+      "startFrame": 1015,
+      "endFrame": 1064,
+      "words": [
+        {
+          "text": "with",
+          "beatId": "versions",
+          "startFrame": 1015,
+          "endFrame": 1024
+        },
+        {
+          "text": "its",
+          "beatId": "versions",
+          "startFrame": 1024,
+          "endFrame": 1031
+        },
+        {
+          "text": "exact",
+          "beatId": "versions",
+          "startFrame": 1031,
+          "endFrame": 1042
+        },
+        {
+          "text": "version.",
+          "beatId": "versions",
+          "startFrame": 1042,
+          "endFrame": 1064
+        }
+      ]
+    },
+    {
+      "text": "And we write that list ourselves,",
+      "startFrame": 1064,
+      "endFrame": 1125,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "versions",
+          "startFrame": 1064,
+          "endFrame": 1072
+        },
+        {
+          "text": "we",
+          "beatId": "versions",
+          "startFrame": 1072,
+          "endFrame": 1074
+        },
+        {
+          "text": "write",
+          "beatId": "versions",
+          "startFrame": 1074,
+          "endFrame": 1085
+        },
+        {
+          "text": "that",
+          "beatId": "versions",
+          "startFrame": 1085,
+          "endFrame": 1094
+        },
+        {
+          "text": "list",
+          "beatId": "versions",
+          "startFrame": 1094,
+          "endFrame": 1101
+        },
+        {
+          "text": "ourselves,",
+          "beatId": "versions",
+          "startFrame": 1101,
+          "endFrame": 1125
+        }
+      ]
+    },
+    {
+      "text": "so we know why each library is there,",
+      "startFrame": 1125,
+      "endFrame": 1184,
+      "words": [
+        {
+          "text": "so",
+          "beatId": "versions",
+          "startFrame": 1125,
+          "endFrame": 1127
+        },
+        {
+          "text": "we",
+          "beatId": "versions",
+          "startFrame": 1127,
+          "endFrame": 1131
+        },
+        {
+          "text": "know",
+          "beatId": "versions",
+          "startFrame": 1131,
+          "endFrame": 1139
+        },
+        {
+          "text": "why",
+          "beatId": "versions",
+          "startFrame": 1139,
+          "endFrame": 1145
+        },
+        {
+          "text": "each",
+          "beatId": "versions",
+          "startFrame": 1145,
+          "endFrame": 1154
+        },
+        {
+          "text": "library",
+          "beatId": "versions",
+          "startFrame": 1154,
+          "endFrame": 1168
+        },
+        {
+          "text": "is",
+          "beatId": "versions",
+          "startFrame": 1168,
+          "endFrame": 1172
+        },
+        {
+          "text": "there,",
+          "beatId": "versions",
+          "startFrame": 1172,
+          "endFrame": 1184
+        }
+      ]
+    },
+    {
+      "text": "instead of copying everything",
+      "startFrame": 1184,
+      "endFrame": 1226,
+      "words": [
+        {
+          "text": "instead",
+          "beatId": "versions",
+          "startFrame": 1184,
+          "endFrame": 1196
+        },
+        {
+          "text": "of",
+          "beatId": "versions",
+          "startFrame": 1196,
+          "endFrame": 1199
+        },
+        {
+          "text": "copying",
+          "beatId": "versions",
+          "startFrame": 1199,
+          "endFrame": 1210
+        },
+        {
+          "text": "everything",
+          "beatId": "versions",
+          "startFrame": 1210,
+          "endFrame": 1226
+        }
+      ]
+    },
+    {
+      "text": "that happens to be installed.",
+      "startFrame": 1226,
+      "endFrame": 1276,
+      "words": [
+        {
+          "text": "that",
+          "beatId": "versions",
+          "startFrame": 1226,
+          "endFrame": 1232
+        },
+        {
+          "text": "happens",
+          "beatId": "versions",
+          "startFrame": 1232,
+          "endFrame": 1243
+        },
+        {
+          "text": "to",
+          "beatId": "versions",
+          "startFrame": 1243,
+          "endFrame": 1247
+        },
+        {
+          "text": "be",
+          "beatId": "versions",
+          "startFrame": 1247,
+          "endFrame": 1249
+        },
+        {
+          "text": "installed.",
+          "beatId": "versions",
+          "startFrame": 1249,
+          "endFrame": 1269
+        }
+      ]
+    },
+    {
+      "text": "Idea three.",
+      "startFrame": 1298,
+      "endFrame": 1336,
+      "words": [
+        {
+          "text": "Idea",
+          "beatId": "package",
+          "startFrame": 1298,
+          "endFrame": 1310
+        },
+        {
+          "text": "three.",
+          "beatId": "package",
+          "startFrame": 1310,
+          "endFrame": 1336
+        }
+      ]
+    },
+    {
+      "text": "Code that lives in a notebook",
+      "startFrame": 1336,
+      "endFrame": 1384,
+      "words": [
+        {
+          "text": "Code",
+          "beatId": "package",
+          "startFrame": 1336,
+          "endFrame": 1339
+        },
+        {
+          "text": "that",
+          "beatId": "package",
+          "startFrame": 1339,
+          "endFrame": 1345
+        },
+        {
+          "text": "lives",
+          "beatId": "package",
+          "startFrame": 1345,
+          "endFrame": 1356
+        },
+        {
+          "text": "in",
+          "beatId": "package",
+          "startFrame": 1356,
+          "endFrame": 1361
+        },
+        {
+          "text": "a",
+          "beatId": "package",
+          "startFrame": 1361,
+          "endFrame": 1363
+        },
+        {
+          "text": "notebook",
+          "beatId": "package",
+          "startFrame": 1363,
+          "endFrame": 1384
+        }
+      ]
+    },
+    {
+      "text": "is stuck in that notebook.",
+      "startFrame": 1384,
+      "endFrame": 1443,
+      "words": [
+        {
+          "text": "is",
+          "beatId": "package",
+          "startFrame": 1384,
+          "endFrame": 1385
+        },
+        {
+          "text": "stuck",
+          "beatId": "package",
+          "startFrame": 1385,
+          "endFrame": 1396
+        },
+        {
+          "text": "in",
+          "beatId": "package",
+          "startFrame": 1396,
+          "endFrame": 1401
+        },
+        {
+          "text": "that",
+          "beatId": "package",
+          "startFrame": 1401,
+          "endFrame": 1408
+        },
+        {
+          "text": "notebook.",
+          "beatId": "package",
+          "startFrame": 1408,
+          "endFrame": 1443
+        }
+      ]
+    },
+    {
+      "text": "If the cleaning logic sits in cell",
+      "startFrame": 1443,
+      "endFrame": 1505,
+      "words": [
+        {
+          "text": "If",
+          "beatId": "package",
+          "startFrame": 1443,
+          "endFrame": 1454
+        },
+        {
+          "text": "the",
+          "beatId": "package",
+          "startFrame": 1454,
+          "endFrame": 1455
+        },
+        {
+          "text": "cleaning",
+          "beatId": "package",
+          "startFrame": 1454,
+          "endFrame": 1472
+        },
+        {
+          "text": "logic",
+          "beatId": "package",
+          "startFrame": 1472,
+          "endFrame": 1483
+        },
+        {
+          "text": "sits",
+          "beatId": "package",
+          "startFrame": 1483,
+          "endFrame": 1493
+        },
+        {
+          "text": "in",
+          "beatId": "package",
+          "startFrame": 1493,
+          "endFrame": 1496
+        },
+        {
+          "text": "cell",
+          "beatId": "package",
+          "startFrame": 1496,
+          "endFrame": 1505
+        }
+      ]
+    },
+    {
+      "text": "number forty, the tests cannot use it,",
+      "startFrame": 1505,
+      "endFrame": 1563,
+      "words": [
+        {
+          "text": "number",
+          "beatId": "package",
+          "startFrame": 1505,
+          "endFrame": 1518
+        },
+        {
+          "text": "forty,",
+          "beatId": "package",
+          "startFrame": 1518,
+          "endFrame": 1539
+        },
+        {
+          "text": "the",
+          "beatId": "package",
+          "startFrame": 1539,
+          "endFrame": 1540
+        },
+        {
+          "text": "tests",
+          "beatId": "package",
+          "startFrame": 1540,
+          "endFrame": 1547
+        },
+        {
+          "text": "cannot",
+          "beatId": "package",
+          "startFrame": 1547,
+          "endFrame": 1555
+        },
+        {
+          "text": "use",
+          "beatId": "package",
+          "startFrame": 1555,
+          "endFrame": 1561
+        },
+        {
+          "text": "it,",
+          "beatId": "package",
+          "startFrame": 1561,
+          "endFrame": 1563
+        }
+      ]
+    },
+    {
+      "text": "and later the API cannot use it.",
+      "startFrame": 1563,
+      "endFrame": 1653,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "package",
+          "startFrame": 1563,
+          "endFrame": 1571
+        },
+        {
+          "text": "later",
+          "beatId": "package",
+          "startFrame": 1571,
+          "endFrame": 1584
+        },
+        {
+          "text": "the",
+          "beatId": "package",
+          "startFrame": 1584,
+          "endFrame": 1593
+        },
+        {
+          "text": "API",
+          "beatId": "package",
+          "startFrame": 1593,
+          "endFrame": 1611
+        },
+        {
+          "text": "cannot",
+          "beatId": "package",
+          "startFrame": 1611,
+          "endFrame": 1632
+        },
+        {
+          "text": "use",
+          "beatId": "package",
+          "startFrame": 1632,
+          "endFrame": 1653
+        },
+        {
+          "text": "it.",
+          "beatId": "package",
+          "startFrame": 1653,
+          "endFrame": 1654
+        }
+      ]
+    },
+    {
+      "text": "So the real code lives in one package,",
+      "startFrame": 1653,
+      "endFrame": 1708,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "package",
+          "startFrame": 1653,
+          "endFrame": 1656
+        },
+        {
+          "text": "the",
+          "beatId": "package",
+          "startFrame": 1656,
+          "endFrame": 1662
+        },
+        {
+          "text": "real",
+          "beatId": "package",
+          "startFrame": 1662,
+          "endFrame": 1669
+        },
+        {
+          "text": "code",
+          "beatId": "package",
+          "startFrame": 1669,
+          "endFrame": 1677
+        },
+        {
+          "text": "lives",
+          "beatId": "package",
+          "startFrame": 1677,
+          "endFrame": 1686
+        },
+        {
+          "text": "in",
+          "beatId": "package",
+          "startFrame": 1686,
+          "endFrame": 1690
+        },
+        {
+          "text": "one",
+          "beatId": "package",
+          "startFrame": 1690,
+          "endFrame": 1695
+        },
+        {
+          "text": "package,",
+          "beatId": "package",
+          "startFrame": 1695,
+          "endFrame": 1708
+        }
+      ]
+    },
+    {
+      "text": "and every notebook, every test,",
+      "startFrame": 1708,
+      "endFrame": 1777,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "package",
+          "startFrame": 1708,
+          "endFrame": 1713
+        },
+        {
+          "text": "every",
+          "beatId": "package",
+          "startFrame": 1713,
+          "endFrame": 1723
+        },
+        {
+          "text": "notebook,",
+          "beatId": "package",
+          "startFrame": 1723,
+          "endFrame": 1743
+        },
+        {
+          "text": "every",
+          "beatId": "package",
+          "startFrame": 1743,
+          "endFrame": 1759
+        },
+        {
+          "text": "test,",
+          "beatId": "package",
+          "startFrame": 1759,
+          "endFrame": 1777
+        }
+      ]
+    },
+    {
+      "text": "and the API import the same code.",
+      "startFrame": 1777,
+      "endFrame": 1863,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "package",
+          "startFrame": 1777,
+          "endFrame": 1783
+        },
+        {
+          "text": "the",
+          "beatId": "package",
+          "startFrame": 1783,
+          "endFrame": 1793
+        },
+        {
+          "text": "API",
+          "beatId": "package",
+          "startFrame": 1793,
+          "endFrame": 1803
+        },
+        {
+          "text": "import",
+          "beatId": "package",
+          "startFrame": 1803,
+          "endFrame": 1826
+        },
+        {
+          "text": "the",
+          "beatId": "package",
+          "startFrame": 1826,
+          "endFrame": 1834
+        },
+        {
+          "text": "same",
+          "beatId": "package",
+          "startFrame": 1834,
+          "endFrame": 1848
+        },
+        {
+          "text": "code.",
+          "beatId": "package",
+          "startFrame": 1848,
+          "endFrame": 1863
+        }
+      ]
+    },
+    {
+      "text": "One source of truth.",
+      "startFrame": 1863,
+      "endFrame": 1918,
+      "words": [
+        {
+          "text": "One",
+          "beatId": "package",
+          "startFrame": 1863,
+          "endFrame": 1874
+        },
+        {
+          "text": "source",
+          "beatId": "package",
+          "startFrame": 1874,
+          "endFrame": 1894
+        },
+        {
+          "text": "of",
+          "beatId": "package",
+          "startFrame": 1894,
+          "endFrame": 1906
+        },
+        {
+          "text": "truth.",
+          "beatId": "package",
+          "startFrame": 1911,
+          "endFrame": 1912
+        }
+      ]
+    },
+    {
+      "text": "Sir, so notebooks are bad?",
+      "startFrame": 1938,
+      "endFrame": 1997,
+      "words": [
+        {
+          "text": "Sir,",
+          "beatId": "doubt2",
+          "startFrame": 1938,
+          "endFrame": 1944
+        },
+        {
+          "text": "so",
+          "beatId": "doubt2",
+          "startFrame": 1944,
+          "endFrame": 1952
+        },
+        {
+          "text": "notebooks",
+          "beatId": "doubt2",
+          "startFrame": 1952,
+          "endFrame": 1975
+        },
+        {
+          "text": "are",
+          "beatId": "doubt2",
+          "startFrame": 1975,
+          "endFrame": 1982
+        },
+        {
+          "text": "bad?",
+          "beatId": "doubt2",
+          "startFrame": 1982,
+          "endFrame": 1990
+        }
+      ]
+    },
+    {
+      "text": "No, no.",
+      "startFrame": 1997,
+      "endFrame": 2007,
+      "words": [
+        {
+          "text": "No,",
+          "beatId": "answer2",
+          "startFrame": 1997,
+          "endFrame": 2000
+        },
+        {
+          "text": "no.",
+          "beatId": "answer2",
+          "startFrame": 2000,
+          "endFrame": 2007
+        }
+      ]
+    },
+    {
+      "text": "Notebooks are great for exploring.",
+      "startFrame": 2007,
+      "endFrame": 2066,
+      "words": [
+        {
+          "text": "Notebooks",
+          "beatId": "answer2",
+          "startFrame": 2007,
+          "endFrame": 2024
+        },
+        {
+          "text": "are",
+          "beatId": "answer2",
+          "startFrame": 2024,
+          "endFrame": 2030
+        },
+        {
+          "text": "great",
+          "beatId": "answer2",
+          "startFrame": 2030,
+          "endFrame": 2041
+        },
+        {
+          "text": "for",
+          "beatId": "answer2",
+          "startFrame": 2041,
+          "endFrame": 2044
+        },
+        {
+          "text": "exploring.",
+          "beatId": "answer2",
+          "startFrame": 2044,
+          "endFrame": 2066
+        }
+      ]
+    },
+    {
+      "text": "For trying ideas, for drawing charts.",
+      "startFrame": 2066,
+      "endFrame": 2139,
+      "words": [
+        {
+          "text": "For",
+          "beatId": "answer2",
+          "startFrame": 2066,
+          "endFrame": 2069
+        },
+        {
+          "text": "trying",
+          "beatId": "answer2",
+          "startFrame": 2069,
+          "endFrame": 2079
+        },
+        {
+          "text": "ideas,",
+          "beatId": "answer2",
+          "startFrame": 2079,
+          "endFrame": 2097
+        },
+        {
+          "text": "for",
+          "beatId": "answer2",
+          "startFrame": 2097,
+          "endFrame": 2099
+        },
+        {
+          "text": "drawing",
+          "beatId": "answer2",
+          "startFrame": 2099,
+          "endFrame": 2111
+        },
+        {
+          "text": "charts.",
+          "beatId": "answer2",
+          "startFrame": 2111,
+          "endFrame": 2139
+        }
+      ]
+    },
+    {
+      "text": "But once an idea works,",
+      "startFrame": 2139,
+      "endFrame": 2186,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "answer2",
+          "startFrame": 2139,
+          "endFrame": 2142
+        },
+        {
+          "text": "once",
+          "beatId": "answer2",
+          "startFrame": 2142,
+          "endFrame": 2152
+        },
+        {
+          "text": "an",
+          "beatId": "answer2",
+          "startFrame": 2152,
+          "endFrame": 2158
+        },
+        {
+          "text": "idea",
+          "beatId": "answer2",
+          "startFrame": 2158,
+          "endFrame": 2168
+        },
+        {
+          "text": "works,",
+          "beatId": "answer2",
+          "startFrame": 2168,
+          "endFrame": 2186
+        }
+      ]
+    },
+    {
+      "text": "it moves into the package.",
+      "startFrame": 2186,
+      "endFrame": 2252,
+      "words": [
+        {
+          "text": "it",
+          "beatId": "answer2",
+          "startFrame": 2186,
+          "endFrame": 2192
+        },
+        {
+          "text": "moves",
+          "beatId": "answer2",
+          "startFrame": 2192,
+          "endFrame": 2205
+        },
+        {
+          "text": "into",
+          "beatId": "answer2",
+          "startFrame": 2205,
+          "endFrame": 2216
+        },
+        {
+          "text": "the",
+          "beatId": "answer2",
+          "startFrame": 2216,
+          "endFrame": 2239
+        },
+        {
+          "text": "package.",
+          "beatId": "answer2",
+          "startFrame": 2239,
+          "endFrame": 2252
+        }
+      ]
+    },
+    {
+      "text": "Explore in the notebook.",
+      "startFrame": 2252,
+      "endFrame": 2285,
+      "words": [
+        {
+          "text": "Explore",
+          "beatId": "answer2",
+          "startFrame": 2252,
+          "endFrame": 2263
+        },
+        {
+          "text": "in",
+          "beatId": "answer2",
+          "startFrame": 2263,
+          "endFrame": 2266
+        },
+        {
+          "text": "the",
+          "beatId": "answer2",
+          "startFrame": 2266,
+          "endFrame": 2270
+        },
+        {
+          "text": "notebook.",
+          "beatId": "answer2",
+          "startFrame": 2270,
+          "endFrame": 2285
+        }
+      ]
+    },
+    {
+      "text": "Keep the final code in the package.",
+      "startFrame": 2285,
+      "endFrame": 2338,
+      "words": [
+        {
+          "text": "Keep",
+          "beatId": "answer2",
+          "startFrame": 2285,
+          "endFrame": 2291
+        },
+        {
+          "text": "the",
+          "beatId": "answer2",
+          "startFrame": 2291,
+          "endFrame": 2296
+        },
+        {
+          "text": "final",
+          "beatId": "answer2",
+          "startFrame": 2296,
+          "endFrame": 2303
+        },
+        {
+          "text": "code",
+          "beatId": "answer2",
+          "startFrame": 2303,
+          "endFrame": 2309
+        },
+        {
+          "text": "in",
+          "beatId": "answer2",
+          "startFrame": 2309,
+          "endFrame": 2312
+        },
+        {
+          "text": "the",
+          "beatId": "answer2",
+          "startFrame": 2312,
+          "endFrame": 2317
+        },
+        {
+          "text": "package.",
+          "beatId": "answer2",
+          "startFrame": 2317,
+          "endFrame": 2330
+        }
+      ]
+    },
+    {
+      "text": "Idea four.",
+      "startFrame": 2361,
+      "endFrame": 2393,
+      "words": [
+        {
+          "text": "Idea",
+          "beatId": "share",
+          "startFrame": 2361,
+          "endFrame": 2371
+        },
+        {
+          "text": "four.",
+          "beatId": "share",
+          "startFrame": 2371,
+          "endFrame": 2393
+        }
+      ]
+    },
+    {
+      "text": "Be careful about what you share.",
+      "startFrame": 2393,
+      "endFrame": 2459,
+      "words": [
+        {
+          "text": "Be",
+          "beatId": "share",
+          "startFrame": 2393,
+          "endFrame": 2399
+        },
+        {
+          "text": "careful",
+          "beatId": "share",
+          "startFrame": 2399,
+          "endFrame": 2406
+        },
+        {
+          "text": "about",
+          "beatId": "share",
+          "startFrame": 2406,
+          "endFrame": 2416
+        },
+        {
+          "text": "what",
+          "beatId": "share",
+          "startFrame": 2416,
+          "endFrame": 2423
+        },
+        {
+          "text": "you",
+          "beatId": "share",
+          "startFrame": 2423,
+          "endFrame": 2429
+        },
+        {
+          "text": "share.",
+          "beatId": "share",
+          "startFrame": 2429,
+          "endFrame": 2459
+        }
+      ]
+    },
+    {
+      "text": "Our data source needs a secret key.",
+      "startFrame": 2459,
+      "endFrame": 2528,
+      "words": [
+        {
+          "text": "Our",
+          "beatId": "share",
+          "startFrame": 2459,
+          "endFrame": 2466
+        },
+        {
+          "text": "data",
+          "beatId": "share",
+          "startFrame": 2466,
+          "endFrame": 2476
+        },
+        {
+          "text": "source",
+          "beatId": "share",
+          "startFrame": 2476,
+          "endFrame": 2490
+        },
+        {
+          "text": "needs",
+          "beatId": "share",
+          "startFrame": 2490,
+          "endFrame": 2501
+        },
+        {
+          "text": "a",
+          "beatId": "share",
+          "startFrame": 2501,
+          "endFrame": 2504
+        },
+        {
+          "text": "secret",
+          "beatId": "share",
+          "startFrame": 2504,
+          "endFrame": 2518
+        },
+        {
+          "text": "key.",
+          "beatId": "share",
+          "startFrame": 2518,
+          "endFrame": 2528
+        }
+      ]
+    },
+    {
+      "text": "That key must never go online.",
+      "startFrame": 2528,
+      "endFrame": 2593,
+      "words": [
+        {
+          "text": "That",
+          "beatId": "share",
+          "startFrame": 2528,
+          "endFrame": 2540
+        },
+        {
+          "text": "key",
+          "beatId": "share",
+          "startFrame": 2540,
+          "endFrame": 2547
+        },
+        {
+          "text": "must",
+          "beatId": "share",
+          "startFrame": 2547,
+          "endFrame": 2558
+        },
+        {
+          "text": "never",
+          "beatId": "share",
+          "startFrame": 2558,
+          "endFrame": 2571
+        },
+        {
+          "text": "go",
+          "beatId": "share",
+          "startFrame": 2571,
+          "endFrame": 2577
+        },
+        {
+          "text": "online.",
+          "beatId": "share",
+          "startFrame": 2577,
+          "endFrame": 2593
+        }
+      ]
+    },
+    {
+      "text": "So the secret stays only on my machine,",
+      "startFrame": 2593,
+      "endFrame": 2656,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "share",
+          "startFrame": 2593,
+          "endFrame": 2601
+        },
+        {
+          "text": "the",
+          "beatId": "share",
+          "startFrame": 2601,
+          "endFrame": 2603
+        },
+        {
+          "text": "secret",
+          "beatId": "share",
+          "startFrame": 2603,
+          "endFrame": 2615
+        },
+        {
+          "text": "stays",
+          "beatId": "share",
+          "startFrame": 2615,
+          "endFrame": 2625
+        },
+        {
+          "text": "only",
+          "beatId": "share",
+          "startFrame": 2625,
+          "endFrame": 2633
+        },
+        {
+          "text": "on",
+          "beatId": "share",
+          "startFrame": 2633,
+          "endFrame": 2637
+        },
+        {
+          "text": "my",
+          "beatId": "share",
+          "startFrame": 2637,
+          "endFrame": 2641
+        },
+        {
+          "text": "machine,",
+          "beatId": "share",
+          "startFrame": 2641,
+          "endFrame": 2656
+        }
+      ]
+    },
+    {
+      "text": "and what we share is an empty template",
+      "startFrame": 2656,
+      "endFrame": 2721,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "share",
+          "startFrame": 2656,
+          "endFrame": 2662
+        },
+        {
+          "text": "what",
+          "beatId": "share",
+          "startFrame": 2662,
+          "endFrame": 2670
+        },
+        {
+          "text": "we",
+          "beatId": "share",
+          "startFrame": 2670,
+          "endFrame": 2674
+        },
+        {
+          "text": "share",
+          "beatId": "share",
+          "startFrame": 2674,
+          "endFrame": 2684
+        },
+        {
+          "text": "is",
+          "beatId": "share",
+          "startFrame": 2684,
+          "endFrame": 2689
+        },
+        {
+          "text": "an",
+          "beatId": "share",
+          "startFrame": 2689,
+          "endFrame": 2692
+        },
+        {
+          "text": "empty",
+          "beatId": "share",
+          "startFrame": 2692,
+          "endFrame": 2702
+        },
+        {
+          "text": "template",
+          "beatId": "share",
+          "startFrame": 2702,
+          "endFrame": 2721
+        }
+      ]
+    },
+    {
+      "text": "that simply says, you need a key here.",
+      "startFrame": 2721,
+      "endFrame": 2798,
+      "words": [
+        {
+          "text": "that",
+          "beatId": "share",
+          "startFrame": 2721,
+          "endFrame": 2728
+        },
+        {
+          "text": "simply",
+          "beatId": "share",
+          "startFrame": 2728,
+          "endFrame": 2743
+        },
+        {
+          "text": "says,",
+          "beatId": "share",
+          "startFrame": 2743,
+          "endFrame": 2760
+        },
+        {
+          "text": "you",
+          "beatId": "share",
+          "startFrame": 2760,
+          "endFrame": 2761
+        },
+        {
+          "text": "need",
+          "beatId": "share",
+          "startFrame": 2761,
+          "endFrame": 2769
+        },
+        {
+          "text": "a",
+          "beatId": "share",
+          "startFrame": 2769,
+          "endFrame": 2772
+        },
+        {
+          "text": "key",
+          "beatId": "share",
+          "startFrame": 2772,
+          "endFrame": 2778
+        },
+        {
+          "text": "here.",
+          "beatId": "share",
+          "startFrame": 2778,
+          "endFrame": 2790
+        }
+      ]
+    },
+    {
+      "text": "Sir, and the data?",
+      "startFrame": 2827,
+      "endFrame": 2873,
+      "words": [
+        {
+          "text": "Sir,",
+          "beatId": "doubt3",
+          "startFrame": 2827,
+          "endFrame": 2834
+        },
+        {
+          "text": "and",
+          "beatId": "doubt3",
+          "startFrame": 2834,
+          "endFrame": 2844
+        },
+        {
+          "text": "the",
+          "beatId": "doubt3",
+          "startFrame": 2844,
+          "endFrame": 2854
+        },
+        {
+          "text": "data?",
+          "beatId": "doubt3",
+          "startFrame": 2854,
+          "endFrame": 2873
+        }
+      ]
+    },
+    {
+      "text": "Do we share that?",
+      "startFrame": 2873,
+      "endFrame": 2903,
+      "words": [
+        {
+          "text": "Do",
+          "beatId": "doubt3",
+          "startFrame": 2873,
+          "endFrame": 2874
+        },
+        {
+          "text": "we",
+          "beatId": "doubt3",
+          "startFrame": 2874,
+          "endFrame": 2876
+        },
+        {
+          "text": "share",
+          "beatId": "doubt3",
+          "startFrame": 2876,
+          "endFrame": 2885
+        },
+        {
+          "text": "that?",
+          "beatId": "doubt3",
+          "startFrame": 2885,
+          "endFrame": 2897
+        }
+      ]
+    },
+    {
+      "text": "No.",
+      "startFrame": 2903,
+      "endFrame": 2907,
+      "words": [
+        {
+          "text": "No.",
+          "beatId": "answer3",
+          "startFrame": 2903,
+          "endFrame": 2907
+        }
+      ]
+    },
+    {
+      "text": "We share the code that downloads the data,",
+      "startFrame": 2907,
+      "endFrame": 2973,
+      "words": [
+        {
+          "text": "We",
+          "beatId": "answer3",
+          "startFrame": 2907,
+          "endFrame": 2910
+        },
+        {
+          "text": "share",
+          "beatId": "answer3",
+          "startFrame": 2910,
+          "endFrame": 2920
+        },
+        {
+          "text": "the",
+          "beatId": "answer3",
+          "startFrame": 2920,
+          "endFrame": 2924
+        },
+        {
+          "text": "code",
+          "beatId": "answer3",
+          "startFrame": 2924,
+          "endFrame": 2931
+        },
+        {
+          "text": "that",
+          "beatId": "answer3",
+          "startFrame": 2931,
+          "endFrame": 2939
+        },
+        {
+          "text": "downloads",
+          "beatId": "answer3",
+          "startFrame": 2939,
+          "endFrame": 2955
+        },
+        {
+          "text": "the",
+          "beatId": "answer3",
+          "startFrame": 2955,
+          "endFrame": 2960
+        },
+        {
+          "text": "data,",
+          "beatId": "answer3",
+          "startFrame": 2960,
+          "endFrame": 2973
+        }
+      ]
+    },
+    {
+      "text": "not the data itself.",
+      "startFrame": 2973,
+      "endFrame": 3031,
+      "words": [
+        {
+          "text": "not",
+          "beatId": "answer3",
+          "startFrame": 2973,
+          "endFrame": 2983
+        },
+        {
+          "text": "the",
+          "beatId": "answer3",
+          "startFrame": 2983,
+          "endFrame": 2990
+        },
+        {
+          "text": "data",
+          "beatId": "answer3",
+          "startFrame": 2990,
+          "endFrame": 3003
+        },
+        {
+          "text": "itself.",
+          "beatId": "answer3",
+          "startFrame": 3003,
+          "endFrame": 3031
+        }
+      ]
+    },
+    {
+      "text": "Data is big, and it can",
+      "startFrame": 3031,
+      "endFrame": 3062,
+      "words": [
+        {
+          "text": "Data",
+          "beatId": "answer3",
+          "startFrame": 3031,
+          "endFrame": 3038
+        },
+        {
+          "text": "is",
+          "beatId": "answer3",
+          "startFrame": 3038,
+          "endFrame": 3042
+        },
+        {
+          "text": "big,",
+          "beatId": "answer3",
+          "startFrame": 3042,
+          "endFrame": 3048
+        },
+        {
+          "text": "and",
+          "beatId": "answer3",
+          "startFrame": 3048,
+          "endFrame": 3053
+        },
+        {
+          "text": "it",
+          "beatId": "answer3",
+          "startFrame": 3053,
+          "endFrame": 3057
+        },
+        {
+          "text": "can",
+          "beatId": "answer3",
+          "startFrame": 3057,
+          "endFrame": 3062
+        }
+      ]
+    },
+    {
+      "text": "always be downloaded again.",
+      "startFrame": 3062,
+      "endFrame": 3113,
+      "words": [
+        {
+          "text": "always",
+          "beatId": "answer3",
+          "startFrame": 3062,
+          "endFrame": 3073
+        },
+        {
+          "text": "be",
+          "beatId": "answer3",
+          "startFrame": 3073,
+          "endFrame": 3077
+        },
+        {
+          "text": "downloaded",
+          "beatId": "answer3",
+          "startFrame": 3077,
+          "endFrame": 3095
+        },
+        {
+          "text": "again.",
+          "beatId": "answer3",
+          "startFrame": 3095,
+          "endFrame": 3113
+        }
+      ]
+    },
+    {
+      "text": "The code is small,",
+      "startFrame": 3113,
+      "endFrame": 3146,
+      "words": [
+        {
+          "text": "The",
+          "beatId": "answer3",
+          "startFrame": 3113,
+          "endFrame": 3120
+        },
+        {
+          "text": "code",
+          "beatId": "answer3",
+          "startFrame": 3120,
+          "endFrame": 3129
+        },
+        {
+          "text": "is",
+          "beatId": "answer3",
+          "startFrame": 3129,
+          "endFrame": 3134
+        },
+        {
+          "text": "small,",
+          "beatId": "answer3",
+          "startFrame": 3134,
+          "endFrame": 3146
+        }
+      ]
+    },
+    {
+      "text": "and it is the real recipe.",
+      "startFrame": 3146,
+      "endFrame": 3202,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "answer3",
+          "startFrame": 3146,
+          "endFrame": 3155
+        },
+        {
+          "text": "it",
+          "beatId": "answer3",
+          "startFrame": 3155,
+          "endFrame": 3158
+        },
+        {
+          "text": "is",
+          "beatId": "answer3",
+          "startFrame": 3158,
+          "endFrame": 3163
+        },
+        {
+          "text": "the",
+          "beatId": "answer3",
+          "startFrame": 3163,
+          "endFrame": 3170
+        },
+        {
+          "text": "real",
+          "beatId": "answer3",
+          "startFrame": 3170,
+          "endFrame": 3190
+        },
+        {
+          "text": "recipe.",
+          "beatId": "answer3",
+          "startFrame": 3190,
+          "endFrame": 3202
+        }
+      ]
+    },
+    {
+      "text": "Share the recipe,",
+      "startFrame": 3202,
+      "endFrame": 3225,
+      "words": [
+        {
+          "text": "Share",
+          "beatId": "answer3",
+          "startFrame": 3202,
+          "endFrame": 3212
+        },
+        {
+          "text": "the",
+          "beatId": "answer3",
+          "startFrame": 3212,
+          "endFrame": 3216
+        },
+        {
+          "text": "recipe,",
+          "beatId": "answer3",
+          "startFrame": 3216,
+          "endFrame": 3225
+        }
+      ]
+    },
+    {
+      "text": "and anyone can cook the same dish.",
+      "startFrame": 3225,
+      "endFrame": 3277,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "answer3",
+          "startFrame": 3225,
+          "endFrame": 3229
+        },
+        {
+          "text": "anyone",
+          "beatId": "answer3",
+          "startFrame": 3229,
+          "endFrame": 3240
+        },
+        {
+          "text": "can",
+          "beatId": "answer3",
+          "startFrame": 3240,
+          "endFrame": 3244
+        },
+        {
+          "text": "cook",
+          "beatId": "answer3",
+          "startFrame": 3244,
+          "endFrame": 3250
+        },
+        {
+          "text": "the",
+          "beatId": "answer3",
+          "startFrame": 3250,
+          "endFrame": 3255
+        },
+        {
+          "text": "same",
+          "beatId": "answer3",
+          "startFrame": 3255,
+          "endFrame": 3261
+        },
+        {
+          "text": "dish.",
+          "beatId": "answer3",
+          "startFrame": 3261,
+          "endFrame": 3270
+        }
+      ]
+    },
+    {
+      "text": "So what did DAF-01 give Asha madam?",
+      "startFrame": 3311,
+      "endFrame": 3386,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "asha",
+          "startFrame": 3311,
+          "endFrame": 3313
+        },
+        {
+          "text": "what",
+          "beatId": "asha",
+          "startFrame": 3313,
+          "endFrame": 3320
+        },
+        {
+          "text": "did",
+          "beatId": "asha",
+          "startFrame": 3320,
+          "endFrame": 3327
+        },
+        {
+          "text": "DAF-01",
+          "beatId": "asha",
+          "startFrame": 3327,
+          "endFrame": 3347
+        },
+        {
+          "text": "give",
+          "beatId": "asha",
+          "startFrame": 3347,
+          "endFrame": 3357
+        },
+        {
+          "text": "Asha",
+          "beatId": "asha",
+          "startFrame": 3357,
+          "endFrame": 3368
+        },
+        {
+          "text": "madam?",
+          "beatId": "asha",
+          "startFrame": 3368,
+          "endFrame": 3386
+        }
+      ]
+    },
+    {
+      "text": "Nothing she can see.",
+      "startFrame": 3386,
+      "endFrame": 3432,
+      "words": [
+        {
+          "text": "Nothing",
+          "beatId": "asha",
+          "startFrame": 3386,
+          "endFrame": 3403
+        },
+        {
+          "text": "she",
+          "beatId": "asha",
+          "startFrame": 3403,
+          "endFrame": 3410
+        },
+        {
+          "text": "can",
+          "beatId": "asha",
+          "startFrame": 3410,
+          "endFrame": 3426
+        },
+        {
+          "text": "see.",
+          "beatId": "asha",
+          "startFrame": 3426,
+          "endFrame": 3432
+        }
+      ]
+    },
+    {
+      "text": "No forecast yet.",
+      "startFrame": 3432,
+      "endFrame": 3476,
+      "words": [
+        {
+          "text": "No",
+          "beatId": "asha",
+          "startFrame": 3432,
+          "endFrame": 3438
+        },
+        {
+          "text": "forecast",
+          "beatId": "asha",
+          "startFrame": 3438,
+          "endFrame": 3458
+        },
+        {
+          "text": "yet.",
+          "beatId": "asha",
+          "startFrame": 3458,
+          "endFrame": 3476
+        }
+      ]
+    },
+    {
+      "text": "But from now on, every number",
+      "startFrame": 3476,
+      "endFrame": 3524,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "asha",
+          "startFrame": 3476,
+          "endFrame": 3482
+        },
+        {
+          "text": "from",
+          "beatId": "asha",
+          "startFrame": 3482,
+          "endFrame": 3489
+        },
+        {
+          "text": "now",
+          "beatId": "asha",
+          "startFrame": 3489,
+          "endFrame": 3495
+        },
+        {
+          "text": "on,",
+          "beatId": "asha",
+          "startFrame": 3495,
+          "endFrame": 3506
+        },
+        {
+          "text": "every",
+          "beatId": "asha",
+          "startFrame": 3506,
+          "endFrame": 3513
+        },
+        {
+          "text": "number",
+          "beatId": "asha",
+          "startFrame": 3513,
+          "endFrame": 3524
+        }
+      ]
+    },
+    {
+      "text": "we show her can be produced again,",
+      "startFrame": 3524,
+      "endFrame": 3585,
+      "words": [
+        {
+          "text": "we",
+          "beatId": "asha",
+          "startFrame": 3524,
+          "endFrame": 3528
+        },
+        {
+          "text": "show",
+          "beatId": "asha",
+          "startFrame": 3528,
+          "endFrame": 3537
+        },
+        {
+          "text": "her",
+          "beatId": "asha",
+          "startFrame": 3537,
+          "endFrame": 3542
+        },
+        {
+          "text": "can",
+          "beatId": "asha",
+          "startFrame": 3542,
+          "endFrame": 3548
+        },
+        {
+          "text": "be",
+          "beatId": "asha",
+          "startFrame": 3548,
+          "endFrame": 3551
+        },
+        {
+          "text": "produced",
+          "beatId": "asha",
+          "startFrame": 3551,
+          "endFrame": 3564
+        },
+        {
+          "text": "again,",
+          "beatId": "asha",
+          "startFrame": 3564,
+          "endFrame": 3585
+        }
+      ]
+    },
+    {
+      "text": "by anyone, on any machine.",
+      "startFrame": 3585,
+      "endFrame": 3652,
+      "words": [
+        {
+          "text": "by",
+          "beatId": "asha",
+          "startFrame": 3585,
+          "endFrame": 3588
+        },
+        {
+          "text": "anyone,",
+          "beatId": "asha",
+          "startFrame": 3588,
+          "endFrame": 3606
+        },
+        {
+          "text": "on",
+          "beatId": "asha",
+          "startFrame": 3606,
+          "endFrame": 3616
+        },
+        {
+          "text": "any",
+          "beatId": "asha",
+          "startFrame": 3616,
+          "endFrame": 3617
+        },
+        {
+          "text": "machine.",
+          "beatId": "asha",
+          "startFrame": 3617,
+          "endFrame": 3652
+        }
+      ]
+    },
+    {
+      "text": "And that is what makes",
+      "startFrame": 3652,
+      "endFrame": 3687,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "asha",
+          "startFrame": 3652,
+          "endFrame": 3658
+        },
+        {
+          "text": "that",
+          "beatId": "asha",
+          "startFrame": 3658,
+          "endFrame": 3665
+        },
+        {
+          "text": "is",
+          "beatId": "asha",
+          "startFrame": 3665,
+          "endFrame": 3671
+        },
+        {
+          "text": "what",
+          "beatId": "asha",
+          "startFrame": 3671,
+          "endFrame": 3677
+        },
+        {
+          "text": "makes",
+          "beatId": "asha",
+          "startFrame": 3677,
+          "endFrame": 3687
+        }
+      ]
+    },
+    {
+      "text": "a forecast trustworthy.",
+      "startFrame": 3687,
+      "endFrame": 3740,
+      "words": [
+        {
+          "text": "a",
+          "beatId": "asha",
+          "startFrame": 3687,
+          "endFrame": 3689
+        },
+        {
+          "text": "forecast",
+          "beatId": "asha",
+          "startFrame": 3689,
+          "endFrame": 3704
+        },
+        {
+          "text": "trustworthy.",
+          "beatId": "asha",
+          "startFrame": 3704,
+          "endFrame": 3732
+        }
+      ]
+    },
+    {
+      "text": "So, remember.",
+      "startFrame": 3765,
+      "endFrame": 3797,
+      "words": [
+        {
+          "text": "So,",
+          "beatId": "recall",
+          "startFrame": 3765,
+          "endFrame": 3767
+        },
+        {
+          "text": "remember.",
+          "beatId": "recall",
+          "startFrame": 3767,
+          "endFrame": 3797
+        }
+      ]
+    },
+    {
+      "text": "Reproducibility means same code,",
+      "startFrame": 3797,
+      "endFrame": 3861,
+      "words": [
+        {
+          "text": "Reproducibility",
+          "beatId": "recall",
+          "startFrame": 3797,
+          "endFrame": 3823
+        },
+        {
+          "text": "means",
+          "beatId": "recall",
+          "startFrame": 3823,
+          "endFrame": 3840
+        },
+        {
+          "text": "same",
+          "beatId": "recall",
+          "startFrame": 3840,
+          "endFrame": 3846
+        },
+        {
+          "text": "code,",
+          "beatId": "recall",
+          "startFrame": 3846,
+          "endFrame": 3861
+        }
+      ]
+    },
+    {
+      "text": "same data, same libraries, same answer.",
+      "startFrame": 3861,
+      "endFrame": 3957,
+      "words": [
+        {
+          "text": "same",
+          "beatId": "recall",
+          "startFrame": 3861,
+          "endFrame": 3871
+        },
+        {
+          "text": "data,",
+          "beatId": "recall",
+          "startFrame": 3871,
+          "endFrame": 3890
+        },
+        {
+          "text": "same",
+          "beatId": "recall",
+          "startFrame": 3890,
+          "endFrame": 3895
+        },
+        {
+          "text": "libraries,",
+          "beatId": "recall",
+          "startFrame": 3895,
+          "endFrame": 3920
+        },
+        {
+          "text": "same",
+          "beatId": "recall",
+          "startFrame": 3920,
+          "endFrame": 3934
+        },
+        {
+          "text": "answer.",
+          "beatId": "recall",
+          "startFrame": 3934,
+          "endFrame": 3957
+        }
+      ]
+    },
+    {
+      "text": "And it stands on four ideas.",
+      "startFrame": 3957,
+      "endFrame": 4029,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "recall",
+          "startFrame": 3957,
+          "endFrame": 3966
+        },
+        {
+          "text": "it",
+          "beatId": "recall",
+          "startFrame": 3966,
+          "endFrame": 3972
+        },
+        {
+          "text": "stands",
+          "beatId": "recall",
+          "startFrame": 3972,
+          "endFrame": 3990
+        },
+        {
+          "text": "on",
+          "beatId": "recall",
+          "startFrame": 3990,
+          "endFrame": 3996
+        },
+        {
+          "text": "four",
+          "beatId": "recall",
+          "startFrame": 3996,
+          "endFrame": 4008
+        },
+        {
+          "text": "ideas.",
+          "beatId": "recall",
+          "startFrame": 4008,
+          "endFrame": 4029
+        }
+      ]
+    },
+    {
+      "text": "Its own environment.",
+      "startFrame": 4029,
+      "endFrame": 4082,
+      "words": [
+        {
+          "text": "Its",
+          "beatId": "recall",
+          "startFrame": 4029,
+          "endFrame": 4036
+        },
+        {
+          "text": "own",
+          "beatId": "recall",
+          "startFrame": 4036,
+          "endFrame": 4044
+        },
+        {
+          "text": "environment.",
+          "beatId": "recall",
+          "startFrame": 4044,
+          "endFrame": 4082
+        }
+      ]
+    },
+    {
+      "text": "Exact versions.",
+      "startFrame": 4082,
+      "endFrame": 4132,
+      "words": [
+        {
+          "text": "Exact",
+          "beatId": "recall",
+          "startFrame": 4082,
+          "endFrame": 4094
+        },
+        {
+          "text": "versions.",
+          "beatId": "recall",
+          "startFrame": 4094,
+          "endFrame": 4132
+        }
+      ]
+    },
+    {
+      "text": "One package for the real code.",
+      "startFrame": 4132,
+      "endFrame": 4182,
+      "words": [
+        {
+          "text": "One",
+          "beatId": "recall",
+          "startFrame": 4132,
+          "endFrame": 4133
+        },
+        {
+          "text": "package",
+          "beatId": "recall",
+          "startFrame": 4133,
+          "endFrame": 4146
+        },
+        {
+          "text": "for",
+          "beatId": "recall",
+          "startFrame": 4146,
+          "endFrame": 4154
+        },
+        {
+          "text": "the",
+          "beatId": "recall",
+          "startFrame": 4154,
+          "endFrame": 4160
+        },
+        {
+          "text": "real",
+          "beatId": "recall",
+          "startFrame": 4160,
+          "endFrame": 4169
+        },
+        {
+          "text": "code.",
+          "beatId": "recall",
+          "startFrame": 4169,
+          "endFrame": 4182
+        }
+      ]
+    },
+    {
+      "text": "And share the recipe, never the secret.",
+      "startFrame": 4182,
+      "endFrame": 4298,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "recall",
+          "startFrame": 4182,
+          "endFrame": 4192
+        },
+        {
+          "text": "share",
+          "beatId": "recall",
+          "startFrame": 4192,
+          "endFrame": 4210
+        },
+        {
+          "text": "the",
+          "beatId": "recall",
+          "startFrame": 4210,
+          "endFrame": 4220
+        },
+        {
+          "text": "recipe,",
+          "beatId": "recall",
+          "startFrame": 4220,
+          "endFrame": 4244
+        },
+        {
+          "text": "never",
+          "beatId": "recall",
+          "startFrame": 4244,
+          "endFrame": 4259
+        },
+        {
+          "text": "the",
+          "beatId": "recall",
+          "startFrame": 4259,
+          "endFrame": 4268
+        },
+        {
+          "text": "secret.",
+          "beatId": "recall",
+          "startFrame": 4268,
+          "endFrame": 4298
+        }
+      ]
+    },
+    {
+      "text": "The full code is on GitHub.",
+      "startFrame": 4298,
+      "endFrame": 4358,
+      "words": [
+        {
+          "text": "The",
+          "beatId": "recall",
+          "startFrame": 4298,
+          "endFrame": 4305
+        },
+        {
+          "text": "full",
+          "beatId": "recall",
+          "startFrame": 4305,
+          "endFrame": 4314
+        },
+        {
+          "text": "code",
+          "beatId": "recall",
+          "startFrame": 4314,
+          "endFrame": 4323
+        },
+        {
+          "text": "is",
+          "beatId": "recall",
+          "startFrame": 4323,
+          "endFrame": 4328
+        },
+        {
+          "text": "on",
+          "beatId": "recall",
+          "startFrame": 4328,
+          "endFrame": 4333
+        },
+        {
+          "text": "GitHub.",
+          "beatId": "recall",
+          "startFrame": 4333,
+          "endFrame": 4350
+        }
+      ]
+    },
+    {
+      "text": "Next time, DAF-02.",
+      "startFrame": 4385,
+      "endFrame": 4440,
+      "words": [
+        {
+          "text": "Next",
+          "beatId": "next",
+          "startFrame": 4385,
+          "endFrame": 4390
+        },
+        {
+          "text": "time,",
+          "beatId": "next",
+          "startFrame": 4390,
+          "endFrame": 4408
+        },
+        {
+          "text": "DAF-02.",
+          "beatId": "next",
+          "startFrame": 4408,
+          "endFrame": 4440
+        }
+      ]
+    },
+    {
+      "text": "Before we touch any data,",
+      "startFrame": 4440,
+      "endFrame": 4486,
+      "words": [
+        {
+          "text": "Before",
+          "beatId": "next",
+          "startFrame": 4440,
+          "endFrame": 4452
+        },
+        {
+          "text": "we",
+          "beatId": "next",
+          "startFrame": 4452,
+          "endFrame": 4457
+        },
+        {
+          "text": "touch",
+          "beatId": "next",
+          "startFrame": 4457,
+          "endFrame": 4467
+        },
+        {
+          "text": "any",
+          "beatId": "next",
+          "startFrame": 4467,
+          "endFrame": 4473
+        },
+        {
+          "text": "data,",
+          "beatId": "next",
+          "startFrame": 4473,
+          "endFrame": 4486
+        }
+      ]
+    },
+    {
+      "text": "we write down exactly what Asha madam needs.",
+      "startFrame": 4486,
+      "endFrame": 4567,
+      "words": [
+        {
+          "text": "we",
+          "beatId": "next",
+          "startFrame": 4486,
+          "endFrame": 4490
+        },
+        {
+          "text": "write",
+          "beatId": "next",
+          "startFrame": 4490,
+          "endFrame": 4500
+        },
+        {
+          "text": "down",
+          "beatId": "next",
+          "startFrame": 4500,
+          "endFrame": 4505
+        },
+        {
+          "text": "exactly",
+          "beatId": "next",
+          "startFrame": 4505,
+          "endFrame": 4515
+        },
+        {
+          "text": "what",
+          "beatId": "next",
+          "startFrame": 4515,
+          "endFrame": 4525
+        },
+        {
+          "text": "Asha",
+          "beatId": "next",
+          "startFrame": 4525,
+          "endFrame": 4536
+        },
+        {
+          "text": "madam",
+          "beatId": "next",
+          "startFrame": 4536,
+          "endFrame": 4546
+        },
+        {
+          "text": "needs.",
+          "beatId": "next",
+          "startFrame": 4546,
+          "endFrame": 4560
+        }
+      ]
+    }
+  ]
+}

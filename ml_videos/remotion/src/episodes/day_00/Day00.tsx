@@ -67,6 +67,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     more: at("products", "more"),
     appsRun: at("products", "run"),
     learning: at("products", "learning"),
+    isnt: at("products", "isnt|nowadays"),
     rec: at("products", "recommendations"),
     fraud: at("products", "fraud"),
     search: at("products", "search|checks"),
@@ -150,6 +151,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     // 10 · ship
     s79: at("ship", "79"),
     makeReal: at("ship", "real"),
+    making: at("ship", "making|real"),
     tuning: at("ship", "tuning"),
     ensembles: at("ship", "ensembles"),
     saving: at("ship", "saving"),
@@ -167,6 +169,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     afterW: at("start", "after"),
     transformers: at("start", "transformers"),
     agents: at("start", "agents"),
+    further: at("start", "further|go"),
     startDay1: at("start", "1"),
     follow: at("start", "follow"),
     by84: at("start", "by"),
@@ -354,7 +357,7 @@ function ProductsBeat({ f, c }: { f: number; c: Cues }) {
             const x = 60 + (i % 4) * 220;
             const y = 120 + Math.floor(i / 4) * 140;
             const ap = c.software + i * 1.5;
-            const wig = f >= c.changing && f < c.changing + 16 ? 5 * Math.sin((f - c.changing + i) * 1.2) : 0;
+            const wig = (f >= c.changing && f < c.changing + 16 ? 5 * Math.sin((f - c.changing + i) * 1.2) : 0) + (f >= c.isnt && f < c.isnt + 20 ? 4 * Math.sin((f - c.isnt + i) * 1.1) : 0);
             return f >= ap ? (
               <div key={i} style={{ position: "absolute", left: x, top: y, width: 180, height: 116, borderRadius: 24, background: "#fff", border: `4px solid ${f >= badgeAt(i) ? K.ink : K.line}`, display: "grid", placeItems: "center", fontSize: 58, transform: `${pop(f, ap, 7).transform} rotate(${wig}deg)`, opacity: pop(f, ap, 7).opacity }}>
                 {a}
@@ -627,7 +630,7 @@ function MapStage({ f, c, start }: { f: number; c: Cues; start: (id: string) => 
         const filled = f >= fillAt(d);
         const col = arcColor(d);
         const dim = range && filled && (d < range[0] || d > range[1]) ? 0.4 : 1;
-        const scale = (filled ? bump(f, fillAt(d), 10) : 1) * bump(f, bandAt(d), 14) * bump(f, judgeAt(d), 12) * (d >= 22 && d <= 36 ? bump(f, c.likeThat, 14) : 1) * (d >= 2 && d <= 12 ? bump(f, c.inHand, 14) * bump(f, c.inHand + 30, 14) : 1) * (d === 84 ? bump(f, c.afterW, 16) : 1) * (d === 1 && f >= c.startDay1 ? bump(f, c.startDay1, 16) : 1);
+        const scale = (filled ? bump(f, fillAt(d), 10) : 1) * bump(f, bandAt(d), 14) * bump(f, judgeAt(d), 12) * (d >= 22 && d <= 36 ? bump(f, c.likeThat, 14) : 1) * (d >= 2 && d <= 12 ? bump(f, c.inHand, 14) * bump(f, c.inHand + 30, 14) : 1) * (d === 84 ? bump(f, c.afterW, 16) * bump(f, c.further, 16) : 1) * (d >= 79 ? bump(f, c.making, 16) : 1) * (d === 1 && f >= c.startDay1 ? bump(f, c.startDay1, 16) : 1);
         const darkText = filled && (d >= 37 && d <= 78);
         return (
           <div key={d} style={{ position: "absolute", left: x, top: y, width: G.size, height: G.size, borderRadius: 10, boxSizing: "border-box", background: filled ? col : "#fff", border: `3px solid ${filled ? K.ink : K.line}`, display: "grid", placeItems: "center", fontSize: 20, fontWeight: 900, color: filled ? (darkText ? K.ink : "#fff") : "#B4BECB", opacity: pop(f, ap, 6).opacity * dim, transform: `${pop(f, ap, 6).transform} scale(${scale})` }}>
@@ -827,6 +830,7 @@ function ShipPanel({ f, c }: { f: number; c: Cues }) {
   return (
     <>
       <PanelTitle text="MAKE IT REAL" color={K.red} />
+      {f >= c.making && f < c.tuning && <Chip label="🚀 MAKING IT REAL" color={K.red} size={40} style={{ position: "absolute", left: 120, top: 100, border: `4px solid ${K.ink}`, ...tilt(pop(f, c.making), 3 * Math.sin((f - c.making) / 6)) }} />}
       {nodes.map((n, i) => {
         const x = 18 + i * 142;
         return f >= n.at ? (
@@ -876,7 +880,8 @@ function SeasonPanel({ f, c }: { f: number; c: Cues }) {
     <>
       <div style={{ opacity: 1 - out }}>
         <PanelTitle text="SEASON 2 →" color={K.purple} />
-        {f >= c.afterW && f < c.deep && <Chip label="AFTER DAY 84 → GO FURTHER" color={K.purple} size={30} style={{ position: "absolute", left: 40, top: 110, border: `4px solid ${K.ink}`, ...pop(f, c.afterW) }} />}
+        {f >= c.afterW && f < c.deep && <Chip label="AFTER DAY 84" color={K.purple} size={32} style={{ position: "absolute", left: 40, top: 100, border: `4px solid ${K.ink}`, ...pop(f, c.afterW) }} />}
+        {f >= c.further && f < c.deep && <Chip label="GO FURTHER →" color={K.yellow} fg={K.ink} size={32} style={{ position: "absolute", left: 300, top: 160, border: `4px solid ${K.ink}`, ...pop(f, c.further) }} />}
         {items.map((it, i) =>
           f >= it.at ? (
             <div key={it.label} style={{ position: "absolute", left: 18 + i * 186, top: 90, width: 172, height: 90, borderRadius: 14, border: `4px dashed ${K.purple}`, background: "#F3EEFF", display: "grid", placeItems: "center", fontFamily: K.head, fontSize: 24, color: K.purple, ...pop(f, it.at) }}>

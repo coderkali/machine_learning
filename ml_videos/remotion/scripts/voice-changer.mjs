@@ -1,6 +1,6 @@
 // ElevenLabs Voice Changer (speech-to-speech): re-render the creator's own recording through his cloned
 // voice. Keeps his words, timing and intonation; output is studio-clean. Costs credits (billed per audio minute).
-//   node scripts/voice-changer.mjs day_02 --beats recap,visual [--voice <id>] [--from day_02/rec_clean] --confirm
+//   node scripts/voice-changer.mjs day_02 --beats recap,visual [--voice <id>] [--from day_02/rec_clean] [--out <dir>] --confirm
 // Input:  public/<from>/<beat>.wav   (default: day_NN/rec_clean, the output of clean-voice.mjs)
 // Output: public/day_NN/rec_sts/<beat>.mp3   → then: npm run master -- day_NN --takes-from day_NN/rec_sts
 import { execFileSync } from "node:child_process";
@@ -11,9 +11,9 @@ import { loadEpisode, PUBLIC } from "./lib/episode.mjs";
 const args = process.argv.slice(2);
 const flag = (k) => (args.includes(`--${k}`) ? args[args.indexOf(`--${k}`) + 1] : undefined);
 const ep = await loadEpisode(args[0]);
-const voiceId = flag("voice") ?? "dEibRDzkMexIgcF5EEiJ"; // Kali (Instant Voice Clone)
+const voiceId = flag("voice") ?? "99SWo5wjrbPpMKuP8Mik"; // Kali – Teacher (Professional Voice Clone, default since 2026-10-04; old instant clone: dEibRDzkMexIgcF5EEiJ)
 const fromDir = path.join(PUBLIC, flag("from") ?? `${ep.id}/rec_clean`);
-const outDir = path.join(ep.publicDir, "rec_sts");
+const outDir = flag("out") ? path.resolve(flag("out")) : path.join(ep.publicDir, "rec_sts"); // --out <dir>: tests that must not touch the episode
 const beats = (flag("beats") ?? ep.voice.beats.map((b) => b.id).join(",")).split(",");
 const confirm = args.includes("--confirm");
 
@@ -36,7 +36,8 @@ for (const x of files) {
   const form = new FormData();
   form.append("audio", new Blob([readFileSync(x.src)], { type: "audio/wav" }), `${x.beat}.wav`);
   form.append("model_id", flag("model") ?? "eleven_multilingual_sts_v2");
-  form.append("voice_settings", JSON.stringify({ stability: 0.5, similarity_boost: 0.85, style: 0, use_speaker_boost: true }));
+  // --similarity 1.0 pushes harder toward the target voice (Day 1 from Viraj's takes still sounded like Viraj).
+  form.append("voice_settings", JSON.stringify({ stability: Number(flag("stability") ?? 0.5), similarity_boost: Number(flag("similarity") ?? 0.85), style: 0, use_speaker_boost: true }));
   form.append("remove_background_noise", "false");
   const res = await fetch(`https://api.elevenlabs.io/v1/speech-to-speech/${voiceId}?output_format=mp3_44100_192`, {
     method: "POST",

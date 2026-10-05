@@ -99,7 +99,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     tThink: opt("technical", "think|ask"),
     ask: at("technical", "ask"),
     tX: at("technical", "x"),
-    tYou: opt("technical", "ask"),
+    tYou: opt("technical", "always|ask"),
     tWhat: opt("technical", "what"),
     tTypeOf: at("technical", "type"),
     tells: at("technical", "tells"),
@@ -108,7 +108,8 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     tString: at("technical", "string"),
     depending: opt("technical", "depending"),
     // java
-    confused: at("java", "confused"),
+    confused: at("java", "java|confused"),
+    conf2: at("java", "confused"),
     jDynamic: at("java", "dynamic"),
     strict: at("java", "strict"),
     tryIt: at("java", "try"),
@@ -130,6 +131,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     rOne: at("recap", "one", 2),
     replace: at("recap", "replace"),
     values: at("recap", "values"),
+    rPython: at("recap", "python"),
     labels: at("recap", "labels"),
     checksWork: at("recap", "checks"),
     done: at("recap", "done"),
@@ -413,6 +415,7 @@ function JavaBeat({ f, c }: { f: number; c: Cues }) {
         <div style={{ position: "absolute", left: 30, top: 24, display: "flex", alignItems: "center", gap: 14, ...pop(f, c.confused) }}>
           <Chip label="☕ JAVA DEVS" color={K.blue} size={32} />
           <span style={{ fontSize: 60, display: "inline-block", transform: `rotate(${10 * Math.sin((f - c.confused) / 4)}deg)` }}>🤔</span>
+          {f >= c.conf2 && f < c.strict && <Chip label="CONFUSED?" color={K.yellow} fg={K.ink} size={32} style={{ border: `4px solid ${K.ink}`, ...pop(f, c.conf2) }} />}
         </div>
       )}
       <div style={{ position: "absolute", left: 30, top: 130, display: "flex", gap: 14 }}>
@@ -489,6 +492,7 @@ function RecapBeat({ f, c }: { f: number; c: Cues }) {
   return (
     <>
       {f >= c.oneLine && <Chip label="DAY 2 IN ONE LINE" color={K.ink} size={32} style={{ position: "absolute", left: 30, top: 24, ...pop(f, c.oneLine) }} />}
+      {f >= c.rPython && f < c.values + 10 && <Chip label="🐍 IN PYTHON…" color={K.green} size={32} style={{ position: "absolute", left: 420, top: 24, ...pop(f, c.rPython) }} />}
       {rows.map((r, i) =>
         f >= r.at ? (
           <div key={r.text} style={{ position: "absolute", left: 30, top: 110 + i * 100, width: 900, height: 84, borderRadius: 16, background: "#fff", border: `4px solid ${K.ink}`, display: "flex", alignItems: "center", gap: 18, padding: "0 18px", boxSizing: "border-box", ...pop(f, r.at) }}>

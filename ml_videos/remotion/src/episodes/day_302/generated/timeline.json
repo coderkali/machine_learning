@@ -1,0 +1,1797 @@
+{
+  "day": 302,
+  "fps": 30,
+  "totalFrames": 2823,
+  "audio": "day_302/mix/narration_v2.wav",
+  "music": null,
+  "beats": [
+    {
+      "id": "hook",
+      "type": "hook",
+      "from": 0,
+      "durationInFrames": 201,
+      "speechFrom": 3,
+      "speechTo": 167
+    },
+    {
+      "id": "data",
+      "type": "explain",
+      "from": 201,
+      "durationInFrames": 325,
+      "speechFrom": 204,
+      "speechTo": 492
+    },
+    {
+      "id": "number",
+      "type": "explain",
+      "from": 526,
+      "durationInFrames": 160,
+      "speechFrom": 530,
+      "speechTo": 652
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "from": 686,
+      "durationInFrames": 184,
+      "speechFrom": 690,
+      "speechTo": 867
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "from": 870,
+      "durationInFrames": 549,
+      "speechFrom": 874,
+      "speechTo": 1386
+    },
+    {
+      "id": "tomorrow",
+      "type": "explain",
+      "from": 1419,
+      "durationInFrames": 291,
+      "speechFrom": 1423,
+      "speechTo": 1676
+    },
+    {
+      "id": "shift",
+      "type": "explain",
+      "from": 1710,
+      "durationInFrames": 293,
+      "speechFrom": 1714,
+      "speechTo": 1964
+    },
+    {
+      "id": "rule",
+      "type": "insight",
+      "from": 2003,
+      "durationInFrames": 472,
+      "speechFrom": 2012,
+      "speechTo": 2436
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "from": 2475,
+      "durationInFrames": 348,
+      "speechFrom": 2484,
+      "speechTo": 2778
+    }
+  ],
+  "captions": [
+    {
+      "text": "Before we train any model,",
+      "startFrame": 5,
+      "endFrame": 46,
+      "words": [
+        {
+          "text": "Before",
+          "beatId": "hook",
+          "startFrame": 5,
+          "endFrame": 12
+        },
+        {
+          "text": "we",
+          "beatId": "hook",
+          "startFrame": 12,
+          "endFrame": 16
+        },
+        {
+          "text": "train",
+          "beatId": "hook",
+          "startFrame": 16,
+          "endFrame": 26
+        },
+        {
+          "text": "any",
+          "beatId": "hook",
+          "startFrame": 26,
+          "endFrame": 31
+        },
+        {
+          "text": "model,",
+          "beatId": "hook",
+          "startFrame": 31,
+          "endFrame": 46
+        }
+      ]
+    },
+    {
+      "text": "we must answer one simple question.",
+      "startFrame": 46,
+      "endFrame": 116,
+      "words": [
+        {
+          "text": "we",
+          "beatId": "hook",
+          "startFrame": 46,
+          "endFrame": 50
+        },
+        {
+          "text": "must",
+          "beatId": "hook",
+          "startFrame": 50,
+          "endFrame": 59
+        },
+        {
+          "text": "answer",
+          "beatId": "hook",
+          "startFrame": 59,
+          "endFrame": 72
+        },
+        {
+          "text": "one",
+          "beatId": "hook",
+          "startFrame": 72,
+          "endFrame": 78
+        },
+        {
+          "text": "simple",
+          "beatId": "hook",
+          "startFrame": 78,
+          "endFrame": 92
+        },
+        {
+          "text": "question.",
+          "beatId": "hook",
+          "startFrame": 92,
+          "endFrame": 116
+        }
+      ]
+    },
+    {
+      "text": "What exactly are we predicting?",
+      "startFrame": 116,
+      "endFrame": 176,
+      "words": [
+        {
+          "text": "What",
+          "beatId": "hook",
+          "startFrame": 116,
+          "endFrame": 121
+        },
+        {
+          "text": "exactly",
+          "beatId": "hook",
+          "startFrame": 121,
+          "endFrame": 134
+        },
+        {
+          "text": "are",
+          "beatId": "hook",
+          "startFrame": 134,
+          "endFrame": 140
+        },
+        {
+          "text": "we",
+          "beatId": "hook",
+          "startFrame": 140,
+          "endFrame": 143
+        },
+        {
+          "text": "predicting?",
+          "beatId": "hook",
+          "startFrame": 143,
+          "endFrame": 168
+        }
+      ]
+    },
+    {
+      "text": "See, this is our real data, from",
+      "startFrame": 206,
+      "endFrame": 264,
+      "words": [
+        {
+          "text": "See,",
+          "beatId": "data",
+          "startFrame": 206,
+          "endFrame": 212
+        },
+        {
+          "text": "this",
+          "beatId": "data",
+          "startFrame": 212,
+          "endFrame": 222
+        },
+        {
+          "text": "is",
+          "beatId": "data",
+          "startFrame": 222,
+          "endFrame": 227
+        },
+        {
+          "text": "our",
+          "beatId": "data",
+          "startFrame": 227,
+          "endFrame": 234
+        },
+        {
+          "text": "real",
+          "beatId": "data",
+          "startFrame": 234,
+          "endFrame": 244
+        },
+        {
+          "text": "data,",
+          "beatId": "data",
+          "startFrame": 244,
+          "endFrame": 260
+        },
+        {
+          "text": "from",
+          "beatId": "data",
+          "startFrame": 260,
+          "endFrame": 264
+        }
+      ]
+    },
+    {
+      "text": "one sensor at R K Puram in Delhi.",
+      "startFrame": 264,
+      "endFrame": 340,
+      "words": [
+        {
+          "text": "one",
+          "beatId": "data",
+          "startFrame": 264,
+          "endFrame": 271
+        },
+        {
+          "text": "sensor",
+          "beatId": "data",
+          "startFrame": 271,
+          "endFrame": 285
+        },
+        {
+          "text": "at",
+          "beatId": "data",
+          "startFrame": 285,
+          "endFrame": 305
+        },
+        {
+          "text": "R",
+          "beatId": "data",
+          "startFrame": 305,
+          "endFrame": 307
+        },
+        {
+          "text": "K",
+          "beatId": "data",
+          "startFrame": 307,
+          "endFrame": 308
+        },
+        {
+          "text": "Puram",
+          "beatId": "data",
+          "startFrame": 308,
+          "endFrame": 319
+        },
+        {
+          "text": "in",
+          "beatId": "data",
+          "startFrame": 319,
+          "endFrame": 323
+        },
+        {
+          "text": "Delhi.",
+          "beatId": "data",
+          "startFrame": 323,
+          "endFrame": 340
+        }
+      ]
+    },
+    {
+      "text": "One row for each day.",
+      "startFrame": 340,
+      "endFrame": 397,
+      "words": [
+        {
+          "text": "One",
+          "beatId": "data",
+          "startFrame": 340,
+          "endFrame": 349
+        },
+        {
+          "text": "row",
+          "beatId": "data",
+          "startFrame": 349,
+          "endFrame": 361
+        },
+        {
+          "text": "for",
+          "beatId": "data",
+          "startFrame": 361,
+          "endFrame": 367
+        },
+        {
+          "text": "each",
+          "beatId": "data",
+          "startFrame": 367,
+          "endFrame": 380
+        },
+        {
+          "text": "day.",
+          "beatId": "data",
+          "startFrame": 380,
+          "endFrame": 397
+        }
+      ]
+    },
+    {
+      "text": "And this column is the average",
+      "startFrame": 397,
+      "endFrame": 447,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "data",
+          "startFrame": 397,
+          "endFrame": 403
+        },
+        {
+          "text": "this",
+          "beatId": "data",
+          "startFrame": 403,
+          "endFrame": 411
+        },
+        {
+          "text": "column",
+          "beatId": "data",
+          "startFrame": 411,
+          "endFrame": 423
+        },
+        {
+          "text": "is",
+          "beatId": "data",
+          "startFrame": 423,
+          "endFrame": 427
+        },
+        {
+          "text": "the",
+          "beatId": "data",
+          "startFrame": 427,
+          "endFrame": 433
+        },
+        {
+          "text": "average",
+          "beatId": "data",
+          "startFrame": 433,
+          "endFrame": 447
+        }
+      ]
+    },
+    {
+      "text": "PM2.5 of that day.",
+      "startFrame": 447,
+      "endFrame": 498,
+      "words": [
+        {
+          "text": "PM2.5",
+          "beatId": "data",
+          "startFrame": 447,
+          "endFrame": 469
+        },
+        {
+          "text": "of",
+          "beatId": "data",
+          "startFrame": 469,
+          "endFrame": 473
+        },
+        {
+          "text": "that",
+          "beatId": "data",
+          "startFrame": 473,
+          "endFrame": 481
+        },
+        {
+          "text": "day.",
+          "beatId": "data",
+          "startFrame": 481,
+          "endFrame": 490
+        }
+      ]
+    },
+    {
+      "text": "So what will the model predict?",
+      "startFrame": 529,
+      "endFrame": 579,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "number",
+          "startFrame": 529,
+          "endFrame": 532
+        },
+        {
+          "text": "what",
+          "beatId": "number",
+          "startFrame": 532,
+          "endFrame": 536
+        },
+        {
+          "text": "will",
+          "beatId": "number",
+          "startFrame": 536,
+          "endFrame": 544
+        },
+        {
+          "text": "the",
+          "beatId": "number",
+          "startFrame": 544,
+          "endFrame": 549
+        },
+        {
+          "text": "model",
+          "beatId": "number",
+          "startFrame": 549,
+          "endFrame": 558
+        },
+        {
+          "text": "predict?",
+          "beatId": "number",
+          "startFrame": 558,
+          "endFrame": 579
+        }
+      ]
+    },
+    {
+      "text": "A number.",
+      "startFrame": 579,
+      "endFrame": 607,
+      "words": [
+        {
+          "text": "A",
+          "beatId": "number",
+          "startFrame": 579,
+          "endFrame": 582
+        },
+        {
+          "text": "number.",
+          "beatId": "number",
+          "startFrame": 582,
+          "endFrame": 607
+        }
+      ]
+    },
+    {
+      "text": "Tomorrow's PM2.5.",
+      "startFrame": 607,
+      "endFrame": 663,
+      "words": [
+        {
+          "text": "Tomorrow's",
+          "beatId": "number",
+          "startFrame": 607,
+          "endFrame": 629
+        },
+        {
+          "text": "PM2.5.",
+          "beatId": "number",
+          "startFrame": 629,
+          "endFrame": 655
+        }
+      ]
+    },
+    {
+      "text": "Sir, Asha only needs inside or outside.",
+      "startFrame": 692,
+      "endFrame": 790,
+      "words": [
+        {
+          "text": "Sir,",
+          "beatId": "doubt1",
+          "startFrame": 692,
+          "endFrame": 700
+        },
+        {
+          "text": "Asha",
+          "beatId": "doubt1",
+          "startFrame": 700,
+          "endFrame": 711
+        },
+        {
+          "text": "only",
+          "beatId": "doubt1",
+          "startFrame": 711,
+          "endFrame": 722
+        },
+        {
+          "text": "needs",
+          "beatId": "doubt1",
+          "startFrame": 722,
+          "endFrame": 745
+        },
+        {
+          "text": "inside",
+          "beatId": "doubt1",
+          "startFrame": 745,
+          "endFrame": 754
+        },
+        {
+          "text": "or",
+          "beatId": "doubt1",
+          "startFrame": 754,
+          "endFrame": 761
+        },
+        {
+          "text": "outside.",
+          "beatId": "doubt1",
+          "startFrame": 761,
+          "endFrame": 790
+        }
+      ]
+    },
+    {
+      "text": "Why not just predict safe or unsafe?",
+      "startFrame": 790,
+      "endFrame": 873,
+      "words": [
+        {
+          "text": "Why",
+          "beatId": "doubt1",
+          "startFrame": 790,
+          "endFrame": 799
+        },
+        {
+          "text": "not",
+          "beatId": "doubt1",
+          "startFrame": 799,
+          "endFrame": 800
+        },
+        {
+          "text": "just",
+          "beatId": "doubt1",
+          "startFrame": 800,
+          "endFrame": 809
+        },
+        {
+          "text": "predict",
+          "beatId": "doubt1",
+          "startFrame": 809,
+          "endFrame": 829
+        },
+        {
+          "text": "safe",
+          "beatId": "doubt1",
+          "startFrame": 829,
+          "endFrame": 837
+        },
+        {
+          "text": "or",
+          "beatId": "doubt1",
+          "startFrame": 837,
+          "endFrame": 842
+        },
+        {
+          "text": "unsafe?",
+          "beatId": "doubt1",
+          "startFrame": 842,
+          "endFrame": 866
+        }
+      ]
+    },
+    {
+      "text": "Because a category hides information.",
+      "startFrame": 875,
+      "endFrame": 951,
+      "words": [
+        {
+          "text": "Because",
+          "beatId": "answer1",
+          "startFrame": 875,
+          "endFrame": 888
+        },
+        {
+          "text": "a",
+          "beatId": "answer1",
+          "startFrame": 888,
+          "endFrame": 889
+        },
+        {
+          "text": "category",
+          "beatId": "answer1",
+          "startFrame": 889,
+          "endFrame": 907
+        },
+        {
+          "text": "hides",
+          "beatId": "answer1",
+          "startFrame": 907,
+          "endFrame": 919
+        },
+        {
+          "text": "information.",
+          "beatId": "answer1",
+          "startFrame": 919,
+          "endFrame": 951
+        }
+      ]
+    },
+    {
+      "text": "Look at these two real days.",
+      "startFrame": 951,
+      "endFrame": 1014,
+      "words": [
+        {
+          "text": "Look",
+          "beatId": "answer1",
+          "startFrame": 951,
+          "endFrame": 957
+        },
+        {
+          "text": "at",
+          "beatId": "answer1",
+          "startFrame": 957,
+          "endFrame": 961
+        },
+        {
+          "text": "these",
+          "beatId": "answer1",
+          "startFrame": 961,
+          "endFrame": 970
+        },
+        {
+          "text": "two",
+          "beatId": "answer1",
+          "startFrame": 970,
+          "endFrame": 975
+        },
+        {
+          "text": "real",
+          "beatId": "answer1",
+          "startFrame": 975,
+          "endFrame": 988
+        },
+        {
+          "text": "days.",
+          "beatId": "answer1",
+          "startFrame": 988,
+          "endFrame": 1014
+        }
+      ]
+    },
+    {
+      "text": "Ninety-two, and three hundred ninety-seven.",
+      "startFrame": 1014,
+      "endFrame": 1095,
+      "words": [
+        {
+          "text": "Ninety-two,",
+          "beatId": "answer1",
+          "startFrame": 1014,
+          "endFrame": 1042
+        },
+        {
+          "text": "and",
+          "beatId": "answer1",
+          "startFrame": 1042,
+          "endFrame": 1052
+        },
+        {
+          "text": "three",
+          "beatId": "answer1",
+          "startFrame": 1052,
+          "endFrame": 1053
+        },
+        {
+          "text": "hundred",
+          "beatId": "answer1",
+          "startFrame": 1052,
+          "endFrame": 1053
+        },
+        {
+          "text": "ninety-seven.",
+          "beatId": "answer1",
+          "startFrame": 1052,
+          "endFrame": 1095
+        }
+      ]
+    },
+    {
+      "text": "Both are unsafe.",
+      "startFrame": 1095,
+      "endFrame": 1144,
+      "words": [
+        {
+          "text": "Both",
+          "beatId": "answer1",
+          "startFrame": 1095,
+          "endFrame": 1107
+        },
+        {
+          "text": "are",
+          "beatId": "answer1",
+          "startFrame": 1107,
+          "endFrame": 1116
+        },
+        {
+          "text": "unsafe.",
+          "beatId": "answer1",
+          "startFrame": 1116,
+          "endFrame": 1144
+        }
+      ]
+    },
+    {
+      "text": "But one is bad,",
+      "startFrame": 1144,
+      "endFrame": 1167,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "answer1",
+          "startFrame": 1144,
+          "endFrame": 1153
+        },
+        {
+          "text": "one",
+          "beatId": "answer1",
+          "startFrame": 1153,
+          "endFrame": 1155
+        },
+        {
+          "text": "is",
+          "beatId": "answer1",
+          "startFrame": 1155,
+          "endFrame": 1159
+        },
+        {
+          "text": "bad,",
+          "beatId": "answer1",
+          "startFrame": 1159,
+          "endFrame": 1167
+        }
+      ]
+    },
+    {
+      "text": "and the other is dangerous.",
+      "startFrame": 1167,
+      "endFrame": 1230,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "answer1",
+          "startFrame": 1167,
+          "endFrame": 1174
+        },
+        {
+          "text": "the",
+          "beatId": "answer1",
+          "startFrame": 1174,
+          "endFrame": 1182
+        },
+        {
+          "text": "other",
+          "beatId": "answer1",
+          "startFrame": 1182,
+          "endFrame": 1194
+        },
+        {
+          "text": "is",
+          "beatId": "answer1",
+          "startFrame": 1194,
+          "endFrame": 1199
+        },
+        {
+          "text": "dangerous.",
+          "beatId": "answer1",
+          "startFrame": 1199,
+          "endFrame": 1230
+        }
+      ]
+    },
+    {
+      "text": "The number keeps that difference.",
+      "startFrame": 1230,
+      "endFrame": 1292,
+      "words": [
+        {
+          "text": "The",
+          "beatId": "answer1",
+          "startFrame": 1230,
+          "endFrame": 1236
+        },
+        {
+          "text": "number",
+          "beatId": "answer1",
+          "startFrame": 1236,
+          "endFrame": 1248
+        },
+        {
+          "text": "keeps",
+          "beatId": "answer1",
+          "startFrame": 1248,
+          "endFrame": 1259
+        },
+        {
+          "text": "that",
+          "beatId": "answer1",
+          "startFrame": 1259,
+          "endFrame": 1267
+        },
+        {
+          "text": "difference.",
+          "beatId": "answer1",
+          "startFrame": 1267,
+          "endFrame": 1292
+        }
+      ]
+    },
+    {
+      "text": "And the official table can still",
+      "startFrame": 1292,
+      "endFrame": 1328,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "answer1",
+          "startFrame": 1292,
+          "endFrame": 1297
+        },
+        {
+          "text": "the",
+          "beatId": "answer1",
+          "startFrame": 1297,
+          "endFrame": 1301
+        },
+        {
+          "text": "official",
+          "beatId": "answer1",
+          "startFrame": 1301,
+          "endFrame": 1312
+        },
+        {
+          "text": "table",
+          "beatId": "answer1",
+          "startFrame": 1312,
+          "endFrame": 1320
+        },
+        {
+          "text": "can",
+          "beatId": "answer1",
+          "startFrame": 1320,
+          "endFrame": 1323
+        },
+        {
+          "text": "still",
+          "beatId": "answer1",
+          "startFrame": 1323,
+          "endFrame": 1328
+        }
+      ]
+    },
+    {
+      "text": "turn it into a category for Asha.",
+      "startFrame": 1328,
+      "endFrame": 1396,
+      "words": [
+        {
+          "text": "turn",
+          "beatId": "answer1",
+          "startFrame": 1328,
+          "endFrame": 1335
+        },
+        {
+          "text": "it",
+          "beatId": "answer1",
+          "startFrame": 1335,
+          "endFrame": 1336
+        },
+        {
+          "text": "into",
+          "beatId": "answer1",
+          "startFrame": 1335,
+          "endFrame": 1347
+        },
+        {
+          "text": "a",
+          "beatId": "answer1",
+          "startFrame": 1347,
+          "endFrame": 1350
+        },
+        {
+          "text": "category",
+          "beatId": "answer1",
+          "startFrame": 1350,
+          "endFrame": 1373
+        },
+        {
+          "text": "for",
+          "beatId": "answer1",
+          "startFrame": 1373,
+          "endFrame": 1382
+        },
+        {
+          "text": "Asha.",
+          "beatId": "answer1",
+          "startFrame": 1382,
+          "endFrame": 1389
+        }
+      ]
+    },
+    {
+      "text": "Now, which number exactly?",
+      "startFrame": 1424,
+      "endFrame": 1476,
+      "words": [
+        {
+          "text": "Now,",
+          "beatId": "tomorrow",
+          "startFrame": 1424,
+          "endFrame": 1430
+        },
+        {
+          "text": "which",
+          "beatId": "tomorrow",
+          "startFrame": 1430,
+          "endFrame": 1440
+        },
+        {
+          "text": "number",
+          "beatId": "tomorrow",
+          "startFrame": 1440,
+          "endFrame": 1454
+        },
+        {
+          "text": "exactly?",
+          "beatId": "tomorrow",
+          "startFrame": 1454,
+          "endFrame": 1476
+        }
+      ]
+    },
+    {
+      "text": "Tomorrow's average,",
+      "startFrame": 1476,
+      "endFrame": 1514,
+      "words": [
+        {
+          "text": "Tomorrow's",
+          "beatId": "tomorrow",
+          "startFrame": 1476,
+          "endFrame": 1493
+        },
+        {
+          "text": "average,",
+          "beatId": "tomorrow",
+          "startFrame": 1493,
+          "endFrame": 1514
+        }
+      ]
+    },
+    {
+      "text": "from midnight to midnight, Indian time.",
+      "startFrame": 1514,
+      "endFrame": 1577,
+      "words": [
+        {
+          "text": "from",
+          "beatId": "tomorrow",
+          "startFrame": 1514,
+          "endFrame": 1516
+        },
+        {
+          "text": "midnight",
+          "beatId": "tomorrow",
+          "startFrame": 1516,
+          "endFrame": 1529
+        },
+        {
+          "text": "to",
+          "beatId": "tomorrow",
+          "startFrame": 1529,
+          "endFrame": 1535
+        },
+        {
+          "text": "midnight,",
+          "beatId": "tomorrow",
+          "startFrame": 1535,
+          "endFrame": 1548
+        },
+        {
+          "text": "Indian",
+          "beatId": "tomorrow",
+          "startFrame": 1548,
+          "endFrame": 1565
+        },
+        {
+          "text": "time.",
+          "beatId": "tomorrow",
+          "startFrame": 1565,
+          "endFrame": 1577
+        }
+      ]
+    },
+    {
+      "text": "Because the official air quality",
+      "startFrame": 1577,
+      "endFrame": 1623,
+      "words": [
+        {
+          "text": "Because",
+          "beatId": "tomorrow",
+          "startFrame": 1577,
+          "endFrame": 1589
+        },
+        {
+          "text": "the",
+          "beatId": "tomorrow",
+          "startFrame": 1589,
+          "endFrame": 1594
+        },
+        {
+          "text": "official",
+          "beatId": "tomorrow",
+          "startFrame": 1594,
+          "endFrame": 1607
+        },
+        {
+          "text": "air",
+          "beatId": "tomorrow",
+          "startFrame": 1607,
+          "endFrame": 1612
+        },
+        {
+          "text": "quality",
+          "beatId": "tomorrow",
+          "startFrame": 1612,
+          "endFrame": 1623
+        }
+      ]
+    },
+    {
+      "text": "bands use the full-day average.",
+      "startFrame": 1623,
+      "endFrame": 1687,
+      "words": [
+        {
+          "text": "bands",
+          "beatId": "tomorrow",
+          "startFrame": 1623,
+          "endFrame": 1632
+        },
+        {
+          "text": "use",
+          "beatId": "tomorrow",
+          "startFrame": 1632,
+          "endFrame": 1639
+        },
+        {
+          "text": "the",
+          "beatId": "tomorrow",
+          "startFrame": 1639,
+          "endFrame": 1645
+        },
+        {
+          "text": "full-day",
+          "beatId": "tomorrow",
+          "startFrame": 1645,
+          "endFrame": 1660
+        },
+        {
+          "text": "average.",
+          "beatId": "tomorrow",
+          "startFrame": 1660,
+          "endFrame": 1679
+        }
+      ]
+    },
+    {
+      "text": "So we take tomorrow's average,",
+      "startFrame": 1713,
+      "endFrame": 1755,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "shift",
+          "startFrame": 1713,
+          "endFrame": 1715
+        },
+        {
+          "text": "we",
+          "beatId": "shift",
+          "startFrame": 1715,
+          "endFrame": 1718
+        },
+        {
+          "text": "take",
+          "beatId": "shift",
+          "startFrame": 1718,
+          "endFrame": 1725
+        },
+        {
+          "text": "tomorrow's",
+          "beatId": "shift",
+          "startFrame": 1725,
+          "endFrame": 1742
+        },
+        {
+          "text": "average,",
+          "beatId": "shift",
+          "startFrame": 1742,
+          "endFrame": 1755
+        }
+      ]
+    },
+    {
+      "text": "and move it up one row.",
+      "startFrame": 1755,
+      "endFrame": 1810,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "shift",
+          "startFrame": 1755,
+          "endFrame": 1764
+        },
+        {
+          "text": "move",
+          "beatId": "shift",
+          "startFrame": 1764,
+          "endFrame": 1776
+        },
+        {
+          "text": "it",
+          "beatId": "shift",
+          "startFrame": 1776,
+          "endFrame": 1781
+        },
+        {
+          "text": "up",
+          "beatId": "shift",
+          "startFrame": 1781,
+          "endFrame": 1787
+        },
+        {
+          "text": "one",
+          "beatId": "shift",
+          "startFrame": 1787,
+          "endFrame": 1805
+        },
+        {
+          "text": "row.",
+          "beatId": "shift",
+          "startFrame": 1805,
+          "endFrame": 1810
+        }
+      ]
+    },
+    {
+      "text": "Now every day has its answer",
+      "startFrame": 1810,
+      "endFrame": 1860,
+      "words": [
+        {
+          "text": "Now",
+          "beatId": "shift",
+          "startFrame": 1810,
+          "endFrame": 1816
+        },
+        {
+          "text": "every",
+          "beatId": "shift",
+          "startFrame": 1816,
+          "endFrame": 1827
+        },
+        {
+          "text": "day",
+          "beatId": "shift",
+          "startFrame": 1827,
+          "endFrame": 1833
+        },
+        {
+          "text": "has",
+          "beatId": "shift",
+          "startFrame": 1833,
+          "endFrame": 1839
+        },
+        {
+          "text": "its",
+          "beatId": "shift",
+          "startFrame": 1839,
+          "endFrame": 1846
+        },
+        {
+          "text": "answer",
+          "beatId": "shift",
+          "startFrame": 1846,
+          "endFrame": 1860
+        }
+      ]
+    },
+    {
+      "text": "sitting right next to it.",
+      "startFrame": 1860,
+      "endFrame": 1909,
+      "words": [
+        {
+          "text": "sitting",
+          "beatId": "shift",
+          "startFrame": 1860,
+          "endFrame": 1873
+        },
+        {
+          "text": "right",
+          "beatId": "shift",
+          "startFrame": 1873,
+          "endFrame": 1884
+        },
+        {
+          "text": "next",
+          "beatId": "shift",
+          "startFrame": 1884,
+          "endFrame": 1892
+        },
+        {
+          "text": "to",
+          "beatId": "shift",
+          "startFrame": 1892,
+          "endFrame": 1897
+        },
+        {
+          "text": "it.",
+          "beatId": "shift",
+          "startFrame": 1897,
+          "endFrame": 1909
+        }
+      ]
+    },
+    {
+      "text": "This new column is our target.",
+      "startFrame": 1909,
+      "endFrame": 1974,
+      "words": [
+        {
+          "text": "This",
+          "beatId": "shift",
+          "startFrame": 1909,
+          "endFrame": 1920
+        },
+        {
+          "text": "new",
+          "beatId": "shift",
+          "startFrame": 1920,
+          "endFrame": 1927
+        },
+        {
+          "text": "column",
+          "beatId": "shift",
+          "startFrame": 1927,
+          "endFrame": 1941
+        },
+        {
+          "text": "is",
+          "beatId": "shift",
+          "startFrame": 1941,
+          "endFrame": 1948
+        },
+        {
+          "text": "our",
+          "beatId": "shift",
+          "startFrame": 1948,
+          "endFrame": 1953
+        },
+        {
+          "text": "target.",
+          "beatId": "shift",
+          "startFrame": 1953,
+          "endFrame": 1967
+        }
+      ]
+    },
+    {
+      "text": "But here's the catch.",
+      "startFrame": 2012,
+      "endFrame": 2060,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "rule",
+          "startFrame": 2012,
+          "endFrame": 2018
+        },
+        {
+          "text": "here's",
+          "beatId": "rule",
+          "startFrame": 2018,
+          "endFrame": 2030
+        },
+        {
+          "text": "the",
+          "beatId": "rule",
+          "startFrame": 2030,
+          "endFrame": 2037
+        },
+        {
+          "text": "catch.",
+          "beatId": "rule",
+          "startFrame": 2037,
+          "endFrame": 2060
+        }
+      ]
+    },
+    {
+      "text": "Sensors go down.",
+      "startFrame": 2060,
+      "endFrame": 2110,
+      "words": [
+        {
+          "text": "Sensors",
+          "beatId": "rule",
+          "startFrame": 2060,
+          "endFrame": 2082
+        },
+        {
+          "text": "go",
+          "beatId": "rule",
+          "startFrame": 2082,
+          "endFrame": 2088
+        },
+        {
+          "text": "down.",
+          "beatId": "rule",
+          "startFrame": 2088,
+          "endFrame": 2110
+        }
+      ]
+    },
+    {
+      "text": "On the second of March,",
+      "startFrame": 2110,
+      "endFrame": 2149,
+      "words": [
+        {
+          "text": "On",
+          "beatId": "rule",
+          "startFrame": 2110,
+          "endFrame": 2115
+        },
+        {
+          "text": "the",
+          "beatId": "rule",
+          "startFrame": 2115,
+          "endFrame": 2121
+        },
+        {
+          "text": "second",
+          "beatId": "rule",
+          "startFrame": 2121,
+          "endFrame": 2131
+        },
+        {
+          "text": "of",
+          "beatId": "rule",
+          "startFrame": 2131,
+          "endFrame": 2135
+        },
+        {
+          "text": "March,",
+          "beatId": "rule",
+          "startFrame": 2135,
+          "endFrame": 2149
+        }
+      ]
+    },
+    {
+      "text": "this sensor gave nothing at all.",
+      "startFrame": 2149,
+      "endFrame": 2215,
+      "words": [
+        {
+          "text": "this",
+          "beatId": "rule",
+          "startFrame": 2149,
+          "endFrame": 2159
+        },
+        {
+          "text": "sensor",
+          "beatId": "rule",
+          "startFrame": 2159,
+          "endFrame": 2170
+        },
+        {
+          "text": "gave",
+          "beatId": "rule",
+          "startFrame": 2170,
+          "endFrame": 2178
+        },
+        {
+          "text": "nothing",
+          "beatId": "rule",
+          "startFrame": 2178,
+          "endFrame": 2193
+        },
+        {
+          "text": "at",
+          "beatId": "rule",
+          "startFrame": 2193,
+          "endFrame": 2197
+        },
+        {
+          "text": "all.",
+          "beatId": "rule",
+          "startFrame": 2197,
+          "endFrame": 2215
+        }
+      ]
+    },
+    {
+      "text": "So we make one rule.",
+      "startFrame": 2215,
+      "endFrame": 2266,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "rule",
+          "startFrame": 2215,
+          "endFrame": 2217
+        },
+        {
+          "text": "we",
+          "beatId": "rule",
+          "startFrame": 2217,
+          "endFrame": 2223
+        },
+        {
+          "text": "make",
+          "beatId": "rule",
+          "startFrame": 2223,
+          "endFrame": 2235
+        },
+        {
+          "text": "one",
+          "beatId": "rule",
+          "startFrame": 2235,
+          "endFrame": 2244
+        },
+        {
+          "text": "rule.",
+          "beatId": "rule",
+          "startFrame": 2244,
+          "endFrame": 2266
+        }
+      ]
+    },
+    {
+      "text": "A day counts only if it has",
+      "startFrame": 2266,
+      "endFrame": 2317,
+      "words": [
+        {
+          "text": "A",
+          "beatId": "rule",
+          "startFrame": 2266,
+          "endFrame": 2271
+        },
+        {
+          "text": "day",
+          "beatId": "rule",
+          "startFrame": 2271,
+          "endFrame": 2276
+        },
+        {
+          "text": "counts",
+          "beatId": "rule",
+          "startFrame": 2276,
+          "endFrame": 2290
+        },
+        {
+          "text": "only",
+          "beatId": "rule",
+          "startFrame": 2290,
+          "endFrame": 2300
+        },
+        {
+          "text": "if",
+          "beatId": "rule",
+          "startFrame": 2300,
+          "endFrame": 2305
+        },
+        {
+          "text": "it",
+          "beatId": "rule",
+          "startFrame": 2305,
+          "endFrame": 2309
+        },
+        {
+          "text": "has",
+          "beatId": "rule",
+          "startFrame": 2309,
+          "endFrame": 2317
+        }
+      ]
+    },
+    {
+      "text": "at least eighteen hours of readings.",
+      "startFrame": 2317,
+      "endFrame": 2397,
+      "words": [
+        {
+          "text": "at",
+          "beatId": "rule",
+          "startFrame": 2317,
+          "endFrame": 2321
+        },
+        {
+          "text": "least",
+          "beatId": "rule",
+          "startFrame": 2321,
+          "endFrame": 2333
+        },
+        {
+          "text": "eighteen",
+          "beatId": "rule",
+          "startFrame": 2333,
+          "endFrame": 2348
+        },
+        {
+          "text": "hours",
+          "beatId": "rule",
+          "startFrame": 2348,
+          "endFrame": 2360
+        },
+        {
+          "text": "of",
+          "beatId": "rule",
+          "startFrame": 2360,
+          "endFrame": 2365
+        },
+        {
+          "text": "readings.",
+          "beatId": "rule",
+          "startFrame": 2365,
+          "endFrame": 2397
+        }
+      ]
+    },
+    {
+      "text": "Otherwise, we drop it.",
+      "startFrame": 2397,
+      "endFrame": 2447,
+      "words": [
+        {
+          "text": "Otherwise,",
+          "beatId": "rule",
+          "startFrame": 2397,
+          "endFrame": 2418
+        },
+        {
+          "text": "we",
+          "beatId": "rule",
+          "startFrame": 2418,
+          "endFrame": 2420
+        },
+        {
+          "text": "drop",
+          "beatId": "rule",
+          "startFrame": 2420,
+          "endFrame": 2429
+        },
+        {
+          "text": "it.",
+          "beatId": "rule",
+          "startFrame": 2429,
+          "endFrame": 2439
+        }
+      ]
+    },
+    {
+      "text": "So, remember.",
+      "startFrame": 2484,
+      "endFrame": 2509,
+      "words": [
+        {
+          "text": "So,",
+          "beatId": "recall",
+          "startFrame": 2484,
+          "endFrame": 2488
+        },
+        {
+          "text": "remember.",
+          "beatId": "recall",
+          "startFrame": 2488,
+          "endFrame": 2509
+        }
+      ]
+    },
+    {
+      "text": "We predict a number.",
+      "startFrame": 2509,
+      "endFrame": 2555,
+      "words": [
+        {
+          "text": "We",
+          "beatId": "recall",
+          "startFrame": 2509,
+          "endFrame": 2510
+        },
+        {
+          "text": "predict",
+          "beatId": "recall",
+          "startFrame": 2510,
+          "endFrame": 2526
+        },
+        {
+          "text": "a",
+          "beatId": "recall",
+          "startFrame": 2526,
+          "endFrame": 2527
+        },
+        {
+          "text": "number.",
+          "beatId": "recall",
+          "startFrame": 2526,
+          "endFrame": 2555
+        }
+      ]
+    },
+    {
+      "text": "Tomorrow's full-day average.",
+      "startFrame": 2555,
+      "endFrame": 2605,
+      "words": [
+        {
+          "text": "Tomorrow's",
+          "beatId": "recall",
+          "startFrame": 2555,
+          "endFrame": 2573
+        },
+        {
+          "text": "full-day",
+          "beatId": "recall",
+          "startFrame": 2573,
+          "endFrame": 2585
+        },
+        {
+          "text": "average.",
+          "beatId": "recall",
+          "startFrame": 2585,
+          "endFrame": 2605
+        }
+      ]
+    },
+    {
+      "text": "Only from days with enough readings.",
+      "startFrame": 2605,
+      "endFrame": 2679,
+      "words": [
+        {
+          "text": "Only",
+          "beatId": "recall",
+          "startFrame": 2605,
+          "endFrame": 2610
+        },
+        {
+          "text": "from",
+          "beatId": "recall",
+          "startFrame": 2610,
+          "endFrame": 2617
+        },
+        {
+          "text": "days",
+          "beatId": "recall",
+          "startFrame": 2617,
+          "endFrame": 2624
+        },
+        {
+          "text": "with",
+          "beatId": "recall",
+          "startFrame": 2624,
+          "endFrame": 2632
+        },
+        {
+          "text": "enough",
+          "beatId": "recall",
+          "startFrame": 2632,
+          "endFrame": 2643
+        },
+        {
+          "text": "readings.",
+          "beatId": "recall",
+          "startFrame": 2643,
+          "endFrame": 2679
+        }
+      ]
+    },
+    {
+      "text": "Next, what is the model",
+      "startFrame": 2679,
+      "endFrame": 2735,
+      "words": [
+        {
+          "text": "Next,",
+          "beatId": "recall",
+          "startFrame": 2679,
+          "endFrame": 2696
+        },
+        {
+          "text": "what",
+          "beatId": "recall",
+          "startFrame": 2696,
+          "endFrame": 2707
+        },
+        {
+          "text": "is",
+          "beatId": "recall",
+          "startFrame": 2707,
+          "endFrame": 2713
+        },
+        {
+          "text": "the",
+          "beatId": "recall",
+          "startFrame": 2713,
+          "endFrame": 2721
+        },
+        {
+          "text": "model",
+          "beatId": "recall",
+          "startFrame": 2721,
+          "endFrame": 2735
+        }
+      ]
+    },
+    {
+      "text": "allowed to see at six pm?",
+      "startFrame": 2735,
+      "endFrame": 2791,
+      "words": [
+        {
+          "text": "allowed",
+          "beatId": "recall",
+          "startFrame": 2735,
+          "endFrame": 2755
+        },
+        {
+          "text": "to",
+          "beatId": "recall",
+          "startFrame": 2755,
+          "endFrame": 2761
+        },
+        {
+          "text": "see",
+          "beatId": "recall",
+          "startFrame": 2761,
+          "endFrame": 2769
+        },
+        {
+          "text": "at",
+          "beatId": "recall",
+          "startFrame": 2769,
+          "endFrame": 2775
+        },
+        {
+          "text": "six",
+          "beatId": "recall",
+          "startFrame": 2775,
+          "endFrame": 2781
+        },
+        {
+          "text": "pm?",
+          "beatId": "recall",
+          "startFrame": 2783,
+          "endFrame": 2784
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "day": 351,
+  "source": "DAF-01 part 2 — bridge + script_v2.md beats versions…next (takes reused from day_301)",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "bridge",
+      "type": "hook",
+      "text": "This is DAF-01, part two. Last time, we learned reproducibility. Same code, same data, same libraries, same answer. And idea one: every project lives in its own room. Now, let's continue.",
+      "v3": {
+        "text": "This is D. A. F. zero one, part two. Last time, we learned reproducibility. Same code, same data, same libraries, same answer. And idea one: every project lives in its own room. Now, let's continue.",
+        "stability": 0.5
+      },
+      "seed": 3983966276,
+      "chosen": "day_351/takes/bridge_v3_t1.mp3",
+      "holdAfter": 0.8,
+      "pickedBy": "manual"
+    },
+    {
+      "id": "versions",
+      "type": "explain",
+      "text": "Idea two. Write down exactly what you need. A recipe that says, some flour, gives a different cake every time. A recipe that says, two hundred grams, gives the same cake in any kitchen. So we list every library the project needs, with its exact version. And we write that list ourselves, so we know why each library is there, instead of copying everything that happens to be installed.",
+      "v3": {
+        "text": "Idea two. Write down exactly what you need. A recipe that says, some flour, gives a different cake every time. A recipe that says, two hundred grams, gives the same cake in any kitchen. So we list every library the project needs, with its exact version. And we write that list ourselves, so we know why each library is there, instead of copying everything that happens to be installed.",
+        "stability": 0.5
+      },
+      "seed": 3680611251,
+      "chosen": "day_301/takes/versions_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "package",
+      "type": "explain",
+      "text": "Idea three. Code that lives in a notebook is stuck in that notebook. If the cleaning logic sits in cell number forty, the tests cannot use it, and later the API cannot use it. So the real code lives in one package, and every notebook, every test, and the API import the same code. One source of truth.",
+      "v3": {
+        "text": "Idea three. Code that lives in a notebook is stuck in that notebook. If the cleaning logic sits in cell number forty, the tests cannot use it, and later the API cannot use it. So the real code lives in one package, and every notebook, every test, and the API import the same code. One source of truth.",
+        "stability": 0.5
+      },
+      "seed": 2474712923,
+      "chosen": "day_301/takes/package_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "doubt2",
+      "type": "java",
+      "text": "Sir, so notebooks are bad?",
+      "v3": {
+        "text": "Sir, so notebooks are bad?",
+        "stability": 0.5
+      },
+      "seed": 1430061093,
+      "chosen": "day_301/takes/doubt2_v3_t2.mp3",
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)"
+    },
+    {
+      "id": "answer2",
+      "type": "explain",
+      "text": "No, no. Notebooks are great for exploring. For trying ideas, for drawing charts. But once an idea works, it moves into the package. Explore in the notebook. Keep the final code in the package.",
+      "v3": {
+        "text": "No, no. Notebooks are great for exploring. For trying ideas, for drawing charts. But once an idea works, it moves into the package. Explore in the notebook. Keep the final code in the package.",
+        "stability": 0.5
+      },
+      "seed": 2012436918,
+      "chosen": "day_301/takes/answer2_v3_t3.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "share",
+      "type": "explain",
+      "text": "Idea four. Be careful about what you share. Our data source needs a secret key. That key must never go online. So the secret stays only on my machine, and what we share is an empty template that simply says, you need a key here.",
+      "v3": {
+        "text": "Idea four. Be careful about what you share. Our data source needs a secret key. That key must never go online. So the secret stays only on my machine, and what we share is an empty template that simply says, you need a key here.",
+        "stability": 0.5
+      },
+      "seed": 4112941441,
+      "chosen": "day_301/takes/share_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "doubt3",
+      "type": "java",
+      "text": "Sir, and the data? Do we share that?",
+      "v3": {
+        "text": "Sir, and the data? Do we share that?",
+        "stability": 0.5
+      },
+      "seed": 1667804012,
+      "chosen": "day_301/takes/doubt3_v3_t2.mp3",
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)"
+    },
+    {
+      "id": "answer3",
+      "type": "explain",
+      "text": "No. We share the code that downloads the data, not the data itself. Data is big, and it can always be downloaded again. The code is small, and it is the real recipe. Share the recipe, and anyone can cook the same dish.",
+      "v3": {
+        "text": "No. We share the code that downloads the data, not the data itself. Data is big, and it can always be downloaded again. The code is small, and it is the real recipe. Share the recipe, and anyone can cook the same dish.",
+        "stability": 0.5
+      },
+      "seed": 264151722,
+      "chosen": "day_301/takes/answer3_v3_t2.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "asha",
+      "type": "insight",
+      "text": "So what did DAF-01 give Asha madam? Nothing she can see. No forecast yet. But from now on, every number we show her can be produced again, by anyone, on any machine. And that is what makes a forecast trustworthy.",
+      "v3": {
+        "text": "So what did DAF-01 give Asha madam? Nothing she can see. No forecast yet. But from now on, every number we show her can be produced again, by anyone, on any machine. And that is what makes a forecast trustworthy.",
+        "stability": 0.5
+      },
+      "seed": 2639471420,
+      "chosen": "day_301/takes/asha_v3_t1.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "recall",
+      "type": "takeaway",
+      "text": "So, remember. Reproducibility means same code, same data, same libraries, same answer. And it stands on four ideas. Its own environment. Exact versions. One package for the real code. And share the recipe, never the secret. The full code is on GitHub.",
+      "v3": {
+        "text": "So, remember. Reproducibility means same code, same data, same libraries, same answer. And it stands on four ideas. Its own environment. Exact versions. One package for the real code. And share the recipe, never the secret. The full code is on GitHub.",
+        "stability": 0.5
+      },
+      "seed": 902558766,
+      "chosen": "day_301/takes/recall_v3_t2.mp3",
+      "holdAfter": 0.8
+    },
+    {
+      "id": "next",
+      "type": "teaser",
+      "text": "Next time, DAF-02. Before we touch any data, we write down exactly what Asha madam needs.",
+      "v3": {
+        "text": "Next time, DAF-02. Before we touch any data, we write down exactly what Asha madam needs.",
+        "stability": 0.5
+      },
+      "seed": 712623369,
+      "chosen": "day_301/takes/next_v3_t1.mp3",
+      "holdAfter": 0.8
+    }
+  ]
+}

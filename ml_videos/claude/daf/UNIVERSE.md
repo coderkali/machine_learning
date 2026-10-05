@@ -70,3 +70,33 @@ catch → Recall card (Problem · Root cause · Fix · Pattern · Gotcha + 1 que
   `Instagram_Youtube_Reels/DAF/DAF_Trailer2_Language_Rules_Plan.mp4` + `DAF_Trailer2_thumbnail.png`. QA motion ✅;
   accepted "fails" = Whisper numerals + recap opening. Shared helpers now in `src/shared/daf/ui.tsx` (ip, live, Box,
   Strike, CPCB table). DoubtCard now bobs (QA motion). Next: **DAF-01 episode** (id plan: `day_301`, part 2 = `day_302` if > 3 min).
+- 2026-10-04: Trailer Part 2 **v2** (script v7, 3 ideas, 1:36, audio approved first) → `DAF/Trailer/Part2/DAF_Trailer_Part2_v2.mp4`
+  (render `out/day_202/episode_v5.mp4`). Folder reorganised into Trailer/Part1|Part2 with VERSIONS.md. ✅ approved as FINAL (2026-10-04).
+- 2026-10-04: Trailer VOICEOVER_SCRIPT.md files written beside both finals. **DAF-01** = `day_301`: script
+  `claude/daf/episodes/daf_01/script_v1.md` (25 beats, ~1,000 words), audio v1 6:22 REJECTED (step-by-step) → v2 concepts-only (script_v2.md, 4:13) →
+  `DAF/Episodes/DAF-01/audio/DAF-01_v1_audio.mp3`. Waiting for Kali's audio approval → then scenes.
+  Note: project README "How to run" is still the placeholder (DAF-01 acceptance item) — told Kali.
+- 2026-10-04: **DAF-01 split** into Part 1 (`day_301`, 2:11) and Part 2 (`day_351`, 2:34; takes reused from day_301 +
+  2 linking lines). IDs: DAF-NN part 1 = `day_3NN`, part 2 = `day_3(50+NN)`. Running picture: `shared/daf/House.tsx`
+  (REPRODUCIBILITY roof on 4 pillars). Videos → `DAF/Episodes/DAF-01/Part1|Part2/` (+ VOICEOVER_SCRIPT.md). ✅ Both approved as FINAL (2026-10-04). Next: DAF-02 (`day_302` / `day_352`) in a new chat.
+- 2026-10-04: **DAF-02** script v1.1 (`episodes/daf_02/script_v1.md`, +data-row beat) and visual plan with REAL rows
+  (`episodes/daf_02/visual_plan_v1.md`: daily_17_clean.csv, DAF-06 cut 2026-03-01 → train 323 / test 164). Audio v1: Part 1 `day_302`
+  2:52, Part 2 `day_352` 2:58 → `DAF/Episodes/DAF-02/Part1|Part2/audio/` (+VERSIONS.md, VOICEOVER_SCRIPT.md). Waiting for Kali's audio approval.
+- 2026-10-05: DAF-02 audio approved → videos v1: `out/day_302/episode_v2.mp4` (2:52) and `out/day_352/episode_v2.mp4` (2:58) →
+  `DAF/Episodes/DAF-02/Part1|Part2/DAF-02_PartN_v1.mp4` (+thumbnail). New shared `src/shared/daf/Req.tsx` (Contract pins, ProjectMap,
+  Stamp, HourBars). QA: only Whisper-numeral + recap-opening fails. Waiting for Kali's video review. Next: DAF-03 (`day_303` / `day_353`).
+- 2026-10-05: DAF-02 videos v1 REJECTED ("not showing the table or data", "only half screen"). v2 = data-first rebuild:
+  `src/shared/daf/Stage.tsx` (full-height window 336→1406, caption at safe-zone bottom 1540, mascot steps down) +
+  `src/shared/daf/DataTable.tsx` (real rows that fill, shift ↑, strike). Renders `out/day_302|day_352/episode_v4.mp4` →
+  `DAF/Episodes/DAF-02/Part1|Part2/DAF-02_PartN_v2.mp4`. **Use Stage + DataTable for every future DAF episode.** Waiting for Kali's review.
+- 2026-10-05: DAF-02 v2 videos also rejected (too many ideas, too fast, D-001/D-002 jargon unexplained; wants the data table
+  PINNED at the top all video). New plan = 3 short videos, one question each, one new column per video:
+  A `day_302` "What exactly do we predict?" (1:34) · B `day_352` "What can the model see at 6 pm?" (1:15) · C `day_402` "How do we know it's good?" (1:39).
+  Script `episodes/daf_02/script_v2.md`; audio → `DAF/Episodes/DAF-02/Part1|Part2|Part3/audio/`. Old v1 data in `src/episodes/day_3x2/v1_backup/`.
+  Waiting for audio approval. Kali will share Instagram reference reels (built-in browser shows them black when logged out → ask for files).
+- 2026-10-05: DAF-02 v3 videos (pinned-table layout, `src/shared/daf/Pinned.tsx`: table on top all video, Zone below,
+  DoubtLow, Takeaways): A `out/day_302/episode_v5.mp4` → Part1_v3 · B `out/day_352/episode_v5.mp4` → Part2_v3 ·
+  C `out/day_402/episode.mp4` → Part3_v1. QA motion ✅ all three. Waiting for Kali's review. **This is the DAF template now.**
+- 2026-10-05: ✅ **DAF-02 A, B, C approved as FINAL.** Part folders: Part1_v3_FINAL, Part2_v3_FINAL, Part3_v1_FINAL; all three + audio +
+  DAF-02_SCRIPTS.md copied to `DAF/Episodes/DAF-02/FINAL/`. Next: DAF-03 with the same pinned-table template
+  (ids: day_303 / day_353 / day_403). Kali's PVC voice exists ("Kali – Teacher", v2 models only) — see memory kali-pvc-voice.

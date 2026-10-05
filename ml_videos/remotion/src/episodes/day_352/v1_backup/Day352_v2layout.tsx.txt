@@ -1,0 +1,353 @@
+// DAF-02 · Part 2 — how good is good enough: success number · baseline · non-goals (claude/daf/episodes/daf_02/script_v1.md).
+// v2 (Kali, 2026-10-05): data-first on the full-height Stage — the same real R K Puram table grows a persistence column,
+// an error column (MAE 18.6), a Poor-day recall check (2 of 3), and the real train/test cut (DAF-06: 1 Mar 2026).
+// Source: data/interim/daily_17_clean.csv. All text is HTML (SVG <text> shakes in renders); SVG only for lines.
+import { AbsoluteFill, Audio, staticFile, useCurrentFrame } from "remotion";
+import { draw, enter, pop } from "../../shared/anim";
+import { Asha, DoubtCard } from "../../shared/daf/Cast";
+import { DataTable, pmColor } from "../../shared/daf/DataTable";
+import { Contract, ProjectMap, Stamp } from "../../shared/daf/Req";
+import { Stage, StageCaption } from "../../shared/daf/Stage";
+import { live, Strike } from "../../shared/daf/ui";
+import { DevMascot } from "../../shared/DevMascot";
+import { Backdrop, ChapterBar, Chip, Header, K, TermCard, tilt, TimelineProvider, TitleCard, useCues, useMouth, useTimeline } from "../../shared/explainer/kit";
+import type { EpisodeMeta, Timeline } from "../../shared/types";
+
+export const Day352: React.FC<{ timeline: Timeline; meta: EpisodeMeta }> = ({ timeline, meta }) => (
+  <TimelineProvider value={timeline}><Scene meta={meta} /></TimelineProvider>
+);
+
+const RISHI_BEATS = ["doubt3"];
+// R K Puram daily means, 20–26 Feb 2025
+const DAYS = ["20", "21", "22", "23", "24", "25", "26"];
+const ACTUAL = [49.4, 90.4, 69.1, 74.0, 101.2, 102.0, 118.2];
+// rows 21–26 Feb: date · actual · persistence guess (= yesterday) · error
+const ROWS = [1, 2, 3, 4, 5, 6].map((i) => ({ day: `${DAYS[i]} Feb`, actual: ACTUAL[i], guess: ACTUAL[i - 1], err: Math.abs(ACTUAL[i] - ACTUAL[i - 1]) }));
+const MAE = ROWS.reduce((s, r) => s + r.err, 0) / ROWS.length; // 18.6
+// Part 1's final table: date · PM2.5 until 17:00 · tomorrow's mean
+const P1: [string, number, number][] = [["22 Feb", 69.8, 74.0], ["23 Feb", 70.3, 101.2], ["24 Feb", 102.7, 102.0], ["25 Feb", 98.7, 118.2]];
+// rows around the DAF-06 cut (1 Mar 2026)
+const CUT: [string, number | null, string][] = [["27 Feb 2026", 97.2, "TRAIN"], ["28 Feb 2026", 109.8, "TRAIN"], ["✂ cut · 1 Mar 2026", null, ""], ["1 Mar 2026", 89.5, "TEST 🔒"], ["2 Mar 2026", 102.6, "TEST 🔒"]];
+
+const num = (v: number) => <span style={{ color: pmColor(v) }}>{v.toFixed(1)}</span>;
+
+function Scene({ meta }: { meta: EpisodeMeta }) {
+  const f = useCurrentFrame();
+  const tl = useTimeline();
+  const { at, start, end } = useCues();
+  const mouth = useMouth(f);
+  const rishiTalking = RISHI_BEATS.some((id) => f >= start(id) && f < end(id));
+
+  const c = {
+    fixed: at("recap2", "fixed"), skip: at("recap2", "skip"), success0: at("recap2", "success"), beat0: at("recap2", "beat"),
+    acc: at("accurate", "accurate"), how: at("accurate", "how"), compared: at("accurate", "Compared"), without: at("accurate", "Without"), number: at("accurate", "number"), rival: at("accurate", "rival"),
+    method: at("baseline", "method"), tomorrow: at("baseline", "Tomorrow"), persistence: at("baseline", "persistence"), free: at("baseline", "free"), noModel: at("baseline", "needs"), right: at("baseline", "right"), beatIt: at("baseline", "beat"),
+    negative: at("answer3", "negative"), zero: at("answer3", "zero"), pipelines: at("answer3", "pipelines"), servers: at("answer3", "servers"), maintenance: at("answer3", "maintenance"), trust: at("answer3", "trust"), worse: at("answer3", "worse"), better: at("answer3", "better"),
+    measure: at("mae", "measure"), mae: at("mae", "MAE"), average: at("mae", "average"), micro: at("mae", "micrograms"), simple: at("mae", "Simple"),
+    same: at("catch", "same"), forty: at("catch", "forty"), harm: at("catch", "harm"), eightyfive: at("catch", "eighty-five"), flips: at("catch", "flips"), safety: at("catch", "safety"), recall: at("catch", "Recall"), caught: at("catch", "catch", 2),
+    sentence: at("criterion", "sentence"), tenP: at("criterion", "ten"), held: at("criterion", "held-out"), never: at("criterion", "never"), catching: at("criterion", "catching"), named: at("criterion", "named"), now: at("criterion", "now"),
+    notB: at("nongoals", "not"), hourly: at("nongoals", "hourly"), city: at("nongoals", "city"), pollutant: at("nongoals", "pollutant"), mobile: at("nongoals", "mobile"), beyond: at("nongoals", "beyond"), laziness: at("nongoals", "laziness"), sideways: at("nongoals", "sideways"),
+    records: at("records", "records"), options: at("records", "options"), why: at("records", "why"), other: at("records", "other"), easier: at("records", "easier"),
+    give: at("asha", "give"), still: at("asha", "Still"), knows: at("asha", "knows"), six: at("asha", "six"), wrong: at("asha", "wrong"),
+    rFive: at("recall", "five"), rDec: at("recall", "decision"), rTar: at("recall", "target"), rTime: at("recall", "time"), rSucc: at("recall", "success"), rBase: at("recall", "baseline"), rNeg: at("recall", "negative"), gh: at("recall", "GitHub"),
+    daf03: at("next", "DAF-03"), sensors: at("next", "sensors"), trust3: at("next", "trust"),
+  };
+  const chapters = (meta.chapters ?? []).map((ch) => ({ label: ch.label, from: start(ch.beat) }));
+  const sec = (a: string, b: string) => live(f, start(a), start(b));
+  const bob = { transform: `translateY(${5 * Math.sin(f / 9)}px)` };
+  const mascotDown = enter(f, c.skip, 14);
+
+  // chart geometry (baseline beat): 7 days, 0–130 µg/m³
+  const GW = 900, GH = 240, ymax = 130;
+  const px = (i: number) => 30 + (i * (GW - 60)) / 6;
+  const py = (v: number) => GH - (v / ymax) * GH;
+  const pathOf = (vals: number[], from = 0) => vals.map((v, i) => `${i ? "L" : "M"}${px(i + from)} ${py(v)}`).join(" ");
+
+  return (
+    <AbsoluteFill style={{ fontFamily: K.ui, overflow: "hidden" }}>
+      <Audio src={staticFile(tl.audio)} />
+      <Backdrop />
+      <Header f={f} day={meta.day} title={meta.title} badge={meta.badge} />
+      <ChapterBar f={f} chapters={chapters} />
+      <Stage f={f} tab="📜 DAF-02 · requirements · R K Puram data">
+        <div style={{ position: "absolute", inset: 0, transform: `translate(${4 * Math.sin(f / 13)}px, ${7 * Math.sin(f / 8)}px)` }}>
+        {/* ── recap2: part 1's table + three pins done, two to go ── */}
+        <div style={{ opacity: sec("recap2", "accurate") }}>
+          <DataTable f={f} size={34} rowH={66} style={{ left: 20, top: 20, width: 960 }}
+            cols={[
+              { key: "d", label: "date", w: 240, at: 2 },
+              { key: "x", label: "INPUT · until 17:00", w: 340, color: K.blue, at: 2 },
+              { key: "y", label: "ANSWER · tomorrow", w: 370, color: K.purple, at: 2 },
+            ]}
+            rows={P1} rowAt={(r) => 4 + r * 3} fmt={(v, ci) => (ci === 0 ? v : <>{ci === 2 ? "→ " : ""}{num(v as number)}</>)} />
+          <div style={{ position: "absolute", left: 0, top: 0, transform: "scale(1.1)", transformOrigin: "0 0" }}>
+            <Contract f={f} at={start("recap2") + 10} lit={[c.fixed - 6, c.fixed, c.fixed + 6, Infinity, Infinity]} glow={[0, 0, 0, c.success0, c.beat0]} x={60} y={350} />
+          </div>
+          <div style={{ position: "absolute", left: 40, top: 900, ...pop(f, c.skip) }}><Chip label="⚠️ the two questions beginners skip" color={K.red} size={34} /></div>
+        </div>
+
+        {/* ── accurate: an adjective is not a criterion ── */}
+        <div style={{ opacity: sec("accurate", "baseline"), ...bob }}>
+          <div style={{ position: "absolute", left: 40, top: 60, ...pop(f, c.acc) }}>
+            <div style={{ position: "relative", padding: "34px 40px", borderRadius: 40, background: "#fff", border: `6px solid ${K.ink}`, boxShadow: `8px 8px 0 ${K.ink}`, fontFamily: K.head, fontSize: 74, transform: `rotate(${-2 + Math.sin(f / 9)}deg)` }}>
+              “The model must be ACCURATE”
+              <Strike p={draw(f, c.without)} />
+            </div>
+          </div>
+          <div style={{ position: "absolute", left: 50, top: 340, display: "flex", gap: 20 }}>
+            <span style={pop(f, c.how)}><Chip label="how accurate? 🤔" color={K.muted} size={38} /></span>
+            <span style={pop(f, c.compared)}><Chip label="compared to what? 🤔" color={K.muted} size={38} /></span>
+          </div>
+          <div style={{ position: "absolute", left: 50, top: 450, ...pop(f, c.without) }}><Chip label="no comparison → every model looks good" color={K.red} size={34} /></div>
+          <div style={{ position: "absolute", left: 50, top: 600, display: "flex", alignItems: "center", gap: 20 }}>
+            <span style={pop(f, c.number)}><TermCard text="A NUMBER" color={K.blue} size={70} /></span>
+            <span style={{ fontFamily: K.head, fontSize: 70, ...pop(f, c.rival) }}>+</span>
+            <span style={pop(f, c.rival)}><TermCard text="A NAMED RIVAL" color={K.ink} size={70} /></span>
+          </div>
+        </div>
+
+        {/* ── baseline: persistence column on the real table + chart ── */}
+        <div style={{ opacity: sec("baseline", "doubt3"), ...bob }}>
+          <div style={{ position: "absolute", left: 30, top: 18, ...pop(f, c.method) }}><Chip label="Asha's method: “tomorrow = today” · R K Puram, Feb 2025" color={K.muted} size={28} /></div>
+          <DataTable f={f} size={36} rowH={64} style={{ left: 20, top: 80, width: 960 }}
+            cols={[
+              { key: "d", label: "date", w: 220, at: c.tomorrow },
+              { key: "a", label: "actual daily mean", w: 330, color: K.blue, at: c.tomorrow },
+              { key: "g", label: "┅ persistence = yesterday", w: 400, color: "#7C8A9C", at: c.persistence, fill: (r) => c.persistence + 6 + r * 5 },
+            ]}
+            rows={ROWS.map((r) => [r.day, r.actual, r.guess])} rowAt={(r) => c.tomorrow + r * 3}
+            fmt={(v, ci) => (ci === 0 ? v : ci === 2 ? <span style={{ color: "#7C8A9C" }}>↘ {(v as number).toFixed(1)}</span> : num(v as number))} />
+          <div style={{ position: "absolute", left: 50, top: 560, width: GW, height: GH + 40, opacity: enter(f, c.persistence) }}>
+            <div style={{ position: "absolute", left: 0, right: 0, top: py(91), borderTop: `4px dashed ${K.red}` }} />
+            <div style={{ position: "absolute", right: 0, top: py(91) - 28, fontWeight: 900, fontSize: 20, color: K.red }}>91 · Poor</div>
+            <svg viewBox={`0 0 ${GW} ${GH}`} width={GW} height={GH} style={{ position: "absolute", left: 0, top: 0, overflow: "visible" }}>
+              <path d={pathOf(ACTUAL)} fill="none" stroke={K.blue} strokeWidth={7} strokeLinejoin="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - draw(f, c.persistence, 24)} />
+              <path d={pathOf(ACTUAL.slice(0, 6), 1)} fill="none" stroke="#9AA6B6" strokeWidth={7} strokeDasharray="14 10" strokeLinejoin="round" opacity={enter(f, c.persistence + 20, 14)} />
+              {ACTUAL.map((v, i) => <circle key={i} cx={px(i)} cy={py(v)} r={10} fill={v >= 91 ? "#FB8C00" : K.blue} stroke={K.ink} strokeWidth={3} opacity={enter(f, c.persistence + i * 2)} />)}
+            </svg>
+            {DAYS.map((d, i) => <div key={d} style={{ position: "absolute", left: px(i) - 16, top: GH + 8, fontWeight: 800, fontSize: 22, color: K.muted }}>{d} Feb</div>)}
+          </div>
+          <div style={{ position: "absolute", left: 30, top: 900, display: "flex", gap: 12, opacity: 1 - enter(f, c.beatIt, 8) }}>
+            <span style={pop(f, c.free)}><Chip label="free" color={K.green} size={28} /></span>
+            <span style={pop(f, c.noModel)}><Chip label="no model" color={K.green} size={28} /></span>
+            <span style={pop(f, c.right)}><Chip label="often close · misses the jumps" color={K.ink} size={28} /></span>
+          </div>
+          <div style={{ position: "absolute", left: 30, top: 890, ...pop(f, c.beatIt) }}><TermCard text="OUR MODEL MUST BEAT IT" color={K.red} size={56} /></div>
+        </div>
+
+        {/* ── doubt3 + answer3: negative value ── */}
+        <div style={{ opacity: live(f, start("doubt3"), start("mae")), ...bob }}>
+          {(() => {
+            const sink = enter(f, c.pipelines, 10) * 90 + enter(f, c.servers, 10) * 90 + enter(f, c.maintenance, 10) * 90;
+            return (
+              <>
+                <div style={{ position: "absolute", left: 40, top: 30, ...pop(f, c.negative) }}><Chip label="value of a model that loses to persistence" color={K.ink} size={30} /></div>
+                <div style={{ position: "absolute", left: 100, top: 300, width: 380, borderTop: `7px solid ${K.ink}`, opacity: enter(f, c.negative) }} />
+                <div style={{ position: "absolute", left: 40, top: 270, fontFamily: K.head, fontSize: 48, opacity: enter(f, c.zero) }}>0</div>
+                <div style={{ position: "absolute", left: 180, top: 307, width: 220, height: 30 + sink, background: "repeating-linear-gradient(45deg,#E53935 0 12px,#EF5350 12px 24px)", border: `5px solid ${K.ink}`, borderTop: "none", opacity: enter(f, c.negative) }} />
+                <div style={{ position: "absolute", left: 520, top: 110, display: "flex", flexDirection: "column", gap: 16, alignItems: "flex-start" }}>
+                  {[["🛠️ data pipelines", c.pipelines], ["🖥️ servers", c.servers], ["🔧 maintenance", c.maintenance]].map(([t, a]) => (
+                    <span key={t as string} style={pop(f, a as number)}><Chip label={`− ${t as string}`} color={K.red} size={34} /></span>
+                  ))}
+                  <span style={pop(f, c.trust)}><Chip label="😎 looks clever → trusted" color="#FB8C00" size={32} /></span>
+                </div>
+                <div style={{ position: "absolute", left: 520, top: 480, ...pop(f, c.negative + 6) }}><TermCard text="NEGATIVE VALUE" color={K.red} size={56} /></div>
+                <div style={{ position: "absolute", left: 40, top: 720, ...pop(f, c.worse) }}><Chip label="worse than “tomorrow = today”?" color={K.ink} size={34} /></div>
+                <div style={{ position: "absolute", left: 40, top: 810, ...pop(f, c.better) }}>
+                  <div style={tilt({ opacity: 1, transform: "" }, -2 + Math.sin(f / 7))}><TermCard text="NO MODEL IS BETTER" color={K.red} size={66} /></div>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+
+        {/* ── mae: the same table grows an error column ── */}
+        <div style={{ opacity: sec("mae", "catch"), ...bob }}>
+          <div style={{ position: "absolute", left: 30, top: 18, ...pop(f, c.mae) }}><Chip label="📏 MAE · mean absolute error · how far off, on average" color={K.blue} size={28} /></div>
+          <DataTable f={f} size={34} rowH={70} style={{ left: 20, top: 80, width: 960 }}
+            cols={[
+              { key: "d", label: "date", w: 170, at: start("mae") },
+              { key: "g", label: "guess", w: 170, color: "#7C8A9C", at: start("mae") },
+              { key: "a", label: "actual", w: 170, color: K.blue, at: start("mae") },
+              { key: "e", label: "how far off |actual − guess|", w: 440, color: K.red, at: c.mae, fill: (r) => c.average + r * 4 },
+            ]}
+            rows={ROWS.map((r) => [r.day, r.guess, r.actual, r.err])} rowAt={(r) => start("mae") + 2 + r * 2}
+            fmt={(v, ci, r) => {
+              if (ci === 0) return v;
+              if (ci === 1) return <span style={{ color: "#7C8A9C" }}>{(v as number).toFixed(1)}</span>;
+              if (ci === 2) return num(v as number);
+              return (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ display: "inline-block", height: 26, width: (v as number) * 6 * enter(f, c.average + r * 4, 10), background: K.red, borderRadius: 6 }} />
+                  {(v as number).toFixed(1)}
+                </span>
+              );
+            }} />
+          <div style={{ position: "absolute", left: 30, top: 640, ...pop(f, c.micro) }}><TermCard text={`MAE = AVERAGE = ${MAE.toFixed(1)} µg/m³`} color={K.blue} size={58} /></div>
+          <div style={{ position: "absolute", left: 30, top: 780, ...pop(f, c.simple) }}><Chip label="persistence, 21–26 Feb 2025: “on average 18.6 off”" color={K.green} size={30} /></div>
+        </div>
+
+        {/* ── catch: same error, different cost → Poor-day recall on the real rows ── */}
+        <div style={{ opacity: sec("catch", "criterion"), ...bob }}>
+          {(() => {
+            const X = 60, W = 880, max = 130;
+            const p = (v: number) => X + (v / max) * W;
+            const Bracket = ({ v, a, ok }: { v: number; a: number; ok: boolean }) => (
+              <div style={{ position: "absolute", left: p(v - 10), top: 110, width: p(v + 10) - p(v - 10), height: 56, border: `7px solid ${ok ? K.green : K.red}`, borderBottom: "none", borderRadius: "10px 10px 0 0", background: ok ? "rgba(46,158,91,.15)" : "rgba(229,57,53,.15)", ...pop(f, a) }}>
+                <div style={{ position: "absolute", left: "50%", top: 48, width: 22, height: 22, marginLeft: -11, borderRadius: 11, background: K.ink }} />
+              </div>
+            );
+            return (
+              <>
+                <div style={{ position: "absolute", left: 30, top: 18, ...pop(f, c.same) }}><Chip label="MAE counts every error the same" color={K.muted} size={28} /></div>
+                <div style={{ position: "absolute", left: X, top: 172, width: W, height: 9, background: K.ink, borderRadius: 4, opacity: enter(f, c.same) }} />
+                <div style={{ position: "absolute", left: p(91), top: 70, height: 170, borderLeft: `6px dashed ${K.red}`, opacity: enter(f, c.same) }} />
+                <div style={{ position: "absolute", left: p(91) + 10, top: 70, fontWeight: 900, fontSize: 22, color: K.red, opacity: enter(f, c.same) }}>91 · Poor</div>
+                {[0, 40, 85, 130].map((t) => <div key={t} style={{ position: "absolute", left: p(t) - 14, top: 192, fontWeight: 800, fontSize: 22, color: K.muted, opacity: enter(f, c.same) }}>{t}</div>)}
+                <Bracket v={40} a={c.forty} ok />
+                <Bracket v={85} a={c.eightyfive} ok={false} />
+                <div style={{ position: "absolute", left: p(40) - 110, top: 240, ...pop(f, c.harm) }}><Chip label="±10 · no harm ✓" color={K.green} size={26} /></div>
+                <div style={{ position: "absolute", left: p(85) - 80, top: 240, ...pop(f, c.flips) }}><Chip label="±10 · decision flips ✗" color={K.red} size={26} /></div>
+                <div style={{ position: "absolute", left: 30, top: 330, ...pop(f, c.safety) }}><TermCard text="+ SAFETY METRIC · POOR-DAY RECALL" color={K.ink} size={44} /></div>
+                <div style={{ position: "absolute", left: 30, top: 440, ...pop(f, c.recall) }}><Chip label="the truly Poor days (≥ 91) in our rows · did persistence say Poor?" color="#FB8C00" size={26} /></div>
+                <DataTable f={f} size={34} rowH={70} style={{ left: 20, top: 500, width: 960 }}
+                  cols={[
+                    { key: "d", label: "Poor day", w: 210, at: c.recall },
+                    { key: "a", label: "actual", w: 200, color: K.blue, at: c.recall },
+                    { key: "g", label: "persistence said", w: 280, color: "#7C8A9C", at: c.recall },
+                    { key: "r", label: "caught?", w: 260, color: K.ink, at: c.caught, fill: (r) => c.caught + 4 + r * 6 },
+                  ]}
+                  rows={[["24 Feb", 101.2, "74.0 · fine", "✗ missed"], ["25 Feb", 102.0, "101.2 · Poor", "✓ caught"], ["26 Feb", 118.2, "102.0 · Poor", "✓ caught"]]}
+                  rowAt={(r) => c.recall + 4 + r * 4}
+                  hi={(r) => (r === 0 && f >= c.caught + 4 ? "#FFEBEE" : null)}
+                  fmt={(v, ci) => (ci === 1 ? num(v as number) : ci === 3 ? <span style={{ color: (v as string).startsWith("✓") ? K.green : K.red }}>{v}</span> : v)} />
+                <div style={{ position: "absolute", left: 30, top: 830, ...pop(f, c.caught + 24) }}><TermCard text="RECALL = 2 OF 3 POOR DAYS CAUGHT" color="#FB8C00" size={46} /></div>
+              </>
+            );
+          })()}
+        </div>
+
+        {/* ── criterion: the one-sentence criterion + the real train/test cut ── */}
+        <div style={{ opacity: sec("criterion", "nongoals"), ...bob }}>
+          <div style={{ position: "absolute", left: 20, top: 16, width: 960, ...pop(f, c.sentence) }}>
+            <div style={{ borderRadius: 18, border: `5px solid ${K.ink}`, background: "#FFFDE7", padding: "16px 22px", boxShadow: `8px 8px 0 ${K.ink}` }}>
+              <div style={{ fontFamily: K.head, fontSize: 42 }}>✍️ SUCCESS CRITERION</div>
+              <div style={{ fontWeight: 900, fontSize: 32, marginTop: 8, ...pop(f, c.tenP) }}>① MAE at least <span style={{ color: K.green }}>10% better</span> than persistence</div>
+              <div style={{ fontWeight: 900, fontSize: 32, marginTop: 8, ...pop(f, c.catching) }}>② Poor-day recall <span style={{ color: K.green }}>not lower</span> than persistence</div>
+            </div>
+          </div>
+          <div style={{ position: "absolute", left: 30, top: 270, ...pop(f, c.held) }}><Chip label="measured on held-out days · all 487 R K Puram rows" color={K.ink} size={28} /></div>
+          {(() => {
+            const W = 940, tr = (323 / 487) * W;
+            return (
+              <div style={{ position: "absolute", left: 30, top: 330, width: W, height: 130, opacity: enter(f, c.held) }}>
+                <div style={{ position: "absolute", left: 0, top: 0, width: tr * enter(f, c.held, 16), height: 110, background: K.blue, border: `5px solid ${K.ink}`, borderRadius: "14px 0 0 14px", boxSizing: "border-box", color: "#fff", padding: 12, overflow: "hidden", whiteSpace: "nowrap" }}>
+                  <div style={{ fontFamily: K.head, fontSize: 44 }}>TRAIN · 323 days</div>
+                  <div style={{ fontWeight: 800, fontSize: 22 }}>19 Feb 2025 → 28 Feb 2026 · 139 Poor</div>
+                </div>
+                <div style={{ position: "absolute", left: tr, top: 0, width: W - tr, height: 110, background: "#37474F", border: `5px solid ${K.ink}`, borderLeft: "none", borderRadius: "0 14px 14px 0", boxSizing: "border-box", color: "#fff", padding: 12, overflow: "hidden", ...pop(f, c.never) }}>
+                  <div style={{ fontFamily: K.head, fontSize: 38 }}>🔒 TEST · 164</div>
+                  <div style={{ fontWeight: 800, fontSize: 20 }}>Mar → Sep 2026 · 17 Poor</div>
+                </div>
+              </div>
+            );
+          })()}
+          <DataTable f={f} size={34} rowH={64} style={{ left: 20, top: 500, width: 960 }}
+            cols={[
+              { key: "d", label: "date", w: 330, at: c.held + 10 },
+              { key: "m", label: "daily mean", w: 290, color: K.blue, at: c.held + 10 },
+              { key: "s", label: "set", w: 330, color: K.ink, at: c.held + 10 },
+            ]}
+            rows={CUT} rowAt={(r) => c.held + 12 + r * 4}
+            hi={(r) => (r === 2 ? "#FFEBEE" : r > 2 && f >= c.never ? "#ECEFF1" : r < 2 ? "#E3F2FD" : null)}
+            fmt={(v, ci, r) => (r === 2 ? (ci === 0 ? <span style={{ color: K.red }}>{v}</span> : "") : ci === 1 ? num(v as number) : ci === 2 ? <span style={{ color: (v as string).startsWith("TEST") ? "#37474F" : K.blue }}>{v}</span> : v)} />
+          <div style={{ position: "absolute", left: 30, top: 880, ...pop(f, c.now) }}><TermCard text="BAR SET BEFORE ANY MODEL" color={K.ink} size={50} /></div>
+          <div style={{ position: "absolute", left: 600, top: 290, ...pop(f, c.now + 8) }}><Chip label="the split itself is built in DAF-06" color={K.muted} size={24} /></div>
+        </div>
+
+        {/* ── nongoals ── */}
+        <div style={{ opacity: sec("nongoals", "records"), ...bob }}>
+          <div style={{ position: "absolute", left: 30, top: 20, ...pop(f, c.notB) }}><Chip label="🚫 NON-GOALS · what we are NOT building" color={K.red} size={32} /></div>
+          {[["⏰ hourly forecast", c.hourly], ["🏙️ another city", c.city], ["🧪 another pollutant", c.pollutant], ["📱 mobile app", c.mobile], ["📅 beyond tomorrow", c.beyond]].map(([t, a], i) => (
+            <div key={t as string} style={{ position: "absolute", left: 30 + (i % 2) * 480, top: 100 + Math.floor(i / 2) * 140, ...pop(f, a as number) }}>
+              <div style={{ position: "relative", width: 450, padding: "26px 20px", borderRadius: 16, border: `5px solid ${K.ink}`, background: "#fff", fontWeight: 900, fontSize: 36 }}>
+                {t as string}
+                <Strike p={draw(f, (a as number) + 8)} />
+              </div>
+            </div>
+          ))}
+          <div style={{ position: "absolute", left: 540, top: 400, ...pop(f, c.laziness) }}><Chip label="not laziness ✋" color={K.muted} size={34} /></div>
+          <div style={{ position: "absolute", left: 30, top: 600, ...pop(f, c.sideways) }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ width: 600, height: 20, background: K.green, borderRadius: 10 }} />
+              <span style={{ fontSize: 70 }}>🎯</span>
+            </div>
+            <div style={{ marginTop: 22 }}><TermCard text="NO SIDEWAYS GROWTH" color={K.green} size={60} /></div>
+          </div>
+        </div>
+
+        {/* ── records: D-001 and D-002 ── */}
+        <div style={{ opacity: sec("records", "asha"), ...bob }}>
+          {[["D-001", "number → CPCB table"], ["D-002", "tomorrow's 24-h mean"]].map(([id, t], i) => (
+            <div key={id} style={{ position: "absolute", left: 30 + i * 480, top: 50, ...pop(f, c.records + i * 8) }}>
+              <div style={{ width: 440, borderRadius: 18, border: `5px solid ${K.ink}`, background: "#fff", boxShadow: `8px 8px 0 ${K.ink}`, padding: 22, transform: `rotate(${(i ? 2 : -2) + Math.sin(f / 9 + i)}deg)` }}>
+                <div style={{ fontFamily: K.head, fontSize: 56 }}>📄 {id}</div>
+                <div style={{ fontWeight: 900, fontSize: 30, color: K.muted, marginBottom: 14 }}>{t}</div>
+                {[["options", c.options], ["why we chose", c.why], ["what the other option made easier", c.other]].map(([l, a]) => (
+                  <div key={l as string} style={{ fontWeight: 900, fontSize: 30, margin: "12px 0", ...pop(f, (a as number) + i * 4) }}>✓ {l as string}</div>
+                ))}
+                <div style={{ marginTop: 14 }}><Stamp f={f} at={c.records + 12 + i * 8} size={40} /></div>
+              </div>
+            </div>
+          ))}
+          <div style={{ position: "absolute", left: 40, top: 640, ...pop(f, c.easier) }}><Chip label="proof we weighed both options" color={K.blue} size={34} /></div>
+        </div>
+
+        {/* ── asha: what DAF-02 gave her ── */}
+        <div style={{ opacity: sec("asha", "recall"), ...bob }}>
+          <div style={{ position: "absolute", left: 40, top: 60, ...pop(f, c.give) }}><div style={{ transform: `rotate(${2 * Math.sin(f / 10)}deg)`, transformOrigin: "50% 100%" }}><Asha height={440} /></div></div>
+          <div style={{ position: "absolute", left: 40, top: 540, ...pop(f, c.still) }}><Chip label="no forecast yet" color={K.muted} size={32} /></div>
+          <div style={{ position: "absolute", left: 340, top: 70, width: 620, ...pop(f, c.knows) }}>
+            <div style={{ borderRadius: 18, border: `5px solid ${K.ink}`, background: "#fff", boxShadow: `8px 8px 0 ${K.ink}`, padding: 24 }}>
+              <div style={{ fontFamily: K.head, fontSize: 48 }}>🕕 EVERY DAY AT 6 PM</div>
+              <div style={{ fontWeight: 900, fontSize: 34, margin: "14px 0", ...pop(f, c.six) }}>🔢 tomorrow's PM2.5 number</div>
+              <div style={{ fontWeight: 900, fontSize: 34, margin: "14px 0", ...pop(f, c.six + 6) }}>🏷️ its category → inside / outside</div>
+              <div style={{ fontWeight: 900, fontSize: 34, margin: "14px 0", ...pop(f, c.wrong) }}>📏 how wrong it may be</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── recall: the full contract ── */}
+        <div style={{ opacity: sec("recall", "next") }}>
+          <div style={{ position: "absolute", left: 0, top: 0, transform: "scale(1.3)", transformOrigin: "0 0" }}>
+            <Contract f={f} at={c.rFive} lit={[c.rDec, c.rTar, c.rTime, c.rSucc, c.rBase]} x={40} y={20} />
+          </div>
+          <div style={{ position: "absolute", left: 50, top: 740, ...pop(f, c.rNeg) }}><Chip label="can't beat the baseline → negative value" color={K.red} size={34} /></div>
+          <div style={{ position: "absolute", left: 50, top: 830, ...pop(f, c.gh) }}><Chip label="💻 full documents on GitHub" color={K.blue} size={34} /></div>
+        </div>
+
+        {/* ── next: DAF-03 ── */}
+        <div style={{ opacity: live(f, start("next"), Infinity) }}>
+          <div style={{ position: "absolute", left: 0, top: 0, transform: "scale(1.25)", transformOrigin: "0 0" }}><ProjectMap f={f} at={start("next")} done={2} current={3} x={30} y={30} /></div>
+          <div style={{ position: "absolute", left: 40, top: 360, ...pop(f, c.daf03) }}><TermCard text="NEXT · DAF-03" color={K.blue} size={70} /></div>
+          <div style={{ position: "absolute", left: 40, top: 520, display: "flex", gap: 24 }}>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} style={{ ...pop(f, c.sensors + i * 3) }}>
+                <div style={{ width: 88, height: 88, borderRadius: 44, background: "#fff", border: `5px solid ${K.ink}`, display: "grid", placeItems: "center", fontSize: 42, transform: `translateY(${8 * Math.sin(f / 7 + i)}px)` }}>📡</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ position: "absolute", left: 40, top: 680, ...pop(f, c.trust3) }}><Chip label="which sensors can we really trust? 🤔" color={K.ink} size={38} /></div>
+        </div>
+        </div>
+      </Stage>
+
+      {meta.titleCard && <TitleCard f={f} line={meta.titleCard.line} sub={meta.titleCard.sub} until={c.fixed} />}
+      <div style={{ position: "absolute", left: 0, top: 930 + 1100 * mascotDown, ...pop(f, 2) }}>
+        <DevMascot height={620} pose="present" mouth={rishiTalking ? 0 : mouth} />
+      </div>
+      <DoubtCard f={f} from={start("doubt3")} to={end("doubt3")} text="Sir, even if it does not beat it, a model is still something, right?" mouth={mouth} />
+      <StageCaption f={f} />
+    </AbsoluteFill>
+  );
+}

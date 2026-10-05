@@ -1,0 +1,2706 @@
+{
+  "day": 301,
+  "fps": 30,
+  "totalFrames": 3927,
+  "audio": "day_301/mix/narration_v4.wav",
+  "music": null,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "from": 0,
+      "durationInFrames": 412,
+      "speechFrom": 3,
+      "speechTo": 385
+    },
+    {
+      "id": "question",
+      "type": "problem",
+      "from": 412,
+      "durationInFrames": 353,
+      "speechFrom": 416,
+      "speechTo": 737
+    },
+    {
+      "id": "matters",
+      "type": "problem",
+      "from": 765,
+      "durationInFrames": 532,
+      "speechFrom": 769,
+      "speechTo": 1269
+    },
+    {
+      "id": "java",
+      "type": "java",
+      "from": 1297,
+      "durationInFrames": 558,
+      "speechFrom": 1300,
+      "speechTo": 1822
+    },
+    {
+      "id": "four",
+      "type": "insight",
+      "from": 1855,
+      "durationInFrames": 156,
+      "speechFrom": 1864,
+      "speechTo": 1984
+    },
+    {
+      "id": "isolation",
+      "type": "explain",
+      "from": 2011,
+      "durationInFrames": 758,
+      "speechFrom": 2015,
+      "speechTo": 2741
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "from": 2769,
+      "durationInFrames": 194,
+      "speechFrom": 2772,
+      "speechTo": 2959
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "from": 2963,
+      "durationInFrames": 541,
+      "speechFrom": 2966,
+      "speechTo": 3476
+    },
+    {
+      "id": "p1_end",
+      "type": "teaser",
+      "from": 3504,
+      "durationInFrames": 423,
+      "speechFrom": 3508,
+      "speechTo": 3882
+    }
+  ],
+  "captions": [
+    {
+      "text": "Last time, in the trailer,",
+      "startFrame": 4,
+      "endFrame": 40,
+      "words": [
+        {
+          "text": "Last",
+          "beatId": "recap",
+          "startFrame": 4,
+          "endFrame": 7
+        },
+        {
+          "text": "time,",
+          "beatId": "recap",
+          "startFrame": 7,
+          "endFrame": 14
+        },
+        {
+          "text": "in",
+          "beatId": "recap",
+          "startFrame": 14,
+          "endFrame": 18
+        },
+        {
+          "text": "the",
+          "beatId": "recap",
+          "startFrame": 18,
+          "endFrame": 23
+        },
+        {
+          "text": "trailer,",
+          "beatId": "recap",
+          "startFrame": 23,
+          "endFrame": 40
+        }
+      ]
+    },
+    {
+      "text": "we met Asha madam, and we learned",
+      "startFrame": 40,
+      "endFrame": 97,
+      "words": [
+        {
+          "text": "we",
+          "beatId": "recap",
+          "startFrame": 40,
+          "endFrame": 45
+        },
+        {
+          "text": "met",
+          "beatId": "recap",
+          "startFrame": 45,
+          "endFrame": 54
+        },
+        {
+          "text": "Asha",
+          "beatId": "recap",
+          "startFrame": 54,
+          "endFrame": 62
+        },
+        {
+          "text": "madam,",
+          "beatId": "recap",
+          "startFrame": 62,
+          "endFrame": 76
+        },
+        {
+          "text": "and",
+          "beatId": "recap",
+          "startFrame": 76,
+          "endFrame": 81
+        },
+        {
+          "text": "we",
+          "beatId": "recap",
+          "startFrame": 81,
+          "endFrame": 85
+        },
+        {
+          "text": "learned",
+          "beatId": "recap",
+          "startFrame": 85,
+          "endFrame": 97
+        }
+      ]
+    },
+    {
+      "text": "that one number, ninety-one,",
+      "startFrame": 97,
+      "endFrame": 155,
+      "words": [
+        {
+          "text": "that",
+          "beatId": "recap",
+          "startFrame": 97,
+          "endFrame": 104
+        },
+        {
+          "text": "one",
+          "beatId": "recap",
+          "startFrame": 104,
+          "endFrame": 110
+        },
+        {
+          "text": "number,",
+          "beatId": "recap",
+          "startFrame": 110,
+          "endFrame": 129
+        },
+        {
+          "text": "ninety-one,",
+          "beatId": "recap",
+          "startFrame": 129,
+          "endFrame": 155
+        }
+      ]
+    },
+    {
+      "text": "decides if six hundred children go outside.",
+      "startFrame": 155,
+      "endFrame": 221,
+      "words": [
+        {
+          "text": "decides",
+          "beatId": "recap",
+          "startFrame": 155,
+          "endFrame": 166
+        },
+        {
+          "text": "if",
+          "beatId": "recap",
+          "startFrame": 166,
+          "endFrame": 169
+        },
+        {
+          "text": "six",
+          "beatId": "recap",
+          "startFrame": 169,
+          "endFrame": 170
+        },
+        {
+          "text": "hundred",
+          "beatId": "recap",
+          "startFrame": 169,
+          "endFrame": 186
+        },
+        {
+          "text": "children",
+          "beatId": "recap",
+          "startFrame": 186,
+          "endFrame": 202
+        },
+        {
+          "text": "go",
+          "beatId": "recap",
+          "startFrame": 202,
+          "endFrame": 205
+        },
+        {
+          "text": "outside.",
+          "beatId": "recap",
+          "startFrame": 205,
+          "endFrame": 221
+        }
+      ]
+    },
+    {
+      "text": "But before we can predict that number,",
+      "startFrame": 221,
+      "endFrame": 289,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "recap",
+          "startFrame": 221,
+          "endFrame": 238
+        },
+        {
+          "text": "before",
+          "beatId": "recap",
+          "startFrame": 238,
+          "endFrame": 240
+        },
+        {
+          "text": "we",
+          "beatId": "recap",
+          "startFrame": 240,
+          "endFrame": 244
+        },
+        {
+          "text": "can",
+          "beatId": "recap",
+          "startFrame": 244,
+          "endFrame": 251
+        },
+        {
+          "text": "predict",
+          "beatId": "recap",
+          "startFrame": 251,
+          "endFrame": 268
+        },
+        {
+          "text": "that",
+          "beatId": "recap",
+          "startFrame": 268,
+          "endFrame": 274
+        },
+        {
+          "text": "number,",
+          "beatId": "recap",
+          "startFrame": 274,
+          "endFrame": 289
+        }
+      ]
+    },
+    {
+      "text": "every real project must",
+      "startFrame": 289,
+      "endFrame": 333,
+      "words": [
+        {
+          "text": "every",
+          "beatId": "recap",
+          "startFrame": 289,
+          "endFrame": 300
+        },
+        {
+          "text": "real",
+          "beatId": "recap",
+          "startFrame": 300,
+          "endFrame": 308
+        },
+        {
+          "text": "project",
+          "beatId": "recap",
+          "startFrame": 308,
+          "endFrame": 324
+        },
+        {
+          "text": "must",
+          "beatId": "recap",
+          "startFrame": 324,
+          "endFrame": 333
+        }
+      ]
+    },
+    {
+      "text": "answer one question first.",
+      "startFrame": 333,
+      "endFrame": 395,
+      "words": [
+        {
+          "text": "answer",
+          "beatId": "recap",
+          "startFrame": 333,
+          "endFrame": 347
+        },
+        {
+          "text": "one",
+          "beatId": "recap",
+          "startFrame": 347,
+          "endFrame": 353
+        },
+        {
+          "text": "question",
+          "beatId": "recap",
+          "startFrame": 353,
+          "endFrame": 370
+        },
+        {
+          "text": "first.",
+          "beatId": "recap",
+          "startFrame": 370,
+          "endFrame": 388
+        }
+      ]
+    },
+    {
+      "text": "If my laptop breaks tomorrow,",
+      "startFrame": 416,
+      "endFrame": 466,
+      "words": [
+        {
+          "text": "If",
+          "beatId": "question",
+          "startFrame": 416,
+          "endFrame": 417
+        },
+        {
+          "text": "my",
+          "beatId": "question",
+          "startFrame": 417,
+          "endFrame": 422
+        },
+        {
+          "text": "laptop",
+          "beatId": "question",
+          "startFrame": 422,
+          "endFrame": 434
+        },
+        {
+          "text": "breaks",
+          "beatId": "question",
+          "startFrame": 434,
+          "endFrame": 445
+        },
+        {
+          "text": "tomorrow,",
+          "beatId": "question",
+          "startFrame": 445,
+          "endFrame": 466
+        }
+      ]
+    },
+    {
+      "text": "can someone else run this project,",
+      "startFrame": 466,
+      "endFrame": 513,
+      "words": [
+        {
+          "text": "can",
+          "beatId": "question",
+          "startFrame": 466,
+          "endFrame": 472
+        },
+        {
+          "text": "someone",
+          "beatId": "question",
+          "startFrame": 472,
+          "endFrame": 480
+        },
+        {
+          "text": "else",
+          "beatId": "question",
+          "startFrame": 480,
+          "endFrame": 488
+        },
+        {
+          "text": "run",
+          "beatId": "question",
+          "startFrame": 488,
+          "endFrame": 491
+        },
+        {
+          "text": "this",
+          "beatId": "question",
+          "startFrame": 491,
+          "endFrame": 499
+        },
+        {
+          "text": "project,",
+          "beatId": "question",
+          "startFrame": 499,
+          "endFrame": 513
+        }
+      ]
+    },
+    {
+      "text": "and get exactly the same result?",
+      "startFrame": 513,
+      "endFrame": 572,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "question",
+          "startFrame": 513,
+          "endFrame": 517
+        },
+        {
+          "text": "get",
+          "beatId": "question",
+          "startFrame": 517,
+          "endFrame": 521
+        },
+        {
+          "text": "exactly",
+          "beatId": "question",
+          "startFrame": 521,
+          "endFrame": 536
+        },
+        {
+          "text": "the",
+          "beatId": "question",
+          "startFrame": 536,
+          "endFrame": 539
+        },
+        {
+          "text": "same",
+          "beatId": "question",
+          "startFrame": 539,
+          "endFrame": 546
+        },
+        {
+          "text": "result?",
+          "beatId": "question",
+          "startFrame": 546,
+          "endFrame": 572
+        }
+      ]
+    },
+    {
+      "text": "In ML, this idea has a name.",
+      "startFrame": 572,
+      "endFrame": 643,
+      "words": [
+        {
+          "text": "In",
+          "beatId": "question",
+          "startFrame": 572,
+          "endFrame": 578
+        },
+        {
+          "text": "ML,",
+          "beatId": "question",
+          "startFrame": 578,
+          "endFrame": 587
+        },
+        {
+          "text": "this",
+          "beatId": "question",
+          "startFrame": 587,
+          "endFrame": 596
+        },
+        {
+          "text": "idea",
+          "beatId": "question",
+          "startFrame": 596,
+          "endFrame": 606
+        },
+        {
+          "text": "has",
+          "beatId": "question",
+          "startFrame": 606,
+          "endFrame": 613
+        },
+        {
+          "text": "a",
+          "beatId": "question",
+          "startFrame": 613,
+          "endFrame": 616
+        },
+        {
+          "text": "name.",
+          "beatId": "question",
+          "startFrame": 616,
+          "endFrame": 625
+        }
+      ]
+    },
+    {
+      "text": "Reproducibility.",
+      "startFrame": 643,
+      "endFrame": 683,
+      "words": [
+        {
+          "text": "Reproducibility.",
+          "beatId": "question",
+          "startFrame": 643,
+          "endFrame": 683
+        }
+      ]
+    },
+    {
+      "text": "And today's ticket is all about it.",
+      "startFrame": 683,
+      "endFrame": 748,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "question",
+          "startFrame": 683,
+          "endFrame": 684
+        },
+        {
+          "text": "today's",
+          "beatId": "question",
+          "startFrame": 684,
+          "endFrame": 700
+        },
+        {
+          "text": "ticket",
+          "beatId": "question",
+          "startFrame": 700,
+          "endFrame": 710
+        },
+        {
+          "text": "is",
+          "beatId": "question",
+          "startFrame": 710,
+          "endFrame": 714
+        },
+        {
+          "text": "all",
+          "beatId": "question",
+          "startFrame": 714,
+          "endFrame": 720
+        },
+        {
+          "text": "about",
+          "beatId": "question",
+          "startFrame": 720,
+          "endFrame": 729
+        },
+        {
+          "text": "it.",
+          "beatId": "question",
+          "startFrame": 729,
+          "endFrame": 740
+        }
+      ]
+    },
+    {
+      "text": "See, why does it",
+      "startFrame": 771,
+      "endFrame": 794,
+      "words": [
+        {
+          "text": "See,",
+          "beatId": "matters",
+          "startFrame": 771,
+          "endFrame": 775
+        },
+        {
+          "text": "why",
+          "beatId": "matters",
+          "startFrame": 775,
+          "endFrame": 781
+        },
+        {
+          "text": "does",
+          "beatId": "matters",
+          "startFrame": 781,
+          "endFrame": 790
+        },
+        {
+          "text": "it",
+          "beatId": "matters",
+          "startFrame": 790,
+          "endFrame": 794
+        }
+      ]
+    },
+    {
+      "text": "matter so much in ML?",
+      "startFrame": 794,
+      "endFrame": 836,
+      "words": [
+        {
+          "text": "matter",
+          "beatId": "matters",
+          "startFrame": 794,
+          "endFrame": 808
+        },
+        {
+          "text": "so",
+          "beatId": "matters",
+          "startFrame": 808,
+          "endFrame": 811
+        },
+        {
+          "text": "much",
+          "beatId": "matters",
+          "startFrame": 811,
+          "endFrame": 820
+        },
+        {
+          "text": "in",
+          "beatId": "matters",
+          "startFrame": 820,
+          "endFrame": 828
+        },
+        {
+          "text": "ML?",
+          "beatId": "matters",
+          "startFrame": 828,
+          "endFrame": 836
+        }
+      ]
+    },
+    {
+      "text": "Let's say our model says, tomorrow",
+      "startFrame": 836,
+      "endFrame": 890,
+      "words": [
+        {
+          "text": "Let's",
+          "beatId": "matters",
+          "startFrame": 836,
+          "endFrame": 847
+        },
+        {
+          "text": "say",
+          "beatId": "matters",
+          "startFrame": 847,
+          "endFrame": 851
+        },
+        {
+          "text": "our",
+          "beatId": "matters",
+          "startFrame": 851,
+          "endFrame": 857
+        },
+        {
+          "text": "model",
+          "beatId": "matters",
+          "startFrame": 857,
+          "endFrame": 866
+        },
+        {
+          "text": "says,",
+          "beatId": "matters",
+          "startFrame": 866,
+          "endFrame": 879
+        },
+        {
+          "text": "tomorrow",
+          "beatId": "matters",
+          "startFrame": 879,
+          "endFrame": 890
+        }
+      ]
+    },
+    {
+      "text": "will be Poor, keep the children inside.",
+      "startFrame": 890,
+      "endFrame": 955,
+      "words": [
+        {
+          "text": "will",
+          "beatId": "matters",
+          "startFrame": 890,
+          "endFrame": 896
+        },
+        {
+          "text": "be",
+          "beatId": "matters",
+          "startFrame": 896,
+          "endFrame": 901
+        },
+        {
+          "text": "Poor,",
+          "beatId": "matters",
+          "startFrame": 901,
+          "endFrame": 910
+        },
+        {
+          "text": "keep",
+          "beatId": "matters",
+          "startFrame": 910,
+          "endFrame": 917
+        },
+        {
+          "text": "the",
+          "beatId": "matters",
+          "startFrame": 917,
+          "endFrame": 923
+        },
+        {
+          "text": "children",
+          "beatId": "matters",
+          "startFrame": 923,
+          "endFrame": 938
+        },
+        {
+          "text": "inside.",
+          "beatId": "matters",
+          "startFrame": 938,
+          "endFrame": 955
+        }
+      ]
+    },
+    {
+      "text": "And someone asks,",
+      "startFrame": 955,
+      "endFrame": 989,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "matters",
+          "startFrame": 955,
+          "endFrame": 963
+        },
+        {
+          "text": "someone",
+          "beatId": "matters",
+          "startFrame": 963,
+          "endFrame": 974
+        },
+        {
+          "text": "asks,",
+          "beatId": "matters",
+          "startFrame": 974,
+          "endFrame": 989
+        }
+      ]
+    },
+    {
+      "text": "how did you get this answer?",
+      "startFrame": 989,
+      "endFrame": 1034,
+      "words": [
+        {
+          "text": "how",
+          "beatId": "matters",
+          "startFrame": 989,
+          "endFrame": 991
+        },
+        {
+          "text": "did",
+          "beatId": "matters",
+          "startFrame": 991,
+          "endFrame": 997
+        },
+        {
+          "text": "you",
+          "beatId": "matters",
+          "startFrame": 997,
+          "endFrame": 1003
+        },
+        {
+          "text": "get",
+          "beatId": "matters",
+          "startFrame": 1003,
+          "endFrame": 1008
+        },
+        {
+          "text": "this",
+          "beatId": "matters",
+          "startFrame": 1008,
+          "endFrame": 1016
+        },
+        {
+          "text": "answer?",
+          "beatId": "matters",
+          "startFrame": 1016,
+          "endFrame": 1034
+        }
+      ]
+    },
+    {
+      "text": "If I cannot run the same code,",
+      "startFrame": 1034,
+      "endFrame": 1083,
+      "words": [
+        {
+          "text": "If",
+          "beatId": "matters",
+          "startFrame": 1034,
+          "endFrame": 1039
+        },
+        {
+          "text": "I",
+          "beatId": "matters",
+          "startFrame": 1039,
+          "endFrame": 1041
+        },
+        {
+          "text": "cannot",
+          "beatId": "matters",
+          "startFrame": 1041,
+          "endFrame": 1053
+        },
+        {
+          "text": "run",
+          "beatId": "matters",
+          "startFrame": 1053,
+          "endFrame": 1059
+        },
+        {
+          "text": "the",
+          "beatId": "matters",
+          "startFrame": 1059,
+          "endFrame": 1066
+        },
+        {
+          "text": "same",
+          "beatId": "matters",
+          "startFrame": 1066,
+          "endFrame": 1074
+        },
+        {
+          "text": "code,",
+          "beatId": "matters",
+          "startFrame": 1074,
+          "endFrame": 1083
+        }
+      ]
+    },
+    {
+      "text": "on the same data, with the same libraries,",
+      "startFrame": 1083,
+      "endFrame": 1142,
+      "words": [
+        {
+          "text": "on",
+          "beatId": "matters",
+          "startFrame": 1083,
+          "endFrame": 1086
+        },
+        {
+          "text": "the",
+          "beatId": "matters",
+          "startFrame": 1086,
+          "endFrame": 1093
+        },
+        {
+          "text": "same",
+          "beatId": "matters",
+          "startFrame": 1093,
+          "endFrame": 1100
+        },
+        {
+          "text": "data,",
+          "beatId": "matters",
+          "startFrame": 1100,
+          "endFrame": 1110
+        },
+        {
+          "text": "with",
+          "beatId": "matters",
+          "startFrame": 1110,
+          "endFrame": 1116
+        },
+        {
+          "text": "the",
+          "beatId": "matters",
+          "startFrame": 1116,
+          "endFrame": 1121
+        },
+        {
+          "text": "same",
+          "beatId": "matters",
+          "startFrame": 1121,
+          "endFrame": 1127
+        },
+        {
+          "text": "libraries,",
+          "beatId": "matters",
+          "startFrame": 1127,
+          "endFrame": 1142
+        }
+      ]
+    },
+    {
+      "text": "and get the same number again,",
+      "startFrame": 1142,
+      "endFrame": 1195,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "matters",
+          "startFrame": 1142,
+          "endFrame": 1147
+        },
+        {
+          "text": "get",
+          "beatId": "matters",
+          "startFrame": 1147,
+          "endFrame": 1151
+        },
+        {
+          "text": "the",
+          "beatId": "matters",
+          "startFrame": 1151,
+          "endFrame": 1156
+        },
+        {
+          "text": "same",
+          "beatId": "matters",
+          "startFrame": 1156,
+          "endFrame": 1163
+        },
+        {
+          "text": "number",
+          "beatId": "matters",
+          "startFrame": 1163,
+          "endFrame": 1173
+        },
+        {
+          "text": "again,",
+          "beatId": "matters",
+          "startFrame": 1173,
+          "endFrame": 1195
+        }
+      ]
+    },
+    {
+      "text": "then I cannot explain it.",
+      "startFrame": 1195,
+      "endFrame": 1236,
+      "words": [
+        {
+          "text": "then",
+          "beatId": "matters",
+          "startFrame": 1195,
+          "endFrame": 1202
+        },
+        {
+          "text": "I",
+          "beatId": "matters",
+          "startFrame": 1202,
+          "endFrame": 1204
+        },
+        {
+          "text": "cannot",
+          "beatId": "matters",
+          "startFrame": 1204,
+          "endFrame": 1214
+        },
+        {
+          "text": "explain",
+          "beatId": "matters",
+          "startFrame": 1214,
+          "endFrame": 1227
+        },
+        {
+          "text": "it.",
+          "beatId": "matters",
+          "startFrame": 1227,
+          "endFrame": 1236
+        }
+      ]
+    },
+    {
+      "text": "And I cannot trust it.",
+      "startFrame": 1236,
+      "endFrame": 1284,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "matters",
+          "startFrame": 1236,
+          "endFrame": 1247
+        },
+        {
+          "text": "I",
+          "beatId": "matters",
+          "startFrame": 1247,
+          "endFrame": 1250
+        },
+        {
+          "text": "cannot",
+          "beatId": "matters",
+          "startFrame": 1250,
+          "endFrame": 1272
+        },
+        {
+          "text": "trust",
+          "beatId": "matters",
+          "startFrame": 1276,
+          "endFrame": 1277
+        },
+        {
+          "text": "it.",
+          "beatId": "matters",
+          "startFrame": 1276,
+          "endFrame": 1277
+        }
+      ]
+    },
+    {
+      "text": "As Java developers,",
+      "startFrame": 1300,
+      "endFrame": 1332,
+      "words": [
+        {
+          "text": "As",
+          "beatId": "java",
+          "startFrame": 1300,
+          "endFrame": 1303
+        },
+        {
+          "text": "Java",
+          "beatId": "java",
+          "startFrame": 1303,
+          "endFrame": 1308
+        },
+        {
+          "text": "developers,",
+          "beatId": "java",
+          "startFrame": 1308,
+          "endFrame": 1332
+        }
+      ]
+    },
+    {
+      "text": "we already know this very well.",
+      "startFrame": 1332,
+      "endFrame": 1382,
+      "words": [
+        {
+          "text": "we",
+          "beatId": "java",
+          "startFrame": 1332,
+          "endFrame": 1336
+        },
+        {
+          "text": "already",
+          "beatId": "java",
+          "startFrame": 1336,
+          "endFrame": 1347
+        },
+        {
+          "text": "know",
+          "beatId": "java",
+          "startFrame": 1347,
+          "endFrame": 1354
+        },
+        {
+          "text": "this",
+          "beatId": "java",
+          "startFrame": 1354,
+          "endFrame": 1361
+        },
+        {
+          "text": "very",
+          "beatId": "java",
+          "startFrame": 1361,
+          "endFrame": 1367
+        },
+        {
+          "text": "well.",
+          "beatId": "java",
+          "startFrame": 1367,
+          "endFrame": 1382
+        }
+      ]
+    },
+    {
+      "text": "Nobody writes a controller",
+      "startFrame": 1382,
+      "endFrame": 1421,
+      "words": [
+        {
+          "text": "Nobody",
+          "beatId": "java",
+          "startFrame": 1382,
+          "endFrame": 1392
+        },
+        {
+          "text": "writes",
+          "beatId": "java",
+          "startFrame": 1392,
+          "endFrame": 1402
+        },
+        {
+          "text": "a",
+          "beatId": "java",
+          "startFrame": 1402,
+          "endFrame": 1404
+        },
+        {
+          "text": "controller",
+          "beatId": "java",
+          "startFrame": 1404,
+          "endFrame": 1421
+        }
+      ]
+    },
+    {
+      "text": "before the project has",
+      "startFrame": 1421,
+      "endFrame": 1452,
+      "words": [
+        {
+          "text": "before",
+          "beatId": "java",
+          "startFrame": 1421,
+          "endFrame": 1429
+        },
+        {
+          "text": "the",
+          "beatId": "java",
+          "startFrame": 1429,
+          "endFrame": 1435
+        },
+        {
+          "text": "project",
+          "beatId": "java",
+          "startFrame": 1435,
+          "endFrame": 1448
+        },
+        {
+          "text": "has",
+          "beatId": "java",
+          "startFrame": 1448,
+          "endFrame": 1452
+        }
+      ]
+    },
+    {
+      "text": "its structure and its pom.xml.",
+      "startFrame": 1452,
+      "endFrame": 1518,
+      "words": [
+        {
+          "text": "its",
+          "beatId": "java",
+          "startFrame": 1452,
+          "endFrame": 1457
+        },
+        {
+          "text": "structure",
+          "beatId": "java",
+          "startFrame": 1457,
+          "endFrame": 1473
+        },
+        {
+          "text": "and",
+          "beatId": "java",
+          "startFrame": 1473,
+          "endFrame": 1485
+        },
+        {
+          "text": "its",
+          "beatId": "java",
+          "startFrame": 1485,
+          "endFrame": 1490
+        },
+        {
+          "text": "pom.xml.",
+          "beatId": "java",
+          "startFrame": 1490,
+          "endFrame": 1518
+        }
+      ]
+    },
+    {
+      "text": "But Python lets you skip all of that,",
+      "startFrame": 1518,
+      "endFrame": 1578,
+      "words": [
+        {
+          "text": "But",
+          "beatId": "java",
+          "startFrame": 1518,
+          "endFrame": 1526
+        },
+        {
+          "text": "Python",
+          "beatId": "java",
+          "startFrame": 1526,
+          "endFrame": 1536
+        },
+        {
+          "text": "lets",
+          "beatId": "java",
+          "startFrame": 1536,
+          "endFrame": 1545
+        },
+        {
+          "text": "you",
+          "beatId": "java",
+          "startFrame": 1545,
+          "endFrame": 1551
+        },
+        {
+          "text": "skip",
+          "beatId": "java",
+          "startFrame": 1551,
+          "endFrame": 1559
+        },
+        {
+          "text": "all",
+          "beatId": "java",
+          "startFrame": 1559,
+          "endFrame": 1565
+        },
+        {
+          "text": "of",
+          "beatId": "java",
+          "startFrame": 1565,
+          "endFrame": 1569
+        },
+        {
+          "text": "that,",
+          "beatId": "java",
+          "startFrame": 1569,
+          "endFrame": 1578
+        }
+      ]
+    },
+    {
+      "text": "and start typing",
+      "startFrame": 1578,
+      "endFrame": 1606,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "java",
+          "startFrame": 1578,
+          "endFrame": 1584
+        },
+        {
+          "text": "start",
+          "beatId": "java",
+          "startFrame": 1584,
+          "endFrame": 1594
+        },
+        {
+          "text": "typing",
+          "beatId": "java",
+          "startFrame": 1594,
+          "endFrame": 1606
+        }
+      ]
+    },
+    {
+      "text": "in a notebook on day one.",
+      "startFrame": 1606,
+      "endFrame": 1652,
+      "words": [
+        {
+          "text": "in",
+          "beatId": "java",
+          "startFrame": 1606,
+          "endFrame": 1610
+        },
+        {
+          "text": "a",
+          "beatId": "java",
+          "startFrame": 1610,
+          "endFrame": 1612
+        },
+        {
+          "text": "notebook",
+          "beatId": "java",
+          "startFrame": 1612,
+          "endFrame": 1629
+        },
+        {
+          "text": "on",
+          "beatId": "java",
+          "startFrame": 1629,
+          "endFrame": 1632
+        },
+        {
+          "text": "day",
+          "beatId": "java",
+          "startFrame": 1632,
+          "endFrame": 1638
+        },
+        {
+          "text": "one.",
+          "beatId": "java",
+          "startFrame": 1638,
+          "endFrame": 1652
+        }
+      ]
+    },
+    {
+      "text": "And here's the catch.",
+      "startFrame": 1652,
+      "endFrame": 1690,
+      "words": [
+        {
+          "text": "And",
+          "beatId": "java",
+          "startFrame": 1652,
+          "endFrame": 1658
+        },
+        {
+          "text": "here's",
+          "beatId": "java",
+          "startFrame": 1658,
+          "endFrame": 1669
+        },
+        {
+          "text": "the",
+          "beatId": "java",
+          "startFrame": 1669,
+          "endFrame": 1674
+        },
+        {
+          "text": "catch.",
+          "beatId": "java",
+          "startFrame": 1674,
+          "endFrame": 1690
+        }
+      ]
+    },
+    {
+      "text": "That freedom is exactly why so many ML",
+      "startFrame": 1690,
+      "endFrame": 1757,
+      "words": [
+        {
+          "text": "That",
+          "beatId": "java",
+          "startFrame": 1690,
+          "endFrame": 1703
+        },
+        {
+          "text": "freedom",
+          "beatId": "java",
+          "startFrame": 1703,
+          "endFrame": 1714
+        },
+        {
+          "text": "is",
+          "beatId": "java",
+          "startFrame": 1714,
+          "endFrame": 1718
+        },
+        {
+          "text": "exactly",
+          "beatId": "java",
+          "startFrame": 1718,
+          "endFrame": 1734
+        },
+        {
+          "text": "why",
+          "beatId": "java",
+          "startFrame": 1734,
+          "endFrame": 1740
+        },
+        {
+          "text": "so",
+          "beatId": "java",
+          "startFrame": 1740,
+          "endFrame": 1745
+        },
+        {
+          "text": "many",
+          "beatId": "java",
+          "startFrame": 1745,
+          "endFrame": 1753
+        },
+        {
+          "text": "ML",
+          "beatId": "java",
+          "startFrame": 1753,
+          "endFrame": 1757
+        }
+      ]
+    },
+    {
+      "text": "projects cannot be run a second time.",
+      "startFrame": 1757,
+      "endFrame": 1833,
+      "words": [
+        {
+          "text": "projects",
+          "beatId": "java",
+          "startFrame": 1757,
+          "endFrame": 1777
+        },
+        {
+          "text": "cannot",
+          "beatId": "java",
+          "startFrame": 1777,
+          "endFrame": 1789
+        },
+        {
+          "text": "be",
+          "beatId": "java",
+          "startFrame": 1789,
+          "endFrame": 1793
+        },
+        {
+          "text": "run",
+          "beatId": "java",
+          "startFrame": 1793,
+          "endFrame": 1800
+        },
+        {
+          "text": "a",
+          "beatId": "java",
+          "startFrame": 1800,
+          "endFrame": 1802
+        },
+        {
+          "text": "second",
+          "beatId": "java",
+          "startFrame": 1802,
+          "endFrame": 1814
+        },
+        {
+          "text": "time.",
+          "beatId": "java",
+          "startFrame": 1814,
+          "endFrame": 1825
+        }
+      ]
+    },
+    {
+      "text": "So reproducibility stands",
+      "startFrame": 1864,
+      "endFrame": 1907,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "four",
+          "startFrame": 1864,
+          "endFrame": 1867
+        },
+        {
+          "text": "reproducibility",
+          "beatId": "four",
+          "startFrame": 1867,
+          "endFrame": 1894
+        },
+        {
+          "text": "stands",
+          "beatId": "four",
+          "startFrame": 1894,
+          "endFrame": 1907
+        }
+      ]
+    },
+    {
+      "text": "on four simple ideas.",
+      "startFrame": 1907,
+      "endFrame": 1950,
+      "words": [
+        {
+          "text": "on",
+          "beatId": "four",
+          "startFrame": 1907,
+          "endFrame": 1909
+        },
+        {
+          "text": "four",
+          "beatId": "four",
+          "startFrame": 1909,
+          "endFrame": 1917
+        },
+        {
+          "text": "simple",
+          "beatId": "four",
+          "startFrame": 1917,
+          "endFrame": 1929
+        },
+        {
+          "text": "ideas.",
+          "beatId": "four",
+          "startFrame": 1929,
+          "endFrame": 1950
+        }
+      ]
+    },
+    {
+      "text": "Let's take them one by one.",
+      "startFrame": 1950,
+      "endFrame": 1992,
+      "words": [
+        {
+          "text": "Let's",
+          "beatId": "four",
+          "startFrame": 1950,
+          "endFrame": 1957
+        },
+        {
+          "text": "take",
+          "beatId": "four",
+          "startFrame": 1957,
+          "endFrame": 1960
+        },
+        {
+          "text": "them",
+          "beatId": "four",
+          "startFrame": 1960,
+          "endFrame": 1966
+        },
+        {
+          "text": "one",
+          "beatId": "four",
+          "startFrame": 1966,
+          "endFrame": 1971
+        },
+        {
+          "text": "by",
+          "beatId": "four",
+          "startFrame": 1971,
+          "endFrame": 1974
+        },
+        {
+          "text": "one.",
+          "beatId": "four",
+          "startFrame": 1974,
+          "endFrame": 1984
+        }
+      ]
+    },
+    {
+      "text": "Idea one.",
+      "startFrame": 2016,
+      "endFrame": 2055,
+      "words": [
+        {
+          "text": "Idea",
+          "beatId": "isolation",
+          "startFrame": 2016,
+          "endFrame": 2028
+        },
+        {
+          "text": "one.",
+          "beatId": "isolation",
+          "startFrame": 2028,
+          "endFrame": 2055
+        }
+      ]
+    },
+    {
+      "text": "Every project lives in its own room.",
+      "startFrame": 2055,
+      "endFrame": 2109,
+      "words": [
+        {
+          "text": "Every",
+          "beatId": "isolation",
+          "startFrame": 2055,
+          "endFrame": 2061
+        },
+        {
+          "text": "project",
+          "beatId": "isolation",
+          "startFrame": 2061,
+          "endFrame": 2074
+        },
+        {
+          "text": "lives",
+          "beatId": "isolation",
+          "startFrame": 2074,
+          "endFrame": 2085
+        },
+        {
+          "text": "in",
+          "beatId": "isolation",
+          "startFrame": 2085,
+          "endFrame": 2087
+        },
+        {
+          "text": "its",
+          "beatId": "isolation",
+          "startFrame": 2087,
+          "endFrame": 2096
+        },
+        {
+          "text": "own",
+          "beatId": "isolation",
+          "startFrame": 2096,
+          "endFrame": 2098
+        },
+        {
+          "text": "room.",
+          "beatId": "isolation",
+          "startFrame": 2098,
+          "endFrame": 2109
+        }
+      ]
+    },
+    {
+      "text": "Just think once.",
+      "startFrame": 2109,
+      "endFrame": 2164,
+      "words": [
+        {
+          "text": "Just",
+          "beatId": "isolation",
+          "startFrame": 2109,
+          "endFrame": 2140
+        },
+        {
+          "text": "think",
+          "beatId": "isolation",
+          "startFrame": 2140,
+          "endFrame": 2141
+        },
+        {
+          "text": "once.",
+          "beatId": "isolation",
+          "startFrame": 2140,
+          "endFrame": 2164
+        }
+      ]
+    },
+    {
+      "text": "On one laptop, I have many Python projects.",
+      "startFrame": 2164,
+      "endFrame": 2272,
+      "words": [
+        {
+          "text": "On",
+          "beatId": "isolation",
+          "startFrame": 2164,
+          "endFrame": 2180
+        },
+        {
+          "text": "one",
+          "beatId": "isolation",
+          "startFrame": 2180,
+          "endFrame": 2187
+        },
+        {
+          "text": "laptop,",
+          "beatId": "isolation",
+          "startFrame": 2187,
+          "endFrame": 2199
+        },
+        {
+          "text": "I",
+          "beatId": "isolation",
+          "startFrame": 2199,
+          "endFrame": 2205
+        },
+        {
+          "text": "have",
+          "beatId": "isolation",
+          "startFrame": 2205,
+          "endFrame": 2215
+        },
+        {
+          "text": "many",
+          "beatId": "isolation",
+          "startFrame": 2215,
+          "endFrame": 2229
+        },
+        {
+          "text": "Python",
+          "beatId": "isolation",
+          "startFrame": 2229,
+          "endFrame": 2243
+        },
+        {
+          "text": "projects.",
+          "beatId": "isolation",
+          "startFrame": 2243,
+          "endFrame": 2272
+        }
+      ]
+    },
+    {
+      "text": "One needs a new version of a library,",
+      "startFrame": 2272,
+      "endFrame": 2330,
+      "words": [
+        {
+          "text": "One",
+          "beatId": "isolation",
+          "startFrame": 2272,
+          "endFrame": 2274
+        },
+        {
+          "text": "needs",
+          "beatId": "isolation",
+          "startFrame": 2274,
+          "endFrame": 2285
+        },
+        {
+          "text": "a",
+          "beatId": "isolation",
+          "startFrame": 2285,
+          "endFrame": 2287
+        },
+        {
+          "text": "new",
+          "beatId": "isolation",
+          "startFrame": 2287,
+          "endFrame": 2291
+        },
+        {
+          "text": "version",
+          "beatId": "isolation",
+          "startFrame": 2291,
+          "endFrame": 2301
+        },
+        {
+          "text": "of",
+          "beatId": "isolation",
+          "startFrame": 2301,
+          "endFrame": 2303
+        },
+        {
+          "text": "a",
+          "beatId": "isolation",
+          "startFrame": 2303,
+          "endFrame": 2306
+        },
+        {
+          "text": "library,",
+          "beatId": "isolation",
+          "startFrame": 2306,
+          "endFrame": 2330
+        }
+      ]
+    },
+    {
+      "text": "another one needs an old version.",
+      "startFrame": 2330,
+      "endFrame": 2378,
+      "words": [
+        {
+          "text": "another",
+          "beatId": "isolation",
+          "startFrame": 2330,
+          "endFrame": 2341
+        },
+        {
+          "text": "one",
+          "beatId": "isolation",
+          "startFrame": 2341,
+          "endFrame": 2346
+        },
+        {
+          "text": "needs",
+          "beatId": "isolation",
+          "startFrame": 2346,
+          "endFrame": 2354
+        },
+        {
+          "text": "an",
+          "beatId": "isolation",
+          "startFrame": 2354,
+          "endFrame": 2357
+        },
+        {
+          "text": "old",
+          "beatId": "isolation",
+          "startFrame": 2357,
+          "endFrame": 2361
+        },
+        {
+          "text": "version.",
+          "beatId": "isolation",
+          "startFrame": 2361,
+          "endFrame": 2378
+        }
+      ]
+    },
+    {
+      "text": "If they all share one Python, upgrading",
+      "startFrame": 2378,
+      "endFrame": 2469,
+      "words": [
+        {
+          "text": "If",
+          "beatId": "isolation",
+          "startFrame": 2378,
+          "endFrame": 2395
+        },
+        {
+          "text": "they",
+          "beatId": "isolation",
+          "startFrame": 2395,
+          "endFrame": 2400
+        },
+        {
+          "text": "all",
+          "beatId": "isolation",
+          "startFrame": 2400,
+          "endFrame": 2404
+        },
+        {
+          "text": "share",
+          "beatId": "isolation",
+          "startFrame": 2404,
+          "endFrame": 2419
+        },
+        {
+          "text": "one",
+          "beatId": "isolation",
+          "startFrame": 2419,
+          "endFrame": 2427
+        },
+        {
+          "text": "Python,",
+          "beatId": "isolation",
+          "startFrame": 2427,
+          "endFrame": 2457
+        },
+        {
+          "text": "upgrading",
+          "beatId": "isolation",
+          "startFrame": 2457,
+          "endFrame": 2469
+        }
+      ]
+    },
+    {
+      "text": "for one project silently breaks the other.",
+      "startFrame": 2469,
+      "endFrame": 2562,
+      "words": [
+        {
+          "text": "for",
+          "beatId": "isolation",
+          "startFrame": 2469,
+          "endFrame": 2476
+        },
+        {
+          "text": "one",
+          "beatId": "isolation",
+          "startFrame": 2476,
+          "endFrame": 2483
+        },
+        {
+          "text": "project",
+          "beatId": "isolation",
+          "startFrame": 2483,
+          "endFrame": 2500
+        },
+        {
+          "text": "silently",
+          "beatId": "isolation",
+          "startFrame": 2500,
+          "endFrame": 2517
+        },
+        {
+          "text": "breaks",
+          "beatId": "isolation",
+          "startFrame": 2517,
+          "endFrame": 2531
+        },
+        {
+          "text": "the",
+          "beatId": "isolation",
+          "startFrame": 2531,
+          "endFrame": 2539
+        },
+        {
+          "text": "other.",
+          "beatId": "isolation",
+          "startFrame": 2539,
+          "endFrame": 2562
+        }
+      ]
+    },
+    {
+      "text": "So each project gets its own",
+      "startFrame": 2562,
+      "endFrame": 2614,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "isolation",
+          "startFrame": 2562,
+          "endFrame": 2564
+        },
+        {
+          "text": "each",
+          "beatId": "isolation",
+          "startFrame": 2564,
+          "endFrame": 2573
+        },
+        {
+          "text": "project",
+          "beatId": "isolation",
+          "startFrame": 2573,
+          "endFrame": 2589
+        },
+        {
+          "text": "gets",
+          "beatId": "isolation",
+          "startFrame": 2589,
+          "endFrame": 2599
+        },
+        {
+          "text": "its",
+          "beatId": "isolation",
+          "startFrame": 2599,
+          "endFrame": 2607
+        },
+        {
+          "text": "own",
+          "beatId": "isolation",
+          "startFrame": 2607,
+          "endFrame": 2614
+        }
+      ]
+    },
+    {
+      "text": "isolated environment.",
+      "startFrame": 2614,
+      "endFrame": 2672,
+      "words": [
+        {
+          "text": "isolated",
+          "beatId": "isolation",
+          "startFrame": 2614,
+          "endFrame": 2632
+        },
+        {
+          "text": "environment.",
+          "beatId": "isolation",
+          "startFrame": 2632,
+          "endFrame": 2672
+        }
+      ]
+    },
+    {
+      "text": "In Python, we call it a virtual environment.",
+      "startFrame": 2672,
+      "endFrame": 2750,
+      "words": [
+        {
+          "text": "In",
+          "beatId": "isolation",
+          "startFrame": 2672,
+          "endFrame": 2673
+        },
+        {
+          "text": "Python,",
+          "beatId": "isolation",
+          "startFrame": 2673,
+          "endFrame": 2685
+        },
+        {
+          "text": "we",
+          "beatId": "isolation",
+          "startFrame": 2685,
+          "endFrame": 2688
+        },
+        {
+          "text": "call",
+          "beatId": "isolation",
+          "startFrame": 2688,
+          "endFrame": 2697
+        },
+        {
+          "text": "it",
+          "beatId": "isolation",
+          "startFrame": 2697,
+          "endFrame": 2702
+        },
+        {
+          "text": "a",
+          "beatId": "isolation",
+          "startFrame": 2704,
+          "endFrame": 2706
+        },
+        {
+          "text": "virtual",
+          "beatId": "isolation",
+          "startFrame": 2706,
+          "endFrame": 2720
+        },
+        {
+          "text": "environment.",
+          "beatId": "isolation",
+          "startFrame": 2720,
+          "endFrame": 2743
+        }
+      ]
+    },
+    {
+      "text": "Sir, in Java I never needed this.",
+      "startFrame": 2776,
+      "endFrame": 2855,
+      "words": [
+        {
+          "text": "Sir,",
+          "beatId": "doubt1",
+          "startFrame": 2776,
+          "endFrame": 2781
+        },
+        {
+          "text": "in",
+          "beatId": "doubt1",
+          "startFrame": 2781,
+          "endFrame": 2790
+        },
+        {
+          "text": "Java",
+          "beatId": "doubt1",
+          "startFrame": 2790,
+          "endFrame": 2803
+        },
+        {
+          "text": "I",
+          "beatId": "doubt1",
+          "startFrame": 2803,
+          "endFrame": 2806
+        },
+        {
+          "text": "never",
+          "beatId": "doubt1",
+          "startFrame": 2806,
+          "endFrame": 2819
+        },
+        {
+          "text": "needed",
+          "beatId": "doubt1",
+          "startFrame": 2819,
+          "endFrame": 2835
+        },
+        {
+          "text": "this.",
+          "beatId": "doubt1",
+          "startFrame": 2835,
+          "endFrame": 2855
+        }
+      ]
+    },
+    {
+      "text": "Why does Python need it?",
+      "startFrame": 2855,
+      "endFrame": 2904,
+      "words": [
+        {
+          "text": "Why",
+          "beatId": "doubt1",
+          "startFrame": 2855,
+          "endFrame": 2856
+        },
+        {
+          "text": "does",
+          "beatId": "doubt1",
+          "startFrame": 2856,
+          "endFrame": 2864
+        },
+        {
+          "text": "Python",
+          "beatId": "doubt1",
+          "startFrame": 2864,
+          "endFrame": 2877
+        },
+        {
+          "text": "need",
+          "beatId": "doubt1",
+          "startFrame": 2877,
+          "endFrame": 2886
+        },
+        {
+          "text": "it?",
+          "beatId": "doubt1",
+          "startFrame": 2886,
+          "endFrame": 2897
+        }
+      ]
+    },
+    {
+      "text": "Because in Java,",
+      "startFrame": 2971,
+      "endFrame": 2994,
+      "words": [
+        {
+          "text": "Because",
+          "beatId": "answer1",
+          "startFrame": 2971,
+          "endFrame": 2977
+        },
+        {
+          "text": "in",
+          "beatId": "answer1",
+          "startFrame": 2977,
+          "endFrame": 2981
+        },
+        {
+          "text": "Java,",
+          "beatId": "answer1",
+          "startFrame": 2981,
+          "endFrame": 2994
+        }
+      ]
+    },
+    {
+      "text": "Maven already does it for you.",
+      "startFrame": 2994,
+      "endFrame": 3052,
+      "words": [
+        {
+          "text": "Maven",
+          "beatId": "answer1",
+          "startFrame": 2994,
+          "endFrame": 3004
+        },
+        {
+          "text": "already",
+          "beatId": "answer1",
+          "startFrame": 3004,
+          "endFrame": 3019
+        },
+        {
+          "text": "does",
+          "beatId": "answer1",
+          "startFrame": 3019,
+          "endFrame": 3031
+        },
+        {
+          "text": "it",
+          "beatId": "answer1",
+          "startFrame": 3031,
+          "endFrame": 3032
+        },
+        {
+          "text": "for",
+          "beatId": "answer1",
+          "startFrame": 3032,
+          "endFrame": 3038
+        },
+        {
+          "text": "you.",
+          "beatId": "answer1",
+          "startFrame": 3038,
+          "endFrame": 3052
+        }
+      ]
+    },
+    {
+      "text": "It keeps every library version",
+      "startFrame": 3052,
+      "endFrame": 3094,
+      "words": [
+        {
+          "text": "It",
+          "beatId": "answer1",
+          "startFrame": 3052,
+          "endFrame": 3055
+        },
+        {
+          "text": "keeps",
+          "beatId": "answer1",
+          "startFrame": 3055,
+          "endFrame": 3063
+        },
+        {
+          "text": "every",
+          "beatId": "answer1",
+          "startFrame": 3063,
+          "endFrame": 3071
+        },
+        {
+          "text": "library",
+          "beatId": "answer1",
+          "startFrame": 3071,
+          "endFrame": 3083
+        },
+        {
+          "text": "version",
+          "beatId": "answer1",
+          "startFrame": 3083,
+          "endFrame": 3094
+        }
+      ]
+    },
+    {
+      "text": "separately, and each project",
+      "startFrame": 3094,
+      "endFrame": 3152,
+      "words": [
+        {
+          "text": "separately,",
+          "beatId": "answer1",
+          "startFrame": 3094,
+          "endFrame": 3132
+        },
+        {
+          "text": "and",
+          "beatId": "answer1",
+          "startFrame": 3132,
+          "endFrame": 3133
+        },
+        {
+          "text": "each",
+          "beatId": "answer1",
+          "startFrame": 3133,
+          "endFrame": 3139
+        },
+        {
+          "text": "project",
+          "beatId": "answer1",
+          "startFrame": 3139,
+          "endFrame": 3152
+        }
+      ]
+    },
+    {
+      "text": "picks exactly what it needs.",
+      "startFrame": 3152,
+      "endFrame": 3202,
+      "words": [
+        {
+          "text": "picks",
+          "beatId": "answer1",
+          "startFrame": 3152,
+          "endFrame": 3162
+        },
+        {
+          "text": "exactly",
+          "beatId": "answer1",
+          "startFrame": 3162,
+          "endFrame": 3178
+        },
+        {
+          "text": "what",
+          "beatId": "answer1",
+          "startFrame": 3178,
+          "endFrame": 3186
+        },
+        {
+          "text": "it",
+          "beatId": "answer1",
+          "startFrame": 3186,
+          "endFrame": 3191
+        },
+        {
+          "text": "needs.",
+          "beatId": "answer1",
+          "startFrame": 3191,
+          "endFrame": 3202
+        }
+      ]
+    },
+    {
+      "text": "Python, by default,",
+      "startFrame": 3202,
+      "endFrame": 3246,
+      "words": [
+        {
+          "text": "Python,",
+          "beatId": "answer1",
+          "startFrame": 3202,
+          "endFrame": 3225
+        },
+        {
+          "text": "by",
+          "beatId": "answer1",
+          "startFrame": 3225,
+          "endFrame": 3226
+        },
+        {
+          "text": "default,",
+          "beatId": "answer1",
+          "startFrame": 3226,
+          "endFrame": 3246
+        }
+      ]
+    },
+    {
+      "text": "has one shared shelf for everyone.",
+      "startFrame": 3246,
+      "endFrame": 3322,
+      "words": [
+        {
+          "text": "has",
+          "beatId": "answer1",
+          "startFrame": 3246,
+          "endFrame": 3254
+        },
+        {
+          "text": "one",
+          "beatId": "answer1",
+          "startFrame": 3254,
+          "endFrame": 3261
+        },
+        {
+          "text": "shared",
+          "beatId": "answer1",
+          "startFrame": 3261,
+          "endFrame": 3275
+        },
+        {
+          "text": "shelf",
+          "beatId": "answer1",
+          "startFrame": 3275,
+          "endFrame": 3287
+        },
+        {
+          "text": "for",
+          "beatId": "answer1",
+          "startFrame": 3287,
+          "endFrame": 3297
+        },
+        {
+          "text": "everyone.",
+          "beatId": "answer1",
+          "startFrame": 3297,
+          "endFrame": 3322
+        }
+      ]
+    },
+    {
+      "text": "The virtual environment gives",
+      "startFrame": 3322,
+      "endFrame": 3366,
+      "words": [
+        {
+          "text": "The",
+          "beatId": "answer1",
+          "startFrame": 3322,
+          "endFrame": 3337
+        },
+        {
+          "text": "virtual",
+          "beatId": "answer1",
+          "startFrame": 3337,
+          "endFrame": 3339
+        },
+        {
+          "text": "environment",
+          "beatId": "answer1",
+          "startFrame": 3339,
+          "endFrame": 3358
+        },
+        {
+          "text": "gives",
+          "beatId": "answer1",
+          "startFrame": 3358,
+          "endFrame": 3366
+        }
+      ]
+    },
+    {
+      "text": "every project its own shelf.",
+      "startFrame": 3366,
+      "endFrame": 3412,
+      "words": [
+        {
+          "text": "every",
+          "beatId": "answer1",
+          "startFrame": 3366,
+          "endFrame": 3375
+        },
+        {
+          "text": "project",
+          "beatId": "answer1",
+          "startFrame": 3375,
+          "endFrame": 3387
+        },
+        {
+          "text": "its",
+          "beatId": "answer1",
+          "startFrame": 3387,
+          "endFrame": 3392
+        },
+        {
+          "text": "own",
+          "beatId": "answer1",
+          "startFrame": 3392,
+          "endFrame": 3397
+        },
+        {
+          "text": "shelf.",
+          "beatId": "answer1",
+          "startFrame": 3397,
+          "endFrame": 3412
+        }
+      ]
+    },
+    {
+      "text": "Same idea, different tool.",
+      "startFrame": 3412,
+      "endFrame": 3479,
+      "words": [
+        {
+          "text": "Same",
+          "beatId": "answer1",
+          "startFrame": 3412,
+          "endFrame": 3418
+        },
+        {
+          "text": "idea,",
+          "beatId": "answer1",
+          "startFrame": 3418,
+          "endFrame": 3435
+        },
+        {
+          "text": "different",
+          "beatId": "answer1",
+          "startFrame": 3435,
+          "endFrame": 3458
+        },
+        {
+          "text": "tool.",
+          "beatId": "answer1",
+          "startFrame": 3458,
+          "endFrame": 3472
+        }
+      ]
+    },
+    {
+      "text": "So that is idea one.",
+      "startFrame": 3508,
+      "endFrame": 3557,
+      "words": [
+        {
+          "text": "So",
+          "beatId": "p1_end",
+          "startFrame": 3508,
+          "endFrame": 3510
+        },
+        {
+          "text": "that",
+          "beatId": "p1_end",
+          "startFrame": 3510,
+          "endFrame": 3522
+        },
+        {
+          "text": "is",
+          "beatId": "p1_end",
+          "startFrame": 3522,
+          "endFrame": 3528
+        },
+        {
+          "text": "idea",
+          "beatId": "p1_end",
+          "startFrame": 3528,
+          "endFrame": 3541
+        },
+        {
+          "text": "one.",
+          "beatId": "p1_end",
+          "startFrame": 3541,
+          "endFrame": 3557
+        }
+      ]
+    },
+    {
+      "text": "Every project in its own room.",
+      "startFrame": 3557,
+      "endFrame": 3620,
+      "words": [
+        {
+          "text": "Every",
+          "beatId": "p1_end",
+          "startFrame": 3557,
+          "endFrame": 3568
+        },
+        {
+          "text": "project",
+          "beatId": "p1_end",
+          "startFrame": 3568,
+          "endFrame": 3583
+        },
+        {
+          "text": "in",
+          "beatId": "p1_end",
+          "startFrame": 3583,
+          "endFrame": 3588
+        },
+        {
+          "text": "its",
+          "beatId": "p1_end",
+          "startFrame": 3588,
+          "endFrame": 3594
+        },
+        {
+          "text": "own",
+          "beatId": "p1_end",
+          "startFrame": 3594,
+          "endFrame": 3600
+        },
+        {
+          "text": "room.",
+          "beatId": "p1_end",
+          "startFrame": 3600,
+          "endFrame": 3620
+        }
+      ]
+    },
+    {
+      "text": "In part two, the other three ideas.",
+      "startFrame": 3620,
+      "endFrame": 3678,
+      "words": [
+        {
+          "text": "In",
+          "beatId": "p1_end",
+          "startFrame": 3620,
+          "endFrame": 3621
+        },
+        {
+          "text": "part",
+          "beatId": "p1_end",
+          "startFrame": 3621,
+          "endFrame": 3635
+        },
+        {
+          "text": "two,",
+          "beatId": "p1_end",
+          "startFrame": 3635,
+          "endFrame": 3648
+        },
+        {
+          "text": "the",
+          "beatId": "p1_end",
+          "startFrame": 3648,
+          "endFrame": 3650
+        },
+        {
+          "text": "other",
+          "beatId": "p1_end",
+          "startFrame": 3650,
+          "endFrame": 3659
+        },
+        {
+          "text": "three",
+          "beatId": "p1_end",
+          "startFrame": 3659,
+          "endFrame": 3669
+        },
+        {
+          "text": "ideas.",
+          "beatId": "p1_end",
+          "startFrame": 3669,
+          "endFrame": 3678
+        }
+      ]
+    },
+    {
+      "text": "Exact versions, one home for the real code,",
+      "startFrame": 3678,
+      "endFrame": 3780,
+      "words": [
+        {
+          "text": "Exact",
+          "beatId": "p1_end",
+          "startFrame": 3678,
+          "endFrame": 3709
+        },
+        {
+          "text": "versions,",
+          "beatId": "p1_end",
+          "startFrame": 3709,
+          "endFrame": 3721
+        },
+        {
+          "text": "one",
+          "beatId": "p1_end",
+          "startFrame": 3721,
+          "endFrame": 3729
+        },
+        {
+          "text": "home",
+          "beatId": "p1_end",
+          "startFrame": 3729,
+          "endFrame": 3748
+        },
+        {
+          "text": "for",
+          "beatId": "p1_end",
+          "startFrame": 3748,
+          "endFrame": 3749
+        },
+        {
+          "text": "the",
+          "beatId": "p1_end",
+          "startFrame": 3749,
+          "endFrame": 3759
+        },
+        {
+          "text": "real",
+          "beatId": "p1_end",
+          "startFrame": 3759,
+          "endFrame": 3769
+        },
+        {
+          "text": "code,",
+          "beatId": "p1_end",
+          "startFrame": 3769,
+          "endFrame": 3780
+        }
+      ]
+    },
+    {
+      "text": "and what we share,",
+      "startFrame": 3780,
+      "endFrame": 3820,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "p1_end",
+          "startFrame": 3780,
+          "endFrame": 3789
+        },
+        {
+          "text": "what",
+          "beatId": "p1_end",
+          "startFrame": 3789,
+          "endFrame": 3805
+        },
+        {
+          "text": "we",
+          "beatId": "p1_end",
+          "startFrame": 3805,
+          "endFrame": 3806
+        },
+        {
+          "text": "share,",
+          "beatId": "p1_end",
+          "startFrame": 3806,
+          "endFrame": 3820
+        }
+      ]
+    },
+    {
+      "text": "and what we never share.",
+      "startFrame": 3820,
+      "endFrame": 3885,
+      "words": [
+        {
+          "text": "and",
+          "beatId": "p1_end",
+          "startFrame": 3820,
+          "endFrame": 3829
+        },
+        {
+          "text": "what",
+          "beatId": "p1_end",
+          "startFrame": 3829,
+          "endFrame": 3839
+        },
+        {
+          "text": "we",
+          "beatId": "p1_end",
+          "startFrame": 3839,
+          "endFrame": 3852
+        },
+        {
+          "text": "never",
+          "beatId": "p1_end",
+          "startFrame": 3852,
+          "endFrame": 3862
+        },
+        {
+          "text": "share.",
+          "beatId": "p1_end",
+          "startFrame": 3862,
+          "endFrame": 3877
+        }
+      ]
+    }
+  ]
+}

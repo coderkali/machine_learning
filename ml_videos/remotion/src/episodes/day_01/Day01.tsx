@@ -105,6 +105,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
     done: at("takeaway", "done"),
     next: at("takeaway", "next"),
     language: at("takeaway", "language"),
+    teach: at("takeaway", "teach"),
     day2: at("takeaway", "day", 2),
     writing: at("shift", "writing"),
     learns: at("training", "learns"),
@@ -181,6 +182,7 @@ function Scene({ meta }: { meta: EpisodeMeta }) {
         <div style={{ position: "absolute", left: 250, right: 120, top: 1040, display: "flex", justifyContent: "center", alignItems: "center", gap: 14, ...pop(f, c.next) }}>
           <Chip label="NEXT →" color={K.blue} size={30} style={{ border: `5px solid ${K.ink}` }} />
           {f >= c.day2 && <Chip label={`DAY ${meta.next.day}`} color={K.blue} size={30} style={{ border: `5px solid ${K.ink}`, ...pop(f, c.day2) }} />}
+          {f >= c.teach && f < c.language && <Chip label="BEFORE WE TEACH MACHINES…" color={K.yellow} fg={K.ink} size={30} style={{ border: `5px solid ${K.ink}`, ...pop(f, c.teach) }} />}
           {f >= c.language && <Chip label="ML'S LANGUAGE" color={K.ink} fg={K.yellow} size={30} style={{ border: `5px solid ${K.ink}`, ...pop(f, c.language) }} />}
         </div>
       )}

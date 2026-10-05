@@ -1,1572 +1,1579 @@
 {
   "day": 1,
   "fps": 30,
-  "totalFrames": 2414,
-  "audio": "day_01/mix/narration.wav",
+  "totalFrames": 2527,
+  "audio": "day_01/mix/narration_v3.wav",
   "music": null,
   "beats": [
     {
       "id": "hook",
       "type": "hook",
       "from": 0,
-      "durationInFrames": 405,
+      "durationInFrames": 443,
       "speechFrom": 3,
-      "speechTo": 401
+      "speechTo": 433
     },
     {
       "id": "rules",
       "type": "problem",
-      "from": 405,
-      "durationInFrames": 459,
-      "speechFrom": 409,
-      "speechTo": 855
+      "from": 443,
+      "durationInFrames": 469,
+      "speechFrom": 454,
+      "speechTo": 897
     },
     {
       "id": "shift",
       "type": "insight",
-      "from": 864,
-      "durationInFrames": 186,
-      "speechFrom": 873,
-      "speechTo": 1046
+      "from": 912,
+      "durationInFrames": 189,
+      "speechFrom": 927,
+      "speechTo": 1090
     },
     {
       "id": "training",
       "type": "explain",
-      "from": 1050,
-      "durationInFrames": 393,
-      "speechFrom": 1054,
-      "speechTo": 1439
+      "from": 1101,
+      "durationInFrames": 404,
+      "speechFrom": 1111,
+      "speechTo": 1494
     },
     {
       "id": "prediction",
       "type": "caveat",
-      "from": 1443,
-      "durationInFrames": 265,
-      "speechFrom": 1447,
-      "speechTo": 1705
+      "from": 1505,
+      "durationInFrames": 293,
+      "speechFrom": 1515,
+      "speechTo": 1788
     },
     {
       "id": "java",
       "type": "java",
-      "from": 1708,
-      "durationInFrames": 301,
-      "speechFrom": 1712,
-      "speechTo": 2007
+      "from": 1798,
+      "durationInFrames": 306,
+      "speechFrom": 1809,
+      "speechTo": 2094
     },
     {
       "id": "takeaway",
       "type": "done",
-      "from": 2009,
-      "durationInFrames": 405,
-      "speechFrom": 2012,
-      "speechTo": 2368
+      "from": 2104,
+      "durationInFrames": 423,
+      "speechFrom": 2115,
+      "speechTo": 2481
     }
   ],
   "captions": [
     {
       "text": "This is Day 1 of ML",
       "startFrame": 4,
-      "endFrame": 46,
+      "endFrame": 68,
       "words": [
         {
           "text": "This",
           "beatId": "hook",
           "startFrame": 4,
-          "endFrame": 11
+          "endFrame": 16
         },
         {
           "text": "is",
           "beatId": "hook",
-          "startFrame": 11,
-          "endFrame": 17
+          "startFrame": 16,
+          "endFrame": 22
         },
         {
           "text": "Day",
           "beatId": "hook",
-          "startFrame": 17,
-          "endFrame": 26
+          "startFrame": 22,
+          "endFrame": 37
         },
         {
           "text": "1",
           "beatId": "hook",
-          "startFrame": 26,
-          "endFrame": 35
+          "startFrame": 37,
+          "endFrame": 48
         },
         {
           "text": "of",
           "beatId": "hook",
-          "startFrame": 35,
-          "endFrame": 40
+          "startFrame": 48,
+          "endFrame": 52
         },
         {
           "text": "ML",
           "beatId": "hook",
-          "startFrame": 40,
-          "endFrame": 46
+          "startFrame": 52,
+          "endFrame": 68
         }
       ]
     },
     {
       "text": "for a Java developer.",
-      "startFrame": 46,
-      "endFrame": 96,
+      "startFrame": 68,
+      "endFrame": 113,
       "words": [
         {
           "text": "for",
           "beatId": "hook",
-          "startFrame": 46,
-          "endFrame": 55
+          "startFrame": 68,
+          "endFrame": 69
         },
         {
           "text": "a",
           "beatId": "hook",
-          "startFrame": 55,
-          "endFrame": 57
+          "startFrame": 69,
+          "endFrame": 70
         },
         {
           "text": "Java",
           "beatId": "hook",
-          "startFrame": 57,
-          "endFrame": 69
+          "startFrame": 70,
+          "endFrame": 80
         },
         {
           "text": "developer.",
           "beatId": "hook",
-          "startFrame": 69,
-          "endFrame": 96
+          "startFrame": 80,
+          "endFrame": 113
         }
       ]
     },
     {
       "text": "What is machine learning?",
-      "startFrame": 96,
-      "endFrame": 142,
+      "startFrame": 113,
+      "endFrame": 163,
       "words": [
         {
           "text": "What",
           "beatId": "hook",
-          "startFrame": 96,
-          "endFrame": 104
+          "startFrame": 113,
+          "endFrame": 122
         },
         {
           "text": "is",
           "beatId": "hook",
-          "startFrame": 104,
-          "endFrame": 107
+          "startFrame": 122,
+          "endFrame": 126
         },
         {
           "text": "machine",
           "beatId": "hook",
-          "startFrame": 107,
-          "endFrame": 120
+          "startFrame": 126,
+          "endFrame": 140
         },
         {
           "text": "learning?",
           "beatId": "hook",
-          "startFrame": 120,
-          "endFrame": 142
+          "startFrame": 140,
+          "endFrame": 163
         }
       ]
     },
     {
       "text": "Your spam folder uses it every day.",
-      "startFrame": 142,
-      "endFrame": 221,
+      "startFrame": 163,
+      "endFrame": 250,
       "words": [
         {
           "text": "Your",
           "beatId": "hook",
-          "startFrame": 142,
-          "endFrame": 153
+          "startFrame": 163,
+          "endFrame": 178
         },
         {
           "text": "spam",
           "beatId": "hook",
-          "startFrame": 153,
-          "endFrame": 164
+          "startFrame": 178,
+          "endFrame": 187
         },
         {
           "text": "folder",
           "beatId": "hook",
-          "startFrame": 164,
-          "endFrame": 181
+          "startFrame": 187,
+          "endFrame": 205
         },
         {
           "text": "uses",
           "beatId": "hook",
-          "startFrame": 181,
-          "endFrame": 192
+          "startFrame": 205,
+          "endFrame": 217
         },
         {
           "text": "it",
           "beatId": "hook",
-          "startFrame": 192,
-          "endFrame": 197
+          "startFrame": 217,
+          "endFrame": 223
         },
         {
           "text": "every",
           "beatId": "hook",
-          "startFrame": 197,
-          "endFrame": 215
+          "startFrame": 223,
+          "endFrame": 236
         },
         {
           "text": "day.",
           "beatId": "hook",
-          "startFrame": 215,
-          "endFrame": 221
+          "startFrame": 236,
+          "endFrame": 250
         }
       ]
     },
     {
       "text": "A \"you won a prize\"",
-      "startFrame": 221,
-      "endFrame": 258,
+      "startFrame": 250,
+      "endFrame": 287,
       "words": [
         {
           "text": "A",
           "beatId": "hook",
-          "startFrame": 221,
-          "endFrame": 225
+          "startFrame": 250,
+          "endFrame": 251
         },
         {
           "text": "\"you",
           "beatId": "hook",
-          "startFrame": 225,
-          "endFrame": 234
+          "startFrame": 250,
+          "endFrame": 257
         },
         {
           "text": "won",
           "beatId": "hook",
-          "startFrame": 234,
-          "endFrame": 242
+          "startFrame": 257,
+          "endFrame": 264
         },
         {
           "text": "a",
           "beatId": "hook",
-          "startFrame": 242,
-          "endFrame": 244
+          "startFrame": 264,
+          "endFrame": 269
         },
         {
           "text": "prize\"",
           "beatId": "hook",
-          "startFrame": 244,
-          "endFrame": 258
+          "startFrame": 269,
+          "endFrame": 287
         }
       ]
     },
     {
       "text": "email lands in spam,",
-      "startFrame": 258,
-      "endFrame": 308,
+      "startFrame": 287,
+      "endFrame": 350,
       "words": [
         {
           "text": "email",
           "beatId": "hook",
-          "startFrame": 258,
-          "endFrame": 274
+          "startFrame": 287,
+          "endFrame": 313
         },
         {
           "text": "lands",
           "beatId": "hook",
-          "startFrame": 274,
-          "endFrame": 285
+          "startFrame": 313,
+          "endFrame": 327
         },
         {
           "text": "in",
           "beatId": "hook",
-          "startFrame": 285,
-          "endFrame": 291
+          "startFrame": 327,
+          "endFrame": 333
         },
         {
           "text": "spam,",
           "beatId": "hook",
-          "startFrame": 291,
-          "endFrame": 308
+          "startFrame": 333,
+          "endFrame": 350
         }
       ]
     },
     {
       "text": "and nobody wrote a rule for it.",
-      "startFrame": 308,
-      "endFrame": 362,
+      "startFrame": 350,
+      "endFrame": 403,
       "words": [
         {
           "text": "and",
           "beatId": "hook",
-          "startFrame": 308,
-          "endFrame": 310
+          "startFrame": 350,
+          "endFrame": 351
         },
         {
           "text": "nobody",
           "beatId": "hook",
-          "startFrame": 310,
-          "endFrame": 323
+          "startFrame": 350,
+          "endFrame": 365
         },
         {
           "text": "wrote",
           "beatId": "hook",
-          "startFrame": 323,
-          "endFrame": 333
+          "startFrame": 365,
+          "endFrame": 370
         },
         {
           "text": "a",
           "beatId": "hook",
-          "startFrame": 333,
-          "endFrame": 335
+          "startFrame": 370,
+          "endFrame": 372
         },
         {
           "text": "rule",
           "beatId": "hook",
-          "startFrame": 335,
-          "endFrame": 344
+          "startFrame": 372,
+          "endFrame": 379
         },
         {
           "text": "for",
           "beatId": "hook",
-          "startFrame": 344,
-          "endFrame": 350
+          "startFrame": 379,
+          "endFrame": 388
         },
         {
           "text": "it.",
           "beatId": "hook",
-          "startFrame": 350,
-          "endFrame": 362
+          "startFrame": 388,
+          "endFrame": 403
         }
       ]
     },
     {
       "text": "So how did it know?",
-      "startFrame": 362,
-      "endFrame": 406,
+      "startFrame": 403,
+      "endFrame": 448,
       "words": [
         {
           "text": "So",
           "beatId": "hook",
-          "startFrame": 362,
-          "endFrame": 367
+          "startFrame": 403,
+          "endFrame": 413
         },
         {
           "text": "how",
           "beatId": "hook",
-          "startFrame": 367,
-          "endFrame": 375
+          "startFrame": 413,
+          "endFrame": 428
         },
         {
           "text": "did",
           "beatId": "hook",
-          "startFrame": 375,
-          "endFrame": 383
+          "startFrame": 428,
+          "endFrame": 436
         },
         {
           "text": "it",
           "beatId": "hook",
-          "startFrame": 383,
-          "endFrame": 387
+          "startFrame": 440,
+          "endFrame": 441
         },
         {
           "text": "know?",
           "beatId": "hook",
-          "startFrame": 387,
-          "endFrame": 404
+          "startFrame": 440,
+          "endFrame": 441
         }
       ]
     },
     {
       "text": "As Java developers, we'd write a rule:",
-      "startFrame": 406,
-      "endFrame": 478,
+      "startFrame": 455,
+      "endFrame": 546,
       "words": [
         {
           "text": "As",
           "beatId": "rules",
-          "startFrame": 406,
-          "endFrame": 412
+          "startFrame": 455,
+          "endFrame": 456
         },
         {
           "text": "Java",
           "beatId": "rules",
-          "startFrame": 412,
-          "endFrame": 418
+          "startFrame": 455,
+          "endFrame": 466
         },
         {
           "text": "developers,",
           "beatId": "rules",
-          "startFrame": 418,
-          "endFrame": 442
+          "startFrame": 466,
+          "endFrame": 499
         },
         {
           "text": "we'd",
           "beatId": "rules",
-          "startFrame": 442,
-          "endFrame": 450
+          "startFrame": 499,
+          "endFrame": 510
         },
         {
           "text": "write",
           "beatId": "rules",
-          "startFrame": 450,
-          "endFrame": 460
+          "startFrame": 510,
+          "endFrame": 526
         },
         {
           "text": "a",
           "beatId": "rules",
-          "startFrame": 460,
-          "endFrame": 462
+          "startFrame": 526,
+          "endFrame": 538
         },
         {
           "text": "rule:",
           "beatId": "rules",
-          "startFrame": 462,
-          "endFrame": 478
+          "startFrame": 538,
+          "endFrame": 546
         }
       ]
     },
     {
       "text": "if the email says prize, it's spam.",
-      "startFrame": 478,
-      "endFrame": 586,
+      "startFrame": 546,
+      "endFrame": 634,
       "words": [
         {
           "text": "if",
           "beatId": "rules",
-          "startFrame": 478,
-          "endFrame": 484
+          "startFrame": 546,
+          "endFrame": 547
         },
         {
           "text": "the",
           "beatId": "rules",
-          "startFrame": 484,
-          "endFrame": 493
+          "startFrame": 547,
+          "endFrame": 553
         },
         {
           "text": "email",
           "beatId": "rules",
-          "startFrame": 493,
-          "endFrame": 509
+          "startFrame": 553,
+          "endFrame": 562
         },
         {
           "text": "says",
           "beatId": "rules",
-          "startFrame": 509,
-          "endFrame": 521
+          "startFrame": 562,
+          "endFrame": 572
         },
         {
           "text": "prize,",
           "beatId": "rules",
-          "startFrame": 521,
-          "endFrame": 549
+          "startFrame": 572,
+          "endFrame": 597
         },
         {
           "text": "it's",
           "beatId": "rules",
-          "startFrame": 549,
-          "endFrame": 574
+          "startFrame": 597,
+          "endFrame": 610
         },
         {
           "text": "spam.",
           "beatId": "rules",
-          "startFrame": 574,
-          "endFrame": 586
+          "startFrame": 610,
+          "endFrame": 634
         }
       ]
     },
     {
       "text": "But real emails say prize too.",
-      "startFrame": 586,
-      "endFrame": 656,
+      "startFrame": 634,
+      "endFrame": 689,
       "words": [
         {
           "text": "But",
           "beatId": "rules",
-          "startFrame": 586,
-          "endFrame": 593
+          "startFrame": 634,
+          "endFrame": 638
         },
         {
           "text": "real",
           "beatId": "rules",
-          "startFrame": 593,
-          "endFrame": 602
+          "startFrame": 638,
+          "endFrame": 644
         },
         {
           "text": "emails",
           "beatId": "rules",
-          "startFrame": 602,
-          "endFrame": 617
+          "startFrame": 644,
+          "endFrame": 656
         },
         {
           "text": "say",
           "beatId": "rules",
-          "startFrame": 617,
-          "endFrame": 626
+          "startFrame": 656,
+          "endFrame": 665
         },
         {
           "text": "prize",
           "beatId": "rules",
-          "startFrame": 626,
-          "endFrame": 640
+          "startFrame": 665,
+          "endFrame": 683
         },
         {
           "text": "too.",
           "beatId": "rules",
-          "startFrame": 640,
-          "endFrame": 656
+          "startFrame": 683,
+          "endFrame": 689
         }
       ]
     },
     {
       "text": "So we add exceptions,",
-      "startFrame": 656,
-      "endFrame": 703,
+      "startFrame": 689,
+      "endFrame": 742,
       "words": [
         {
           "text": "So",
           "beatId": "rules",
-          "startFrame": 656,
-          "endFrame": 659
+          "startFrame": 689,
+          "endFrame": 695
         },
         {
           "text": "we",
           "beatId": "rules",
-          "startFrame": 659,
-          "endFrame": 664
+          "startFrame": 695,
+          "endFrame": 710
         },
         {
           "text": "add",
           "beatId": "rules",
-          "startFrame": 664,
-          "endFrame": 673
+          "startFrame": 710,
+          "endFrame": 711
         },
         {
           "text": "exceptions,",
           "beatId": "rules",
-          "startFrame": 673,
-          "endFrame": 703
+          "startFrame": 711,
+          "endFrame": 742
         }
       ]
     },
     {
       "text": "and the if-else grows into a maze.",
-      "startFrame": 703,
-      "endFrame": 794,
+      "startFrame": 742,
+      "endFrame": 809,
       "words": [
         {
           "text": "and",
           "beatId": "rules",
-          "startFrame": 703,
-          "endFrame": 712
+          "startFrame": 742,
+          "endFrame": 763
         },
         {
           "text": "the",
           "beatId": "rules",
-          "startFrame": 712,
-          "endFrame": 723
+          "startFrame": 763,
+          "endFrame": 764
         },
         {
           "text": "if-else",
           "beatId": "rules",
-          "startFrame": 723,
-          "endFrame": 743
+          "startFrame": 764,
+          "endFrame": 770
         },
         {
           "text": "grows",
           "beatId": "rules",
-          "startFrame": 743,
-          "endFrame": 760
+          "startFrame": 770,
+          "endFrame": 781
         },
         {
           "text": "into",
           "beatId": "rules",
-          "startFrame": 760,
-          "endFrame": 770
+          "startFrame": 781,
+          "endFrame": 790
         },
         {
           "text": "a",
           "beatId": "rules",
-          "startFrame": 770,
-          "endFrame": 773
+          "startFrame": 790,
+          "endFrame": 792
         },
         {
           "text": "maze.",
           "beatId": "rules",
-          "startFrame": 773,
-          "endFrame": 794
+          "startFrame": 792,
+          "endFrame": 809
         }
       ]
     },
     {
       "text": "We can't write a rule for every case.",
-      "startFrame": 794,
-      "endFrame": 866,
+      "startFrame": 809,
+      "endFrame": 907,
       "words": [
         {
           "text": "We",
           "beatId": "rules",
-          "startFrame": 794,
-          "endFrame": 799
+          "startFrame": 809,
+          "endFrame": 812
         },
         {
           "text": "can't",
           "beatId": "rules",
-          "startFrame": 799,
-          "endFrame": 810
+          "startFrame": 812,
+          "endFrame": 842
         },
         {
           "text": "write",
           "beatId": "rules",
-          "startFrame": 810,
-          "endFrame": 822
+          "startFrame": 842,
+          "endFrame": 846
         },
         {
           "text": "a",
           "beatId": "rules",
-          "startFrame": 822,
-          "endFrame": 824
+          "startFrame": 846,
+          "endFrame": 849
         },
         {
           "text": "rule",
           "beatId": "rules",
-          "startFrame": 824,
-          "endFrame": 833
+          "startFrame": 849,
+          "endFrame": 861
         },
         {
           "text": "for",
           "beatId": "rules",
-          "startFrame": 833,
-          "endFrame": 840
+          "startFrame": 861,
+          "endFrame": 871
         },
         {
           "text": "every",
           "beatId": "rules",
-          "startFrame": 840,
-          "endFrame": 851
+          "startFrame": 871,
+          "endFrame": 886
         },
         {
           "text": "case.",
           "beatId": "rules",
-          "startFrame": 851,
-          "endFrame": 858
+          "startFrame": 886,
+          "endFrame": 899
         }
       ]
     },
     {
       "text": "Machine learning flips it.",
-      "startFrame": 874,
-      "endFrame": 926,
+      "startFrame": 928,
+      "endFrame": 990,
       "words": [
         {
           "text": "Machine",
           "beatId": "shift",
-          "startFrame": 874,
-          "endFrame": 885
+          "startFrame": 928,
+          "endFrame": 941
         },
         {
           "text": "learning",
           "beatId": "shift",
-          "startFrame": 885,
-          "endFrame": 902
+          "startFrame": 941,
+          "endFrame": 963
         },
         {
           "text": "flips",
           "beatId": "shift",
-          "startFrame": 902,
-          "endFrame": 913
+          "startFrame": 963,
+          "endFrame": 967
         },
         {
           "text": "it.",
           "beatId": "shift",
-          "startFrame": 913,
-          "endFrame": 926
+          "startFrame": 967,
+          "endFrame": 990
         }
       ]
     },
     {
       "text": "Instead of writing the rules,",
-      "startFrame": 926,
-      "endFrame": 993,
+      "startFrame": 990,
+      "endFrame": 1047,
       "words": [
         {
           "text": "Instead",
           "beatId": "shift",
-          "startFrame": 926,
-          "endFrame": 943
+          "startFrame": 990,
+          "endFrame": 998
         },
         {
           "text": "of",
           "beatId": "shift",
-          "startFrame": 943,
-          "endFrame": 948
+          "startFrame": 998,
+          "endFrame": 1004
         },
         {
           "text": "writing",
           "beatId": "shift",
-          "startFrame": 948,
-          "endFrame": 964
+          "startFrame": 1004,
+          "endFrame": 1018
         },
         {
           "text": "the",
           "beatId": "shift",
-          "startFrame": 964,
-          "endFrame": 971
+          "startFrame": 1018,
+          "endFrame": 1025
         },
         {
           "text": "rules,",
           "beatId": "shift",
-          "startFrame": 971,
-          "endFrame": 993
+          "startFrame": 1025,
+          "endFrame": 1047
         }
       ]
     },
     {
       "text": "we show the computer examples.",
-      "startFrame": 993,
-      "endFrame": 1049,
+      "startFrame": 1047,
+      "endFrame": 1101,
       "words": [
         {
           "text": "we",
           "beatId": "shift",
-          "startFrame": 993,
-          "endFrame": 996
+          "startFrame": 1047,
+          "endFrame": 1048
         },
         {
           "text": "show",
           "beatId": "shift",
-          "startFrame": 996,
-          "endFrame": 1001
+          "startFrame": 1048,
+          "endFrame": 1057
         },
         {
           "text": "the",
           "beatId": "shift",
-          "startFrame": 1001,
-          "endFrame": 1008
+          "startFrame": 1057,
+          "endFrame": 1064
         },
         {
           "text": "computer",
           "beatId": "shift",
-          "startFrame": 1008,
-          "endFrame": 1025
+          "startFrame": 1064,
+          "endFrame": 1084
         },
         {
           "text": "examples.",
           "beatId": "shift",
-          "startFrame": 1025,
-          "endFrame": 1049
+          "startFrame": 1084,
+          "endFrame": 1093
         }
       ]
     },
     {
       "text": "Give it emails labeled spam or safe.",
-      "startFrame": 1049,
-      "endFrame": 1135,
+      "startFrame": 1112,
+      "endFrame": 1227,
       "words": [
         {
           "text": "Give",
           "beatId": "training",
-          "startFrame": 1049,
-          "endFrame": 1058
+          "startFrame": 1112,
+          "endFrame": 1121
         },
         {
           "text": "it",
           "beatId": "training",
-          "startFrame": 1058,
-          "endFrame": 1064
+          "startFrame": 1121,
+          "endFrame": 1125
         },
         {
           "text": "emails",
           "beatId": "training",
-          "startFrame": 1064,
-          "endFrame": 1079
+          "startFrame": 1125,
+          "endFrame": 1144
         },
         {
           "text": "labeled",
           "beatId": "training",
-          "startFrame": 1079,
-          "endFrame": 1096
+          "startFrame": 1144,
+          "endFrame": 1165
         },
         {
           "text": "spam",
           "beatId": "training",
-          "startFrame": 1096,
-          "endFrame": 1107
+          "startFrame": 1165,
+          "endFrame": 1184
         },
         {
           "text": "or",
           "beatId": "training",
-          "startFrame": 1107,
-          "endFrame": 1115
+          "startFrame": 1184,
+          "endFrame": 1191
         },
         {
           "text": "safe.",
           "beatId": "training",
-          "startFrame": 1115,
-          "endFrame": 1135
+          "startFrame": 1191,
+          "endFrame": 1227
         }
       ]
     },
     {
       "text": "It finds the clues spam tends to have,",
-      "startFrame": 1135,
-      "endFrame": 1223,
+      "startFrame": 1227,
+      "endFrame": 1297,
       "words": [
         {
           "text": "It",
           "beatId": "training",
-          "startFrame": 1135,
-          "endFrame": 1142
+          "startFrame": 1227,
+          "endFrame": 1228
         },
         {
           "text": "finds",
           "beatId": "training",
-          "startFrame": 1142,
-          "endFrame": 1154
+          "startFrame": 1228,
+          "endFrame": 1242
         },
         {
           "text": "the",
           "beatId": "training",
-          "startFrame": 1154,
-          "endFrame": 1162
+          "startFrame": 1242,
+          "endFrame": 1246
         },
         {
           "text": "clues",
           "beatId": "training",
-          "startFrame": 1162,
-          "endFrame": 1178
+          "startFrame": 1246,
+          "endFrame": 1256
         },
         {
           "text": "spam",
           "beatId": "training",
-          "startFrame": 1178,
-          "endFrame": 1187
+          "startFrame": 1256,
+          "endFrame": 1271
         },
         {
           "text": "tends",
           "beatId": "training",
-          "startFrame": 1187,
-          "endFrame": 1200
+          "startFrame": 1271,
+          "endFrame": 1275
         },
         {
           "text": "to",
           "beatId": "training",
-          "startFrame": 1200,
-          "endFrame": 1205
+          "startFrame": 1275,
+          "endFrame": 1280
         },
         {
           "text": "have,",
           "beatId": "training",
-          "startFrame": 1205,
-          "endFrame": 1223
+          "startFrame": 1280,
+          "endFrame": 1297
         }
       ]
     },
     {
       "text": "and corrects itself when it's wrong.",
-      "startFrame": 1223,
-      "endFrame": 1286,
+      "startFrame": 1297,
+      "endFrame": 1370,
       "words": [
         {
           "text": "and",
           "beatId": "training",
-          "startFrame": 1223,
-          "endFrame": 1224
+          "startFrame": 1297,
+          "endFrame": 1303
         },
         {
           "text": "corrects",
           "beatId": "training",
-          "startFrame": 1223,
-          "endFrame": 1240
+          "startFrame": 1303,
+          "endFrame": 1319
         },
         {
           "text": "itself",
           "beatId": "training",
-          "startFrame": 1240,
-          "endFrame": 1253
+          "startFrame": 1319,
+          "endFrame": 1331
         },
         {
           "text": "when",
           "beatId": "training",
-          "startFrame": 1253,
-          "endFrame": 1262
+          "startFrame": 1331,
+          "endFrame": 1340
         },
         {
           "text": "it's",
           "beatId": "training",
-          "startFrame": 1262,
-          "endFrame": 1269
+          "startFrame": 1340,
+          "endFrame": 1347
         },
         {
           "text": "wrong.",
           "beatId": "training",
-          "startFrame": 1269,
-          "endFrame": 1286
+          "startFrame": 1347,
+          "endFrame": 1370
         }
       ]
     },
     {
       "text": "What it learns is called a model.",
-      "startFrame": 1286,
-      "endFrame": 1375,
+      "startFrame": 1370,
+      "endFrame": 1438,
       "words": [
         {
           "text": "What",
           "beatId": "training",
-          "startFrame": 1286,
-          "endFrame": 1298
+          "startFrame": 1370,
+          "endFrame": 1371
         },
         {
           "text": "it",
           "beatId": "training",
-          "startFrame": 1298,
-          "endFrame": 1304
+          "startFrame": 1371,
+          "endFrame": 1378
         },
         {
           "text": "learns",
           "beatId": "training",
-          "startFrame": 1304,
-          "endFrame": 1327
+          "startFrame": 1378,
+          "endFrame": 1395
         },
         {
           "text": "is",
           "beatId": "training",
-          "startFrame": 1327,
-          "endFrame": 1329
+          "startFrame": 1395,
+          "endFrame": 1401
         },
         {
           "text": "called",
           "beatId": "training",
-          "startFrame": 1329,
-          "endFrame": 1347
+          "startFrame": 1401,
+          "endFrame": 1418
         },
         {
           "text": "a",
           "beatId": "training",
-          "startFrame": 1347,
-          "endFrame": 1350
+          "startFrame": 1418,
+          "endFrame": 1421
         },
         {
           "text": "model.",
           "beatId": "training",
-          "startFrame": 1350,
-          "endFrame": 1375
+          "startFrame": 1421,
+          "endFrame": 1438
         }
       ]
     },
     {
       "text": "Learning it is called training.",
-      "startFrame": 1375,
-      "endFrame": 1442,
+      "startFrame": 1438,
+      "endFrame": 1509,
       "words": [
         {
           "text": "Learning",
           "beatId": "training",
-          "startFrame": 1375,
-          "endFrame": 1394
+          "startFrame": 1438,
+          "endFrame": 1474
         },
         {
           "text": "it",
           "beatId": "training",
-          "startFrame": 1394,
-          "endFrame": 1398
+          "startFrame": 1474,
+          "endFrame": 1483
         },
         {
           "text": "is",
           "beatId": "training",
-          "startFrame": 1398,
-          "endFrame": 1405
+          "startFrame": 1483,
+          "endFrame": 1490
         },
         {
           "text": "called",
           "beatId": "training",
-          "startFrame": 1405,
-          "endFrame": 1416
+          "startFrame": 1490,
+          "endFrame": 1497
         },
         {
           "text": "training.",
           "beatId": "training",
-          "startFrame": 1416,
-          "endFrame": 1442
+          "startFrame": 1502,
+          "endFrame": 1503
         }
       ]
     },
     {
       "text": "Now a new email arrives.",
-      "startFrame": 1442,
-      "endFrame": 1505,
+      "startFrame": 1516,
+      "endFrame": 1573,
       "words": [
         {
           "text": "Now",
           "beatId": "prediction",
-          "startFrame": 1442,
-          "endFrame": 1451
+          "startFrame": 1516,
+          "endFrame": 1520
         },
         {
           "text": "a",
           "beatId": "prediction",
-          "startFrame": 1451,
-          "endFrame": 1454
+          "startFrame": 1520,
+          "endFrame": 1523
         },
         {
           "text": "new",
           "beatId": "prediction",
-          "startFrame": 1454,
-          "endFrame": 1462
+          "startFrame": 1523,
+          "endFrame": 1532
         },
         {
           "text": "email",
           "beatId": "prediction",
-          "startFrame": 1462,
-          "endFrame": 1476
+          "startFrame": 1532,
+          "endFrame": 1547
         },
         {
           "text": "arrives.",
           "beatId": "prediction",
-          "startFrame": 1476,
-          "endFrame": 1505
+          "startFrame": 1547,
+          "endFrame": 1573
         }
       ]
     },
     {
       "text": "The model checks the clues",
-      "startFrame": 1505,
-      "endFrame": 1560,
+      "startFrame": 1573,
+      "endFrame": 1610,
       "words": [
         {
           "text": "The",
           "beatId": "prediction",
-          "startFrame": 1505,
-          "endFrame": 1512
+          "startFrame": 1573,
+          "endFrame": 1578
         },
         {
           "text": "model",
           "beatId": "prediction",
-          "startFrame": 1512,
-          "endFrame": 1525
+          "startFrame": 1578,
+          "endFrame": 1587
         },
         {
           "text": "checks",
           "beatId": "prediction",
-          "startFrame": 1525,
-          "endFrame": 1540
+          "startFrame": 1587,
+          "endFrame": 1596
         },
         {
           "text": "the",
           "beatId": "prediction",
-          "startFrame": 1540,
-          "endFrame": 1547
+          "startFrame": 1596,
+          "endFrame": 1600
         },
         {
           "text": "clues",
           "beatId": "prediction",
-          "startFrame": 1547,
-          "endFrame": 1560
+          "startFrame": 1600,
+          "endFrame": 1610
         }
       ]
     },
     {
       "text": "and says: likely spam.",
-      "startFrame": 1560,
-      "endFrame": 1618,
+      "startFrame": 1610,
+      "endFrame": 1666,
       "words": [
         {
           "text": "and",
           "beatId": "prediction",
-          "startFrame": 1560,
-          "endFrame": 1579
+          "startFrame": 1610,
+          "endFrame": 1620
         },
         {
           "text": "says:",
           "beatId": "prediction",
-          "startFrame": 1579,
-          "endFrame": 1581
+          "startFrame": 1620,
+          "endFrame": 1643
         },
         {
           "text": "likely",
           "beatId": "prediction",
-          "startFrame": 1581,
-          "endFrame": 1599
+          "startFrame": 1643,
+          "endFrame": 1656
         },
         {
           "text": "spam.",
           "beatId": "prediction",
-          "startFrame": 1599,
-          "endFrame": 1618
+          "startFrame": 1656,
+          "endFrame": 1666
         }
       ]
     },
     {
-      "text": "It's a prediction, not a promise,",
-      "startFrame": 1618,
-      "endFrame": 1670,
+      "text": "It's a prediction,",
+      "startFrame": 1666,
+      "endFrame": 1715,
       "words": [
         {
           "text": "It's",
           "beatId": "prediction",
-          "startFrame": 1618,
-          "endFrame": 1625
+          "startFrame": 1666,
+          "endFrame": 1688
         },
         {
           "text": "a",
           "beatId": "prediction",
-          "startFrame": 1625,
-          "endFrame": 1626
+          "startFrame": 1688,
+          "endFrame": 1691
         },
         {
           "text": "prediction,",
           "beatId": "prediction",
-          "startFrame": 1626,
-          "endFrame": 1651
-        },
-        {
-          "text": "not",
-          "beatId": "prediction",
-          "startFrame": 1651,
-          "endFrame": 1652
-        },
-        {
-          "text": "a",
-          "beatId": "prediction",
-          "startFrame": 1652,
-          "endFrame": 1654
-        },
-        {
-          "text": "promise,",
-          "beatId": "prediction",
-          "startFrame": 1654,
-          "endFrame": 1670
+          "startFrame": 1691,
+          "endFrame": 1715
         }
       ]
     },
     {
-      "text": "so people still check.",
-      "startFrame": 1670,
-      "endFrame": 1713,
+      "text": "not a promise, so people still",
+      "startFrame": 1715,
+      "endFrame": 1782,
       "words": [
+        {
+          "text": "not",
+          "beatId": "prediction",
+          "startFrame": 1715,
+          "endFrame": 1720
+        },
+        {
+          "text": "a",
+          "beatId": "prediction",
+          "startFrame": 1720,
+          "endFrame": 1722
+        },
+        {
+          "text": "promise,",
+          "beatId": "prediction",
+          "startFrame": 1722,
+          "endFrame": 1740
+        },
         {
           "text": "so",
           "beatId": "prediction",
-          "startFrame": 1670,
-          "endFrame": 1676
+          "startFrame": 1740,
+          "endFrame": 1742
         },
         {
           "text": "people",
           "beatId": "prediction",
-          "startFrame": 1676,
-          "endFrame": 1683
+          "startFrame": 1742,
+          "endFrame": 1760
         },
         {
           "text": "still",
           "beatId": "prediction",
-          "startFrame": 1683,
-          "endFrame": 1692
-        },
+          "startFrame": 1760,
+          "endFrame": 1765
+        }
+      ]
+    },
+    {
+      "text": "check.",
+      "startFrame": 1782,
+      "endFrame": 1798,
+      "words": [
         {
           "text": "check.",
           "beatId": "prediction",
-          "startFrame": 1692,
-          "endFrame": 1708
+          "startFrame": 1782,
+          "endFrame": 1791
         }
       ]
     },
     {
       "text": "So in Java terms: no more if-else maze.",
-      "startFrame": 1713,
-      "endFrame": 1800,
+      "startFrame": 1810,
+      "endFrame": 1908,
       "words": [
         {
           "text": "So",
           "beatId": "java",
-          "startFrame": 1713,
-          "endFrame": 1714
+          "startFrame": 1810,
+          "endFrame": 1811
         },
         {
           "text": "in",
           "beatId": "java",
-          "startFrame": 1714,
-          "endFrame": 1718
+          "startFrame": 1810,
+          "endFrame": 1815
         },
         {
           "text": "Java",
           "beatId": "java",
-          "startFrame": 1718,
-          "endFrame": 1728
+          "startFrame": 1815,
+          "endFrame": 1825
         },
         {
           "text": "terms:",
           "beatId": "java",
-          "startFrame": 1728,
-          "endFrame": 1750
+          "startFrame": 1825,
+          "endFrame": 1849
         },
         {
           "text": "no",
           "beatId": "java",
-          "startFrame": 1750,
-          "endFrame": 1751
+          "startFrame": 1849,
+          "endFrame": 1850
         },
         {
           "text": "more",
           "beatId": "java",
-          "startFrame": 1751,
-          "endFrame": 1760
+          "startFrame": 1849,
+          "endFrame": 1861
         },
         {
           "text": "if-else",
           "beatId": "java",
-          "startFrame": 1760,
-          "endFrame": 1780
+          "startFrame": 1861,
+          "endFrame": 1882
         },
         {
           "text": "maze.",
           "beatId": "java",
-          "startFrame": 1780,
-          "endFrame": 1800
+          "startFrame": 1882,
+          "endFrame": 1908
         }
       ]
     },
     {
       "text": "Just two steps: train on examples,",
-      "startFrame": 1800,
-      "endFrame": 1882,
+      "startFrame": 1908,
+      "endFrame": 1991,
       "words": [
         {
           "text": "Just",
           "beatId": "java",
-          "startFrame": 1800,
-          "endFrame": 1810
+          "startFrame": 1908,
+          "endFrame": 1916
         },
         {
           "text": "two",
           "beatId": "java",
-          "startFrame": 1810,
-          "endFrame": 1817
+          "startFrame": 1916,
+          "endFrame": 1925
         },
         {
           "text": "steps:",
           "beatId": "java",
-          "startFrame": 1817,
-          "endFrame": 1836
+          "startFrame": 1925,
+          "endFrame": 1948
         },
         {
           "text": "train",
           "beatId": "java",
-          "startFrame": 1836,
-          "endFrame": 1848
+          "startFrame": 1948,
+          "endFrame": 1954
         },
         {
           "text": "on",
           "beatId": "java",
-          "startFrame": 1848,
-          "endFrame": 1853
+          "startFrame": 1954,
+          "endFrame": 1958
         },
         {
           "text": "examples,",
           "beatId": "java",
-          "startFrame": 1853,
-          "endFrame": 1882
+          "startFrame": 1958,
+          "endFrame": 1991
         }
       ]
     },
     {
       "text": "then predict on new input.",
-      "startFrame": 1882,
-      "endFrame": 1944,
+      "startFrame": 1991,
+      "endFrame": 2041,
       "words": [
         {
           "text": "then",
           "beatId": "java",
-          "startFrame": 1882,
-          "endFrame": 1887
+          "startFrame": 1991,
+          "endFrame": 1992
         },
         {
           "text": "predict",
           "beatId": "java",
-          "startFrame": 1887,
-          "endFrame": 1905
+          "startFrame": 1992,
+          "endFrame": 2004
         },
         {
           "text": "on",
           "beatId": "java",
-          "startFrame": 1905,
-          "endFrame": 1909
+          "startFrame": 2004,
+          "endFrame": 2008
         },
         {
           "text": "new",
           "beatId": "java",
-          "startFrame": 1916,
-          "endFrame": 1923
+          "startFrame": 2008,
+          "endFrame": 2015
         },
         {
           "text": "input.",
           "beatId": "java",
-          "startFrame": 1923,
-          "endFrame": 1944
+          "startFrame": 2015,
+          "endFrame": 2034
         }
       ]
     },
     {
       "text": "We'll write that code later in the series.",
-      "startFrame": 1944,
-      "endFrame": 2006,
+      "startFrame": 2041,
+      "endFrame": 2101,
       "words": [
         {
           "text": "We'll",
           "beatId": "java",
-          "startFrame": 1944,
-          "endFrame": 1952
+          "startFrame": 2041,
+          "endFrame": 2044
         },
         {
           "text": "write",
           "beatId": "java",
-          "startFrame": 1952,
-          "endFrame": 1960
+          "startFrame": 2044,
+          "endFrame": 2052
         },
         {
           "text": "that",
           "beatId": "java",
-          "startFrame": 1960,
-          "endFrame": 1967
+          "startFrame": 2052,
+          "endFrame": 2059
         },
         {
           "text": "code",
           "beatId": "java",
-          "startFrame": 1967,
-          "endFrame": 1974
+          "startFrame": 2059,
+          "endFrame": 2065
         },
         {
           "text": "later",
           "beatId": "java",
-          "startFrame": 1974,
-          "endFrame": 1982
+          "startFrame": 2065,
+          "endFrame": 2074
         },
         {
           "text": "in",
           "beatId": "java",
-          "startFrame": 1982,
-          "endFrame": 1986
+          "startFrame": 2074,
+          "endFrame": 2077
         },
         {
           "text": "the",
           "beatId": "java",
-          "startFrame": 1986,
-          "endFrame": 1990
+          "startFrame": 2077,
+          "endFrame": 2082
         },
         {
           "text": "series.",
           "beatId": "java",
-          "startFrame": 1990,
-          "endFrame": 2006
+          "startFrame": 2082,
+          "endFrame": 2094
         }
       ]
     },
     {
       "text": "Machine learning means learning",
-      "startFrame": 2006,
-      "endFrame": 2053,
+      "startFrame": 2116,
+      "endFrame": 2160,
       "words": [
         {
           "text": "Machine",
           "beatId": "takeaway",
-          "startFrame": 2006,
-          "endFrame": 2018
+          "startFrame": 2116,
+          "endFrame": 2123
         },
         {
           "text": "learning",
           "beatId": "takeaway",
-          "startFrame": 2018,
-          "endFrame": 2031
+          "startFrame": 2123,
+          "endFrame": 2137
         },
         {
           "text": "means",
           "beatId": "takeaway",
-          "startFrame": 2031,
-          "endFrame": 2040
+          "startFrame": 2137,
+          "endFrame": 2148
         },
         {
           "text": "learning",
           "beatId": "takeaway",
-          "startFrame": 2040,
-          "endFrame": 2053
+          "startFrame": 2148,
+          "endFrame": 2160
         }
       ]
     },
     {
       "text": "from examples to predict new cases.",
-      "startFrame": 2053,
-      "endFrame": 2124,
+      "startFrame": 2160,
+      "endFrame": 2235,
       "words": [
         {
           "text": "from",
           "beatId": "takeaway",
-          "startFrame": 2053,
-          "endFrame": 2060
+          "startFrame": 2160,
+          "endFrame": 2169
         },
         {
           "text": "examples",
           "beatId": "takeaway",
-          "startFrame": 2060,
-          "endFrame": 2074
+          "startFrame": 2169,
+          "endFrame": 2186
         },
         {
           "text": "to",
           "beatId": "takeaway",
-          "startFrame": 2074,
-          "endFrame": 2080
+          "startFrame": 2186,
+          "endFrame": 2191
         },
         {
           "text": "predict",
           "beatId": "takeaway",
-          "startFrame": 2080,
-          "endFrame": 2096
+          "startFrame": 2191,
+          "endFrame": 2209
         },
         {
           "text": "new",
           "beatId": "takeaway",
-          "startFrame": 2096,
-          "endFrame": 2103
+          "startFrame": 2209,
+          "endFrame": 2217
         },
         {
           "text": "cases.",
           "beatId": "takeaway",
-          "startFrame": 2103,
-          "endFrame": 2124
+          "startFrame": 2217,
+          "endFrame": 2235
         }
       ]
     },
     {
       "text": "Day 1 done!",
-      "startFrame": 2124,
-      "endFrame": 2167,
+      "startFrame": 2235,
+      "endFrame": 2278,
       "words": [
         {
           "text": "Day",
           "beatId": "takeaway",
-          "startFrame": 2124,
-          "endFrame": 2134
+          "startFrame": 2235,
+          "endFrame": 2248
         },
         {
           "text": "1",
           "beatId": "takeaway",
-          "startFrame": 2134,
-          "endFrame": 2144
+          "startFrame": 2248,
+          "endFrame": 2261
         },
         {
           "text": "done!",
           "beatId": "takeaway",
-          "startFrame": 2144,
-          "endFrame": 2167
+          "startFrame": 2261,
+          "endFrame": 2278
         }
       ]
     },
     {
       "text": "Next, Day 2: before we teach machines,",
-      "startFrame": 2167,
-      "endFrame": 2268,
+      "startFrame": 2278,
+      "endFrame": 2386,
       "words": [
         {
           "text": "Next,",
           "beatId": "takeaway",
-          "startFrame": 2167,
-          "endFrame": 2186
+          "startFrame": 2278,
+          "endFrame": 2305
         },
         {
           "text": "Day",
           "beatId": "takeaway",
-          "startFrame": 2186,
-          "endFrame": 2201
+          "startFrame": 2305,
+          "endFrame": 2312
         },
         {
           "text": "2:",
           "beatId": "takeaway",
-          "startFrame": 2201,
-          "endFrame": 2230
+          "startFrame": 2312,
+          "endFrame": 2335
         },
         {
           "text": "before",
           "beatId": "takeaway",
-          "startFrame": 2230,
-          "endFrame": 2241
+          "startFrame": 2335,
+          "endFrame": 2348
         },
         {
           "text": "we",
           "beatId": "takeaway",
-          "startFrame": 2241,
-          "endFrame": 2243
+          "startFrame": 2348,
+          "endFrame": 2352
         },
         {
           "text": "teach",
           "beatId": "takeaway",
-          "startFrame": 2243,
-          "endFrame": 2252
+          "startFrame": 2352,
+          "endFrame": 2362
         },
         {
           "text": "machines,",
           "beatId": "takeaway",
-          "startFrame": 2252,
-          "endFrame": 2268
+          "startFrame": 2362,
+          "endFrame": 2386
         }
       ]
     },
     {
       "text": "we learn the language ML speaks,",
-      "startFrame": 2268,
-      "endFrame": 2335,
+      "startFrame": 2386,
+      "endFrame": 2455,
       "words": [
         {
           "text": "we",
           "beatId": "takeaway",
-          "startFrame": 2268,
-          "endFrame": 2273
+          "startFrame": 2386,
+          "endFrame": 2387
         },
         {
           "text": "learn",
           "beatId": "takeaway",
-          "startFrame": 2273,
-          "endFrame": 2283
+          "startFrame": 2387,
+          "endFrame": 2395
         },
         {
           "text": "the",
           "beatId": "takeaway",
-          "startFrame": 2283,
-          "endFrame": 2290
+          "startFrame": 2395,
+          "endFrame": 2400
         },
         {
           "text": "language",
           "beatId": "takeaway",
-          "startFrame": 2290,
-          "endFrame": 2308
+          "startFrame": 2400,
+          "endFrame": 2417
         },
         {
           "text": "ML",
           "beatId": "takeaway",
-          "startFrame": 2308,
-          "endFrame": 2314
+          "startFrame": 2417,
+          "endFrame": 2423
         },
         {
           "text": "speaks,",
           "beatId": "takeaway",
-          "startFrame": 2314,
-          "endFrame": 2335
+          "startFrame": 2423,
+          "endFrame": 2455
         }
       ]
     },
     {
       "text": "through Java eyes.",
-      "startFrame": 2335,
-      "endFrame": 2369,
+      "startFrame": 2455,
+      "endFrame": 2490,
       "words": [
         {
           "text": "through",
           "beatId": "takeaway",
-          "startFrame": 2335,
-          "endFrame": 2342
+          "startFrame": 2455,
+          "endFrame": 2463
         },
         {
           "text": "Java",
           "beatId": "takeaway",
-          "startFrame": 2342,
-          "endFrame": 2349
+          "startFrame": 2463,
+          "endFrame": 2470
         },
         {
           "text": "eyes.",
           "beatId": "takeaway",
-          "startFrame": 2349,
-          "endFrame": 2362
+          "startFrame": 2470,
+          "endFrame": 2482
         }
       ]
     }

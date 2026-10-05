@@ -1,0 +1,164 @@
+{
+  "day": 302,
+  "source": "DAF-02 part 1 — claude/daf/episodes/daf_02/script_v1.md",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "Last time, we built the house for our project. Now, what do we build inside it? Today's ticket answers that, before we touch any data.",
+      "v3": {
+        "text": "Last time, we built the house for our project. Now, what do we build inside it? Today's ticket answers that, before we touch any data.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/recap_v3_t2.mp3",
+      "seed": 2759850679
+    },
+    {
+      "id": "wish",
+      "type": "problem",
+      "text": "See, predict Delhi's air quality is not a requirement. It is a wish. You cannot build it, and you cannot tell if you succeeded. As Java developers, we agree the API contract and the SLA before we write a service. An ML requirement is that same contract.",
+      "v3": {
+        "text": "See, predict Delhi's air quality is not a requirement. It is a wish. You cannot build it, and you cannot tell if you succeeded. As Java developers, we agree the API contract and the SLA before we write a service. An ML requirement is that same contract.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/wish_v3_t1.mp3",
+      "seed": 4169271500
+    },
+    {
+      "id": "five",
+      "type": "insight",
+      "text": "It pins down five things. The decision, the target, the time, the success number, and the baseline it must beat. In this part, the first three.",
+      "v3": {
+        "text": "It pins down five things. The decision, the target, the time, the success number, and the baseline it must beat. In this part, the first three.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/five_v3_t2.mp3",
+      "seed": 3617766072
+    },
+    {
+      "id": "decision",
+      "type": "explain",
+      "text": "First, the decision. At six pm, Asha madam decides if six hundred children assemble outside tomorrow. And this tells us which mistake is expensive. Say bad when it is fine, and the children stay inside. A small loss. Say fine when it is bad, and six hundred children breathe poor air. That is the costly one.",
+      "v3": {
+        "text": "First, the decision. At six pm, Asha madam decides if six hundred children assemble outside tomorrow. And this tells us which mistake is expensive. Say bad when it is fine, and the children stay inside. A small loss. Say fine when it is bad, and six hundred children breathe poor air. That is the costly one.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/decision_v3_t2.mp3",
+      "seed": 3804740098
+    },
+    {
+      "id": "what",
+      "type": "explain",
+      "text": "Next, what exactly do we predict? A number. A category, like safe or unsafe. Or the number, converted into a category with the official air quality table. We chose the third one. That is decision D-001.",
+      "v3": {
+        "text": "Next, what exactly do we predict? A number. A category, like safe or unsafe. Or the number, converted into a category with the official air quality table. We chose the third one. That is decision D-001.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/what_v3_t1.mp3",
+      "seed": 4020361330
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, Asha only needs inside or outside. Why not predict that directly?",
+      "v3": {
+        "text": "Sir, Asha only needs inside or outside. Why not predict that directly?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_302/takes/doubt1_v3_t1.mp3",
+      "seed": 3117688634
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "text": "Because a category throws information away. Ninety-one and four hundred both become unsafe, but one is bad, and the other is dangerous. The number keeps that difference, and the table still gives Asha her category.",
+      "v3": {
+        "text": "Because a category throws information away. Ninety-one and four hundred both become unsafe, but one is bad, and the other is dangerous. The number keeps that difference, and the table still gives Asha her category.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/answer1_v3_t1.mp3",
+      "seed": 2185407327
+    },
+    {
+      "id": "target",
+      "type": "explain",
+      "text": "And the target must be so exact that two people build the same column. Tomorrow's twenty-four hour average PM2.5, midnight to midnight, Indian time, because the official bands use the daily average. That is D-002. And here's the catch. Sensors go down. So a day counts only if at least eighteen hours have readings. Otherwise, that day is dropped.",
+      "v3": {
+        "text": "And the target must be so exact that two people build the same column. Tomorrow's twenty-four hour average PM2.5, midnight to midnight, Indian time, because the official bands use the daily average. That is D-002. And here's the catch. Sensors go down. So a day counts only if at least eighteen hours have readings. Otherwise, that day is dropped.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/target_v3_t2.mp3",
+      "seed": 111648357
+    },
+    {
+      "id": "when",
+      "type": "explain",
+      "text": "Third, when is the prediction made? At six pm, because that is when Asha decides. And at six pm, today is not over. We have readings only up to five pm.",
+      "v3": {
+        "text": "Third, when is the prediction made? At six pm, because that is when Asha decides. And at six pm, today is not over. We have readings only up to five pm.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/when_v3_t1.mp3",
+      "seed": 4009636465
+    },
+    {
+      "id": "doubt2",
+      "type": "java",
+      "text": "Sir, but today's average is the best clue. Why can't I use it?",
+      "v3": {
+        "text": "Sir, but today's average is the best clue. Why can't I use it?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_302/takes/doubt2_v3_t1.mp3",
+      "seed": 109560872
+    },
+    {
+      "id": "answer2",
+      "type": "explain",
+      "text": "Because at six pm, it does not exist yet. In the notebook, the full day sits in the table, and the model looks brilliant. In production, it is missing, and the model fails. So, use only what exists at prediction time. Even for tomorrow's weather, we use only its forecast.",
+      "v3": {
+        "text": "Because at six pm, it does not exist yet. In the notebook, the full day sits in the table, and the model looks brilliant. In production, it is missing, and the model fails. So, use only what exists at prediction time. Even for tomorrow's weather, we use only its forecast.",
+        "stability": 0.5
+      },
+      "holdAfter": 0.8,
+      "chosen": "day_302/takes/answer2_v3_t1.mp3",
+      "seed": 302483004
+    },
+    {
+      "id": "row",
+      "type": "explain",
+      "text": "So, this is how the model will see our data. One row for each day. On the left, only what we know at six pm today. On the right, the answer, tomorrow's daily average. The decision, the target, and the time, all inside one row. In Part two, how good is good enough?",
+      "v3": {
+        "text": "So, this is how the model will see our data. One row for each day. On the left, only what we know at six pm today. On the right, the answer, tomorrow's daily average. The decision, the target, and the time, all inside one row. In Part two, how good is good enough?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "chosen": "day_302/takes/row_v3_t2.mp3",
+      "seed": 1087501288
+    }
+  ]
+}

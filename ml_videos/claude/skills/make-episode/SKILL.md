@@ -102,7 +102,7 @@ episode with the current recording; give 2–3 encouraging, concrete notes; trac
 4. **Clean**: `node scripts/clean-voice.mjs day_NN --from <folder> --map Hook=hook,… --max-pause 0.55 --keep-pause 0.42
    [--cut beat=a-b+c-d]` → `public/day_NN/rec_clean/`. Never use ffmpeg `silenceremove` on speech (it cut words).
 4b. **Voice Changer (creator's choice, 2026-09-29):** `node scripts/voice-changer.mjs day_NN --confirm` sends each
-   cleaned part through ElevenLabs speech-to-speech with his clone (`dEibRDzkMexIgcF5EEiJ`) → `public/day_NN/rec_sts/`
+   cleaned part through ElevenLabs speech-to-speech with his **Professional Voice Clone `99SWo5wjrbPpMKuP8Mik`** (default since 2026-10-04; keeps his energy 7.5 vs instant clone 5.1) → `public/day_NN/rec_sts/`
    (≈ 1,000 credits per audio minute). Clearer key words + studio-quiet; keeps his timing, energy and wording.
    Then master with `--takes-from day_NN/rec_sts --min-gap 0.7` (0.25 s joins felt like hard cuts, 2026-10-04) (add `--music <approved bed> --music-lufs -28` only after audio preview approval).
 4c. **No background music** (creator, 2026-09-30: "don't add unnecessary music"). Voice only, unless he asks.
@@ -115,7 +115,10 @@ episode with the current recording; give 2–3 encouraging, concrete notes; trac
      visuals to where he now says them, and use optional cues (`opt()` in `Day02.tsx`: hidden when the word
      isn't said) instead of `at()` fallbacks that pop at the start of the part.
    - Report energy per part vs his previous take (pitch 10–90 % range, semitones) and 2 things to try next.
-   - Voice Changer flattens energy by ≈ 1 st; still his choice. Keep old parts (`rec_sts_<date>/`) before re-running.
+   - The old instant clone flattened energy by ≈ 1–2 st and lowered pitch; the PVC keeps both.
+   - **No recording available?** Use the PVC reading the script itself: `node scripts/pvc-tts.mjs day_NN --out public/day_NN/rec_tts --confirm`
+     → master `--takes-from day_NN/rec_tts`. Do NOT voice-change someone else's take (Viraj → PVC kept Viraj's melody;
+     Kali heard "Viraj", 2026-10-05). Same tool patches a single word: `--text "capstone" --name capstone`. Keep old parts (`rec_sts_<date>/`) before re-running.
    - Never pipe a paid/long script into `head`/`tail -n` mid-run (SIGPIPE killed voice-changer after 2 parts) — redirect to a log.
    - Cut boundaries: Whisper word times are rough; confirm with 50 ms levels + snippet transcripts, then re-transcribe.
    - Voice Memos "Lossless" saves `.qta` (AAC + spatial): extract with `ffmpeg -i x.qta -map 0:a:0 -c:a copy x.m4a`.
