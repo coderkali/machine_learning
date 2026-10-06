@@ -1,0 +1,126 @@
+{
+  "day": 353,
+  "source": "DAF-03 video B — claude/daf/episodes/daf_03/script_v1.md",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "Last time, OpenAQ gave us one hundred forty-seven PM2.5 sensors. Now, before we download years of data, we must check one thing. Is there enough good data at all?",
+      "v3": {
+        "text": "Last time, OpenAQ gave us one hundred forty-seven PM2.5 sensors. Now, before we download years of data, we must check one thing. Is there enough good data at all?",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_353/takes/recap_v3_t2.mp3",
+      "seed": 1822963827
+    },
+    {
+      "id": "risk",
+      "type": "explain",
+      "text": "See, everything we build later assumes Delhi has many stations with years of readings. Very likely, yes. But very likely is not checked. So we check it now, in week one, while changing course is still cheap.",
+      "v3": {
+        "text": "See, everything we build later assumes Delhi has many stations with years of readings. Very likely, yes. But very likely is not checked. So we check it now, in week one, while changing course is still cheap.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_353/takes/risk_v3_t1.mp3",
+      "seed": 2306453556
+    },
+    {
+      "id": "gate",
+      "type": "explain",
+      "text": "We set a simple gate. At least five stations with two years of data. If fewer pass, we stop, and find another data source.",
+      "v3": {
+        "text": "We set a simple gate. At least five stations with two years of data. If fewer pass, we stop, and find another data source.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_353/takes/gate_v3_t1.mp3",
+      "seed": 3107281417
+    },
+    {
+      "id": "table",
+      "type": "explain",
+      "text": "Look at our table. Each sensor has a first reading and a last reading. The gap between them is its coverage, in days.",
+      "v3": {
+        "text": "Look at our table. Each sensor has a first reading and a last reading. The gap between them is its coverage, in days.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_353/takes/table_v3_t1.mp3",
+      "seed": 3613742382
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, why not just pick the big famous stations, like ITO?",
+      "v3": {
+        "text": "Sir, why not just pick the big famous stations, like ITO?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_353/takes/doubt1_v3_t1.mp3",
+      "seed": 2984457759
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "text": "Because a famous name tells you nothing about the data. Look at ITO. Only six hundred eighty-two days. Pusa, only sixty-six. So the rule must be a number we can measure. Two years, which means at least seven hundred thirty days.",
+      "v3": {
+        "text": "Because a famous name tells you nothing about the data. Look at ITO. Only six hundred eighty-two days. Pusa, only sixty-six. So the rule must be a number we can measure. Two years, which means at least seven hundred thirty days.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_353/takes/answer1_v3_t1.mp3",
+      "seed": 2607501053
+    },
+    {
+      "id": "result",
+      "type": "insight",
+      "text": "Now we apply this rule to all one hundred forty-seven sensors. Fifty pass. Far more than five. The gate is passed, and the project can go on.",
+      "v3": {
+        "text": "Now we apply this rule to all one hundred forty-seven sensors. Fifty pass. Far more than five. The gate is passed, and the project can go on.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_353/takes/result_v3_t1.mp3",
+      "seed": 199648613
+    },
+    {
+      "id": "stale",
+      "type": "insight",
+      "text": "But here's the catch. Punjabi Bagh passes, with seven hundred forty-seven days. But its readings stopped in February twenty eighteen. Old air is not today's air. So we keep only stations that also report in the last four years. Fifty becomes forty-four.",
+      "v3": {
+        "text": "But here's the catch. Punjabi Bagh passes, with seven hundred forty-seven days. But its readings stopped in February twenty eighteen. Old air is not today's air. So we keep only stations that also report in the last four years. Fifty becomes forty-four.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_353/takes/stale_v3_t2.mp3",
+      "seed": 4011673003
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. Check the biggest risk first. Choose stations by a number, not by a name. And the data must be recent, not just long. Next, we download the real readings.",
+      "v3": {
+        "text": "So, remember. Check the biggest risk first. Choose stations by a number, not by a name. And the data must be recent, not just long. Next, we download the real readings.",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "chosen": "day_353/takes/recall_v3_t1.mp3",
+      "seed": 1603941617
+    }
+  ]
+}

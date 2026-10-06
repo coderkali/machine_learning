@@ -1,0 +1,114 @@
+{
+  "day": 303,
+  "source": "DAF-03 video A v2 — claude/daf/episodes/daf_03/script_v1.md",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "publicOwnerId": "7398804d9eaf2f463899a907587c33a390591775784f87857b6d0e1e4e3e66f6",
+    "accent": "Indian English",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "why",
+      "type": "hook",
+      "text": "Our model must learn from the past. Thousands of real days of Delhi's air. But we do not own a single sensor. So where does that past come from? That is why we need OpenAQ.",
+      "v3": {
+        "text": "Our model must learn from the past. Thousands of real days of Delhi's air. But we do not own a single sensor. So where does that past come from? That is why we need OpenAQ.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_303/takes/why_v3_t1.mp3",
+      "seed": 4278188022
+    },
+    {
+      "id": "reached",
+      "type": "explain",
+      "text": "Let's see how we reached here. In DAF-01, we built the house for the project. In DAF-02, we decided exactly what to predict. Tomorrow's PM2.5, at six pm. That gave us a table. But right now, that table is empty.",
+      "v3": {
+        "text": "Let's see how we reached here. In DAF-01, we built the house for the project. In DAF-02, we decided exactly what to predict. Tomorrow's PM2.5, at six pm. That gave us a table. But right now, that table is empty.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_303/takes/reached_v3_t1.mp3",
+      "seed": 372250811
+    },
+    {
+      "id": "openaq",
+      "type": "explain",
+      "text": "OpenAQ is a free, open library of air readings. Government monitors in Delhi, like the CPCB network, send their readings there. So in one place, we find many stations, all in one format.",
+      "v3": {
+        "text": "OpenAQ is a free, open library of air readings. Government monitors in Delhi, like the CPCB network, send their readings there. So in one place, we find many stations, all in one format.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_303/takes/openaq_v3_t1.mp3",
+      "seed": 479496869
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, a weather website also gives PM2.5, with no sign-up. Why not use that?",
+      "v3": {
+        "text": "Sir, a weather website also gives PM2.5, with no sign-up. Why not use that?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "voiceId": "FwuKjlVpi0N3exead7ji",
+      "speaker": "Rishi (Raj)",
+      "chosen": "day_303/takes/doubt1_v3_t4.mp3",
+      "seed": 528177798
+    },
+    {
+      "id": "answer1",
+      "type": "explain",
+      "text": "Because that PM2.5 is a model's guess, not a measurement. If we learn from it, our model learns to copy another model, not what the air really did. And one of its boxes is about forty-five kilometres wide. All of Delhi becomes one pixel. We want what the sensors actually measured.",
+      "v3": {
+        "text": "Because that PM2.5 is a model's guess, not a measurement. If we learn from it, our model learns to copy another model, not what the air really did. And one of its boxes is about forty-five kilometres wide. All of Delhi becomes one pixel. We want what the sensors actually measured.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "seed": 162224110,
+      "chosen": "day_303/takes/answer1_v3_t5.mp3"
+    },
+    {
+      "id": "list",
+      "type": "explain",
+      "text": "So what does OpenAQ give us first? A list. Every monitoring location around Delhi, one hundred and two of them. And for each one, its PM2.5 sensor. Who runs it, where it stands, and the first and last day it reported. One hundred forty-seven sensors.",
+      "v3": {
+        "text": "So what does OpenAQ give us first? A list. Every monitoring location around Delhi, one hundred and two of them. And for each one, its PM2.5 sensor. Who runs it, where it stands, and the first and last day it reported. One hundred forty-seven sensors.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_303/takes/list_v3_t2.mp3",
+      "seed": 2337079712
+    },
+    {
+      "id": "first",
+      "type": "insight",
+      "text": "Here's the catch. We do not download years of readings yet. First, we only ask one question. What exists? The real readings come later.",
+      "v3": {
+        "text": "Here's the catch. We do not download years of readings yet. First, we only ask one question. What exists? The real readings come later.",
+        "stability": 0.5
+      },
+      "holdAfter": 1,
+      "chosen": "day_303/takes/first_v3_t1.mp3",
+      "seed": 3103763657
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. We need OpenAQ because our model must learn from real air, and we have no sensors of our own. Measured, not modelled. And first, we only look at the list. Next, which of these stations can we trust?",
+      "v3": {
+        "text": "So, remember. We need OpenAQ because our model must learn from real air, and we have no sensors of our own. Measured, not modelled. And first, we only look at the list. Next, which of these stations can we trust?",
+        "stability": 0.5
+      },
+      "holdAfter": 0,
+      "chosen": "day_303/takes/recall_v3_t4.mp3",
+      "seed": 2635149613
+    }
+  ]
+}

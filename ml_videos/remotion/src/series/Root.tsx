@@ -9,6 +9,8 @@ import day118Timeline from "../episodes/day_118/generated/timeline.json";
 import day02 from "../episodes/day_02/episode.json";
 import day201 from "../episodes/day_201/episode.json";
 import day201Timeline from "../episodes/day_201/generated/timeline.json";
+import day211 from "../episodes/day_211/episode.json";
+import day211Timeline from "../episodes/day_211/generated/timeline.json";
 import day202 from "../episodes/day_202/episode.json";
 import day202Timeline from "../episodes/day_202/generated/timeline.json";
 import day301 from "../episodes/day_301/episode.json";
@@ -34,6 +36,7 @@ import { Day00 } from "../episodes/day_00/Day00";
 import { Day01, type EpisodeProps } from "../episodes/day_01/Day01";
 import { Day02 } from "../episodes/day_02/Day02";
 import { Day201 } from "../episodes/day_201/Day201";
+import { Day211 } from "../episodes/day_211/Day211";
 import { Day202 } from "../episodes/day_202/Day202";
 import { Day301 } from "../episodes/day_301/Day301";
 import { Day351 } from "../episodes/day_351/Day351";
@@ -168,6 +171,16 @@ export const SeriesRoot: React.FC = () => (
       fps={FPS}
       durationInFrames={1}
       defaultProps={{ meta: day402 as EpisodeMeta, timeline: day402Timeline as Timeline } satisfies EpisodeProps}
+      calculateMetadata={({ props }) => ({ durationInFrames: props.timeline.totalFrames, fps: props.timeline.fps })}
+    />
+    <Composition
+      id="Day211"
+      component={Day211}
+      width={W}
+      height={H}
+      fps={FPS}
+      durationInFrames={1}
+      defaultProps={{ meta: day211 as EpisodeMeta, timeline: day211Timeline as Timeline } satisfies EpisodeProps}
       calculateMetadata={({ props }) => ({ durationInFrames: props.timeline.totalFrames, fps: props.timeline.fps })}
     />
     <Composition
