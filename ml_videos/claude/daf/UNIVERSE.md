@@ -100,3 +100,9 @@ catch → Recall card (Problem · Root cause · Fix · Pattern · Gotcha + 1 que
 - 2026-10-05: ✅ **DAF-02 A, B, C approved as FINAL.** Part folders: Part1_v3_FINAL, Part2_v3_FINAL, Part3_v1_FINAL; all three + audio +
   DAF-02_SCRIPTS.md copied to `DAF/Episodes/DAF-02/FINAL/`. Next: DAF-03 with the same pinned-table template
   (ids: day_303 / day_353 / day_403). Kali's PVC voice exists ("Kali – Teacher", v2 models only) — see memory kali-pvc-voice.
+- 2026-10-05: Trailer Part 1 re-voiced with Kali's PVC (`day_211` copy of day_201) → `DAF/Trailer/Part1/DAF_Trailer_Part1_v7.mp4` (2:54) + v7 audio; 4,608 EL chars. v6 stays FINAL until Kali approves v7.
+- 2026-10-05: Kali REJECTED the PVC voice for the trailer ("just like reading") → he will **record his own voice**. Recording sheet:
+  `DAF/Recordings/Trailer_Part1/RECORDING_SHEET.md` (one file per line, `NN_<beat>.m4a`). Pipeline after files arrive:
+  analyze-recording.mjs → clean-voice.mjs day_21x --from <folder> --map … → master.mjs --takes-from day_21x/rec_clean → captions → timeline → render (day_211 scenes).
+- 2026-10-05: **DAF-03** script v1 (`episodes/daf_03/script_v1.md`, 2 videos, DAF-02 v3 template): A `day_303` "How do we talk to a real API?" (1:58) · B `day_353` "Which stations can we trust?" (1:46). Audio v1 → `DAF/Episodes/DAF-03/Part1|Part2/audio/` (~6,000 EL chars). Waiting for audio approval → then pinned-table videos.
+- 2026-10-05: DAF-03 A rewritten (Kali: no API mechanics — why → how we got here → what we get): "Why do we need OpenAQ?" (1:55). B unchanged (1:46).
