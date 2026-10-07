@@ -1,0 +1,60 @@
+{
+  "day": 404,
+  "source": "DAF-04 video C — claude/daf/episodes/daf_04/script_v1.md (approved 2026-10-06). SILENT build: no takes yet.",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "R K Puram, one station. From nineteenth February twenty twenty-five, to eleventh September twenty twenty-six. Five hundred seventy days. Now we download. But not all at once."
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, it is only one station. Why not download everything in one go?",
+      "voiceId": "FwuKjlVpi0N3exead7ji"
+    },
+    {
+      "id": "small",
+      "type": "explain",
+      "text": "Because a mistake is cheaper to find small. So first, just one month, February twenty twenty-five. February has twenty-eight days, but our sensor started on the nineteenth. So how many files can we get? Think once… ten. And ten came, in five seconds."
+    },
+    {
+      "id": "twice",
+      "type": "explain",
+      "text": "Then we ran the same thing again. Downloaded, zero. Skipped, ten. Just like Maven. On the second build, it does not download the jars again. They are already in your local repository. So we can run it again any time, safely."
+    },
+    {
+      "id": "full",
+      "type": "explain",
+      "text": "Then the full run. Eighty seconds. Five hundred fifty-four files, about two and a half megabytes. Five hundred seventy days, so sixteen days have no file at all. And nine of them in a row, eleventh to nineteenth January. Right in the middle of winter."
+    },
+    {
+      "id": "inside",
+      "type": "explain",
+      "text": "Now open one file. It is not only PM2.5. Twelve things are measured. PM10, gases, temperature, humidity, wind. Out of almost four lakh seventy thousand rows, only forty-four thousand are PM2.5. About one in ten."
+    },
+    {
+      "id": "diwali",
+      "type": "insight",
+      "text": "Now look at twenty-first October, three in the morning. PM2.5, one thousand seven hundred fifty-three. Our Poor line is ninety-one. This is nineteen times that. Looks like a broken sensor, isn't it? Let's ask it. And it says, no sir. That was Diwali night."
+    },
+    {
+      "id": "catch",
+      "type": "insight",
+      "text": "Here's the catch. If we had cleaned while downloading, this row would be gone, forever. So raw files stay exactly as they came, even a number that looks wrong. Fixing happens later, in its own step, where we can always go back."
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. Test small first, and make it safe to run again. Five hundred fifty-four files, sixteen missing days. And never edit raw data. Next, we turn these files into one table, one row per day."
+    }
+  ]
+}

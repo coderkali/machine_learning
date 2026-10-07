@@ -19,6 +19,26 @@ Read this before writing any DAF video. Facts come only from
   Copy ONLY with `node scripts/daf-publish.mjs day_NN <dest> <prefix> [--audio|--final]`, then add the VERSIONS.md line.
   Workflow: script → complete audio (`--audio`) → Kali approves → video. Working files stay in Claude's folders.
 
+## How Kali wants a DAF episode (approved 2026-10-06 — read before writing any DAF-NN script)
+
+Models to copy: script `episodes/daf_03/script_v3.md` · finished videos `DAF/Episodes/DAF-02/FINAL/`
+(code: `remotion/src/episodes/day_302|day_352|day_402` + `src/shared/daf/{Stage,Pinned,DataTable}.tsx`).
+
+1. **Split the ticket** into 2–3 short videos (A/B/C), one question each, **max 3 ideas**, ~60–140 s. Ids: A = `day_3NN`,
+   B = `day_3(50+NN)`, C = `day_4NN` (DAF-04 → 304 / 354 / 404). Folders `DAF/Episodes/DAF-NN/Part1|Part2|Part3`.
+2. **Simple everyday English**, short sentences, desi-teacher phrases (`../PHRASE_BANK.md`); explain every term plainly.
+3. **Concepts only.** No code, commands, folders, keys, headers, paging, status codes, retries, rate limits.
+   No decision-record names (D-00x), no "contract/pins/gate/coverage/TTL" jargon.
+4. Data/API tickets: **① why we need it → ② how we reached here → ③ what it gives us.**
+5. **Real numbers only**, verified in the project data / notebook outputs, sources cited at the top of the script.
+6. **≥ 3 moments** from `../SCRIPT_MOMENTS_GUIDE.md` (M1–M6), tagged, each with a 🎬 animation line.
+7. Cast: narrator (Viraj for previews; Kali will record his own voice later — PVC rejected), **Rishi = Raj, one doubt
+   per video**, Asha shown only.
+8. **Visual:** the real data table **pinned at the top all video**, one new column per idea; one visual per sentence below;
+   full-height Stage; mascot down; doubt card low.
+9. **Workflow:** script table (# · id · Who · Moment · Line · 🎬) + characters per video → approval → audio (2 takes,
+   check Whisper "heard" text) → approval → video. No ElevenLabs before script approval.
+
 ## The cast
 
 | Character | Who | Job in every video |
@@ -106,3 +126,16 @@ catch → Recall card (Problem · Root cause · Fix · Pattern · Gotcha + 1 que
   analyze-recording.mjs → clean-voice.mjs day_21x --from <folder> --map … → master.mjs --takes-from day_21x/rec_clean → captions → timeline → render (day_211 scenes).
 - 2026-10-05: **DAF-03** script v1 (`episodes/daf_03/script_v1.md`, 2 videos, DAF-02 v3 template): A `day_303` "How do we talk to a real API?" (1:58) · B `day_353` "Which stations can we trust?" (1:46). Audio v1 → `DAF/Episodes/DAF-03/Part1|Part2/audio/` (~6,000 EL chars). Waiting for audio approval → then pinned-table videos.
 - 2026-10-05: DAF-03 A rewritten (Kali: no API mechanics — why → how we got here → what we get): "Why do we need OpenAQ?" (1:55). B unchanged (1:46).
+- 2026-10-06: ✅ **DAF-03 script approved** = `episodes/daf_03/script_v3.md` (A "Why do we need OpenAQ?" v2 text · B "Which sensors
+  can we trust?" simple-English v3). Old v1 audio is superseded → next in a DAF-03 chat: audio for v3 → video.
+  Next scripts: DAF-04 and DAF-05 (new chats) following "How Kali wants a DAF episode" above.
+- 2026-10-06: ✅ **DAF-04 script approved** (`episodes/daf_04/script_v1.md`: A `day_304` "Why download the original files?" ·
+  B `day_354` "Why start with just one station?" · C `day_404` "What did we really download?"). Kali asked for **video first, audio later**:
+  `scripts/silent-timeline.mjs day_NN` writes an estimated-timing timeline + silent wav (pace calibrated on DAF-02, ≈145 wpm);
+  scenes cue on words, so real audio later re-times them. New **motion kit v2** `src/shared/daf/motion.tsx` (springs, blur-in Push zones,
+  Table2 with growing columns + row spotlight, Count, typing Bubble, Ring/Underline, Burst, camera push, KineticCaption) — spec in
+  `episodes/daf_04/visual_plan_v1.md`. Silent v1 videos → `DAF/Episodes/DAF-04/Part1|Part2|Part3/DAF-04_PartN_v1.mp4` (2:05 · 2:26 · 2:26).
+  Waiting for Kali's video review → then audio (ElevenLabs ≈5,300 chars per take, ask first) or his own recording.
+- 2026-10-06: **DAF-05** script v1 (`episodes/daf_05/script_v1.md`): A `day_305` "How do 44,000 readings become one row per day?" ·
+  B `day_355` "When does a day count?" · C `day_405` "Where is the answer?" (5,052 chars total). Every number re-checked from the raw
+  files + `daily_17.csv`. Waiting for Kali's script approval — no audio yet.

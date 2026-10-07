@@ -1,0 +1,60 @@
+{
+  "day": 304,
+  "source": "DAF-04 video A — claude/daf/episodes/daf_04/script_v1.md (approved 2026-10-06). SILENT build: no takes yet.",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "Last time, we found fifty sensors with long records, and forty-four with recent data. But see, that was only a list. A list tells us who was watching Delhi's air. It does not tell us what they saw. For that, we need the actual readings."
+    },
+    {
+      "id": "shortcut",
+      "type": "explain",
+      "text": "Now, there is a shortcut. OpenAQ can hand us one ready-made number per day, the daily average. Easy, right? We even tried it. It gave us three thousand three hundred forty-two daily numbers."
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, an average is an average. Why does it matter who calculates it?",
+      "voiceId": "FwuKjlVpi0N3exead7ji"
+    },
+    {
+      "id": "count",
+      "type": "explain",
+      "text": "Let me show you. A sensor sends one reading every fifteen minutes. So in one full day, how many readings? Four per hour, twenty-four hours. Think once… ninety-six."
+    },
+    {
+      "id": "talk",
+      "type": "insight",
+      "text": "Now let's ask one day. Twentieth January, how many readings are behind your number? It says, only thirteen, sir. The sensor woke up at a quarter to nine at night."
+    },
+    {
+      "id": "hides",
+      "type": "explain",
+      "text": "So that one number looks like a whole day, but it is only three hours. A ready-made average hides this. We want to decide ourselves when a day is complete. So we need every reading, not just the average."
+    },
+    {
+      "id": "original",
+      "type": "explain",
+      "text": "And we keep those readings exactly as they came. Think of Maven. Version one point zero of a library never changes, but a snapshot can change any day. OpenAQ keeps one original file per station per day, like that release, free for anyone. We never edit it, not even to fix a mistake."
+    },
+    {
+      "id": "why",
+      "type": "explain",
+      "text": "So weeks later, if a number looks strange, we can always go back and see what the sensor really sent."
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. A list is not data. A daily average hides the hours behind it. And we keep the original files, untouched. Next, whose files do we download first?"
+    }
+  ]
+}

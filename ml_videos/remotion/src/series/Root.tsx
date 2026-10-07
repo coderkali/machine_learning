@@ -23,6 +23,12 @@ import day352 from "../episodes/day_352/episode.json";
 import day352Timeline from "../episodes/day_352/generated/timeline.json";
 import day402 from "../episodes/day_402/episode.json";
 import day402Timeline from "../episodes/day_402/generated/timeline.json";
+import day304 from "../episodes/day_304/episode.json";
+import day304Timeline from "../episodes/day_304/generated/timeline.json";
+import day404 from "../episodes/day_404/episode.json";
+import day404Timeline from "../episodes/day_404/generated/timeline.json";
+import day354 from "../episodes/day_354/episode.json";
+import day354Timeline from "../episodes/day_354/generated/timeline.json";
 import day02Timeline from "../episodes/day_02/generated/timeline.json";
 // Voice test (2026-09-28): same intro beat in Viraj (97) vs the creator's clone (98). Remove after the decision.
 import day97 from "../episodes/day_97/episode.json";
@@ -43,6 +49,9 @@ import { Day351 } from "../episodes/day_351/Day351";
 import { Day302 } from "../episodes/day_302/Day302";
 import { Day352 } from "../episodes/day_352/Day352";
 import { Day402 } from "../episodes/day_402/Day402";
+import { Day304 } from "../episodes/day_304/Day304";
+import { Day404 } from "../episodes/day_404/Day404";
+import { Day354 } from "../episodes/day_354/Day354";
 import { Day118 } from "../episodes/day_118/Day118";
 import { Thumbnail, type ThumbnailProps } from "./Thumbnail";
 
@@ -171,6 +180,36 @@ export const SeriesRoot: React.FC = () => (
       fps={FPS}
       durationInFrames={1}
       defaultProps={{ meta: day402 as EpisodeMeta, timeline: day402Timeline as Timeline } satisfies EpisodeProps}
+      calculateMetadata={({ props }) => ({ durationInFrames: props.timeline.totalFrames, fps: props.timeline.fps })}
+    />
+    <Composition
+      id="Day304"
+      component={Day304}
+      width={W}
+      height={H}
+      fps={FPS}
+      durationInFrames={1}
+      defaultProps={{ meta: day304 as EpisodeMeta, timeline: day304Timeline as Timeline } satisfies EpisodeProps}
+      calculateMetadata={({ props }) => ({ durationInFrames: props.timeline.totalFrames, fps: props.timeline.fps })}
+    />
+    <Composition
+      id="Day354"
+      component={Day354}
+      width={W}
+      height={H}
+      fps={FPS}
+      durationInFrames={1}
+      defaultProps={{ meta: day354 as EpisodeMeta, timeline: day354Timeline as Timeline } satisfies EpisodeProps}
+      calculateMetadata={({ props }) => ({ durationInFrames: props.timeline.totalFrames, fps: props.timeline.fps })}
+    />
+    <Composition
+      id="Day404"
+      component={Day404}
+      width={W}
+      height={H}
+      fps={FPS}
+      durationInFrames={1}
+      defaultProps={{ meta: day404 as EpisodeMeta, timeline: day404Timeline as Timeline } satisfies EpisodeProps}
       calculateMetadata={({ props }) => ({ durationInFrames: props.timeline.totalFrames, fps: props.timeline.fps })}
     />
     <Composition

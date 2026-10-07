@@ -26,6 +26,7 @@ creator the one-line prompt for the next chat.
   so → therefore"), each beat saying why it matters to the *Java developer*; a list of facts felt
   disconnected. Rule now in the skill §1 ("One argument, not a list").
 
+- **Script moments (2026-10-06):** every script has ≥ 3 of the 6 moments in `claude/SCRIPT_MOMENTS_GUIDE.md`, each written with its animation. DAF-03 A/B v2 rewrite will use it.
 - **Script voice (2026-10-02):** desi-teacher feel in clear English, phrases from `claude/PHRASE_BANK.md`, flowing paragraphs.
 
 ## Approval flow (creator's rules)
