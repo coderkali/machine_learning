@@ -11,6 +11,7 @@ folder does not edit or depend on them.
 | `skills/make-episode/SKILL.md` | The one-prompt procedure: "make Day N" → finished video, thumbnail, QA. |
 | `SERIES_ROADMAP.md` | **Locked** 84-day episode order, fixed rules, thumbnail spec (§5b), script prompt. |
 | `VOICE_GUIDE.md` | **Locked** voice rules and tone palette (emotion tags for eleven_v3). |
+| `SCRIPT_MOMENTS_GUIDE.md` | **Every script:** ≥ 3 of 6 "interesting moments" (make it talk, viewer computes, extremes, wow fact, Java contrast, imagine), each with its animation. |
 | `ANIMATION_GUIDE.md` | The "animated technical explainer" rules: context first, word-cued motion, timings. |
 | `PRODUCTION_PLAN.md` | Pipeline decisions and the per-episode production loop. |
 | `episodes/day_NN/` | Per-episode scripts: `voiceover_sheet_v2.md` (current Day 1 script). |

@@ -1,0 +1,60 @@
+{
+  "day": 354,
+  "source": "DAF-04 video B — claude/daf/episodes/daf_04/script_v1.md (approved 2026-10-06). SILENT build: no takes yet.",
+  "voice": {
+    "name": "Viraj - Confident and Natural",
+    "voiceId": "fPIfC3elMLbN9tNwMXkw",
+    "model": "v3",
+    "chosen": "series narrator; beats with voiceId use Raj for Rishi"
+  },
+  "leadIn": 0.1,
+  "endHold": 1.5,
+  "beats": [
+    {
+      "id": "recap",
+      "type": "hook",
+      "text": "We want every reading, in the original daily files. So, should we download all forty-four sensors from our list? First, let's check what those sensors were really doing."
+    },
+    {
+      "id": "talk",
+      "type": "explain",
+      "text": "Let's ask them. When did you last send a reading? New Delhi says, I am still recording. Mandir Marg says, thirty-first October, twenty twenty-two. Anand Vihar says, the same day. And R K Puram says, the same day too."
+    },
+    {
+      "id": "wow",
+      "type": "insight",
+      "text": "Wait. Forty-two of our forty-four sensors went quiet in October twenty twenty-two. Only two are still recording. Mandir Marg passed our four-year rule last time. But inside those four years, it gave only about six weeks of readings."
+    },
+    {
+      "id": "compute",
+      "type": "explain",
+      "text": "So how full is our table? Forty-four sensors, four years each. That is about sixty-four thousand sensor-days. We had only three thousand three hundred forty-two. Just think… about five percent. And two sensors fill almost two-thirds of that."
+    },
+    {
+      "id": "doubt1",
+      "type": "java",
+      "text": "Sir, then fix the list first, and download every station properly.",
+      "voiceId": "FwuKjlVpi0N3exead7ji"
+    },
+    {
+      "id": "slice",
+      "type": "explain",
+      "text": "We could. But that is weeks of data work before we see a single model. Think of a new Spring Boot service. You do not write all fifty endpoints first. You build one request end to end, from controller to database, and see it work. Then you add the rest. So we take one station, all the way. Data, model, and a running app."
+    },
+    {
+      "id": "rkpuram",
+      "type": "explain",
+      "text": "And which station? R K Puram. Same place, new sensor. The old one stopped in twenty twenty-two. A new one started on nineteenth February, twenty twenty-five, and it is still recording, every fifteen minutes."
+    },
+    {
+      "id": "catch",
+      "type": "insight",
+      "text": "Here's the catch. That is only about a year and a half of data. Only one winter. And our answer will describe R K Puram, not all of Delhi. We take that deal on purpose, and we widen to more stations later."
+    },
+    {
+      "id": "recall",
+      "type": "insight",
+      "text": "So, remember. Check what the sensors are really doing, not just what the list says. Build one thin slice end to end first. And for us, that is R K Puram, one station, one winter. Next, we download it."
+    }
+  ]
+}
